@@ -261,27 +261,31 @@ function TaskItem(props) {
                         commentCount={commentCount}
                     />
                 </ItemWrapper>
-                <div className={classes.dots}>
-                    <TaskContextMenu
-                        disableDeleted={props.deleteDisabled}
-                        disableRelay={!!props.relayNext}
-                        assignedRiders={assignedRiders}
-                        task={task}
-                    />
-                </div>
-                <div className={classes.select}>
-                    <ToggleButton
-                        sx={{ border: 0 }}
-                        size="small"
-                        onClick={handleSelectItem}
-                    >
-                        {isSelected ? (
-                            <CheckBoxIcon />
-                        ) : (
-                            <CheckBoxOutlineBlankIcon />
-                        )}
-                    </ToggleButton>
-                </div>
+                {!isSm && (
+                    <>
+                        <div className={classes.dots}>
+                            <TaskContextMenu
+                                disableDeleted={props.deleteDisabled}
+                                disableRelay={!!props.relayNext}
+                                assignedRiders={assignedRiders}
+                                task={task}
+                            />
+                        </div>
+                        <div className={classes.select}>
+                            <ToggleButton
+                                sx={{ border: 0 }}
+                                size="small"
+                                onClick={handleSelectItem}
+                            >
+                                {isSelected ? (
+                                    <CheckBoxIcon />
+                                ) : (
+                                    <CheckBoxOutlineBlankIcon />
+                                )}
+                            </ToggleButton>
+                        </div>
+                    </>
+                )}
             </Box>
         </Grow>
     ) : (
