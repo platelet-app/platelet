@@ -102,9 +102,11 @@ const useStyles = (isSelected) =>
         },
         select: () => {
             return {
-                display: "none",
                 height: 0,
                 display: isSelected ? "inline" : "none",
+                [theme.breakpoints.down("sm")]: {
+                    display: "inline",
+                },
                 zIndex: 90,
             };
         },
