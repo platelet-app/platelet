@@ -79,6 +79,8 @@ function TaskActions(props) {
         dataStoreModelSyncedStatusSelector
     ).Task;
 
+    const taskVersion = useRef(null);
+
     const errorMessage = "Sorry, something went wrong";
 
     function onClickToggle(key) {
@@ -111,10 +113,13 @@ function TaskActions(props) {
 
     function calculateState() {
         if (!task) return;
-        const result = Object.keys(fields).filter((key) => {
-            return !!task[key];
-        });
-        setState(result);
+        if (task._version !== taskVersion.current) {
+            const result = Object.keys(fields).filter((key) => {
+                return !!task[key];
+            });
+            setState(result);
+            taskVersion.current = task._version;
+        }
     }
 
     useEffect(calculateState, [task]);
