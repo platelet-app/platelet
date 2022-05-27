@@ -147,7 +147,6 @@ function TaskItem(props) {
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const classes = useStyles(isSelected)();
-    const history = useHistory();
 
     const { ref, inView, entry } = useInView({
         threshold: 0,
@@ -268,7 +267,7 @@ function TaskItem(props) {
 
     const contents = visibility ? (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>
-            <Box className={classes.root}>
+            <Box data-testId="task-item-parent" className={classes.root}>
                 <ItemWrapper
                     isSm={isSm}
                     location={props.location}
@@ -302,6 +301,8 @@ function TaskItem(props) {
                         </div>
                         <div className={classes.select}>
                             <ToggleButton
+                                data-testId="task-item-select"
+                                aria-label="select task"
                                 sx={{ border: 0 }}
                                 size="small"
                                 onClick={handleSelectItem}

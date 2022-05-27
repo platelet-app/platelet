@@ -1027,4 +1027,49 @@ describe("TasksGridColumn", () => {
         }
         userEvent.click(screen.getByRole("button", { name: "Clear Search" }));
     });
+
+    test("select and unselect an item by clicking the checkbox", async () => {
+        await DataStore.save(new models.Task({ status: tasksStatus.new }));
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 1,
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+            preloadedState,
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        expect(
+            await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
+        ).toHaveLength(2);
+        const tasks = await screen.findAllByTestId("task-item-parent");
+        userEvent.hover(tasks[0]);
+        const checks = await screen.findAllByTestId("task-item-select");
+        userEvent.click(checks[0]);
+        // both the taskitem and header checkbox will be changed
+        expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(2);
+        userEvent.click(checks[0]);
+        expect(
+            await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
+        ).toHaveLength(2);
+    });
 });
