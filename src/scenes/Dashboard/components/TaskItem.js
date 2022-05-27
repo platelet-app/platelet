@@ -218,6 +218,13 @@ function TaskItem(props) {
 
     useEffect(() => () => commentObserver.current.unsubscribe(), []);
 
+    const handleCtrlClick = (e) => {
+        if (e.ctrlKey) {
+            e.preventDefault();
+            handleSelectItem();
+        }
+    };
+
     const ItemWrapper = ({ children }) => {
         if (isSm)
             return (
@@ -231,6 +238,7 @@ function TaskItem(props) {
         else
             return (
                 <Link
+                    onClick={handleCtrlClick}
                     style={{ textDecoration: "none" }}
                     to={{
                         pathname: `/task/${encodeUUID(props.taskUUID)}`,
