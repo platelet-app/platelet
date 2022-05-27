@@ -1,10 +1,14 @@
 import { put, select, takeLatest } from "redux-saga/effects";
-import { availableSelectionItemsSelector } from "../Selectors";
+import {
+    availableSelectionItemsSelector,
+    dashboardTabIndexSelector,
+} from "../Selectors";
 import * as actions from "./selectionModeActions";
 
 function* selectAllItems() {
     const availableItems = yield select(availableSelectionItemsSelector);
-    yield put(actions.setSelectedItems(availableItems));
+    const tabIndex = yield select(dashboardTabIndexSelector);
+    yield put(actions.setSelectedItems(availableItems, tabIndex));
 }
 
 export function* watchSelectAllItems() {

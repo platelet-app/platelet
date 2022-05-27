@@ -19,30 +19,34 @@ export function unSelectAllItems() {
     };
 }
 
-export function selectItem(item) {
+export function selectItem(item, tabIndex) {
     return {
         type: SELECT_ITEM,
         item,
+        tabIndex,
     };
 }
 
-export function unselectItem(itemId) {
+export function unselectItem(itemId, tabIndex) {
     return {
         type: UNSELECT_ITEM,
         itemId,
+        tabIndex,
     };
 }
 
-export function setSelectedItems(items) {
+export function setSelectedItems(items, tabIndex) {
     return {
         type: SET_SELECTED_ITEMS,
         items,
+        tabIndex,
     };
 }
 
-export function clearItems() {
+export function clearItems(tabIndex) {
     return {
         type: CLEAR_ITEMS,
+        tabIndex,
     };
 }
 

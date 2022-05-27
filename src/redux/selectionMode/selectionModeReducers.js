@@ -4,13 +4,25 @@ import * as actions from "./selectionModeActions";
 export function selectionModeReducer(state = [], action) {
     switch (action.type) {
         case actions.SET_SELECTED_ITEMS:
-            return action.items;
+            return { ...state, [action.tabIndex]: action.items };
         case actions.SELECT_ITEM:
-            return { ...state, [action.item.id]: action.item };
+            return {
+                ...state,
+                [action.tabIndex]: {
+                    ...state[action.tabIndex],
+                    [action.item.id]: action.item,
+                },
+            };
         case actions.UNSELECT_ITEM:
-            return _.omit(state, action.itemId);
+            return {
+                ...state,
+                [action.tabIndex]: _.omit(
+                    state[action.tabIndex],
+                    action.itemId
+                ),
+            };
         case actions.CLEAR_ITEMS:
-            return {};
+            return { ...state, [action.tabIndex]: {} };
         default:
             return state;
     }
