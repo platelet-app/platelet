@@ -17,6 +17,7 @@ import * as selectionActions from "../../../redux/selectionMode/selectionModeAct
 import {
     availableSelectionItemsSelector,
     dashboardFilterTermSelector,
+    dashboardTabIndexSelector,
     selectedItemsSelector,
 } from "../../../redux/Selectors";
 import { tasksStatus } from "../../../apiConsts";
@@ -39,11 +40,13 @@ const initialState = {
 };
 
 function MultipleSelectionActionsMenu() {
-    const selectedItems = Object.values(useSelector(selectedItemsSelector));
+    const selectedItemsAll = useSelector(selectedItemsSelector);
     const availableSelection = useSelector(availableSelectionItemsSelector);
     const availableSelectionItems = Object.values(availableSelection);
+    const tabIndex = useSelector(dashboardTabIndexSelector);
     const dashboardFilter = useSelector(dashboardFilterTermSelector);
     const [state, setState] = useState(initialState);
+    const selectedItems = selectedItemsAll[tabIndex];
 
     const handleClick = (event) => {
         event.preventDefault();
@@ -57,11 +60,13 @@ function MultipleSelectionActionsMenu() {
         setState(initialState);
     };
     function checkButtonDisabled(action) {
+        if (!selectedItems) return true;
+        const values = Object.values(selectedItems);
         if (action === actions.assignUser) {
-            return selectedItems.length === 0;
+            return values.length === 0;
         }
         if (
-            selectedItems.some((item) => {
+            values.some((item) => {
                 return [
                     tasksStatus.completed,
                     tasksStatus.cancelled,
@@ -74,24 +79,24 @@ function MultipleSelectionActionsMenu() {
         }
         if (action === actions.markPickedUp) {
             return (
-                selectedItems.length === 0 ||
-                selectedItems.some((item) => {
+                values.length === 0 ||
+                values.some((item) => {
                     return item.status !== tasksStatus.active;
                 })
             );
         }
         if (action === actions.markDelivered) {
             return (
-                selectedItems.length === 0 ||
-                selectedItems.some((item) => {
+                values.length === 0 ||
+                values.some((item) => {
                     return item.status !== tasksStatus.pickedUp;
                 })
             );
         }
         if (action === actions.markRiderHome) {
             return (
-                selectedItems.length === 0 ||
-                selectedItems.some((item) => {
+                values.length === 0 ||
+                values.some((item) => {
                     return item.status !== tasksStatus.droppedOff;
                 })
             );
@@ -100,27 +105,30 @@ function MultipleSelectionActionsMenu() {
             [dotActions.markCancelled, dotActions.markRejected].includes(action)
         ) {
             return (
-                selectedItems.length === 0 ||
-                selectedItems.some((item) => {
+                values.length === 0 ||
+                values.some((item) => {
                     return item.status === tasksStatus.droppedOff;
                 })
             );
         }
     }
 
-    let checkBoxIcon = <CheckBoxOutlineBlankIcon />;
-
-    if (availableSelectionItems.length === 0) {
-        checkBoxIcon = <CheckBoxOutlineBlankIcon />;
-    } else if (selectedItems.length === availableSelectionItems.length) {
-        checkBoxIcon = <CheckBoxIcon />;
-    } else if (selectedItems.length > 0) {
-        checkBoxIcon = <IndeterminateCheckBoxIcon />;
+    function getCheckBox() {
+        if (!selectedItems) return <CheckBoxOutlineBlankIcon />;
+        const values = Object.values(selectedItems);
+        if (availableSelectionItems.length === 0) {
+            return <CheckBoxOutlineBlankIcon />;
+        } else if (values && values.length === availableSelectionItems.length) {
+            return <CheckBoxIcon />;
+        } else if (values && values.length > 0) {
+            return <IndeterminateCheckBoxIcon />;
+        } else {
+            return <CheckBoxOutlineBlankIcon />;
+        }
     }
-
     function handleOnClickCheck() {
-        if (selectedItems.length > 0) {
-            dispatch(selectionActions.clearItems());
+        if (selectedItems && Object.values(selectedItems).length > 0) {
+            dispatch(selectionActions.clearItems(tabIndex));
         } else {
             dispatch(selectionActions.selectAllItems());
         }
@@ -176,9 +184,9 @@ function MultipleSelectionActionsMenu() {
                 onClick={handleOnClickCheck}
                 disabled={!!dashboardFilter}
             >
-                {checkBoxIcon}
+                {getCheckBox()}
             </ToggleButton>
-            {selectedItems.length > 0 && (
+            {selectedItems && Object.values(selectedItems).length > 0 && (
                 <>
                     {Object.values(actions).map((action) => (
                         <Button
