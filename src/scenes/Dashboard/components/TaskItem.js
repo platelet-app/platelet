@@ -80,6 +80,48 @@ const useStyles = (isSelected) =>
         },
     }));
 
+const ItemWrapper = ({
+    children,
+    isSm,
+    location,
+    taskId,
+    handleSelectItem,
+}) => {
+    const handleCtrlClick = (e) => {
+        if (e.ctrlKey) {
+            e.preventDefault();
+            handleSelectItem();
+        }
+    };
+    const history = useHistory();
+    const longPressEvent = useLongPress();
+    function handleClick(e) {
+        history.push({
+            pathname: `/task/${encodeUUID(taskId)}`,
+            state: { background: location },
+        });
+    }
+
+    if (isSm)
+        return (
+            <Box {...longPressEvent(handleSelectItem)} onClick={handleClick}>
+                {children}
+            </Box>
+        );
+    else
+        return (
+            <Link
+                onClick={handleCtrlClick}
+                style={{ textDecoration: "none" }}
+                to={{
+                    pathname: `/task/${encodeUUID(taskId)}`,
+                    state: { background: location },
+                }}
+            >
+                {children}
+            </Link>
+        );
+};
 function TaskItemWrapper(props) {
     const location = useLocation();
     return <TaskItem {...props} location={location} />;
@@ -117,8 +159,6 @@ function TaskItem(props) {
         }
     }, [inView]);
 
-    const longPressEvent = useLongPress();
-
     function calculateIsSelected() {
         const itemsTab = selectedItems[tabIndex];
         let result = false;
@@ -130,13 +170,6 @@ function TaskItem(props) {
         setIsSelected(result);
     }
     useEffect(calculateIsSelected, [selectedItems, tabIndex]);
-
-    function handleClick(e) {
-        history.push({
-            pathname: `/task/${encodeUUID(props.taskUUID)}`,
-            state: { background: props.location },
-        });
-    }
 
     function handleSelectItem(e) {
         if (isSelected) {
@@ -233,42 +266,15 @@ function TaskItem(props) {
 
     useEffect(() => () => commentObserver.current.unsubscribe(), []);
 
-    const handleCtrlClick = (e) => {
-        if (e.ctrlKey) {
-            e.preventDefault();
-            handleSelectItem();
-        }
-    };
-
-    const ItemWrapper = ({ children }) => {
-        if (isSm)
-            return (
-                <Box
-                    {...longPressEvent(handleSelectItem)}
-                    onClick={handleClick}
-                >
-                    {children}
-                </Box>
-            );
-        else
-            return (
-                <Link
-                    onClick={handleCtrlClick}
-                    style={{ textDecoration: "none" }}
-                    to={{
-                        pathname: `/task/${encodeUUID(props.taskUUID)}`,
-                        state: { background: props.location },
-                    }}
-                >
-                    {children}
-                </Link>
-            );
-    };
-
     const contents = visibility ? (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>
             <Box className={classes.root}>
-                <ItemWrapper>
+                <ItemWrapper
+                    isSm={isSm}
+                    location={props.location}
+                    taskId={task.id}
+                    handleSelectItem={handleSelectItem}
+                >
                     <TaskCard
                         title={"Task"}
                         status={task.status}
@@ -323,7 +329,6 @@ TaskItem.defaultProps = {
 
 TaskItem.propTypes = {
     task: PropTypes.object,
-    taskUUID: PropTypes.string,
     view: PropTypes.string,
     deleteDisabled: PropTypes.bool,
     animate: PropTypes.bool,
