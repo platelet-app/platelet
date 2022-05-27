@@ -137,7 +137,7 @@ function MultipleSelectionActionsMenu() {
     const dotsMenu = (
         <>
             <IconButton
-                aria-label="more-selection-actions"
+                aria-label="More Selection Actions"
                 aria-controls="long-menu"
                 aria-haspopup="true"
                 onClick={handleClick}
@@ -158,6 +158,7 @@ function MultipleSelectionActionsMenu() {
                 {Object.values(dotActions).map((action) => {
                     return (
                         <MenuItem
+                            aria-label={`Selection ${action}`}
                             disabled={checkButtonDisabled(action)}
                             key={action}
                             onClick={() => {}}
@@ -179,6 +180,7 @@ function MultipleSelectionActionsMenu() {
             direction="row"
         >
             <ToggleButton
+                aria-label="Select All"
                 sx={{ margin: 0.5 }}
                 size="small"
                 onClick={handleOnClickCheck}
@@ -190,6 +192,8 @@ function MultipleSelectionActionsMenu() {
                 <>
                     {Object.values(actions).map((action) => (
                         <Button
+                            data-testId="select-action-button"
+                            aria-label={`Selection ${action}`}
                             key={action}
                             size="small"
                             onClick={() => {}}
