@@ -16,6 +16,7 @@ import * as models from "../../../models/index";
 import { DataStore } from "aws-amplify";
 import { useDispatch, useSelector } from "react-redux";
 import {
+    dashboardTabIndexSelector,
     dataStoreModelSyncedStatusSelector,
     getRoleView,
     getWhoami,
@@ -79,6 +80,11 @@ const useStyles = (isSelected) =>
         },
     }));
 
+function TaskItemWrapper(props) {
+    const location = useLocation();
+    return <TaskItem {...props} location={location} />;
+}
+
 function TaskItem(props) {
     const whoami = useSelector(getWhoami);
     const { task } = props;
@@ -86,19 +92,18 @@ function TaskItem(props) {
     const [assignedRiders, setAssignedRiders] = useState([]);
     const [visibility, setVisibility] = useState(false);
     const [commentCount, setCommentCount] = useState(0);
+    const [isSelected, setIsSelected] = useState(false);
     const commentObserver = useRef({ unsubscribe: () => {} });
     const roleView = useSelector(getRoleView);
     const allAssignees = useSelector(taskAssigneesSelector);
     const commentModelSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     ).Comment;
+    const tabIndex = useSelector(dashboardTabIndexSelector);
     const selectedItems = useSelector(selectedItemsSelector);
     const dispatch = useDispatch();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
-    const isSelected = Object.values(selectedItems)
-        .map((t) => t.id)
-        .includes(task.id);
     const classes = useStyles(isSelected)();
     const history = useHistory();
 
@@ -114,20 +119,30 @@ function TaskItem(props) {
 
     const longPressEvent = useLongPress();
 
-    const location = useLocation();
+    function calculateIsSelected() {
+        const itemsTab = selectedItems[tabIndex];
+        let result = false;
+        if (itemsTab) {
+            result = Object.values(itemsTab)
+                .map((t) => t.id)
+                .includes(task.id);
+        }
+        setIsSelected(result);
+    }
+    useEffect(calculateIsSelected, [selectedItems, tabIndex]);
 
     function handleClick(e) {
         history.push({
             pathname: `/task/${encodeUUID(props.taskUUID)}`,
-            state: { background: location },
+            state: { background: props.location },
         });
     }
 
     function handleSelectItem(e) {
         if (isSelected) {
-            dispatch(selectionActions.unselectItem(task.id));
+            dispatch(selectionActions.unselectItem(task.id, tabIndex));
         } else {
-            dispatch(selectionActions.selectItem(task));
+            dispatch(selectionActions.selectItem(task, tabIndex));
         }
     }
 
@@ -242,7 +257,7 @@ function TaskItem(props) {
                     style={{ textDecoration: "none" }}
                     to={{
                         pathname: `/task/${encodeUUID(props.taskUUID)}`,
-                        state: { background: location },
+                        state: { background: props.location },
                     }}
                 >
                     {children}
@@ -314,4 +329,4 @@ TaskItem.propTypes = {
     animate: PropTypes.bool,
 };
 
-export default TaskItem;
+export default TaskItemWrapper;
