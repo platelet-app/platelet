@@ -1,0 +1,112 @@
+import React from "react";
+import PropTypes from "prop-types";
+import * as selectionActions from "../../../redux/selectionMode/selectionModeActions";
+import { Box, IconButton, Stack, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    dashboardTabIndexSelector,
+    selectedItemsSelector,
+} from "../../../redux/Selectors";
+
+const useStyles = makeStyles({
+    header: {
+        fontWeight: "bold",
+    },
+    headerParent: {
+        "&:hover": {
+            "& $select": {
+                display: "block",
+            },
+        },
+    },
+});
+
+function TaskGridColumnHeader(props) {
+    const selectedItemsAll = useSelector(selectedItemsSelector);
+    const tabIndex = useSelector(dashboardTabIndexSelector);
+    const selectedItems = selectedItemsAll[tabIndex];
+    const dispatch = useDispatch();
+
+    const classes = useStyles();
+
+    function handleSelectCheckBoxClick() {
+        const selectedItems = selectedItemsAll[tabIndex];
+        if (
+            !selectedItems ||
+            Object.values(props.tasks).some((t) =>
+                Object.values(selectedItems)
+                    .map((a) => a.id)
+                    .includes(t.id)
+            )
+        ) {
+            for (const task of Object.values(props.tasks)) {
+                dispatch(selectionActions.unselectItem(task.id, tabIndex));
+            }
+        } else {
+            for (const task of Object.values(props.tasks)) {
+                dispatch(selectionActions.selectItem(task, tabIndex));
+            }
+        }
+    }
+    function getCheckBox() {
+        const selectedItems = selectedItemsAll[tabIndex];
+        if (!selectedItems) return <CheckBoxOutlineBlankIcon />;
+        const values = Object.values(selectedItems);
+        if (
+            !Object.values(props.tasks).some((t) =>
+                values.map((a) => a.id).includes(t.id)
+            )
+        ) {
+            return <CheckBoxOutlineBlankIcon />;
+        } else if (
+            !Object.values(props.tasks).some(
+                (t) => !values.map((a) => a.id).includes(t.id)
+            )
+        ) {
+            return <CheckBoxIcon />;
+        } else if (
+            Object.values(props.tasks).some((t) =>
+                values.map((a) => a.id).includes(t.id)
+            )
+        ) {
+            return <IndeterminateCheckBoxIcon />;
+        }
+    }
+
+    return (
+        <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="flex-start"
+            className={classes.headerParent}
+        >
+            <Typography
+                data-cy={`${props.title}-header`}
+                className={classes.header}
+            >
+                {props.title}
+            </Typography>
+            {Object.values(props.tasks).length > 0 && (
+                <Box sx={{ height: 0 }}>
+                    <IconButton onClick={handleSelectCheckBoxClick}>
+                        {getCheckBox()}
+                    </IconButton>
+                </Box>
+            )}
+        </Stack>
+    );
+}
+
+TaskGridColumnHeader.propTypes = {
+    tasks: PropTypes.object,
+};
+
+TaskGridColumnHeader.defaultProps = {
+    tasks: {},
+};
+
+export default TaskGridColumnHeader;

@@ -1,8 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import * as selectionActions from "../../../redux/selectionMode/selectionModeActions";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import _ from "lodash";
 import TaskItem from "./TaskItem";
 import * as models from "../../../models/index";
@@ -18,7 +14,6 @@ import {
 } from "@mui/material";
 import PropTypes from "prop-types";
 import { showHide } from "../../../styles/common";
-import clsx from "clsx";
 import makeStyles from "@mui/styles/makeStyles";
 import {
     dashboardFilteredUserSelector,
@@ -29,6 +24,7 @@ import {
     dataStoreModelSyncedStatusSelector,
     dashboardFilterTermSelector,
     selectedItemsSelector,
+    dashboardTabIndexSelector,
 } from "../../../redux/Selectors";
 import { sortByCreatedTime } from "../../../utilities";
 import { DataStore } from "aws-amplify";
@@ -44,6 +40,8 @@ import getAllMyTasksWithUser from "../utilities/getAllMyTasksWithUser";
 import useWindowSize from "../../../hooks/useWindowSize";
 import { useTheme } from "@mui/styles";
 import { useInView } from "react-intersection-observer";
+import TaskGridColumnHeader from "./TaskGridColumnHeader";
+import TaskGridTasksList from "./TaskGridTasksList";
 
 const loaderStyles = makeStyles((theme) => ({
     linear: {
@@ -62,10 +60,6 @@ const loaderStyles = makeStyles((theme) => ({
 
 const useStyles = (isSelected) =>
     makeStyles((theme) => ({
-        header: {
-            fontWeight: "bold",
-        },
-        headerParent: {},
         divider: {
             width: "95%",
         },
@@ -73,11 +67,6 @@ const useStyles = (isSelected) =>
             height: 35,
         },
         column: {
-            "&:hover": {
-                "& $select": {
-                    display: "block",
-                },
-            },
             padding: 5,
             backgroundColor: "rgba(180, 180, 180, 0.1)",
             borderRadius: 5,
@@ -94,28 +83,14 @@ const useStyles = (isSelected) =>
                 width: "100%",
             },
         },
-        taskItem: {
-            width: "100%",
-        },
         gridItem: {
             width: "100%",
-        },
-        select: () => {
-            return {
-                height: 0,
-                display: isSelected ? "inline" : "none",
-                [theme.breakpoints.down("sm")]: {
-                    display: "inline",
-                },
-                zIndex: 90,
-            };
         },
     }));
 
 function TasksGridColumn(props) {
     const [state, setState] = useState([]);
     const stateRef = useRef({});
-    const { show, hide } = showHide();
     const taskAssignees = useSelector(taskAssigneesSelector);
     const prevTaskAssigneesRef = useRef(null);
     const taskAssigneesReady = useSelector(taskAssigneesReadyStatusSelector);
@@ -128,7 +103,9 @@ function TasksGridColumn(props) {
     const dashboardFilter = useSelector(dashboardFilterTermSelector);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const roleView = useSelector(getRoleView);
-    const selectedItems = Object.values(useSelector(selectedItemsSelector));
+    const selectedItemsAll = useSelector(selectedItemsSelector);
+    const tabIndex = useSelector(dashboardTabIndexSelector);
+    const isSomeSelected = useRef(false);
     const dataStoreModelSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     );
@@ -144,13 +121,16 @@ function TasksGridColumn(props) {
         threshold: 0,
     });
 
-    const dispatch = useDispatch();
+    useEffect(() => {
+        const selectedItems = selectedItemsAll[tabIndex];
+        if (!selectedItems) return;
+        const values = Object.values(selectedItems);
+        isSomeSelected.current = Object.values(state).some((t) =>
+            values.map((a) => a.id).includes(t.id)
+        );
+    });
 
-    const isSomeSelected = Object.values(state).some((t) =>
-        selectedItems.map((a) => a.id).includes(t.id)
-    );
-
-    const classes = useStyles(isSomeSelected)();
+    const classes = useStyles(isSomeSelected.current)();
 
     useEffect(() => {
         if (inView && !visibility) {
@@ -161,24 +141,6 @@ function TasksGridColumn(props) {
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     stateRef.current = state;
-
-    let checkBoxIcon = <CheckBoxOutlineBlankIcon />;
-
-    if (
-        !Object.values(state).some((t) =>
-            selectedItems.map((a) => a.id).includes(t.id)
-        )
-    ) {
-        checkBoxIcon = <CheckBoxOutlineBlankIcon />;
-    } else if (
-        !Object.values(state).some(
-            (t) => !selectedItems.map((a) => a.id).includes(t.id)
-        )
-    ) {
-        checkBoxIcon = <CheckBoxIcon />;
-    } else if (isSomeSelected) {
-        checkBoxIcon = <IndeterminateCheckBoxIcon />;
-    }
 
     function addTaskToState(newTask) {
         animate.current = true;
@@ -436,44 +398,6 @@ function TasksGridColumn(props) {
         };
     }, []);
 
-    function handleSelectCheckBoxClick() {
-        if (
-            Object.values(state).some((t) =>
-                selectedItems.map((a) => a.id).includes(t.id)
-            )
-        ) {
-            for (const task of Object.values(state)) {
-                dispatch(selectionActions.unselectItem(task.id));
-            }
-        } else {
-            for (const task of Object.values(state)) {
-                dispatch(selectionActions.selectItem(task));
-            }
-        }
-    }
-
-    const header = (
-        <Stack
-            direction="row"
-            justifyContent="space-between"
-            className={classes.headerParent}
-        >
-            <Typography
-                data-cy={`${props.title}-header`}
-                className={classes.header}
-            >
-                {props.title}
-            </Typography>
-            {Object.values(state).length > 0 && (
-                <Box className={classes.select}>
-                    <IconButton onClick={handleSelectCheckBoxClick}>
-                        {checkBoxIcon}
-                    </IconButton>
-                </Box>
-            )}
-        </Stack>
-    );
-
     const animate = useRef(false);
 
     if (errorState) {
@@ -507,9 +431,6 @@ function TasksGridColumn(props) {
             </Box>
         );
     } else {
-        let displayDate = false;
-        let lastTime = new Date();
-        const filteredTasksIdsList = filteredTasksIds || [];
         return (
             <Box
                 className={classes.column}
@@ -518,81 +439,11 @@ function TasksGridColumn(props) {
                     width: isSm ? "100%" : width / 4.2,
                 }}
             >
-                {header}
-                <Stack
-                    direction={"column"}
-                    data-cy={`tasks-kanban-column-${props.taskKey}`}
-                    spacing={0}
-                    alignItems={"center"}
-                    justifyContent={"center"}
-                >
-                    {sortByCreatedTime(
-                        Object.values(state).reverse(),
-                        "newest"
-                    ).map((task) => {
-                        displayDate = false;
-                        const timeComparison = new Date(
-                            task.createdAt || task.timeOfCall || null
-                        );
-                        if (
-                            timeComparison &&
-                            (filteredTasksIdsList.length === 0 ||
-                                filteredTasksIdsList.includes(task.id)) &&
-                            timeComparison.getDate() <= lastTime.getDate() - 1
-                        ) {
-                            lastTime = timeComparison;
-                            displayDate = true;
-                        }
-                        return (
-                            <Box
-                                className={clsx(
-                                    classes.taskItem,
-                                    filteredTasksIds === null ||
-                                        filteredTasksIds.includes(task.id)
-                                        ? show
-                                        : hide
-                                )}
-                                key={task.id}
-                            >
-                                <Box
-                                    display="flex"
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    height={35}
-                                    sx={{ width: "100%" }}
-                                >
-                                    {displayDate && (
-                                        <DateStampDivider date={lastTime} />
-                                    )}
-                                </Box>
-                                <TaskItem
-                                    animate={animate.current}
-                                    task={task}
-                                    taskUUID={task.id}
-                                    deleteDisabled
-                                />
-                                <Box
-                                    className={
-                                        !!task.relayNext &&
-                                        props.showTasks === null &&
-                                        !props.hideRelayIcons &&
-                                        roleView !== userRoles.rider
-                                            ? show
-                                            : hide
-                                    }
-                                >
-                                    <Tooltip title="Relay">
-                                        <ArrowDownwardIcon
-                                            style={{
-                                                height: "35px",
-                                            }}
-                                        />
-                                    </Tooltip>
-                                </Box>
-                            </Box>
-                        );
-                    })}
-                </Stack>
+                <TaskGridColumnHeader tasks={state} title={props.title} />
+                <TaskGridTasksList
+                    tasks={state}
+                    includeList={filteredTasksIds}
+                />
             </Box>
         );
     }

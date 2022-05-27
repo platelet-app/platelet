@@ -108,4 +108,6 @@ TasksGrid.propTypes = {
     isFetching: PropTypes.bool,
 };
 
+TasksGrid.whyDidYouRender = true;
+
 export default TasksGrid;
