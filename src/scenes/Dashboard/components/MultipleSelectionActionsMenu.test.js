@@ -2,20 +2,13 @@ import React from "react";
 import { render } from "../../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import TasksGridColumn from "./TasksGridColumn";
-import { priorities, tasksStatus, userRoles } from "../../../apiConsts";
-import * as amplify from "aws-amplify";
+import { tasksStatus, userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
 import { mockAllIsIntersecting } from "react-intersection-observer/test-utils";
 import _ from "lodash";
-import { DashboardDetailTabs } from "./DashboardDetailTabs";
 import { createMatchMedia } from "../../../test-utils";
 import userEvent from "@testing-library/user-event";
-import * as dashboardUtils from "../utilities/functions";
-import { convertListDataToObject } from "../../../utilities";
-import ActiveRidersChips from "./ActiveRidersChips";
-import moment from "moment";
-import { DataStore, Logger } from "aws-amplify";
-import { setTaskAssignees } from "../../../redux/taskAssignees/taskAssigneesActions";
+import { DataStore } from "aws-amplify";
 import MultipleSelectionActionsMenu from "./MultipleSelectionActionsMenu";
 
 describe("MultipleSelectionActionsMenu", () => {
@@ -217,6 +210,7 @@ describe("MultipleSelectionActionsMenu", () => {
             }
         }
     );
+
     test.only.each`
         taskStatus
         ${tasksStatus.completed} | ${tasksStatus.droppedOff} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
