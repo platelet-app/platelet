@@ -211,7 +211,7 @@ describe("MultipleSelectionActionsMenu", () => {
         }
     );
 
-    test.only.each`
+    test.each`
         taskStatus
         ${tasksStatus.completed} | ${tasksStatus.droppedOff} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
         ${tasksStatus.active}    | ${tasksStatus.pickedUp}   | ${tasksStatus.new}      | ${tasksStatus.droppedOff}
@@ -292,4 +292,88 @@ describe("MultipleSelectionActionsMenu", () => {
             }
         }
     );
+
+    test.each`
+        role
+        ${userRoles.coordinator} | ${userRoles.rider}
+    `("assign someone to a task", async ({ role }) => {
+        const mockTask = await DataStore.save(
+            new models.Task({ status: tasksStatus.new })
+        );
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        const assignee = await DataStore.save(
+            new models.User({
+                roles: [role],
+                displayName: "Other Person",
+            })
+        );
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            assignee,
+            role: role,
+        });
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 1,
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(
+            <>
+                <MultipleSelectionActionsMenu />
+                <TasksGridColumn
+                    title={tasksStatus.new}
+                    taskKey={[tasksStatus.new]}
+                />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        userEvent.click(screen.getByRole("button", { name: "Select All" }));
+        expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(3);
+        userEvent.click(
+            screen.getByRole("button", { name: "Selection Assign User" })
+        );
+        if (role === userRoles.coordinator) {
+            userEvent.click(screen.getByText("COORDINATOR"));
+            await waitFor(() => {
+                expect(querySpy).toHaveBeenCalledTimes(4);
+            });
+        } else {
+            await waitFor(() => {
+                expect(querySpy).toHaveBeenCalledTimes(3);
+            });
+        }
+
+        const textBox = screen.getByRole("textbox");
+        userEvent.type(textBox, assignee.displayName);
+        userEvent.click(screen.getByText(assignee.displayName));
+        userEvent.click(screen.getByText("OK"));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenNthCalledWith(
+                1,
+                expect.objectContaining(_.omit(mockAssignment, "id"))
+            );
+        });
+    });
 });
