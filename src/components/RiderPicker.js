@@ -56,7 +56,6 @@ function RiderPicker(props) {
     return (
         <>
             <Autocomplete
-                disablePortal
                 fullWidth
                 key={reset}
                 filterOptions={filterOptions}

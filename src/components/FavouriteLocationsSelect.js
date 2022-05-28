@@ -32,7 +32,6 @@ function FavouriteLocationsSelect(props) {
 
     return (
         <Autocomplete
-            disablePortal
             fullWidth
             aria-label={props.label}
             filterOptions={filterOptions}

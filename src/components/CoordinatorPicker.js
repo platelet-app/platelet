@@ -54,7 +54,6 @@ function CoordinatorPicker(props) {
     return (
         <div>
             <Autocomplete
-                disablePortal
                 fullWidth
                 key={reset}
                 filterOptions={filterOptions}
