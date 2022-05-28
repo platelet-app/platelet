@@ -203,9 +203,7 @@ function MultipleSelectionActionsMenu() {
 
     async function handleConfirmation() {
         await saveModels();
-        for (const i of Object.values(selectedItems)) {
-            dispatch(selectionModeActions.unselectItem(i.id, tabIndex));
-        }
+        dispatch(selectionModeActions.clearItems(tabIndex));
         setCurrentAction(null);
     }
 
