@@ -28,15 +28,13 @@ const useStyles = makeStyles({
 function TaskGridColumnHeader(props) {
     const selectedItemsAll = useSelector(selectedItemsSelector);
     const tabIndex = useSelector(dashboardTabIndexSelector);
-    const selectedItems = selectedItemsAll[tabIndex];
     const dispatch = useDispatch();
 
     const classes = useStyles();
 
     function handleSelectCheckBoxClick() {
-        const selectedItems = selectedItemsAll[tabIndex];
+        const selectedItems = selectedItemsAll[tabIndex] || [];
         if (
-            !selectedItems ||
             Object.values(props.tasks).some((t) =>
                 Object.values(selectedItems)
                     .map((a) => a.id)
@@ -92,7 +90,10 @@ function TaskGridColumnHeader(props) {
             </Typography>
             {Object.values(props.tasks).length > 0 && (
                 <Box sx={{ height: 0 }}>
-                    <IconButton onClick={handleSelectCheckBoxClick}>
+                    <IconButton
+                        data-testId={`${props.title}-select-all`}
+                        onClick={handleSelectCheckBoxClick}
+                    >
                         {getCheckBox()}
                     </IconButton>
                 </Box>

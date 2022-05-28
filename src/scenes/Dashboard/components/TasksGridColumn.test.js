@@ -1028,7 +1028,8 @@ describe("TasksGridColumn", () => {
         userEvent.click(screen.getByRole("button", { name: "Clear Search" }));
     });
 
-    test("select and unselect an item by clicking the checkbox", async () => {
+    test("select and unselect items by clicking the checkbox", async () => {
+        await DataStore.save(new models.Task({ status: tasksStatus.new }));
         await DataStore.save(new models.Task({ status: tasksStatus.new }));
         const mockWhoami = await DataStore.save(
             new models.User({
@@ -1056,20 +1057,71 @@ describe("TasksGridColumn", () => {
         });
         mockAllIsIntersecting(true);
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(2);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         expect(
             await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
-        ).toHaveLength(2);
-        const tasks = await screen.findAllByTestId("task-item-parent");
-        userEvent.hover(tasks[0]);
+        ).toHaveLength(3);
         const checks = await screen.findAllByTestId("task-item-select");
         userEvent.click(checks[0]);
         // both the taskitem and header checkbox will be changed
-        expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(2);
+        expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(1);
+        expect(
+            await screen.findAllByTestId("IndeterminateCheckBoxIcon")
+        ).toHaveLength(1);
+        userEvent.click(checks[1]);
+        expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(3);
+        expect(screen.queryByTestId("IndeterminateCheckBoxIcon")).toBeNull();
         userEvent.click(checks[0]);
+        userEvent.click(checks[1]);
         expect(
             await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
-        ).toHaveLength(2);
+        ).toHaveLength(3);
+    });
+
+    test("select all the items in a column", async () => {
+        for (const i in _.range(0, 10)) {
+            await DataStore.save(new models.Task({ status: tasksStatus.new }));
+        }
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 1,
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(
+            <TasksGridColumn
+                taskKey={[tasksStatus.new]}
+                title={tasksStatus.new}
+            />,
+            {
+                preloadedState,
+            }
+        );
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(11);
+        });
+        expect(
+            await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
+        ).toHaveLength(11);
+        userEvent.click(screen.getByTestId(`${tasksStatus.new}-select-all`));
+
+        expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(11);
     });
 });
