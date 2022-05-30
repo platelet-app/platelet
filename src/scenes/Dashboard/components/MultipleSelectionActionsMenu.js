@@ -29,6 +29,7 @@ import { tasksStatus, userRoles } from "../../../apiConsts";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import MultipleSelectionActionsAssignUser from "./MultipleSelectionActionsAssignUser";
 import { DataStore } from "aws-amplify";
+import MultipleSelectionActionsSetTime from "./MultipleSelectionActionsSetTime";
 
 const actions = {
     assignUser: "Assign User",
@@ -36,15 +37,62 @@ const actions = {
     markDelivered: "Delivered",
     markRiderHome: "Rider Home",
 };
-
 const dotActions = {
     markCancelled: "Cancelled",
     markRejected: "Rejected",
 };
 
+const getKey = (action) => {
+    switch (action) {
+        case actions.assignUser:
+            return null;
+        case actions.markPickedUp:
+            return "timePickedUp";
+        case actions.markDelivered:
+            return "timeDroppedOff";
+        case actions.markRiderHome:
+            return "timeRiderHome";
+        case dotActions.markCancelled:
+            return "timeCancelled";
+        case dotActions.markRejected:
+            return "timeRejected";
+        default:
+    }
+};
+
 const initialState = {
     mouseX: null,
     mouseY: null,
+};
+
+const DialogActions = ({ onChange, items, action }) => {
+    if (action === actions.assignUser) {
+        return (
+            <Paper sx={{ padding: 2, minWidth: 500, minHeight: 300 }}>
+                <MultipleSelectionActionsAssignUser
+                    onChange={onChange}
+                    selectedItems={items}
+                />
+            </Paper>
+        );
+    } else if (
+        [
+            actions.markPickedUp,
+            actions.markDelivered,
+            actions.markRiderHome,
+            dotActions.markCancelled,
+            dotActions.markRejected,
+        ].includes(action)
+    ) {
+        return (
+            <MultipleSelectionActionsSetTime
+                selectedItems={items}
+                onChange={onChange}
+                timeKey={getKey(action)}
+            />
+        );
+    }
+    return null;
 };
 
 function MultipleSelectionActionsMenu() {
@@ -174,7 +222,10 @@ function MultipleSelectionActionsMenu() {
                             aria-label={`Selection ${action}`}
                             disabled={checkButtonDisabled(action)}
                             key={action}
-                            onClick={() => {}}
+                            onClick={(e) => {
+                                handleClose(e);
+                                setCurrentAction(action);
+                            }}
                         >
                             {action}
                         </MenuItem>
@@ -185,14 +236,7 @@ function MultipleSelectionActionsMenu() {
     );
 
     function handleActionClick(action) {
-        if (action === actions.assignUser) {
-            setCurrentAction(action);
-        } else if (action === actions.markPickedUp) {
-        } else if (action === actions.markDelivered) {
-        } else if (action === actions.markRiderHome) {
-        } else if (action === actions.markCancelled) {
-        } else if (action === actions.markRejected) {
-        }
+        setCurrentAction(action);
     }
 
     function saveModels() {
@@ -205,22 +249,11 @@ function MultipleSelectionActionsMenu() {
         await saveModels();
         dispatch(selectionModeActions.clearItems(tabIndex));
         setCurrentAction(null);
+        saveData.current = [];
     }
 
-    const dialogContents =
-        currentAction === actions.assignUser ? (
-            <Paper sx={{ padding: 2, minWidth: 500, minHeight: 300 }}>
-                <MultipleSelectionActionsAssignUser
-                    selectedItems={selectedItems}
-                    onChange={(items) => {
-                        console.log(items);
-                        saveData.current = items;
-                    }}
-                />
-            </Paper>
-        ) : null;
-
     const dispatch = useDispatch();
+
     return (
         <>
             <Stack
@@ -264,7 +297,11 @@ function MultipleSelectionActionsMenu() {
                 fullScreen={isSm}
                 onConfirmation={handleConfirmation}
             >
-                {dialogContents}
+                <DialogActions
+                    items={selectedItems}
+                    action={currentAction}
+                    onChange={(models) => (saveData.current = models)}
+                />
             </ConfirmationDialog>
         </>
     );
