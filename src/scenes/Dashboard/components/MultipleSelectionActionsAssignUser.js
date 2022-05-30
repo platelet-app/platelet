@@ -105,6 +105,7 @@ function MultipleSelectionActionsAssignUser({ selectedItems, onChange }) {
                             user && (
                                 <Grid key={user.id} item>
                                     <UserChip
+                                        showResponsibility
                                         onDelete={() =>
                                             handleRemoveUser(user.id)
                                         }
