@@ -1,5 +1,4 @@
 import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
-import { DataStore } from "aws-amplify";
 import React, { useEffect, useState } from "react";
 import * as models from "../../../models";
 import { userRoles } from "../../../apiConsts";
@@ -9,11 +8,8 @@ import RiderPicker from "../../../components/RiderPicker";
 import UserChip from "../../../components/UserChip";
 import UserRoleSelect from "../../../components/UserRoleSelect";
 import { useSelector } from "react-redux";
-import {
-    dashboardTabIndexSelector,
-    selectedItemsSelector,
-    taskAssigneesSelector,
-} from "../../../redux/Selectors";
+import { taskAssigneesSelector } from "../../../redux/Selectors";
+import { determineTaskStatus } from "../../../utilities";
 
 function MultipleSelectionActionsAssignUser(props) {
     const [role, setRole] = useState(userRoles.rider);
@@ -38,7 +34,7 @@ function MultipleSelectionActionsAssignUser(props) {
         }));
     }
 
-    function generateModels() {
+    async function generateModels() {
         const riders = Object.values(props.selectedItems).map((task) => {
             return Object.values(state[userRoles.rider]).map((assignee) => {
                 return new models.TaskAssignee({
@@ -68,9 +64,17 @@ function MultipleSelectionActionsAssignUser(props) {
                 );
             });
         });
-        props.onChange(filtered);
+        const newTasks = await Promise.all(
+            Object.values(props.selectedItems).map(async (task) => {
+                const status = await determineTaskStatus(task, riders.flat());
+                return models.Task.copyOf(task, (updated) => {
+                    updated.status = status;
+                });
+            })
+        );
+        props.onChange([...filtered, ...newTasks]);
     }
-    useEffect(generateModels, [state]);
+    useEffect(() => generateModels(), [state]);
 
     return (
         <Stack spacing={2} direction="column" divider={<Divider />}>
