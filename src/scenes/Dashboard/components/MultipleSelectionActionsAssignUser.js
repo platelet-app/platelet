@@ -145,7 +145,7 @@ function MultipleSelectionActionsAssignUser({ selectedItems, onChange }) {
 }
 
 MultipleSelectionActionsAssignUser.propTypes = {
-    selectedItems: PropTypes.arrayOf(PropTypes.object),
+    selectedItems: PropTypes.object,
     onChange: PropTypes.func,
 };
 

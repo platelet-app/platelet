@@ -552,4 +552,69 @@ describe("MultipleSelectionActionsMenu", () => {
             });
         });
     });
+
+    it.each`
+        timeToSet
+        ${"assignUser"} | ${"setTime"}
+    `("shows the selection count", async ({ action }) => {
+        const mockTasks = await Promise.all(
+            _.range(0, 10).map((i) =>
+                DataStore.save(new models.Task({ status: tasksStatus.new }))
+            )
+        );
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 1,
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(
+            <>
+                <MultipleSelectionActionsMenu />
+                <TasksGridColumn
+                    title={tasksStatus.new}
+                    taskKey={[tasksStatus.new]}
+                />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(11);
+        });
+        userEvent.click(screen.getByRole("button", { name: "Select All" }));
+        if (action === "assignUser") {
+            userEvent.click(
+                screen.getByRole("button", { name: "Selection Assign User" })
+            );
+        } else {
+            userEvent.click(
+                screen.getByRole("button", { name: "More Selection Actions" })
+            );
+            userEvent.click(
+                screen.getByRole("menuitem", {
+                    name: "Selection Rejected",
+                })
+            );
+        }
+        expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(12);
+        expect(screen.getByText(/10 items/)).toBeInTheDocument();
+    });
 });

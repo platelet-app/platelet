@@ -48,7 +48,7 @@ function MultipleSelectionActionsSetTime({ selectedItems, timeKey, onChange }) {
 }
 
 MultipleSelectionActionsSetTime.propTypes = {
-    selectedItems: PropTypes.arrayOf(PropTypes.object),
+    selectedItems: PropTypes.object,
     timeKey: PropTypes.string.isRequired,
     onChange: PropTypes.func,
 };

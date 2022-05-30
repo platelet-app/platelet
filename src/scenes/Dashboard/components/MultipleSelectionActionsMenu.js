@@ -31,6 +31,7 @@ import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import MultipleSelectionActionsAssignUser from "./MultipleSelectionActionsAssignUser";
 import { DataStore } from "aws-amplify";
 import MultipleSelectionActionsSetTime from "./MultipleSelectionActionsSetTime";
+import MultipleSelectionActionsInformation from "./MultipleSelectionActionsInformation";
 
 const actions = {
     assignUser: "Assign User",
@@ -70,10 +71,16 @@ const DialogActions = ({ onChange, items, action }) => {
     if (action === actions.assignUser) {
         return (
             <Paper sx={{ padding: 2, minWidth: 500, minHeight: 300 }}>
-                <MultipleSelectionActionsAssignUser
-                    onChange={onChange}
-                    selectedItems={items}
-                />
+                <Stack divider={<Divider />} direction="column" spacing={2}>
+                    <MultipleSelectionActionsInformation
+                        selectedItems={items}
+                        action={action}
+                    />
+                    <MultipleSelectionActionsAssignUser
+                        onChange={onChange}
+                        selectedItems={items}
+                    />
+                </Stack>
             </Paper>
         );
     } else if (
@@ -86,11 +93,19 @@ const DialogActions = ({ onChange, items, action }) => {
         ].includes(action)
     ) {
         return (
-            <MultipleSelectionActionsSetTime
-                selectedItems={items}
-                onChange={onChange}
-                timeKey={getKey(action)}
-            />
+            <Paper sx={{ padding: 2 }}>
+                <Stack divider={<Divider />} direction="column" spacing={2}>
+                    <MultipleSelectionActionsInformation
+                        selectedItems={items}
+                        action={action}
+                    />
+                    <MultipleSelectionActionsSetTime
+                        selectedItems={items}
+                        onChange={onChange}
+                        timeKey={getKey(action)}
+                    />
+                </Stack>
+            </Paper>
         );
     }
     return null;
@@ -98,7 +113,7 @@ const DialogActions = ({ onChange, items, action }) => {
 
 DialogActions.propTypes = {
     onChange: PropTypes.func,
-    items: PropTypes.arrayOf(PropTypes.object),
+    items: PropTypes.object,
     action: PropTypes.string,
 };
 
