@@ -1,5 +1,6 @@
 import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import * as models from "../../../models";
 import { userRoles } from "../../../apiConsts";
 import CoordinatorPicker from "../../../components/CoordinatorPicker";
@@ -11,7 +12,7 @@ import { useSelector } from "react-redux";
 import { taskAssigneesSelector } from "../../../redux/Selectors";
 import { determineTaskStatus } from "../../../utilities";
 
-function MultipleSelectionActionsAssignUser(props) {
+function MultipleSelectionActionsAssignUser({ selectedItems, onChange }) {
     const [role, setRole] = useState(userRoles.rider);
     const [state, setState] = useState({
         [userRoles.rider]: [],
@@ -35,7 +36,7 @@ function MultipleSelectionActionsAssignUser(props) {
     }
 
     async function generateModels() {
-        const riders = Object.values(props.selectedItems).map((task) => {
+        const riders = Object.values(selectedItems).map((task) => {
             return Object.values(state[userRoles.rider]).map((assignee) => {
                 return new models.TaskAssignee({
                     assignee,
@@ -44,7 +45,7 @@ function MultipleSelectionActionsAssignUser(props) {
                 });
             });
         });
-        const coords = Object.values(props.selectedItems).map((task) => {
+        const coords = Object.values(selectedItems).map((task) => {
             return Object.values(state[userRoles.coordinator]).map(
                 (assignee) =>
                     new models.TaskAssignee({
@@ -65,14 +66,14 @@ function MultipleSelectionActionsAssignUser(props) {
             });
         });
         const newTasks = await Promise.all(
-            Object.values(props.selectedItems).map(async (task) => {
+            Object.values(selectedItems).map(async (task) => {
                 const status = await determineTaskStatus(task, riders.flat());
                 return models.Task.copyOf(task, (updated) => {
                     updated.status = status;
                 });
             })
         );
-        props.onChange([...filtered, ...newTasks]);
+        onChange([...filtered, ...newTasks]);
     }
     useEffect(() => generateModels(), [state]);
 
@@ -142,5 +143,15 @@ function MultipleSelectionActionsAssignUser(props) {
         </Stack>
     );
 }
+
+MultipleSelectionActionsAssignUser.propTypes = {
+    selectedItems: PropTypes.arrayOf(PropTypes.object),
+    onChange: PropTypes.func,
+};
+
+MultipleSelectionActionsAssignUser.defaultProps = {
+    selectedItems: [],
+    onChange: () => {},
+};
 
 export default MultipleSelectionActionsAssignUser;

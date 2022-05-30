@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import PropTypes from "prop-types";
 import * as selectionModeActions from "../../../redux/selectionMode/selectionModeActions";
 import { useTheme } from "@mui/material/styles";
 import Menu from "@mui/material/Menu";
@@ -93,6 +94,18 @@ const DialogActions = ({ onChange, items, action }) => {
         );
     }
     return null;
+};
+
+DialogActions.propTypes = {
+    onChange: PropTypes.func,
+    items: PropTypes.arrayOf(PropTypes.object),
+    action: PropTypes.string,
+};
+
+DialogActions.defaultProps = {
+    onChange: () => {},
+    items: [],
+    action: "",
 };
 
 function MultipleSelectionActionsMenu() {

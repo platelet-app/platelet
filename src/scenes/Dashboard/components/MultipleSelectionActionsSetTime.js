@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { Divider, Stack, TextField } from "@mui/material";
 import * as models from "../../../models";
 import { DateTimePicker } from "@mui/lab";
@@ -45,5 +46,16 @@ function MultipleSelectionActionsSetTime({ selectedItems, timeKey, onChange }) {
         </Stack>
     );
 }
+
+MultipleSelectionActionsSetTime.propTypes = {
+    selectedItems: PropTypes.arrayOf(PropTypes.object),
+    timeKey: PropTypes.string.isRequired,
+    onChange: PropTypes.func,
+};
+
+MultipleSelectionActionsSetTime.defaultProps = {
+    selectedItems: [],
+    onChange: () => {},
+};
 
 export default MultipleSelectionActionsSetTime;
