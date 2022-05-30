@@ -68,8 +68,17 @@ function MultipleSelectionActionsAssignUser({ selectedItems, onChange }) {
         const newTasks = await Promise.all(
             Object.values(selectedItems).map(async (task) => {
                 const status = await determineTaskStatus(task, riders.flat());
+                let riderResponsibility = null;
+                for (const rider of riders
+                    .flat()
+                    .map((assignment) => assignment.assignee)) {
+                    riderResponsibility = rider.riderResponsibility;
+                }
                 return models.Task.copyOf(task, (updated) => {
                     updated.status = status;
+                    if (riderResponsibility) {
+                        updated.riderResponsibility = riderResponsibility;
+                    }
                 });
             })
         );

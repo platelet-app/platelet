@@ -325,6 +325,7 @@ describe("MultipleSelectionActionsMenu", () => {
             new models.User({
                 roles: [role],
                 displayName: "Other Person",
+                riderResponsibility: "test",
             })
         );
         const mockAssignments = [mockTask, mockTask2].map(
@@ -404,15 +405,27 @@ describe("MultipleSelectionActionsMenu", () => {
             role === userRoles.coordinator
                 ? tasksStatus.new
                 : tasksStatus.active;
-        expect(saveSpy).toHaveBeenCalledWith({
-            ...mockTask,
-            status: expectedStatus,
-        });
-        expect(saveSpy).toHaveBeenCalledWith({
-            ...mockTask2,
-            status: expectedStatus,
-        });
-        console.log(role);
+        if (role === userRoles.rider) {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockTask,
+                status: expectedStatus,
+                riderResponsibility: assignee.riderResponsibility,
+            });
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockTask2,
+                status: expectedStatus,
+                riderResponsibility: assignee.riderResponsibility,
+            });
+        } else {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockTask,
+                status: expectedStatus,
+            });
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockTask2,
+                status: expectedStatus,
+            });
+        }
     });
 
     it.each`
