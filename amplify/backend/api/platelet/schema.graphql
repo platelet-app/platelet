@@ -170,6 +170,10 @@ type Task
   pickUpLocation: Location @belongsTo(fields: ["pickUpLocationId"])
   dropOffLocation: Location @belongsTo(fields: ["dropOffLocationId"])
   riderResponsibility: String
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+])
   assignees: [TaskAssignee] @hasMany(indexName: "byTask", fields: ["id"])
   priority: Priority
 @auth(rules: [
