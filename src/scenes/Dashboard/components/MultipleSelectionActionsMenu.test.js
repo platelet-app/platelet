@@ -12,11 +12,22 @@ import { DataStore } from "aws-amplify";
 import MultipleSelectionActionsMenu from "./MultipleSelectionActionsMenu";
 
 describe("MultipleSelectionActionsMenu", () => {
+    const RealDate = Date;
+    const isoDate = "2021-11-29T23:24:58.987Z";
+    function mockDate() {
+        global.Date = class extends RealDate {
+            constructor() {
+                super();
+                return new RealDate(isoDate);
+            }
+        };
+    }
     beforeAll(() => {
         window.matchMedia = createMatchMedia(window.innerWidth);
     });
     beforeEach(() => {
         jest.restoreAllMocks();
+        mockDate();
     });
     afterEach(async () => {
         jest.restoreAllMocks();
@@ -26,6 +37,7 @@ describe("MultipleSelectionActionsMenu", () => {
         await Promise.all(
             [...tasks, ...users, ...assignees].map((t) => DataStore.delete(t))
         );
+        global.Date = RealDate;
     });
     test("select all items", async () => {
         for (const i in _.range(0, 10)) {
@@ -296,8 +308,11 @@ describe("MultipleSelectionActionsMenu", () => {
     test.each`
         role
         ${userRoles.coordinator} | ${userRoles.rider}
-    `("assign someone to a task", async ({ role }) => {
+    `("assign someone to two tasks", async ({ role }) => {
         const mockTask = await DataStore.save(
+            new models.Task({ status: tasksStatus.new })
+        );
+        const mockTask2 = await DataStore.save(
             new models.Task({ status: tasksStatus.new })
         );
         const mockWhoami = await DataStore.save(
@@ -312,11 +327,14 @@ describe("MultipleSelectionActionsMenu", () => {
                 displayName: "Other Person",
             })
         );
-        const mockAssignment = new models.TaskAssignee({
-            task: mockTask,
-            assignee,
-            role: role,
-        });
+        const mockAssignments = [mockTask, mockTask2].map(
+            (t) =>
+                new models.TaskAssignee({
+                    task: t,
+                    assignee,
+                    role: role,
+                })
+        );
         const preloadedState = {
             roleView: "ALL",
             dashboardTabIndex: 1,
@@ -329,6 +347,7 @@ describe("MultipleSelectionActionsMenu", () => {
         };
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
+        const modelSpy = jest.spyOn(models.Task, "copyOf");
         render(
             <>
                 <MultipleSelectionActionsMenu />
@@ -347,33 +366,190 @@ describe("MultipleSelectionActionsMenu", () => {
         });
         mockAllIsIntersecting(true);
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(2);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
-        expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(3);
+        expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(4);
         userEvent.click(
             screen.getByRole("button", { name: "Selection Assign User" })
         );
         if (role === userRoles.coordinator) {
             userEvent.click(screen.getByText("COORDINATOR"));
             await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(4);
+                expect(querySpy).toHaveBeenCalledTimes(5);
             });
         } else {
             await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(3);
+                expect(querySpy).toHaveBeenCalledTimes(4);
             });
         }
 
         const textBox = screen.getByRole("textbox");
         userEvent.type(textBox, assignee.displayName);
         userEvent.click(screen.getByText(assignee.displayName));
+        await waitFor(() => {
+            expect(modelSpy).toHaveBeenCalledTimes(2);
+        });
         userEvent.click(screen.getByText("OK"));
         await waitFor(() => {
-            expect(saveSpy).toHaveBeenNthCalledWith(
-                1,
-                expect.objectContaining(_.omit(mockAssignment, "id"))
+            expect(saveSpy).toHaveBeenCalledTimes(4);
+        });
+        expect(saveSpy).toHaveBeenCalledWith(
+            expect.objectContaining(_.omit(mockAssignments[0], "id"))
+        );
+        expect(saveSpy).toHaveBeenCalledWith(
+            expect.objectContaining(_.omit(mockAssignments[1], "id"))
+        );
+        const expectedStatus =
+            role === userRoles.coordinator
+                ? tasksStatus.new
+                : tasksStatus.active;
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockTask,
+            status: expectedStatus,
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockTask2,
+            status: expectedStatus,
+        });
+        console.log(role);
+    });
+
+    it.each`
+        timeToSet
+        ${"timePickedUp"} | ${"timeDroppedOff"} | ${"timeRejected"} | ${"timeCancelled"} | ${"timeRiderHome"}
+    `("set the time on two tasks", async ({ timeToSet }) => {
+        let taskData = {};
+        let buttonLabel = null;
+        let newStatus = null;
+        if (timeToSet === "timePickedUp") {
+            taskData = { status: tasksStatus.active };
+            buttonLabel = "Picked Up";
+            newStatus = tasksStatus.pickedUp;
+        } else if (timeToSet === "timeDroppedOff") {
+            taskData = {
+                status: tasksStatus.pickedUp,
+                timePickedUp: new Date().toISOString(),
+            };
+            buttonLabel = "Delivered";
+            newStatus = tasksStatus.droppedOff;
+        } else if (timeToSet === "timeRejected") {
+            taskData = { status: tasksStatus.new };
+            buttonLabel = "Rejected";
+            newStatus = tasksStatus.rejected;
+        } else if (timeToSet === "timeCancelled") {
+            taskData = { status: tasksStatus.new };
+            buttonLabel = "Cancelled";
+            newStatus = tasksStatus.cancelled;
+        } else if (timeToSet === "timeRiderHome") {
+            taskData = {
+                status: tasksStatus.droppedOff,
+                timePickedUp: new Date().toISOString(),
+                timeDroppedOff: new Date().toISOString(),
+            };
+            buttonLabel = "Rider Home";
+            newStatus = tasksStatus.completed;
+        }
+        const mockTask = await DataStore.save(new models.Task(taskData));
+        const mockTask2 = await DataStore.save(new models.Task(taskData));
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        const mockRider = await DataStore.save(
+            new models.User({ roles: [userRoles.rider], displayName: "Rider" })
+        );
+        const assignments = await Promise.all(
+            [mockTask, mockTask2].map((t) =>
+                DataStore.save(
+                    new models.TaskAssignee({
+                        task: t,
+                        assignee: mockRider,
+                        role: userRoles.rider,
+                    })
+                )
+            )
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 1,
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: assignments,
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        const modelSpy = jest.spyOn(models.Task, "copyOf");
+        render(
+            <>
+                <MultipleSelectionActionsMenu />
+                <TasksGridColumn
+                    title={mockTask.status}
+                    taskKey={[mockTask.status]}
+                />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(3);
+        });
+        userEvent.click(screen.getByRole("button", { name: "Select All" }));
+        expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(4);
+        let buttonToClick = null;
+        if (
+            ["timePickedUp", "timeDroppedOff", "timeRiderHome"].includes(
+                timeToSet
+            )
+        ) {
+            buttonToClick = screen.getByRole("button", {
+                name: "Selection " + buttonLabel,
+            });
+            expect(buttonToClick).toBeEnabled();
+        } else {
+            userEvent.click(
+                screen.getByRole("button", { name: "More Selection Actions" })
             );
+            if (timeToSet === "timeRejected") {
+                buttonToClick = screen.getByRole("menuitem", {
+                    name: "Selection Rejected",
+                });
+            } else {
+                buttonToClick = screen.getByRole("menuitem", {
+                    name: "Selection Cancelled",
+                });
+            }
+            expect(buttonToClick).not.toHaveAttribute("aria-disabled");
+        }
+        userEvent.click(buttonToClick);
+        await waitFor(() => {
+            expect(modelSpy).toHaveBeenCalledTimes(2);
+        });
+        userEvent.click(screen.getByText("OK"));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockTask,
+                status: newStatus,
+                [timeToSet]: isoDate,
+            });
+        });
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockTask2,
+                status: newStatus,
+                [timeToSet]: isoDate,
+            });
         });
     });
 });
