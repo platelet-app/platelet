@@ -29,53 +29,54 @@ function TaskGridTasksList(props) {
             alignItems={"center"}
             justifyContent={"center"}
         >
-            {sortByCreatedTime(Object.values(props.tasks), "newest").map(
-                (task) => {
-                    displayDate = false;
-                    const timeComparison = new Date(
-                        task.createdAt || task.timeOfCall || null
-                    );
-                    if (
-                        timeComparison &&
-                        (filteredTasksIdsList.length === 0 ||
-                            filteredTasksIdsList.includes(task.id)) &&
-                        timeComparison.getDate() <= lastTime.getDate() - 1
-                    ) {
-                        lastTime = timeComparison;
-                        displayDate = true;
-                    }
-                    return (
-                        <Box
-                            className={clsx(
-                                classes.taskItem,
-                                props.includeList === null ||
-                                    props.includeList.includes(task.id)
-                                    ? show
-                                    : hide
-                            )}
-                            key={task.id}
-                        >
-                            <Box
-                                display="flex"
-                                justifyContent="center"
-                                alignItems="center"
-                                height={35}
-                                sx={{ width: "100%" }}
-                            >
-                                {displayDate && (
-                                    <DateStampDivider date={lastTime} />
-                                )}
-                            </Box>
-                            <TaskItem
-                                animate={props.animate}
-                                task={task}
-                                taskUUID={task.id}
-                                deleteDisabled
-                            />
-                        </Box>
-                    );
+            {sortByCreatedTime(
+                Object.values(props.tasks).reverse(),
+                "newest"
+            ).map((task) => {
+                displayDate = false;
+                const timeComparison = new Date(
+                    task.createdAt || task.timeOfCall || null
+                );
+                if (
+                    timeComparison &&
+                    (filteredTasksIdsList.length === 0 ||
+                        filteredTasksIdsList.includes(task.id)) &&
+                    timeComparison.getDate() <= lastTime.getDate() - 1
+                ) {
+                    lastTime = timeComparison;
+                    displayDate = true;
                 }
-            )}
+                return (
+                    <Box
+                        className={clsx(
+                            classes.taskItem,
+                            props.includeList === null ||
+                                props.includeList.includes(task.id)
+                                ? show
+                                : hide
+                        )}
+                        key={task.id}
+                    >
+                        <Box
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                            height={35}
+                            sx={{ width: "100%" }}
+                        >
+                            {displayDate && (
+                                <DateStampDivider date={lastTime} />
+                            )}
+                        </Box>
+                        <TaskItem
+                            animate={props.animate}
+                            task={task}
+                            taskUUID={task.id}
+                            deleteDisabled
+                        />
+                    </Box>
+                );
+            })}
         </Stack>
     );
 }
