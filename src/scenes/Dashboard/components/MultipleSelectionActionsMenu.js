@@ -371,7 +371,7 @@ function MultipleSelectionActionsMenu() {
                                 sm: "relative",
                             },
                             left: { xs: 10, sm: "auto" },
-                            bottom: { xs: 20, sm: "auto" },
+                            bottom: { xs: 60, sm: "auto" },
                         }}
                         delay={1000}
                         progress={saveProgress}

@@ -69,7 +69,6 @@ describe("MultipleSelectionActionsMenu", () => {
                 preloadedState,
             }
         );
-        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
@@ -128,7 +127,6 @@ describe("MultipleSelectionActionsMenu", () => {
                     preloadedState,
                 }
             );
-            mockAllIsIntersecting(true);
             await waitFor(() => {
                 expect(querySpy).toHaveBeenCalledTimes(1);
             });
@@ -268,7 +266,6 @@ describe("MultipleSelectionActionsMenu", () => {
                     preloadedState,
                 }
             );
-            mockAllIsIntersecting(true);
             await waitFor(() => {
                 expect(querySpy).toHaveBeenCalledTimes(1);
             });
@@ -361,7 +358,6 @@ describe("MultipleSelectionActionsMenu", () => {
                 preloadedState,
             }
         );
-        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
@@ -506,7 +502,6 @@ describe("MultipleSelectionActionsMenu", () => {
                 preloadedState,
             }
         );
-        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
@@ -611,7 +606,6 @@ describe("MultipleSelectionActionsMenu", () => {
                 preloadedState,
             }
         );
-        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
