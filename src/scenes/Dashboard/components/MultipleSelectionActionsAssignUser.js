@@ -67,7 +67,10 @@ function MultipleSelectionActionsAssignUser({ selectedItems, onChange }) {
         });
         const newTasks = await Promise.all(
             Object.values(selectedItems).map(async (task) => {
-                const status = await determineTaskStatus(task, riders.flat());
+                let status = task.status;
+                if (riders.flat().length > 0) {
+                    status = await determineTaskStatus(task, riders.flat());
+                }
                 let riderResponsibility = null;
                 for (const rider of riders
                     .flat()
