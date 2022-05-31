@@ -472,11 +472,10 @@ describe("TasksGridColumn", () => {
             status: tasksStatus.new,
             timeOfCall,
         });
+        const querySpy = jest.spyOn(DataStore, "query");
         render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
             preloadedState,
         });
-        const querySpy = jest.spyOn(DataStore, "query");
-        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(querySpy).toHaveBeenNthCalledWith(
                 1,
@@ -521,11 +520,10 @@ describe("TasksGridColumn", () => {
             status: tasksStatus.active,
             timeOfCall,
         });
+        const querySpy = jest.spyOn(DataStore, "query");
         render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
             preloadedState,
         });
-        const querySpy = jest.spyOn(DataStore, "query");
-        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(querySpy).toHaveBeenNthCalledWith(
                 1,

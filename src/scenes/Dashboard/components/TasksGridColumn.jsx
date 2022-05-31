@@ -1,19 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
-import TaskItem from "./TaskItem";
 import * as models from "../../../models/index";
-import { useDispatch, useSelector } from "react-redux";
-import Tooltip from "@mui/material/Tooltip";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import {
-    IconButton,
-    Skeleton,
-    Stack,
-    Typography,
-    useMediaQuery,
-} from "@mui/material";
+import { useSelector } from "react-redux";
+import { Skeleton, Stack, useMediaQuery } from "@mui/material";
 import PropTypes from "prop-types";
-import { showHide } from "../../../styles/common";
 import makeStyles from "@mui/styles/makeStyles";
 import {
     dashboardFilteredUserSelector,
@@ -27,39 +17,21 @@ import {
     dashboardTabIndexSelector,
     selectionActionsPendingSelector,
 } from "../../../redux/Selectors";
-import { sortByCreatedTime } from "../../../utilities";
 import { DataStore } from "aws-amplify";
 import { filterTasks } from "../utilities/functions";
 import GetError from "../../../ErrorComponents/GetError";
 import { userRoles } from "../../../apiConsts";
 import Box from "@mui/material/Box";
-import DateStampDivider from "./TimeStampDivider";
 import getTasksAll from "../utilities/getTasksAll";
 import getAllTasksByUser from "../utilities/getAllTasksByUser";
 import getAllMyTasks from "../utilities/getAllMyTasks";
 import getAllMyTasksWithUser from "../utilities/getAllMyTasksWithUser";
 import useWindowSize from "../../../hooks/useWindowSize";
 import { useTheme } from "@mui/styles";
-import { useInView } from "react-intersection-observer";
 import TaskGridColumnHeader from "./TaskGridColumnHeader";
 import TaskGridTasksList from "./TaskGridTasksList";
 
-const loaderStyles = makeStyles((theme) => ({
-    linear: {
-        width: "100%",
-        "& > * + *": {
-            marginTop: theme.spacing(2),
-        },
-    },
-    circular: {
-        display: "flex",
-        "& > * + *": {
-            marginLeft: theme.spacing(2),
-        },
-    },
-}));
-
-const useStyles = (isSelected) =>
+const useStyles = () =>
     makeStyles((theme) => ({
         divider: {
             width: "95%",
@@ -98,7 +70,6 @@ function TasksGridColumn(props) {
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
     const [filteredTasksIds, setFilteredTasksIds] = useState(null);
-    const [visibility, setVisibility] = useState(false);
     const [width, height] = useWindowSize();
     const whoami = useSelector(getWhoami);
     const dashboardFilter = useSelector(dashboardFilterTermSelector);
@@ -121,10 +92,6 @@ function TasksGridColumn(props) {
         unsubscribe: () => {},
     });
     const theme = useTheme();
-    const { ref, inView, entry } = useInView({
-        threshold: 0,
-    });
-
     useEffect(() => {
         const selectedItems = selectedItemsAll[tabIndex];
         if (!selectedItems) return;
@@ -135,12 +102,6 @@ function TasksGridColumn(props) {
     });
 
     const classes = useStyles(isSomeSelected.current)();
-
-    useEffect(() => {
-        if (inView && !visibility) {
-            setVisibility(true);
-        }
-    }, [inView]);
 
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -169,12 +130,7 @@ function TasksGridColumn(props) {
     useEffect(doSearch, [dashboardFilter, state]);
 
     async function getTasks() {
-        if (
-            !roleView ||
-            !visibility ||
-            !taskAssigneesReady ||
-            selectionActionsPending
-        ) {
+        if (!roleView || !taskAssigneesReady || selectionActionsPending) {
             return;
         } else {
             try {
@@ -234,7 +190,6 @@ function TasksGridColumn(props) {
             selectionActionsPending,
             dashboardFilteredUser,
             taskAssigneesReady,
-            visibility,
             roleView,
             JSON.stringify(props.taskKey),
         ]
@@ -420,7 +375,6 @@ function TasksGridColumn(props) {
         return (
             <Box
                 className={classes.column}
-                ref={ref}
                 sx={{
                     width: isSm ? "100%" : width / 4.2,
                 }}
@@ -448,7 +402,6 @@ function TasksGridColumn(props) {
         return (
             <Box
                 className={classes.column}
-                ref={ref}
                 sx={{
                     width: isSm ? "100%" : width / 4.2,
                 }}
