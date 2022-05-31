@@ -25,6 +25,7 @@ import {
     dashboardFilterTermSelector,
     selectedItemsSelector,
     dashboardTabIndexSelector,
+    selectionActionsPendingSelector,
 } from "../../../redux/Selectors";
 import { sortByCreatedTime } from "../../../utilities";
 import { DataStore } from "aws-amplify";
@@ -109,6 +110,9 @@ function TasksGridColumn(props) {
     const dataStoreModelSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     );
+    const selectionActionsPending = useSelector(
+        selectionActionsPendingSelector
+    );
     const getTasksRef = useRef(null);
     const tasksSubscription = useRef({
         unsubscribe: () => {},
@@ -165,7 +169,12 @@ function TasksGridColumn(props) {
     useEffect(doSearch, [dashboardFilter, state]);
 
     async function getTasks() {
-        if (!roleView || !visibility || !taskAssigneesReady) {
+        if (
+            !roleView ||
+            !visibility ||
+            !taskAssigneesReady ||
+            selectionActionsPending
+        ) {
             return;
         } else {
             try {
@@ -222,6 +231,7 @@ function TasksGridColumn(props) {
         [
             dataStoreModelSynced.Task,
             dataStoreModelSynced.Location,
+            selectionActionsPending,
             dashboardFilteredUser,
             taskAssigneesReady,
             visibility,
@@ -259,10 +269,14 @@ function TasksGridColumn(props) {
         }
     }, [taskAssignees, roleView, whoami]);
 
+    const selectionActionsPendingRef = useRef(false);
+    selectionActionsPendingRef.current = selectionActionsPending;
+
     function setUpObservers() {
         tasksSubscription.current.unsubscribe();
         tasksSubscription.current = DataStore.observe(models.Task).subscribe(
             (newTask) => {
+                if (selectionActionsPendingRef.current) return;
                 try {
                     if (newTask.opType === "UPDATE") {
                         if (
