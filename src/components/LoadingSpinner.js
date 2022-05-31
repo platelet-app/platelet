@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Box } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react";
 
-function LoadingSpinner({ progress, tooltip, size, delay }) {
+function LoadingSpinner({ progress, tooltip, size, delay, ...props }) {
     const [loadingColor, setLoadingColor] = useState(null);
     const [completed, setCompleted] = useState(true);
     const [fade, setFade] = useState(false);
@@ -56,34 +56,36 @@ function LoadingSpinner({ progress, tooltip, size, delay }) {
         return null;
     } else {
         return (
-            <Fade in={fade} unmountOnExit>
-                <Tooltip title={tooltip}>
-                    <Box sx={{ display: "grid" }}>
-                        <CircularProgress
-                            size={size}
-                            variant="determinate"
-                            value={progress}
-                            sx={{
-                                zIndex: 2,
-                                gridColumn: 1,
-                                gridRow: 1,
-                                color: loadingColor,
-                            }}
-                        />
-                        {Math.round(progress) !== 100 && (
+            <Box sx={props.sx}>
+                <Fade in={fade} unmountOnExit>
+                    <Tooltip title={tooltip}>
+                        <Box sx={{ display: "grid" }}>
                             <CircularProgress
                                 size={size}
+                                variant="determinate"
+                                value={progress}
                                 sx={{
+                                    zIndex: 2,
                                     gridColumn: 1,
                                     gridRow: 1,
-                                    opacity: 0.5,
-                                    zIndex: 1,
+                                    color: loadingColor,
                                 }}
                             />
-                        )}
-                    </Box>
-                </Tooltip>
-            </Fade>
+                            {Math.round(progress) !== 100 && (
+                                <CircularProgress
+                                    size={size}
+                                    sx={{
+                                        gridColumn: 1,
+                                        gridRow: 1,
+                                        opacity: 0.5,
+                                        zIndex: 1,
+                                    }}
+                                />
+                            )}
+                        </Box>
+                    </Tooltip>
+                </Fade>
+            </Box>
         );
     }
 }
@@ -93,12 +95,14 @@ LoadingSpinner.propTypes = {
     tooltip: PropTypes.string,
     size: PropTypes.number,
     delay: PropTypes.number,
+    sx: PropTypes.object,
 };
 
 LoadingSpinner.defaultProps = {
     tooltip: "",
     size: 40,
     delay: 0,
+    sx: {},
 };
 
 export default LoadingSpinner;
