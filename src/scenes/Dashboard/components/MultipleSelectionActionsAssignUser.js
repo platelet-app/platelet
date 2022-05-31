@@ -65,26 +65,29 @@ function MultipleSelectionActionsAssignUser({ selectedItems, onChange }) {
                 );
             });
         });
-        const newTasks = await Promise.all(
-            Object.values(selectedItems).map(async (task) => {
-                let status = task.status;
-                if (riders.flat().length > 0) {
-                    status = await determineTaskStatus(task, riders.flat());
-                }
-                let riderResponsibility = null;
-                for (const rider of riders
-                    .flat()
-                    .map((assignment) => assignment.assignee)) {
-                    riderResponsibility = rider.riderResponsibility;
-                }
-                return models.Task.copyOf(task, (updated) => {
-                    updated.status = status;
-                    if (riderResponsibility) {
-                        updated.riderResponsibility = riderResponsibility;
+        let newTasks = [];
+        if (riders.flat().length > 0) {
+            newTasks = await Promise.all(
+                Object.values(selectedItems).map(async (task) => {
+                    const status = await determineTaskStatus(
+                        task,
+                        riders.flat()
+                    );
+                    let riderResponsibility = task.riderResponsibility;
+                    for (const rider of riders
+                        .flat()
+                        .map((assignment) => assignment.assignee)) {
+                        if (rider.riderResponsibility) {
+                            riderResponsibility = rider.riderResponsibility;
+                        }
                     }
-                });
-            })
-        );
+                    return models.Task.copyOf(task, (updated) => {
+                        updated.status = status;
+                        updated.riderResponsibility = riderResponsibility;
+                    });
+                })
+            );
+        }
         onChange([...filtered, ...newTasks]);
     }
     useEffect(() => generateModels(), [state]);
@@ -101,14 +104,20 @@ function MultipleSelectionActionsAssignUser({ selectedItems, onChange }) {
                         )
                 )}
             />
-            <Grid container spacing={1} direction={"row"}>
-                {role === userRoles.rider &&
-                    state[userRoles.rider].map((user) => {
+            <Stack
+                spacing={1}
+                direction={
+                    role === userRoles.rider ? "column" : "column-reverse"
+                }
+            >
+                <Grid container spacing={1} direction={"row"}>
+                    {state[userRoles.rider].map((user) => {
                         return (
                             user && (
                                 <Grid key={user.id} item>
                                     <UserChip
                                         showResponsibility
+                                        disabled={role !== userRoles.rider}
                                         onDelete={() =>
                                             handleRemoveUser(user.id)
                                         }
@@ -118,12 +127,18 @@ function MultipleSelectionActionsAssignUser({ selectedItems, onChange }) {
                             )
                         );
                     })}
-                {role === userRoles.coordinator &&
-                    state[userRoles.coordinator].map((user) => {
+                </Grid>
+                {!!state[userRoles.rider].length &&
+                    !!state[userRoles.coordinator].length && <Divider />}
+                <Grid container spacing={1} direction={"row"}>
+                    {state[userRoles.coordinator].map((user) => {
                         return (
                             user && (
                                 <Grid key={user.id} item>
                                     <UserChip
+                                        disabled={
+                                            role !== userRoles.coordinator
+                                        }
                                         onDelete={() =>
                                             handleRemoveUser(user.id)
                                         }
@@ -133,7 +148,8 @@ function MultipleSelectionActionsAssignUser({ selectedItems, onChange }) {
                             )
                         );
                     })}
-            </Grid>
+                </Grid>
+            </Stack>
             <RecentlyAssignedUsers
                 onChange={onSelect}
                 role={role}
