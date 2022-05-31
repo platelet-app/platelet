@@ -329,7 +329,7 @@ function MultipleSelectionActionsMenu() {
                         {dotsMenu}
                     </>
                 )}
-                <LoadingSpinner delay={800} progress={saveProgress} />
+                <LoadingSpinner delay={1000} progress={saveProgress} />
             </Stack>
             <ConfirmationDialog
                 onCancel={() => setCurrentAction(null)}
