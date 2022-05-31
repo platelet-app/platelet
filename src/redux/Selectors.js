@@ -33,3 +33,5 @@ export const dataStoreModelSyncedStatusSelector = (state) =>
 export const selectedItemsSelector = (state) => state.selectionModeReducer;
 export const availableSelectionItemsSelector = (state) =>
     state.selectionModeAvailableItemsReducer;
+export const selectionActionsPendingSelector = (state) =>
+    state.selectionActionsPendingReducer;

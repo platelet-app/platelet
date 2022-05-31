@@ -42,3 +42,12 @@ export function selectionModeAvailableItemsReducer(state = {}, action) {
             return state;
     }
 }
+
+export function selectionActionsPendingReducer(state = false, action) {
+    switch (action.type) {
+        case actions.SET_SELECTION_ACTIONS_PENDING:
+            return action.pending;
+        default:
+            return state;
+    }
+}

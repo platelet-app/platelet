@@ -26,6 +26,7 @@ import { taskAssigneesReducer } from "./taskAssignees/taskAssigneesReducers";
 import {
     selectionModeReducer,
     selectionModeAvailableItemsReducer,
+    selectionActionsPendingReducer,
 } from "./selectionMode/selectionModeReducers";
 
 const darkModeInitialState = getDarkModePreference();
@@ -303,6 +304,7 @@ const appReducer = combineReducers({
     taskAssigneesReducer,
     selectionModeReducer,
     selectionModeAvailableItemsReducer,
+    selectionActionsPendingReducer,
 });
 
 const rootReducer = (state, action) => {

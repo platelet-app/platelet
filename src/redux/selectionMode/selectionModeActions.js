@@ -83,3 +83,12 @@ export function clearAvailableItems() {
         type: CLEAR_AVAILABLE_ITEMS,
     };
 }
+
+export const SET_SELECTION_ACTIONS_PENDING = "SET_SELECTION_ACTIONS_PENDING";
+
+export function setSelectionActionsPending(pending) {
+    return {
+        type: SET_SELECTION_ACTIONS_PENDING,
+        pending,
+    };
+}
