@@ -388,12 +388,16 @@ describe("MultipleSelectionActionsMenu", () => {
         const textBox = screen.getByRole("textbox");
         userEvent.type(textBox, assignee.displayName);
         userEvent.click(screen.getByText(assignee.displayName));
-        await waitFor(() => {
-            expect(modelSpy).toHaveBeenCalledTimes(2);
-        });
+        if (role === userRoles.rider) {
+            await waitFor(() => {
+                expect(modelSpy).toHaveBeenCalledTimes(2);
+            });
+        }
         userEvent.click(screen.getByText("OK"));
         await waitFor(() => {
-            expect(saveSpy).toHaveBeenCalledTimes(4);
+            expect(saveSpy).toHaveBeenCalledTimes(
+                role === userRoles.rider ? 4 : 2
+            );
         });
         expect(saveSpy).toHaveBeenCalledWith(
             expect.objectContaining(_.omit(mockAssignments[0], "id"))
@@ -415,15 +419,6 @@ describe("MultipleSelectionActionsMenu", () => {
                 ...mockTask2,
                 status: expectedStatus,
                 riderResponsibility: assignee.riderResponsibility,
-            });
-        } else {
-            expect(saveSpy).toHaveBeenCalledWith({
-                ...mockTask,
-                status: expectedStatus,
-            });
-            expect(saveSpy).toHaveBeenCalledWith({
-                ...mockTask2,
-                status: expectedStatus,
             });
         }
         expect(screen.queryByTestId("CheckBoxIcon")).toBeNull();
