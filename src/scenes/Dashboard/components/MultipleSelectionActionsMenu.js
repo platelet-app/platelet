@@ -31,6 +31,7 @@ import MultipleSelectionActionsAssignUser from "./MultipleSelectionActionsAssign
 import { DataStore } from "aws-amplify";
 import MultipleSelectionActionsSetTime from "./MultipleSelectionActionsSetTime";
 import MultipleSelectionActionsInformation from "./MultipleSelectionActionsInformation";
+import LoadingSpinner from "../../../components/LoadingSpinner";
 
 const actions = {
     assignUser: "Assign User",
@@ -131,6 +132,7 @@ function MultipleSelectionActionsMenu() {
     const [state, setState] = useState(initialState);
     const selectedItems = selectedItemsAll[tabIndex];
     const [currentAction, setCurrentAction] = useState(null);
+    const [saveProgress, setSaveProgress] = useState(null);
     const saveData = useRef([]);
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
@@ -267,10 +269,18 @@ function MultipleSelectionActionsMenu() {
     }
 
     function saveModels() {
-        return Promise.all(
-            saveData.current.map((model) => DataStore.save(model))
-        );
+        const promises = saveData.current.map((model) => DataStore.save(model));
+        let count = 0;
+        for (const p of promises) {
+            p.then(() => {
+                count++;
+                setSaveProgress((count * 100) / promises.length);
+            });
+        }
+        return Promise.all(promises);
     }
+
+    useEffect(() => console.log(saveProgress), [saveProgress]);
 
     async function handleConfirmation() {
         setCurrentAction(null);
@@ -319,6 +329,7 @@ function MultipleSelectionActionsMenu() {
                         {dotsMenu}
                     </>
                 )}
+                <LoadingSpinner delay={800} progress={saveProgress} />
             </Stack>
             <ConfirmationDialog
                 onCancel={() => setCurrentAction(null)}
