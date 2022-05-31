@@ -29,7 +29,7 @@ function MainWindowContainer(props) {
     const styles = makeStyles((theme) => ({
         root: {
             marginRight:
-                guidedSetupOpen && navIndex === "dashboard" ? "400px" : "auto",
+                guidedSetupOpen && navIndex === "dashboard" ? 0 : "auto",
             marginLeft: navIndex === "dashboard" ? 0 : 200,
             paddingTop: 10,
             paddingBottom: 10,
