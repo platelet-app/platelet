@@ -25,13 +25,14 @@ import {
     dashboardTabIndexSelector,
     selectedItemsSelector,
 } from "../../../redux/Selectors";
-import { tasksStatus, userRoles } from "../../../apiConsts";
+import { tasksStatus } from "../../../apiConsts";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import MultipleSelectionActionsAssignUser from "./MultipleSelectionActionsAssignUser";
 import { DataStore } from "aws-amplify";
 import MultipleSelectionActionsSetTime from "./MultipleSelectionActionsSetTime";
 import MultipleSelectionActionsInformation from "./MultipleSelectionActionsInformation";
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import _ from "lodash";
 
 const actions = {
     assignUser: "Assign User",
@@ -68,9 +69,14 @@ const initialState = {
 };
 
 const DialogActions = ({ onChange, items, action }) => {
+    const sx = {
+        padding: 2,
+        minWidth: { xs: 0, sm: 500 },
+        minHeight: 300,
+    };
     if (action === actions.assignUser) {
         return (
-            <Paper sx={{ padding: 2, minWidth: 500, minHeight: 300 }}>
+            <Paper sx={sx}>
                 <Stack divider={<Divider />} direction="column" spacing={2}>
                     <MultipleSelectionActionsInformation
                         selectedItems={items}
@@ -93,7 +99,7 @@ const DialogActions = ({ onChange, items, action }) => {
         ].includes(action)
     ) {
         return (
-            <Paper sx={{ padding: 2 }}>
+            <Paper sx={sx}>
                 <Stack divider={<Divider />} direction="column" spacing={2}>
                     <MultipleSelectionActionsInformation
                         selectedItems={items}
@@ -295,54 +301,83 @@ function MultipleSelectionActionsMenu() {
 
     return (
         <>
-            <Stack
-                alignItems="center"
-                divider={<Divider orientation="vertical" flexItem />}
-                spacing={2}
-                direction="row"
+            <Paper
+                sx={{
+                    position: {
+                        xs: "fixed",
+                        sm: "relative",
+                    },
+                    display: {
+                        xs: _.isEmpty(selectedItems) ? "none" : "block",
+                        sm: "block",
+                    },
+                    zIndex: 1000,
+                    borderRadius: 0,
+                    bottom: { xs: 0, sm: "auto" },
+                    width: { xs: "100%", sm: "auto" },
+                }}
             >
-                <ToggleButton
-                    aria-label="Select All"
-                    sx={{ margin: 0.5 }}
-                    size="small"
-                    onClick={handleOnClickCheck}
-                    disabled={!!dashboardFilter}
+                <Stack
+                    sx={{ minHeight: 50 }}
+                    alignItems="center"
+                    divider={
+                        isSm ? null : (
+                            <Divider orientation="vertical" flexItem />
+                        )
+                    }
+                    spacing={2}
+                    direction="row"
                 >
-                    {getCheckBox()}
-                </ToggleButton>
-                {selectedItems && Object.values(selectedItems).length > 0 && (
-                    <>
-                        {Object.values(actions).map((action) => (
-                            <Button
-                                data-testId="select-action-button"
-                                aria-label={`Selection ${action}`}
-                                key={action}
-                                size="small"
-                                onClick={() => {
-                                    handleActionClick(action);
-                                }}
-                                disabled={checkButtonDisabled(action)}
-                            >
-                                {action}
-                            </Button>
-                        ))}
-                        {dotsMenu}
-                    </>
-                )}
-                <LoadingSpinner
-                    sx={{
-                        position: {
-                            xs: "absolute",
-                            sm: "absolute",
-                            md: "relative",
-                        },
-                        left: { xs: 10, sm: 10, md: "auto" },
-                        bottom: { xs: 20, sm: 20, md: "auto" },
-                    }}
-                    delay={1000}
-                    progress={saveProgress}
-                />
-            </Stack>
+                    {!isSm && (
+                        <ToggleButton
+                            aria-label="Select All"
+                            sx={{ margin: 0.5 }}
+                            size="small"
+                            onClick={handleOnClickCheck}
+                            disabled={!!dashboardFilter}
+                        >
+                            {getCheckBox()}
+                        </ToggleButton>
+                    )}
+                    {selectedItems && Object.values(selectedItems).length > 0 && (
+                        <Stack
+                            sx={{ width: "100%" }}
+                            justifyContent={
+                                isSm ? "space-between" : "flex-start"
+                            }
+                            direction="row"
+                        >
+                            {Object.values(actions).map((action) => (
+                                <Button
+                                    data-testId="select-action-button"
+                                    aria-label={`Selection ${action}`}
+                                    key={action}
+                                    size="small"
+                                    onClick={() => {
+                                        handleActionClick(action);
+                                    }}
+                                    disabled={checkButtonDisabled(action)}
+                                >
+                                    {action}
+                                </Button>
+                            ))}
+                            {dotsMenu}
+                        </Stack>
+                    )}
+                    <LoadingSpinner
+                        sx={{
+                            position: {
+                                xs: "absolute",
+                                sm: "relative",
+                            },
+                            left: { xs: 10, sm: "auto" },
+                            bottom: { xs: 20, sm: "auto" },
+                        }}
+                        delay={1000}
+                        progress={saveProgress}
+                    />
+                </Stack>
+            </Paper>
             <ConfirmationDialog
                 onCancel={() => setCurrentAction(null)}
                 open={!!currentAction}
