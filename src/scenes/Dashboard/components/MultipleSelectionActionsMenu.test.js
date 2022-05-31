@@ -566,6 +566,16 @@ describe("MultipleSelectionActionsMenu", () => {
             });
         });
         expect(screen.queryByTestId("CheckBoxIcon")).toBeNull();
+        await waitFor(() => {
+            // not sure what the difference is here
+            // seems like taskAssignees isn't getting refreshed when cancelled/rejected, but it does in the browser
+            expect(querySpy).toHaveBeenCalledTimes(
+                ["timeRejected", "timeCancelled"].includes(timeToSet) ? 4 : 6
+            );
+        });
+        expect(
+            await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
+        ).toHaveLength(1);
     });
 
     it.each`
