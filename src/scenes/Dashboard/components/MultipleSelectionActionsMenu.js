@@ -8,7 +8,6 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
 import {
     Button,
-    Dialog,
     Divider,
     IconButton,
     Paper,
@@ -274,9 +273,11 @@ function MultipleSelectionActionsMenu() {
     }
 
     async function handleConfirmation() {
+        setCurrentAction(null);
+        dispatch(selectionActions.setSelectionActionsPending(true));
         await saveModels();
         dispatch(selectionModeActions.clearItems(tabIndex));
-        setCurrentAction(null);
+        dispatch(selectionActions.setSelectionActionsPending(false));
         saveData.current = [];
     }
 
