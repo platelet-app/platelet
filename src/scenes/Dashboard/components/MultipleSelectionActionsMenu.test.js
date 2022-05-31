@@ -426,6 +426,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 status: expectedStatus,
             });
         }
+        expect(screen.queryByTestId("CheckBoxIcon")).toBeNull();
     });
 
     it.each`
@@ -564,6 +565,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 [timeToSet]: isoDate,
             });
         });
+        expect(screen.queryByTestId("CheckBoxIcon")).toBeNull();
     });
 
     it.each`
