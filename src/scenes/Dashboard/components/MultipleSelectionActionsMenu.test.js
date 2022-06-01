@@ -82,7 +82,7 @@ describe("MultipleSelectionActionsMenu", () => {
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(12);
     });
-    test.each`
+    test.only.each`
         taskStatus
         ${tasksStatus.completed} | ${tasksStatus.droppedOff} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
         ${tasksStatus.active}    | ${tasksStatus.pickedUp}   | ${tasksStatus.new}      | ${tasksStatus.droppedOff}
@@ -158,7 +158,14 @@ describe("MultipleSelectionActionsMenu", () => {
             const name = `Selection ${stringMatch}`;
             const actionButtonsFiltered = actionButtons
                 .filter((button) => !button.textContent.includes("Assign User"))
+                .filter((button) => !button.textContent.includes("Cancelled"))
+                .filter((button) => !button.textContent.includes("Rejected"))
                 .filter((button) => !button.textContent.includes(stringMatch));
+            const rejectedCancelledButtons = actionButtons.filter(
+                (button) =>
+                    button.textContent.includes("Cancelled") ||
+                    button.textContent.includes("Rejected")
+            );
             const assignButton = screen.getByRole("button", {
                 name: "Selection Assign User",
             });
@@ -181,6 +188,10 @@ describe("MultipleSelectionActionsMenu", () => {
                     for (const button of actionButtonsFiltered) {
                         expect(button).toBeDisabled();
                     }
+                    // or cancelled and rejected
+                    for (const button of rejectedCancelledButtons) {
+                        expect(button).toBeEnabled();
+                    }
                     break;
                 case tasksStatus.pickedUp:
                     // picked up tasks can only be delivered
@@ -191,6 +202,10 @@ describe("MultipleSelectionActionsMenu", () => {
                     ).toBeEnabled();
                     for (const button of actionButtonsFiltered) {
                         expect(button).toBeDisabled();
+                    }
+                    // or cancelled and rejected
+                    for (const button of rejectedCancelledButtons) {
+                        expect(button).toBeEnabled();
                     }
                     break;
                 case tasksStatus.droppedOff:
@@ -203,6 +218,10 @@ describe("MultipleSelectionActionsMenu", () => {
                     for (const button of actionButtonsFiltered) {
                         expect(button).toBeDisabled();
                     }
+                    // not cancelled and rejected
+                    for (const button of rejectedCancelledButtons) {
+                        expect(button).toBeDisabled();
+                    }
                     break;
                 case [
                     tasksStatus.completed,
@@ -212,6 +231,9 @@ describe("MultipleSelectionActionsMenu", () => {
                 ].includes(taskStatus):
                     // everything else means disabled
                     for (const button of actionButtonsFiltered) {
+                        expect(button).toBeDisabled();
+                    }
+                    for (const button of rejectedCancelledButtons) {
                         expect(button).toBeDisabled();
                     }
                     break;
@@ -277,13 +299,10 @@ describe("MultipleSelectionActionsMenu", () => {
             expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(
                 3
             );
-            userEvent.click(
-                screen.getByRole("button", { name: "More Selection Actions" })
-            );
-            const cancelled = screen.getByRole("menuitem", {
+            const cancelled = screen.getByRole("button", {
                 name: "Selection Cancelled",
             });
-            const rejected = screen.getByRole("menuitem", {
+            const rejected = screen.getByRole("button", {
                 name: "Selection Rejected",
             });
             if (
@@ -293,11 +312,11 @@ describe("MultipleSelectionActionsMenu", () => {
                     tasksStatus.pickedUp,
                 ].includes(taskStatus)
             ) {
-                expect(cancelled).not.toHaveAttribute("aria-disabled");
-                expect(rejected).not.toHaveAttribute("aria-disabled");
+                expect(cancelled).toBeEnabled();
+                expect(rejected).toBeEnabled();
             } else {
-                expect(cancelled).toHaveAttribute("aria-disabled", "true");
-                expect(rejected).toHaveAttribute("aria-disabled", "true");
+                expect(cancelled).toBeDisabled();
+                expect(rejected).toBeDisabled();
             }
         }
     );
@@ -511,31 +530,10 @@ describe("MultipleSelectionActionsMenu", () => {
         });
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(4);
-        let buttonToClick = null;
-        if (
-            ["timePickedUp", "timeDroppedOff", "timeRiderHome"].includes(
-                timeToSet
-            )
-        ) {
-            buttonToClick = screen.getByRole("button", {
-                name: "Selection " + buttonLabel,
-            });
-            expect(buttonToClick).toBeEnabled();
-        } else {
-            userEvent.click(
-                screen.getByRole("button", { name: "More Selection Actions" })
-            );
-            if (timeToSet === "timeRejected") {
-                buttonToClick = screen.getByRole("menuitem", {
-                    name: "Selection Rejected",
-                });
-            } else {
-                buttonToClick = screen.getByRole("menuitem", {
-                    name: "Selection Cancelled",
-                });
-            }
-            expect(buttonToClick).not.toHaveAttribute("aria-disabled");
-        }
+        const buttonToClick = screen.getByRole("button", {
+            name: "Selection " + buttonLabel,
+        });
+        expect(buttonToClick).toBeEnabled();
         userEvent.click(buttonToClick);
         await waitFor(() => {
             expect(modelSpy).toHaveBeenCalledTimes(2);
@@ -620,12 +618,7 @@ describe("MultipleSelectionActionsMenu", () => {
             );
         } else {
             userEvent.click(
-                screen.getByRole("button", { name: "More Selection Actions" })
-            );
-            userEvent.click(
-                screen.getByRole("menuitem", {
-                    name: "Selection Rejected",
-                })
+                screen.getByRole("button", { name: "Selection Rejected" })
             );
         }
         expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(12);

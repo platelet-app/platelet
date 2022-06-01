@@ -299,6 +299,8 @@ function MultipleSelectionActionsMenu() {
 
     const dispatch = useDispatch();
 
+    const buttonActions = isSm ? actions : { ...actions, ...dotActions };
+
     return (
         <>
             <Paper
@@ -347,7 +349,7 @@ function MultipleSelectionActionsMenu() {
                             }
                             direction="row"
                         >
-                            {Object.values(actions).map((action) => (
+                            {Object.values(buttonActions).map((action) => (
                                 <Button
                                     data-testId="select-action-button"
                                     aria-label={`Selection ${action}`}
@@ -361,7 +363,7 @@ function MultipleSelectionActionsMenu() {
                                     {action}
                                 </Button>
                             ))}
-                            {dotsMenu}
+                            {isSm && dotsMenu}
                         </Stack>
                     )}
                     <LoadingSpinner
