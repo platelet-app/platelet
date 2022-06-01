@@ -1,5 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Typography } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import {
+    Typography,
+    Dialog,
+    DialogContent,
+    DialogActions,
+    Grid,
+    Button,
+    Paper,
+    Link,
+} from "@mui/material";
+import TaskCard from "./TaskCardsColoured";
+import { useTheme } from "@mui/styles";
 
 const actions = {
     assignUser: "Assign User",
@@ -13,25 +25,40 @@ const dotActions = {
 };
 
 function humanReadableAction(action) {
-    if (action === actions.assignUser) {
-        return "Assigning a user to";
-    } else if (action === actions.markPickedUp) {
-        return "Marking as picked up on";
+    if (action === actions.markPickedUp) {
+        return "picked up";
     } else if (action === actions.markDelivered) {
-        return "Marking as delivered on";
+        return "delivered";
     } else if (action === actions.markRiderHome) {
-        return "Marking as rider home on";
+        return "rider home";
     } else if (action === dotActions.markCancelled) {
-        return "Marking as cancelled on";
+        return "cancelled";
     } else if (action === dotActions.markRejected) {
-        return "Marking as rejected on";
+        return "rejected";
     }
-
     return action;
 }
 
 function MultipleSelectionActionsInformation({ selectedItems, action }) {
     const [message, setMessage] = useState("");
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const theme = useTheme();
+    const isMd = useMediaQuery(theme.breakpoints.down("md"));
+
+    function generateLink() {
+        const items = Object.values(selectedItems);
+        const plural = items.length > 1 ? "items" : "item";
+        return (
+            <Link
+                sx={{
+                    cursor: "pointer",
+                }}
+                onClick={() => setDialogOpen(true)}
+            >
+                {items.length} {plural}
+            </Link>
+        );
+    }
 
     function generateMessage() {
         const items = Object.values(selectedItems);
@@ -39,15 +66,85 @@ function MultipleSelectionActionsInformation({ selectedItems, action }) {
             setMessage("No items selected");
             return;
         }
-        if (items.length === 1) {
-            setMessage(`${humanReadableAction(action)} ${items.length} item.`);
-            return;
+        if (action === actions.assignUser) {
+            setMessage(
+                <Typography variant="h6">
+                    Assign users to {generateLink()}
+                </Typography>
+            );
+        } else {
+            setMessage(
+                <Typography variant="h6">
+                    Updating {generateLink()} as {humanReadableAction(action)}
+                </Typography>
+            );
         }
-        setMessage(`${humanReadableAction(action)} ${items.length} items`);
     }
     useEffect(generateMessage, [selectedItems, action]);
 
-    return <Typography variant="h6">{message}</Typography>;
+    const itemLength = Object.values(selectedItems).length;
+
+    return (
+        <>
+            <Dialog
+                open={dialogOpen}
+                fullWidth={!isMd}
+                fullScreen={isMd}
+                maxWidth={itemLength > 4 ? "md" : "sm"}
+                onClose={() => setDialogOpen(false)}
+            >
+                <DialogContent>
+                    <Paper sx={{ padding: isMd ? 0 : 1 }}>
+                        <Grid
+                            sx={{ width: "100%", flexGrow: 1 }}
+                            container
+                            justifyContent="flex-start"
+                            direction="row"
+                            spacing={1}
+                        >
+                            {Object.values(selectedItems).map((item) => (
+                                <Grid
+                                    item
+                                    xs={12}
+                                    sm={itemLength > 4 ? 6 : 12}
+                                    md={itemLength > 4 ? 6 : 12}
+                                    key={item.id}
+                                    sx={{
+                                        marginBottom: 0.5,
+                                        minWidth: 300,
+                                        maxWidth: 410,
+                                        width: "100%",
+                                    }}
+                                >
+                                    <TaskCard
+                                        priority={item.priority}
+                                        pickUpAddress={item.pickUpAddress}
+                                        dropOffAddress={item.dropOffAddress}
+                                        riderResponsibility={
+                                            item.riderResponsibility
+                                        }
+                                        timeOfCall={item.timeOfCall}
+                                        status={item.status}
+                                    />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </Paper>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => {
+                            setDialogOpen(false);
+                        }}
+                    >
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {message}
+        </>
+    );
 }
 
 export default MultipleSelectionActionsInformation;

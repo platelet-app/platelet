@@ -27,7 +27,6 @@ const generateClass = (theme, status) => {
         ${theme.palette.taskStatus[status]}
         ${colourBarPercent},
         ${theme.palette.taskStatus[status]} 100%)`,
-        cursor: "pointer",
     };
 };
 
