@@ -41,13 +41,16 @@ function TaskGridColumnHeader(props) {
                     .includes(t.id)
             )
         ) {
-            for (const task of Object.values(props.tasks)) {
-                dispatch(selectionActions.unselectItem(task.id, tabIndex));
-            }
+            dispatch(
+                selectionActions.unselectMultipleItems(
+                    Object.values(props.tasks).map((t) => t.id),
+                    tabIndex
+                )
+            );
         } else {
-            for (const task of Object.values(props.tasks)) {
-                dispatch(selectionActions.selectItem(task, tabIndex));
-            }
+            dispatch(
+                selectionActions.selectMultipleItems(props.tasks, tabIndex)
+            );
         }
     }
     function getCheckBox() {

@@ -21,6 +21,22 @@ export function selectionModeReducer(state = [], action) {
                     action.itemId
                 ),
             };
+        case actions.SELECT_MULTIPLE_ITEMS:
+            return {
+                ...state,
+                [action.tabIndex]: {
+                    ...state[action.tabIndex],
+                    ...action.items,
+                },
+            };
+        case actions.UNSELECT_MULTIPLE_ITEMS:
+            return {
+                ...state,
+                [action.tabIndex]: _.omit(
+                    state[action.tabIndex],
+                    ...action.itemIds
+                ),
+            };
         case actions.CLEAR_ITEMS:
             return { ...state, [action.tabIndex]: {} };
         default:
