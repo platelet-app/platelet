@@ -32,10 +32,6 @@ function LoadingSpinner({ progress, tooltip, size, delay, error, ...props }) {
     }, [progress, error]);
 
     useEffect(() => {
-        console.log(fade, completed);
-    }, [fade, completed]);
-
-    useEffect(() => {
         if (!error) {
             setLoadingColor(null);
         }

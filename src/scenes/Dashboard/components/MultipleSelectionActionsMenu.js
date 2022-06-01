@@ -69,26 +69,49 @@ const initialState = {
     mouseY: null,
 };
 
-const DialogActions = ({ onChange, items, action }) => {
+const DialogActions = ({
+    onChange,
+    items,
+    action,
+    onCancel,
+    open,
+    onConfirmation,
+}) => {
+    const [isReady, setIsReady] = useState(false);
+    const isSm = useMediaQuery(useTheme().breakpoints.down("sm"));
     const sx = {
         padding: 2,
         minWidth: { xs: 0, sm: 500 },
         minHeight: 300,
     };
+
+    const handleReady = (v) => {
+        console.log(v);
+        setIsReady(v);
+    };
     if (action === actions.assignUser) {
         return (
-            <Paper sx={sx}>
-                <Stack divider={<Divider />} direction="column" spacing={2}>
-                    <MultipleSelectionActionsInformation
-                        selectedItems={items}
-                        action={action}
-                    />
-                    <MultipleSelectionActionsAssignUser
-                        onChange={onChange}
-                        selectedItems={items}
-                    />
-                </Stack>
-            </Paper>
+            <ConfirmationDialog
+                onCancel={onCancel}
+                disabled={!isReady}
+                open={open}
+                fullScreen={isSm}
+                onConfirmation={onConfirmation}
+            >
+                <Paper sx={sx}>
+                    <Stack divider={<Divider />} direction="column" spacing={2}>
+                        <MultipleSelectionActionsInformation
+                            selectedItems={items}
+                            action={action}
+                        />
+                        <MultipleSelectionActionsAssignUser
+                            onReady={handleReady}
+                            onChange={onChange}
+                            selectedItems={items}
+                        />
+                    </Stack>
+                </Paper>
+            </ConfirmationDialog>
         );
     } else if (
         [
@@ -100,19 +123,29 @@ const DialogActions = ({ onChange, items, action }) => {
         ].includes(action)
     ) {
         return (
-            <Paper sx={sx}>
-                <Stack divider={<Divider />} direction="column" spacing={2}>
-                    <MultipleSelectionActionsInformation
-                        selectedItems={items}
-                        action={action}
-                    />
-                    <MultipleSelectionActionsSetTime
-                        selectedItems={items}
-                        onChange={onChange}
-                        timeKey={getKey(action)}
-                    />
-                </Stack>
-            </Paper>
+            <ConfirmationDialog
+                onCancel={onCancel}
+                onReady={(v) => setIsReady(v)}
+                disabled={!isReady}
+                open={open}
+                fullScreen={isSm}
+                onConfirmation={onConfirmation}
+            >
+                <Paper sx={sx}>
+                    <Stack divider={<Divider />} direction="column" spacing={2}>
+                        <MultipleSelectionActionsInformation
+                            selectedItems={items}
+                            action={action}
+                        />
+                        <MultipleSelectionActionsSetTime
+                            selectedItems={items}
+                            onReady={handleReady}
+                            onChange={onChange}
+                            timeKey={getKey(action)}
+                        />
+                    </Stack>
+                </Paper>
+            </ConfirmationDialog>
         );
     }
     return null;
@@ -397,18 +430,14 @@ function MultipleSelectionActionsMenu() {
                     />
                 </Stack>
             </Box>
-            <ConfirmationDialog
+            <DialogActions
                 onCancel={() => setCurrentAction(null)}
-                open={!!currentAction}
-                fullScreen={isSm}
+                open={currentAction !== null}
+                items={selectedItems}
+                action={currentAction}
                 onConfirmation={handleConfirmation}
-            >
-                <DialogActions
-                    items={selectedItems}
-                    action={currentAction}
-                    onChange={(models) => (saveData.current = models)}
-                />
-            </ConfirmationDialog>
+                onChange={(models) => (saveData.current = models)}
+            />
         </>
     );
 }

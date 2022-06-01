@@ -5,15 +5,28 @@ import * as models from "../../../models";
 import { DateTimePicker } from "@mui/lab";
 import { determineTaskStatus } from "../../../utilities";
 
-function MultipleSelectionActionsSetTime({ selectedItems, timeKey, onChange }) {
+function isValidDate(d) {
+    return d instanceof Date && !isNaN(d);
+}
+
+function MultipleSelectionActionsSetTime({
+    selectedItems,
+    timeKey,
+    onChange,
+    onReady,
+}) {
     const [time, setTime] = React.useState(new Date());
 
     function handleTimeChange(value) {
+        if (!isValidDate(value)) {
+            return;
+        }
         setTime(value);
     }
 
     async function generatedModels() {
         if (!selectedItems || !timeKey) return;
+        onReady(false);
         const newModels = await Promise.all(
             Object.values(selectedItems).map(async (item) => {
                 const status = await determineTaskStatus({
@@ -27,6 +40,7 @@ function MultipleSelectionActionsSetTime({ selectedItems, timeKey, onChange }) {
             })
         );
         onChange(newModels);
+        onReady(true);
     }
     useEffect(
         () => generatedModels(),
@@ -51,11 +65,13 @@ MultipleSelectionActionsSetTime.propTypes = {
     selectedItems: PropTypes.object,
     timeKey: PropTypes.string.isRequired,
     onChange: PropTypes.func,
+    onReady: PropTypes.func,
 };
 
 MultipleSelectionActionsSetTime.defaultProps = {
     selectedItems: [],
     onChange: () => {},
+    onReady: () => {},
 };
 
 export default MultipleSelectionActionsSetTime;

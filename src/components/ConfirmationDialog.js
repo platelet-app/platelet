@@ -41,6 +41,7 @@ function ConfirmationDialog(props) {
                     )}{" "}
                     {!props.hideOk && (
                         <Button
+                            disabled={props.disabled}
                             data-cy="confirmation-ok-button"
                             onClick={() => {
                                 props.onConfirmation();
@@ -65,6 +66,7 @@ ConfirmationDialog.propTypes = {
     hideCancel: PropTypes.bool,
     hideOk: PropTypes.bool,
     fullScreen: PropTypes.bool,
+    disabled: PropTypes.bool,
 };
 
 ConfirmationDialog.defaultProps = {
@@ -76,6 +78,7 @@ ConfirmationDialog.defaultProps = {
     hideCancel: false,
     hideOk: false,
     fullScreen: false,
+    disabled: false,
 };
 
 export default ConfirmationDialog;

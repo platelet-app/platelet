@@ -13,7 +13,7 @@ import MultipleSelectionActionsMenu from "./MultipleSelectionActionsMenu";
 
 describe("MultipleSelectionActionsMenu", () => {
     const RealDate = Date;
-    const isoDate = "2021-11-29T23:24:58.987Z";
+    const isoDate = new RealDate().toISOString();
     function mockDate() {
         global.Date = class extends RealDate {
             constructor() {
@@ -403,12 +403,13 @@ describe("MultipleSelectionActionsMenu", () => {
         const textBox = screen.getByRole("textbox");
         userEvent.type(textBox, assignee.displayName);
         userEvent.click(screen.getByText(assignee.displayName));
+        const okButton = screen.getByText("OK");
         if (role === userRoles.rider) {
             await waitFor(() => {
                 expect(modelSpy).toHaveBeenCalledTimes(2);
             });
         }
-        userEvent.click(screen.getByText("OK"));
+        userEvent.click(okButton);
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledTimes(
                 role === userRoles.rider ? 4 : 2
@@ -535,10 +536,12 @@ describe("MultipleSelectionActionsMenu", () => {
         });
         expect(buttonToClick).toBeEnabled();
         userEvent.click(buttonToClick);
+        const okButton = screen.getByText("OK");
+        expect(okButton).toBeDisabled();
         await waitFor(() => {
             expect(modelSpy).toHaveBeenCalledTimes(2);
         });
-        userEvent.click(screen.getByText("OK"));
+        userEvent.click(okButton);
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...mockTask,
@@ -673,10 +676,12 @@ describe("MultipleSelectionActionsMenu", () => {
         userEvent.click(
             screen.getByRole("button", { name: "Selection Rejected" })
         );
+        const okButton = screen.getByText("OK");
+        expect(okButton).toBeDisabled();
         await waitFor(() => {
             expect(modelSpy).toHaveBeenCalledTimes(1);
         });
-        userEvent.click(screen.getByText("OK"));
+        userEvent.click(okButton);
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledTimes(1);
         });
@@ -694,4 +699,100 @@ describe("MultipleSelectionActionsMenu", () => {
             )
         ).toBeInTheDocument();
     });
+    test.each`
+        role
+        ${userRoles.coordinator} | ${userRoles.rider}
+    `(
+        "the confirmation button is disabled when there are no assignees selected",
+        async ({ role }) => {
+            const mockTask = await DataStore.save(
+                new models.Task({ status: tasksStatus.new })
+            );
+            const mockWhoami = await DataStore.save(
+                new models.User({
+                    roles: [userRoles.coordinator],
+                    displayName: "Someone Person",
+                })
+            );
+            const assignee = await DataStore.save(
+                new models.User({
+                    roles: [role],
+                    displayName: "Other Person",
+                    riderResponsibility: "test",
+                })
+            );
+            const mockAssignments = [mockTask].map(
+                (t) =>
+                    new models.TaskAssignee({
+                        task: t,
+                        assignee,
+                        role: role,
+                    })
+            );
+            const preloadedState = {
+                roleView: "ALL",
+                dashboardTabIndex: 1,
+                whoami: { user: mockWhoami },
+                taskAssigneesReducer: {
+                    items: [],
+                    ready: true,
+                    isSynced: true,
+                },
+            };
+            const querySpy = jest.spyOn(DataStore, "query");
+            const modelSpy = jest.spyOn(models.Task, "copyOf");
+            render(
+                <>
+                    <MultipleSelectionActionsMenu />
+                    <TasksGridColumn
+                        title={tasksStatus.new}
+                        taskKey={[tasksStatus.new]}
+                    />
+                </>,
+                {
+                    preloadedState,
+                }
+            );
+            await waitFor(() => {
+                expect(querySpy).toHaveBeenCalledTimes(1);
+            });
+            mockAllIsIntersecting(true);
+            await waitFor(() => {
+                expect(querySpy).toHaveBeenCalledTimes(2);
+            });
+            userEvent.click(screen.getByRole("button", { name: "Select All" }));
+            expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(
+                3
+            );
+            userEvent.click(
+                screen.getByRole("button", { name: "Selection Assign User" })
+            );
+            if (role === userRoles.coordinator) {
+                userEvent.click(screen.getByText("COORDINATOR"));
+                await waitFor(() => {
+                    expect(querySpy).toHaveBeenCalledTimes(4);
+                });
+            } else {
+                await waitFor(() => {
+                    expect(querySpy).toHaveBeenCalledTimes(3);
+                });
+            }
+
+            const okButton = screen.getByText("OK");
+            expect(okButton).toBeDisabled();
+            const textBox = screen.getByRole("textbox");
+            userEvent.type(textBox, assignee.displayName);
+            userEvent.click(screen.getByText(assignee.displayName));
+            if (role === userRoles.rider) {
+                await waitFor(() => {
+                    expect(modelSpy).toHaveBeenCalledTimes(1);
+                });
+            }
+            expect(okButton).toBeEnabled();
+            userEvent.click(screen.getByTestId("CancelIcon"));
+            await waitFor(() => {
+                expect(okButton).toBeDisabled();
+            });
+        }
+    );
 });

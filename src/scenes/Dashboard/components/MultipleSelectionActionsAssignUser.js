@@ -11,8 +11,13 @@ import UserRoleSelect from "../../../components/UserRoleSelect";
 import { useSelector } from "react-redux";
 import { taskAssigneesSelector } from "../../../redux/Selectors";
 import { determineTaskStatus } from "../../../utilities";
+import _ from "lodash";
 
-function MultipleSelectionActionsAssignUser({ selectedItems, onChange }) {
+function MultipleSelectionActionsAssignUser({
+    selectedItems,
+    onChange,
+    onReady,
+}) {
     const [role, setRole] = useState(userRoles.rider);
     const [state, setState] = useState({
         [userRoles.rider]: [],
@@ -36,6 +41,13 @@ function MultipleSelectionActionsAssignUser({ selectedItems, onChange }) {
     }
 
     async function generateModels() {
+        onReady(false);
+        if (
+            _.isEmpty(state[userRoles.coordinator]) &&
+            _.isEmpty(state[userRoles.rider])
+        ) {
+            return;
+        }
         const riders = Object.values(selectedItems).map((task) => {
             return Object.values(state[userRoles.rider]).map((assignee) => {
                 return new models.TaskAssignee({
@@ -89,6 +101,7 @@ function MultipleSelectionActionsAssignUser({ selectedItems, onChange }) {
             );
         }
         onChange([...filtered, ...newTasks]);
+        onReady(true);
     }
     useEffect(() => generateModels(), [state]);
 
@@ -176,11 +189,13 @@ function MultipleSelectionActionsAssignUser({ selectedItems, onChange }) {
 MultipleSelectionActionsAssignUser.propTypes = {
     selectedItems: PropTypes.object,
     onChange: PropTypes.func,
+    onReady: PropTypes.func,
 };
 
 MultipleSelectionActionsAssignUser.defaultProps = {
     selectedItems: [],
     onChange: () => {},
+    onReady: () => {},
 };
 
 export default MultipleSelectionActionsAssignUser;
