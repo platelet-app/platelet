@@ -341,7 +341,11 @@ function MultipleSelectionActionsMenu() {
                             sx={{ margin: 0.5 }}
                             size="small"
                             onClick={handleOnClickCheck}
-                            disabled={!!dashboardFilter}
+                            disabled={
+                                !!dashboardFilter ||
+                                Object.values(availableSelectionItems)
+                                    .length === 0
+                            }
                         >
                             {getCheckBox()}
                         </ToggleButton>
