@@ -56,14 +56,6 @@ TabPanel.propTypes = {
     value: PropTypes.any.isRequired,
 };
 
-function a11yProps(index) {
-    return {
-        "aria-controls": `dashboard-tabpanel-${index}`,
-        "data-cy": `dashboard-tabpanel-${index}`,
-        "aria-labelledby": `dashboard-tabpanel-${index}`,
-    };
-}
-
 export function DashboardDetailTabs(props) {
     const dispatch = useDispatch();
     const [anchorElRoleMenu, setAnchorElRoleMenu] = React.useState(null);
@@ -75,35 +67,30 @@ export function DashboardDetailTabs(props) {
     const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
 
     const theme = useTheme();
-    const isXs = useMediaQuery(theme.breakpoints.down("sm"));
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
     const dashboardTabIndex = useSelector(dashboardTabIndexSelector);
 
-    const handleChange = (event, newValue) => {
+    const handleChange = (newValue) => {
         //props.onChange(event, newValue);
         dispatch(setDashboardTabIndex(newValue));
     };
-    const tabs = isXs ? (
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <Tabs
-                value={parseInt(dashboardTabIndex)}
-                onChange={handleChange}
-                aria-label={"dashboard-tabs"}
-            >
-                <Tab icon={<ExploreIcon />} {...a11yProps(0)} />
-                <Tab icon={<DoneIcon />} {...a11yProps(1)} />
-            </Tabs>
-        </Box>
-    ) : (
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <Tabs
-                value={parseInt(dashboardTabIndex)}
-                onChange={handleChange}
-                aria-label={"dashboard-tabs"}
-            >
-                <Tab label="In Progress" {...a11yProps(0)} />
-                <Tab label="Completed" {...a11yProps(1)} />
-            </Tabs>
-        </Box>
+    const tabs = (
+        <Stack spacing={isSm ? 1 : 2} direction="row">
+            <Chip
+                aria-label="Dashboard in Progress"
+                sx={{ padding: 1 }}
+                label="IN PROGRESS"
+                color={dashboardTabIndex === 0 ? "primary" : "default"}
+                onClick={() => handleChange(0)}
+            />
+            <Chip
+                aria-label="Dashboard Completed"
+                sx={{ padding: 1 }}
+                onClick={() => handleChange(1)}
+                color={dashboardTabIndex === 1 ? "primary" : "default"}
+                label="COMPLETED"
+            />
+        </Stack>
     );
 
     const addClearButton =
@@ -149,7 +136,7 @@ export function DashboardDetailTabs(props) {
                 direction={"row"}
                 spacing={2}
                 justifyContent={"flex-start"}
-                alignItems={"flex-end"}
+                alignItems={"center"}
             >
                 <Box>{tabs}</Box>
                 <Hidden mdDown>
