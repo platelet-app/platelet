@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Box } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react";
 
-function LoadingSpinner({ progress, tooltip, size, delay, ...props }) {
+function LoadingSpinner({ progress, tooltip, size, delay, error, ...props }) {
     const [loadingColor, setLoadingColor] = useState(null);
     const [completed, setCompleted] = useState(true);
     const [fade, setFade] = useState(false);
@@ -11,7 +11,7 @@ function LoadingSpinner({ progress, tooltip, size, delay, ...props }) {
     const timeOut = useRef(null);
 
     useEffect(() => {
-        if (Math.round(progress) === 100) {
+        if (!error && Math.round(progress) === 100) {
             setLoadingColor("lightgreen");
             setTimeout(() => {
                 setCompleted(true);
@@ -22,13 +22,27 @@ function LoadingSpinner({ progress, tooltip, size, delay, ...props }) {
         } else if (timeOut.current) {
             clearTimeout(timeOut.current);
         }
-        if (progress !== null) {
+        if (!error && progress !== null) {
             setCompleted(false);
             setLoadingColor("orange");
+        } else if (error) {
+            setCompleted(false);
+            setLoadingColor("red");
         }
-    }, [progress]);
+    }, [progress, error]);
 
     useEffect(() => {
+        console.log(fade, completed);
+    }, [fade, completed]);
+
+    useEffect(() => {
+        if (!error) {
+            setLoadingColor(null);
+        }
+    }, [error]);
+
+    useEffect(() => {
+        if (error) return;
         if (delay === 0) {
             setFade(true);
             return;
@@ -38,26 +52,32 @@ function LoadingSpinner({ progress, tooltip, size, delay, ...props }) {
         } else {
             clearTimeout(delayTimer.current);
         }
-    }, [loadingColor, delay]);
+    }, [loadingColor, delay, error]);
 
     useEffect(() => {
+        if (error) return;
         if (delay === 0) return;
-        if (Math.round(progress) === 100 && fade === true) {
+        if (Math.round(progress) === 100 && fade) {
             clearTimeout(delayTimer.current);
         }
-    }, [progress, fade, delay]);
+    }, [progress, fade, delay, error]);
 
     useEffect(() => {
+        if (error) return;
         if (delay === 0) return;
         if (completed) setFade(false);
-    }, [completed, delay]);
+    }, [completed, delay, error]);
 
     if (completed) {
         return null;
     } else {
         return (
             <Box sx={props.sx}>
-                <Fade in={fade} unmountOnExit>
+                <Fade
+                    data-testId="progressive-loading-spinner"
+                    in={error || fade}
+                    unmountOnExit
+                >
                     <Tooltip title={tooltip}>
                         <Box sx={{ display: "grid" }}>
                             <CircularProgress
