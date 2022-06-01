@@ -28,7 +28,6 @@ import { displayErrorNotification } from "../../../redux/notifications/Notificat
 import { setDashboardFilteredUser } from "../../../redux/Actions";
 import moment from "moment";
 
-// use for transparency on arrows sometime
 const useStyles = makeStyles((theme) => ({
     gradientContainer: {
         position: "relative",
@@ -37,10 +36,7 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "center",
     },
     gradientLeft: () => {
-        const background =
-            theme.palette.mode === "dark"
-                ? "linear-gradient(90deg, rgba(51,51,51,1) 0%, rgba(0,0,0,0) 100%)"
-                : `linear-gradient(90deg, ${theme.palette.background.paper} 0%, rgba(0,0,0,0) 100%)`;
+        const background = `linear-gradient(90deg, ${theme.palette.background.paper} 0%, rgba(0,0,0,0) 100%)`;
         return {
             background: background,
             width: 35,
@@ -50,10 +46,7 @@ const useStyles = makeStyles((theme) => ({
         };
     },
     gradientRight: () => {
-        const background =
-            theme.palette.mode === "dark"
-                ? "linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(51,51,51,1) 100%)"
-                : `linear-gradient(90deg, rgba(0,0,0,0) 0%, ${theme.palette.background.paper} 100%)`;
+        const background = `linear-gradient(90deg, rgba(0,0,0,0) 0%, ${theme.palette.background.paper} 100%)`;
         return {
             background: background,
             width: 35,
