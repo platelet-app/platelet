@@ -13,12 +13,8 @@ function ConfirmationDialog(props) {
             open={props.open}
             fullScreen={props.fullScreen}
             onClose={props.onClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
         >
-            <DialogTitle id="alert-dialog-title">
-                {props.dialogTitle}
-            </DialogTitle>
+            <DialogTitle>{props.dialogTitle}</DialogTitle>
             <DialogContent>{props.children}</DialogContent>
             <DialogActions>
                 <Stack

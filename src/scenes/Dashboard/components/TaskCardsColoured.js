@@ -224,11 +224,13 @@ TaskCard.propTypes = {
     riderResponsibility: PropTypes.string,
     timeOfCall: PropTypes.string,
     priority: PropTypes.string,
+    assignees: PropTypes.arrayOf(PropTypes.object),
 };
 
 TaskCard.defaultProps = {
     riderResponsibility: "",
     priority: "",
+    assignees: [],
 };
 
 export default TaskCard;
