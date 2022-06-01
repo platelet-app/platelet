@@ -16,16 +16,21 @@ function MultipleSelectionActionsSetTime({
     onReady,
 }) {
     const [time, setTime] = React.useState(new Date());
+    const [isValid, setIsValid] = React.useState(true);
 
     function handleTimeChange(value) {
         if (!isValidDate(value)) {
+            onReady(false);
+            setIsValid(false);
+            setTime(value);
             return;
         }
+        setIsValid(true);
         setTime(value);
     }
 
     async function generatedModels() {
-        if (!selectedItems || !timeKey) return;
+        if (!selectedItems || !timeKey || !isValid) return;
         onReady(false);
         const newModels = await Promise.all(
             Object.values(selectedItems).map(async (item) => {
