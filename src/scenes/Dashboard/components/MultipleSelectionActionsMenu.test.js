@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "../../../test-utils";
-import { screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import TasksGridColumn from "./TasksGridColumn";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
@@ -623,5 +623,75 @@ describe("MultipleSelectionActionsMenu", () => {
         }
         expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(12);
         expect(screen.getByText(/10 items/)).toBeInTheDocument();
+    });
+
+    test("throwing an error on save", async () => {
+        const mockTask = DataStore.save(
+            new models.Task({ status: tasksStatus.new })
+        );
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 1,
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest
+            .spyOn(DataStore, "save")
+            .mockRejectedValue(new Error("Something went wrong"));
+        const modelSpy = jest.spyOn(models.Task, "copyOf");
+        render(
+            <>
+                <MultipleSelectionActionsMenu />
+                <TasksGridColumn
+                    title={tasksStatus.new}
+                    taskKey={[tasksStatus.new]}
+                />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(3);
+        });
+        userEvent.click(screen.getByRole("button", { name: "Select All" }));
+        userEvent.click(
+            screen.getByRole("button", { name: "Selection Rejected" })
+        );
+        await waitFor(() => {
+            expect(modelSpy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(screen.getByText("OK"));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(1);
+        });
+        const spinner = await screen.findByTestId(
+            "progressive-loading-spinner"
+        );
+
+        await waitFor(() => {
+            expect(screen.queryByText("OK")).toBeNull();
+        });
+        fireEvent.mouseOver(spinner);
+        expect(
+            await screen.findByText(
+                "An error occurred and data may not have been saved"
+            )
+        ).toBeInTheDocument();
     });
 });

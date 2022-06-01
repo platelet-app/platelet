@@ -143,6 +143,7 @@ function MultipleSelectionActionsMenu() {
     const saveData = useRef([]);
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+    const [errorState, setErrorState] = useState(null);
 
     const handleClick = (event) => {
         event.preventDefault();
@@ -276,18 +277,21 @@ function MultipleSelectionActionsMenu() {
     }
 
     function saveModels() {
-        const promises = saveData.current.map((model) => DataStore.save(model));
+        setErrorState(null);
         let count = 0;
-        for (const p of promises) {
-            p.then(() => {
-                count++;
-                setSaveProgress((count * 100) / promises.length);
-            });
-        }
+        const promises = saveData.current.map((model) =>
+            DataStore.save(model)
+                .then(() => {
+                    count++;
+                    setSaveProgress((count * 100) / saveData.current.length);
+                })
+                .catch((error) => {
+                    setErrorState(error);
+                    console.log(error);
+                })
+        );
         return Promise.all(promises);
     }
-
-    useEffect(() => console.log(saveProgress), [saveProgress]);
 
     async function handleConfirmation() {
         setCurrentAction(null);
@@ -344,7 +348,7 @@ function MultipleSelectionActionsMenu() {
                     )}
                     {selectedItems && Object.values(selectedItems).length > 0 && (
                         <Stack
-                            sx={{ width: "100%" }}
+                            sx={{ width: { xs: "100%", sm: "auto" } }}
                             justifyContent={
                                 isSm ? "space-between" : "flex-start"
                             }
@@ -366,6 +370,7 @@ function MultipleSelectionActionsMenu() {
                                 </Button>
                             ))}
                             {isSm && dotsMenu}
+                            <Divider />
                         </Stack>
                     )}
                     <LoadingSpinner
@@ -377,8 +382,14 @@ function MultipleSelectionActionsMenu() {
                             left: { xs: 10, sm: "auto" },
                             bottom: { xs: 60, sm: "auto" },
                         }}
-                        delay={1000}
+                        tooltip={
+                            !!errorState
+                                ? "An error occurred and data may not have been saved"
+                                : "Saving..."
+                        }
+                        delay={800}
                         progress={saveProgress}
+                        error={errorState !== null}
                     />
                 </Stack>
             </Box>
