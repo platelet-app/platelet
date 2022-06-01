@@ -7,6 +7,7 @@ import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
 import {
+    Box,
     Button,
     Divider,
     IconButton,
@@ -303,7 +304,7 @@ function MultipleSelectionActionsMenu() {
 
     return (
         <>
-            <Paper
+            <Box
                 sx={{
                     position: {
                         xs: "fixed",
@@ -314,9 +315,9 @@ function MultipleSelectionActionsMenu() {
                         sm: "block",
                     },
                     zIndex: 1000,
-                    borderRadius: 0,
                     bottom: { xs: 0, sm: "auto" },
                     width: { xs: "100%", sm: "auto" },
+                    background: theme.palette.background.paper,
                 }}
             >
                 <Stack
@@ -347,6 +348,7 @@ function MultipleSelectionActionsMenu() {
                             justifyContent={
                                 isSm ? "space-between" : "flex-start"
                             }
+                            spacing={isSm ? 0 : 1}
                             direction="row"
                         >
                             {Object.values(buttonActions).map((action) => (
@@ -379,7 +381,7 @@ function MultipleSelectionActionsMenu() {
                         progress={saveProgress}
                     />
                 </Stack>
-            </Paper>
+            </Box>
             <ConfirmationDialog
                 onCancel={() => setCurrentAction(null)}
                 open={!!currentAction}

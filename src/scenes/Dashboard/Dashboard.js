@@ -21,7 +21,7 @@ import {
 } from "../../redux/Selectors";
 import { tasksStatus, userRoles } from "../../apiConsts";
 import { clearDashboardFilter } from "../../redux/dashboardFilter/DashboardFilterActions";
-import { Fab, Hidden } from "@mui/material";
+import { Divider, Fab, Hidden, Stack } from "@mui/material";
 import ActiveRidersChips from "./components/ActiveRidersChips";
 import GuidedSetupDrawer from "./components/GuidedSetupDrawer";
 import MultipleSelectionActionsMenu from "./components/MultipleSelectionActionsMenu";
@@ -98,15 +98,15 @@ function Dashboard() {
     useEffect(setInitialRoleView, [whoami]);
 
     return (
-        <>
-            <Paper sx={{ marginBottom: 10, maxWidth: 1480 }}>
-                <Hidden mdUp>
-                    <DashboardDetailTabs />
-                </Hidden>
-                <MultipleSelectionActionsMenu />
-                {[userRoles.coordinator, "ALL"].includes(roleView) && (
-                    <ActiveRidersChips />
-                )}
+        <Stack divider={<Divider />}>
+            <Hidden mdUp>
+                <DashboardDetailTabs />
+            </Hidden>
+            <MultipleSelectionActionsMenu />
+            {[userRoles.coordinator, "ALL"].includes(roleView) && (
+                <ActiveRidersChips />
+            )}
+            <Paper sx={{ marginBottom: 10 }}>
                 <TasksGrid
                     modalView={"edit"}
                     hideRelayIcons={roleView === userRoles.rider}
@@ -139,7 +139,7 @@ function Dashboard() {
                 )}
             </Hidden>
             <GuidedSetupDrawer />
-        </>
+        </Stack>
     );
 }
 

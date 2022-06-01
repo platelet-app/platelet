@@ -187,6 +187,7 @@ function ActiveRidersChips() {
     const roleView = useSelector(getRoleView);
     const dashboardFilteredUserRef = useRef(null);
     dashboardFilteredUserRef.current = dashboardFilteredUser;
+    const theme = useTheme();
 
     const dispatch = useDispatch();
 
@@ -295,7 +296,7 @@ function ActiveRidersChips() {
         return <Typography>Sorry, something went wrong.</Typography>;
     }
     return (
-        <React.Fragment>
+        <Box sx={{ background: theme.palette.background.paper }}>
             <ScrollMenu
                 alignItems="center"
                 LeftArrow={
@@ -352,7 +353,7 @@ function ActiveRidersChips() {
                     );
                 })}
             </ScrollMenu>
-        </React.Fragment>
+        </Box>
     );
 }
 
