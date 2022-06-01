@@ -667,7 +667,7 @@ describe("MultipleSelectionActionsMenu", () => {
         });
         mockAllIsIntersecting(true);
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(3);
+            expect(querySpy).toHaveBeenCalledTimes(2);
         });
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         userEvent.click(
