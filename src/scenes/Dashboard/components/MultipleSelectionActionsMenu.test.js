@@ -82,7 +82,7 @@ describe("MultipleSelectionActionsMenu", () => {
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(12);
     });
-    test.only.each`
+    test.each`
         taskStatus
         ${tasksStatus.completed} | ${tasksStatus.droppedOff} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
         ${tasksStatus.active}    | ${tasksStatus.pickedUp}   | ${tasksStatus.new}      | ${tasksStatus.droppedOff}
