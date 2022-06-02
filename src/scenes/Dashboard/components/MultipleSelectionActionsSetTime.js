@@ -9,7 +9,6 @@ function isValidDate(d) {
 
 function MultipleSelectionActionsSetTime({ onChange, onReady }) {
     const [time, setTime] = React.useState(new Date());
-    const [isValid, setIsValid] = React.useState(true);
 
     function handleTimeChange(value) {
         setTime(value);
@@ -18,7 +17,7 @@ function MultipleSelectionActionsSetTime({ onChange, onReady }) {
     useEffect(() => {
         if (!isValidDate(time)) onChange(null);
         else onChange(time);
-    }, [isValid, onChange, time]);
+    }, [onChange, time]);
 
     return (
         <Stack spacing={2} direction="column" divider={<Divider />}>
