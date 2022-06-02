@@ -118,8 +118,8 @@ function MultipleSelectionActionsInformation({ selectedItems, action }) {
                                 >
                                     <TaskCard
                                         priority={item.priority}
-                                        pickUpAddress={item.pickUpAddress}
-                                        dropOffAddress={item.dropOffAddress}
+                                        pickUpLocation={item.pickUpLocation}
+                                        dropOffLocation={item.dropOffLocation}
                                         riderResponsibility={
                                             item.riderResponsibility
                                         }

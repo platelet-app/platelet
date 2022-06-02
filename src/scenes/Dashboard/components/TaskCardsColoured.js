@@ -218,8 +218,8 @@ const TaskCard = React.memo((props) => {
 });
 
 TaskCard.propTypes = {
-    pickUpAddress: PropTypes.object,
-    dropOffAddress: PropTypes.object,
+    pickUpLocation: PropTypes.object,
+    dropOffLocation: PropTypes.object,
     riderResponsibility: PropTypes.string,
     timeOfCall: PropTypes.string,
     priority: PropTypes.string,
