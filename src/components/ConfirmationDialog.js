@@ -27,6 +27,7 @@ function ConfirmationDialog(props) {
                     ) : (
                         <Button
                             data-cy="confirmation-cancel-button"
+                            aria-label="Cancel"
                             onClick={() => {
                                 props.onCancel();
                             }}
@@ -38,6 +39,7 @@ function ConfirmationDialog(props) {
                     {!props.hideOk && (
                         <Button
                             disabled={props.disabled}
+                            aria-label="OK"
                             data-cy="confirmation-ok-button"
                             onClick={() => {
                                 props.onConfirmation();
