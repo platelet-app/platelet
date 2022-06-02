@@ -404,12 +404,13 @@ describe("MultipleSelectionActionsMenu", () => {
         userEvent.type(textBox, assignee.displayName);
         userEvent.click(screen.getByText(assignee.displayName));
         const okButton = screen.getByText("OK");
+        userEvent.click(okButton);
+        expect(okButton).toBeDisabled();
         if (role === userRoles.rider) {
             await waitFor(() => {
                 expect(modelSpy).toHaveBeenCalledTimes(2);
             });
         }
-        userEvent.click(okButton);
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledTimes(
                 role === userRoles.rider ? 4 : 2
@@ -537,11 +538,11 @@ describe("MultipleSelectionActionsMenu", () => {
         expect(buttonToClick).toBeEnabled();
         userEvent.click(buttonToClick);
         const okButton = screen.getByText("OK");
+        userEvent.click(okButton);
         expect(okButton).toBeDisabled();
         await waitFor(() => {
             expect(modelSpy).toHaveBeenCalledTimes(2);
         });
-        userEvent.click(okButton);
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...mockTask,
@@ -677,11 +678,11 @@ describe("MultipleSelectionActionsMenu", () => {
             screen.getByRole("button", { name: "Selection Rejected" })
         );
         const okButton = screen.getByText("OK");
+        userEvent.click(okButton);
         expect(okButton).toBeDisabled();
         await waitFor(() => {
             expect(modelSpy).toHaveBeenCalledTimes(1);
         });
-        userEvent.click(okButton);
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledTimes(1);
         });
@@ -740,7 +741,6 @@ describe("MultipleSelectionActionsMenu", () => {
                 },
             };
             const querySpy = jest.spyOn(DataStore, "query");
-            const modelSpy = jest.spyOn(models.Task, "copyOf");
             render(
                 <>
                     <MultipleSelectionActionsMenu />
@@ -783,11 +783,6 @@ describe("MultipleSelectionActionsMenu", () => {
             const textBox = screen.getByRole("textbox");
             userEvent.type(textBox, assignee.displayName);
             userEvent.click(screen.getByText(assignee.displayName));
-            if (role === userRoles.rider) {
-                await waitFor(() => {
-                    expect(modelSpy).toHaveBeenCalledTimes(1);
-                });
-            }
             expect(okButton).toBeEnabled();
             userEvent.click(screen.getByTestId("CancelIcon"));
             await waitFor(() => {
@@ -795,4 +790,62 @@ describe("MultipleSelectionActionsMenu", () => {
             });
         }
     );
+
+    it.skip("disables the confirmation button if the time is invalid", async () => {
+        // skipped because for some reason the date picker is read only when used in jest
+        global.Date = RealDate;
+        const mockTask = await DataStore.save(
+            new models.Task({ status: tasksStatus.new })
+        );
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 1,
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(
+            <>
+                <MultipleSelectionActionsMenu />
+                <TasksGridColumn
+                    title={mockTask.status}
+                    taskKey={[mockTask.status]}
+                />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        userEvent.click(screen.getByRole("button", { name: "Select All" }));
+        expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(3);
+        const buttonToClick = screen.getByRole("button", {
+            name: "Selection Cancelled",
+        });
+        expect(buttonToClick).toBeEnabled();
+        userEvent.click(buttonToClick);
+        const dateBox = screen.getByRole("textbox");
+        const okButton = screen.getByText("OK");
+        expect(okButton).toBeEnabled();
+        userEvent.type(dateBox, "invalid date");
+        await waitFor(() => {
+            expect(okButton).toBeDisabled();
+        });
+    });
 });

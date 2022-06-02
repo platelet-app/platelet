@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import PropTypes from "prop-types";
+import React, { useRef, useState } from "react";
 import * as selectionModeActions from "../../../redux/selectionMode/selectionModeActions";
 import { useTheme } from "@mui/material/styles";
 import Menu from "@mui/material/Menu";
@@ -11,7 +10,6 @@ import {
     Button,
     Divider,
     IconButton,
-    Paper,
     Stack,
     ToggleButton,
     useMediaQuery,
@@ -27,140 +25,25 @@ import {
     selectedItemsSelector,
 } from "../../../redux/Selectors";
 import { tasksStatus } from "../../../apiConsts";
-import ConfirmationDialog from "../../../components/ConfirmationDialog";
-import MultipleSelectionActionsAssignUser from "./MultipleSelectionActionsAssignUser";
 import { DataStore } from "aws-amplify";
-import MultipleSelectionActionsSetTime from "./MultipleSelectionActionsSetTime";
-import MultipleSelectionActionsInformation from "./MultipleSelectionActionsInformation";
+import MultipleSelectionActionsDialog from "./MultipleSelectionActionsDialog";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import _ from "lodash";
 
-const actions = {
+export const actions = {
     assignUser: "Assign User",
     markPickedUp: "Picked Up",
     markDelivered: "Delivered",
     markRiderHome: "Rider Home",
 };
-const dotActions = {
+export const dotActions = {
     markCancelled: "Cancelled",
     markRejected: "Rejected",
-};
-
-const getKey = (action) => {
-    switch (action) {
-        case actions.assignUser:
-            return null;
-        case actions.markPickedUp:
-            return "timePickedUp";
-        case actions.markDelivered:
-            return "timeDroppedOff";
-        case actions.markRiderHome:
-            return "timeRiderHome";
-        case dotActions.markCancelled:
-            return "timeCancelled";
-        case dotActions.markRejected:
-            return "timeRejected";
-        default:
-    }
 };
 
 const initialState = {
     mouseX: null,
     mouseY: null,
-};
-
-const DialogActions = ({
-    onChange,
-    items,
-    action,
-    onCancel,
-    open,
-    onConfirmation,
-}) => {
-    const [isReady, setIsReady] = useState(false);
-    const isSm = useMediaQuery(useTheme().breakpoints.down("sm"));
-    const sx = {
-        padding: 2,
-        minWidth: { xs: 0, sm: 500 },
-        minHeight: 300,
-    };
-
-    const handleReady = (v) => {
-        console.log(v);
-        setIsReady(v);
-    };
-    if (action === actions.assignUser) {
-        return (
-            <ConfirmationDialog
-                onCancel={onCancel}
-                disabled={!isReady}
-                open={open}
-                fullScreen={isSm}
-                onConfirmation={onConfirmation}
-            >
-                <Paper sx={sx}>
-                    <Stack divider={<Divider />} direction="column" spacing={2}>
-                        <MultipleSelectionActionsInformation
-                            selectedItems={items}
-                            action={action}
-                        />
-                        <MultipleSelectionActionsAssignUser
-                            onReady={handleReady}
-                            onChange={onChange}
-                            selectedItems={items}
-                        />
-                    </Stack>
-                </Paper>
-            </ConfirmationDialog>
-        );
-    } else if (
-        [
-            actions.markPickedUp,
-            actions.markDelivered,
-            actions.markRiderHome,
-            dotActions.markCancelled,
-            dotActions.markRejected,
-        ].includes(action)
-    ) {
-        return (
-            <ConfirmationDialog
-                onCancel={onCancel}
-                onReady={(v) => setIsReady(v)}
-                disabled={!isReady}
-                open={open}
-                fullScreen={isSm}
-                onConfirmation={onConfirmation}
-            >
-                <Paper sx={sx}>
-                    <Stack divider={<Divider />} direction="column" spacing={2}>
-                        <MultipleSelectionActionsInformation
-                            selectedItems={items}
-                            action={action}
-                        />
-                        <MultipleSelectionActionsSetTime
-                            selectedItems={items}
-                            onReady={handleReady}
-                            onChange={onChange}
-                            timeKey={getKey(action)}
-                        />
-                    </Stack>
-                </Paper>
-            </ConfirmationDialog>
-        );
-    }
-    return null;
-};
-
-DialogActions.propTypes = {
-    onChange: PropTypes.func,
-    items: PropTypes.object,
-    action: PropTypes.string,
-};
-
-DialogActions.defaultProps = {
-    onChange: () => {},
-    items: [],
-    action: "",
 };
 
 function MultipleSelectionActionsMenu() {
@@ -173,7 +56,6 @@ function MultipleSelectionActionsMenu() {
     const selectedItems = selectedItemsAll[tabIndex];
     const [currentAction, setCurrentAction] = useState(null);
     const [saveProgress, setSaveProgress] = useState(null);
-    const saveData = useRef([]);
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
     const [errorState, setErrorState] = useState(null);
@@ -309,14 +191,14 @@ function MultipleSelectionActionsMenu() {
         setCurrentAction(action);
     }
 
-    function saveModels() {
+    function saveModels(models) {
         setErrorState(null);
         let count = 0;
-        const promises = saveData.current.map((model) =>
+        const promises = models.map((model) =>
             DataStore.save(model)
                 .then(() => {
                     count++;
-                    setSaveProgress((count * 100) / saveData.current.length);
+                    setSaveProgress((count * 100) / models.length);
                 })
                 .catch((error) => {
                     setErrorState(error);
@@ -326,13 +208,12 @@ function MultipleSelectionActionsMenu() {
         return Promise.all(promises);
     }
 
-    async function handleConfirmation() {
+    async function handleConfirmation(models) {
         setCurrentAction(null);
         dispatch(selectionActions.setSelectionActionsPending(true));
-        await saveModels();
+        await saveModels(models);
         dispatch(selectionModeActions.clearItems(tabIndex));
         dispatch(selectionActions.setSelectionActionsPending(false));
-        saveData.current = [];
     }
 
     const dispatch = useDispatch();
@@ -430,13 +311,12 @@ function MultipleSelectionActionsMenu() {
                     />
                 </Stack>
             </Box>
-            <DialogActions
+            <MultipleSelectionActionsDialog
                 onCancel={() => setCurrentAction(null)}
                 open={currentAction !== null}
                 items={selectedItems}
                 action={currentAction}
                 onConfirmation={handleConfirmation}
-                onChange={(models) => (saveData.current = models)}
             />
         </>
     );
