@@ -73,7 +73,10 @@ const MultipleSelectionActionsDialog = ({
             const generatedModels = await generateMultipleTaskTimeModels(
                 items,
                 getKey(action),
-                saveData.current
+                saveData.current,
+                assignees.items
+                    ? assignees.items.filter((a) => a.role === userRoles.rider)
+                    : []
             );
             onConfirmation(generatedModels);
         }

@@ -544,11 +544,7 @@ describe("MultipleSelectionActionsMenu", () => {
         });
         expect(screen.queryByTestId("CheckBoxIcon")).toBeNull();
         await waitFor(() => {
-            // not sure what the difference is here
-            // seems like taskAssignees isn't getting refreshed when cancelled/rejected, but it does in the browser
-            expect(querySpy).toHaveBeenCalledTimes(
-                ["timeRejected", "timeCancelled"].includes(timeToSet) ? 4 : 6
-            );
+            expect(querySpy).toHaveBeenCalledTimes(4);
         });
         expect(
             await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
@@ -559,7 +555,7 @@ describe("MultipleSelectionActionsMenu", () => {
         timeToSet
         ${"assignUser"} | ${"setTime"}
     `("shows the selection count", async ({ action }) => {
-        const mockTasks = await Promise.all(
+        await Promise.all(
             _.range(0, 10).map((i) =>
                 DataStore.save(new models.Task({ status: tasksStatus.new }))
             )
