@@ -54,7 +54,6 @@ function LocationDetailsPanel(props) {
                 task.id
             ).subscribe(({ opType, element }) => {
                 if (opType === "UPDATE") {
-                    debugger;
                     const locId = element[`${props.locationKey}Id`];
                     if ((!state && locId) || (state && locId !== state.id)) {
                         DataStore.query(models.Location, locId).then((result) =>

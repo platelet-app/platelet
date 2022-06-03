@@ -9,6 +9,9 @@ import _ from "lodash";
 import userEvent from "@testing-library/user-event";
 import { DataStore } from "aws-amplify";
 import MultipleSelectionActionsMenu from "./MultipleSelectionActionsMenu";
+import { DashboardDetailTabs } from "./DashboardDetailTabs";
+import TaskFilterTextField from "../../../components/TaskFilterTextfield";
+import ActiveRidersChips from "./ActiveRidersChips";
 
 describe("MultipleSelectionActionsMenu", () => {
     beforeEach(() => {
@@ -877,6 +880,104 @@ describe("MultipleSelectionActionsMenu", () => {
             });
         }
     );
+
+    test("the checkboxes are disabled when filters are applied", async () => {
+        const mockTask = await DataStore.save(
+            new models.Task({ status: tasksStatus.active })
+        );
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        const mockRider = await DataStore.save(
+            new models.User({
+                roles: [userRoles.rider],
+                displayName: "Test Rider",
+            })
+        );
+        const mockAssignments = [
+            await DataStore.save(
+                new models.TaskAssignee({
+                    task: mockTask,
+                    assignee: mockRider,
+                    role: userRoles.rider,
+                })
+            ),
+        ];
+
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 0,
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: mockAssignments,
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(
+            <>
+                <TaskFilterTextField />
+                <ActiveRidersChips />
+                <MultipleSelectionActionsMenu />
+                <TasksGridColumn
+                    title={mockTask.status}
+                    taskKey={[mockTask.status]}
+                />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        const searchBox = screen.getByRole("textbox", { name: "Filter tasks" });
+        const headerCheckbox = screen.getByTestId(
+            `${mockTask.status}-select-all`
+        );
+        expect(headerCheckbox).toBeEnabled();
+        userEvent.type(searchBox, "test");
+        await waitFor(() => {
+            expect(
+                screen.getByRole("button", { name: "Select All" })
+            ).toBeDisabled();
+        });
+        expect(
+            screen.queryByTestId(`${mockTask.status}-select-all`)
+        ).toBeNull();
+        fireEvent.change(searchBox, { target: { value: "" } });
+        await waitFor(() => {
+            expect(
+                screen.getByRole("button", { name: "Select All" })
+            ).toBeEnabled();
+        });
+        await waitFor(() => {
+            expect(headerCheckbox).toBeEnabled();
+        });
+        userEvent.click(await screen.findByText(mockRider.displayName));
+        await waitFor(() => {
+            expect(
+                screen.getByRole("button", { name: "Select All" })
+            ).toBeDisabled();
+        });
+        await waitFor(() => {
+            expect(headerCheckbox).toBeEnabled();
+        });
+        userEvent.click(await screen.findByText(mockRider.displayName));
+        await waitFor(() => {
+            expect(
+                screen.getByRole("button", { name: "Select All" })
+            ).toBeEnabled();
+        });
+    });
 
     it.skip("disables the confirmation button if the time is invalid", async () => {
         // skipped because for some reason the date picker is read only when used in jest

@@ -46,6 +46,9 @@ function TaskFilterTextField(props) {
                 onPressEscape={() => dispatch(clearDashboardFilter())}
                 color={"secondary"}
                 className={classes.root}
+                inputProps={{
+                    "aria-label": "Filter tasks",
+                }}
                 InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">
