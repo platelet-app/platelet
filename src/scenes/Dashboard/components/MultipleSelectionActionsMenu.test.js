@@ -611,7 +611,7 @@ describe("MultipleSelectionActionsMenu", () => {
             );
         }
         expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(12);
-        expect(screen.getByText(/10 items/)).toBeInTheDocument();
+        expect(screen.getAllByText(/10 items/)).toHaveLength(2);
     });
 
     test("throwing an error on save", async () => {
