@@ -8,6 +8,7 @@ import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import { useDispatch, useSelector } from "react-redux";
 import {
+    dashboardFilterTermSelector,
     dashboardTabIndexSelector,
     selectedItemsSelector,
 } from "../../../redux/Selectors";
@@ -29,6 +30,7 @@ function TaskGridColumnHeader(props) {
     const selectedItemsAll = useSelector(selectedItemsSelector);
     const tabIndex = useSelector(dashboardTabIndexSelector);
     const dispatch = useDispatch();
+    const dashboardFilter = useSelector(dashboardFilterTermSelector);
 
     const classes = useStyles();
 
@@ -91,7 +93,7 @@ function TaskGridColumnHeader(props) {
             >
                 {props.title}
             </Typography>
-            {Object.values(props.tasks).length > 0 && (
+            {!!!dashboardFilter && Object.values(props.tasks).length > 0 && (
                 <Box sx={{ height: 0 }}>
                     <IconButton
                         data-testId={`${props.title}-select-all`}
