@@ -2,7 +2,7 @@ import React from "react";
 import { render } from "../../../test-utils";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import TasksGridColumn from "./TasksGridColumn";
-import { tasksStatus, userRoles } from "../../../apiConsts";
+import { commentVisibility, tasksStatus, userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
 import { mockAllIsIntersecting } from "react-intersection-observer/test-utils";
 import _ from "lodash";
@@ -769,6 +769,111 @@ describe("MultipleSelectionActionsMenu", () => {
             userEvent.click(screen.getByTestId("CancelIcon"));
             await waitFor(() => {
                 expect(okButton).toBeDisabled();
+            });
+        }
+    );
+
+    test.each`
+        status
+        ${tasksStatus.rejected} | ${tasksStatus.cancelled}
+    `(
+        "adds a comment reason if the rejected or cancelled",
+        async ({ status }) => {
+            const reason = "This is a reason";
+            const mockTask = await DataStore.save(
+                new models.Task({ status: tasksStatus.new })
+            );
+            const mockTask2 = await DataStore.save(
+                new models.Task({ status: tasksStatus.new })
+            );
+            const mockWhoami = await DataStore.save(
+                new models.User({
+                    roles: [userRoles.coordinator],
+                    displayName: "Someone Person",
+                })
+            );
+            const mockComment = new models.Comment({
+                parentId: mockTask.id,
+                visibility: commentVisibility.everyone,
+                body: reason,
+                author: mockWhoami,
+            });
+            const mockComment2 = new models.Comment({
+                parentId: mockTask.id,
+                visibility: commentVisibility.everyone,
+                body: reason,
+                author: mockWhoami,
+            });
+            const preloadedState = {
+                roleView: "ALL",
+                dashboardTabIndex: 0,
+                whoami: { user: mockWhoami },
+                taskAssigneesReducer: {
+                    items: [],
+                    ready: true,
+                    isSynced: true,
+                },
+            };
+
+            const querySpy = jest.spyOn(DataStore, "query");
+            const saveSpy = jest.spyOn(DataStore, "save");
+            render(
+                <>
+                    <MultipleSelectionActionsMenu />
+                    <TasksGridColumn
+                        title={tasksStatus.new}
+                        taskKey={[tasksStatus.new]}
+                    />
+                </>,
+                {
+                    preloadedState,
+                }
+            );
+            await waitFor(() => {
+                expect(querySpy).toHaveBeenCalledTimes(1);
+            });
+            mockAllIsIntersecting(true);
+            await waitFor(() => {
+                expect(querySpy).toHaveBeenCalledTimes(3);
+            });
+            const label =
+                status === tasksStatus.rejected ? "Rejected" : "Cancelled";
+            userEvent.click(screen.getByRole("button", { name: "Select All" }));
+            userEvent.click(
+                screen.getByRole("button", { name: `Selection ${label}` })
+            );
+            const textBox = screen.getByRole("textbox", {
+                name: "Enter a reason",
+            });
+            userEvent.type(textBox, reason);
+            userEvent.click(screen.getByRole("button", { name: "OK" }));
+            const key =
+                status === tasksStatus.rejected
+                    ? "timeRejected"
+                    : "timeCancelled";
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                    status,
+                    [key]: expect.any(String),
+                });
+            });
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask2,
+                    status,
+                    [key]: expect.any(String),
+                });
+            });
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith(
+                    expect.objectContaining(_.omit(mockComment, "id"))
+                );
+            });
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith(
+                    expect.objectContaining(_.omit(mockComment2, "id"))
+                );
             });
         }
     );

@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { Divider, Paper, Stack, useMediaQuery } from "@mui/material";
+import * as models from "../../../models";
+import { Divider, Paper, Stack, TextField, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import {
     actions,
@@ -11,10 +12,12 @@ import MultipleSelectionActionsInformation from "./MultipleSelectionActionsInfor
 import MultipleSelectionActionsAssignUser from "./MultipleSelectionActionsAssignUser";
 import MultipleSelectionActionsSetTime from "./MultipleSelectionActionsSetTime";
 import { useSelector } from "react-redux";
-import { taskAssigneesSelector } from "../../../redux/Selectors";
+import { getWhoami, taskAssigneesSelector } from "../../../redux/Selectors";
 import generateMultipleAssignmentModels from "../utilities/generateMultipleAssignmentModels";
 import { userRoles } from "../../../apiConsts";
 import generateMultipleTaskTimeModels from "../utilities/generateMultipleTaskTimeModels";
+import generateMultipleTaskComments from "../utilities/generateMultipleTaskComments";
+import { DataStore } from "aws-amplify";
 
 const getKey = (action) => {
     switch (action) {
@@ -42,6 +45,8 @@ const MultipleSelectionActionsDialog = ({
     onConfirmation,
 }) => {
     const [isDisabled, setIsDisabled] = useState(true);
+    const [reasonBody, setReasonBody] = useState("");
+    const whoami = useSelector(getWhoami);
     const saveData = useRef(null);
     const assignees = useSelector(taskAssigneesSelector);
     const isSm = useMediaQuery(useTheme().breakpoints.down("sm"));
@@ -78,8 +83,21 @@ const MultipleSelectionActionsDialog = ({
                     ? assignees.items.filter((a) => a.role === userRoles.rider)
                     : []
             );
-            onConfirmation(generatedModels);
+            let generatedComments = [];
+            if (reasonBody) {
+                const whoamiResult = await DataStore.query(
+                    models.User,
+                    whoami.id
+                );
+                generatedComments = await generateMultipleTaskComments(
+                    items,
+                    reasonBody,
+                    whoamiResult
+                );
+            }
+            onConfirmation([...generatedModels, ...generatedComments]);
         }
+        setReasonBody("");
 
         setIsDisabled(false);
     };
@@ -136,6 +154,20 @@ const MultipleSelectionActionsDialog = ({
                             selectedItems={items}
                             onChange={handleChange}
                         />
+                        {[
+                            dotActions.markRejected,
+                            dotActions.markCancelled,
+                        ].includes(action) && (
+                            <TextField
+                                inputProps={{
+                                    "aria-label": "Enter a reason",
+                                }}
+                                multiline
+                                placeholder="Enter a reason"
+                                value={reasonBody}
+                                onChange={(e) => setReasonBody(e.target.value)}
+                            />
+                        )}
                     </Stack>
                 </Paper>
             </ConfirmationDialog>
