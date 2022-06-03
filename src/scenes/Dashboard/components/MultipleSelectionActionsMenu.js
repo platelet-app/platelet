@@ -257,6 +257,14 @@ function MultipleSelectionActionsMenu() {
                     background: theme.palette.background.paper,
                 }}
             >
+                {isSm && Object.keys(selectedItems).length > 0 && (
+                    <Typography sx={{ margin: 0.5 }} fontWeight="bold">
+                        You have {Object.keys(selectedItems).length} selected{" "}
+                        {Object.keys(selectedItems).length > 1
+                            ? "items"
+                            : "item"}
+                    </Typography>
+                )}
                 <Stack
                     sx={{ minHeight: 50 }}
                     alignItems="center"
