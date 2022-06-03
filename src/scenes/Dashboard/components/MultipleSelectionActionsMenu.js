@@ -1,5 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as selectionModeActions from "../../../redux/selectionMode/selectionModeActions";
+import { setDashboardFilteredUser } from "../../../redux/Actions";
 import { useTheme } from "@mui/material/styles";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -13,6 +14,7 @@ import {
     Stack,
     ToggleButton,
     useMediaQuery,
+    Typography,
 } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
@@ -20,6 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import * as selectionActions from "../../../redux/selectionMode/selectionModeActions";
 import {
     availableSelectionItemsSelector,
+    dashboardFilteredUserSelector,
     dashboardFilterTermSelector,
     dashboardTabIndexSelector,
     selectedItemsSelector,
@@ -53,12 +56,15 @@ function MultipleSelectionActionsMenu() {
     const tabIndex = useSelector(dashboardTabIndexSelector);
     const dashboardFilter = useSelector(dashboardFilterTermSelector);
     const [state, setState] = useState(initialState);
-    const selectedItems = selectedItemsAll[tabIndex];
+    const selectedItems = selectedItemsAll[tabIndex] || {};
     const [currentAction, setCurrentAction] = useState(null);
     const [saveProgress, setSaveProgress] = useState(null);
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMd = useMediaQuery(theme.breakpoints.down("md"));
     const [errorState, setErrorState] = useState(null);
+    const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
+    const availableItemsWithoutFilterRef = useRef(availableSelectionItems);
 
     const handleClick = (event) => {
         event.preventDefault();
@@ -71,6 +77,13 @@ function MultipleSelectionActionsMenu() {
         e.preventDefault();
         setState(initialState);
     };
+
+    useEffect(() => {
+        if (!dashboardFilteredUser) {
+            // keeps the icon checked if all items were selected
+            availableItemsWithoutFilterRef.current = availableSelectionItems;
+        }
+    }, [dashboardFilteredUser, availableSelectionItems]);
 
     function checkButtonDisabled(action) {
         if (!selectedItems) return true;
@@ -125,13 +138,18 @@ function MultipleSelectionActionsMenu() {
             );
         }
     }
-
     function getCheckBox() {
         if (!selectedItems) return <CheckBoxOutlineBlankIcon />;
         const values = Object.values(selectedItems);
         if (availableSelectionItems.length === 0) {
             return <CheckBoxOutlineBlankIcon />;
         } else if (values && values.length === availableSelectionItems.length) {
+            return <CheckBoxIcon />;
+        } else if (
+            values &&
+            dashboardFilteredUser &&
+            values.length === availableItemsWithoutFilterRef.current.length
+        ) {
             return <CheckBoxIcon />;
         } else if (values && values.length > 0) {
             return <IndeterminateCheckBoxIcon />;
@@ -176,7 +194,7 @@ function MultipleSelectionActionsMenu() {
                             key={action}
                             onClick={(e) => {
                                 handleClose(e);
-                                setCurrentAction(action);
+                                handleActionClick(action);
                             }}
                         >
                             {action}
@@ -189,6 +207,7 @@ function MultipleSelectionActionsMenu() {
 
     function handleActionClick(action) {
         setCurrentAction(action);
+        if (dashboardFilteredUser) dispatch(setDashboardFilteredUser(null));
     }
 
     function saveModels(models) {
@@ -218,7 +237,7 @@ function MultipleSelectionActionsMenu() {
 
     const dispatch = useDispatch();
 
-    const buttonActions = isSm ? actions : { ...actions, ...dotActions };
+    const buttonActions = isMd ? actions : { ...actions, ...dotActions };
 
     return (
         <>
@@ -241,11 +260,6 @@ function MultipleSelectionActionsMenu() {
                 <Stack
                     sx={{ minHeight: 50 }}
                     alignItems="center"
-                    divider={
-                        isSm ? null : (
-                            <Divider orientation="vertical" flexItem />
-                        )
-                    }
                     spacing={2}
                     direction="row"
                 >
@@ -257,6 +271,7 @@ function MultipleSelectionActionsMenu() {
                             onClick={handleOnClickCheck}
                             disabled={
                                 !!dashboardFilter ||
+                                !!dashboardFilteredUser ||
                                 Object.values(availableSelectionItems)
                                     .length === 0
                             }
@@ -270,6 +285,7 @@ function MultipleSelectionActionsMenu() {
                             justifyContent={
                                 isSm ? "space-between" : "flex-start"
                             }
+                            alignItems="center"
                             spacing={isSm ? 0 : 1}
                             direction="row"
                         >
@@ -287,9 +303,18 @@ function MultipleSelectionActionsMenu() {
                                     {action}
                                 </Button>
                             ))}
-                            {isSm && dotsMenu}
-                            <Divider />
+                            {isMd && dotsMenu}
                         </Stack>
+                    )}
+                    {!isSm && <Divider orientation="vertical" flexItem />}
+                    {!isSm && Object.keys(selectedItems).length !== 0 && (
+                        <Typography fontWeight="bold">
+                            {Object.keys(selectedItems).length}{" "}
+                            {Object.keys(selectedItems).length === 1
+                                ? "item"
+                                : "items"}{" "}
+                            selected
+                        </Typography>
                     )}
                     <LoadingSpinner
                         sx={{
