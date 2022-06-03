@@ -7,7 +7,7 @@ function isValidDate(d) {
     return d instanceof Date && !isNaN(d);
 }
 
-function MultipleSelectionActionsSetTime({ onChange, onReady }) {
+function MultipleSelectionActionsSetTime({ onChange }) {
     const [time, setTime] = React.useState(new Date());
 
     function handleTimeChange(value) {
@@ -20,31 +20,24 @@ function MultipleSelectionActionsSetTime({ onChange, onReady }) {
     }, [onChange, time]);
 
     return (
-        <Stack spacing={2} direction="column" divider={<Divider />}>
-            <DateTimePicker
-                value={time}
-                inputFormat={"dd/MM/yyyy HH:mm"}
-                openTo="hours"
-                onChange={handleTimeChange}
-                renderInput={(params) => (
-                    <TextField variant={"standard"} fullWidth {...params} />
-                )}
-            />
-        </Stack>
+        <DateTimePicker
+            value={time}
+            inputFormat={"dd/MM/yyyy HH:mm"}
+            openTo="hours"
+            onChange={handleTimeChange}
+            renderInput={(params) => (
+                <TextField variant={"standard"} fullWidth {...params} />
+            )}
+        />
     );
 }
 
 MultipleSelectionActionsSetTime.propTypes = {
-    selectedItems: PropTypes.object,
-    timeKey: PropTypes.string.isRequired,
     onChange: PropTypes.func,
-    onReady: PropTypes.func,
 };
 
 MultipleSelectionActionsSetTime.defaultProps = {
-    selectedItems: [],
     onChange: () => {},
-    onReady: () => {},
 };
 
 export default MultipleSelectionActionsSetTime;
