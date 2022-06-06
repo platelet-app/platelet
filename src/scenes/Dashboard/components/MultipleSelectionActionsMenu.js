@@ -207,7 +207,6 @@ function MultipleSelectionActionsMenu() {
 
     function handleActionClick(action) {
         setCurrentAction(action);
-        if (dashboardFilteredUser) dispatch(setDashboardFilteredUser(null));
     }
 
     function saveModels(models) {
