@@ -1,3 +1,4 @@
+import { DataStore } from "aws-amplify";
 import _ from "lodash";
 import { userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
@@ -9,7 +10,11 @@ async function generateMultipleAssignmentModels(
     riders,
     allAssignees
 ) {
-    if (_.isEmpty(coordinators) && _.isEmpty(riders)) {
+    if (
+        !selectedItems ||
+        _.isEmpty(selectedItems) ||
+        (_.isEmpty(coordinators) && _.isEmpty(riders))
+    ) {
         return;
     }
     const ridersMapped = Object.values(selectedItems).map((task) => {
@@ -43,8 +48,15 @@ async function generateMultipleAssignmentModels(
     });
     let newTasks = [];
     if (ridersMapped.flat().length > 0) {
+        const filteredTasks = await DataStore.query(models.Task, (task) =>
+            task.or((task) =>
+                Object.values(selectedItems)
+                    .map((t) => t.id)
+                    .reduce((task, id) => task.id("eq", id), task)
+            )
+        );
         newTasks = await Promise.all(
-            Object.values(selectedItems).map(async (task) => {
+            filteredTasks.map(async (task) => {
                 const status = await determineTaskStatus(
                     task,
                     ridersMapped.flat()

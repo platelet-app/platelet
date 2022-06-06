@@ -547,7 +547,7 @@ describe("MultipleSelectionActionsMenu", () => {
         });
         expect(screen.queryByTestId("CheckBoxIcon")).toBeNull();
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
+            expect(querySpy).toHaveBeenCalledTimes(5);
         });
         expect(
             await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
