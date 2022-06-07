@@ -1,66 +1,168 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { alpha } from "@mui/material";
+import { Link, useHistory, useLocation } from "react-router-dom";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import TaskCard from "./TaskCardsColoured";
+import * as selectionActions from "../../../redux/selectionMode/selectionModeActions";
 import { encodeUUID } from "../../../utilities";
 import PropTypes from "prop-types";
-import { Box, Grow, Skeleton } from "@mui/material";
+import { Box, Grow, Skeleton, ToggleButton } from "@mui/material";
 import { makeStyles, useTheme } from "@mui/styles";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
 import { commentVisibility, userRoles } from "../../../apiConsts";
 import * as models from "../../../models/index";
 import { DataStore } from "aws-amplify";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
+    dashboardTabIndexSelector,
     dataStoreModelSyncedStatusSelector,
     getRoleView,
     getWhoami,
+    selectedItemsSelector,
     taskAssigneesSelector,
 } from "../../../redux/Selectors";
 import { useInView } from "react-intersection-observer";
+import useLongPress from "../../../hooks/useLongPress";
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        position: "relative",
-        "&:hover": {
-            "& $dots": {
-                display: "inline",
+const useStyles = (isSelected) =>
+    makeStyles((theme) => ({
+        root: {
+            position: "relative",
+            "&:hover": {
+                "& $dots": {
+                    display: isSelected ? "none" : "inline",
+                },
+                "& $select": {
+                    display: "inline",
+                },
+                "& $overlay": {
+                    display: "inline",
+                    [theme.breakpoints.down("sm")]: {
+                        display: isSelected ? "inline" : "none",
+                    },
+                },
             },
+            padding: 1,
+            width: "100%",
+            cursor: "context-menu",
         },
-        padding: 1,
-        width: "100%",
-        cursor: "context-menu",
-    },
-    dots: () => {
-        const background =
-            theme.palette.mode === "dark"
-                ? "radial-gradient(circle, rgba(64,64,64,1) 30%, rgba(0,0,0,0) 100%)"
-                : `radial-gradient(circle, ${theme.palette.background.paper} 30%, rgba(0,0,0,0) 100%)`;
-        return {
-            background: background,
-            borderRadius: "1em",
+        overlay: {
             position: "absolute",
-            bottom: 4,
-            right: 4,
-            display: "none",
-            zIndex: 90,
-        };
-    },
-}));
+            display: isSelected ? "inline" : "none",
+            top: 0,
+            left: 0,
+            pointerEvents: "none",
+            background: isSelected
+                ? alpha(theme.palette.primary.main, 0.3)
+                : alpha(theme.palette.background.paper, 0.3),
+            width: "100%",
+            height: "100%",
+        },
+        dots: () => {
+            const background =
+                theme.palette.mode === "dark"
+                    ? "radial-gradient(circle, rgba(64,64,64,1) 30%, rgba(0,0,0,0) 100%)"
+                    : `radial-gradient(circle, ${theme.palette.background.paper} 30%, rgba(0,0,0,0) 100%)`;
+            return {
+                background: background,
+                borderRadius: "1em",
+                position: "absolute",
+                bottom: 4,
+                right: 4,
+                display: "none",
+                zIndex: 90,
+            };
+        },
+        select: () => {
+            const background =
+                theme.palette.mode === "dark"
+                    ? "radial-gradient(circle, rgba(64,64,64,1) 30%, rgba(0,0,0,0) 100%)"
+                    : `radial-gradient(circle, ${theme.palette.background.paper} 30%, rgba(0,0,0,0) 100%)`;
+            return {
+                background: isSelected
+                    ? theme.palette.background.paper
+                    : background,
+                margin: 2,
+                borderRadius: "1em",
+                position: "absolute",
+                bottom: 4,
+                left: 4,
+                display: isSelected ? "inline" : "none",
+                zIndex: 90,
+            };
+        },
+    }));
+
+const ItemWrapper = ({
+    children,
+    isSm,
+    location,
+    taskId,
+    handleSelectItem,
+}) => {
+    const handleCtrlClick = (e) => {
+        if (e.ctrlKey) {
+            e.preventDefault();
+            handleSelectItem();
+        }
+    };
+    const history = useHistory();
+    const longPressEvent = useLongPress();
+    function handleClick(e) {
+        history.push({
+            pathname: `/task/${encodeUUID(taskId)}`,
+            state: { background: location },
+        });
+    }
+
+    if (isSm)
+        return (
+            <Box {...longPressEvent(handleSelectItem)} onClick={handleClick}>
+                {children}
+            </Box>
+        );
+    else
+        return (
+            <Link
+                onClick={handleCtrlClick}
+                style={{ textDecoration: "none" }}
+                to={{
+                    pathname: `/task/${encodeUUID(taskId)}`,
+                    state: { background: location },
+                }}
+            >
+                {children}
+            </Link>
+        );
+};
+
+function TaskItemWrapper(props) {
+    const location = useLocation();
+    return <TaskItem {...props} location={location} />;
+}
 
 function TaskItem(props) {
-    const classes = useStyles();
     const whoami = useSelector(getWhoami);
     const { task } = props;
     const [assignees, setAssignees] = useState([]);
     const [assignedRiders, setAssignedRiders] = useState([]);
     const [visibility, setVisibility] = useState(false);
     const [commentCount, setCommentCount] = useState(0);
+    const [isSelected, setIsSelected] = useState(false);
     const commentObserver = useRef({ unsubscribe: () => {} });
     const roleView = useSelector(getRoleView);
     const allAssignees = useSelector(taskAssigneesSelector);
     const commentModelSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     ).Comment;
+    const tabIndex = useSelector(dashboardTabIndexSelector);
+    const selectedItems = useSelector(selectedItemsSelector);
+    const dispatch = useDispatch();
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("md"));
+    const classes = useStyles(isSelected)();
 
     const { ref, inView, entry } = useInView({
         threshold: 0,
@@ -71,6 +173,33 @@ function TaskItem(props) {
             setVisibility(true);
         }
     }, [inView]);
+
+    function calculateIsSelected() {
+        const itemsTab = selectedItems[tabIndex];
+        let result = false;
+        if (itemsTab) {
+            result = Object.values(itemsTab)
+                .map((t) => t.id)
+                .includes(task.id);
+        }
+        setIsSelected(result);
+    }
+    useEffect(calculateIsSelected, [selectedItems, tabIndex]);
+
+    function handleSelectItem(e) {
+        if (isSelected) {
+            dispatch(selectionActions.unselectItem(task.id, tabIndex));
+        } else {
+            dispatch(selectionActions.selectItem(task, tabIndex));
+        }
+    }
+
+    function addItemToAvailableSelection() {
+        dispatch(selectionActions.addToAvailableItems(task));
+        return () =>
+            dispatch(selectionActions.removeFromAvailableItems(task.id));
+    }
+    useEffect(addItemToAvailableSelection, [task]);
 
     async function getAssignees() {
         if (!visibility || !roleView || !props.task) return;
@@ -152,17 +281,14 @@ function TaskItem(props) {
 
     useEffect(() => () => commentObserver.current.unsubscribe(), []);
 
-    const location = useLocation();
-
     const contents = visibility ? (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>
-            <Box className={classes.root}>
-                <Link
-                    style={{ textDecoration: "none" }}
-                    to={{
-                        pathname: `/task/${encodeUUID(props.taskUUID)}`,
-                        state: { background: location },
-                    }}
+            <Box data-testId="task-item-parent" className={classes.root}>
+                <ItemWrapper
+                    isSm={isSm}
+                    location={props.location}
+                    taskId={task.id}
+                    handleSelectItem={handleSelectItem}
                 >
                     <TaskCard
                         title={"Task"}
@@ -178,15 +304,35 @@ function TaskItem(props) {
                             .join(", ")}
                         commentCount={commentCount}
                     />
-                </Link>
-                <div className={classes.dots}>
-                    <TaskContextMenu
-                        disableDeleted={props.deleteDisabled}
-                        disableRelay={!!props.relayNext}
-                        assignedRiders={assignedRiders}
-                        task={task}
-                    />
-                </div>
+                </ItemWrapper>
+                {!isSm && (
+                    <>
+                        <div className={classes.dots}>
+                            <TaskContextMenu
+                                disableDeleted={props.deleteDisabled}
+                                disableRelay={!!props.relayNext}
+                                assignedRiders={assignedRiders}
+                                task={task}
+                            />
+                        </div>
+                        <div className={classes.select}>
+                            <ToggleButton
+                                data-testId="task-item-select"
+                                aria-label="select task"
+                                sx={{ border: 0 }}
+                                size="small"
+                                onClick={handleSelectItem}
+                            >
+                                {isSelected ? (
+                                    <CheckBoxIcon />
+                                ) : (
+                                    <CheckBoxOutlineBlankIcon />
+                                )}
+                            </ToggleButton>
+                        </div>
+                    </>
+                )}
+                <div className={classes.overlay} />
             </Box>
         </Grow>
     ) : (
@@ -201,10 +347,9 @@ TaskItem.defaultProps = {
 
 TaskItem.propTypes = {
     task: PropTypes.object,
-    taskUUID: PropTypes.string,
     view: PropTypes.string,
     deleteDisabled: PropTypes.bool,
     animate: PropTypes.bool,
 };
 
-export default TaskItem;
+export default TaskItemWrapper;

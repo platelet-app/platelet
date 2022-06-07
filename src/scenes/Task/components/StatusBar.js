@@ -109,7 +109,6 @@ function StatusBar(props) {
     useEffect(() => getTask(), [props.taskId, taskModelsSynced]);
 
     async function copyToClipboard() {
-        debugger;
         if (!props.taskId) {
             dispatch(displayErrorNotification("Copy failed."));
             return;

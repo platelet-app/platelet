@@ -29,9 +29,8 @@ function MainWindowContainer(props) {
     const styles = makeStyles((theme) => ({
         root: {
             marginRight:
-                guidedSetupOpen && navIndex === "dashboard" ? "400px" : "auto",
+                guidedSetupOpen && navIndex === "dashboard" ? 0 : "auto",
             marginLeft: navIndex === "dashboard" ? 0 : 200,
-            marginRight: 5,
             paddingTop: 10,
             paddingBottom: 10,
             [theme.breakpoints.down("md")]: {
@@ -50,7 +49,7 @@ export default function MainWindow(_props) {
     const dispatch = useDispatch();
     let background = location.state && location.state.background;
 
-    // whenever returning an item, set the MenuIndex to update the mobile view drawer menu
+    // whenever returning an item, set the MenuIndex to update the drawer menu
     return (
         <MainWindowContainer>
             <main>

@@ -135,26 +135,38 @@ export function taskStatusHumanReadable(status) {
 
 export function sortByCreatedTime(items, order = "newest") {
     if (!items || items.length === 0) return [];
-    if (order !== "newest")
+    if (order !== "newest") {
         return items.sort((a, b) => {
             return new Date(a.createdAt) - new Date(b.createdAt);
         });
-    else
+    } else {
         return items.sort((a, b) => {
+            if (!a.createdAt) {
+                return 1;
+            } else if (!b.createdAt) {
+                return -1;
+            }
             return new Date(b.createdAt) - new Date(a.createdAt);
         });
+    }
 }
 
 export function sortByTimeOfCall(items, order = "newest") {
     if (!items || items.length === 0) return [];
-    if (order !== "newest")
+    if (order !== "newest") {
         return items.sort((a, b) => {
             return new Date(a.timeOfCall) - new Date(b.timeOfCall);
         });
-    else
+    } else {
         return items.sort((a, b) => {
+            if (!a.timeOfCall) {
+                return 1;
+            } else if (!b.timeOfCall) {
+                return -1;
+            }
             return new Date(b.timeOfCall) - new Date(a.timeOfCall);
         });
+    }
 }
 
 export function encodeUUID(uuid) {
