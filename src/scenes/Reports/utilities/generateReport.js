@@ -1,6 +1,7 @@
 import { DataStore } from "aws-amplify";
 import _ from "lodash";
 import moment from "moment";
+import { commentVisibility } from "../../../apiConsts";
 import * as models from "../../../models";
 
 const locationFields = {
@@ -20,6 +21,12 @@ const requesterContactFields = {
     telephoneNumber: "",
 };
 
+const commentFields = {
+    body: "",
+    author: "",
+    createdAt: "",
+};
+
 function generateHeader(fields, prefix = "") {
     let keys = Object.keys(fields);
     if (prefix) {
@@ -29,8 +36,26 @@ function generateHeader(fields, prefix = "") {
     }
 }
 
-function generateCSV(data, prefix = "") {
+function generateCommentsHeader(count) {
+    return _.range(count)
+        .map((i) => {
+            return Object.keys(commentFields)
+                .map((k) => `comment_${i}_${k}`)
+                .join(",");
+        })
+        .join(",");
+}
+
+async function generateCSV(data) {
     let csv = "";
+    debugger;
+
+    const commentsCount = data.reduce((acc, task) => {
+        if (task.comments && task.comments.length > acc)
+            return task.comments.length;
+        else return acc;
+    }, 0);
+
     let keys = Object.keys(
         _.omit(
             data[0],
@@ -43,22 +68,19 @@ function generateCSV(data, prefix = "") {
             "_deleted"
         )
     );
-    if (prefix) {
-        csv += keys.map((k) => `${prefix}_${k}`).join(",") + ",";
-    } else {
-        csv += keys.join(",") + ",";
-    }
+    csv += keys.join(",") + ",";
     csv += generateHeader(locationFields, "pickUpLocation") + ",";
     csv += generateHeader(locationFields, "dropOffLocation") + ",";
     csv += generateHeader(requesterContactFields, "requesterContact") + ",";
+    csv += generateCommentsHeader(commentsCount) + ",";
     csv += "\n";
-    console.log(csv);
     data.forEach((item) => {
         let row = [];
         const {
             pickUpLocation,
             dropOffLocation,
             requesterContact,
+            comments,
             createdBy,
             ...rest
         } = item;
@@ -89,6 +111,20 @@ function generateCSV(data, prefix = "") {
             Object.values(requesterContactFields).forEach((value) => {
                 row.push(value);
             });
+        if (comments && comments.length > 0) {
+            comments.forEach((comment) => {
+                Object.keys(commentFields).forEach((key) => {
+                    if (key === "author") {
+                        row.push(
+                            comment[key].displayName || commentFields[key]
+                        );
+                    } else {
+                        row.push(comment[key] || commentFields[key]);
+                    }
+                });
+            });
+        }
+
         csv += row.join(",") + "\n";
     });
     return csv;
@@ -125,6 +161,17 @@ export default async function generateReport(userId, role, days) {
             )
         );
     }
+    let mostComments = 0;
+    finalTasks = await Promise.all(
+        finalTasks.map(async (t) => {
+            const comments = await DataStore.query(models.Comment, (c) =>
+                c
+                    .parentId("eq", t.id)
+                    .visibility("eq", commentVisibility.everyone)
+            );
+            return { ...t, comments: comments };
+        })
+    );
 
-    return generateCSV(finalTasks);
+    return generateCSV(finalTasks, mostComments);
 }
