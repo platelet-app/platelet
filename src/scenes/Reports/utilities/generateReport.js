@@ -118,6 +118,12 @@ export default async function generateReport(userId, role, days) {
                     taskIds.reduce((task, id) => task.id("eq", id), task)
                 )
         );
+    } else if (role === "ALL") {
+        finalTasks = await DataStore.query(models.Task, (task) =>
+            task.or((task) =>
+                task.createdAt("eq", undefined).createdAt("gt", timeStamp)
+            )
+        );
     }
 
     return generateCSV(finalTasks);
