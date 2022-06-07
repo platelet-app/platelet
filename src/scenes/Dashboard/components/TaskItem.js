@@ -39,6 +39,9 @@ const useStyles = (isSelected) =>
                 },
                 "& $overlay": {
                     display: "inline",
+                    [theme.breakpoints.down("sm")]: {
+                        display: isSelected ? "inline" : "none",
+                    },
                 },
             },
             padding: 1,
