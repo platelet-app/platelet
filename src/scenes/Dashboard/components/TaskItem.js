@@ -30,9 +30,6 @@ const useStyles = (isSelected) =>
     makeStyles((theme) => ({
         root: {
             position: "relative",
-            backgroundColor: isSelected
-                ? alpha(theme.palette.primary.main, 0.3)
-                : "transparent",
             "&:hover": {
                 "& $dots": {
                     display: isSelected ? "none" : "inline",
@@ -40,10 +37,25 @@ const useStyles = (isSelected) =>
                 "& $select": {
                     display: "inline",
                 },
+                "& $overlay": {
+                    display: "inline",
+                },
             },
             padding: 1,
             width: "100%",
             cursor: "context-menu",
+        },
+        overlay: {
+            position: "absolute",
+            display: isSelected ? "inline" : "none",
+            top: 0,
+            left: 0,
+            pointerEvents: "none",
+            background: isSelected
+                ? alpha(theme.palette.primary.main, 0.3)
+                : alpha(theme.palette.background.paper, 0.3),
+            width: "100%",
+            height: "100%",
         },
         dots: () => {
             const background =
@@ -122,6 +134,7 @@ const ItemWrapper = ({
             </Link>
         );
 };
+
 function TaskItemWrapper(props) {
     const location = useLocation();
     return <TaskItem {...props} location={location} />;
@@ -316,6 +329,7 @@ function TaskItem(props) {
                         </div>
                     </>
                 )}
+                <div className={classes.overlay} />
             </Box>
         </Grow>
     ) : (
