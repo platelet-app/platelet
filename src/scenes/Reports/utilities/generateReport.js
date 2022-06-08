@@ -8,6 +8,7 @@ const taskFields = {
     id: "",
     createdAt: "",
     priority: "",
+    status: "",
     riderResponsibility: "",
     timePickedUp: "",
     timeDroppedOff: "",
