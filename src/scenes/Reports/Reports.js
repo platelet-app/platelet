@@ -82,6 +82,7 @@ function Reports() {
                     </Fade>
                     <Button
                         disabled={isPosting}
+                        aria-label="Export"
                         onClick={handleExport}
                         sx={{ marginLeft: "auto", maxWidth: 100 }}
                     >
