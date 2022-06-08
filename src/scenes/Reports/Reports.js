@@ -7,6 +7,8 @@ import {
     FormControlLabel,
     Typography,
     Box,
+    Fade,
+    CircularProgress,
 } from "@mui/material";
 import DaysSelection from "../../components/DaysSelection";
 import { PaddedPaper } from "../../styles/common";
@@ -22,13 +24,17 @@ function Reports() {
     const [includeStats, setIncludeStats] = useState(false);
     const whoami = useSelector(getWhoami);
     const [csvData, setCsvData] = useState(null);
+    const [isPosting, setIsPosting] = useState(false);
 
     const handleExport = async () => {
         setCsvData(null);
+        setIsPosting(true);
         generateReport(whoami.id, role, days).then((data) => {
             setCsvData(data);
+            setIsPosting(false);
         });
     };
+
     return (
         <PaddedPaper>
             <Stack sx={{ maxWidth: 400 }} direction="column" spacing={2}>
@@ -65,7 +71,17 @@ function Reports() {
                     )
                 }
                 <Box display="flex" justifyContent="flex-end">
+                    <Fade
+                        in={isPosting}
+                        style={{
+                            transitionDelay: isPosting ? "800ms" : "0ms",
+                        }}
+                        unmountOnExit
+                    >
+                        <CircularProgress />
+                    </Fade>
                     <Button
+                        disabled={isPosting}
                         onClick={handleExport}
                         sx={{ marginLeft: "auto", maxWidth: 100 }}
                     >
