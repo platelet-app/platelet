@@ -22,6 +22,7 @@ import TaskDialogCompact from "../scenes/Task/TaskDialogCompact";
 import { AdminControl } from "../scenes/AdminControl/AdminControl";
 import { guidedSetupOpenSelector, menuIndexSelector } from "../redux/Selectors";
 import { Box } from "@mui/material";
+import Reports from "../scenes/Reports/Reports";
 
 function MainWindowContainer(props) {
     const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
@@ -162,6 +163,14 @@ export default function MainWindow(_props) {
                         render={(props) => {
                             dispatch(setMenuIndex("statistics"));
                             return <StatisticsDashboard {...props} />;
+                        }}
+                    />
+                    <Route
+                        exact
+                        path="/reports"
+                        render={(props) => {
+                            dispatch(setMenuIndex("reports"));
+                            return <Reports {...props} />;
                         }}
                     />
                     <Route
