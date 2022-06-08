@@ -62,8 +62,7 @@ export function MenuMainContainer() {
         if (menuIndex !== "dashboard") {
             setSearchMode(false);
             dispatch(clearDashboardFilter());
-        }
-        if (currentFilter) {
+        } else if (currentFilter && !searchMode && isSm) {
             setSearchMode(true);
         }
     }, [currentFilter, isSm, menuIndex]);

@@ -50,6 +50,9 @@ function TaskFilterTextField({ sx }) {
     }
 
     useEffect(() => {
+        if (!currentFilter) {
+            setValue("");
+        }
         if (firstMount.current) {
             setValue(currentFilter);
             firstMount.current = false;
