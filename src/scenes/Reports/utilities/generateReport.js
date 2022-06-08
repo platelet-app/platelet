@@ -10,6 +10,7 @@ const taskFields = {
     timePickedUp: "",
     timeDroppedOff: "",
     timeRiderHome: "",
+    createdAt: "",
 };
 
 const locationFields = {
@@ -24,14 +25,21 @@ const locationFields = {
     postcode: "",
 };
 
+const itemFields = {
+    label: "",
+    count: "",
+    unit: "",
+    createdAt: "",
+};
+
 const requesterContactFields = {
     name: "",
     telephoneNumber: "",
 };
 
 const commentFields = {
-    body: "",
     author: "",
+    body: "",
     createdAt: "",
 };
 
@@ -44,11 +52,11 @@ function generateHeader(fields, prefix = "") {
     }
 }
 
-function generateCommentsHeader(count) {
+function generateCountedHeader(count, fields, prefix) {
     return _.range(count)
         .map((i) => {
-            return Object.keys(commentFields)
-                .map((k) => `comment_${i}_${k}`)
+            return Object.keys(fields)
+                .map((k) => `${prefix}_${i}_${k}`)
                 .join(",");
         })
         .join(",");
@@ -69,25 +77,26 @@ async function generateCSV(data) {
             return task.comments.length;
         else return acc;
     }, 0);
+    const itemOffsetCount =
+        [
+            ...Object.keys(taskFields),
+            ...Object.keys(locationFields),
+            ...Object.keys(locationFields),
+            ...Object.keys(requesterContactFields),
+        ].length +
+        commentsCount * 3;
 
-    let keys = Object.keys(
-        _.omit(
-            data[0],
-            "pickUpLocation",
-            "dropOffLocation",
-            "requesterContact",
-            "createdBy",
-            "comments",
-            "_version",
-            "_lastChangedAt",
-            "_deleted"
-        )
-    );
+    const itemsCount = data.reduce((acc, task) => {
+        if (task.items && task.items.length > acc) return task.items.length;
+        else return acc;
+    }, 0);
+
     csv += generateHeader(taskFields) + ",";
     csv += generateHeader(locationFields, "pickUpLocation") + ",";
     csv += generateHeader(locationFields, "dropOffLocation") + ",";
     csv += generateHeader(requesterContactFields, "requesterContact") + ",";
-    csv += generateCommentsHeader(commentsCount) + ",";
+    csv += generateCountedHeader(commentsCount, commentFields, "comment") + ",";
+    csv += generateCountedHeader(itemsCount, itemFields, "item") + ",";
     csv += "\n";
     data.forEach((item) => {
         let row = [];
@@ -96,6 +105,7 @@ async function generateCSV(data) {
             dropOffLocation,
             requesterContact,
             comments,
+            items,
             createdBy,
             ...rest
         } = item;
@@ -136,6 +146,23 @@ async function generateCSV(data) {
                         );
                     } else {
                         row.push(comment[key] || commentFields[key]);
+                    }
+                });
+            });
+        }
+
+        if (items && items.length > 0) {
+            if (row.length !== itemOffsetCount) {
+                _.range(itemOffsetCount - row.length).forEach(() => {
+                    row.push("");
+                });
+            }
+            items.forEach((item) => {
+                Object.keys(itemFields).forEach((key) => {
+                    if (key === "label") {
+                        row.push(item.deliverableType.label || itemFields[key]);
+                    } else {
+                        row.push(item[key] || itemFields[key]);
                     }
                 });
             });
@@ -185,7 +212,11 @@ export default async function generateReport(userId, role, days) {
                     .parentId("eq", t.id)
                     .visibility("eq", commentVisibility.everyone)
             );
-            return { ...t, comments: comments };
+            const deliverables = await DataStore.query(models.Deliverable);
+            const items = deliverables.filter(
+                (d) => d.task && d.task.id === t.id
+            );
+            return { ...t, comments, items };
         })
     );
 
