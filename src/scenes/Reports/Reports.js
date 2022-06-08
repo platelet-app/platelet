@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { CSVDownload } from "react-csv";
-import { Button, Stack } from "@mui/material";
+import {
+    Button,
+    Stack,
+    Switch,
+    FormControlLabel,
+    Typography,
+    Box,
+} from "@mui/material";
 import DaysSelection from "../../components/DaysSelection";
 import { PaddedPaper } from "../../styles/common";
 import generateReport from "./utilities/generateReport";
@@ -12,6 +19,7 @@ import UserRoleSelect from "../../components/UserRoleSelect";
 function Reports() {
     const [days, setDays] = useState("3");
     const [role, setRole] = useState(userRoles.coordinator);
+    const [includeStats, setIncludeStats] = useState(false);
     const whoami = useSelector(getWhoami);
     const [csvData, setCsvData] = useState(null);
 
@@ -23,22 +31,47 @@ function Reports() {
     };
     return (
         <PaddedPaper>
-            <Stack direction="column" spacing={2}>
-                <DaysSelection
-                    value={days}
-                    onChange={(v) => {
-                        setDays(v);
-                    }}
-                />
+            <Stack sx={{ maxWidth: 400 }} direction="column" spacing={2}>
+                <Typography variant="h5">Export to CSV</Typography>
+                <div>
+                    <DaysSelection
+                        value={days}
+                        onChange={(v) => {
+                            setDays(v);
+                        }}
+                    />
+                </div>
                 <UserRoleSelect
                     all
                     value={role}
                     onSelect={(v) => setRole(v)}
                     exclude={[userRoles.user, userRoles.admin]}
                 />
-                <Button onClick={handleExport} sx={{ maxWidth: 100 }}>
-                    Export
-                </Button>
+                {
+                    // TODO: add stats
+                    false && (
+                        <FormControlLabel
+                            sx={{ maxWidth: 180 }}
+                            control={
+                                <Switch
+                                    onChange={(e) =>
+                                        setIncludeStats(e.target.checked)
+                                    }
+                                    checked={includeStats}
+                                />
+                            }
+                            label="Include stats"
+                        />
+                    )
+                }
+                <Box display="flex" justifyContent="flex-end">
+                    <Button
+                        onClick={handleExport}
+                        sx={{ marginLeft: "auto", maxWidth: 100 }}
+                    >
+                        Export
+                    </Button>
+                </Box>
             </Stack>
             {csvData && <CSVDownload data={csvData} target="_blank" />}
         </PaddedPaper>
