@@ -6,11 +6,12 @@ import * as models from "../../../models";
 
 const taskFields = {
     id: "",
+    createdAt: "",
+    priority: "",
     riderResponsibility: "",
     timePickedUp: "",
     timeDroppedOff: "",
     timeRiderHome: "",
-    createdAt: "",
 };
 
 const locationFields = {
@@ -26,10 +27,11 @@ const locationFields = {
 };
 
 const itemFields = {
+    id: "",
+    createdAt: "",
     label: "",
     count: "",
     unit: "",
-    createdAt: "",
 };
 
 const requesterContactFields = {
@@ -38,9 +40,10 @@ const requesterContactFields = {
 };
 
 const commentFields = {
+    id: "",
+    createdAt: "",
     author: "",
     body: "",
-    createdAt: "",
 };
 
 function generateHeader(fields, prefix = "") {
@@ -84,7 +87,7 @@ async function generateCSV(data) {
             ...Object.keys(locationFields),
             ...Object.keys(requesterContactFields),
         ].length +
-        commentsCount * 3;
+        commentsCount * Object.keys(commentFields).length;
 
     const itemsCount = data.reduce((acc, task) => {
         if (task.items && task.items.length > acc) return task.items.length;
