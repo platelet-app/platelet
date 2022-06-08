@@ -59,45 +59,49 @@ function MultipleSelectionActionsAssignUser({ onChange }) {
                     role === userRoles.rider ? "column" : "column-reverse"
                 }
             >
-                <Grid container spacing={1} direction={"row"}>
-                    {state[userRoles.rider].map((user) => {
-                        return (
-                            user && (
-                                <Grid key={user.id} item>
-                                    <UserChip
-                                        showResponsibility
-                                        disabled={role !== userRoles.rider}
-                                        onDelete={() =>
-                                            handleRemoveUser(user.id)
-                                        }
-                                        user={user}
-                                    />
-                                </Grid>
-                            )
-                        );
-                    })}
-                </Grid>
+                <div>
+                    <Grid container spacing={1} direction={"row"}>
+                        {state[userRoles.rider].map((user) => {
+                            return (
+                                user && (
+                                    <Grid key={user.id} item>
+                                        <UserChip
+                                            showResponsibility
+                                            disabled={role !== userRoles.rider}
+                                            onDelete={() =>
+                                                handleRemoveUser(user.id)
+                                            }
+                                            user={user}
+                                        />
+                                    </Grid>
+                                )
+                            );
+                        })}
+                    </Grid>
+                </div>
                 {!!state[userRoles.rider].length &&
                     !!state[userRoles.coordinator].length && <Divider />}
-                <Grid container spacing={1} direction={"row"}>
-                    {state[userRoles.coordinator].map((user) => {
-                        return (
-                            user && (
-                                <Grid key={user.id} item>
-                                    <UserChip
-                                        disabled={
-                                            role !== userRoles.coordinator
-                                        }
-                                        onDelete={() =>
-                                            handleRemoveUser(user.id)
-                                        }
-                                        user={user}
-                                    />
-                                </Grid>
-                            )
-                        );
-                    })}
-                </Grid>
+                <div>
+                    <Grid container spacing={1} direction={"row"}>
+                        {state[userRoles.coordinator].map((user) => {
+                            return (
+                                user && (
+                                    <Grid key={user.id} item>
+                                        <UserChip
+                                            disabled={
+                                                role !== userRoles.coordinator
+                                            }
+                                            onDelete={() =>
+                                                handleRemoveUser(user.id)
+                                            }
+                                            user={user}
+                                        />
+                                    </Grid>
+                                )
+                            );
+                        })}
+                    </Grid>
+                </div>
             </Stack>
             <RecentlyAssignedUsers
                 onChange={onSelect}
