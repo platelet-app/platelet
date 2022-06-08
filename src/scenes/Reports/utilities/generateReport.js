@@ -4,6 +4,14 @@ import moment from "moment";
 import { commentVisibility } from "../../../apiConsts";
 import * as models from "../../../models";
 
+const taskFields = {
+    id: "",
+    riderResponsibility: "",
+    timePickedUp: "",
+    timeDroppedOff: "",
+    timeRiderHome: "",
+};
+
 const locationFields = {
     ward: "",
     line1: "",
@@ -46,10 +54,16 @@ function generateCommentsHeader(count) {
         .join(",");
 }
 
+//    items
+//    "bike allocated" (referred to as riderResponsibility in the schema, but we could start using "Rider role" on the front end as a better name?)
+//    rider name
+//    handover group (not currently recorded, but may be put in to a comment or attached to location, I'll check with the charity)
+//    time collected
+//    time delivered
+//    time rider home
+
 async function generateCSV(data) {
     let csv = "";
-    debugger;
-
     const commentsCount = data.reduce((acc, task) => {
         if (task.comments && task.comments.length > acc)
             return task.comments.length;
@@ -63,12 +77,13 @@ async function generateCSV(data) {
             "dropOffLocation",
             "requesterContact",
             "createdBy",
+            "comments",
             "_version",
             "_lastChangedAt",
             "_deleted"
         )
     );
-    csv += keys.join(",") + ",";
+    csv += generateHeader(taskFields) + ",";
     csv += generateHeader(locationFields, "pickUpLocation") + ",";
     csv += generateHeader(locationFields, "dropOffLocation") + ",";
     csv += generateHeader(requesterContactFields, "requesterContact") + ",";
@@ -84,24 +99,25 @@ async function generateCSV(data) {
             createdBy,
             ...rest
         } = item;
-        keys.forEach((key) => {
+        Object.keys(taskFields).forEach((key) => {
             row.push(rest[key]);
         });
-        if (pickUpLocation)
+        if (pickUpLocation && pickUpLocation.listed === 1)
             Object.keys(locationFields).forEach((key) => {
                 row.push(pickUpLocation[key] || locationFields[key]);
             });
         else
             Object.values(locationFields).forEach((value) => {
-                row.push(value);
+                row.push(pickUpLocation ? "Unlisted" : value);
             });
-        if (dropOffLocation)
+
+        if (dropOffLocation && dropOffLocation.listed === 1)
             Object.keys(locationFields).forEach((key) => {
                 row.push(dropOffLocation[key] || locationFields[key]);
             });
         else
             Object.values(locationFields).forEach((value) => {
-                row.push(value);
+                row.push(dropOffLocation ? "Unlisted" : value);
             });
         if (requesterContact)
             Object.keys(requesterContactFields).forEach((key) => {
