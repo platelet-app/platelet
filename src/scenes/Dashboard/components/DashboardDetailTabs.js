@@ -139,10 +139,10 @@ export function DashboardDetailTabs(props) {
                 alignItems={"center"}
             >
                 <Box>{tabs}</Box>
-                <Hidden mdDown>
-                    <TaskFilterTextField />
-                </Hidden>
             </Stack>
+            <Hidden mdDown>
+                <TaskFilterTextField sx={{ width: "40%" }} />
+            </Hidden>
             <Stack
                 spacing={1}
                 direction={"row"}

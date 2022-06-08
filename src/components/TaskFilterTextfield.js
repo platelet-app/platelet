@@ -1,15 +1,15 @@
-import { TextFieldControlled } from "./TextFields";
 import {
     clearDashboardFilter,
     debounceDashboardFilter,
 } from "../redux/dashboardFilter/DashboardFilterActions";
-import { InputAdornment } from "@mui/material";
+import { InputAdornment, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import makeStyles from "@mui/styles/makeStyles";
 import PropTypes from "prop-types";
 import { dashboardFilterTermSelector } from "../redux/Selectors";
+import { styled } from "@mui/material/styles";
 
 const useStyles = makeStyles((theme) => {
     return {
@@ -26,43 +26,80 @@ const useStyles = makeStyles((theme) => {
     };
 });
 
-function TaskFilterTextField(props) {
+const CustomTextField = styled(TextField)({
+    "& .MuiOutlinedInput-root": {
+        "& fieldset": {
+            borderRadius: 10,
+        },
+        "&:hover fieldset": {
+            borderColor: "orange",
+        },
+    },
+});
+
+function TaskFilterTextField({ sx }) {
     const dispatch = useDispatch();
-    const dashboardFilterValue = useSelector(dashboardFilterTermSelector);
+    const currentFilter = useSelector(dashboardFilterTermSelector);
+    const [value, setValue] = useState("");
     const classes = useStyles();
+    const firstMount = useRef(true);
 
     function onChangeFilterText(e) {
+        setValue(e.target.value);
         dispatch(debounceDashboardFilter(e.target.value));
     }
 
+    useEffect(() => {
+        if (firstMount.current) {
+            setValue(currentFilter);
+            firstMount.current = false;
+        }
+    }, [currentFilter]);
+
     return (
-        <div className={props.className}>
-            <TextFieldControlled
-                data-cy="tasks-filter-input"
-                variant={"standard"}
-                placeholder={"Filter tasks"}
-                value={dashboardFilterValue}
-                onChange={onChangeFilterText}
-                onPressEscape={() => dispatch(clearDashboardFilter())}
-                color={"secondary"}
-                className={classes.root}
-                inputProps={{
-                    "aria-label": "Filter tasks",
-                }}
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <SearchIcon className={classes.searchIcon} />
-                        </InputAdornment>
-                    ),
-                }}
-            />
-        </div>
+        <CustomTextField
+            data-cy="tasks-filter-input"
+            variant={"outlined"}
+            size={"small"}
+            value={value}
+            sx={sx}
+            fullWidth
+            placeholder={"Filter tasks"}
+            onChange={onChangeFilterText}
+            onKeyUp={(ev) => {
+                switch (ev.key) {
+                    case "Escape": {
+                        dispatch(clearDashboardFilter());
+                        setValue("");
+                        ev.preventDefault();
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }}
+            color={value ? "secondary" : "primary"}
+            className={classes.root}
+            inputProps={{
+                "aria-label": "Filter tasks",
+            }}
+            InputProps={{
+                startAdornment: (
+                    <InputAdornment position="start">
+                        <SearchIcon className={classes.searchIcon} />
+                    </InputAdornment>
+                ),
+            }}
+        />
     );
 }
 
 TaskFilterTextField.propTypes = {
-    className: PropTypes.string,
+    sx: PropTypes.object,
+};
+
+TaskFilterTextField.defaultProps = {
+    sx: {},
 };
 
 export default TaskFilterTextField;
