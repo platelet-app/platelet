@@ -40,6 +40,14 @@ const requesterContactFields = {
     telephoneNumber: "",
 };
 
+const assigneeFields = {
+    id: "",
+    createdAt: "",
+    displayName: "",
+    name: "",
+    role: "",
+};
+
 const commentFields = {
     id: "",
     createdAt: "",
@@ -57,6 +65,7 @@ function generateHeader(fields, prefix = "") {
 }
 
 function generateCountedHeader(count, fields, prefix) {
+    console.log(count, fields, prefix);
     return _.range(count)
         .map((i) => {
             return Object.keys(fields)
@@ -95,12 +104,23 @@ async function generateCSV(data) {
         else return acc;
     }, 0);
 
+    const assigneeOffsetCount =
+        itemOffsetCount + itemsCount * Object.keys(itemFields).length;
+
+    const assigneesCount = data.reduce((acc, task) => {
+        if (task.assignees && task.assignees.length > acc)
+            return task.assignees.length;
+        else return acc;
+    }, 0);
+
     csv += generateHeader(taskFields) + ",";
     csv += generateHeader(locationFields, "pickUpLocation") + ",";
     csv += generateHeader(locationFields, "dropOffLocation") + ",";
     csv += generateHeader(requesterContactFields, "requesterContact") + ",";
     csv += generateCountedHeader(commentsCount, commentFields, "comment") + ",";
     csv += generateCountedHeader(itemsCount, itemFields, "item") + ",";
+    csv +=
+        generateCountedHeader(assigneesCount, assigneeFields, "assignee") + ",";
     csv += "\n";
     data.forEach((item) => {
         let row = [];
@@ -110,6 +130,7 @@ async function generateCSV(data) {
             requesterContact,
             comments,
             items,
+            assignees,
             createdBy,
             ...rest
         } = item;
@@ -172,6 +193,23 @@ async function generateCSV(data) {
             });
         }
 
+        if (assignees && assignees.length > 0) {
+            if (row.length !== assigneeOffsetCount) {
+                _.range(assigneeOffsetCount - row.length).forEach(() => {
+                    row.push("");
+                });
+            }
+            assignees.forEach((item) => {
+                Object.keys(assigneeFields).forEach((key) => {
+                    if (["displayName", "name"].includes(key)) {
+                        row.push(item.assignee[key] || assigneeFields[key]);
+                    } else {
+                        row.push(item[key] || assigneeFields[key]);
+                    }
+                });
+            });
+        }
+
         csv += row.join(",") + "\n";
     });
     return csv;
@@ -220,7 +258,11 @@ export default async function generateReport(userId, role, days) {
             const items = deliverables.filter(
                 (d) => d.task && d.task.id === t.id
             );
-            return { ...t, comments, items };
+            const assigneesQuery = await DataStore.query(models.TaskAssignee);
+            const assignees = assigneesQuery.filter(
+                (assignment) => assignment.task && assignment.task.id === t.id
+            );
+            return { ...t, comments, items, assignees };
         })
     );
 
