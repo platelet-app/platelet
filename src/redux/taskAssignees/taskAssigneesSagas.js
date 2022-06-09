@@ -11,7 +11,6 @@ function listener() {
     return eventChannel((emitter) => {
         let observer = { unsubscribe: () => {} };
         function restartObserver() {
-            console.log("restarting task assignees observer");
             observer.unsubscribe();
             observer = DataStore.observeQuery(models.TaskAssignee, () => {}, {
                 sort: (s) => s.createdAt("desc"),
