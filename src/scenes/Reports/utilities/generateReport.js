@@ -65,7 +65,6 @@ function generateHeader(fields, prefix = "") {
 }
 
 function generateCountedHeader(count, fields, prefix) {
-    console.log(count, fields, prefix);
     return _.range(count)
         .map((i) => {
             return Object.keys(fields)
@@ -117,10 +116,19 @@ async function generateCSV(data) {
     csv += generateHeader(locationFields, "pickUpLocation") + ",";
     csv += generateHeader(locationFields, "dropOffLocation") + ",";
     csv += generateHeader(requesterContactFields, "requesterContact") + ",";
-    csv += generateCountedHeader(commentsCount, commentFields, "comment") + ",";
-    csv += generateCountedHeader(itemsCount, itemFields, "item") + ",";
-    csv +=
-        generateCountedHeader(assigneesCount, assigneeFields, "assignee") + ",";
+    if (commentsCount > 0) {
+        csv +=
+            generateCountedHeader(commentsCount, commentFields, "comment") +
+            ",";
+    }
+    if (itemsCount > 0) {
+        csv += generateCountedHeader(itemsCount, itemFields, "item") + ",";
+    }
+    if (assigneesCount > 0) {
+        csv +=
+            generateCountedHeader(assigneesCount, assigneeFields, "assignee") +
+            ",";
+    }
     csv += "\n";
     data.forEach((item) => {
         let row = [];
