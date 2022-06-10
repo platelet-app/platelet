@@ -11,7 +11,7 @@ import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import MultipleSelectionActionsInformation from "./MultipleSelectionActionsInformation";
 import MultipleSelectionActionsAssignUser from "./MultipleSelectionActionsAssignUser";
 import MultipleSelectionActionsSetTime from "./MultipleSelectionActionsSetTime";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
     getWhoami,
     taskAssigneesSelector,
@@ -51,6 +51,7 @@ const MultipleSelectionActionsDialog = ({
 }) => {
     const [isDisabled, setIsDisabled] = useState(true);
     const [reasonBody, setReasonBody] = useState("");
+    const dispatch = useDispatch();
     const tenantId = useSelector(tenantIdSelector);
     const whoami = useSelector(getWhoami);
     const saveData = useRef(null);
