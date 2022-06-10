@@ -99,9 +99,14 @@ function TaskActions(props) {
     async function setTimeWithKey(key, value) {
         setIsPosting(true);
         try {
-            saveTaskTimeWithKey(key, value, props.taskId, taskAssignees).then(
-                () => setIsPosting(false)
+            const updatedTask = await saveTaskTimeWithKey(
+                key,
+                value,
+                props.taskId,
+                taskAssignees
             );
+            setTask(updatedTask);
+            setIsPosting(false);
         } catch (error) {
             console.log(error);
             setIsPosting(false);
