@@ -136,7 +136,7 @@ function TaskAssignmentsPanel(props) {
                     dispatch(displayInfoNotification("Task moved to ACTIVE"));
                 }
             }
-            //setState({ ...state, [result.id]: result });
+            setState({ ...state, [result.id]: result });
             setIsPosting(false);
         } catch (error) {
             console.log(error);
@@ -191,7 +191,7 @@ function TaskAssignmentsPanel(props) {
                     updated.riderResponsibility = riderResponsibility;
                 })
             );
-            //setState((prevState) => _.omit(prevState, assignmentId));
+            setState((prevState) => _.omit(prevState, assignmentId));
             setIsDeleting(false);
         } catch (error) {
             console.log(error);
