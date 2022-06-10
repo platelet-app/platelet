@@ -40,6 +40,7 @@ describe("MultipleSelectionActionsMenu", () => {
             roleView: "ALL",
             dashboardTabIndex: 1,
             whoami: { user: mockWhoami },
+            tenantId: "tenantId",
             taskAssigneesReducer: {
                 items: [],
                 ready: true,
@@ -95,6 +96,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 roleView: "ALL",
                 dashboardTabIndex,
                 whoami: { user: mockWhoami },
+                tenantId: "tenantId",
                 taskAssigneesReducer: {
                     items: [],
                     ready: true,
@@ -255,6 +257,7 @@ describe("MultipleSelectionActionsMenu", () => {
             const preloadedState = {
                 roleView: "ALL",
                 dashboardTabIndex,
+                tenantId: "tenantId",
                 whoami: { user: mockWhoami },
                 taskAssigneesReducer: {
                     items: [],
@@ -331,17 +334,10 @@ describe("MultipleSelectionActionsMenu", () => {
                 riderResponsibility: "test",
             })
         );
-        const mockAssignments = [mockTask, mockTask2].map(
-            (t) =>
-                new models.TaskAssignee({
-                    task: t,
-                    assignee,
-                    role: role,
-                })
-        );
         const preloadedState = {
             roleView: "ALL",
             dashboardTabIndex: 1,
+            tenantId: "tenantId",
             whoami: { user: mockWhoami },
             taskAssigneesReducer: {
                 items: [],
@@ -349,6 +345,15 @@ describe("MultipleSelectionActionsMenu", () => {
                 isSynced: true,
             },
         };
+        const mockAssignments = [mockTask, mockTask2].map(
+            (t) =>
+                new models.TaskAssignee({
+                    task: t,
+                    assignee,
+                    role: role,
+                    tenantId: preloadedState.tenantId,
+                })
+        );
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         const modelSpy = jest.spyOn(models.Task, "copyOf");
@@ -489,6 +494,7 @@ describe("MultipleSelectionActionsMenu", () => {
         const preloadedState = {
             roleView: "ALL",
             dashboardTabIndex: 0,
+            tenantId: "tenantId",
             whoami: { user: mockWhoami },
             taskAssigneesReducer: {
                 items: assignments,
@@ -572,6 +578,7 @@ describe("MultipleSelectionActionsMenu", () => {
         const preloadedState = {
             roleView: "ALL",
             dashboardTabIndex: 1,
+            tenantId: "tenantId",
             whoami: { user: mockWhoami },
             taskAssigneesReducer: {
                 items: [],
@@ -626,6 +633,7 @@ describe("MultipleSelectionActionsMenu", () => {
         const preloadedState = {
             roleView: "ALL",
             dashboardTabIndex: 1,
+            tenantId: "tenantId",
             whoami: { user: mockWhoami },
             taskAssigneesReducer: {
                 items: [],
@@ -718,6 +726,7 @@ describe("MultipleSelectionActionsMenu", () => {
             const preloadedState = {
                 roleView: "ALL",
                 dashboardTabIndex: 1,
+                tenantId: "tenantId",
                 whoami: { user: mockWhoami },
                 taskAssigneesReducer: {
                     items: [],
@@ -795,21 +804,10 @@ describe("MultipleSelectionActionsMenu", () => {
                     displayName: "Someone Person",
                 })
             );
-            const mockComment = new models.Comment({
-                parentId: mockTask.id,
-                visibility: commentVisibility.everyone,
-                body: reason,
-                author: mockWhoami,
-            });
-            const mockComment2 = new models.Comment({
-                parentId: mockTask.id,
-                visibility: commentVisibility.everyone,
-                body: reason,
-                author: mockWhoami,
-            });
             const preloadedState = {
                 roleView: "ALL",
                 dashboardTabIndex: 0,
+                tenantId: "tenantId",
                 whoami: { user: mockWhoami },
                 taskAssigneesReducer: {
                     items: [],
@@ -818,6 +816,20 @@ describe("MultipleSelectionActionsMenu", () => {
                 },
             };
 
+            const mockComment = new models.Comment({
+                parentId: mockTask.id,
+                visibility: commentVisibility.everyone,
+                tenantId: preloadedState.tenantId,
+                body: reason,
+                author: mockWhoami,
+            });
+            const mockComment2 = new models.Comment({
+                parentId: mockTask.id,
+                visibility: commentVisibility.everyone,
+                tenantId: preloadedState.tenantId,
+                body: reason,
+                author: mockWhoami,
+            });
             const querySpy = jest.spyOn(DataStore, "query");
             const saveSpy = jest.spyOn(DataStore, "save");
             render(
@@ -910,6 +922,7 @@ describe("MultipleSelectionActionsMenu", () => {
         const preloadedState = {
             roleView: "ALL",
             dashboardTabIndex: 0,
+            tenantId: "tenantId",
             whoami: { user: mockWhoami },
             taskAssigneesReducer: {
                 items: mockAssignments,
@@ -993,6 +1006,7 @@ describe("MultipleSelectionActionsMenu", () => {
         const preloadedState = {
             roleView: "ALL",
             dashboardTabIndex: 1,
+            tenantId: "tenantId",
             whoami: { user: mockWhoami },
             taskAssigneesReducer: {
                 items: [],

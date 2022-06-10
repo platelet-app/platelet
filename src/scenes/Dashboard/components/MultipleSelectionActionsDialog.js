@@ -12,12 +12,17 @@ import MultipleSelectionActionsInformation from "./MultipleSelectionActionsInfor
 import MultipleSelectionActionsAssignUser from "./MultipleSelectionActionsAssignUser";
 import MultipleSelectionActionsSetTime from "./MultipleSelectionActionsSetTime";
 import { useSelector } from "react-redux";
-import { getWhoami, taskAssigneesSelector } from "../../../redux/Selectors";
+import {
+    getWhoami,
+    taskAssigneesSelector,
+    tenantIdSelector,
+} from "../../../redux/Selectors";
 import generateMultipleAssignmentModels from "../utilities/generateMultipleAssignmentModels";
 import { userRoles } from "../../../apiConsts";
 import generateMultipleTaskTimeModels from "../utilities/generateMultipleTaskTimeModels";
 import generateMultipleTaskComments from "../utilities/generateMultipleTaskComments";
 import { DataStore } from "aws-amplify";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 
 const getKey = (action) => {
     switch (action) {
@@ -46,6 +51,7 @@ const MultipleSelectionActionsDialog = ({
 }) => {
     const [isDisabled, setIsDisabled] = useState(true);
     const [reasonBody, setReasonBody] = useState("");
+    const tenantId = useSelector(tenantIdSelector);
     const whoami = useSelector(getWhoami);
     const saveData = useRef(null);
     const assignees = useSelector(taskAssigneesSelector);
@@ -64,42 +70,52 @@ const MultipleSelectionActionsDialog = ({
     ].includes(action);
 
     const handleConfirmation = async () => {
-        if (!saveData.current) return;
-        setIsDisabled(true);
-        if (action === actions.assignUser) {
-            const generatedModels = await generateMultipleAssignmentModels(
-                items,
-                saveData.current[userRoles.coordinator] || [],
-                saveData.current[userRoles.rider] || [],
-                assignees
-            );
-            onConfirmation(generatedModels);
-        } else if (timeAction) {
-            const generatedModels = await generateMultipleTaskTimeModels(
-                items,
-                getKey(action),
-                saveData.current,
-                assignees.items
-                    ? assignees.items.filter((a) => a.role === userRoles.rider)
-                    : []
-            );
-            let generatedComments = [];
-            if (reasonBody) {
-                const whoamiResult = await DataStore.query(
-                    models.User,
-                    whoami.id
-                );
-                generatedComments = await generateMultipleTaskComments(
+        try {
+            if (!saveData.current) return;
+            setIsDisabled(true);
+            if (action === actions.assignUser) {
+                const generatedModels = await generateMultipleAssignmentModels(
                     items,
-                    reasonBody,
-                    whoamiResult
+                    saveData.current[userRoles.coordinator] || [],
+                    saveData.current[userRoles.rider] || [],
+                    assignees,
+                    tenantId
                 );
+                onConfirmation(generatedModels);
+            } else if (timeAction) {
+                const generatedModels = await generateMultipleTaskTimeModels(
+                    items,
+                    getKey(action),
+                    saveData.current,
+                    assignees.items
+                        ? assignees.items.filter(
+                              (a) => a.role === userRoles.rider
+                          )
+                        : []
+                );
+                let generatedComments = [];
+                if (reasonBody) {
+                    const whoamiResult = await DataStore.query(
+                        models.User,
+                        whoami.id
+                    );
+                    generatedComments = await generateMultipleTaskComments(
+                        items,
+                        reasonBody,
+                        whoamiResult,
+                        tenantId
+                    );
+                }
+                onConfirmation([...generatedModels, ...generatedComments]);
             }
-            onConfirmation([...generatedModels, ...generatedComments]);
-        }
-        setReasonBody("");
+            setReasonBody("");
 
-        setIsDisabled(false);
+            setIsDisabled(false);
+        } catch (error) {
+            console.log(error);
+            setIsDisabled(false);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+        }
     };
 
     const handleChange = React.useCallback((value) => {

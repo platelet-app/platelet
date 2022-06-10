@@ -8,7 +8,8 @@ async function generateMultipleAssignmentModels(
     selectedItems,
     coordinators,
     riders,
-    allAssignees
+    allAssignees,
+    tenantId
 ) {
     if (
         !selectedItems ||
@@ -17,12 +18,14 @@ async function generateMultipleAssignmentModels(
     ) {
         return;
     }
+    if (!tenantId) throw new Error("Tenant ID is required");
     const ridersMapped = Object.values(selectedItems).map((task) => {
         return Object.values(riders).map((assignee) => {
             return new models.TaskAssignee({
                 assignee,
                 task,
                 role: userRoles.rider,
+                tenantId,
             });
         });
     });
@@ -33,6 +36,7 @@ async function generateMultipleAssignmentModels(
                     assignee,
                     task,
                     role: userRoles.coordinator,
+                    tenantId,
                 })
         );
     });
