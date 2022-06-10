@@ -17,6 +17,7 @@ import { DataStore } from "aws-amplify";
 import { dataStoreModelSyncedStatusSelector } from "../../redux/Selectors";
 import { useHistory, useLocation, useParams } from "react-router";
 import PropTypes from "prop-types";
+import { setSelectionActionsPending } from "../../redux/selectionMode/selectionModeActions";
 
 const drawerWidth = 420;
 const drawerWidthMd = 420;
@@ -164,6 +165,14 @@ function TaskDialogCompact(props) {
                 taskId={taskUUID}
             />
         );
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(setSelectionActionsPending(true));
+    }, [dispatch]);
+
+    useEffect(() => () => dispatch(setSelectionActionsPending(false)), []);
 
     if (notFound) {
         return (
