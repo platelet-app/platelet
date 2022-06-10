@@ -21,7 +21,6 @@ function listener() {
         }
 
         const debouncedRestartObserver = _.debounce(restartObserver, 1000, {
-            leading: true,
             trailing: true,
         });
 
