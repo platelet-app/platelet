@@ -202,11 +202,14 @@ function TaskAssignmentsPanel(props) {
 
     function setCollapsedOnFirstMount() {
         if (_.isEmpty(state)) {
+            if (!isFetching) setCollapsed(false);
             return;
         }
         if (!taskAssigneesReady || collapsed !== null) return;
         if (
             Object.values(state).filter((a) => a.role === userRoles.rider)
+                .length === 0 ||
+            Object.values(state).filter((a) => a.role === userRoles.coordinator)
                 .length === 0
         ) {
             setCollapsed(false);
