@@ -29,8 +29,10 @@ function TaskGridTasksList(props) {
             alignItems={"center"}
             justifyContent={"center"}
         >
-            {sortByCreatedTime(Object.values(props.tasks), "newest").map(
-                (task) => {
+            {sortByCreatedTime(Object.values(props.tasks), "oldest")
+                // sort by oldest and reverse so that undefined createdAt is at the top
+                .reverse()
+                .map((task) => {
                     displayDate = false;
                     const timeComparison = new Date(
                         task.createdAt || task.timeOfCall || null
@@ -74,8 +76,7 @@ function TaskGridTasksList(props) {
                             />
                         </Box>
                     );
-                }
-            )}
+                })}
         </Stack>
     );
 }

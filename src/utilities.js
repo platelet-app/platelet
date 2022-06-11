@@ -141,11 +141,6 @@ export function sortByCreatedTime(items, order = "newest") {
         });
     } else {
         return items.sort((a, b) => {
-            if (!a.createdAt) {
-                return 1;
-            } else if (!b.createdAt) {
-                return -1;
-            }
             return new Date(b.createdAt) - new Date(a.createdAt);
         });
     }
