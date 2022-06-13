@@ -98,13 +98,18 @@ function Dashboard() {
     useEffect(setInitialRoleView, [whoami]);
 
     return (
-        <Stack divider={<Divider />}>
+        <Stack>
             <Hidden mdUp>
                 <DashboardDetailTabs />
             </Hidden>
+            <Divider />
             <MultipleSelectionActionsMenu />
+            <Divider />
             {[userRoles.coordinator, "ALL"].includes(roleView) && (
-                <ActiveRidersChips />
+                <>
+                    <ActiveRidersChips />
+                    <Divider />
+                </>
             )}
             <Paper sx={{ marginBottom: 10 }}>
                 <TasksGrid
