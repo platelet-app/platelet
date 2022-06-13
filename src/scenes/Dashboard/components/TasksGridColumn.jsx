@@ -408,6 +408,7 @@ function TasksGridColumn(props) {
             >
                 <TaskGridColumnHeader tasks={state} title={props.title} />
                 <TaskGridTasksList
+                    datacy={`tasks-kanban-column-${props.taskKey}`}
                     tasks={state}
                     includeList={filteredTasksIds}
                 />

@@ -24,8 +24,8 @@ function TaskGridTasksList(props) {
     return (
         <Stack
             direction={"column"}
-            data-cy={`tasks-kanban-column-${props.taskKey}`}
             spacing={0}
+            data-cy={props.datacy}
             alignItems={"center"}
             justifyContent={"center"}
         >
