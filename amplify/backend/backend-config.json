@@ -25,16 +25,7 @@
             }
           ]
         }
-      },
-      "dependsOn": [
-        {
-          "category": "auth",
-          "resourceName": "platelet61a0ac07",
-          "attributes": [
-            "UserPoolId"
-          ]
-        }
-      ]
+      }
     }
   },
   "function": {
