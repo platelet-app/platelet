@@ -35,6 +35,11 @@ function Reports() {
         });
     };
 
+    // exclude roles the user does not have
+    const exclude = Object.values(userRoles).filter(
+        (role) => !whoami.roles.includes(role)
+    );
+
     return (
         <PaddedPaper>
             <Stack sx={{ maxWidth: 400 }} direction="column" spacing={2}>
@@ -48,10 +53,10 @@ function Reports() {
                     />
                 </div>
                 <UserRoleSelect
-                    all
+                    all={whoami.roles.includes(userRoles.admin)}
                     value={role}
                     onSelect={(v) => setRole(v)}
-                    exclude={[userRoles.user, userRoles.admin]}
+                    exclude={[userRoles.user, userRoles.admin, ...exclude]}
                 />
                 {
                     // TODO: add stats
