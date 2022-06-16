@@ -157,6 +157,7 @@ export declare class User {
   readonly assignments?: (TaskAssignee | null)[] | null;
   readonly createdTasks?: (Task | null)[] | null;
   readonly disabled?: number | null;
+  readonly profilePictureUploadURL?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   constructor(init: ModelInit<User, UserMetaData>);

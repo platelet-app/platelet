@@ -173,6 +173,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "profilePictureUploadURL": {
+                    "name": "profilePictureUploadURL",
+                    "isArray": false,
+                    "type": "AWSURL",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -2001,5 +2008,5 @@ export const schema = {
             }
         }
     },
-    "version": "80201745af5ce2e8c7821fbcc3fea6d4"
+    "version": "f6b5e8db4aec28f829e585ae2d972eb9"
 };

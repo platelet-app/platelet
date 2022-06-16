@@ -62,6 +62,7 @@ export const getTenant = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -101,6 +102,7 @@ export const listTenants = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -149,6 +151,7 @@ export const syncTenants = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -282,6 +285,7 @@ export const getUser = /* GraphQL */ `
         startedAt
       }
       disabled
+      profilePictureUploadURL
       createdAt
       updatedAt
       _version
@@ -352,6 +356,7 @@ export const listUsers = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -431,6 +436,7 @@ export const syncUsers = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -512,6 +518,7 @@ export const getUserByCognitoId = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -583,6 +590,7 @@ export const getPossibleRiderResponsibilities = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -641,6 +649,7 @@ export const listPossibleRiderResponsibilities = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -700,6 +709,7 @@ export const syncPossibleRiderResponsibilities = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -1138,6 +1148,7 @@ export const getTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -1355,6 +1366,7 @@ export const listTasks = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -1485,6 +1497,7 @@ export const syncTasks = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -1617,6 +1630,7 @@ export const tasksByStatus = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -1742,6 +1756,7 @@ export const getTaskAssignee = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -1893,6 +1908,7 @@ export const getTaskAssignee = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -1954,6 +1970,7 @@ export const listTaskAssignees = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -2024,6 +2041,7 @@ export const syncTaskAssignees = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -2103,6 +2121,7 @@ export const getComment = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -2145,6 +2164,7 @@ export const listComments = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -2196,6 +2216,7 @@ export const syncComments = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -2361,6 +2382,7 @@ export const getDeliverable = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version

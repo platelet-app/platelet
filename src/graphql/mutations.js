@@ -65,6 +65,7 @@ export const createTenant = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -144,6 +145,7 @@ export const updateTenant = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -223,6 +225,7 @@ export const deleteTenant = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -356,6 +359,7 @@ export const createUser = /* GraphQL */ `
         startedAt
       }
       disabled
+      profilePictureUploadURL
       createdAt
       updatedAt
       _version
@@ -482,6 +486,7 @@ export const updateUser = /* GraphQL */ `
         startedAt
       }
       disabled
+      profilePictureUploadURL
       createdAt
       updatedAt
       _version
@@ -608,6 +613,7 @@ export const deleteUser = /* GraphQL */ `
         startedAt
       }
       disabled
+      profilePictureUploadURL
       createdAt
       updatedAt
       _version
@@ -679,6 +685,7 @@ export const createPossibleRiderResponsibilities = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -773,6 +780,7 @@ export const updatePossibleRiderResponsibilities = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -867,6 +875,7 @@ export const deletePossibleRiderResponsibilities = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -1423,6 +1432,7 @@ export const createTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -1680,6 +1690,7 @@ export const updateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -1937,6 +1948,7 @@ export const deleteTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -2158,6 +2170,7 @@ export const createTaskAssignee = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -2309,6 +2322,7 @@ export const createTaskAssignee = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -2350,6 +2364,7 @@ export const updateTaskAssignee = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -2501,6 +2516,7 @@ export const updateTaskAssignee = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -2542,6 +2558,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -2693,6 +2710,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -2772,6 +2790,7 @@ export const createComment = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -2854,6 +2873,7 @@ export const updateComment = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -2936,6 +2956,7 @@ export const deleteComment = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -3112,6 +3133,7 @@ export const createDeliverable = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -3281,6 +3303,7 @@ export const updateDeliverable = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -3450,6 +3473,7 @@ export const deleteDeliverable = /* GraphQL */ `
           profilePictureURL
           profilePictureThumbnailURL
           disabled
+          profilePictureUploadURL
           createdAt
           updatedAt
           _version
@@ -3801,6 +3825,7 @@ export const registerUser = /* GraphQL */ `
         startedAt
       }
       disabled
+      profilePictureUploadURL
       createdAt
       updatedAt
       _version
@@ -3878,6 +3903,7 @@ export const registerTenant = /* GraphQL */ `
           startedAt
         }
         disabled
+        profilePictureUploadURL
         createdAt
         updatedAt
         _version
@@ -4008,6 +4034,7 @@ export const updateUserRoles = /* GraphQL */ `
         startedAt
       }
       disabled
+      profilePictureUploadURL
       createdAt
       updatedAt
       _version
