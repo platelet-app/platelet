@@ -39,6 +39,7 @@ type User
   assignments: [TaskAssignee] @hasMany(indexName: "byAssignee", fields: ["id"])
   createdTasks: [Task] @hasMany
   disabled: Int @default(value: "0")
+  profilePictureUploadURL: AWSURL @function(name: "plateletProfilePictureUploadURLResolver-${env}") @auth(rules: [{allow: private}])
 }
 
 type PossibleRiderResponsibilities

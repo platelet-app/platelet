@@ -1,5 +1,9 @@
 {
-  "key1": "value1",
-  "key2": "value2",
-  "key3": "value3"
+    "identity": {
+        "claims": {
+            "cognito:groups": ["ADMIN"],
+            "sub": "test"
+        }
+    },
+    "source": { "id": "testId" }
 }

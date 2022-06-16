@@ -122,6 +122,28 @@
           ]
         }
       ]
+    },
+    "plateletProfilePictureUploadURLResolver": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda",
+      "dependsOn": [
+        {
+          "category": "api",
+          "resourceName": "platelet",
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ]
+        },
+        {
+          "category": "storage",
+          "resourceName": "plateletStorage",
+          "attributes": [
+            "BucketName"
+          ]
+        }
+      ]
     }
   },
   "geo": {
@@ -156,5 +178,6 @@
       "providerPlugin": "awscloudformation",
       "type": "manual"
     }
-  }
+  },
+  "custom": {}
 }

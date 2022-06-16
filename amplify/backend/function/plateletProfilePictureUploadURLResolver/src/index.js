@@ -9,26 +9,20 @@ Amplify Params - DO NOT EDIT */
 /**
  * @type {import('@types/aws-lambda').APIGatewayProxyHandler}
  */
-const AWS = require("aws-sdk");
-AWS.config.update({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    sessionToken: process.env.AWS_SESSION_TOKEN,
-    region: process.env.AWS_REGION,
-});
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
-const s3 = new AWS.S3();
 const expiryTime = 3600;
 
-const bucketParams = {
+const putObjectParams = {
     Bucket: process.env.STORAGE_PLATELETSTORAGE_BUCKETNAME,
-    Key: null,
-    Expires: expiryTime,
 };
 
 async function generatePresignedUrl(Key) {
     // Create a presigned URL for the bucket and key.
-    return s3.getSignedUrl("putObject", { ...bucketParams, Key });
+    const client = new S3Client({ region: process.env.REGION });
+    const command = new PutObjectCommand({ ...putObjectParams, Key });
+    return await getSignedUrl(client, command, { expiresIn: expiryTime });
 }
 
 exports.handler = (event, context, callback) => {
@@ -40,7 +34,7 @@ exports.handler = (event, context, callback) => {
         event.identity.claims["cognito:groups"].includes("ADMIN") ||
         event.identity.claims.sub === event.source.cognitoId
     ) {
-        return generatePresignedUrl(`public/${event.source.id}`);
+        return generatePresignedUrl(`public/${event.source.id}.jpg`);
     } else {
         return null;
     }
