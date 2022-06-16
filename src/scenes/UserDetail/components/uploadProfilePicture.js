@@ -1,7 +1,8 @@
-import { Auth, Storage } from "aws-amplify";
+import { API, Auth, graphqlOperation } from "aws-amplify";
 import { DataStore } from "aws-amplify";
 import { S3ObjectAccessLevels } from "../../../apiConsts";
 import * as models from "../../../models";
+import * as queries from "../../../graphql/queries";
 
 let aws_config = {
     default: {
@@ -21,8 +22,6 @@ if (
 
 async function uploadProfilePicture(userId, selectedFile) {
     if (selectedFile) {
-        const { type: mimeType } = selectedFile;
-
         const bucket = aws_config.default
             ? aws_config.default.aws_user_files_s3_bucket
             : null;
@@ -30,9 +29,8 @@ async function uploadProfilePicture(userId, selectedFile) {
             ? aws_config.default.aws_user_files_s3_bucket_region
             : null;
         const visibility = S3ObjectAccessLevels.public;
-        const { identityId } = await Auth.currentCredentials();
 
-        const key = `${visibility}/${identityId}/${userId}.jpg`;
+        const key = `uploads/${userId}.jpg`;
 
         const file = {
             bucket,
@@ -42,20 +40,33 @@ async function uploadProfilePicture(userId, selectedFile) {
 
         const thumbnailFile = {
             ...file,
-            key: `${visibility}/${identityId}/${userId}_thumbnail.jpg`,
+            key: `${visibility}/${userId}_thumbnail.jpg`,
         };
 
         try {
-            const existingUser = await DataStore.query(models.User, userId);
-            await Storage.put(`${userId}.jpg`, selectedFile, {
-                bucket: process.env.REACT_APP_RESIZE_BUCKET_NAME,
-                contentType: mimeType,
-                level: visibility,
+            const uploadUrlData = await API.graphql(
+                graphqlOperation(queries.getUser, {
+                    id: userId,
+                })
+            );
+
+            const uploadUrl =
+                uploadUrlData.data.getUser.profilePictureUploadURL;
+            if (!uploadUrl) throw new Error("No upload URL found");
+
+            await fetch(uploadUrl, {
+                method: "PUT",
+                headers: {
+                    Accept: "image/jpeg",
+                    "Content-Type": "image/jpeg",
+                },
+                body: selectedFile,
             });
+
+            const existingUser = await DataStore.query(models.User, userId);
             await DataStore.save(
                 models.User.copyOf(existingUser, (updated) => {
                     updated.profilePicture = file;
-                    updated.profilePictureThumbnail = thumbnailFile;
                 })
             );
         } catch (err) {
