@@ -6,6 +6,7 @@ import { render } from "../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import * as gr from "./utilities/generateReport";
+import { userRoles } from "../../apiConsts";
 
 describe("Reports", () => {
     beforeAll(async () => {
@@ -40,5 +41,36 @@ describe("Reports", () => {
             undefined,
             undefined
         );
+    });
+
+    test.each`
+        role
+        ${userRoles.admin} | ${userRoles.rider} | ${userRoles.coordinator}
+    `("show the correct roles available to the user", async ({ role }) => {
+        const whoami = await DataStore.save(
+            new models.User({
+                displayName: "Test User",
+                roles: [role],
+            })
+        );
+        const preloadedState = {
+            whoami: {
+                user: whoami,
+            },
+        };
+        render(<Reports />, { preloadedState });
+        if (role === userRoles.admin) {
+            expect(screen.getByText("ALL")).toBeInTheDocument();
+            expect(screen.queryByText("RIDER")).toBeNull();
+            expect(screen.queryByText("COORDINATOR")).toBeNull();
+        } else if (role === userRoles.rider) {
+            expect(screen.getByText("RIDER")).toBeInTheDocument();
+            expect(screen.queryByText("ALL")).toBeNull();
+            expect(screen.queryByText("COORDINATOR")).toBeNull();
+        } else if (role === userRoles.coordinator) {
+            expect(screen.getByText("COORDINATOR")).toBeInTheDocument();
+            expect(screen.queryByText("ALL")).toBeNull();
+            expect(screen.queryByText("RIDER")).toBeNull();
+        }
     });
 });
