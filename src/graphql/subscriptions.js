@@ -233,8 +233,8 @@ export const onDeleteTenant = /* GraphQL */ `
   }
 `;
 export const onCreateUser = /* GraphQL */ `
-  subscription OnCreateUser {
-    onCreateUser {
+  subscription OnCreateUser($cognitoId: String) {
+    onCreateUser(cognitoId: $cognitoId) {
       id
       username
       cognitoId
@@ -357,8 +357,8 @@ export const onCreateUser = /* GraphQL */ `
   }
 `;
 export const onUpdateUser = /* GraphQL */ `
-  subscription OnUpdateUser {
-    onUpdateUser {
+  subscription OnUpdateUser($cognitoId: String) {
+    onUpdateUser(cognitoId: $cognitoId) {
       id
       username
       cognitoId
@@ -481,8 +481,8 @@ export const onUpdateUser = /* GraphQL */ `
   }
 `;
 export const onDeleteUser = /* GraphQL */ `
-  subscription OnDeleteUser {
-    onDeleteUser {
+  subscription OnDeleteUser($cognitoId: String) {
+    onDeleteUser(cognitoId: $cognitoId) {
       id
       username
       cognitoId
