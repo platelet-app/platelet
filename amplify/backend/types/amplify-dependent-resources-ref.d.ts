@@ -48,13 +48,13 @@ export type AmplifyDependentResourcesAttributes = {
             "Region": "string",
             "LambdaExecutionRole": "string"
         },
-        "plateletProfilePictureResolver": {
+        "plateletProfilePictureUploadURLResolver": {
             "Name": "string",
             "Arn": "string",
             "Region": "string",
             "LambdaExecutionRole": "string"
         },
-        "plateletProfilePictureUploadURLResolver": {
+        "plateletProfilePictureResolver": {
             "Name": "string",
             "Arn": "string",
             "Region": "string",
