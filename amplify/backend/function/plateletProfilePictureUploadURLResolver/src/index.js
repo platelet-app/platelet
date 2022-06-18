@@ -25,7 +25,7 @@ async function generatePresignedUrl(Key) {
     return await getSignedUrl(client, command, { expiresIn: expiryTime });
 }
 
-exports.handler = (event, context, callback) => {
+exports.handler = (event, context) => {
     console.log(`Invoke: event = ${JSON.stringify(event, null, 2)}`);
     console.log(`context = ${JSON.stringify(context, null, 2)}`);
     console.log(process.env);
@@ -36,6 +36,8 @@ exports.handler = (event, context, callback) => {
     ) {
         return generatePresignedUrl(`public/${event.source.id}.jpg`);
     } else {
-        return null;
+        return new Promise((resolve) => {
+            resolve(null);
+        });
     }
 };
