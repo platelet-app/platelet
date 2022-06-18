@@ -1,0 +1,10 @@
+{
+    "source": {
+        "id": "test",
+        "profilePicture": {
+            "bucket": "platelet26fb7449fb884a3eb4c5fd7539c78dd310707-martwo",
+            "key": "public/0ec9cfaf-6db4-4f3a-9ffc-40c18f39ebc0.jpg",
+            "region": "eu-west-1"
+        }
+    }
+}
