@@ -30,7 +30,7 @@ async function uploadProfilePicture(userId, selectedFile) {
             : null;
         const visibility = S3ObjectAccessLevels.public;
 
-        const key = `uploads/${userId}.jpg`;
+        const key = `public/${userId}.jpg`;
 
         const file = {
             bucket,
