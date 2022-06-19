@@ -92,6 +92,15 @@ export const schema = {
                         associatedWith: "userPossibleRiderResponsibilitiesId",
                     },
                 },
+                profilePicture: {
+                    name: "profilePicture",
+                    isArray: false,
+                    type: {
+                        nonModel: "S3Object",
+                    },
+                    isRequired: false,
+                    attributes: [],
+                },
                 comments: {
                     name: "comments",
                     isArray: true,
@@ -1828,6 +1837,6 @@ export const schema = {
             },
         },
     },
-    version: "36f6750390844ee6613175c5318eb547",
+    version: "1aeda1ca83756b3e5f90c7e6f64bbcc4",
 };
 

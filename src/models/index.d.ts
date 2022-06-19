@@ -150,14 +150,11 @@ export declare class User {
   readonly riderResponsibility?: string | null;
   readonly possibleRiderResponsibilities?: (PossibleRiderResponsibilities | null)[] | null;
   readonly profilePictureURL?: string | null;
-  readonly profilePictureThumbnailURL?: string | null;
   readonly profilePicture?: S3Object | null;
-  readonly profilePictureThumbnail?: S3Object | null;
   readonly comments?: (Comment | null)[] | null;
   readonly assignments?: (TaskAssignee | null)[] | null;
   readonly createdTasks?: (Task | null)[] | null;
   readonly disabled?: number | null;
-  readonly profilePictureUploadURL?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   constructor(init: ModelInit<User, UserMetaData>);
