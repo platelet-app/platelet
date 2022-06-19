@@ -5,5 +5,5 @@
             "sub": "test"
         }
     },
-    "source": { "id": "testId" }
+    "arguments": { "userId": "testId" }
 }

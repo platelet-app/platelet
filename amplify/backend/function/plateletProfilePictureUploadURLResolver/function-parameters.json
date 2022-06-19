@@ -2,8 +2,7 @@
   "permissions": {
     "api": {
       "platelet": [
-        "Query",
-        "Mutation"
+        "Query"
       ]
     },
     "storage": {

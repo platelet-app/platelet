@@ -32,17 +32,11 @@ type User
   ])
   possibleRiderResponsibilities: [PossibleRiderResponsibilities] @hasMany
   profilePictureURL(width: Int, height: Int): AWSURL @function(name: "plateletProfilePictureResolver-${env}") @auth(rules: [{allow: private, operations: [read]}])
-  profilePictureThumbnailURL: String
   profilePicture: S3Object
-  profilePictureThumbnail: S3Object
   comments: [Comment] @hasMany
   assignments: [TaskAssignee] @hasMany(indexName: "byAssignee", fields: ["id"])
   createdTasks: [Task] @hasMany
   disabled: Int @default(value: "0")
-  profilePictureUploadURL: AWSURL @function(name: "plateletProfilePictureUploadURLResolver-${env}") @auth(rules: [
-    {allow: owner, ownerField: "cognitoId", operations: [read]},
-    {allow: groups, groups: ["ADMIN"], operations: [read]},
-  ])
 }
 
 type PossibleRiderResponsibilities
@@ -338,5 +332,6 @@ type Statistics {
 }
 
 type Query {
+  profilePictureUploadURL(userId: ID!): AWSURL @function(name: "plateletProfilePictureUploadURLResolver-${env}") @auth(rules: [{allow: private}])
   getStatistics(tenantId: ID!): Statistics @function(name: "plateletGetStatistics-${env}") @auth(rules: [{allow: private}])
 }

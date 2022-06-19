@@ -76,39 +76,34 @@ exports.handler = async (event, context) => {
     console.log(`Invoke: event = ${JSON.stringify(event, null, 2)}`);
     console.log(`context = ${JSON.stringify(context, null, 2)}`);
     console.log(process.env);
-    try {
-        let { width, height } = event.arguments || {
-            width: null,
-            height: null,
-        };
-        const imageKey = event.source.profilePicture
-            ? event.source.profilePicture.key || null
-            : null;
-        if (!imageKey) return null;
-        if (!width || !height) {
-            return generatePresignedUrl(imageKey);
-        }
-        const cachedImageKey = await getCachedImageKey(imageKey, width, height);
+    let { width, height } = event.arguments || {
+        width: null,
+        height: null,
+    };
+    const imageKey = event.source.profilePicture
+        ? event.source.profilePicture.key || null
+        : null;
+    if (!imageKey) return null;
+    if (!width || !height) {
+        return generatePresignedUrl(imageKey);
+    }
+    const cachedImageKey = await getCachedImageKey(imageKey, width, height);
 
-        if (cachedImageKey) {
-            return generatePresignedUrl(cachedImageKey);
-        } else {
-            console.log("making image");
-            const image = await downloadImageFromBucket(imageKey);
-            const resized = await resizeImage(image, width, height);
-            const key = imageKey.split(".")[0];
-            const newKey = `${key}-${width}-${height}.jpg`;
-            const putObjectParams = {
-                Bucket: process.env.STORAGE_PLATELETSTORAGE_BUCKETNAME,
-                Key: newKey,
-                Body: resized,
-            };
-            const command = new PutObjectCommand(putObjectParams);
-            await client.send(command);
-            return generatePresignedUrl(newKey);
-        }
-    } catch (error) {
-        console.log(error);
-        return null;
+    if (cachedImageKey) {
+        return generatePresignedUrl(cachedImageKey);
+    } else {
+        console.log("making image");
+        const image = await downloadImageFromBucket(imageKey);
+        const resized = await resizeImage(image, width, height);
+        const key = imageKey.split(".")[0];
+        const newKey = `${key}-${width}-${height}.jpg`;
+        const putObjectParams = {
+            Bucket: process.env.STORAGE_PLATELETSTORAGE_BUCKETNAME,
+            Key: newKey,
+            Body: resized,
+        };
+        const command = new PutObjectCommand(putObjectParams);
+        await client.send(command);
+        return generatePresignedUrl(newKey);
     }
 };
