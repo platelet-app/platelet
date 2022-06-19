@@ -1,4 +1,4 @@
-import { API, Auth, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation, Storage } from "aws-amplify";
 import { DataStore } from "aws-amplify";
 import { S3ObjectAccessLevels } from "../../../apiConsts";
 import * as models from "../../../models";
@@ -20,6 +20,14 @@ if (
     aws_config = require("../../../aws-exports");
 }
 
+const getProfilePictureUrlQuery = `
+  query GetUser($id: ID! $width: Int $height: Int) {
+    getUser(id: $id) {
+      profilePictureURL(width: $width height: $height)
+    }
+  }
+`;
+
 async function uploadProfilePicture(userId, selectedFile) {
     if (selectedFile) {
         const bucket = aws_config.default
@@ -30,7 +38,7 @@ async function uploadProfilePicture(userId, selectedFile) {
             : null;
         const visibility = S3ObjectAccessLevels.public;
 
-        const key = `public/${userId}.jpg`;
+        const key = `${visibility}/${userId}.jpg`;
 
         const file = {
             bucket,
@@ -38,20 +46,14 @@ async function uploadProfilePicture(userId, selectedFile) {
             region,
         };
 
-        const thumbnailFile = {
-            ...file,
-            key: `${visibility}/${userId}_thumbnail.jpg`,
-        };
-
         try {
             const uploadUrlData = await API.graphql(
-                graphqlOperation(queries.getUser, {
-                    id: userId,
+                graphqlOperation(queries.profilePictureUploadURL, {
+                    userId,
                 })
             );
 
-            const uploadUrl =
-                uploadUrlData.data.getUser.profilePictureUploadURL;
+            const uploadUrl = uploadUrlData.data.profilePictureUploadURL;
             if (!uploadUrl) throw new Error("No upload URL found");
 
             await fetch(uploadUrl, {
@@ -62,11 +64,43 @@ async function uploadProfilePicture(userId, selectedFile) {
                 },
                 body: selectedFile,
             });
+            let fileExists = false;
+            let tries = 0;
+            // check that the file was uploaded before continuing
+            // aaaaaaaaaaa
+            while (!fileExists) {
+                console.log("Checking if file exists");
+                tries++;
+                fileExists = await Storage.get(key);
+                if (!fileExists)
+                    console.log(`File not found, trying again... (${tries})`);
+                if (tries > 10) {
+                    throw new Error("File not found");
+                }
+            }
+            console.log("File found");
 
             const existingUser = await DataStore.query(models.User, userId);
             await DataStore.save(
                 models.User.copyOf(existingUser, (updated) => {
                     updated.profilePicture = file;
+                })
+            );
+            // just to generate the scaled files in the bucket
+            console.log(
+                await API.graphql(
+                    graphqlOperation(getProfilePictureUrlQuery, {
+                        id: userId,
+                        width: 300,
+                        height: 300,
+                    })
+                )
+            );
+            await API.graphql(
+                graphqlOperation(getProfilePictureUrlQuery, {
+                    id: userId,
+                    width: 128,
+                    height: 128,
                 })
             );
         } catch (err) {
