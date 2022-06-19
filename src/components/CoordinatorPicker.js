@@ -77,9 +77,7 @@ function CoordinatorPicker(props) {
                             <CompactUserCard
                                 userUUID={option.id}
                                 displayName={option.displayName}
-                                profilePictureThumbnail={
-                                    option.profilePictureThumbnail
-                                }
+                                profilePictureThumbnail={option.profilePicture}
                             />
                         </Box>
                     );

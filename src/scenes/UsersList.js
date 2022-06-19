@@ -109,8 +109,8 @@ export default function UsersList(props) {
                                 riderResponsibility={user.riderResponsibility}
                                 userUUID={user.id}
                                 thumbnailKey={
-                                    user.profilePictureThumbnail
-                                        ? user.profilePictureThumbnail.key
+                                    user.profilePicture
+                                        ? user.profilePicture.key
                                         : null
                                 }
                             />

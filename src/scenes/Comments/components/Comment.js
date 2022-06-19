@@ -66,7 +66,6 @@ const initialCommentState = {
     author: {
         displayName: "",
         id: "",
-        profilePictureThumbnailURL: "",
     },
     body: "",
     visibility: commentVisibility.me,

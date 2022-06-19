@@ -83,10 +83,8 @@ function NewCommentCard(props) {
                                 uuid={props.author.id}
                                 displayName={props.author.displayName}
                                 thumbnailKey={
-                                    props.author &&
-                                    props.author.profilePictureThumbnail
-                                        ? props.author.profilePictureThumbnail
-                                              .key
+                                    props.author && props.author.profilePicture
+                                        ? props.author.profilePicture.key
                                         : null
                                 }
                             />
@@ -178,7 +176,7 @@ NewCommentCard.defaultProps = {
     author: {
         displayName: "",
         id: "",
-        profilePictureThumbnail: { bucket: "", key: "", region: "" },
+        profilePicture: { bucket: "", key: "", region: "" },
     },
     parentUUID: "",
 };

@@ -59,9 +59,7 @@ function LightToggleProfileMenu() {
                     userUUID={whoami.id}
                     displayName={whoami.displayName}
                     thumbnailKey={
-                        whoami.profilePictureThumbnail
-                            ? whoami.profilePictureThumbnail.key
-                            : null
+                        whoami.profilePicture ? whoami.profilePicture.key : null
                     }
                 />
 
