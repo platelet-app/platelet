@@ -4,7 +4,6 @@ import { Paper, Stack } from "@mui/material";
 import ProfilePictureCropper from "./ProfilePictureCropper";
 import uploadProfilePicture from "./uploadProfilePicture";
 import { generateS3Link } from "../../../amplifyUtilities";
-import getProfilePictureUrl from "../../../utilities/getProfilePictureUrl";
 
 export default function ProfilePicture(props) {
     const [image, setImage] = useState(null);
