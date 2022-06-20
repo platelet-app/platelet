@@ -80,14 +80,13 @@ async function getUserByCognitoId(cognitoId) {
     });
 }
 
-exports.handler = async (event, context) => {
+exports.handler = async (event) => {
     console.log(`Invoke: event = ${JSON.stringify(event, null, 2)}`);
-    console.log(`context = ${JSON.stringify(context, null, 2)}`);
-    console.log(process.env);
     if (!event.arguments.userId)
         return new Promise((_, reject) => reject("No userId provided"));
     const userResult = await getUser(event.arguments.userId);
     const user = userResult.data.getUser;
+    console.log("user:", user);
     if (!user) return new Promise((_, reject) => reject("User not found"));
     if (event.identity.claims["cognito:groups"].includes("ADMIN")) {
         let tenantId = event.identity.claims["custom:tenantId"];
@@ -98,6 +97,7 @@ exports.handler = async (event, context) => {
                 event.identity.claims.sub
             );
             const admin = adminResult.data.getUserByCognitoId.items[0];
+            console.log("admin:", admin);
             tenantId = admin.tenantId;
         }
         if (user.tenantId === tenantId) {
