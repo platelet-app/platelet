@@ -177,6 +177,12 @@ async function generateCSV(data) {
                         row.push(
                             comment[key].displayName || commentFields[key]
                         );
+                    } else if (key === "body") {
+                        // replace any newlines with spaces
+                        row.push(
+                            comment[key].replace(/\n/g, " ") ||
+                                commentFields[key]
+                        );
                     } else {
                         row.push(comment[key] || commentFields[key]);
                     }
