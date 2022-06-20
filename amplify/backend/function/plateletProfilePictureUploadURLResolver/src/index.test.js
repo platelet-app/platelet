@@ -1,7 +1,4 @@
 const plateletProfilePictureUploadURLResolver = require("./index").handler;
-const s3RequestPresigner = require("@aws-sdk/s3-request-presigner");
-const s3 = require("@aws-sdk/client-s3");
-const AWS = require("aws-sdk/global");
 const appsync = require("aws-appsync");
 
 const event = {
@@ -28,17 +25,10 @@ jest.mock("aws-appsync", () => {
 const beginString = `https://s3.${process.env.REGION}.amazonaws.com/${process.env.STORAGE_PLATELETSTORAGE_BUCKETNAME}/public/${event.arguments.userId}.jpg`;
 
 describe("platelet profile picture upload URL resolver", () => {
-    const OLD_ENV = process.env;
-
     beforeEach(() => {
-        jest.resetModules();
         jest.restoreAllMocks();
-        process.env = { ...OLD_ENV };
     });
 
-    afterAll(() => {
-        process.env = OLD_ENV;
-    });
     it("should generate a url for their own picture", async () => {
         const querySpy = jest
             .spyOn(appsync.default.prototype, "query")
