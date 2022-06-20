@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"Amplify\",\"createdWith\":\"8.0.3\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
+  "Description": "Lambda Function resource stack creation using Amplify CLI",
   "Parameters": {
     "CloudWatchRule": {
       "Type": "String",
@@ -19,18 +19,6 @@
     "storageplateletStorageBucketName": {
       "Type": "String",
       "Default": "storageplateletStorageBucketName"
-    },
-    "resizeWidth": {
-      "Type": "String"
-    },
-    "resizeHeight": {
-      "Type": "String"
-    },
-    "thumbnailWidth": {
-      "Type": "String"
-    },
-    "thumbnailHeight": {
-      "Type": "String"
     }
   },
   "Conditions": {
@@ -63,12 +51,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "plateletImageResize",
+            "plateletProfilePictureResolver",
             {
               "Fn::Join": [
                 "",
                 [
-                  "plateletImageResize",
+                  "plateletProfilePictureResolver",
                   "-",
                   {
                     "Ref": "env"
@@ -88,18 +76,6 @@
             },
             "STORAGE_PLATELETSTORAGE_BUCKETNAME": {
               "Ref": "storageplateletStorageBucketName"
-            },
-            "RESIZE_WIDTH": {
-              "Ref": "resizeWidth"
-            },
-            "RESIZE_HEIGHT": {
-              "Ref": "resizeHeight"
-            },
-            "THUMBNAIL_WIDTH": {
-              "Ref": "thumbnailWidth"
-            },
-            "THUMBNAIL_HEIGHT": {
-              "Ref": "thumbnailHeight"
             }
           }
         },
@@ -109,10 +85,8 @@
             "Arn"
           ]
         },
-        "Runtime": "python3.8",
-        "Layers": [
-          "arn:aws:lambda:eu-west-1:770693421928:layer:Klayers-python38-Pillow:15"
-        ],
+        "Runtime": "nodejs14.x",
+        "Layers": [],
         "Timeout": 25
       }
     },
@@ -122,12 +96,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "plateletLambdaRoleed86f801",
+            "plateletLambdaRole5e18e187",
             {
               "Fn::Join": [
                 "",
                 [
-                  "plateletLambdaRoleed86f801",
+                  "plateletLambdaRole5e18e187",
                   "-",
                   {
                     "Ref": "env"
@@ -234,8 +208,7 @@
               "Effect": "Allow",
               "Action": [
                 "s3:PutObject",
-                "s3:GetObject",
-                "s3:DeleteObject"
+                "s3:GetObject"
               ],
               "Resource": [
                 {
@@ -255,33 +228,6 @@
           ]
         }
       }
-    },
-    "CustomLambdaExecutionPolicy": {
-      "Type": "AWS::IAM::Policy",
-      "Properties": {
-        "PolicyName": "custom-lambda-execution-policy",
-        "PolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Action": [
-                "s3:*",
-                "s3-object-lambda:*"
-              ],
-              "Resource": [
-                "*"
-              ],
-              "Effect": "Allow"
-            }
-          ]
-        },
-        "Roles": [
-          {
-            "Ref": "LambdaExecutionRole"
-          }
-        ]
-      },
-      "DependsOn": "LambdaExecutionRole"
     }
   },
   "Outputs": {

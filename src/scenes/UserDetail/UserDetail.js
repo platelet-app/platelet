@@ -34,7 +34,6 @@ const initialUserState = {
     dateOfBirth: null,
     patch: null,
     profilePictureURL: null,
-    profilePictureThumbnailURL: null,
     disabled: 0,
 };
 

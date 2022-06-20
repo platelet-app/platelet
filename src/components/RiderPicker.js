@@ -90,9 +90,7 @@ function RiderPicker(props) {
                                 responsibility={
                                     option.riderResponsibility || ""
                                 }
-                                profilePictureThumbnail={
-                                    option.profilePictureThumbnail
-                                }
+                                profilePictureThumbnail={option.profilePicture}
                             />
                         </Box>
                     );

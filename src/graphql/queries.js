@@ -38,13 +38,7 @@ export const getTenant = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -99,7 +93,6 @@ export const listTenants = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -147,7 +140,6 @@ export const syncTenants = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -211,13 +203,7 @@ export const getUser = /* GraphQL */ `
         startedAt
       }
       profilePictureURL
-      profilePictureThumbnailURL
       profilePicture {
-        bucket
-        key
-        region
-      }
-      profilePictureThumbnail {
         bucket
         key
         region
@@ -328,13 +314,7 @@ export const listUsers = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -407,13 +387,7 @@ export const syncUsers = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -488,13 +462,7 @@ export const getUserByCognitoId = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -559,13 +527,7 @@ export const getPossibleRiderResponsibilities = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -639,7 +601,6 @@ export const listPossibleRiderResponsibilities = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -698,7 +659,6 @@ export const syncPossibleRiderResponsibilities = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -1114,13 +1074,7 @@ export const getTask = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -1353,7 +1307,6 @@ export const listTasks = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -1483,7 +1436,6 @@ export const syncTasks = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -1615,7 +1567,6 @@ export const tasksByStatus = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -1740,7 +1691,6 @@ export const getTaskAssignee = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -1869,13 +1819,7 @@ export const getTaskAssignee = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -1952,7 +1896,6 @@ export const listTaskAssignees = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -2022,7 +1965,6 @@ export const syncTaskAssignees = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -2079,13 +2021,7 @@ export const getComment = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -2143,7 +2079,6 @@ export const listComments = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -2194,7 +2129,6 @@ export const syncComments = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -2359,7 +2293,6 @@ export const getDeliverable = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -2716,6 +2649,11 @@ export const syncRiderResponsibilities = /* GraphQL */ `
       nextToken
       startedAt
     }
+  }
+`;
+export const profilePictureUploadURL = /* GraphQL */ `
+  query ProfilePictureUploadURL($userId: ID!) {
+    profilePictureUploadURL(userId: $userId)
   }
 `;
 export const getStatistics = /* GraphQL */ `

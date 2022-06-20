@@ -38,13 +38,7 @@ export const onCreateTenant = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -114,13 +108,7 @@ export const onUpdateTenant = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -190,13 +178,7 @@ export const onDeleteTenant = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -273,13 +255,7 @@ export const onCreateUser = /* GraphQL */ `
         startedAt
       }
       profilePictureURL
-      profilePictureThumbnailURL
       profilePicture {
-        bucket
-        key
-        region
-      }
-      profilePictureThumbnail {
         bucket
         key
         region
@@ -396,13 +372,7 @@ export const onUpdateUser = /* GraphQL */ `
         startedAt
       }
       profilePictureURL
-      profilePictureThumbnailURL
       profilePicture {
-        bucket
-        key
-        region
-      }
-      profilePictureThumbnail {
         bucket
         key
         region
@@ -519,13 +489,7 @@ export const onDeleteUser = /* GraphQL */ `
         startedAt
       }
       profilePictureURL
-      profilePictureThumbnailURL
       profilePicture {
-        bucket
-        key
-        region
-      }
-      profilePictureThumbnail {
         bucket
         key
         region
@@ -634,13 +598,7 @@ export const onCreatePossibleRiderResponsibilities = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -725,13 +683,7 @@ export const onUpdatePossibleRiderResponsibilities = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -816,13 +768,7 @@ export const onDeletePossibleRiderResponsibilities = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -1351,13 +1297,7 @@ export const onCreateTask = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -1605,13 +1545,7 @@ export const onUpdateTask = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -1859,13 +1793,7 @@ export const onDeleteTask = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -2099,7 +2027,6 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -2228,13 +2155,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -2288,7 +2209,6 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -2417,13 +2337,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -2477,7 +2391,6 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -2606,13 +2519,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -2682,13 +2589,7 @@ export const onCreateComment = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -2761,13 +2662,7 @@ export const onUpdateComment = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -2840,13 +2735,7 @@ export const onDeleteComment = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -3026,7 +2915,6 @@ export const onCreateDeliverable = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -3192,7 +3080,6 @@ export const onUpdateDeliverable = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -3358,7 +3245,6 @@ export const onDeleteDeliverable = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt

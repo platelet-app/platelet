@@ -4,15 +4,14 @@ import PropTypes from "prop-types";
 import { generateS3Link } from "../amplifyUtilities";
 
 function UserChip(props) {
-    let { profilePictureThumbnail, displayName, riderResponsibility } =
-        props.user;
+    let { profilePicture, displayName, riderResponsibility } = props.user;
     const [thumbnail, setThumbnail] = useState(null);
     const [label, setLabel] = useState(displayName);
 
     async function getThumbnail() {
-        if (profilePictureThumbnail && profilePictureThumbnail.key) {
+        if (profilePicture && profilePicture.key) {
             try {
-                const profilePictureKey = profilePictureThumbnail.key;
+                const profilePictureKey = profilePicture.key;
                 const result = await generateS3Link(profilePictureKey);
                 if (result) {
                     setThumbnail(result);

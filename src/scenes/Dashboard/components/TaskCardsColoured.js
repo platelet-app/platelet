@@ -141,8 +141,8 @@ const TaskCard = React.memo((props) => {
                                     userUUID={u.id}
                                     displayName={u.displayName}
                                     thumbnailKey={
-                                        u.profilePictureThumbnail
-                                            ? u.profilePictureThumbnail.key
+                                        u.profilePicture
+                                            ? u.profilePicture.key
                                             : null
                                     }
                                 />
