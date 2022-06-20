@@ -14,6 +14,7 @@
         "sharp": "^0.30.6"
     },
     "scripts": {
+        "preinstall": "SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install --arch=x64 --platform=linux --libc=glibc sharp",
         "test": "jest test --watchAll --testTimeout=10000",
         "test:debug": "jest --watchAll --inspect test --runInBand --no-cache --testTimeout=100000000"
     }
