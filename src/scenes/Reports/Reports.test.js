@@ -37,7 +37,7 @@ describe("Reports", () => {
             expect(generateReportSpy).toHaveBeenCalled();
         });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(32);
+            expect(querySpy).toHaveBeenCalledTimes(4);
         });
     });
 
@@ -62,7 +62,7 @@ describe("Reports", () => {
             expect(generateReportSpy).toHaveBeenCalled();
         });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(32);
+            expect(querySpy).toHaveBeenCalledTimes(4);
         });
     });
 
@@ -85,7 +85,7 @@ describe("Reports", () => {
             expect(generateReportSpy).toHaveBeenCalled();
         });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(32);
+            expect(querySpy).toHaveBeenCalledTimes(4);
         });
     });
 

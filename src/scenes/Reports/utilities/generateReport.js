@@ -220,8 +220,8 @@ async function generateCSV(data) {
 export default async function generateReport(userId, role, days) {
     const timeStamp = moment.utc().subtract(days, "days").toISOString();
     let finalTasks = [];
+    const assignments = await DataStore.query(models.TaskAssignee);
     if (role !== "ALL") {
-        const assignments = await DataStore.query(models.TaskAssignee);
         const filteredAssignments = assignments.filter(
             (assignment) =>
                 assignment.role === role &&
@@ -248,24 +248,21 @@ export default async function generateReport(userId, role, days) {
             )
         );
     }
+    const deliverables = await DataStore.query(models.Deliverable);
+    const commentsAll = await DataStore.query(models.Comment, (c) =>
+        c.visibility("eq", commentVisibility.everyone)
+    );
     finalTasks = await Promise.all(
         finalTasks.map(async (t) => {
-            const comments = await DataStore.query(models.Comment, (c) =>
-                c
-                    .parentId("eq", t.id)
-                    .visibility("eq", commentVisibility.everyone)
-            );
-            const deliverables = await DataStore.query(models.Deliverable);
+            const comments = commentsAll.filter((c) => c.parentId === t.id);
             const items = deliverables.filter(
                 (d) => d.task && d.task.id === t.id
             );
-            const assigneesQuery = await DataStore.query(models.TaskAssignee);
-            const assignees = assigneesQuery.filter(
+            const assignees = assignments.filter(
                 (assignment) => assignment.task && assignment.task.id === t.id
             );
             return { ...t, comments, items, assignees };
         })
     );
-
     return generateCSV(finalTasks);
 }
