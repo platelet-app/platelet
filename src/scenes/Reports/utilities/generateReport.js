@@ -74,7 +74,6 @@ function generateCountedHeader(count, fields, prefix) {
 }
 
 async function generateCSV(data) {
-    let csv = "";
     const rows = [];
     const headers = [];
     const commentsCount = data.reduce((acc, task) => {
@@ -172,12 +171,6 @@ async function generateCSV(data) {
                         row.push(
                             comment[key].displayName || commentFields[key]
                         );
-                    } else if (key === "body") {
-                        // replace any newlines with spaces
-                        row.push(
-                            comment[key].replace(/\n/g, " ") ||
-                                commentFields[key]
-                        );
                     } else {
                         row.push(comment[key] || commentFields[key]);
                     }
@@ -255,7 +248,6 @@ export default async function generateReport(userId, role, days) {
             )
         );
     }
-    let mostComments = 0;
     finalTasks = await Promise.all(
         finalTasks.map(async (t) => {
             const comments = await DataStore.query(models.Comment, (c) =>
@@ -275,5 +267,5 @@ export default async function generateReport(userId, role, days) {
         })
     );
 
-    return generateCSV(finalTasks, mostComments);
+    return generateCSV(finalTasks);
 }

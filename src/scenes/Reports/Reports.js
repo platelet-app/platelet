@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { CSVDownload } from "react-csv";
 import {
     Button,
     Stack,
@@ -17,22 +16,38 @@ import { userRoles } from "../../apiConsts";
 import { useSelector } from "react-redux";
 import { getWhoami } from "../../redux/Selectors";
 import UserRoleSelect from "../../components/UserRoleSelect";
+import moment from "moment";
 
 function Reports() {
     const [days, setDays] = useState("3");
     const [role, setRole] = useState(userRoles.coordinator);
     const [includeStats, setIncludeStats] = useState(false);
     const whoami = useSelector(getWhoami);
-    const [csvData, setCsvData] = useState(null);
     const [isPosting, setIsPosting] = useState(false);
 
     const handleExport = async () => {
-        setCsvData(null);
         setIsPosting(true);
+        const timeStamp = moment().subtract(days, "days");
+        const fileName = `${
+            whoami.name
+        }_${role}_${timeStamp}_to_${moment()}.csv`;
         generateReport(whoami.id, role, days).then((data) => {
-            setCsvData(data);
+            downloadCSVFile(data, fileName);
             setIsPosting(false);
         });
+    };
+
+    const downloadCSVFile = (data, fileName) => {
+        if (data) {
+            const element = document.createElement("a");
+            const file = new Blob([data], {
+                type: "text/csv",
+            });
+            element.href = URL.createObjectURL(file);
+            element.download = fileName || "report.csv";
+            document.body.appendChild(element);
+            element.click();
+        }
     };
 
     // exclude roles the user does not have
@@ -95,7 +110,6 @@ function Reports() {
                     </Button>
                 </Box>
             </Stack>
-            {csvData && <CSVDownload data={csvData} target="_blank" />}
         </PaddedPaper>
     );
 }
