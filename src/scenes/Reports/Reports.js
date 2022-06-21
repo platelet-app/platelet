@@ -14,16 +14,24 @@ import { PaddedPaper } from "../../styles/common";
 import generateReport from "./utilities/generateReport";
 import { userRoles } from "../../apiConsts";
 import { useSelector } from "react-redux";
-import { getWhoami } from "../../redux/Selectors";
+import {
+    dataStoreReadyStatusSelector,
+    getWhoami,
+    networkStatusSelector,
+} from "../../redux/Selectors";
 import UserRoleSelect from "../../components/UserRoleSelect";
 import moment from "moment";
+import ConfirmationDialog from "../../components/ConfirmationDialog";
 
 function Reports() {
     const [days, setDays] = useState("3");
     const [role, setRole] = useState(userRoles.coordinator);
     const [includeStats, setIncludeStats] = useState(false);
+    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const networkStatus = useSelector(networkStatusSelector);
     const whoami = useSelector(getWhoami);
     const [isPosting, setIsPosting] = useState(false);
+    const [confirmation, setConfirmation] = useState(false);
 
     const handleExport = async () => {
         setIsPosting(true);
@@ -37,6 +45,14 @@ function Reports() {
         });
     };
 
+    const handleClick = () => {
+        if (!dataStoreReadyStatus && networkStatus) {
+            setConfirmation(true);
+        } else {
+            handleExport();
+        }
+    };
+
     const downloadCSVFile = (data, fileName) => {
         if (data) {
             const element = document.createElement("a");
@@ -48,6 +64,11 @@ function Reports() {
             document.body.appendChild(element);
             element.click();
         }
+    };
+
+    const handleOnConfirm = () => {
+        setConfirmation(false);
+        handleExport();
     };
 
     // exclude roles the user does not have
@@ -103,13 +124,25 @@ function Reports() {
                     <Button
                         disabled={isPosting}
                         aria-label="Export"
-                        onClick={handleExport}
+                        onClick={handleClick}
                         sx={{ marginLeft: "auto", maxWidth: 100 }}
                     >
                         Export
                     </Button>
                 </Box>
             </Stack>
+            <ConfirmationDialog
+                open={confirmation}
+                onConfirmation={handleOnConfirm}
+                onCancel={() => setConfirmation(false)}
+                onClose={() => setConfirmation(false)}
+                title={"Data still syncing"}
+            >
+                <Typography>
+                    Some data may not be downloaded yet. Do you still want to
+                    export?
+                </Typography>
+            </ConfirmationDialog>
         </PaddedPaper>
     );
 }
