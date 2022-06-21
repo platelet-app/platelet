@@ -3,6 +3,7 @@ import _ from "lodash";
 import moment from "moment";
 import { commentVisibility } from "../../../apiConsts";
 import * as models from "../../../models";
+import { writeToString } from "@fast-csv/format";
 
 const taskFields = {
     id: "",
@@ -58,32 +59,24 @@ const commentFields = {
 function generateHeader(fields, prefix = "") {
     let keys = Object.keys(fields);
     if (prefix) {
-        return keys.map((k) => `${prefix}_${k}`).join(",");
+        return keys.map((k) => `${prefix}_${k}`);
     } else {
-        return keys.join(",");
+        return keys;
     }
 }
 
 function generateCountedHeader(count, fields, prefix) {
     return _.range(count)
         .map((i) => {
-            return Object.keys(fields)
-                .map((k) => `${prefix}_${i}_${k}`)
-                .join(",");
+            return Object.keys(fields).map((k) => `${prefix}_${i}_${k}`);
         })
-        .join(",");
+        .flat();
 }
-
-//    items
-//    "bike allocated" (referred to as riderResponsibility in the schema, but we could start using "Rider role" on the front end as a better name?)
-//    rider name
-//    handover group (not currently recorded, but may be put in to a comment or attached to location, I'll check with the charity)
-//    time collected
-//    time delivered
-//    time rider home
 
 async function generateCSV(data) {
     let csv = "";
+    const rows = [];
+    const headers = [];
     const commentsCount = data.reduce((acc, task) => {
         if (task.comments && task.comments.length > acc)
             return task.comments.length;
@@ -112,24 +105,26 @@ async function generateCSV(data) {
         else return acc;
     }, 0);
 
-    csv += generateHeader(taskFields) + ",";
-    csv += generateHeader(locationFields, "pickUpLocation") + ",";
-    csv += generateHeader(locationFields, "dropOffLocation") + ",";
-    csv += generateHeader(requesterContactFields, "requesterContact") + ",";
+    headers.push(generateHeader(taskFields));
+    headers.push(generateHeader(locationFields, "pickUpLocation"));
+    headers.push(generateHeader(locationFields, "dropOffLocation"));
+    headers.push(generateHeader(requesterContactFields, "requesterContact"));
     if (commentsCount > 0) {
-        csv +=
-            generateCountedHeader(commentsCount, commentFields, "comment") +
-            ",";
+        headers.push(
+            generateCountedHeader(commentsCount, commentFields, "comment")
+        );
     }
     if (itemsCount > 0) {
-        csv += generateCountedHeader(itemsCount, itemFields, "item") + ",";
+        headers.push(generateCountedHeader(itemsCount, itemFields, "item"));
     }
     if (assigneesCount > 0) {
-        csv +=
-            generateCountedHeader(assigneesCount, assigneeFields, "assignee") +
-            ",";
+        headers.push(
+            generateCountedHeader(assigneesCount, assigneeFields, "assignee")
+        );
     }
-    csv += "\n";
+    console.log(headers);
+    rows.push(headers.flat());
+    console.log(rows);
     data.forEach((item) => {
         let row = [];
         const {
@@ -224,9 +219,9 @@ async function generateCSV(data) {
             });
         }
 
-        csv += row.join(",") + "\n";
+        rows.push(row);
     });
-    return csv;
+    return await writeToString(rows);
 }
 
 export default async function generateReport(userId, role, days) {

@@ -165,7 +165,7 @@ describe("generateReports", () => {
             )
         );
         // I don't know why I did this
-        const expected = `id,createdAt,priority,status,riderResponsibility,timePickedUp,timeDroppedOff,timeRiderHome,pickUpLocation_ward,pickUpLocation_line1,pickUpLocation_line2,pickUpLocation_line3,pickUpLocation_town,pickUpLocation_county,pickUpLocation_state,pickUpLocation_country,pickUpLocation_postcode,dropOffLocation_ward,dropOffLocation_line1,dropOffLocation_line2,dropOffLocation_line3,dropOffLocation_town,dropOffLocation_county,dropOffLocation_state,dropOffLocation_country,dropOffLocation_postcode,requesterContact_name,requesterContact_telephoneNumber,comment_0_id,comment_0_createdAt,comment_0_author,comment_0_body,comment_1_id,comment_1_createdAt,comment_1_author,comment_1_body,item_0_id,item_0_createdAt,item_0_label,item_0_count,item_0_unit,assignee_0_id,assignee_0_createdAt,assignee_0_displayName,assignee_0_name,assignee_0_role,assignee_1_id,assignee_1_createdAt,assignee_1_displayName,assignee_1_name,assignee_1_role,
+        const expected = `id,createdAt,priority,status,riderResponsibility,timePickedUp,timeDroppedOff,timeRiderHome,pickUpLocation_ward,pickUpLocation_line1,pickUpLocation_line2,pickUpLocation_line3,pickUpLocation_town,pickUpLocation_county,pickUpLocation_state,pickUpLocation_country,pickUpLocation_postcode,dropOffLocation_ward,dropOffLocation_line1,dropOffLocation_line2,dropOffLocation_line3,dropOffLocation_town,dropOffLocation_county,dropOffLocation_state,dropOffLocation_country,dropOffLocation_postcode,requesterContact_name,requesterContact_telephoneNumber,comment_0_id,comment_0_createdAt,comment_0_author,comment_0_body,comment_1_id,comment_1_createdAt,comment_1_author,comment_1_body,item_0_id,item_0_createdAt,item_0_label,item_0_count,item_0_unit,assignee_0_id,assignee_0_createdAt,assignee_0_displayName,assignee_0_name,assignee_0_role,assignee_1_id,assignee_1_createdAt,assignee_1_displayName,assignee_1_name,assignee_1_role
 ${task1.id},${task1.createdAt || ""},${task1.priority},${task1.status},${
             task1.riderResponsibility
         },${task1.timePickedUp},${task1.timeDroppedOff},${
@@ -343,8 +343,7 @@ ${task2.id},${task2.createdAt || ""},${task2.priority},${task2.status},${
             riderAssignee2.createdAt || ""
         },${riderAssignee2.assignee.displayName},${
             riderAssignee2.assignee.name
-        },${riderAssignee2.role}
-`;
+        },${riderAssignee2.role}`;
 
         const result = await generateReport(
             whoami.id,
