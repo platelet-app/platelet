@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Button,
     Stack,
@@ -13,7 +13,7 @@ import DaysSelection from "../../components/DaysSelection";
 import { PaddedPaper } from "../../styles/common";
 import generateReport from "./utilities/generateReport";
 import { userRoles } from "../../apiConsts";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
     dataStoreReadyStatusSelector,
     getWhoami,
@@ -22,6 +22,7 @@ import {
 import UserRoleSelect from "../../components/UserRoleSelect";
 import moment from "moment";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
+import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 
 function Reports() {
     const [days, setDays] = useState("3");
@@ -32,17 +33,22 @@ function Reports() {
     const whoami = useSelector(getWhoami);
     const [isPosting, setIsPosting] = useState(false);
     const [confirmation, setConfirmation] = useState(false);
+    const dispatch = useDispatch();
 
     const handleExport = async () => {
-        setIsPosting(true);
-        const timeStamp = moment().subtract(days, "days");
-        const fileName = `${
-            whoami.name
-        }_${role}_${timeStamp}_to_${moment()}.csv`;
-        generateReport(whoami.id, role, days).then((data) => {
-            downloadCSVFile(data, fileName);
+        try {
+            setIsPosting(true);
+            const timeStamp = moment().subtract(days, "days");
+            const fileName = `${
+                whoami.name
+            }_${role}_${timeStamp}_to_${moment()}.csv`;
+            const result = await generateReport(whoami.id, role, days);
+            downloadCSVFile(result, fileName);
             setIsPosting(false);
-        });
+        } catch (err) {
+            console.log(err);
+            dispatch(displayErrorNotification("Sorry, something went wrong."));
+        }
     };
 
     const handleClick = () => {
@@ -52,6 +58,13 @@ function Reports() {
             handleExport();
         }
     };
+
+    useEffect(() => {
+        if (dataStoreReadyStatus && confirmation) {
+            setConfirmation(false);
+            handleExport();
+        }
+    }, [dataStoreReadyStatus, confirmation]);
 
     const downloadCSVFile = (data, fileName) => {
         if (data) {
