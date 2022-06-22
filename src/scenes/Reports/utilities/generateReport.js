@@ -266,3 +266,33 @@ export default async function generateReport(userId, role, days) {
     );
     return generateCSV(finalTasks);
 }
+
+// callback code that may be useful
+/*let count = 0;
+    finalTasks = await Promise.all(
+        finalTasks.map((t) =>
+            new Promise((resolve, reject) => {
+                const comments = commentsAll.filter((c) => c.parentId === t.id);
+                const items = deliverables.filter(
+                    (d) => d.task && d.task.id === t.id
+                );
+                const assignees = assignments.filter(
+                    (assignment) =>
+                        assignment.task && assignment.task.id === t.id
+                );
+                resolve({ ...t, comments, items, assignees });
+            })
+                .then((result) => {
+                    count++;
+                    if (progressCallback) {
+                        progressCallback((count * 100) / finalTasks.length);
+                    }
+                    return result;
+                })
+                .catch((err) => {
+                    console.log(err);
+                    throw err;
+                })
+        )
+    );
+    */
