@@ -7,6 +7,7 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import * as gr from "./utilities/generateReport";
 import { userRoles } from "../../apiConsts";
+import { setReadyStatus } from "../../redux/awsHubListener/awsHubListenerActions";
 
 const preloadedState = {
     dataStoreReadyStatus: true,
@@ -58,6 +59,30 @@ describe("Reports", () => {
         userEvent.click(okButton);
         expect(screen.queryByRole(("button", { name: "OK" }))).toBeNull();
         expect(button).toBeDisabled();
+        await waitFor(() => {
+            expect(generateReportSpy).toHaveBeenCalled();
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(4);
+        });
+    });
+
+    test("skip confirmation if sync status changes", async () => {
+        const generateReportSpy = jest.spyOn(gr, "default");
+        const querySpy = jest.spyOn(DataStore, "query");
+        const { store } = render(<Reports />, {
+            preloadedState: {
+                awsHubDataStoreEventsReducer: {
+                    network: true,
+                    ready: false,
+                },
+            },
+        });
+        const button = screen.getByRole("button", { name: "Export" });
+        userEvent.click(button);
+        expect(screen.getByRole("button", { name: "OK" })).toBeInTheDocument();
+        store.dispatch(setReadyStatus(true));
+        expect(screen.queryByRole(("button", { name: "OK" }))).toBeNull();
         await waitFor(() => {
             expect(generateReportSpy).toHaveBeenCalled();
         });
