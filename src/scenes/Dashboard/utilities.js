@@ -18,6 +18,8 @@ export const getTaskUUIDs = (tasks) => {
 };
 
 export async function addTask(whoamiId, tenantId) {
+    const date = new Date();
+    const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     if (!whoamiId || !tenantId) {
         throw new Error("Missing required parameters");
     }
@@ -32,6 +34,7 @@ export async function addTask(whoamiId, tenantId) {
             timeOfCall,
             createdBy,
             tenantId,
+            dateCreated: today,
         })
     );
     await DataStore.save(

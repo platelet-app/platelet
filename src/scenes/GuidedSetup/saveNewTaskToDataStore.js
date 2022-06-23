@@ -28,6 +28,9 @@ export async function saveNewTaskToDataStore(
             new models.Location({ ...dropOffLocation, listed: 0, tenantId })
         );
     }
+    // get the date today without time
+    const date = new Date();
+    const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     const newTask = await DataStore.save(
         new models.Task({
             ...rest,
@@ -35,6 +38,7 @@ export async function saveNewTaskToDataStore(
             dropOffLocation,
             status: tasksStatus.new,
             tenantId,
+            dateCreated: today,
         })
     );
 
