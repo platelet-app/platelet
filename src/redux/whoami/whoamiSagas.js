@@ -15,6 +15,8 @@ import * as queries from "../../graphql/queries";
 import { NotFound } from "http-errors";
 import { userRoles } from "../../apiConsts";
 import { eventChannel } from "redux-saga";
+import { tasksStatus, userRoles } from "../apiConsts";
+import moment from "moment";
 
 const fakeUser = {
     id: "offline",
@@ -115,7 +117,6 @@ function* getWhoami() {
                 for (const model of Object.values(models)) {
                     if (
                         [
-                            "Task",
                             "User",
                             "TaskAssignee",
                             "RiderResponsibility",
@@ -131,6 +132,10 @@ function* getWhoami() {
                     }
                 }
 
+                const oneWeekAgo = moment()
+                    .subtract(7, "days")
+                    .format("YYYY-MM-DD");
+
                 yield call([DataStore, DataStore.configure], {
                     errorHandler: (err) => {
                         console.log("DataStore error:", err);
@@ -145,8 +150,22 @@ function* getWhoami() {
                         syncExpression(models.Tenant, (m) =>
                             m.id("eq", tenantId)
                         ),
+                        syncExpression(models.Task, (m) =>
+                            m
+                                .tenantId("eq", tenantId)
+                                .or((task) =>
+                                    task
+                                        .status("eq", tasksStatus.new)
+                                        .status("eq", tasksStatus.active)
+                                        .status("eq", tasksStatus.pickedUp)
+                                        .status("eq", tasksStatus.droppedOff)
+                                        .dateCreated("eq", null)
+                                        .dateCreated("gt", oneWeekAgo)
+                                )
+                        ),
                     ],
                 });
+
                 result = yield call(
                     [DataStore, DataStore.query],
                     models.User,
