@@ -56,7 +56,6 @@ function RiderPicker(props) {
     return (
         <>
             <Autocomplete
-                disablePortal
                 fullWidth
                 key={reset}
                 filterOptions={filterOptions}
@@ -91,9 +90,7 @@ function RiderPicker(props) {
                                 responsibility={
                                     option.riderResponsibility || ""
                                 }
-                                profilePictureThumbnail={
-                                    option.profilePictureThumbnail
-                                }
+                                profilePictureThumbnail={option.profilePicture}
                             />
                         </Box>
                     );

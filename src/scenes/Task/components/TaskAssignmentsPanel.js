@@ -22,6 +22,7 @@ import * as models from "../../../models";
 import {
     convertListDataToObject,
     determineTaskStatus,
+    sortByCreatedTime,
 } from "../../../utilities";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -30,7 +31,6 @@ import {
 } from "../../../redux/notifications/NotificationsActions";
 import _ from "lodash";
 import {
-    dataStoreReadyStatusSelector,
     taskAssigneesReadyStatusSelector,
     taskAssigneesSelector,
     tenantIdSelector,
@@ -68,7 +68,6 @@ function TaskAssignmentsPanel(props) {
     const taskAssignees = useSelector(taskAssigneesSelector).items;
     const taskAssigneesReady = useSelector(taskAssigneesReadyStatusSelector);
     const tenantId = useSelector(tenantIdSelector);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
     const [state, setState] = useState({});
@@ -81,7 +80,7 @@ function TaskAssignmentsPanel(props) {
 
     async function getAssignees() {
         setIsFetching(true);
-        if (!dataStoreReadyStatus || !taskAssigneesReady) return;
+        if (!taskAssigneesReady) return;
         try {
             const result = taskAssignees.filter(
                 (assignee) => assignee.task && assignee.task.id === props.taskId
@@ -96,7 +95,7 @@ function TaskAssignmentsPanel(props) {
     }
     useEffect(() => {
         getAssignees();
-    }, [props.taskId, dataStoreReadyStatus, taskAssigneesReady, taskAssignees]);
+    }, [props.taskId, taskAssigneesReady, taskAssignees]);
 
     async function addAssignee(user, role) {
         setIsPosting(true);
@@ -203,11 +202,14 @@ function TaskAssignmentsPanel(props) {
 
     function setCollapsedOnFirstMount() {
         if (_.isEmpty(state)) {
+            if (!isFetching) setCollapsed(false);
             return;
         }
         if (!taskAssigneesReady || collapsed !== null) return;
         if (
             Object.values(state).filter((a) => a.role === userRoles.rider)
+                .length === 0 ||
+            Object.values(state).filter((a) => a.role === userRoles.coordinator)
                 .length === 0
         ) {
             setCollapsed(false);
@@ -257,7 +259,7 @@ function TaskAssignmentsPanel(props) {
                     </Stack>
                     {collapsed && (
                         <Grid container spacing={1} direction={"row"}>
-                            {Object.values(state)
+                            {sortByCreatedTime(Object.values(state), "oldest")
                                 .sort(sortByUserRole)
                                 .map((assignment) => {
                                     return (
@@ -268,7 +270,6 @@ function TaskAssignmentsPanel(props) {
                                                 item
                                             >
                                                 <UserChip
-                                                    key={assignment.assignee.id}
                                                     user={assignment.assignee}
                                                 />
                                             </Grid>

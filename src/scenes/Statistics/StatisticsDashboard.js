@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { PaddedPaper } from "../../styles/common";
 import TasksStatistics from "./components/TasksStatistics";
-import { createLoadingSelector } from "../../redux/LoadingSelectors";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserStatisticsRequest } from "../../redux/statistics/statisticsActions";
 import { DateAndTimePicker } from "../../components/DateTimePickers";
-import Button from "@mui/material/Button";
-import RoleSelect from "../../components/RoleSelect";
 import makeStyles from "@mui/styles/makeStyles";
-import ToggleButton from "@mui/material/ToggleButton";
 import FormControl from "@mui/material/FormControl";
-import { InputLabel, MenuItem, Select, Stack } from "@mui/material";
+import { Fade, InputLabel, MenuItem, Select, Stack } from "@mui/material";
 import { getWhoami } from "../../redux/Selectors";
 import getStats from "./utilities/getStats";
 import { userRoles } from "../../apiConsts";
@@ -51,12 +47,7 @@ function StatisticsDashboard() {
     const [dateMode, setDateMode] = useState(false);
     const [state, setState] = useState(initialState);
     const classes = useStyles();
-    const loadingSelector = createLoadingSelector([
-        "GET_USER_STATISTICS",
-        "GET_PRIORITIES",
-        "GET_WHOAMI",
-    ]);
-    const isFetching = useSelector((state) => loadingSelector(state));
+    const [isFetching, setIsFetching] = useState(false);
     const whoami = useSelector(getWhoami);
     const [endDateTime, setEndDateTime] = useState(new Date());
     const [startDateTime, setStartDateTime] = useState(new Date());
@@ -97,17 +88,16 @@ function StatisticsDashboard() {
                     <MenuItem value={3}>3</MenuItem>
                     <MenuItem value={5}>5</MenuItem>
                     <MenuItem value={7}>7</MenuItem>
-                    <MenuItem value={7}>14</MenuItem>
-                    <MenuItem value={7}>30</MenuItem>
+                    <MenuItem value={14}>14</MenuItem>
+                    <MenuItem value={30}>30</MenuItem>
                 </Select>
             </FormControl>
         </div>
     );
 
-    console.log(endDateTime, startDateTime, days);
-
     async function getStatsData() {
         try {
+            setIsFetching(true);
             const newMoment = moment();
             const start = newMoment.toISOString();
             const end = newMoment.subtract(days, "day").toISOString();
@@ -116,6 +106,7 @@ function StatisticsDashboard() {
                 end,
             };
             setState(await getStats(role, range, whoami.id));
+            setIsFetching(false);
         } catch (e) {
             dispatch(displayErrorNotification("Sorry, something went wrong"));
             setState(initialState);
@@ -123,17 +114,33 @@ function StatisticsDashboard() {
         }
     }
 
-    useEffect(() => getStatsData(), [role, days]);
+    useEffect(() => getStatsData(), [role, days, whoami]);
 
     return (
         <PaddedPaper>
-            <Stack direction="row" spacing={2} alignItems="center">
-                {picker}
-                <UserRoleSelect
-                    value={[role]}
-                    onSelect={(value) => setRole(value)}
-                    exclude={[userRoles.user, userRoles.admin]}
-                />
+            <Stack
+                direction="row"
+                spacing={2}
+                alignItems="center"
+                justifyContent="space-between"
+            >
+                <Stack direction="row" spacing={2} alignItems="center">
+                    {picker}
+                    <UserRoleSelect
+                        value={[role]}
+                        onSelect={(value) => setRole(value)}
+                        exclude={[userRoles.user, userRoles.admin]}
+                    />
+                </Stack>
+                <Fade
+                    in={isFetching}
+                    style={{
+                        transitionDelay: isFetching ? "800ms" : "0ms",
+                    }}
+                    unmountOnExit
+                >
+                    <CircularProgress />
+                </Fade>
             </Stack>
             <TasksStatistics data={state} />
         </PaddedPaper>

@@ -22,8 +22,16 @@ export const onChangeTaskSelector = (state) => state.onChangeTask;
 export const dashboardTabIndexSelector = (state) => state.dashboardTabIndex;
 export const menuIndexSelector = (state) => state.menuIndex;
 export const guidedSetupOpenSelector = (state) => state.guidedSetupOpen;
+export const dashboardFilterTermSelector = (state) => state.dashboardFilter;
 export const dashboardFilteredUserSelector = (state) =>
     state.dashboardFilteredUser;
 export const taskAssigneesSelector = (state) => state.taskAssigneesReducer;
 export const taskAssigneesReadyStatusSelector = (state) =>
     state.taskAssigneesReducer.ready;
+export const dataStoreModelSyncedStatusSelector = (state) =>
+    state.awsHubDataStoreModelsSyncedStatusReducer;
+export const selectedItemsSelector = (state) => state.selectionModeReducer;
+export const availableSelectionItemsSelector = (state) =>
+    state.selectionModeAvailableItemsReducer;
+export const selectionActionsPendingSelector = (state) =>
+    state.selectionActionsPendingReducer;

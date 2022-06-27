@@ -1,106 +1,89 @@
 import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
-import TaskItem from "./TaskItem";
 import * as models from "../../../models/index";
 import { useSelector } from "react-redux";
-import Tooltip from "@mui/material/Tooltip";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { Skeleton, Stack, Typography, useMediaQuery } from "@mui/material";
+import { Skeleton, Stack, useMediaQuery } from "@mui/material";
 import PropTypes from "prop-types";
-import { showHide } from "../../../styles/common";
-import clsx from "clsx";
 import makeStyles from "@mui/styles/makeStyles";
 import {
     dashboardFilteredUserSelector,
-    dataStoreReadyStatusSelector,
     getRoleView,
     getWhoami,
     taskAssigneesReadyStatusSelector,
     taskAssigneesSelector,
+    dataStoreModelSyncedStatusSelector,
+    dashboardFilterTermSelector,
+    selectedItemsSelector,
+    dashboardTabIndexSelector,
+    selectionActionsPendingSelector,
 } from "../../../redux/Selectors";
-import { sortByCreatedTime } from "../../../utilities";
 import { DataStore } from "aws-amplify";
 import { filterTasks } from "../utilities/functions";
 import GetError from "../../../ErrorComponents/GetError";
 import { userRoles } from "../../../apiConsts";
 import Box from "@mui/material/Box";
-import DateStampDivider from "./TimeStampDivider";
 import getTasksAll from "../utilities/getTasksAll";
 import getAllTasksByUser from "../utilities/getAllTasksByUser";
 import getAllMyTasks from "../utilities/getAllMyTasks";
 import getAllMyTasksWithUser from "../utilities/getAllMyTasksWithUser";
 import useWindowSize from "../../../hooks/useWindowSize";
 import { useTheme } from "@mui/styles";
-import { useInView } from "react-intersection-observer";
+import TaskGridColumnHeader from "./TaskGridColumnHeader";
+import TaskGridTasksList from "./TaskGridTasksList";
 
-const loaderStyles = makeStyles((theme) => ({
-    linear: {
-        width: "100%",
-        "& > * + *": {
-            marginTop: theme.spacing(2),
+const useStyles = () =>
+    makeStyles((theme) => ({
+        divider: {
+            width: "95%",
         },
-    },
-    circular: {
-        display: "flex",
-        "& > * + *": {
-            marginLeft: theme.spacing(2),
+        spacer: {
+            height: 35,
         },
-    },
-}));
-
-const useStyles = makeStyles((theme) => ({
-    header: {
-        fontWeight: "bold",
-    },
-    divider: {
-        width: "95%",
-    },
-    spacer: {
-        height: 35,
-    },
-    column: {
-        padding: 5,
-        backgroundColor: "rgba(180, 180, 180, 0.1)",
-        borderRadius: 5,
-        border: 0,
-        boxShadow: "0 2px 3px 1px rgba(100, 100, 100, .3)",
-        height: "100%",
-        maxWidth: 360,
-        minWidth: 285,
-        [theme.breakpoints.down("lg")]: {
-            padding: 0,
+        column: {
+            padding: 5,
+            backgroundColor: "rgba(180, 180, 180, 0.1)",
+            borderRadius: 5,
+            border: 0,
+            boxShadow: "0 2px 3px 1px rgba(100, 100, 100, .3)",
+            height: "100%",
+            maxWidth: 360,
+            minWidth: 285,
+            [theme.breakpoints.down("lg")]: {
+                padding: 0,
+            },
+            [theme.breakpoints.down("sm")]: {
+                maxWidth: "100%",
+                width: "100%",
+            },
         },
-        [theme.breakpoints.down("sm")]: {
-            maxWidth: "100%",
+        gridItem: {
             width: "100%",
         },
-    },
-    taskItem: {
-        width: "100%",
-    },
-    gridItem: {
-        width: "100%",
-    },
-}));
+    }));
 
 function TasksGridColumn(props) {
-    const classes = useStyles();
     const [state, setState] = useState([]);
     const stateRef = useRef({});
-    const { show, hide } = showHide();
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const taskAssignees = useSelector(taskAssigneesSelector);
     const prevTaskAssigneesRef = useRef(null);
     const taskAssigneesReady = useSelector(taskAssigneesReadyStatusSelector);
-    const [isFetching, setIsFetching] = useState(false);
+    const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
     const [filteredTasksIds, setFilteredTasksIds] = useState(null);
-    const [visibility, setVisibility] = useState(false);
     const [width, height] = useWindowSize();
     const whoami = useSelector(getWhoami);
-    const dashboardFilter = useSelector((state) => state.dashboardFilter);
+    const dashboardFilter = useSelector(dashboardFilterTermSelector);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const roleView = useSelector(getRoleView);
+    const selectedItemsAll = useSelector(selectedItemsSelector);
+    const tabIndex = useSelector(dashboardTabIndexSelector);
+    const isSomeSelected = useRef(false);
+    const dataStoreModelSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    );
+    const selectionActionsPending = useSelector(
+        selectionActionsPendingSelector
+    );
     const getTasksRef = useRef(null);
     const tasksSubscription = useRef({
         unsubscribe: () => {},
@@ -108,19 +91,17 @@ function TasksGridColumn(props) {
     const locationsSubscription = useRef({
         unsubscribe: () => {},
     });
-    const taskAssigneesObserver = useRef({
-        unsubscribe: () => {},
-    });
     const theme = useTheme();
-    const { ref, inView, entry } = useInView({
-        threshold: 0,
+    useEffect(() => {
+        const selectedItems = selectedItemsAll[tabIndex];
+        if (!selectedItems) return;
+        const values = Object.values(selectedItems);
+        isSomeSelected.current = Object.values(state).some((t) =>
+            values.map((a) => a.id).includes(t.id)
+        );
     });
 
-    useEffect(() => {
-        if (inView && !visibility) {
-            setVisibility(true);
-        }
-    }, [inView]);
+    const classes = useStyles(isSomeSelected.current)();
 
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -149,12 +130,7 @@ function TasksGridColumn(props) {
     useEffect(doSearch, [dashboardFilter, state]);
 
     async function getTasks() {
-        if (
-            !dataStoreReadyStatus ||
-            !roleView ||
-            !visibility ||
-            !taskAssigneesReady
-        ) {
+        if (!roleView || !taskAssigneesReady || selectionActionsPending) {
             return;
         } else {
             try {
@@ -205,15 +181,15 @@ function TasksGridColumn(props) {
 
     useEffect(
         () => {
-            setIsFetching(true);
             getTasks();
         },
         // JSON.stringify prevents component remount from an array prop
         [
-            dataStoreReadyStatus,
+            dataStoreModelSynced.Task,
+            dataStoreModelSynced.Location,
+            selectionActionsPending,
             dashboardFilteredUser,
             taskAssigneesReady,
-            visibility,
             roleView,
             JSON.stringify(props.taskKey),
         ]
@@ -248,11 +224,14 @@ function TasksGridColumn(props) {
         }
     }, [taskAssignees, roleView, whoami]);
 
+    const selectionActionsPendingRef = useRef(false);
+    selectionActionsPendingRef.current = selectionActionsPending;
+
     function setUpObservers() {
-        if (!dataStoreReadyStatus) return;
         tasksSubscription.current.unsubscribe();
         tasksSubscription.current = DataStore.observe(models.Task).subscribe(
             (newTask) => {
+                if (selectionActionsPendingRef.current) return;
                 try {
                     if (newTask.opType === "UPDATE") {
                         if (
@@ -272,7 +251,18 @@ function TasksGridColumn(props) {
                             removeTaskFromState(newTask.element);
                             return;
                         } else if (newTask.element.id in stateRef.current) {
-                            addTaskToState(newTask.element);
+                            if (
+                                newTask.element.pickUpLocationId !==
+                                    stateRef.current[newTask.element.id]
+                                        .pickUpLocationId ||
+                                newTask.element.dropOffLocationId !==
+                                    stateRef.current[newTask.element.id]
+                                        .dropOffLocationId
+                            ) {
+                                getTasksRef.current();
+                            } else {
+                                addTaskToState(newTask.element);
+                            }
                         }
                     } else {
                         // if roleView is rider or coordinator, let the assignments observer deal with it
@@ -301,10 +291,7 @@ function TasksGridColumn(props) {
                                 ...prevState,
                                 [task.id]: {
                                     ...prevState[task.id],
-                                    pickUpLocation: {
-                                        ...task.pickUpLocation,
-                                        ...location.element,
-                                    },
+                                    pickUpLocation: location.element,
                                 },
                             }));
                         }
@@ -316,10 +303,7 @@ function TasksGridColumn(props) {
                                 ...prevState,
                                 [task.id]: {
                                     ...prevState[task.id],
-                                    dropOffLocation: {
-                                        ...task.dropOffLocation,
-                                        ...location.element,
-                                    },
+                                    dropOffLocation: location.element,
                                 },
                             }));
                         }
@@ -374,19 +358,14 @@ function TasksGridColumn(props) {
 
     useEffect(() => {
         setUpObservers();
-    }, [dataStoreReadyStatus, roleView]);
+    }, [roleView]);
 
     useEffect(() => {
         return () => {
             tasksSubscription.current.unsubscribe();
             locationsSubscription.current.unsubscribe();
-            taskAssigneesObserver.current.unsubscribe();
         };
     }, []);
-
-    const header = (
-        <Typography className={classes.header}>{props.title}</Typography>
-    );
 
     const animate = useRef(false);
 
@@ -395,7 +374,6 @@ function TasksGridColumn(props) {
     } else if (isFetching) {
         return (
             <Box
-                ref={ref}
                 className={classes.column}
                 sx={{
                     width: isSm ? "100%" : width / 4.2,
@@ -421,9 +399,6 @@ function TasksGridColumn(props) {
             </Box>
         );
     } else {
-        let displayDate = false;
-        let lastTime = new Date();
-        const filteredTasksIdsList = filteredTasksIds || [];
         return (
             <Box
                 className={classes.column}
@@ -431,81 +406,12 @@ function TasksGridColumn(props) {
                     width: isSm ? "100%" : width / 4.2,
                 }}
             >
-                {header}
-                <Stack
-                    direction={"column"}
-                    data-cy={`tasks-kanban-column-${props.taskKey}`}
-                    spacing={0}
-                    alignItems={"center"}
-                    justifyContent={"center"}
-                >
-                    {sortByCreatedTime(
-                        Object.values(state).reverse(),
-                        "newest"
-                    ).map((task) => {
-                        displayDate = false;
-                        const timeComparison = new Date(
-                            task.createdAt || task.timeOfCall || null
-                        );
-                        if (
-                            timeComparison &&
-                            (filteredTasksIdsList.length === 0 ||
-                                filteredTasksIdsList.includes(task.id)) &&
-                            timeComparison.getDate() <= lastTime.getDate() - 1
-                        ) {
-                            lastTime = timeComparison;
-                            displayDate = true;
-                        }
-                        return (
-                            <Box
-                                className={clsx(
-                                    classes.taskItem,
-                                    filteredTasksIds === null ||
-                                        filteredTasksIds.includes(task.id)
-                                        ? show
-                                        : hide
-                                )}
-                                key={task.id}
-                            >
-                                <Box
-                                    display="flex"
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    height={35}
-                                    sx={{ width: "100%" }}
-                                >
-                                    {displayDate && (
-                                        <DateStampDivider date={lastTime} />
-                                    )}
-                                </Box>
-                                <TaskItem
-                                    animate={animate.current}
-                                    task={task}
-                                    taskUUID={task.id}
-                                    deleteDisabled
-                                />
-                                <Box
-                                    className={
-                                        !!task.relayNext &&
-                                        props.showTasks === null &&
-                                        !props.hideRelayIcons &&
-                                        roleView !== userRoles.rider
-                                            ? show
-                                            : hide
-                                    }
-                                >
-                                    <Tooltip title="Relay">
-                                        <ArrowDownwardIcon
-                                            style={{
-                                                height: "35px",
-                                            }}
-                                        />
-                                    </Tooltip>
-                                </Box>
-                            </Box>
-                        );
-                    })}
-                </Stack>
+                <TaskGridColumnHeader tasks={state} title={props.title} />
+                <TaskGridTasksList
+                    datacy={`tasks-kanban-column-${props.taskKey}`}
+                    tasks={state}
+                    includeList={filteredTasksIds}
+                />
             </Box>
         );
     }
@@ -513,7 +419,6 @@ function TasksGridColumn(props) {
 
 TasksGridColumn.propTypes = {
     title: PropTypes.string,
-    // this array only works up to two keys for now
     taskKey: PropTypes.array.isRequired,
     showTasks: PropTypes.arrayOf(PropTypes.string),
     hideRelayIcons: PropTypes.bool,

@@ -13,12 +13,8 @@ function ConfirmationDialog(props) {
             open={props.open}
             fullScreen={props.fullScreen}
             onClose={props.onClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
         >
-            <DialogTitle id="alert-dialog-title">
-                {props.dialogTitle}
-            </DialogTitle>
+            <DialogTitle>{props.dialogTitle}</DialogTitle>
             <DialogContent>{props.children}</DialogContent>
             <DialogActions>
                 <Stack
@@ -30,7 +26,8 @@ function ConfirmationDialog(props) {
                         <div></div>
                     ) : (
                         <Button
-                            data-cy="confirmation-cancel-button"
+                            data-testId="confirmation-cancel-button"
+                            aria-label="Cancel"
                             onClick={() => {
                                 props.onCancel();
                             }}
@@ -41,7 +38,9 @@ function ConfirmationDialog(props) {
                     )}{" "}
                     {!props.hideOk && (
                         <Button
-                            data-cy="confirmation-ok-button"
+                            disabled={props.disabled}
+                            aria-label="OK"
+                            data-testId="confirmation-ok-button"
                             onClick={() => {
                                 props.onConfirmation();
                             }}
@@ -65,6 +64,7 @@ ConfirmationDialog.propTypes = {
     hideCancel: PropTypes.bool,
     hideOk: PropTypes.bool,
     fullScreen: PropTypes.bool,
+    disabled: PropTypes.bool,
 };
 
 ConfirmationDialog.defaultProps = {
@@ -76,6 +76,7 @@ ConfirmationDialog.defaultProps = {
     hideCancel: false,
     hideOk: false,
     fullScreen: false,
+    disabled: false,
 };
 
 export default ConfirmationDialog;

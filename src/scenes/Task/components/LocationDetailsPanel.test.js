@@ -58,7 +58,7 @@ describe("LocationDetailsPanel", () => {
     it("renders without crashing", async () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<LocationDetailsPanel />, { preloadedState });
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(0));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(2));
     });
     it.each`
         locationKey
@@ -81,18 +81,13 @@ describe("LocationDetailsPanel", () => {
         const mockLocation = mockLocations[1];
         render(
             <LocationDetailsPanel
-                task={mockTask}
                 taskId={mockTask.id}
                 locationKey={"pickUpLocation"}
             />,
             { preloadedState }
         );
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
-        expect(querySpy).toHaveBeenNthCalledWith(
-            1,
-            models.Location,
-            mockLocation.id
-        );
+        expect(querySpy).toHaveBeenNthCalledWith(1, models.Task, mockTask.id);
         expect(screen.getByText(mockLocation.name)).toBeInTheDocument();
         expect(screen.getByText(mockLocation.ward)).toBeInTheDocument();
     });
@@ -106,11 +101,7 @@ describe("LocationDetailsPanel", () => {
         await DataStore.save(task);
         const querySpy = jest.spyOn(DataStore, "query");
         render(
-            <LocationDetailsPanel
-                task={task}
-                taskId={task.id}
-                locationKey={locationKey}
-            />,
+            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />,
             { preloadedState }
         );
 
@@ -142,11 +133,7 @@ describe("LocationDetailsPanel", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
-            <LocationDetailsPanel
-                task={task}
-                taskId={task.id}
-                locationKey={locationKey}
-            />,
+            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />,
             {
                 preloadedState,
             }
@@ -157,7 +144,7 @@ describe("LocationDetailsPanel", () => {
         expect(screen.getByText(mockLocation.name)).toBeInTheDocument();
         userEvent.type(screen.getByRole("textbox"), mockLocation.name);
         userEvent.click(await screen.findByText(mockLocation.name));
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(2));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(3));
         await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(1));
         expect(saveSpy).toHaveBeenCalledWith({
             ...task,
@@ -186,11 +173,7 @@ describe("LocationDetailsPanel", () => {
         });
 
         render(
-            <LocationDetailsPanel
-                task={task}
-                taskId={task.id}
-                locationKey={locationKey}
-            />,
+            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />,
             { preloadedState }
         );
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
@@ -273,11 +256,7 @@ describe("LocationDetailsPanel", () => {
         }
         clearedLocation = { ...unlistedLocation, ...clearedLocation };
         render(
-            <LocationDetailsPanel
-                task={task}
-                taskId={task.id}
-                locationKey={locationKey}
-            />,
+            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />,
             { preloadedState }
         );
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
@@ -342,11 +321,7 @@ describe("LocationDetailsPanel", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
-            <LocationDetailsPanel
-                task={task}
-                taskId={task.id}
-                locationKey={locationKey}
-            />,
+            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />,
             { preloadedState }
         );
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
@@ -398,7 +373,6 @@ describe("LocationDetailsPanel", () => {
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
             <LocationDetailsPanel
-                task={mockTask}
                 taskId={mockTask.id}
                 locationKey={locationKey}
             />,
@@ -438,7 +412,6 @@ describe("LocationDetailsPanel", () => {
             await DataStore.save(fakeTaskModel);
             render(
                 <LocationDetailsPanel
-                    task={fakeTaskModel}
                     taskId={fakeTaskModel.id}
                     locationKey={locationKey}
                 />,
@@ -485,7 +458,6 @@ describe("LocationDetailsPanel", () => {
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
             <LocationDetailsPanel
-                task={mockTask}
                 taskId={mockTask.id}
                 locationKey={locationKey}
             />
@@ -528,7 +500,6 @@ describe("LocationDetailsPanel", () => {
             const saveSpy = jest.spyOn(DataStore, "save");
             render(
                 <LocationDetailsPanel
-                    task={fakeTask}
                     taskId={fakeTask.id}
                     locationKey={locationKey}
                 />,
@@ -598,7 +569,6 @@ describe("LocationDetailsPanel", () => {
             const saveSpy = jest.spyOn(DataStore, "save");
             render(
                 <LocationDetailsPanel
-                    task={fakeTask}
                     taskId={fakeTask.id}
                     locationKey={locationKey}
                 />,
@@ -669,6 +639,86 @@ describe("LocationDetailsPanel", () => {
             );
         }
     );
+
+    test.each`
+        locationKey
+        ${"pickUpLocation"} | ${"dropOffLocation"}
+    `("respond to a preset being set remotely", async ({ locationKey }) => {
+        const mockLocation = new models.Location({
+            name: "test location",
+            listed: 1,
+        });
+        const task = await DataStore.save(new models.Task({}));
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(
+            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />
+        );
+
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
+        await DataStore.save(
+            models.Task.copyOf(task, (upd) => (upd[locationKey] = mockLocation))
+        );
+        await waitFor(() =>
+            expect(screen.getByText(mockLocation.name)).toBeInTheDocument()
+        );
+    });
+
+    test.each`
+        locationKey
+        ${"pickUpLocation"} | ${"dropOffLocation"}
+    `("respond to a remote location edit", async ({ locationKey }) => {
+        const mockLocation = new models.Location({
+            name: "test location",
+            listed: 0,
+        });
+        const task = await DataStore.save(
+            new models.Task({
+                [locationKey]: mockLocation,
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(
+            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />
+        );
+
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
+        await DataStore.save(
+            models.Location.copyOf(
+                mockLocation,
+                (upd) => (upd.line1 = "new data")
+            )
+        );
+        await waitFor(() =>
+            expect(screen.getByText("new data")).toBeInTheDocument()
+        );
+    });
+
+    test.skip.each`
+        locationKey
+        ${"pickUpLocation"} | ${"dropOffLocation"}
+    `("respond to a remote clear", async ({ locationKey }) => {
+        const mockLocation = new models.Location({
+            name: "test location",
+            listed: 1,
+        });
+        const task = await DataStore.save(
+            new models.Task({
+                [locationKey]: mockLocation,
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(
+            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />
+        );
+
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
+        await DataStore.save(
+            models.Task.copyOf(task, (upd) => (upd[locationKey] = null))
+        );
+        await waitFor(() =>
+            expect(screen.queryByText(mockLocation.name)).toBeNull()
+        );
+    });
 
     test.each`
         locationKey
@@ -777,7 +827,6 @@ describe("LocationDetailsPanel", () => {
         });
         render(
             <LocationDetailsPanel
-                task={fakeTask}
                 taskId={"fakeId"}
                 locationKey={"pickUpLocation"}
             />,
@@ -785,5 +834,44 @@ describe("LocationDetailsPanel", () => {
         );
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
         expect(screen.getByText(errorMessage)).toBeInTheDocument();
+    });
+
+    it("unsubscribes observers on unmount", async () => {
+        const unsubscribe = jest.fn();
+        const observeSpy = jest
+            .spyOn(amplify.DataStore, "observe")
+            .mockImplementation(() => {
+                return {
+                    subscribe: () => ({ unsubscribe }),
+                };
+            });
+        const querySpy = jest.spyOn(DataStore, "query");
+        amplify.DataStore.observe.mockReturnValue({
+            subscribe: () => ({ unsubscribe }),
+        });
+        const mockLocation = new models.Location({
+            name: "test location",
+            listed: 0,
+        });
+        const task = await DataStore.save(
+            new models.Task({
+                pickUpLocation: mockLocation,
+            })
+        );
+        const { component } = render(
+            <LocationDetailsPanel
+                locationKey={"pickUpLocation"}
+                taskId={task.id}
+            />
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        await waitFor(() => {
+            expect(observeSpy).toHaveBeenCalledTimes(2);
+        });
+        expect(unsubscribe).toHaveBeenCalledTimes(0);
+        component.unmount();
+        expect(unsubscribe).toHaveBeenCalledTimes(2);
     });
 });

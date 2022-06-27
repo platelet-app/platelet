@@ -8,7 +8,10 @@ import Typography from "@mui/material/Typography";
 import { PaddedPaper } from "../../styles/common";
 import CommentsSection from "../Comments/CommentsSection";
 import UserCard from "../../components/UserCard";
-import { dataStoreReadyStatusSelector, getWhoami } from "../../redux/Selectors";
+import {
+    dataStoreModelSyncedStatusSelector,
+    getWhoami,
+} from "../../redux/Selectors";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { DataStore } from "aws-amplify";
@@ -26,39 +29,34 @@ const initialVehicleState = {
 export default function VehicleDetail(props) {
     const dispatch = useDispatch();
     const [isFetching, setIsFetching] = useState(false);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [notFound, setNotFound] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
     const [vehicle, setVehicle] = useState(initialVehicleState);
     const vehicleUUID = decodeUUID(props.match.params.vehicle_uuid_b62);
     const assignedUser = false;
+    const vehicleModelSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).Vehicle;
 
     async function newVehicleProfile() {
-        if (!dataStoreReadyStatus) {
-            setIsFetching(true);
-        } else {
-            try {
-                const vehicle = await DataStore.query(
-                    models.Vehicle,
-                    vehicleUUID
-                );
-                setIsFetching(false);
-                if (vehicle) setVehicle(vehicle);
-                else setNotFound(true);
-            } catch (error) {
-                setIsFetching(false);
-                dispatch(
-                    displayErrorNotification(
-                        `Failed to get vehicle: ${error.message}`
-                    )
-                );
-                console.log("Request failed", error);
-            }
+        try {
+            const vehicle = await DataStore.query(models.Vehicle, vehicleUUID);
+            setIsFetching(false);
+            if (vehicle) setVehicle(vehicle);
+            else setNotFound(true);
+        } catch (error) {
+            setIsFetching(false);
+            dispatch(
+                displayErrorNotification(
+                    `Failed to get vehicle: ${error.message}`
+                )
+            );
+            console.log("Request failed", error);
         }
     }
     useEffect(
         () => newVehicleProfile(),
-        [props.location.key, dataStoreReadyStatus]
+        [props.location.key, vehicleModelSynced]
     );
 
     async function onUpdate(value) {

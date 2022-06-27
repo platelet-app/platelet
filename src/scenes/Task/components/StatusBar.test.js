@@ -5,10 +5,8 @@ import { screen, waitFor } from "@testing-library/react";
 import { tasksStatus } from "../../../apiConsts";
 import * as models from "../../../models/index";
 import userEvent from "@testing-library/user-event";
-import * as amplify from "aws-amplify";
 import { createMatchMedia } from "../../../test-utils";
-
-jest.mock("aws-amplify");
+import { DataStore } from "aws-amplify";
 
 const utils = require("../../../utilities");
 
@@ -26,6 +24,9 @@ describe("StatusBar", () => {
     beforeAll(() => {
         window.matchMedia = createMatchMedia(window.innerWidth);
     });
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
     it("renders correctly", () => {
         render(<StatusBar />);
     });
@@ -41,67 +42,67 @@ describe("StatusBar", () => {
         ${tasksStatus.new}
         ${tasksStatus.rejected}
     `("renders the correct status", async ({ status }) => {
-        render(<StatusBar status={status} />);
+        const mockTask = await DataStore.save(new models.Task({ status }));
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<StatusBar taskId={mockTask.id} />);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledWith(models.Task, mockTask.id);
+        });
         if (status === tasksStatus.droppedOff) status = "DELIVERED";
         else if (status === tasksStatus.pickedUp) status = "PICKED UP";
         expect(screen.getByText(status)).toBeInTheDocument();
     });
     test("click the copy to clipboard button", async () => {
         const timeOfCall = new Date().toISOString();
-        const newTask = new models.Task({
+        const mockTask = new models.Task({
             timeOfCall,
             status: tasksStatus.new,
         });
+        await DataStore.save(mockTask);
+        const mockDeliverableType = new models.DeliverableType({
+            label: "test deliverable",
+        });
+        await DataStore.save(mockDeliverableType);
         const mockDeliverables = [
             {
                 unit: "ITEM",
                 count: 1,
                 orderInGrid: 0,
-                id: "fc9b0188-096b-48e9-8e1e-0b21c68e4c13",
-                deliverableType: {
-                    label: "Equipment",
-                    icon: "EQUIPMENT",
-                    defaultUnit: "ITEM",
-                    id: "9d346ba8-12af-46ed-bb60-e807ff92877b",
-                },
+                deliverableType: mockDeliverableType,
             },
             {
                 unit: "ITEM",
                 count: 2,
                 orderInGrid: 0,
-                id: "ae768ff7-e655-4bfb-bf01-1485d5be6993",
-                deliverableType: {
-                    label: "Sample",
-                    icon: "BUG",
-                    defaultUnit: "ITEM",
-                    id: "a25551df-693b-40dd-8522-cbd6f161cba5",
-                },
+                deliverableType: mockDeliverableType,
             },
             {
                 unit: "LITRE",
                 count: 3,
                 orderInGrid: 0,
-                id: "0aa5c205-1260-4e49-824c-abe3f2d0245d",
-                deliverableType: {
-                    label: "Milk",
-                    icon: "CHILD",
-                    defaultUnit: "LITRE",
-                    id: "414fc9ff-6448-4f3f-a90e-00a53e7a28e8",
-                },
+                deliverableType: mockDeliverableType,
             },
         ];
-        amplify.DataStore.query
-            .mockResolvedValueOnce(newTask)
-            .mockResolvedValue(mockDeliverables);
-        render(<StatusBar taskId={newTask.id} />);
+        const savedDeliverables = await Promise.all(
+            mockDeliverables.map((deliverable) =>
+                DataStore.save(
+                    new models.Deliverable({ task: mockTask, ...deliverable })
+                )
+            )
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<StatusBar taskId={mockTask.id} />);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledWith(models.Task, mockTask.id);
+        });
         const copyButton = screen.getByText("Copy to clipboard");
         expect(copyButton).toBeInTheDocument();
         userEvent.click(copyButton);
         jest.spyOn(utils, "copyTaskDataToClipboard");
         await waitFor(() =>
             expect(utils.copyTaskDataToClipboard).toHaveBeenCalledWith({
-                ...newTask,
-                deliverables: [],
+                ...mockTask,
+                deliverables: savedDeliverables,
             })
         );
         expect(await screen.findByText("Copy successful!")).toBeInTheDocument();

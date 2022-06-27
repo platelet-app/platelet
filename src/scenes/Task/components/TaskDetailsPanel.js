@@ -5,15 +5,14 @@ import PrioritySelect from "./PrioritySelect";
 import PropTypes from "prop-types";
 import makeStyles from "@mui/styles/makeStyles";
 import TimePicker from "./TimePicker";
-import { Divider, IconButton, Paper, Skeleton, Stack } from "@mui/material";
+import { Divider, Paper, Skeleton, Stack } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
-import { dataStoreReadyStatusSelector } from "../../../redux/Selectors";
+import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
-import { saveTaskTimeWithKey } from "../utilities";
 import RequesterContact from "./RequesterContact";
 
 const useStyles = makeStyles({
@@ -43,16 +42,15 @@ function TaskDetailsPanel(props) {
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(null);
     const taskObserver = useRef({ unsubscribe: () => {} });
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const dispatch = useDispatch();
-    const classes = useStyles();
+
+    const taskModelsSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).Task;
 
     const errorMessage = "Sorry, something went wrong";
 
     async function getTask() {
-        if (!dataStoreReadyStatus) {
-            return;
-        }
         try {
             const task = await DataStore.query(models.Task, props.taskId);
             if (!task) throw new Error("Task not found");
@@ -64,35 +62,11 @@ function TaskDetailsPanel(props) {
                 props.taskId
             ).subscribe(async (observeResult) => {
                 const taskData = observeResult.element;
-                if (observeResult.opType === "INSERT") {
+                if (["INSERT", "UPDATE"].includes(observeResult.opType)) {
                     setState(taskData);
-                } else if (observeResult.opType === "UPDATE") {
-                    if (
-                        taskData.taskRiderResponsibilityId ||
-                        taskData.taskRiderResponsibilityId === null
-                    ) {
-                        let riderResponsibility = null;
-                        if (taskData.taskRiderResponsibilityId)
-                            riderResponsibility = await DataStore.query(
-                                models.RiderResponsibility,
-                                taskData.taskRiderResponsibilityId
-                            );
-                        setState((prevState) => ({
-                            ...prevState,
-                            ...taskData,
-                            riderResponsibility,
-                        }));
-                    } else {
-                        setState((prevState) => ({
-                            ...prevState,
-                            ...taskData,
-                        }));
-                    }
                 } else if (observeResult.opType === "DELETE") {
                     setErrorState(new Error("Task was deleted"));
                 }
-                const task = observeResult.element;
-                setState((prevState) => ({ ...prevState, ...task }));
             });
         } catch (error) {
             console.log(error);
@@ -100,31 +74,63 @@ function TaskDetailsPanel(props) {
             setIsFetching(false);
         }
     }
-    useEffect(() => getTask(), [props.taskId, dataStoreReadyStatus]);
+    useEffect(() => getTask(), [props.taskId, taskModelsSynced]);
     useEffect(() => () => taskObserver.current.unsubscribe(), []);
 
-    async function setTimeWithKey(key, value) {
+    async function setTimeOfCall(value) {
         try {
-            saveTaskTimeWithKey(key, value, props.taskId);
-            setState((prevState) => ({
-                ...prevState,
-                [key]: value.toISOString(),
-            }));
+            const result = await DataStore.query(models.Task, props.taskId);
+            if (!result) throw new Error("Task doesn't exist");
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.timeOfCall = value.toISOString();
+                })
+            );
+        } catch (error) {
+            console.log(error);
+            dispatch(displayErrorNotification(errorMessage));
+        }
+    }
+    async function selectPriority(priority) {
+        try {
+            const result = await DataStore.query(models.Task, props.taskId);
+            if (!result) throw new Error("Task doesn't exist");
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.priority = priority;
+                })
+            );
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
 
-    function onChangeTimeOfCall(value) {
-        //check value is a Date object
-        if (value && value instanceof Date) {
-            setTimeWithKey("timeOfCall", value);
+    async function updateRequesterContact(requesterValue) {
+        try {
+            const result = await DataStore.query(models.Task, props.taskId);
+            if (!result) throw new Error("Task doesn't exist");
+            if (!result.requesterContact) {
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        updated.requesterContact = requesterValue;
+                    })
+                );
+            } else {
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        for (const [key, value] of Object.entries(
+                            requesterValue
+                        )) {
+                            updated.requesterContact[key] = value;
+                        }
+                    })
+                );
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch(displayErrorNotification(errorMessage));
         }
-    }
-
-    function onSelectPriority(priority) {
-        props.onSelectPriority(priority);
     }
 
     if (errorState) {
@@ -146,16 +152,14 @@ function TaskDetailsPanel(props) {
                     )}
                     <LabelItemPair label={"Time of call"}>
                         <TimePicker
-                            onChange={onChangeTimeOfCall}
+                            onChange={setTimeOfCall}
                             disableClear={true}
                             time={state.timeOfCall}
                         />
                     </LabelItemPair>
                     <Divider />
                     <RequesterContact
-                        onChange={(value) =>
-                            props.onChangeRequesterContact(value)
-                        }
+                        onChange={(value) => updateRequesterContact(value)}
                         telephoneNumber={
                             state.requesterContact
                                 ? state.requesterContact.telephoneNumber
@@ -175,7 +179,7 @@ function TaskDetailsPanel(props) {
                     >
                         <Typography>Priority:</Typography>
                         <PrioritySelect
-                            onSelect={onSelectPriority}
+                            onSelect={selectPriority}
                             priority={state.priority}
                         />
                     </Stack>

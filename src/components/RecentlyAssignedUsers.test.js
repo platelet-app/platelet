@@ -1,6 +1,5 @@
 import React from "react";
 import { render } from "../test-utils";
-import * as amplify from "aws-amplify";
 import * as models from "../models";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -35,6 +34,7 @@ const fakeAssignments = Object.values(tasksStatus)
                 }),
                 assignee: new models.User({
                     displayName: uuidv4(),
+                    roles: ["USER", "RIDER"],
                 }),
                 role: userRoles.rider,
             })
@@ -48,6 +48,7 @@ const fakeAssignmentsCoordinator = Object.values(tasksStatus).map(
             }),
             assignee: new models.User({
                 displayName: uuidv4(),
+                roles: ["USER", "COORDINATOR"],
             }),
             role: userRoles.coordinator,
         })
@@ -55,6 +56,7 @@ const fakeAssignmentsCoordinator = Object.values(tasksStatus).map(
 
 const fakeSingleUser = new models.User({
     displayName: uuidv4(),
+    roles: ["USER", "RIDER"],
 });
 
 const fakeAssignmentsOneRider = _.range(0, 10).map(
@@ -68,8 +70,14 @@ const fakeAssignmentsOneRider = _.range(0, 10).map(
         })
 );
 
-const fakeCoord1 = new models.User({ displayName: "First Coordinator" });
-const fakeCoord2 = new models.User({ displayName: "Second Coordinator" });
+const fakeCoord1 = new models.User({
+    displayName: "First Coordinator",
+    roles: ["USER", "COORDINATOR"],
+});
+const fakeCoord2 = new models.User({
+    displayName: "Second Coordinator",
+    roles: ["USER", "COORDINATOR"],
+});
 
 const fakeAssignmentsFirstCoord = _.range(0, 5).map(
     (i) =>
@@ -98,6 +106,7 @@ const fakeAssignmentsRiders = [
     task: assignment.task,
     assignee: new models.User({
         displayName: uuidv4(),
+        roles: ["USER", "RIDER"],
     }),
     role: userRoles.rider,
 }));
@@ -328,6 +337,45 @@ describe("RecentlyAssignedUsers", () => {
         expect(
             screen.queryByText(fakeAssignments[0].assignee.displayName)
         ).toBeNull();
+    });
+
+    it.each`
+        role
+        ${userRoles.rider} | ${userRoles.coordinator}
+    `("don't show users that no longer have the role", async ({ role }) => {
+        const fakeUserNoRoles = new models.User({
+            displayName: uuidv4(),
+            roles: ["USER"],
+        });
+        const fakeAssignmentsNew = [
+            new models.TaskAssignee({
+                assignee: fakeUserNoRoles,
+                task: new models.Task({}),
+                role: role,
+            }),
+        ];
+
+        const newPreloadedState = {
+            ...preloadedState,
+            taskAssigneesReducer: {
+                items: fakeAssignmentsNew,
+                ready: true,
+                isSynced: true,
+            },
+        };
+        render(
+            <RecentlyAssignedUsers
+                exclude={[fakeAssignments[0].assignee.id]}
+                value={null}
+                role={role}
+            />,
+            {
+                preloadedState: newPreloadedState,
+            }
+        );
+        await waitFor(() => {
+            expect(screen.queryByText(fakeUserNoRoles.displayName)).toBeNull();
+        });
     });
 
     test("coordinator roleview shows only intersecting assignments", async () => {

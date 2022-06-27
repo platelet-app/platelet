@@ -10,6 +10,10 @@ import {
 import { watchDebounceDashboardFilter } from "./dashboardFilter/DashboardFilterSagas";
 import { watchInitialiseBroadcastAPIListener } from "./broadcastAPI/broadcastAPISagas";
 import { watchInitializeTaskAssigneesObserver } from "./taskAssignees/taskAssigneesSagas";
+import {
+    watchSelectAllItems,
+    watchFilterFromAvailableItems,
+} from "./selectionMode/selectionModeSagas";
 
 export default function* rootSaga() {
     yield all([
@@ -24,5 +28,7 @@ export default function* rootSaga() {
         call(watchDebounceDashboardFilter),
         call(watchInitialiseBroadcastAPIListener),
         call(watchInitializeTaskAssigneesObserver),
+        call(watchSelectAllItems),
+        call(watchFilterFromAvailableItems),
     ]);
 }

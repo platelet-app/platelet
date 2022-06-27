@@ -52,12 +52,42 @@ describe("TaskActions", () => {
         });
     });
 
+    test("picked up is disabled when there are no assignees", async () => {
+        const mockTask = new models.Task({});
+        await DataStore.save(mockTask);
+        const spy = jest.spyOn(DataStore, "query");
+        const preloadedState = {
+            taskAssigneesReducer: {
+                items: [],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(spy).toHaveBeenCalledTimes(1);
+        });
+        const button = screen.getByRole("button", { name: "Picked up" });
+        expect(button).toBeDisabled();
+    });
+
     it("clicks the picked up button", async () => {
         const mockTask = new models.Task({});
         await DataStore.save(mockTask);
         const spy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
-        render(<TaskActions taskId={mockTask.id} />);
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            role: userRoles.rider,
+        });
+        const preloadedState = {
+            taskAssigneesReducer: {
+                items: [mockAssignment],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
         await waitFor(() => {
             expect(spy).toHaveBeenCalledTimes(1);
         });
@@ -80,7 +110,7 @@ describe("TaskActions", () => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timePickedUp: isoDate,
-                status: tasksStatus.new,
+                status: tasksStatus.pickedUp,
             });
         });
     });
@@ -101,14 +131,21 @@ describe("TaskActions", () => {
     it("clicks the delivered button when timePickedUp is set and there are assignees", async () => {
         const mockTask = new models.Task({ timePickedUp: isoDate });
         const mockAssignment = new models.TaskAssignee({
-            task: { id: mockTask.id },
+            task: mockTask,
             role: userRoles.rider,
         });
+        const preloadedState = {
+            taskAssigneesReducer: {
+                items: [mockAssignment],
+                ready: true,
+                isSynced: true,
+            },
+        };
         await DataStore.save(mockTask);
         await DataStore.save(mockAssignment);
         const spy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
-        render(<TaskActions taskId={mockTask.id} />);
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
         await waitFor(() => {
             expect(spy).toHaveBeenCalledTimes(1);
         });
@@ -139,14 +176,21 @@ describe("TaskActions", () => {
             timeDroppedOff: isoDate,
         });
         const mockAssignment = new models.TaskAssignee({
-            task: { id: mockTask.id },
+            task: mockTask,
             role: userRoles.rider,
         });
         await DataStore.save(mockTask);
         await DataStore.save(mockAssignment);
+        const preloadedState = {
+            taskAssigneesReducer: {
+                items: [mockAssignment],
+                ready: true,
+                isSynced: true,
+            },
+        };
         const spy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
-        render(<TaskActions taskId={mockTask.id} />);
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
         await waitFor(() => {
             expect(spy).toHaveBeenCalledTimes(1);
         });
@@ -282,14 +326,26 @@ describe("TaskActions", () => {
         ).toBeDisabled();
     });
 
-    test("delivered is disabled it rider home is set", async () => {
+    test("delivered is disabled if rider home is set", async () => {
         const mockTask = new models.Task({
             timeDroppedOff: new Date().toISOString(),
             timeRiderHome: new Date().toISOString(),
         });
         await DataStore.save(mockTask);
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            role: userRoles.rider,
+        });
+        await DataStore.save(mockAssignment);
+        const preloadedState = {
+            taskAssigneesReducer: {
+                items: [mockAssignment],
+                ready: true,
+                isSynced: true,
+            },
+        };
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<TaskActions taskId={mockTask.id} />);
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
@@ -301,9 +357,21 @@ describe("TaskActions", () => {
     test("untoggle timePickedUp", async () => {
         const mockTask = new models.Task({ timePickedUp: isoDate });
         await DataStore.save(mockTask);
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            role: userRoles.rider,
+        });
+        await DataStore.save(mockAssignment);
+        const preloadedState = {
+            taskAssigneesReducer: {
+                items: [mockAssignment],
+                ready: true,
+                isSynced: true,
+            },
+        };
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
-        render(<TaskActions taskId={mockTask.id} />);
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
@@ -320,7 +388,7 @@ describe("TaskActions", () => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timePickedUp: null,
-                status: tasksStatus.new,
+                status: tasksStatus.active,
             });
         });
     });
@@ -331,14 +399,21 @@ describe("TaskActions", () => {
             timeDroppedOff: new Date().toISOString(),
         });
         const mockAssignment = new models.TaskAssignee({
-            task: { id: mockTask.id },
+            task: mockTask,
             role: userRoles.rider,
         });
         await DataStore.save(mockTask);
         await DataStore.save(mockAssignment);
+        const preloadedState = {
+            taskAssigneesReducer: {
+                items: [mockAssignment],
+                ready: true,
+                isSynced: true,
+            },
+        };
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
-        render(<TaskActions taskId={mockTask.id} />);
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
@@ -362,6 +437,7 @@ describe("TaskActions", () => {
     });
 
     test("untoggle timeCancelled", async () => {
+        console.log();
         const mockTask = new models.Task({
             timeCancelled: isoDate,
         });
@@ -484,5 +560,90 @@ describe("TaskActions", () => {
         buttons.forEach((button) => {
             expect(button).toBeDisabled();
         });
+    });
+
+    test("multiple actions", async () => {
+        const mockTask = new models.Task({ status: tasksStatus.active });
+        const fakeAssignee = new models.User({
+            roles: [userRoles.rider, userRoles.user],
+            displayName: "test",
+        });
+        const fakeAssignment = new models.TaskAssignee({
+            task: mockTask,
+            assignee: fakeAssignee,
+            role: userRoles.rider,
+        });
+        const preloadedState = {
+            taskAssigneesReducer: {
+                items: [fakeAssignment],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        await DataStore.save(mockTask);
+        await DataStore.save(fakeAssignee);
+        await DataStore.save(fakeAssignment);
+        const spy = jest.spyOn(DataStore, "query");
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
+        const saveSpy = jest.spyOn(DataStore, "save");
+        await waitFor(() => {
+            expect(spy).toHaveBeenCalledTimes(1);
+        });
+        const button = screen.getByRole("button", { name: "Picked up" });
+        await waitFor(() => {
+            expect(button).toBeEnabled();
+        });
+        userEvent.click(button);
+        expect(screen.getByText(/Set the picked up time/)).toBeInTheDocument();
+        const okButton = screen.getByRole("button", { name: "OK" });
+        userEvent.click(okButton);
+        // expect button to be toggled
+        await waitFor(() => {
+            expect(button).toHaveAttribute("aria-pressed", "true");
+        });
+        const buttonDroppedOff = await screen.findByRole("button", {
+            name: "Delivered",
+        });
+        await waitFor(() => {
+            expect(buttonDroppedOff).toBeEnabled();
+        });
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
+                ...mockTask,
+                timePickedUp: isoDate,
+                status: tasksStatus.pickedUp,
+            });
+        });
+        userEvent.click(buttonDroppedOff);
+        const okButton2 = screen.getByRole("button", { name: "OK" });
+        userEvent.click(okButton2);
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenNthCalledWith(2, {
+                ...mockTask,
+                timePickedUp: isoDate,
+                timeDroppedOff: isoDate,
+                status: tasksStatus.droppedOff,
+            });
+        });
+        const buttonRiderHome = await screen.findByRole("button", {
+            name: "Rider home",
+        });
+        await waitFor(() => {
+            expect(buttonRiderHome).toBeEnabled();
+        });
+        userEvent.click(buttonRiderHome);
+        const okButton3 = screen.getByRole("button", { name: "OK" });
+        userEvent.click(okButton3);
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenNthCalledWith(3, {
+                ...mockTask,
+                timePickedUp: isoDate,
+                timeDroppedOff: isoDate,
+                timeRiderHome: isoDate,
+                status: tasksStatus.completed,
+            });
+        });
+        const result = await DataStore.query(models.Task, mockTask.id);
+        expect(result.status).toBe(tasksStatus.completed);
     });
 });

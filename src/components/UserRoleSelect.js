@@ -26,6 +26,17 @@ function UserRoleSelect(props) {
                         }
                     />
                 ))}
+            {props.all && (
+                <Chip
+                    onClick={() => handleChange("ALL")}
+                    label={"ALL"}
+                    color={props.value.includes("ALL") ? "primary" : "default"}
+                    key={"ALL"}
+                    variant={
+                        props.value.includes("ALL") ? "default" : "outlined"
+                    }
+                />
+            )}
         </Stack>
     );
 }
@@ -34,12 +45,14 @@ UserRoleSelect.propTypes = {
     value: PropTypes.arrayOf(Object.values(userRoles)),
     exclude: PropTypes.arrayOf(PropTypes.oneOf(Object.values(userRoles))),
     onSelect: PropTypes.func,
+    all: PropTypes.bool,
 };
 
 UserRoleSelect.defaultProps = {
     value: [],
     exclude: [],
     onSelect: () => {},
+    all: false,
 };
 
 export default UserRoleSelect;

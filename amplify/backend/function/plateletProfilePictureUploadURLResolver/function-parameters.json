@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "api": {
+      "platelet": [
+        "Query"
+      ]
+    },
+    "storage": {
+      "plateletStorage": [
+        "create",
+        "read",
+        "update"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}

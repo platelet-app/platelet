@@ -7,7 +7,7 @@ import NotFound from "../../ErrorComponents/NotFound";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
-import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
+import { dataStoreModelSyncedStatusSelector } from "../../redux/Selectors";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import LocationProfile from "./components/LocationProfile";
 import { protectedFields } from "../../apiConsts";
@@ -32,38 +32,36 @@ export default function LocationDetail(props) {
     const dispatch = useDispatch();
     const [isFetching, setIsFetching] = useState(false);
     const [location, setLocation] = useState(initialLocationState);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [notFound, setNotFound] = useState(false);
+    const locationModelSynced = useSelector(
+        dataStoreModelSyncedStatusSelector
+    ).Location;
 
     async function newLocationProfile() {
-        if (!dataStoreReadyStatus) {
-            setIsFetching(true);
-        } else {
-            try {
-                const locationResult = await DataStore.query(
-                    models.Location,
-                    locationUUID
-                );
-                setIsFetching(false);
-                if (locationResult) {
-                    setLocation(locationResult);
-                } else {
-                    setNotFound(true);
-                }
-            } catch (error) {
-                setIsFetching(false);
-                dispatch(
-                    displayErrorNotification(
-                        `Failed to get location: ${error.message}`
-                    )
-                );
-                console.log("Request failed", error);
+        try {
+            const locationResult = await DataStore.query(
+                models.Location,
+                locationUUID
+            );
+            setIsFetching(false);
+            if (locationResult) {
+                setLocation(locationResult);
+            } else {
+                setNotFound(true);
             }
+        } catch (error) {
+            setIsFetching(false);
+            dispatch(
+                displayErrorNotification(
+                    `Failed to get location: ${error.message}`
+                )
+            );
+            console.log("Request failed", error);
         }
     }
     useEffect(
         () => newLocationProfile(),
-        [props.location.key, dataStoreReadyStatus]
+        [props.location.key, locationModelSynced]
     );
 
     async function onUpdate(value) {

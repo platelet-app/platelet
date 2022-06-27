@@ -35,16 +35,10 @@ function generateTimes(previous = null, hours = 2) {
     const timePickedUp = date.toISOString();
     date.setMinutes(date.getMinutes() + getRandomInt(20, 30));
     const timeDroppedOff = date.toISOString();
+    date.setMinutes(date.getMinutes() + getRandomInt(20, 30));
+    const timeCompleted = date.toISOString();
 
-    return { timeDroppedOff, timePickedUp, timeOfCall };
-}
-
-function importAll(r) {
-    let images = {};
-    r.keys().forEach((item, index) => {
-        images[item.replace("./", "")] = r(item);
-    });
-    return images;
+    return { timeDroppedOff, timePickedUp, timeOfCall, timeCompleted };
 }
 
 let profilePictures = [];
@@ -57,7 +51,6 @@ if (
         profilePictures.push(`${_.padStart(i, 4, "0")}.jpg`);
         profilePictureThumbnails.push(`${_.padStart(i, 4, "0")}_thumbnail.jpg`);
     }
-    console.log(profilePictures);
 }
 
 function* initialiseApp() {
@@ -77,15 +70,12 @@ function* initialiseApp() {
             yield call(populateTasks);
         }
     }
+    yield put(initialiseAwsDataStoreListener());
     yield put(getWhoamiRequest());
 }
 
 export function* watchInitialiseApp() {
     yield takeLatest(actions.INITIALISE_APP, initialiseApp);
-}
-
-function* initialiseAwsHub() {
-    yield all([put(initialiseAwsDataStoreListener())]);
 }
 
 function* initialiseBroadcastAPI() {
@@ -97,7 +87,6 @@ function* initialiseTaskAssigneesObserver() {
 }
 
 export function* watchInitialWhoamiCompleted() {
-    yield takeLatest(GET_WHOAMI_SUCCESS, initialiseAwsHub);
     yield takeLatest(GET_WHOAMI_SUCCESS, initialiseBroadcastAPI);
     yield takeLatest(GET_WHOAMI_SUCCESS, initialiseTaskAssigneesObserver);
 }
@@ -558,6 +547,7 @@ async function populateTasks() {
                     pickUpLocation,
                     timePickedUp: times.timePickedUp,
                     timeDroppedOff: times.timeDroppedOff,
+                    timeRiderHome: i < 8 ? times.timeCompleted : null,
                     dropOffLocation,
                     riderResponsibility: rider.riderResponsibility,
                     requesterContact,

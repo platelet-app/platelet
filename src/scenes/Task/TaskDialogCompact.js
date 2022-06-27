@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import StatusBar from "./components/StatusBar";
 import Dialog from "@mui/material/Dialog";
 import { useDispatch, useSelector } from "react-redux";
-import { decodeUUID, determineTaskStatus } from "../../utilities";
+import { decodeUUID } from "../../utilities";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -11,16 +11,13 @@ import GetError from "../../ErrorComponents/GetError";
 import Typography from "@mui/material/Typography";
 import TaskOverview from "./components/TaskOverview";
 import CommentsSideBar from "./components/CommentsSideBar";
-import { Button, Divider, Hidden, Stack } from "@mui/material";
-import CommentsSection from "../Comments/CommentsSection";
+import { Button, Hidden } from "@mui/material";
 import * as models from "../../models/index";
 import { DataStore } from "aws-amplify";
-import { dataStoreReadyStatusSelector } from "../../redux/Selectors";
-import _ from "lodash";
-import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
+import { dataStoreModelSyncedStatusSelector } from "../../redux/Selectors";
 import { useHistory, useLocation, useParams } from "react-router";
-import TaskAssignmentsPanel from "./components/TaskAssignmentsPanel";
 import PropTypes from "prop-types";
+import { setSelectionActionsPending } from "../../redux/selectionMode/selectionModeActions";
 
 const drawerWidth = 420;
 const drawerWidthMd = 420;
@@ -47,8 +44,6 @@ const useStyles = makeStyles((theme) => ({
         },
     },
 }));
-
-const errorMessage = "Sorry, an error occurred";
 
 const DialogWrapper = (props) => {
     const { handleClose } = props;
@@ -110,131 +105,46 @@ const initialState = {
 };
 
 function TaskDialogCompact(props) {
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const [notFound, setNotFound] = useState(false);
     const classes = useStyles();
     const theme = useTheme();
     const isMd = useMediaQuery(theme.breakpoints.down("lg"));
+    const taskObserver = useRef({ unsubscribe: () => {} });
     const [isFetching, setIsFetching] = useState(false);
     const [errorState, setErrorState] = useState(null);
     const [state, setState] = useState(initialState);
     const taskRef = useRef();
     taskRef.current = state;
-    const taskObserver = useRef({ unsubscribe: () => {} });
-    const dispatch = useDispatch();
+    const tasksSynced = useSelector(dataStoreModelSyncedStatusSelector).Task;
     let { task_uuid_b62 } = useParams();
     const taskUUID = decodeUUID(task_uuid_b62);
 
     async function getTask() {
         setIsFetching(true);
-        if (!dataStoreReadyStatus) {
-            return;
-        } else {
-            try {
-                const taskData = await DataStore.query(models.Task, taskUUID);
-                if (taskData) {
-                    setState({
-                        ...taskData,
-                    });
-                    taskObserver.current.unsubscribe();
-                    taskObserver.current = DataStore.observe(
-                        models.Task,
-                        taskUUID
-                    ).subscribe(async (observeResult) => {
-                        const taskData = observeResult.element;
-                        if (observeResult.opType === "UPDATE") {
-                            setState((prevState) => ({
-                                ...prevState,
-                                ...taskData,
-                            }));
-                        } else if (observeResult.opType === "DELETE") {
-                            setNotFound(true);
-                            setState(initialState);
-                        }
-                    });
-                } else {
+        try {
+            const taskData = await DataStore.query(models.Task, taskUUID);
+            taskObserver.current.unsubscribe();
+            taskObserver.current = DataStore.observe(
+                models.Task,
+                taskUUID
+            ).subscribe(async (observeResult) => {
+                if (observeResult.opType === "DELETE") {
                     setNotFound(true);
                 }
-                setIsFetching(false);
-            } catch (error) {
-                setIsFetching(false);
-                setErrorState(error);
-                console.error("Request failed", error);
-            }
-        }
-    }
-    useEffect(() => getTask(), [dataStoreReadyStatus, props.taskId]);
-
-    useEffect(() => () => taskObserver.current.unsubscribe(), []);
-
-    async function setTimeOfCall(value) {
-        try {
-            const result = await DataStore.query(models.Task, taskUUID);
-            if (!result) throw new Error("Task doesn't exist");
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated.timeOfCall = value;
-                })
-            );
-            taskRef.current = { ...taskRef.current, timeOfCall: value };
-            setState((prevState) => ({
-                ...prevState,
-                timeOfCall: value,
-            }));
-        } catch (error) {
-            console.log(error);
-            dispatch(displayErrorNotification(errorMessage));
-        }
-    }
-
-    async function selectPriority(priority) {
-        try {
-            const result = await DataStore.query(models.Task, taskUUID);
-            if (!result) throw new Error("Task doesn't exist");
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated.priority = priority;
-                })
-            );
-        } catch (error) {
-            console.log(error);
-            dispatch(displayErrorNotification(errorMessage));
-        }
-    }
-
-    async function updateRequesterContact(requesterValue) {
-        try {
-            const result = await DataStore.query(models.Task, taskUUID);
-            if (!result) throw new Error("Task doesn't exist");
-            if (!result.requesterContact) {
-                await DataStore.save(
-                    models.Task.copyOf(result, (updated) => {
-                        updated.requesterContact = requesterValue;
-                    })
-                );
+            });
+            if (taskData) {
+                setNotFound(false);
             } else {
-                await DataStore.save(
-                    models.Task.copyOf(result, (updated) => {
-                        for (const [key, value] of Object.entries(
-                            requesterValue
-                        )) {
-                            updated.requesterContact[key] = value;
-                        }
-                    })
-                );
+                setNotFound(true);
             }
-            taskRef.current = {
-                ...taskRef.current,
-                requesterContact: {
-                    ...taskRef.current.requesterContact,
-                    ...requesterValue,
-                },
-            };
+            setIsFetching(false);
         } catch (error) {
-            console.log(error);
-            dispatch(displayErrorNotification(errorMessage));
+            setIsFetching(false);
+            setErrorState(error);
+            console.error("Request failed", error);
         }
     }
+    useEffect(() => getTask(), [props.taskId, tasksSynced]);
 
     const history = useHistory();
     const location = useLocation();
@@ -255,6 +165,14 @@ function TaskDialogCompact(props) {
                 taskId={taskUUID}
             />
         );
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(setSelectionActionsPending(true));
+    }, [dispatch]);
+
+    useEffect(() => () => dispatch(setSelectionActionsPending(false)), []);
 
     if (notFound) {
         return (
@@ -288,10 +206,7 @@ function TaskDialogCompact(props) {
                     <TaskOverview
                         isFetching={isFetching}
                         task={state}
-                        taskUUID={taskUUID}
-                        onSelectPriority={selectPriority}
-                        onChangeTimeOfCall={setTimeOfCall}
-                        onChangeRequesterContact={updateRequesterContact}
+                        taskId={taskUUID}
                     />
                     <Hidden mdDown>
                         <CommentsSideBar

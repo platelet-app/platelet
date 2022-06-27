@@ -11,10 +11,10 @@ import Brightness4Icon from "@mui/icons-material/Brightness4";
 import UserAvatar from "../../components/UserAvatar";
 import { useDispatch, useSelector } from "react-redux";
 import { getWhoami } from "../../redux/Selectors";
-import { Auth } from "aws-amplify";
 import SignalWifiOff from "@mui/icons-material/SignalWifiOff";
 import { networkStatusSelector } from "../../redux/Selectors";
 import { logoutUser } from "../../redux/login/LoginActions";
+import SyncStatusCircleLoader from "./SyncStatusCircleLoader";
 
 function LightToggleProfileMenu() {
     const whoami = useSelector(getWhoami);
@@ -32,6 +32,7 @@ function LightToggleProfileMenu() {
             spacing={1}
         >
             <Box sx={{ width: 40 }}>
+                <SyncStatusCircleLoader />
                 {!networkStatus && (
                     <Tooltip title={"You are working offline"}>
                         <IconButton size="large">
@@ -58,9 +59,7 @@ function LightToggleProfileMenu() {
                     userUUID={whoami.id}
                     displayName={whoami.displayName}
                     thumbnailKey={
-                        whoami.profilePictureThumbnail
-                            ? whoami.profilePictureThumbnail.key
-                            : null
+                        whoami.profilePicture ? whoami.profilePicture.key : null
                     }
                 />
 

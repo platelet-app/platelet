@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "../../App.css";
-import AddIcon from "@mui/icons-material/Add";
 import Paper from "@mui/material/Paper";
 import {
     setDashboardFilteredUser,
@@ -13,24 +12,29 @@ import { DashboardDetailTabs } from "./components/DashboardDetailTabs";
 import { getDashboardRoleMode, saveDashboardRoleMode } from "../../utilities";
 import {
     dashboardFilteredUserSelector,
+    dashboardFilterTermSelector,
     dashboardTabIndexSelector,
-    dataStoreReadyStatusSelector,
     getRoleView,
     getWhoami,
     guidedSetupOpenSelector,
+    selectedItemsSelector,
 } from "../../redux/Selectors";
 import { tasksStatus, userRoles } from "../../apiConsts";
 import { clearDashboardFilter } from "../../redux/dashboardFilter/DashboardFilterActions";
-import { Fab, Hidden } from "@mui/material";
+import { Divider, Fab, Hidden, Stack } from "@mui/material";
 import ActiveRidersChips from "./components/ActiveRidersChips";
 import GuidedSetupDrawer from "./components/GuidedSetupDrawer";
+import MultipleSelectionActionsMenu from "./components/MultipleSelectionActionsMenu";
+import _ from "lodash";
 
 function AddClearFab() {
     const dispatch = useDispatch();
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
-    const dashboardFilter = useSelector((state) => state.dashboardFilter);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
+    const dashboardFilter = useSelector(dashboardFilterTermSelector);
     const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
+    const selectedItems = useSelector(selectedItemsSelector);
+    const tabIndex = useSelector(dashboardTabIndexSelector);
+    const items = selectedItems[tabIndex];
     const filterOn = !!dashboardFilter || !!dashboardFilteredUser;
     const message = filterOn ? "Clear search" : "Create new";
 
@@ -45,10 +49,19 @@ function AddClearFab() {
 
     return (
         <Fab
-            sx={{ position: "fixed", zIndex: 100, bottom: 30, right: 30 }}
+            sx={{
+                display: {
+                    xs: _.isEmpty(items) ? "block" : "none",
+                    sm: "block",
+                },
+                position: "fixed",
+                zIndex: 100,
+                bottom: 30,
+                right: 30,
+            }}
             color={filterOn ? "secondary" : "primary"}
             variant="extended"
-            disabled={!dataStoreReadyStatus || guidedSetupOpen}
+            disabled={guidedSetupOpen}
             onClick={handleClick}
         >
             {message}
@@ -85,14 +98,20 @@ function Dashboard() {
     useEffect(setInitialRoleView, [whoami]);
 
     return (
-        <>
-            <Paper sx={{ marginBottom: 10, maxWidth: 1480 }}>
-                <Hidden mdUp>
-                    <DashboardDetailTabs />
-                </Hidden>
-                {[userRoles.coordinator, "ALL"].includes(roleView) && (
+        <Stack>
+            <Hidden mdUp>
+                <DashboardDetailTabs />
+            </Hidden>
+            <Divider />
+            <MultipleSelectionActionsMenu />
+            <Divider />
+            {[userRoles.coordinator, "ALL"].includes(roleView) && (
+                <>
                     <ActiveRidersChips />
-                )}
+                    <Divider />
+                </>
+            )}
+            <Paper sx={{ marginBottom: 10 }}>
                 <TasksGrid
                     modalView={"edit"}
                     hideRelayIcons={roleView === userRoles.rider}
@@ -125,7 +144,7 @@ function Dashboard() {
                 )}
             </Hidden>
             <GuidedSetupDrawer />
-        </>
+        </Stack>
     );
 }
 

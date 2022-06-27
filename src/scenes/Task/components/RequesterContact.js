@@ -1,10 +1,18 @@
-import React from "react";
-import { Stack, IconButton, Typography, Tooltip } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import {
+    useMediaQuery,
+    Stack,
+    IconButton,
+    Typography,
+    Tooltip,
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import ClickableTextField from "../../../components/ClickableTextField";
 import LabelItemPair from "../../../components/LabelItemPair";
 import PropTypes from "prop-types";
-import { makeStyles } from "@mui/styles";
+import { makeStyles, useTheme } from "@mui/styles";
+import ConfirmationDialog from "../../../components/ConfirmationDialog";
+import { TextFieldControlled } from "../../../components/TextFields";
 
 const useStyles = makeStyles({
     inset: {
@@ -12,12 +20,37 @@ const useStyles = makeStyles({
     },
 });
 
+const fields = {
+    name: "Name",
+    telephoneNumber: "Telephone",
+};
+
 function RequesterContact(props) {
     const [editMode, setEditMode] = React.useState(false);
-    function onChange(value) {
-        props.onChange(value);
-    }
+    const [state, setState] = useState({
+        name: props.name,
+        telephoneNumber: props.telephoneNumber,
+    });
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("md"));
+
+    useEffect(() => {
+        setState({
+            name: props.name,
+            telephoneNumber: props.telephoneNumber,
+        });
+    }, [props]);
+
+    const onCancelDialog = () => {
+        setEditMode(false);
+        setState({
+            name: props.name,
+            telephoneNumber: props.telephoneNumber,
+        });
+    };
+
     const classes = useStyles();
+
     return (
         <Stack>
             <Stack
@@ -26,44 +59,64 @@ function RequesterContact(props) {
                 justifyContent="space-between"
             >
                 <Typography>Caller details</Typography>
-                <Tooltip title={editMode ? "Finish" : "Edit"}>
+                <Tooltip title={editMode && !isSm ? "Finish" : "Edit"}>
                     <IconButton
                         onClick={() => setEditMode((prevState) => !prevState)}
+                        aria-label="edit caller details"
                         size={"small"}
                     >
-                        <EditIcon color={editMode ? "secondary" : "inherit"} />
+                        <EditIcon
+                            color={editMode && !isSm ? "secondary" : "inherit"}
+                        />
                     </IconButton>
                 </Tooltip>
             </Stack>
-            <div className={classes.inset}>
-                <LabelItemPair label={"Name"}>
-                    <ClickableTextField
-                        disabled={!editMode}
-                        onFinished={(value) =>
-                            onChange({
-                                name: value,
-                            })
-                        }
-                        label={"Name"}
-                        value={props.name}
-                    />
-                </LabelItemPair>
-            </div>
-            <div className={classes.inset}>
-                <LabelItemPair label={"Telephone"}>
-                    <ClickableTextField
-                        tel
-                        disabled={!editMode}
-                        onFinished={(value) =>
-                            onChange({
-                                telephoneNumber: value,
-                            })
-                        }
-                        value={props.telephoneNumber}
-                        label={"Telephone"}
-                    />
-                </LabelItemPair>
-            </div>
+            {Object.entries(fields).map(([key, label]) => (
+                <div key={key} className={classes.inset}>
+                    <LabelItemPair label={label}>
+                        <ClickableTextField
+                            tel={key === "telephoneNumber"}
+                            disabled={isSm || !editMode}
+                            onFinished={(value) =>
+                                props.onChange({
+                                    [key]: value,
+                                })
+                            }
+                            label={label}
+                            value={props[key]}
+                        />
+                    </LabelItemPair>
+                </div>
+            ))}
+            {isSm && (
+                <ConfirmationDialog
+                    onCancel={onCancelDialog}
+                    onConfirmation={() => {
+                        props.onChange(state);
+                        setEditMode(false);
+                    }}
+                    fullScreen={isSm}
+                    open={editMode}
+                >
+                    <Stack marginTop={1} spacing={2}>
+                        {Object.entries(fields).map(([key, label]) => (
+                            <TextFieldControlled
+                                tel={key === "telephoneNumber"}
+                                key={key}
+                                label={label}
+                                aria-label={label}
+                                value={state[key]}
+                                onChange={(event) =>
+                                    setState({
+                                        ...state,
+                                        [key]: event.target.value,
+                                    })
+                                }
+                            />
+                        ))}
+                    </Stack>
+                </ConfirmationDialog>
+            )}
         </Stack>
     );
 }

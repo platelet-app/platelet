@@ -8,6 +8,7 @@
         "@date-io/moment": "^2.11.0",
         "@emotion/react": "^11.4.1",
         "@emotion/styled": "^11.3.0",
+        "@fast-csv/format": "^4.3.5",
         "@fontsource/roboto": "^4.5.1",
         "@mui/icons-material": "^5.0.3",
         "@mui/lab": "^5.0.0-alpha.50",
@@ -18,7 +19,7 @@
         "@testing-library/react": "^12.1.2",
         "@testing-library/user-event": "^13.5.0",
         "autosuggest-highlight": "^3.1.1",
-        "aws-amplify": "^4.3.20",
+        "aws-amplify": "^4.3.22",
         "axios": "^0.21.1",
         "date-fns": "^2.23.0",
         "downshift": "^6.1.7",
@@ -82,7 +83,7 @@
         "test:debug": "react-scripts --inspect test --runInBand --no-cache --testTimeout=100000000",
         "eject": "react-scripts eject",
         "preserve:static": "npm run build",
-        "serve:static": "npx serve ./build  -p 3000" 
+        "serve:static": "npx serve ./build  -p 3000"
     },
     "eslintConfig": {
         "extends": [

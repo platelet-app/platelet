@@ -35,6 +35,7 @@ TaskActionConfirmationDialogContents.propTypes = {
         "timeDroppedOff",
         "timeRejected",
         "timeCancelled",
+        "timeRiderHome",
     ]).isRequired,
     nullify: PropTypes.bool.isRequired,
 };

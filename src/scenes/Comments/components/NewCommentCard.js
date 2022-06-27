@@ -7,10 +7,7 @@ import { commentStyles, CommentCardStyled } from "../styles/CommentCards";
 import PropTypes from "prop-types";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
-import {
-    dataStoreReadyStatusSelector,
-    tenantIdSelector,
-} from "../../../redux/Selectors";
+import { tenantIdSelector } from "../../../redux/Selectors";
 import { commentVisibility } from "../../../apiConsts";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import CommentVisibilitySelector from "../../../components/CommentVisibilitySelector";
@@ -27,7 +24,6 @@ function NewCommentCard(props) {
     const [isPosting, setIsPosting] = useState(false);
     const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
     const tenantId = useSelector(tenantIdSelector);
-    const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const dispatch = useDispatch();
 
     const classes = commentStyles();
@@ -87,10 +83,8 @@ function NewCommentCard(props) {
                                 uuid={props.author.id}
                                 displayName={props.author.displayName}
                                 thumbnailKey={
-                                    props.author &&
-                                    props.author.profilePictureThumbnail
-                                        ? props.author.profilePictureThumbnail
-                                              .key
+                                    props.author && props.author.profilePicture
+                                        ? props.author.profilePicture.key
                                         : null
                                 }
                             />
@@ -136,11 +130,7 @@ function NewCommentCard(props) {
                     >
                         <Grid item>
                             <Button
-                                disabled={
-                                    state.body.length === 0 ||
-                                    isPosting ||
-                                    !dataStoreReadyStatus
-                                }
+                                disabled={state.body.length === 0 || isPosting}
                                 onClick={addComment}
                             >
                                 Post
@@ -186,7 +176,7 @@ NewCommentCard.defaultProps = {
     author: {
         displayName: "",
         id: "",
-        profilePictureThumbnail: { bucket: "", key: "", region: "" },
+        profilePicture: { bucket: "", key: "", region: "" },
     },
     parentUUID: "",
 };
