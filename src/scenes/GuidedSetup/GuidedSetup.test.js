@@ -331,7 +331,7 @@ describe("GuidedSetup", () => {
         render(<GuidedSetup />, { preloadedState });
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
         userEvent.type(
-            screen.getByRole("textbox", { name: "select establishment" }),
+            screen.getByRole("textbox", { name: "Select establishment" }),
             "Test"
         );
         userEvent.click(screen.getByText(mockLocation.name));
