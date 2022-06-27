@@ -76,10 +76,14 @@ export const CallerDetails = ({
                         onChange={onChangeEstablishmentSameAsPickup}
                         control={<Switch defaultChecked />}
                         label="Same as pick up?"
+                        aria-label="toggle same as pick up"
                     />
                 </Stack>
             ) : (
-                <FavouriteLocationsSelect onSelect={handleSelectLocation} />
+                <FavouriteLocationsSelect
+                    label="Select establishment"
+                    onSelect={handleSelectLocation}
+                />
             )}
             <ContactForm
                 values={state}

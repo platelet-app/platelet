@@ -29,13 +29,15 @@ describe("GuidedSetup", () => {
         const tasks = await DataStore.query(models.Task);
         const comments = await DataStore.query(models.Comment);
         const assignments = await DataStore.query(models.TaskAssignee);
+        const locations = await DataStore.query(models.Location);
         await Promise.all(
-            [...users, ...tasks, ...comments, ...assignments].map((item) =>
-                DataStore.delete(item)
+            [...users, ...tasks, ...comments, ...assignments, ...locations].map(
+                (item) => DataStore.delete(item)
             )
         );
     });
-    it.only("renders correctly", async () => {
+
+    it("renders correctly", async () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<GuidedSetup />, { preloadedState });
         await waitFor(() => {
@@ -114,7 +116,7 @@ describe("GuidedSetup", () => {
             pickUpLocation: null,
             priority: null,
             status: tasksStatus.new,
-            establishment: null,
+            establishmentLocation: null,
             requesterContact: {
                 name: "",
                 telephoneNumber: "",
@@ -177,7 +179,7 @@ describe("GuidedSetup", () => {
         const mockTask = new models.Task({
             dropOffLocation: null,
             pickUpLocation: null,
-            establishment: null,
+            establishmentLocation: null,
             priority: null,
             status: tasksStatus.new,
             requesterContact: {
@@ -277,12 +279,92 @@ describe("GuidedSetup", () => {
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(9));
     });
 
+    test("saving the establishment", async () => {
+        const mockLocation = await DataStore.save(
+            new models.Location({ name: "Test Location", listed: 1 })
+        );
+        const mockTask = new models.Task({
+            dropOffLocation: null,
+            pickUpLocation: null,
+            priority: null,
+            establishmentLocation: mockLocation,
+            status: tasksStatus.new,
+            requesterContact: { name: "", telephoneNumber: "" },
+            tenantId: "test-tenant",
+        });
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<GuidedSetup />, { preloadedState });
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
+        userEvent.type(
+            screen.getByRole("textbox", { name: "Select establishment" }),
+            "Test"
+        );
+        userEvent.click(screen.getByText(mockLocation.name));
+        userEvent.click(
+            screen.getByRole("button", { name: "Save to dashboard" })
+        );
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(2);
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockTask,
+            timeOfCall: expect.any(String),
+            id: expect.any(String),
+        });
+    });
+    test("saving the establishment as the pickup", async () => {
+        const mockLocation = await DataStore.save(
+            new models.Location({ name: "Test Location", listed: 1 })
+        );
+        const mockTask = new models.Task({
+            dropOffLocation: null,
+            pickUpLocation: mockLocation,
+            priority: null,
+            establishmentLocation: mockLocation,
+            status: tasksStatus.new,
+            requesterContact: { name: "", telephoneNumber: "" },
+            tenantId: "test-tenant",
+        });
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<GuidedSetup />, { preloadedState });
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
+        userEvent.type(
+            screen.getByRole("textbox", { name: "select establishment" }),
+            "Test"
+        );
+        userEvent.click(screen.getByText(mockLocation.name));
+        userEvent.click(
+            screen.getByRole("checkbox", { name: "toggle same as pick up" })
+        );
+        userEvent.click(screen.getByText(/PICK-UP/));
+        expect(screen.getByText(mockLocation.name)).toBeInTheDocument();
+        expect(screen.queryByText("CLEAR")).toBeNull();
+        expect(
+            await screen.findAllByRole("button", {
+                name: "Enter manually?",
+            })
+        ).toHaveLength(1);
+        userEvent.click(
+            screen.getByRole("button", { name: "Save to dashboard" })
+        );
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(2);
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockTask,
+            timeOfCall: expect.any(String),
+            id: expect.any(String),
+        });
+    });
+
     test("adding item data", async () => {
         const mockTask = new models.Task({
             dropOffLocation: null,
             pickUpLocation: null,
             priority: null,
-            establishment: null,
+            establishmentLocation: null,
             status: tasksStatus.new,
             requesterContact: { name: "", telephoneNumber: "" },
             tenantId: "test-tenant",

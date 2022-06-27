@@ -117,7 +117,7 @@ const guidedSetupStyles = makeStyles((theme) => ({
 
 const defaultValues = {
     priority: null,
-    establishment: null,
+    establishmentLocation: null,
 };
 
 const defaultContact = {
@@ -130,12 +130,15 @@ const defaultComment = {
     visibility: commentVisibility.everyone,
 };
 
+const initialEstablishmentSameAsPickUpState = false;
+
 export const GuidedSetup = () => {
     const classes = guidedSetupStyles();
     const [tabIndex, setTabIndex] = React.useState(0);
     const [formValues, setFormValues] = useState(defaultValues);
-    const [establishmentSameAsPickup, setEstablishmentSameAsPickup] =
-        useState(true);
+    const [establishmentSameAsPickup, setEstablishmentSameAsPickup] = useState(
+        initialEstablishmentSameAsPickUpState
+    );
     const tenantId = useSelector(tenantIdSelector);
     const [isPosting, setIsPosting] = useState(false);
     const [reset, setReset] = useState(false);
@@ -170,35 +173,21 @@ export const GuidedSetup = () => {
     const handleEstablishmentChange = (value) => {
         setFormValues((prevState) => ({
             ...prevState,
-            establishment: value,
+            establishmentLocation: value,
         }));
     };
 
     useEffect(() => {
         if (establishmentSameAsPickup) {
-            setLocation("pickUpLocation", formValues.establishment);
-            setPickUpOverride(formValues.establishment);
+            setLocation("pickUpLocation", formValues.establishmentLocation);
+            setPickUpOverride(formValues.establishmentLocation);
         } else {
             setPickUpOverride(null);
         }
-    }, [establishmentSameAsPickup, formValues.establishment]);
+    }, [establishmentSameAsPickup, formValues.establishmentLocation]);
 
     const handleEstablishmentSameAsPickupChange = () => {
         setEstablishmentSameAsPickup((prevState) => !prevState);
-    };
-
-    const handleSenderContactChange = (value) => {
-        setFormValues((prevState) => ({
-            ...prevState,
-            sender: { ...prevState.sender, ...value },
-        }));
-    };
-
-    const handleReceiverContactChange = (value) => {
-        setFormValues((prevState) => ({
-            ...prevState,
-            receiver: { ...prevState.receiver, ...value },
-        }));
     };
 
     const handleSave = async () => {
@@ -216,10 +205,12 @@ export const GuidedSetup = () => {
                 tenantId,
                 whoami && whoami.id
             );
+            setEstablishmentSameAsPickup(initialEstablishmentSameAsPickUpState);
         } catch (e) {
             console.error(e);
             dispatch(displayErrorNotification("Sorry, something went wrong"));
             setIsPosting(false);
+            setEstablishmentSameAsPickup(initialEstablishmentSameAsPickUpState);
             return;
         }
         setIsPosting(false);
@@ -283,6 +274,7 @@ export const GuidedSetup = () => {
 
     const onCloseForm = () => {
         dispatch(setGuidedSetupOpen(false));
+        setEstablishmentSameAsPickup(initialEstablishmentSameAsPickUpState);
         setTabIndex(0);
     };
 
