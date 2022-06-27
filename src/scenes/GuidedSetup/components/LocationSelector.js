@@ -5,13 +5,12 @@ import PropTypes from "prop-types";
 import LabelItemPair from "../../../components/LabelItemPair";
 import ClickableTextField from "../../../components/ClickableTextField";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
-import Button from "@mui/material/Button";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import Divider from "@mui/material/Divider";
 import { Tooltip } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
-import { showHide, ThemedLink } from "../../../styles/common";
+import { showHide } from "../../../styles/common";
 import { encodeUUID } from "../../../utilities";
 import ClearButtonWithConfirmation from "../../Task/components/ClearButtonWithConfirmation";
 
@@ -98,13 +97,6 @@ function LocationSelector(props) {
         props.onClear();
     }
 
-    const presetName =
-        props.location && props.location.name ? props.location.name : "";
-    const locationLink =
-        props.location && props.location.uuid
-            ? `/location/${encodeUUID(props.location.uuid)}`
-            : "";
-
     const presetSelect = props.displayPresets ? (
         <Grid item>
             <Grid
@@ -142,7 +134,8 @@ function LocationSelector(props) {
                                     edge={"end"}
                                     disabled={props.disabled}
                                     onClick={onClickEditButton}
-                                    size="large">
+                                    size="large"
+                                >
                                     <EditIcon />
                                 </IconButton>
                             </Tooltip>
@@ -178,7 +171,11 @@ function LocationSelector(props) {
                 direction={"column"}
             >
                 <Grid item>
-                    <Grid container direction={"row"} justifyContent={"space-between"}>
+                    <Grid
+                        container
+                        direction={"row"}
+                        justifyContent={"space-between"}
+                    >
                         <Grid item>
                             <Typography variant={"h6"}>
                                 {props.label}

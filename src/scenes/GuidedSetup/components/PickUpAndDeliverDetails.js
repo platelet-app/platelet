@@ -1,6 +1,5 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import LocationDetailAndSelector from "../../Task/components/LocationDetailAndSelector";
 import { Divider, Stack } from "@mui/material";
 import PopOutLocationSelector from "./PopOutLocationSelector";
 
@@ -9,6 +8,7 @@ export const PickUpAndDeliverDetails = ({
     onSetDropOffLocation,
     onClearPickUpLocation,
     onClearDropOffLocation,
+    overrides,
 }) => {
     return (
         <Stack spacing={1}>
@@ -17,6 +17,7 @@ export const PickUpAndDeliverDetails = ({
                 label="pick up"
                 onChange={onSetPickUpLocation}
                 onClear={onClearPickUpLocation}
+                override={overrides.pickUpLocation}
             />
             <Divider />
             <Typography variant="h6">Where to?</Typography>

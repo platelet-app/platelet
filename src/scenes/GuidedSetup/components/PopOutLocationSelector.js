@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Typography from "@mui/material/Typography";
 import _ from "lodash";
 import PropTypes from "prop-types";
@@ -50,6 +50,7 @@ const contactFields = {
 function PopOutLocationSelector(props) {
     const classes = useStyles();
     const [state, setState] = useState(null);
+    const oldState = useRef(null);
     const [editMode, setEditMode] = useState(false);
     const [collapsed, setCollapsed] = useState(true);
 
@@ -61,6 +62,15 @@ function PopOutLocationSelector(props) {
     function onClickClearButton() {
         setState(null);
     }
+
+    useEffect(() => {
+        if (props.override) {
+            oldState.current = state;
+            setState(props.override);
+        } else {
+            setState(oldState.current);
+        }
+    }, [props.override]);
 
     function handleConfirmation(value) {
         if (_.isEqual(state, value)) {
@@ -154,7 +164,7 @@ function PopOutLocationSelector(props) {
     return (
         <Box className={classes.root}>
             <Stack spacing={1} className={props.className} direction={"column"}>
-                {presetSelect}
+                {!props.override && presetSelect}
                 {state && (
                     <>
                         <Stack direction={"column"}>
@@ -215,7 +225,7 @@ function PopOutLocationSelector(props) {
                                 }
                                 value={collapsed}
                             />
-                            {state && !props.disableClear && (
+                            {state && !props.disableClear && !props.override && (
                                 <ClearButtonWithConfirmation
                                     disabled={props.disabled}
                                     onClear={onClickClearButton}
@@ -243,7 +253,7 @@ function PopOutLocationSelector(props) {
 
 PopOutLocationSelector.propTypes = {
     label: PropTypes.string,
-    location: PropTypes.object,
+    override: PropTypes.object,
     onSelectPreset: PropTypes.func,
     className: PropTypes.string,
     displayPresets: PropTypes.bool,
@@ -260,7 +270,7 @@ PopOutLocationSelector.defaultProps = {
     label: "Search locations",
     displayPresets: true,
     disableClear: false,
-    location: null,
+    override: null,
     onSelectPreset: () => {},
     onChange: () => {},
     onChangeContact: () => {},

@@ -1,20 +1,11 @@
-import {
-    FormControlLabel,
-    Stack,
-    Switch,
-    ToggleButton,
-    Typography,
-} from "@mui/material";
+import { FormControlLabel, Stack, Switch, Typography } from "@mui/material";
 import React from "react";
 import ClearButtonWithConfirmation from "../../../components/ClearButtonWithConfirmation";
 import { ContactForm } from "../../../components/ContactForm";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
-import PrioritySelect from "../../Task/components/PrioritySelect";
 
 export const CallerDetails = ({
-    values,
     onChangeContact,
-    onChangePriority,
     onChangeLocation,
     establishmentSameAsPickup,
     onChangeEstablishmentSameAsPickup,

@@ -117,6 +117,7 @@ const guidedSetupStyles = makeStyles((theme) => ({
 
 const defaultValues = {
     priority: null,
+    establishment: null,
 };
 
 const defaultContact = {
@@ -145,6 +146,7 @@ export const GuidedSetup = () => {
     const timeOfCall = useRef(new Date().toISOString());
     const dispatch = useDispatch();
     const locations = useRef({ pickUpLocation: null, dropOffLocation: null });
+    const [pickUpOverride, setPickUpOverride] = useState(null);
     const { show, hide } = showHide();
     const [discardConfirmationOpen, setDiscardConfirmationOpen] =
         useState(false);
@@ -171,6 +173,15 @@ export const GuidedSetup = () => {
             establishment: value,
         }));
     };
+
+    useEffect(() => {
+        if (establishmentSameAsPickup) {
+            setLocation("pickUpLocation", formValues.establishment);
+            setPickUpOverride(formValues.establishment);
+        } else {
+            setPickUpOverride(null);
+        }
+    }, [establishmentSameAsPickup, formValues.establishment]);
 
     const handleEstablishmentSameAsPickupChange = () => {
         setEstablishmentSameAsPickup((prevState) => !prevState);
@@ -356,6 +367,9 @@ export const GuidedSetup = () => {
                     </Box>
                     <Box className={tabIndex === 1 ? show : hide}>
                         <PickUpAndDeliverDetails
+                            overrides={{
+                                pickUpLocation: pickUpOverride,
+                            }}
                             onSetPickUpLocation={(value) => {
                                 setLocation("pickUpLocation", value);
                             }}
