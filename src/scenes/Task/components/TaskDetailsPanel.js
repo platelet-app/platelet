@@ -43,7 +43,6 @@ function TaskDetailsPanel(props) {
     const [errorState, setErrorState] = useState(null);
     const taskObserver = useRef({ unsubscribe: () => {} });
     const dispatch = useDispatch();
-    const classes = useStyles();
 
     const taskModelsSynced = useSelector(
         dataStoreModelSyncedStatusSelector

@@ -60,57 +60,165 @@ describe("TaskDetailsPanel", () => {
         expect(screen.getByText("test-reference")).toBeInTheDocument();
         expect(screen.getByText("Someone Person")).toBeInTheDocument();
         expect(screen.getByText("01234567890")).toBeInTheDocument();
-        expect(screen.getByText("HIGH")).toBeInTheDocument();
+        await waitFor(() => {
+            expect(
+                screen.getByRole("button", { name: priorities.high })
+            ).toHaveClass("MuiChip-default");
+        });
         expect(screen.getByText(/Today at/)).toBeInTheDocument();
         expect(
             screen.getByText(moment(timeOfCall).format("HH:mm"))
         ).toBeInTheDocument();
     });
-    test.skip.each`
-        timeKey
-        ${"timePickedUp"} | ${"timeDroppedOff"}
-    `("sets timePickedUp and timeDroppedOff", async ({ timeKey }) => {
-        const time = "2021-11-29T21:24:58.987Z";
+
+    test("changing the requester contact details", async () => {
+        const timeOfCall = new Date().toISOString();
         const mockTask = new models.Task({
-            [timeKey]: time,
-            status: tasksStatus.new,
+            timeOfCall,
+            priority: priorities.high,
+            reference: "test-reference",
+            requesterContact: {
+                telephoneNumber: "01234567890",
+                name: "Someone Person",
+            },
         });
-        amplify.DataStore.query
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValueOnce(mockTask)
-            .mockResolvedValue([]);
-        amplify.DataStore.save.mockResolvedValue({
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        const saveSpy = jest.spyOn(amplify.DataStore, "save");
+        render(<TaskDetailsPanel taskId={mockTask.id} />);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(
+            screen.getByRole("button", { name: "edit caller details" })
+        );
+        userEvent.click(screen.getByText(mockTask.requesterContact.name));
+        userEvent.type(screen.getByRole("textbox"), " more name");
+        userEvent.type(screen.getByRole("textbox"), "{enter}");
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(1);
+        });
+        expect(screen.queryByRole("textbox")).toBeNull();
+        userEvent.click(
+            screen.getByText(mockTask.requesterContact.telephoneNumber)
+        );
+        userEvent.type(screen.getByRole("textbox"), "999999");
+        userEvent.type(screen.getByRole("textbox"), "{enter}");
+        expect(screen.queryByRole("textbox")).toBeNull();
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(2);
+        });
+        expect(saveSpy).toHaveBeenNthCalledWith(1, {
             ...mockTask,
-            [timeKey]: time,
+            requesterContact: {
+                name: "Someone Person more name",
+                telephoneNumber: "01234567890",
+            },
         });
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
+        expect(saveSpy).toHaveBeenNthCalledWith(2, {
+            ...mockTask,
+            requesterContact: {
+                name: "Someone Person more name",
+                telephoneNumber: "01234567890999999",
+            },
         });
-        render(<TaskDetailsPanel taskId={"test"} />);
+    });
+
+    test("changing the requester contact details in mobile view", async () => {
+        const timeOfCall = new Date().toISOString();
+        const mockTask = new models.Task({
+            timeOfCall,
+            priority: priorities.high,
+            reference: "test-reference",
+            requesterContact: {
+                telephoneNumber: "01234567890",
+                name: "Someone Person",
+            },
+        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        const saveSpy = jest.spyOn(amplify.DataStore, "save");
+        render(<TaskDetailsPanel taskId={mockTask.id} />);
+
+        window.matchMedia = createMatchMedia(100);
+
         await waitFor(() => {
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
-        const editButton = screen.getByRole("button", { name: "Edit" });
-        userEvent.click(editButton);
-        // TODO: for whatever reason the textbox for the timer picker
-        // can't be typed into, so just send the same data for now.
-        //
-        /* const timePickedUpInput = screen.getByRole("textbox");
-         expect(timePickedUpInput).not.toBeDisabled();
-         userEvent.clear(timePickedUpInput);
-         expect(timePickedUpInput.value).toBe("");
-         userEvent.type(timePickedUpInput, "29/11/2021 23:23");
-         expect(timePickedUpInput.value).toBe("29/11/2021 23:23");
-         */
-        const saveButton = screen.getByLabelText("Finish");
-        userEvent.click(saveButton);
+        userEvent.click(
+            screen.getByRole("button", { name: "edit caller details" })
+        );
+        const textBoxes = screen.getAllByRole("textbox");
+        userEvent.type(textBoxes[0], " more name");
+        userEvent.type(textBoxes[1], "999999");
+        userEvent.click(screen.getByTestId("confirmation-ok-button"));
         await waitFor(() => {
-            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(1, {
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
-                [timeKey]: time,
+                requesterContact: {
+                    name: "Someone Person more name",
+                    telephoneNumber: "01234567890999999",
+                },
             });
         });
     });
+
+    test("responds to the observer", async () => {
+        const timeOfCall = new Date().toISOString();
+        const mockTask = new models.Task({
+            timeOfCall,
+            priority: priorities.high,
+            reference: "test-reference",
+            requesterContact: {
+                telephoneNumber: "01234567890",
+                name: "Someone Person",
+            },
+        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        render(<TaskDetailsPanel taskId={mockTask.id} />);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        await DataStore.save(
+            models.Task.copyOf(mockTask, (upd) => {
+                upd.priority = priorities.low;
+            })
+        );
+        await waitFor(() => {
+            expect(
+                screen.getByRole("button", { name: priorities.low })
+            ).toHaveClass("MuiChip-default");
+        });
+        await DataStore.save(
+            models.Task.copyOf(mockTask, (upd) => {
+                upd.requesterContact.name = "New Name";
+            })
+        );
+        await waitFor(() => {
+            expect(screen.getByText("New Name")).toBeInTheDocument();
+        });
+        await DataStore.save(
+            models.Task.copyOf(mockTask, (upd) => {
+                upd.requesterContact.telephoneNumber = "000000";
+            })
+        );
+        await waitFor(() => {
+            expect(screen.getByText("000000")).toBeInTheDocument();
+        });
+        const toc = new Date().toISOString();
+        await DataStore.save(
+            models.Task.copyOf(mockTask, (upd) => {
+                upd.timeOfCall = toc;
+            })
+        );
+        await waitFor(() => {
+            expect(
+                screen.getByText(moment(toc).format("HH:mm"))
+            ).toBeInTheDocument();
+        });
+    });
+
     it("unsubscribes to task observer on unmount", async () => {
         const mockTask = new models.Task({
             status: tasksStatus.new,
