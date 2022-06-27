@@ -13,7 +13,6 @@ export const CallerDetails = ({
     const [state, setState] = React.useState({
         name: "",
         telephoneNumber: "",
-        email: "",
         establishment: null,
     });
 
@@ -30,6 +29,10 @@ export const CallerDetails = ({
                 establishment: location,
                 telephoneNumber: location.contact.telephoneNumber,
             }));
+            onChangeContact({
+                name: state.name,
+                telephoneNumber: location.contact.telephoneNumber,
+            });
         } else if (
             state.telephoneNumber &&
             !location &&
@@ -38,12 +41,19 @@ export const CallerDetails = ({
             state.establishment.contact.telephoneNumber ===
                 state.telephoneNumber
         ) {
+            // if we're clearing the establishment and the number didn't change
+            // clear the number too
             setState((prevState) => ({
                 ...prevState,
                 establishment: null,
                 telephoneNumber: "",
             }));
+            onChangeContact({
+                name: state.name,
+                telephoneNumber: "",
+            });
         } else {
+            // otherwise leave the contact number alone
             setState((prevState) => ({
                 ...prevState,
                 establishment: location,

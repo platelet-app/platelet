@@ -359,6 +359,51 @@ describe("GuidedSetup", () => {
         });
     });
 
+    test.only("auto fill telephone number from establishment", async () => {
+        const mockLocation = await DataStore.save(
+            new models.Location({
+                name: "Test Location",
+                contact: { telephoneNumber: "01234567890" },
+                listed: 1,
+            })
+        );
+        const mockTask = new models.Task({
+            dropOffLocation: null,
+            pickUpLocation: null,
+            priority: null,
+            establishmentLocation: mockLocation,
+            status: tasksStatus.new,
+            requesterContact: {
+                name: "",
+                telephoneNumber: mockLocation.contact.telephoneNumber,
+            },
+            tenantId: "test-tenant",
+        });
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<GuidedSetup />, { preloadedState });
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
+        userEvent.type(
+            screen.getByRole("textbox", { name: "Select establishment" }),
+            "Test"
+        );
+        userEvent.click(screen.getByText(mockLocation.name));
+        expect(screen.getByRole("textbox", { name: "Telephone" })).toHaveValue(
+            mockLocation.contact.telephoneNumber
+        );
+        userEvent.click(
+            screen.getByRole("button", { name: "Save to dashboard" })
+        );
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(2);
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockTask,
+            timeOfCall: expect.any(String),
+            id: expect.any(String),
+        });
+    });
+
     test("adding item data", async () => {
         const mockTask = new models.Task({
             dropOffLocation: null,
