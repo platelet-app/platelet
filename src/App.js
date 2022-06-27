@@ -147,7 +147,9 @@ function AppContents(props) {
     const theme = useTheme();
     dispatch(setMobileView(!useMediaQuery(theme.breakpoints.up("sm"))));
 
-    registerServiceWorker(props);
+    useEffect(() => {
+        registerServiceWorker(props);
+    }, [props]);
 
     return (
         <React.Fragment>
