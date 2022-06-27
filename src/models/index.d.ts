@@ -222,6 +222,7 @@ export declare class Task {
   readonly requesterContact?: AddressAndContactDetails | null;
   readonly pickUpLocation?: Location | null;
   readonly dropOffLocation?: Location | null;
+  readonly establishmentLocation?: Location | null;
   readonly riderResponsibility?: string | null;
   readonly assignees?: (TaskAssignee | null)[] | null;
   readonly priority?: Priority | keyof typeof Priority | null;
@@ -252,6 +253,7 @@ export declare class Location {
   readonly what3words?: string | null;
   readonly tasksAsPickUp?: (Task | null)[] | null;
   readonly tasksAsDropOff?: (Task | null)[] | null;
+  readonly taskAsEstablishment?: (Task | null)[] | null;
   readonly comments?: (Comment | null)[] | null;
   readonly disabled?: number | null;
   readonly createdAt?: string | null;
