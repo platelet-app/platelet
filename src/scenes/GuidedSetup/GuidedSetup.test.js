@@ -26,10 +26,10 @@ const preloadedState = {
 
 describe("GuidedSetup", () => {
     beforeEach(async () => {
-        jest.restoreAllMocks();
         await DataStore.save(whoami);
     });
     afterEach(async () => {
+        jest.restoreAllMocks();
         const users = await DataStore.query(models.User);
         const tasks = await DataStore.query(models.Task);
         const comments = await DataStore.query(models.Comment);

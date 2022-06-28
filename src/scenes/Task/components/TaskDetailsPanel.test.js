@@ -25,8 +25,13 @@ describe("TaskDetailsPanel", () => {
         window.matchMedia = createMatchMedia(window.innerWidth);
     });
 
-    afterEach(() => {
+    afterEach(async () => {
         jest.restoreAllMocks();
+        const tasks = await DataStore.query(models.Task);
+        const locations = await DataStore.query(models.Location);
+        await Promise.all(
+            [...tasks, ...locations].map((item) => DataStore.delete(item))
+        );
     });
 
     it("renders", async () => {
@@ -164,6 +169,149 @@ describe("TaskDetailsPanel", () => {
                     name: "Someone Person more name",
                     telephoneNumber: "01234567890999999",
                 },
+            });
+        });
+    });
+
+    test("change the establishment", async () => {
+        const timeOfCall = new Date().toISOString();
+        const mockEstablishment = await DataStore.save(
+            new models.Location({
+                name: "Test Establishment",
+                listed: 1,
+            })
+        );
+        const mockTask = new models.Task({
+            timeOfCall,
+            priority: priorities.high,
+            reference: "test-reference",
+            establishmentLocation: null,
+            requesterContact: {
+                telephoneNumber: "01234567890",
+                name: "Someone Person",
+            },
+        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        const saveSpy = jest.spyOn(amplify.DataStore, "save");
+        render(<TaskDetailsPanel taskId={mockTask.id} />);
+
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(
+            screen.getByRole("button", { name: "edit establishment" })
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenNthCalledWith(
+                2,
+                models.Location,
+                expect.any(Function)
+            );
+        });
+        userEvent.type(screen.getByRole("textbox"), "Test");
+        userEvent.click(screen.getByText(mockEstablishment.name));
+        userEvent.click(screen.getByTestId("confirmation-ok-button"));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockTask,
+                establishmentLocation: mockEstablishment,
+            });
+        });
+    });
+
+    test("disable establishment ok button", async () => {
+        const timeOfCall = new Date().toISOString();
+        const mockEstablishment = await DataStore.save(
+            new models.Location({
+                name: "Test Establishment",
+                listed: 1,
+            })
+        );
+        const mockTask = new models.Task({
+            timeOfCall,
+            priority: priorities.high,
+            reference: "test-reference",
+            establishmentLocation: null,
+            requesterContact: {
+                telephoneNumber: "01234567890",
+                name: "Someone Person",
+            },
+        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        render(<TaskDetailsPanel taskId={mockTask.id} />);
+
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(
+            screen.getByRole("button", { name: "edit establishment" })
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenNthCalledWith(
+                2,
+                models.Location,
+                expect.any(Function)
+            );
+        });
+        const okButton = screen.getByTestId("confirmation-ok-button");
+        expect(okButton).toBeDisabled();
+        userEvent.type(screen.getByRole("textbox"), "Test");
+        userEvent.click(screen.getByText(mockEstablishment.name));
+        expect(okButton).toBeEnabled();
+        userEvent.click(
+            screen.getByRole("button", { name: "establishment not listed?" })
+        );
+        expect(okButton).toBeDisabled();
+        userEvent.type(screen.getByRole("textbox"), "Test");
+        expect(okButton).toBeEnabled();
+    });
+
+    test("change the establishment to unlisted", async () => {
+        const timeOfCall = new Date().toISOString();
+        const mockEstablishment = new models.Location({
+            name: "Test Unlisted",
+            listed: 0,
+        });
+        const mockTask = new models.Task({
+            timeOfCall,
+            priority: priorities.high,
+            reference: "test-reference",
+            establishmentLocation: null,
+            requesterContact: {
+                telephoneNumber: "01234567890",
+                name: "Someone Person",
+            },
+        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        const saveSpy = jest.spyOn(amplify.DataStore, "save");
+        render(<TaskDetailsPanel taskId={mockTask.id} />);
+
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(
+            screen.getByRole("button", { name: "edit establishment" })
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenNthCalledWith(
+                2,
+                models.Location,
+                expect.any(Function)
+            );
+        });
+        userEvent.click(screen.getByText("Not listed?"));
+        userEvent.type(screen.getByRole("textbox"), "Test Unlisted");
+        userEvent.click(screen.getByTestId("confirmation-ok-button"));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockTask,
+                establishmentLocation: expect.objectContaining({
+                    ...mockEstablishment,
+                    id: expect.any(String),
+                }),
             });
         });
     });
