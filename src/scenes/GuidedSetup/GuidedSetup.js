@@ -353,7 +353,6 @@ export const GuidedSetup = () => {
                                 establishmentSameAsPickup
                             }
                             onChangeContact={handleCallerContactChange}
-                            onChangePriority={handlePriorityChange}
                             onChangeLocation={handleEstablishmentChange}
                             onChangeEstablishmentSameAsPickUp={
                                 handleEstablishmentSameAsPickupChange
@@ -387,10 +386,12 @@ export const GuidedSetup = () => {
                     </Box>
                     <Box className={tabIndex === 3 ? show : hide}>
                         <Notes
+                            priority={formValues.priority}
                             handleVisibilityChange={
                                 handleCommentVisibilityChange
                             }
                             onChange={handleCommentChange}
+                            onChangePriority={handlePriorityChange}
                         />
                     </Box>
                 </Box>

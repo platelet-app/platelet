@@ -6,7 +6,12 @@ import * as models from "../../models";
 import { DataStore } from "aws-amplify";
 import userEvent from "@testing-library/user-event";
 import _ from "lodash";
-import { commentVisibility, tasksStatus, userRoles } from "../../apiConsts";
+import {
+    commentVisibility,
+    priorities,
+    tasksStatus,
+    userRoles,
+} from "../../apiConsts";
 
 const whoami = new models.User({
     displayName: "test user",
@@ -171,7 +176,7 @@ describe("GuidedSetup", () => {
         );
     });
 
-    test("setting the contact details", async () => {
+    test("setting the contact details and priority", async () => {
         const mockWhoami = new models.User({
             displayName: "test user",
             tenantId: "test-tenant",
@@ -180,7 +185,7 @@ describe("GuidedSetup", () => {
             dropOffLocation: null,
             pickUpLocation: null,
             establishmentLocation: null,
-            priority: null,
+            priority: priorities.high,
             status: tasksStatus.new,
             requesterContact: {
                 name: "Someone Person",
@@ -214,6 +219,8 @@ describe("GuidedSetup", () => {
         expect(screen.getByRole("textbox", { name: "Name" })).toHaveValue(
             mockTask.requesterContact.name
         );
+        userEvent.click(screen.getByText(/PRIORITY/));
+        userEvent.click(screen.getByText(priorities.high));
         userEvent.click(
             screen.getByRole("button", { name: "Save to dashboard" })
         );
