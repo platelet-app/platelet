@@ -8,22 +8,15 @@ import PrioritySelect from "../../Task/components/PrioritySelect";
 
 export const Notes = ({
     onChange,
+    priority,
     handleVisibilityChange,
     onChangePriority,
 }) => {
     const classes = Styles();
     const [visibility, setVisibility] = useState(commentVisibility.everyone);
-    const [priority, setPriority] = useState(null);
 
     return (
         <Stack direction="column" spacing={2} className={classes.block}>
-            <Stack>
-                <Typography variant="h6">What is the priority?</Typography>
-                <PrioritySelect
-                    priority={priority}
-                    onSelect={onChangePriority}
-                />
-            </Stack>
             <Stack>
                 <Typography variant="h6" gutterBottom>
                     {"Who should the notes be visible to?"}
@@ -48,6 +41,10 @@ export const Notes = ({
                     className={classes.textField}
                     margin="normal"
                 />
+            </Stack>
+            <Stack>
+                <Typography variant="h6">What is the priority?</Typography>
+                <PrioritySelect value={priority} onSelect={onChangePriority} />
             </Stack>
         </Stack>
     );
