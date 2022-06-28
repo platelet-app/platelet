@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import TaskDetailsEstablishment from "./TaskDetailsEstablishment";
 import Typography from "@mui/material/Typography";
 import LabelItemPair from "../../../components/LabelItemPair";
 import PrioritySelect from "./PrioritySelect";
@@ -54,7 +55,15 @@ function TaskDetailsPanel(props) {
             ).subscribe(async (observeResult) => {
                 const taskData = observeResult.element;
                 if (["INSERT", "UPDATE"].includes(observeResult.opType)) {
-                    setState(taskData);
+                    if (taskData.establishmentLocationId) {
+                        const establishmentLocation = await DataStore.query(
+                            models.Location,
+                            taskData.establishmentLocationId
+                        );
+                        setState({ ...taskData, establishmentLocation });
+                    } else {
+                        setState(taskData);
+                    }
                 } else if (observeResult.opType === "DELETE") {
                     setErrorState(new Error("Task was deleted"));
                 }
@@ -89,6 +98,21 @@ function TaskDetailsPanel(props) {
             await DataStore.save(
                 models.Task.copyOf(result, (updated) => {
                     updated.priority = priority;
+                })
+            );
+        } catch (error) {
+            console.log(error);
+            dispatch(displayErrorNotification(errorMessage));
+        }
+    }
+
+    async function setEstablishmentLocation(value) {
+        try {
+            const result = await DataStore.query(models.Task, props.taskId);
+            if (!result) throw new Error("Task doesn't exist");
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.establishmentLocation = value;
                 })
             );
         } catch (error) {
@@ -148,20 +172,10 @@ function TaskDetailsPanel(props) {
                             time={state.timeOfCall}
                         />
                     </LabelItemPair>
-                    <LabelItemPair label={"Establishment"}>
-                        <Typography
-                            sx={{
-                                fontStyle: state.establishmentLocation
-                                    ? "normal"
-                                    : "italic",
-                            }}
-                        >
-                            {state.establishmentLocation &&
-                            state.establishmentLocation.name
-                                ? state.establishmentLocation.name
-                                : "Unset"}
-                        </Typography>
-                    </LabelItemPair>
+                    <TaskDetailsEstablishment
+                        value={state.establishmentLocation}
+                        onChange={setEstablishmentLocation}
+                    />
                     <Divider />
                     <RequesterContact
                         onChange={(value) => updateRequesterContact(value)}
