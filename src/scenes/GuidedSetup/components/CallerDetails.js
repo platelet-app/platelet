@@ -1,14 +1,13 @@
-import { FormControlLabel, Stack, Switch, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import React from "react";
-import ClearButtonWithConfirmation from "../../../components/ClearButtonWithConfirmation";
 import { ContactForm } from "../../../components/ContactForm";
-import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
+import EstablishmentDetails from "./EstablishmentDetails";
 
 export const CallerDetails = ({
     onChangeContact,
     onChangeLocation,
     establishmentSameAsPickup,
-    onChangeEstablishmentSameAsPickup,
+    onChangeEstablishmentSameAsPickUp,
 }) => {
     const [state, setState] = React.useState({
         name: "",
@@ -66,35 +65,14 @@ export const CallerDetails = ({
             <Typography variant="h6">
                 What are their contact details?
             </Typography>
-            {state.establishment ? (
-                <Stack direction="column" spacing={1}>
-                    <Stack
-                        justifyContent="space-between"
-                        alignItems="center"
-                        direction="row"
-                    >
-                        <Typography>{state.establishment.name}</Typography>
-                        <ClearButtonWithConfirmation
-                            onClear={() => handleSelectLocation(null)}
-                        >
-                            <Typography>Clear the location?</Typography>
-                        </ClearButtonWithConfirmation>
-                    </Stack>
-                    <FormControlLabel
-                        labelPlacement="start"
-                        checked={establishmentSameAsPickup}
-                        onChange={onChangeEstablishmentSameAsPickup}
-                        control={<Switch defaultChecked />}
-                        label="Same as pick up?"
-                        aria-label="toggle same as pick up"
-                    />
-                </Stack>
-            ) : (
-                <FavouriteLocationsSelect
-                    label="Select establishment"
-                    onSelect={handleSelectLocation}
-                />
-            )}
+            <EstablishmentDetails
+                sameAsPickUp={establishmentSameAsPickup}
+                value={state.establishment}
+                onSelect={handleSelectLocation}
+                onChangeEstablishmentSameAsPickUp={
+                    onChangeEstablishmentSameAsPickUp
+                }
+            />
             <ContactForm
                 values={state}
                 italicTel={

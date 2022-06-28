@@ -178,7 +178,11 @@ export const GuidedSetup = () => {
     };
 
     useEffect(() => {
-        if (establishmentSameAsPickup) {
+        if (
+            establishmentSameAsPickup &&
+            formValues.establishmentLocation &&
+            formValues.establishmentLocation.listed === 1
+        ) {
             setLocation("pickUpLocation", formValues.establishmentLocation);
             setPickUpOverride(formValues.establishmentLocation);
         } else {
@@ -339,7 +343,6 @@ export const GuidedSetup = () => {
                             {...a11yProps(3)}
                             className={classes.tabButton}
                         />
-                        {/* <Tab label="Step 5" {...a11yProps(4)} className={classes.tabButton} /> */}
                     </Tabs>
                 </AppBar>
                 <Box sx={{ padding: 1 }}>
@@ -352,7 +355,7 @@ export const GuidedSetup = () => {
                             onChangeContact={handleCallerContactChange}
                             onChangePriority={handlePriorityChange}
                             onChangeLocation={handleEstablishmentChange}
-                            onChangeEstablishmentSameAsPickup={
+                            onChangeEstablishmentSameAsPickUp={
                                 handleEstablishmentSameAsPickupChange
                             }
                         />

@@ -313,6 +313,88 @@ describe("GuidedSetup", () => {
             id: expect.any(String),
         });
     });
+
+    test("clear the establishment", async () => {
+        const mockLocation = await DataStore.save(
+            new models.Location({ name: "Test Location", listed: 1 })
+        );
+        const mockTask = new models.Task({
+            dropOffLocation: null,
+            pickUpLocation: null,
+            priority: null,
+            establishmentLocation: null,
+            status: tasksStatus.new,
+            requesterContact: { name: "", telephoneNumber: "" },
+            tenantId: "test-tenant",
+        });
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<GuidedSetup />, { preloadedState });
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
+        userEvent.type(
+            screen.getByRole("textbox", { name: "Select establishment" }),
+            "Test"
+        );
+        userEvent.click(screen.getByText(mockLocation.name));
+        userEvent.click(screen.getByRole("button", { name: "Clear" }));
+        userEvent.click(screen.getByTestId("confirmation-ok-button"));
+        userEvent.click(
+            screen.getByRole("button", { name: "Save to dashboard" })
+        );
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(2);
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockTask,
+            timeOfCall: expect.any(String),
+            id: expect.any(String),
+        });
+    });
+
+    test("a custom establishment", async () => {
+        const mockLocation = new models.Location({
+            name: "Test Location",
+            listed: 0,
+        });
+        const mockTask = new models.Task({
+            dropOffLocation: null,
+            pickUpLocation: null,
+            priority: null,
+            establishmentLocation: mockLocation,
+            status: tasksStatus.new,
+            requesterContact: { name: "", telephoneNumber: "" },
+            tenantId: "test-tenant",
+        });
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<GuidedSetup />, { preloadedState });
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
+
+        userEvent.click(
+            screen.getByRole("button", { name: "establishment not listed?" })
+        );
+        userEvent.type(
+            screen.getByRole("textbox", { name: "establishment name" }),
+            mockLocation.name
+        );
+        userEvent.click(screen.getByTestId("confirmation-ok-button"));
+        expect(screen.queryByTestId("confirmation-ok-button")).toBeNull();
+        expect(screen.getByText(mockLocation.name)).toBeInTheDocument();
+
+        userEvent.click(
+            screen.getByRole("button", { name: "Save to dashboard" })
+        );
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(2);
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockTask,
+            establishmentLocation: { ...mockLocation, id: expect.any(String) },
+            timeOfCall: expect.any(String),
+            id: expect.any(String),
+        });
+    });
+
     test("saving the establishment as the pickup", async () => {
         const mockLocation = await DataStore.save(
             new models.Location({ name: "Test Location", listed: 1 })
@@ -359,7 +441,7 @@ describe("GuidedSetup", () => {
         });
     });
 
-    test.only("auto fill telephone number from establishment", async () => {
+    test("auto fill telephone number from establishment", async () => {
         const mockLocation = await DataStore.save(
             new models.Location({
                 name: "Test Location",
