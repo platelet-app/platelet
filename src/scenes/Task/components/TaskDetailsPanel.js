@@ -3,7 +3,6 @@ import Typography from "@mui/material/Typography";
 import LabelItemPair from "../../../components/LabelItemPair";
 import PrioritySelect from "./PrioritySelect";
 import PropTypes from "prop-types";
-import makeStyles from "@mui/styles/makeStyles";
 import TimePicker from "./TimePicker";
 import { Divider, Paper, Skeleton, Stack } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
@@ -15,15 +14,6 @@ import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
 import RequesterContact from "./RequesterContact";
 
-const useStyles = makeStyles({
-    requesterContact: {
-        paddingLeft: "20px",
-    },
-    priority: {
-        paddingLeft: "20px",
-    },
-});
-
 function TaskDetailsPanel(props) {
     const cardClasses = dialogCardStyles();
     const [state, setState] = useState({
@@ -34,6 +24,7 @@ function TaskDetailsPanel(props) {
         priority: null,
         riderResponsibility: null,
         id: null,
+        establishmentLocation: null,
         requesterContact: {
             name: null,
             telephoneNumber: null,
@@ -156,6 +147,20 @@ function TaskDetailsPanel(props) {
                             disableClear={true}
                             time={state.timeOfCall}
                         />
+                    </LabelItemPair>
+                    <LabelItemPair label={"Establishment"}>
+                        <Typography
+                            sx={{
+                                fontStyle: state.establishmentLocation
+                                    ? "normal"
+                                    : "italic",
+                            }}
+                        >
+                            {state.establishmentLocation &&
+                            state.establishmentLocation.name
+                                ? state.establishmentLocation.name
+                                : "Unset"}
+                        </Typography>
                     </LabelItemPair>
                     <Divider />
                     <RequesterContact

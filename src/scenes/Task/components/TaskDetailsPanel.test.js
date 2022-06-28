@@ -38,12 +38,16 @@ describe("TaskDetailsPanel", () => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
     });
+
     it("renders task details", async () => {
         const timeOfCall = new Date().toISOString();
         const mockTask = new models.Task({
             riderResponsibility: "North",
             timeOfCall,
             priority: priorities.high,
+            establishmentLocation: new models.Location({
+                name: "Test Establishment",
+            }),
             reference: "test-reference",
             requesterContact: {
                 telephoneNumber: "01234567890",
@@ -59,6 +63,7 @@ describe("TaskDetailsPanel", () => {
         expect(screen.getByText("North")).toBeInTheDocument();
         expect(screen.getByText("test-reference")).toBeInTheDocument();
         expect(screen.getByText("Someone Person")).toBeInTheDocument();
+        expect(screen.getByText("Test Establishment")).toBeInTheDocument();
         expect(screen.getByText("01234567890")).toBeInTheDocument();
         await waitFor(() => {
             expect(
