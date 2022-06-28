@@ -14,3 +14,12 @@ export function setTaskAssignees(taskAssignees) {
         taskAssignees,
     };
 }
+
+export const ADD_ASSIGNEE = "ADD_ASSIGNEE";
+
+export function addTaskAssignee(assignee) {
+    return {
+        type: ADD_ASSIGNEE,
+        assignee,
+    };
+}
