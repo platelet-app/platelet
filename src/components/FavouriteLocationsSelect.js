@@ -18,7 +18,7 @@ function FavouriteLocationsSelect(props) {
         dataStoreModelSyncedStatusSelector
     ).Location;
     const onSelect = (event, selectedItem) => {
-        if (selectedItem) props.onSelect(selectedItem);
+        props.onSelect(selectedItem);
     };
 
     async function getLocations() {
