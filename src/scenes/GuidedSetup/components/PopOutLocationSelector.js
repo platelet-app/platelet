@@ -119,13 +119,13 @@ function PopOutLocationSelector(props) {
             {!state ? (
                 <Stack
                     spacing={1}
-                    alignItems="flex-start"
+                    alignItems="flex-end"
                     sx={{ width: "100%" }}
                     direction="column"
                 >
                     <FavouriteLocationsSelect onSelect={onSelectPreset} />
                     <Button onClick={() => setEditMode(true)}>
-                        Enter manually?
+                        Not listed?
                     </Button>
                 </Stack>
             ) : (
