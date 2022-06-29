@@ -72,6 +72,11 @@ function EstablishmentDetails({
                 </Button>
                 <ConfirmationDialog
                     onConfirmation={handleNotListedConfirmation}
+                    onCancel={() => {
+                        setNotListedName("");
+                        setNotListedWindow(false);
+                    }}
+                    disabled={!notListedName}
                     open={notListedWindow}
                 >
                     <TextField
