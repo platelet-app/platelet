@@ -432,7 +432,7 @@ describe("GuidedSetup", () => {
         expect(screen.queryByText("CLEAR")).toBeNull();
         expect(
             await screen.findAllByRole("button", {
-                name: "Enter manually?",
+                name: "Not listed?",
             })
         ).toHaveLength(1);
         userEvent.click(
@@ -632,7 +632,7 @@ describe("GuidedSetup", () => {
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
         userEvent.click(screen.getByText(/PICK-UP/));
         const enterManuallyButtons = screen.getAllByRole("button", {
-            name: "Enter manually?",
+            name: "Not listed?",
         });
         userEvent.click(enterManuallyButtons[0]);
         const textBox = screen.getAllByRole("textbox");
