@@ -24,7 +24,6 @@ import {
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
 import { getWhoami } from "./redux/Selectors";
-import registerServiceWorker from "./register-worker";
 import { DataStore } from "aws-amplify";
 import * as models from "./models";
 
@@ -146,10 +145,6 @@ function AppContents(props) {
 
     const theme = useTheme();
     dispatch(setMobileView(!useMediaQuery(theme.breakpoints.up("sm"))));
-
-    useEffect(() => {
-        registerServiceWorker(props);
-    }, [props]);
 
     return (
         <React.Fragment>
