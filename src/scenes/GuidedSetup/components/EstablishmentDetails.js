@@ -40,7 +40,7 @@ function EstablishmentDetails({
                 >
                     <Typography>{value.name}</Typography>
                     <ClearButtonWithConfirmation onClear={() => onSelect(null)}>
-                        <Typography>Clear the location?</Typography>
+                        <Typography>Clear the establishment?</Typography>
                     </ClearButtonWithConfirmation>
                 </Stack>
                 {value.listed === 1 && (
@@ -61,6 +61,7 @@ function EstablishmentDetails({
             <Stack alignItems="flex-end" direction="column" spacing={1}>
                 <FavouriteLocationsSelect
                     label="Select establishment"
+                    size="large"
                     onSelect={onSelect}
                 />
                 <Button
