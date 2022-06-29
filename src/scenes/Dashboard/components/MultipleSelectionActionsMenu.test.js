@@ -617,13 +617,12 @@ describe("MultipleSelectionActionsMenu", () => {
             );
         }
         expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(12);
-        expect(screen.getAllByText(/10 items/)).toHaveLength(2);
+        expect(screen.getByText("10 selected")).toBeInTheDocument();
+        //expect(screen.getAllByText(/10 selected/)).toHaveLength(2);
     });
 
     test("throwing an error on save", async () => {
-        const mockTask = DataStore.save(
-            new models.Task({ status: tasksStatus.new })
-        );
+        DataStore.save(new models.Task({ status: tasksStatus.new }));
         const mockWhoami = await DataStore.save(
             new models.User({
                 roles: [userRoles.coordinator],

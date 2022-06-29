@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as selectionModeActions from "../../../redux/selectionMode/selectionModeActions";
-import { setDashboardFilteredUser } from "../../../redux/Actions";
 import { useTheme } from "@mui/material/styles";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -316,11 +315,7 @@ function MultipleSelectionActionsMenu() {
                     {!isSm && <Divider orientation="vertical" flexItem />}
                     {!isSm && Object.keys(selectedItems).length !== 0 && (
                         <Typography fontWeight="bold">
-                            {Object.keys(selectedItems).length}{" "}
-                            {Object.keys(selectedItems).length === 1
-                                ? "item"
-                                : "items"}{" "}
-                            selected
+                            {Object.keys(selectedItems).length} selected
                         </Typography>
                     )}
                     <LoadingSpinner
