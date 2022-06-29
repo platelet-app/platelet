@@ -248,7 +248,6 @@ function DeliverableDetails(props) {
                     >
                         <Typography variant={"h6"}>Inventory</Typography>
                         <EditModeToggleButton
-                            className={classes.button}
                             value={!collapsed}
                             onChange={() =>
                                 setCollapsed((prevState) => !prevState)
