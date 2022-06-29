@@ -123,7 +123,10 @@ function PopOutLocationSelector(props) {
                     sx={{ width: "100%" }}
                     direction="column"
                 >
-                    <FavouriteLocationsSelect onSelect={onSelectPreset} />
+                    <FavouriteLocationsSelect
+                        size="large"
+                        onSelect={onSelectPreset}
+                    />
                     <Button onClick={() => setEditMode(true)}>
                         Not listed?
                     </Button>
