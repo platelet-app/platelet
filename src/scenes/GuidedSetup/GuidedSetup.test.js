@@ -308,6 +308,8 @@ describe("GuidedSetup", () => {
             "Test"
         );
         userEvent.click(screen.getByText(mockLocation.name));
+        userEvent.click(screen.getByText(/PICK-UP/));
+        expect(screen.queryByText("Same as establishment")).toBeNull();
         userEvent.click(
             screen.getByRole("button", { name: "Save to dashboard" })
         );
@@ -425,9 +427,10 @@ describe("GuidedSetup", () => {
         );
         userEvent.click(screen.getByText(mockLocation.name));
         userEvent.click(
-            screen.getByRole("checkbox", { name: "toggle same as pick up" })
+            screen.getByRole("checkbox", { name: "toggle same as pick-up" })
         );
         userEvent.click(screen.getByText(/PICK-UP/));
+        expect(screen.getByText("Same as establishment")).toBeInTheDocument();
         expect(screen.getByText(mockLocation.name)).toBeInTheDocument();
         expect(screen.queryByText("CLEAR")).toBeNull();
         expect(

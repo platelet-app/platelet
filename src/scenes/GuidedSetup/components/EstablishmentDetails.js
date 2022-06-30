@@ -40,7 +40,9 @@ function EstablishmentDetails({
                 >
                     <Typography>{value.name}</Typography>
                     <ClearButtonWithConfirmation onClear={() => onSelect(null)}>
-                        <Typography>Clear the establishment?</Typography>
+                        <Typography>
+                            Are you sure you want to clear the establishment?
+                        </Typography>
                     </ClearButtonWithConfirmation>
                 </Stack>
                 {value.listed === 1 && (
@@ -50,8 +52,8 @@ function EstablishmentDetails({
                         color="secondary"
                         onChange={onChangeEstablishmentSameAsPickUp}
                         control={<Switch color="warning" defaultChecked />}
-                        label="Same as pick up?"
-                        aria-label="toggle same as pick up"
+                        label="Same as pick-up?"
+                        aria-label="toggle same as pick-up"
                     />
                 )}
             </Stack>
