@@ -60,7 +60,6 @@ export default function CommentContextMenu(props) {
         try {
             deleteComment();
             dispatch(displayInfoNotification("Comment deleted"));
-            props.onDelete(props.commentUUID);
             handleClose();
         } catch (error) {
             dispatch(displayInfoNotification("Sorry, something went wrong."));
@@ -93,14 +92,12 @@ export default function CommentContextMenu(props) {
                         showContextMenu={false}
                         showAuthor={false}
                         comment={comment}
-                        onDelete={props.onDelete}
-                        onRestore={props.onRestore}
                     />
                 )}
             </ConfirmationDialog>
             <IconButton
                 aria-label="comment-menu"
-                data-testid="comment-menu"
+                data-testId="comment-menu"
                 aria-controls="long-menu"
                 aria-haspopup="true"
                 onClick={handleClick}

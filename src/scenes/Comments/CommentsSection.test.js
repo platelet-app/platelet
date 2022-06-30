@@ -236,21 +236,16 @@ describe("CommentsSection", () => {
                 mockComment.id
             );
         });
+        // it shows the preview
+        expect(screen.getAllByText(mockComment.body)).toHaveLength(2);
         userEvent.click(screen.getByText("OK"));
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(
-                2,
-                models.Comment,
-                mockComment.id
-            );
-        });
         await waitFor(() => {
             expect(deleteSpy).toHaveBeenNthCalledWith(1, mockComment);
         });
-        await waitFor(() => {
-            expect(screen.queryByText(mockComment.body)).toBeNull();
-        });
         expect(await screen.findByText("Comment deleted")).toBeInTheDocument();
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(3);
+        });
     });
 
     it("cancel deleting a comment", async () => {

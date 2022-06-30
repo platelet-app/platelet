@@ -61,8 +61,6 @@ function CommentsMain(props) {
                                         prevAuthorUUID !== comment.author.id
                                     }
                                     comment={comment}
-                                    onDelete={props.onDelete}
-                                    onRestore={props.onRestore}
                                 />
                             </Grid>
                         </React.Fragment>
@@ -85,16 +83,12 @@ function CommentsMain(props) {
 CommentsMain.propTypes = {
     parentUUID: PropTypes.string,
     comments: PropTypes.arrayOf(PropTypes.object),
-    onDelete: PropTypes.func,
-    onRestore: PropTypes.func,
     onNewComment: PropTypes.func,
 };
 
 CommentsMain.defaultProps = {
     parentUUID: "",
     comments: [],
-    onDelete: () => {},
-    onRestore: () => {},
     onNewComment: () => {},
 };
 

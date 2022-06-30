@@ -16,7 +16,7 @@ import GetError from "../../ErrorComponents/GetError";
 
 function CommentsSection(props) {
     const [isFetching, setIsFetching] = useState(false);
-    const [comments, setComments] = useState({});
+    const [comments, setComments] = useState([]);
     const [errorState, setErrorState] = useState(null);
     const whoami = useSelector(getWhoami);
     const commentsSubscription = useRef({
@@ -38,8 +38,7 @@ function CommentsSection(props) {
                             c.author &&
                             c.author.id === whoami.id)
                 );
-                const commentsObject = convertListDataToObject(commentsResult);
-                setComments(commentsObject);
+                setComments(commentsResult);
                 setIsFetching(false);
             });
         } catch (error) {
@@ -60,34 +59,7 @@ function CommentsSection(props) {
     } else if (errorState) {
         return <GetError />;
     } else {
-        return (
-            <CommentsMain
-                parentUUID={props.parentId}
-                comments={Object.values(comments).filter((c) => !c._deleted)}
-                onRestore={(comment) => {
-                    setComments((prevState) => {
-                        return {
-                            ...prevState,
-                            [comment.id]: {
-                                ...comment,
-                                _deleted: false,
-                            },
-                        };
-                    });
-                }}
-                onDelete={(commentId) => {
-                    setComments((prevState) => {
-                        return {
-                            ...prevState,
-                            [commentId]: {
-                                ...prevState[commentId],
-                                _deleted: true,
-                            },
-                        };
-                    });
-                }}
-            />
-        );
+        return <CommentsMain parentUUID={props.parentId} comments={comments} />;
     }
 }
 
