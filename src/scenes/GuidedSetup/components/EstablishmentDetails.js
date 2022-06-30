@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import ClearButtonWithConfirmation from "../../../components/ClearButtonWithConfirmation";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
 import {
@@ -103,5 +104,19 @@ function EstablishmentDetails({
         );
     }
 }
+
+EstablishmentDetails.propTypes = {
+    value: PropTypes.object,
+    onChangeEstablishmentSameAsPickUp: PropTypes.func,
+    sameAsPickUp: PropTypes.bool,
+    onSelect: PropTypes.func,
+};
+
+EstablishmentDetails.defaultProps = {
+    value: null,
+    onChangeEstablishmentSameAsPickUp: () => {},
+    sameAsPickUp: false,
+    onSelect: () => {},
+};
 
 export default EstablishmentDetails;
