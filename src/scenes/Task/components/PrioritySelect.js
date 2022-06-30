@@ -19,6 +19,7 @@ function PrioritySelect(props) {
             {Object.values(priorities).map((priority) => (
                 <Chip
                     key={priority}
+                    disabled={props.disabled}
                     data-cy={`new-task-priority-${priority}`}
                     variant={state === priority ? "default" : "outlined"}
                     label={priority}
@@ -33,11 +34,13 @@ function PrioritySelect(props) {
 PrioritySelect.propTypes = {
     priority: PropTypes.string,
     onSelect: PropTypes.func,
+    disabled: PropTypes.bool,
 };
 
 PrioritySelect.defaultProps = {
     priority: null,
     onSelect: () => {},
+    disabled: false,
 };
 
 export default PrioritySelect;

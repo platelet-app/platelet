@@ -102,11 +102,13 @@ TaskOverview.propTypes = {
     isFetching: PropTypes.bool,
     taskId: PropTypes.string,
     onChangeTimeOfCall: PropTypes.func,
+    assignmentRole: PropTypes.string,
 };
 
 TaskOverview.defaultProps = {
     isFetching: false,
     onChangeTimeOfCall: () => {},
+    assignmentRole: null,
 };
 
 export default TaskOverview;

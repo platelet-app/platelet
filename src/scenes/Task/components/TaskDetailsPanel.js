@@ -3,7 +3,6 @@ import Typography from "@mui/material/Typography";
 import LabelItemPair from "../../../components/LabelItemPair";
 import PrioritySelect from "./PrioritySelect";
 import PropTypes from "prop-types";
-import makeStyles from "@mui/styles/makeStyles";
 import TimePicker from "./TimePicker";
 import { Divider, Paper, Skeleton, Stack } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
@@ -14,15 +13,8 @@ import { displayErrorNotification } from "../../../redux/notifications/Notificat
 import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
 import RequesterContact from "./RequesterContact";
-
-const useStyles = makeStyles({
-    requesterContact: {
-        paddingLeft: "20px",
-    },
-    priority: {
-        paddingLeft: "20px",
-    },
-});
+import { userRoles } from "../../../apiConsts";
+import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 
 function TaskDetailsPanel(props) {
     const cardClasses = dialogCardStyles();
@@ -43,6 +35,12 @@ function TaskDetailsPanel(props) {
     const [errorState, setErrorState] = useState(null);
     const taskObserver = useRef({ unsubscribe: () => {} });
     const dispatch = useDispatch();
+    const currentUserRole = useAssignmentRole(state.id);
+
+    const hasFullPermissions = [
+        userRoles.admin,
+        userRoles.coordinator,
+    ].includes(currentUserRole);
 
     const taskModelsSynced = useSelector(
         dataStoreModelSyncedStatusSelector
@@ -153,39 +151,51 @@ function TaskDetailsPanel(props) {
                     <LabelItemPair label={"Time of call"}>
                         <TimePicker
                             onChange={setTimeOfCall}
-                            disableClear={true}
+                            disableClear
                             time={state.timeOfCall}
+                            hideEditIcon={!hasFullPermissions}
                         />
                     </LabelItemPair>
-                    <Divider />
-                    <RequesterContact
-                        onChange={(value) => updateRequesterContact(value)}
-                        telephoneNumber={
-                            state.requesterContact
-                                ? state.requesterContact.telephoneNumber
-                                : null
-                        }
-                        name={
-                            state.requesterContact
-                                ? state.requesterContact.name
-                                : null
-                        }
-                    />
-                    <Divider />
+                    {hasFullPermissions && <Divider />}
+                    {hasFullPermissions && (
+                        <>
+                            <RequesterContact
+                                onChange={(value) =>
+                                    updateRequesterContact(value)
+                                }
+                                telephoneNumber={
+                                    state.requesterContact
+                                        ? state.requesterContact.telephoneNumber
+                                        : null
+                                }
+                                hideEditIcon={!hasFullPermissions}
+                                name={
+                                    state.requesterContact
+                                        ? state.requesterContact.name
+                                        : null
+                                }
+                            />
+                            <Divider />
+                        </>
+                    )}
                     <Stack
                         direction="row"
                         alignItems="center"
                         justifyContent="space-between"
                     >
                         <Typography>Priority:</Typography>
-                        <PrioritySelect
-                            onSelect={selectPriority}
-                            priority={state.priority}
-                        />
+                        {hasFullPermissions ? (
+                            <PrioritySelect
+                                onSelect={selectPriority}
+                                priority={state.priority}
+                            />
+                        ) : (
+                            <Typography>{state.priority}</Typography>
+                        )}
                     </Stack>
+                    {hasFullPermissions && <Divider />}
                     {state.riderResponsibility && (
                         <>
-                            <Divider />
                             <LabelItemPair label={"Responsibility"}>
                                 <Typography>
                                     {state.riderResponsibility}

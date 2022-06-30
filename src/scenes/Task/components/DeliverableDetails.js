@@ -16,7 +16,8 @@ import {
     tenantIdSelector,
 } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
-import { deliverableUnits } from "../../../apiConsts";
+import { deliverableUnits, userRoles } from "../../../apiConsts";
+import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 
 const useStyles = makeStyles({
     button: { height: 30 },
@@ -41,6 +42,12 @@ function DeliverableDetails(props) {
     const deliverableTypesSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     ).DeliverableType;
+
+    const currentUserRole = useAssignmentRole(props.taskId);
+    const hasFullPermissions = [
+        userRoles.admin,
+        userRoles.coordinator,
+    ].includes(currentUserRole);
 
     async function getDeliverables() {
         if (!loadedOnce.current) setIsFetching(true);
@@ -247,12 +254,14 @@ function DeliverableDetails(props) {
                         justifyContent={"space-between"}
                     >
                         <Typography variant={"h6"}>Inventory</Typography>
-                        <EditModeToggleButton
-                            value={!collapsed}
-                            onChange={() =>
-                                setCollapsed((prevState) => !prevState)
-                            }
-                        />
+                        {hasFullPermissions && (
+                            <EditModeToggleButton
+                                value={!collapsed}
+                                onChange={() =>
+                                    setCollapsed((prevState) => !prevState)
+                                }
+                            />
+                        )}
                     </Stack>
                     <Divider />
                     {isFetching ? (

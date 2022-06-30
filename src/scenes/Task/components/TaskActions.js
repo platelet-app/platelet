@@ -26,6 +26,7 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import { saveTaskTimeWithKey } from "../utilities";
 import { tasksStatus, userRoles } from "../../../apiConsts";
+import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 
 const fields = {
     timePickedUp: "Picked up",
@@ -78,6 +79,13 @@ function TaskActions(props) {
     const taskModelsSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     ).Task;
+
+    const currentUserRole = useAssignmentRole(props.taskId);
+    const hasFullPermissions = [
+        userRoles.rider,
+        userRoles.admin,
+        userRoles.coordinator,
+    ].includes(currentUserRole);
 
     const errorMessage = "Sorry, something went wrong";
 
@@ -154,6 +162,7 @@ function TaskActions(props) {
     useEffect(() => () => taskObserver.current.unsubscribe(), []);
 
     function checkDisabled(key) {
+        if (!hasFullPermissions) return true;
         const stopped =
             state.includes("timeCancelled") || state.includes("timeRejected");
         if (key === "timeDroppedOff")
@@ -288,6 +297,9 @@ function TaskActions(props) {
                                                 disableClear
                                                 disableUnsetMessage
                                                 time={task && task[key]}
+                                                hideEditIcon={
+                                                    !hasFullPermissions
+                                                }
                                             />
                                         </Stack>
                                     );

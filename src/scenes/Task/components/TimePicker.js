@@ -90,29 +90,33 @@ function TimePicker(props) {
                             )}
                         </Typography>
                     </Tooltip>
-                    <Tooltip title={"Edit"}>
-                        <IconButton
-                            aria-label={"Edit"}
-                            disabled={props.disabled}
-                            onClick={toggleEditMode}
-                            size="small"
-                        >
-                            <EditIcon />
-                        </IconButton>
-                    </Tooltip>
-                    <div className={props.disableClear ? hide : show}>
-                        <Tooltip title={"Clear"}>
-                            <IconButton
-                                aria-label={"Clear"}
-                                className={classes.button}
-                                disabled={props.disabled}
-                                onClick={onClear}
-                                size="small"
-                            >
-                                <CancelIcon />
-                            </IconButton>
-                        </Tooltip>
-                    </div>
+                    {!props.hideEditIcon && (
+                        <>
+                            <Tooltip title={"Edit"}>
+                                <IconButton
+                                    aria-label={"Edit"}
+                                    disabled={props.disabled}
+                                    onClick={toggleEditMode}
+                                    size="small"
+                                >
+                                    <EditIcon />
+                                </IconButton>
+                            </Tooltip>
+                            <div className={props.disableClear ? hide : show}>
+                                <Tooltip title={"Clear"}>
+                                    <IconButton
+                                        aria-label={"Clear"}
+                                        className={classes.button}
+                                        disabled={props.disabled}
+                                        onClick={onClear}
+                                        size="small"
+                                    >
+                                        <CancelIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            </div>
+                        </>
+                    )}
                 </Stack>
                 <ConfirmationDialog
                     onCancel={() => setEditMode(false)}
@@ -155,6 +159,7 @@ TimePicker.propTypes = {
     disabled: PropTypes.bool,
     disableClear: PropTypes.bool,
     disableUnsetMessage: PropTypes.bool,
+    hideEditIcon: PropTypes.bool,
 };
 TimePicker.defaultProps = {
     time: "",
@@ -163,6 +168,7 @@ TimePicker.defaultProps = {
     disabled: false,
     disableClear: false,
     disableUnsetMessage: false,
+    hideEditIcon: false,
 };
 
 export default TimePicker;
