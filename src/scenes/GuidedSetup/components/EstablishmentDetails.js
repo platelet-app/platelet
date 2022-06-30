@@ -8,9 +8,11 @@ import {
     Switch,
     TextField,
     Typography,
+    useMediaQuery,
 } from "@mui/material";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import * as models from "../../../models";
+import { useTheme } from "@mui/styles";
 
 function EstablishmentDetails({
     value,
@@ -20,6 +22,9 @@ function EstablishmentDetails({
 }) {
     const [notListedWindow, setNotListedWindow] = useState(false);
     const [notListedName, setNotListedName] = useState("");
+
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     const handleNotListedConfirmation = () => {
         setNotListedWindow(false);
@@ -73,7 +78,9 @@ function EstablishmentDetails({
                     Not listed?
                 </Button>
                 <ConfirmationDialog
+                    dialogTitle={"Establishment name"}
                     onConfirmation={handleNotListedConfirmation}
+                    fullScreen={isSm}
                     onCancel={() => {
                         setNotListedName("");
                         setNotListedWindow(false);
