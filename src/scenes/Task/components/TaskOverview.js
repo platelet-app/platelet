@@ -61,16 +61,6 @@ function TaskOverview(props) {
                             taskId={taskId}
                         />
                         <TaskActions taskId={taskId} />
-                        <Hidden xlUp>
-                            <DeliverableDetails
-                                deliverables={
-                                    task.deliverables
-                                        ? Object.values(task.deliverables)
-                                        : []
-                                }
-                                taskId={taskId}
-                            />
-                        </Hidden>
                     </Stack>
                 </Grid>
                 <Grid item className={classes.item}>
@@ -84,13 +74,6 @@ function TaskOverview(props) {
                             taskId={taskId}
                             locationKey={"dropOffLocation"}
                         />
-                        <Hidden mdUp>
-                            <TaskAssignmentsPanel taskId={taskId} />
-                        </Hidden>
-                    </Stack>
-                </Grid>
-                <Hidden xlDown>
-                    <Grid item className={classes.item}>
                         <DeliverableDetails
                             deliverables={
                                 task.deliverables
@@ -99,8 +82,11 @@ function TaskOverview(props) {
                             }
                             taskId={taskId}
                         />
-                    </Grid>
-                </Hidden>
+                        <Hidden mdUp>
+                            <TaskAssignmentsPanel taskId={taskId} />
+                        </Hidden>
+                    </Stack>
+                </Grid>
                 <Hidden mdUp>
                     <Grid item className={classes.item}>
                         <CommentsSection parentId={taskId} />
