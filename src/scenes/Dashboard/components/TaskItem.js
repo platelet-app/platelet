@@ -245,13 +245,9 @@ function TaskItem(props) {
         getAssignees();
     }, [visibility, props.task, allAssignees.items]);
 
-    async function getCommentCount() {
-        if (!props.task || !props.task.id) return 0;
-        const commentsResult = (
-            await DataStore.query(models.Comment, (c) =>
-                c.parentId("eq", props.task.id)
-            )
-        ).filter(
+    function getCommentCount(comments) {
+        if (!comments || !props.task || !props.task.id) return 0;
+        const commentsResult = comments.filter(
             (c) =>
                 c.visibility === commentVisibility.everyone ||
                 (c.visibility === commentVisibility.me &&
@@ -263,16 +259,12 @@ function TaskItem(props) {
 
     async function calculateCommentCount() {
         if (!visibility || !props.task) return;
-        const commentCount = await getCommentCount();
-        setCommentCount(commentCount);
-        // TODO: change this to observeQuery when the bug is fixed
         commentObserver.current.unsubscribe();
-        commentObserver.current = DataStore.observe(models.Comment, (c) =>
+        commentObserver.current = DataStore.observeQuery(models.Comment, (c) =>
             c.parentId("eq", props.task.id)
-        ).subscribe(async () => {
-            getCommentCount().then((count) => {
-                setCommentCount(count);
-            });
+        ).subscribe(({ items }) => {
+            const count = getCommentCount(items);
+            setCommentCount(count);
         });
     }
     useEffect(() => {

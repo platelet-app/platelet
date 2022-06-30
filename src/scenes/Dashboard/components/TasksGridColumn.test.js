@@ -2,7 +2,12 @@ import React from "react";
 import { render } from "../../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import TasksGridColumn from "./TasksGridColumn";
-import { priorities, tasksStatus, userRoles } from "../../../apiConsts";
+import {
+    commentVisibility,
+    priorities,
+    tasksStatus,
+    userRoles,
+} from "../../../apiConsts";
 import * as amplify from "aws-amplify";
 import * as models from "../../../models";
 import { mockAllIsIntersecting } from "react-intersection-observer/test-utils";
@@ -1166,5 +1171,51 @@ describe("TasksGridColumn", () => {
         userEvent.click(screen.getByTestId(`${tasksStatus.new}-select-all`));
 
         expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(11);
+    });
+
+    test("show the comment count", async () => {
+        const task = await DataStore.save(
+            new models.Task({
+                status: tasksStatus.new,
+            })
+        );
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        await DataStore.save(
+            new models.Comment({
+                parentId: task.id,
+                visibility: commentVisibility.everyone,
+                author: mockWhoami,
+                body: "test",
+            })
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 1,
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        const tooltip = await screen.findByTestId("comment-count-tooltip");
+        userEvent.hover(tooltip);
+        expect(await screen.findByText("1 comment")).toBeInTheDocument();
     });
 });

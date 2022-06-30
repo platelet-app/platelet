@@ -116,6 +116,7 @@ const TaskCard = React.memo((props) => {
                 >
                     {props.commentCount > 0 ? (
                         <Tooltip
+                            data-testId="comment-count-tooltip"
                             title={`${props.commentCount} ${
                                 props.commentCount === 1
                                     ? "comment"
