@@ -1172,7 +1172,8 @@ describe("TasksGridColumn", () => {
 
         expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(11);
     });
-    test.only("show the comment count", async () => {
+
+    test("show the comment count", async () => {
         const task = await DataStore.save(
             new models.Task({
                 status: tasksStatus.new,
@@ -1225,5 +1226,78 @@ describe("TasksGridColumn", () => {
             })
         );
         expect(await screen.findByText("2 comments")).toBeInTheDocument();
+    });
+
+    test("show the assignees", async () => {
+        const task = await DataStore.save(
+            new models.Task({
+                status: tasksStatus.new,
+            })
+        );
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        const mockAssignee1 = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "A Coordinator",
+            })
+        );
+        const mockAssignee2 = await DataStore.save(
+            new models.User({
+                roles: [userRoles.rider],
+                displayName: "A Rider",
+            })
+        );
+        const mockAssignment1 = await DataStore.save(
+            new models.TaskAssignee({
+                task: task,
+                assignee: mockAssignee1,
+                role: userRoles.coordinator,
+            })
+        );
+        const mockAssignment2 = await DataStore.save(
+            new models.TaskAssignee({
+                task: task,
+                assignee: mockAssignee2,
+                role: userRoles.rider,
+            })
+        );
+        const mockAssignmentMe = await DataStore.save(
+            new models.TaskAssignee({
+                task: task,
+                assignee: mockWhoami,
+                role: userRoles.coordinator,
+            })
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 1,
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [mockAssignment1, mockAssignment2, mockAssignmentMe],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        const tooltip = await screen.findByTestId("assignee-names-tooltip");
+        userEvent.hover(tooltip);
+        expect(await screen.findByText(/A Coordinator/)).toBeInTheDocument();
+        expect(await screen.findByText(/A Rider/)).toBeInTheDocument();
+        expect(screen.queryByText(/Someone Person/)).toBeNull();
     });
 });

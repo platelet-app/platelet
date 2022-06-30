@@ -133,7 +133,10 @@ const TaskCard = React.memo((props) => {
                     ) : (
                         <div></div>
                     )}
-                    <Tooltip title={assigneesDisplayString}>
+                    <Tooltip
+                        data-testId="assignee-names-tooltip"
+                        title={assigneesDisplayString}
+                    >
                         <AvatarGroup>
                             {props.assignees.map((u) => (
                                 <UserAvatar
