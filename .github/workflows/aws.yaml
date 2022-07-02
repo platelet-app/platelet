@@ -18,6 +18,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: Install dependencies
       run: npm ci
+    - name: NPM test
+      run: npm test -- --silent
     - name: Production Build
       run: npm run build
       env:
@@ -28,8 +30,6 @@ jobs:
         REACT_APP_POPULATE_FAKE_DATA: true
         CI: false
         GENERATE_SOURCEMAP: false
-    - name: NPM test
-      run: npm test -- --silent
     - name: Deploy to S3
       uses: jakejarvis/s3-sync-action@master
       with:
@@ -40,7 +40,31 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
         SOURCE_DIR: "build"
-    - name: invalidate
+    - name: Screenshot Website
+      uses: swinton/screenshot-website@v1.x
+      with:
+        source: http://${{ secrets.AWS_S3_BUCKET }}.s3-website-${{ secrets.AWS_REGION }}.amazonaws.com
+        destination: screenshot-dashboard-light.png
+        delay: 60
+        full-page: true
+        click-element: 'data-cy="create-task-button"'
+    - name: Make screenshot directory
+      run: mkdir screenshots
+    - name: Download screenshots
+      uses: actions/download-artifact@master
+      with:
+        path: screenshots
+    - name: Upload screenshots to S3
+      uses: jakejarvis/s3-sync-action@master
+      with:
+        args: --acl public-read --delete
+      env:
+        AWS_S3_BUCKET: ${{ secrets.AWS_S3_SCREENSHOTS_BUCKET }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        SOURCE_DIR: "screenshots"
+    - name: Invalidate Cloudfront
       uses: chetan/invalidate-cloudfront-action@v2
       env:
         DISTRIBUTION: ${{ secrets.DISTRIBUTION }}

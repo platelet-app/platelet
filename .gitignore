@@ -50,3 +50,4 @@ amplifytools.xcconfig
 amplify/team-provider-info.json
 
 cypress.env.json
+.secrets
