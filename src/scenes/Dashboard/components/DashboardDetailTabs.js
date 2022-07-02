@@ -97,6 +97,7 @@ export function DashboardDetailTabs(props) {
                 key="dashboard-fab"
                 color="primary"
                 variant="extended"
+                data-testId="create-task-button"
                 data-cy="create-task-button"
                 disabled={
                     guidedSetupOpen ||
