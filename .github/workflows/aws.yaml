@@ -3,7 +3,7 @@ name: Demo build
 on:
   push:
     branches:
-      - master
+      - screenshot_workflow
 jobs:
   build:
     runs-on: ubuntu-latest
