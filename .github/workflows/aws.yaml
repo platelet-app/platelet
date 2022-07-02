@@ -47,7 +47,7 @@ jobs:
         destination: screenshot-dashboard-light.png
         delay: 60
         full-page: true
-        click-element: "button[data-testId=create-task-button]"
+        click-element: "#root > div.makeStyles-root-84.MuiBox-root.css-0 > main > div > div.css-1gzfi3x-MuiStack-root > div.css-1ro2rbe-MuiStack-root > button.MuiButtonBase-root.MuiFab-root.MuiFab-extended.MuiFab-sizeLarge.MuiFab-primary.css-1se8swf-MuiButtonBase-root-MuiFab-root"
     - name: Make screenshot directory
       run: mkdir screenshots
     - name: Download screenshots
