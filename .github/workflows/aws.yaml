@@ -12,34 +12,34 @@ jobs:
         node-version: [12.x]
     steps:
     - uses: actions/checkout@v1
-      #    - name: Use Node.js ${{ matrix.node-version }}
-      #      uses: actions/setup-node@v1
-      #      with:
-      #        node-version: ${{ matrix.node-version }}
-      #    - name: Install dependencies
-      #      run: npm ci
-      #    - name: NPM test
-      #      run: npm test -- --silent
-      #    - name: Production Build
-      #      run: npm run build
-      #      env:
-      #        REACT_APP_DEMO_MODE: true
-      #        REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_NAME: platelet-demo-profilepics
-      #        REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_REGION: eu-west-1
-      #        REACT_APP_OFFLINE_ONLY: true
-      #        REACT_APP_POPULATE_FAKE_DATA: true
-      #        CI: false
-      #        GENERATE_SOURCEMAP: false
-      #    - name: Deploy to S3
-      #      uses: jakejarvis/s3-sync-action@master
-      #      with:
-      #        args: --acl public-read --delete
-      #      env:
-      #        AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-      #        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #        AWS_REGION: ${{ secrets.AWS_REGION }}
-      #        SOURCE_DIR: "build"
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install dependencies
+      run: npm ci
+    - name: NPM test
+      run: npm test -- --silent
+    - name: Production Build
+      run: npm run build
+      env:
+        REACT_APP_DEMO_MODE: true
+        REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_NAME: platelet-demo-profilepics
+        REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_REGION: eu-west-1
+        REACT_APP_OFFLINE_ONLY: true
+        REACT_APP_POPULATE_FAKE_DATA: true
+        CI: false
+        GENERATE_SOURCEMAP: false
+    - name: Deploy to S3
+      uses: jakejarvis/s3-sync-action@master
+      with:
+        args: --acl public-read --delete
+      env:
+        AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+        SOURCE_DIR: "build"
     - name: Screenshot Website
       uses: swinton/screenshot-website@v1.x
       with:
