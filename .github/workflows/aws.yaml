@@ -47,7 +47,7 @@ jobs:
         destination: screenshot-dashboard-light.png
         delay: 60
         full-page: true
-        click-element: "[data-cy=create-task-button]"
+        click-element: "button[data-cy=create-task-button]"
     - name: Make screenshot directory
       run: mkdir screenshots
     - name: Download screenshots
