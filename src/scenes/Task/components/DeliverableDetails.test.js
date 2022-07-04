@@ -522,4 +522,57 @@ describe("DeliverableDetails", () => {
             )
         ).toBeNull();
     });
+
+    test("don't allow riders to edit", async () => {
+        const task = await DataStore.save(fakeTask);
+        const mockAssignee = await DataStore.save(
+            new models.User({
+                name: "John Doe",
+                roles: [userRoles.rider],
+            })
+        );
+        const mockAssignment = await DataStore.save(
+            new models.TaskAssignee({
+                task,
+                assignee: mockAssignee,
+                role: userRoles.rider,
+            })
+        );
+        await saveMockAvailableDeliverables();
+        const mockDeliverable = await DataStore.save(
+            new models.Deliverable({
+                deliverableType: mockData[0],
+                task,
+                count: 1,
+                orderInGrid: 0,
+                unit: mockData[0].defaultUnit,
+                tenantId: "tenant-id",
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        const preloadedState = {
+            roleView: userRoles.rider,
+            whoami: { user: mockAssignee },
+            taskAssigneesReducer: {
+                ready: true,
+                isSynced: true,
+                items: [mockAssignment],
+            },
+        };
+        render(<DeliverableDetails taskId={fakeTask.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        expect(
+            await screen.findByText(`${mockDeliverable.deliverableType.label}`)
+        ).toBeInTheDocument();
+        expect(
+            await screen.findByText(
+                `${mockDeliverable.count} x ${mockDeliverable.unit}`
+            )
+        ).toBeInTheDocument();
+        expect(screen.queryByRole("button", { name: "Edit" })).toBeNull();
+    });
 });

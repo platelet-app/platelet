@@ -880,4 +880,46 @@ describe("LocationDetailsPanel", () => {
         component.unmount();
         expect(unsubscribe).toHaveBeenCalledTimes(2);
     });
+
+    test("don't allow riders to edit", async () => {
+        const mockLocation = new models.Location({
+            name: "test location",
+            listed: 0,
+        });
+        const task = await DataStore.save(
+            new models.Task({
+                pickUpLocation: mockLocation,
+            })
+        );
+        const mockAssignee = new models.User({
+            displayName: "test user",
+            roles: [userRoles.rider],
+        });
+        const mockAssignment = new models.TaskAssignee({
+            task,
+            assignee: mockAssignee,
+            role: userRoles.rider,
+        });
+
+        const preloadedState = {
+            whoami: { user: mockAssignee },
+            roleView: userRoles.rider,
+            taskAssigneesReducer: {
+                ready: true,
+                isSynced: true,
+                items: [mockAssignment],
+            },
+        };
+
+        render(
+            <LocationDetailsPanel
+                locationKey={"pickUpLocation"}
+                taskId={task.id}
+            />,
+            { preloadedState }
+        );
+        await waitFor(() => {
+            expect(screen.queryByText("Edit")).toBeNull();
+        });
+    });
 });
