@@ -253,4 +253,176 @@ describe("TaskDetailsPanel", () => {
         component.unmount();
         expect(unsubscribe).toHaveBeenCalledTimes(1);
     });
+
+    test("the view for an assigned rider", async () => {
+        const timeOfCall = new Date().toISOString();
+        const mockTask = new models.Task({
+            riderResponsibility: "North",
+            timeOfCall,
+            priority: priorities.high,
+            reference: "test-reference",
+            requesterContact: {
+                telephoneNumber: "01234567890",
+                name: "Someone Person",
+            },
+        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        const mockWhoami = new models.User({
+            displayName: "test rider",
+            roles: [userRoles.rider],
+        });
+        const mockAssignment = await DataStore.save(
+            new models.TaskAssignee({
+                task: mockTask,
+                assignee: mockWhoami,
+                role: userRoles.rider,
+            })
+        );
+        const preloadedState = {
+            roleView: userRoles.rider,
+            whoami: {
+                user: mockWhoami,
+            },
+            taskAssigneesReducer: {
+                ready: true,
+                isSynced: true,
+                items: [mockAssignment],
+            },
+        };
+        render(<TaskDetailsPanel taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        expect(screen.getByText("North")).toBeInTheDocument();
+        expect(screen.getByText("test-reference")).toBeInTheDocument();
+        expect(screen.queryByText("Someone Person")).toBeNull();
+        expect(screen.queryByText("01234567890")).toBeNull();
+        expect(screen.getByText(priorities.high)).toBeInTheDocument();
+        expect(screen.getByText(/Today at/)).toBeInTheDocument();
+        expect(
+            screen.getByText(moment(timeOfCall).format("HH:mm"))
+        ).toBeInTheDocument();
+    });
+
+    test("the view for an assigned coordinator", async () => {
+        const timeOfCall = new Date().toISOString();
+        const mockTask = new models.Task({
+            riderResponsibility: "North",
+            timeOfCall,
+            priority: priorities.high,
+            reference: "test-reference",
+            requesterContact: {
+                telephoneNumber: "01234567890",
+                name: "Someone Person",
+            },
+        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        const mockWhoami = new models.User({
+            displayName: "test coord",
+            roles: [userRoles.coordinator],
+        });
+        const mockAssignment = await DataStore.save(
+            new models.TaskAssignee({
+                task: mockTask,
+                assignee: mockWhoami,
+                role: userRoles.coordinator,
+            })
+        );
+        const preloadedState = {
+            roleView: userRoles.rider,
+            whoami: {
+                user: mockWhoami,
+            },
+            taskAssigneesReducer: {
+                ready: true,
+                isSynced: true,
+                items: [mockAssignment],
+            },
+        };
+        render(<TaskDetailsPanel taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        expect(screen.getByText("North")).toBeInTheDocument();
+        expect(screen.getByText("test-reference")).toBeInTheDocument();
+        expect(screen.getByText("Someone Person")).toBeInTheDocument();
+        expect(screen.getByText("01234567890")).toBeInTheDocument();
+        await waitFor(() => {
+            expect(
+                screen.getByRole("button", { name: priorities.high })
+            ).toHaveClass("MuiChip-default");
+        });
+        expect(screen.getByText(/Today at/)).toBeInTheDocument();
+        expect(
+            screen.getByText(moment(timeOfCall).format("HH:mm"))
+        ).toBeInTheDocument();
+    });
+
+    test.each`
+        role
+        ${userRoles.rider} | ${userRoles.coordinator}
+    `("the views for different role views not assigned", async ({ role }) => {
+        const timeOfCall = new Date().toISOString();
+        const mockTask = new models.Task({
+            riderResponsibility: "North",
+            timeOfCall,
+            priority: priorities.high,
+            reference: "test-reference",
+            requesterContact: {
+                telephoneNumber: "01234567890",
+                name: "Someone Person",
+            },
+        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        const mockWhoami = new models.User({
+            displayName: "test coord",
+            roles: [role],
+        });
+        const preloadedState = {
+            roleView: role,
+            whoami: {
+                user: mockWhoami,
+            },
+            taskAssigneesReducer: {
+                ready: true,
+                isSynced: true,
+                items: [],
+            },
+        };
+        render(<TaskDetailsPanel taskId={mockTask.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+
+        if (role === userRoles.rider) {
+            expect(screen.getByText("North")).toBeInTheDocument();
+            expect(screen.getByText("test-reference")).toBeInTheDocument();
+            expect(screen.queryByText("Someone Person")).toBeNull();
+            expect(screen.queryByText("01234567890")).toBeNull();
+            expect(screen.getByText(priorities.high)).toBeInTheDocument();
+            expect(screen.getByText(/Today at/)).toBeInTheDocument();
+            expect(
+                screen.getByText(moment(timeOfCall).format("HH:mm"))
+            ).toBeInTheDocument();
+        } else {
+            expect(screen.getByText("North")).toBeInTheDocument();
+            expect(screen.getByText("test-reference")).toBeInTheDocument();
+            expect(screen.getByText("Someone Person")).toBeInTheDocument();
+            expect(screen.getByText("01234567890")).toBeInTheDocument();
+            await waitFor(() => {
+                expect(
+                    screen.getByRole("button", { name: priorities.high })
+                ).toHaveClass("MuiChip-default");
+            });
+            expect(screen.getByText(/Today at/)).toBeInTheDocument();
+            expect(
+                screen.getByText(moment(timeOfCall).format("HH:mm"))
+            ).toBeInTheDocument();
+        }
+    });
 });
