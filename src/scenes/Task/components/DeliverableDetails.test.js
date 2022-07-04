@@ -4,11 +4,16 @@ import _ from "lodash";
 import { render } from "../../../test-utils";
 import DeliverableDetails from "./DeliverableDetails";
 import userEvent from "@testing-library/user-event";
-import { deliverableUnits } from "../../../apiConsts";
+import { deliverableUnits, userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
 import { DataStore, Predicates } from "aws-amplify";
 
-const preloadedState = { tenantId: "tenant-id" };
+const preloadedState = {
+    tenantId: "tenant-id",
+    whoami: {
+        user: { displayName: "Test User", roles: [userRoles.coordinator] },
+    },
+};
 
 const mockData = [
     new models.DeliverableType({
@@ -112,8 +117,9 @@ describe("DeliverableDetails", () => {
 
     it("renders available items in edit mode", async () => {
         await saveMockAvailableDeliverables();
+        await DataStore.save(fakeTask);
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<DeliverableDetails />, { preloadedState });
+        render(<DeliverableDetails taskId={fakeTask.id} />, { preloadedState });
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });

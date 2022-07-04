@@ -37,11 +37,7 @@ function LocationDetailsPanel(props) {
     ).Task;
 
     const currentUserRole = useAssignmentRole(props.taskId);
-
-    const hasFullPermissions = [
-        userRoles.admin,
-        userRoles.coordinator,
-    ].includes(currentUserRole);
+    const hasFullPermissions = currentUserRole === userRoles.coordinator;
 
     const taskObserver = useRef({ unsubscribe: () => {} });
     const locationObserver = useRef({ unsubscribe: () => {} });

@@ -7,7 +7,7 @@ import * as amplify from "aws-amplify";
 import userEvent from "@testing-library/user-event";
 import * as models from "../../../models/index";
 import _ from "lodash";
-import { protectedFields } from "../../../apiConsts";
+import { protectedFields, userRoles } from "../../../apiConsts";
 import { v4 as uuidv4 } from "uuid";
 import * as mutations from "../../../graphql/mutations";
 import * as queries from "../../../graphql/queries";
@@ -18,8 +18,13 @@ const tenantId = uuidv4();
 
 const preloadedState = {
     tenantId,
+    roleView: "ALL",
     whoami: {
-        user: new models.User({ tenantId: "tenant-id", displayName: "test" }),
+        user: new models.User({
+            roles: [userRoles.coordinator],
+            tenantId: "tenant-id",
+            displayName: "test",
+        }),
     },
 };
 
@@ -460,7 +465,8 @@ describe("LocationDetailsPanel", () => {
             <LocationDetailsPanel
                 taskId={mockTask.id}
                 locationKey={locationKey}
-            />
+            />,
+            { preloadedState }
         );
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
         userEvent.click(screen.getByText("Expand to see more"));

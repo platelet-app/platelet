@@ -4,11 +4,18 @@ import { render } from "../../../test-utils";
 import TaskDetailsPanel from "./TaskDetailsPanel";
 import * as amplify from "aws-amplify";
 import * as models from "../../../models";
-import { priorities, tasksStatus } from "../../../apiConsts";
+import { priorities, tasksStatus, userRoles } from "../../../apiConsts";
 import moment from "moment";
 import userEvent from "@testing-library/user-event";
 import mediaQuery from "css-mediaquery";
 import { DataStore } from "aws-amplify";
+
+const preloadedState = {
+    roleView: "ALL",
+    whoami: {
+        user: { displayName: "Test User", roles: [userRoles.coordinator] },
+    },
+};
 
 function createMatchMedia(width) {
     return (query) => ({
@@ -38,6 +45,7 @@ describe("TaskDetailsPanel", () => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
     });
+
     it("renders task details", async () => {
         const timeOfCall = new Date().toISOString();
         const mockTask = new models.Task({
@@ -52,7 +60,7 @@ describe("TaskDetailsPanel", () => {
         });
         await DataStore.save(mockTask);
         const querySpy = jest.spyOn(amplify.DataStore, "query");
-        render(<TaskDetailsPanel taskId={mockTask.id} />);
+        render(<TaskDetailsPanel taskId={mockTask.id} />, { preloadedState });
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
@@ -85,7 +93,7 @@ describe("TaskDetailsPanel", () => {
         await DataStore.save(mockTask);
         const querySpy = jest.spyOn(amplify.DataStore, "query");
         const saveSpy = jest.spyOn(amplify.DataStore, "save");
-        render(<TaskDetailsPanel taskId={mockTask.id} />);
+        render(<TaskDetailsPanel taskId={mockTask.id} />, { preloadedState });
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
@@ -138,7 +146,7 @@ describe("TaskDetailsPanel", () => {
         await DataStore.save(mockTask);
         const querySpy = jest.spyOn(amplify.DataStore, "query");
         const saveSpy = jest.spyOn(amplify.DataStore, "save");
-        render(<TaskDetailsPanel taskId={mockTask.id} />);
+        render(<TaskDetailsPanel taskId={mockTask.id} />, { preloadedState });
 
         window.matchMedia = createMatchMedia(100);
 
@@ -176,7 +184,7 @@ describe("TaskDetailsPanel", () => {
         });
         await DataStore.save(mockTask);
         const querySpy = jest.spyOn(amplify.DataStore, "query");
-        render(<TaskDetailsPanel taskId={mockTask.id} />);
+        render(<TaskDetailsPanel taskId={mockTask.id} />, { preloadedState });
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
@@ -233,7 +241,10 @@ describe("TaskDetailsPanel", () => {
                 };
             });
         const querySpy = jest.spyOn(amplify.DataStore, "query");
-        const { component } = render(<TaskDetailsPanel taskId={mockTask.id} />);
+        const { component } = render(
+            <TaskDetailsPanel taskId={mockTask.id} />,
+            { preloadedState }
+        );
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });

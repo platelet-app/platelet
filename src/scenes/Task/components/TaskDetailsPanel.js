@@ -36,11 +36,7 @@ function TaskDetailsPanel(props) {
     const taskObserver = useRef({ unsubscribe: () => {} });
     const dispatch = useDispatch();
     const currentUserRole = useAssignmentRole(state.id);
-
-    const hasFullPermissions = [
-        userRoles.admin,
-        userRoles.coordinator,
-    ].includes(currentUserRole);
+    const hasFullPermissions = currentUserRole === userRoles.coordinator;
 
     const taskModelsSynced = useSelector(
         dataStoreModelSyncedStatusSelector

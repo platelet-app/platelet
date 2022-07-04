@@ -44,10 +44,7 @@ function DeliverableDetails(props) {
     ).DeliverableType;
 
     const currentUserRole = useAssignmentRole(props.taskId);
-    const hasFullPermissions = [
-        userRoles.admin,
-        userRoles.coordinator,
-    ].includes(currentUserRole);
+    const hasFullPermissions = currentUserRole === userRoles.coordinator;
 
     async function getDeliverables() {
         if (!loadedOnce.current) setIsFetching(true);
