@@ -641,9 +641,12 @@ describe("GuidedSetup", () => {
         const textBox = screen.getAllByRole("textbox");
         userEvent.type(textBox[0], "data");
         userEvent.click(screen.getByRole("button", { name: "OK" }));
-        await waitFor(() => {
-            expect(screen.queryByRole("button", { name: "OK" })).toBeNull();
-        });
+        await waitFor(
+            () => {
+                expect(screen.queryByRole("button", { name: "OK" })).toBeNull();
+            },
+            { timeout: 2000 }
+        );
         userEvent.click(screen.getByRole("button", { name: "Discard" }));
         expect(screen.getByText(/Are you sure/)).toBeInTheDocument();
         userEvent.click(screen.getByRole("button", { name: "OK" }));
