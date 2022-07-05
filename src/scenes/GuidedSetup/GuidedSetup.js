@@ -18,7 +18,7 @@ import {
     CallerDetails,
     DeliverableDetails,
     PickUpAndDeliverDetails,
-    Notes,
+    NotesAndPriority,
 } from "./index";
 import { Paper, Stack } from "@mui/material";
 import { saveNewTaskToDataStore } from "./saveNewTaskToDataStore";
@@ -385,7 +385,7 @@ export const GuidedSetup = () => {
                         />
                     </Box>
                     <Box className={tabIndex === 3 ? show : hide}>
-                        <Notes
+                        <NotesAndPriority
                             priority={formValues.priority}
                             handleVisibilityChange={
                                 handleCommentVisibilityChange

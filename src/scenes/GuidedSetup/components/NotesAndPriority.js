@@ -6,7 +6,7 @@ import { commentVisibility } from "../../../apiConsts";
 import CommentVisibilitySelector from "../../../components/CommentVisibilitySelector";
 import PrioritySelect from "../../Task/components/PrioritySelect";
 
-export const Notes = ({
+export const NotesAndPriority = ({
     onChange,
     priority,
     handleVisibilityChange,
