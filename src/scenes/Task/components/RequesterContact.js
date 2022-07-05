@@ -59,17 +59,23 @@ function RequesterContact(props) {
                 justifyContent="space-between"
             >
                 <Typography>Caller details</Typography>
-                <Tooltip title={editMode && !isSm ? "Finish" : "Edit"}>
-                    <IconButton
-                        onClick={() => setEditMode((prevState) => !prevState)}
-                        aria-label="edit caller details"
-                        size={"small"}
-                    >
-                        <EditIcon
-                            color={editMode && !isSm ? "secondary" : "inherit"}
-                        />
-                    </IconButton>
-                </Tooltip>
+                {!props.hideEditIcon && (
+                    <Tooltip title={editMode && !isSm ? "Finish" : "Edit"}>
+                        <IconButton
+                            onClick={() =>
+                                setEditMode((prevState) => !prevState)
+                            }
+                            aria-label="edit caller details"
+                            size={"small"}
+                        >
+                            <EditIcon
+                                color={
+                                    editMode && !isSm ? "secondary" : "inherit"
+                                }
+                            />
+                        </IconButton>
+                    </Tooltip>
+                )}
             </Stack>
             {Object.entries(fields).map(([key, label]) => (
                 <div key={key} className={classes.inset}>
@@ -125,12 +131,14 @@ RequesterContact.propTypes = {
     name: PropTypes.string,
     telephoneNumber: PropTypes.string,
     onChange: PropTypes.func,
+    hideEditIcon: PropTypes.bool,
 };
 
 RequesterContact.defaultProps = {
     name: "",
     telephoneNumber: "",
     onChange: () => {},
+    hideEditIcon: false,
 };
 
 export default RequesterContact;

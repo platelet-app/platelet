@@ -8,7 +8,7 @@ import { displayErrorNotification } from "../../../redux/notifications/Notificat
 import * as models from "../../../models/index";
 import { API, DataStore, graphqlOperation } from "aws-amplify";
 import _ from "lodash";
-import { protectedFields } from "../../../apiConsts";
+import { protectedFields, userRoles } from "../../../apiConsts";
 import {
     dataStoreModelSyncedStatusSelector,
     tenantIdSelector,
@@ -17,6 +17,7 @@ import GetError from "../../../ErrorComponents/GetError";
 import EditModeToggleButton from "../../../components/EditModeToggleButton";
 import * as mutations from "../../../graphql/mutations";
 import * as queries from "../../../graphql/queries";
+import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 
 function LocationDetailsPanel(props) {
     const classes = dialogCardStyles();
@@ -34,6 +35,9 @@ function LocationDetailsPanel(props) {
     const taskModelsSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     ).Task;
+
+    const currentUserRole = useAssignmentRole(props.taskId);
+    const hasFullPermissions = currentUserRole === userRoles.coordinator;
 
     const taskObserver = useRef({ unsubscribe: () => {} });
     const locationObserver = useRef({ unsubscribe: () => {} });
@@ -399,7 +403,7 @@ function LocationDetailsPanel(props) {
                                 ? "Collect from"
                                 : "Deliver to"}
                         </Typography>
-                        {state && (
+                        {hasFullPermissions && state && (
                             <EditModeToggleButton
                                 value={editMode}
                                 onChange={() =>

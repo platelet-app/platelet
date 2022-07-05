@@ -7,7 +7,7 @@ import * as amplify from "aws-amplify";
 import userEvent from "@testing-library/user-event";
 import * as models from "../../../models/index";
 import _ from "lodash";
-import { protectedFields } from "../../../apiConsts";
+import { protectedFields, userRoles } from "../../../apiConsts";
 import { v4 as uuidv4 } from "uuid";
 import * as mutations from "../../../graphql/mutations";
 import * as queries from "../../../graphql/queries";
@@ -18,8 +18,13 @@ const tenantId = uuidv4();
 
 const preloadedState = {
     tenantId,
+    roleView: "ALL",
     whoami: {
-        user: new models.User({ tenantId: "tenant-id", displayName: "test" }),
+        user: new models.User({
+            roles: [userRoles.coordinator],
+            tenantId: "tenant-id",
+            displayName: "test",
+        }),
     },
 };
 
@@ -460,7 +465,8 @@ describe("LocationDetailsPanel", () => {
             <LocationDetailsPanel
                 taskId={mockTask.id}
                 locationKey={locationKey}
-            />
+            />,
+            { preloadedState }
         );
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
         userEvent.click(screen.getByText("Expand to see more"));
@@ -873,5 +879,47 @@ describe("LocationDetailsPanel", () => {
         expect(unsubscribe).toHaveBeenCalledTimes(0);
         component.unmount();
         expect(unsubscribe).toHaveBeenCalledTimes(2);
+    });
+
+    test("don't allow riders to edit", async () => {
+        const mockLocation = new models.Location({
+            name: "test location",
+            listed: 0,
+        });
+        const task = await DataStore.save(
+            new models.Task({
+                pickUpLocation: mockLocation,
+            })
+        );
+        const mockAssignee = new models.User({
+            displayName: "test user",
+            roles: [userRoles.rider],
+        });
+        const mockAssignment = new models.TaskAssignee({
+            task,
+            assignee: mockAssignee,
+            role: userRoles.rider,
+        });
+
+        const preloadedState = {
+            whoami: { user: mockAssignee },
+            roleView: userRoles.rider,
+            taskAssigneesReducer: {
+                ready: true,
+                isSynced: true,
+                items: [mockAssignment],
+            },
+        };
+
+        render(
+            <LocationDetailsPanel
+                locationKey={"pickUpLocation"}
+                taskId={task.id}
+            />,
+            { preloadedState }
+        );
+        await waitFor(() => {
+            expect(screen.queryByText("Edit")).toBeNull();
+        });
     });
 });
