@@ -318,6 +318,7 @@ export const createUser = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status
@@ -438,6 +439,7 @@ export const updateUser = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status
@@ -558,6 +560,7 @@ export const deleteUser = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status
@@ -1015,6 +1018,7 @@ export const createLocation = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status
@@ -1040,6 +1044,33 @@ export const createLocation = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
+          riderResponsibility
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedTasksId
+        }
+        nextToken
+        startedAt
+      }
+      taskAsEstablishment {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status
@@ -1128,6 +1159,7 @@ export const updateLocation = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status
@@ -1153,6 +1185,33 @@ export const updateLocation = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
+          riderResponsibility
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedTasksId
+        }
+        nextToken
+        startedAt
+      }
+      taskAsEstablishment {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status
@@ -1241,6 +1300,7 @@ export const deleteLocation = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status
@@ -1266,6 +1326,33 @@ export const deleteLocation = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
+          riderResponsibility
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedTasksId
+        }
+        nextToken
+        startedAt
+      }
+      taskAsEstablishment {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status
@@ -1393,6 +1480,7 @@ export const createTask = /* GraphQL */ `
       }
       pickUpLocationId
       dropOffLocationId
+      establishmentLocationId
       pickUpLocation {
         id
         tenantId
@@ -1429,6 +1517,10 @@ export const createTask = /* GraphQL */ `
           startedAt
         }
         tasksAsDropOff {
+          nextToken
+          startedAt
+        }
+        taskAsEstablishment {
           nextToken
           startedAt
         }
@@ -1479,6 +1571,64 @@ export const createTask = /* GraphQL */ `
           startedAt
         }
         tasksAsDropOff {
+          nextToken
+          startedAt
+        }
+        taskAsEstablishment {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      establishmentLocation {
+        id
+        tenantId
+        name
+        listed
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
+        taskAsEstablishment {
           nextToken
           startedAt
         }
@@ -1644,6 +1794,7 @@ export const updateTask = /* GraphQL */ `
       }
       pickUpLocationId
       dropOffLocationId
+      establishmentLocationId
       pickUpLocation {
         id
         tenantId
@@ -1680,6 +1831,10 @@ export const updateTask = /* GraphQL */ `
           startedAt
         }
         tasksAsDropOff {
+          nextToken
+          startedAt
+        }
+        taskAsEstablishment {
           nextToken
           startedAt
         }
@@ -1730,6 +1885,64 @@ export const updateTask = /* GraphQL */ `
           startedAt
         }
         tasksAsDropOff {
+          nextToken
+          startedAt
+        }
+        taskAsEstablishment {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      establishmentLocation {
+        id
+        tenantId
+        name
+        listed
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
+        taskAsEstablishment {
           nextToken
           startedAt
         }
@@ -1895,6 +2108,7 @@ export const deleteTask = /* GraphQL */ `
       }
       pickUpLocationId
       dropOffLocationId
+      establishmentLocationId
       pickUpLocation {
         id
         tenantId
@@ -1931,6 +2145,10 @@ export const deleteTask = /* GraphQL */ `
           startedAt
         }
         tasksAsDropOff {
+          nextToken
+          startedAt
+        }
+        taskAsEstablishment {
           nextToken
           startedAt
         }
@@ -1981,6 +2199,64 @@ export const deleteTask = /* GraphQL */ `
           startedAt
         }
         tasksAsDropOff {
+          nextToken
+          startedAt
+        }
+        taskAsEstablishment {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      establishmentLocation {
+        id
+        tenantId
+        name
+        listed
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
+        taskAsEstablishment {
           nextToken
           startedAt
         }
@@ -2115,6 +2391,7 @@ export const createTaskAssignee = /* GraphQL */ `
         }
         pickUpLocationId
         dropOffLocationId
+        establishmentLocationId
         pickUpLocation {
           id
           tenantId
@@ -2138,6 +2415,28 @@ export const createTaskAssignee = /* GraphQL */ `
           _lastChangedAt
         }
         dropOffLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        establishmentLocation {
           id
           tenantId
           name
@@ -2300,6 +2599,7 @@ export const updateTaskAssignee = /* GraphQL */ `
         }
         pickUpLocationId
         dropOffLocationId
+        establishmentLocationId
         pickUpLocation {
           id
           tenantId
@@ -2323,6 +2623,28 @@ export const updateTaskAssignee = /* GraphQL */ `
           _lastChangedAt
         }
         dropOffLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        establishmentLocation {
           id
           tenantId
           name
@@ -2485,6 +2807,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
         }
         pickUpLocationId
         dropOffLocationId
+        establishmentLocationId
         pickUpLocation {
           id
           tenantId
@@ -2508,6 +2831,28 @@ export const deleteTaskAssignee = /* GraphQL */ `
           _lastChangedAt
         }
         dropOffLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        establishmentLocation {
           id
           tenantId
           name
@@ -3030,6 +3375,7 @@ export const createDeliverable = /* GraphQL */ `
         }
         pickUpLocationId
         dropOffLocationId
+        establishmentLocationId
         pickUpLocation {
           id
           tenantId
@@ -3053,6 +3399,28 @@ export const createDeliverable = /* GraphQL */ `
           _lastChangedAt
         }
         dropOffLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        establishmentLocation {
           id
           tenantId
           name
@@ -3198,6 +3566,7 @@ export const updateDeliverable = /* GraphQL */ `
         }
         pickUpLocationId
         dropOffLocationId
+        establishmentLocationId
         pickUpLocation {
           id
           tenantId
@@ -3221,6 +3590,28 @@ export const updateDeliverable = /* GraphQL */ `
           _lastChangedAt
         }
         dropOffLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        establishmentLocation {
           id
           tenantId
           name
@@ -3366,6 +3757,7 @@ export const deleteDeliverable = /* GraphQL */ `
         }
         pickUpLocationId
         dropOffLocationId
+        establishmentLocationId
         pickUpLocation {
           id
           tenantId
@@ -3389,6 +3781,28 @@ export const deleteDeliverable = /* GraphQL */ `
           _lastChangedAt
         }
         dropOffLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        establishmentLocation {
           id
           tenantId
           name
@@ -3667,6 +4081,7 @@ export const registerUser = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status
@@ -3862,6 +4277,7 @@ export const updateUserRoles = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status

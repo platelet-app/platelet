@@ -117,6 +117,7 @@ const guidedSetupStyles = makeStyles((theme) => ({
 
 const defaultValues = {
     priority: null,
+    establishmentLocation: null,
 };
 
 const defaultContact = {
@@ -129,10 +130,15 @@ const defaultComment = {
     visibility: commentVisibility.everyone,
 };
 
+const initialEstablishmentSameAsPickUpState = false;
+
 export const GuidedSetup = () => {
     const classes = guidedSetupStyles();
     const [tabIndex, setTabIndex] = React.useState(0);
     const [formValues, setFormValues] = useState(defaultValues);
+    const [establishmentSameAsPickup, setEstablishmentSameAsPickup] = useState(
+        initialEstablishmentSameAsPickUpState
+    );
     const tenantId = useSelector(tenantIdSelector);
     const [isPosting, setIsPosting] = useState(false);
     const [reset, setReset] = useState(false);
@@ -143,6 +149,7 @@ export const GuidedSetup = () => {
     const timeOfCall = useRef(new Date().toISOString());
     const dispatch = useDispatch();
     const locations = useRef({ pickUpLocation: null, dropOffLocation: null });
+    const [pickUpOverride, setPickUpOverride] = useState(null);
     const { show, hide } = showHide();
     const [discardConfirmationOpen, setDiscardConfirmationOpen] =
         useState(false);
@@ -163,18 +170,28 @@ export const GuidedSetup = () => {
         }));
     };
 
-    const handleSenderContactChange = (value) => {
+    const handleEstablishmentChange = (value) => {
         setFormValues((prevState) => ({
             ...prevState,
-            sender: { ...prevState.sender, ...value },
+            establishmentLocation: value,
         }));
     };
 
-    const handleReceiverContactChange = (value) => {
-        setFormValues((prevState) => ({
-            ...prevState,
-            receiver: { ...prevState.receiver, ...value },
-        }));
+    useEffect(() => {
+        if (
+            establishmentSameAsPickup &&
+            formValues.establishmentLocation &&
+            formValues.establishmentLocation.listed === 1
+        ) {
+            setLocation("pickUpLocation", formValues.establishmentLocation);
+            setPickUpOverride(formValues.establishmentLocation);
+        } else {
+            setPickUpOverride(null);
+        }
+    }, [establishmentSameAsPickup, formValues.establishmentLocation]);
+
+    const handleEstablishmentSameAsPickupChange = () => {
+        setEstablishmentSameAsPickup((prevState) => !prevState);
     };
 
     const handleSave = async () => {
@@ -192,10 +209,12 @@ export const GuidedSetup = () => {
                 tenantId,
                 whoami && whoami.id
             );
+            setEstablishmentSameAsPickup(initialEstablishmentSameAsPickUpState);
         } catch (e) {
             console.error(e);
             dispatch(displayErrorNotification("Sorry, something went wrong"));
             setIsPosting(false);
+            setEstablishmentSameAsPickup(initialEstablishmentSameAsPickUpState);
             return;
         }
         setIsPosting(false);
@@ -259,6 +278,7 @@ export const GuidedSetup = () => {
 
     const onCloseForm = () => {
         dispatch(setGuidedSetupOpen(false));
+        setEstablishmentSameAsPickup(initialEstablishmentSameAsPickUpState);
         setTabIndex(0);
     };
 
@@ -291,18 +311,8 @@ export const GuidedSetup = () => {
                     >
                         <Tab
                             icon={<PersonIcon className={classes.btnIcon} />}
-                            label={
-                                <div>
-                                    CALLER /<br /> PRIORITY
-                                </div>
-                            }
+                            label={"CALLER"}
                             {...a11yProps(0)}
-                            className={classes.tabButton}
-                        />
-                        <Tab
-                            icon={<ArchiveIcon className={classes.btnIcon} />}
-                            label={"ITEMS"}
-                            {...a11yProps(1)}
                             className={classes.tabButton}
                         />
                         <Tab
@@ -318,30 +328,42 @@ export const GuidedSetup = () => {
                             className={classes.tabButton}
                         />
                         <Tab
+                            icon={<ArchiveIcon className={classes.btnIcon} />}
+                            label={"ITEMS"}
+                            {...a11yProps(1)}
+                            className={classes.tabButton}
+                        />
+                        <Tab
                             icon={<NotesIcon className={classes.btnIcon} />}
-                            label={"NOTES"}
+                            label={
+                                <div>
+                                    NOTES /<br /> PRIORITY
+                                </div>
+                            }
                             {...a11yProps(3)}
                             className={classes.tabButton}
                         />
-                        {/* <Tab label="Step 5" {...a11yProps(4)} className={classes.tabButton} /> */}
                     </Tabs>
                 </AppBar>
                 <Box sx={{ padding: 1 }}>
                     <Box className={tabIndex === 0 ? show : hide}>
                         <CallerDetails
                             values={formValues}
+                            establishmentSameAsPickup={
+                                establishmentSameAsPickup
+                            }
                             onChangeContact={handleCallerContactChange}
-                            onChangePriority={handlePriorityChange}
+                            onChangeLocation={handleEstablishmentChange}
+                            onChangeEstablishmentSameAsPickUp={
+                                handleEstablishmentSameAsPickupChange
+                            }
                         />
                     </Box>
                     <Box className={tabIndex === 1 ? show : hide}>
-                        <DeliverableDetails
-                            onChange={handleDeliverablesChange}
-                            onDelete={handleDeliverablesDelete}
-                        />
-                    </Box>
-                    <Box className={tabIndex === 2 ? show : hide}>
                         <PickUpAndDeliverDetails
+                            overrides={{
+                                pickUpLocation: pickUpOverride,
+                            }}
                             onSetPickUpLocation={(value) => {
                                 setLocation("pickUpLocation", value);
                             }}
@@ -356,12 +378,20 @@ export const GuidedSetup = () => {
                             }
                         />
                     </Box>
+                    <Box className={tabIndex === 2 ? show : hide}>
+                        <DeliverableDetails
+                            onChange={handleDeliverablesChange}
+                            onDelete={handleDeliverablesDelete}
+                        />
+                    </Box>
                     <Box className={tabIndex === 3 ? show : hide}>
                         <Notes
+                            priority={formValues.priority}
                             handleVisibilityChange={
                                 handleCommentVisibilityChange
                             }
                             onChange={handleCommentChange}
+                            onChangePriority={handlePriorityChange}
                         />
                     </Box>
                 </Box>

@@ -4,6 +4,7 @@ import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import PropTypes from "prop-types";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { useTheme } from "@mui/styles";
+import _ from "lodash";
 
 const initialState = {
     name: "",
@@ -49,15 +50,28 @@ function PopOutLocationSelectorForm(props) {
     }
     useEffect(updateStateFromProps, [props.location]);
 
+    const checkDisabled = () => {
+        return _.isEqual(state, initialState);
+    };
+
+    const handleCancel = () => {
+        setState(initialState);
+        props.onCancel();
+    };
+
     return (
         <ConfirmationDialog
             fullScreen={isSm}
             dialogTitle={props.label}
-            onCancel={props.onCancel}
+            onCancel={handleCancel}
+            disabled={checkDisabled()}
             onConfirmation={() => props.onConfirmation(state)}
             open={props.open}
         >
-            <Stack sx={{ width: "100%", minWidth: isSm ? 0 : 400 }} spacing={1}>
+            <Stack
+                sx={{ marginTop: 1, width: "100%", minWidth: isSm ? 0 : 400 }}
+                spacing={1}
+            >
                 {Object.entries(addressFields).map(([key, label]) => (
                     <TextField
                         key={key}
