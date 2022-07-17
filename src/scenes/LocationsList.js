@@ -6,7 +6,7 @@ import { getWhoami } from "../redux/Selectors";
 import { DataStore } from "aws-amplify";
 import * as models from "../models/index";
 import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
-import { Button, Stack, Skeleton } from "@mui/material";
+import { Button, Stack, Skeleton, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
 import { matchSorter } from "match-sorter";
 import makeStyles from "@mui/styles/makeStyles";
@@ -102,8 +102,7 @@ export default function LocationsList() {
                 alignItems={"flex-start"}
                 justifyContent={"center"}
             >
-                <TextFieldControlled
-                    id="tasks-filter-input"
+                <TextField
                     variant={"standard"}
                     placeholder={"Filter locations"}
                     onChange={onChangeFilterText}

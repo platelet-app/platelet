@@ -63,7 +63,6 @@ export default function UserDetail(props) {
     ).RiderResponsibility;
 
     async function newUserProfile() {
-      console.log('here')
         setNotFound(false);
         if (!loadedOnce.current) setIsFetching(true);
         try {
@@ -104,15 +103,9 @@ export default function UserDetail(props) {
                     }
                 );
                   })
-                observer.current.unsubscribe();
-                observer.current = DataStore.observe(
-                    models.User
-                ).subscribe((result) => {
-                DataStore.query(models.User, userUUID).then((res)=>{
-                  setUser(res);
-                })
-
-                })
+                observer.current = DataStore
+                    .observe(models.User, userUUID)
+                    .subscribe(({ element }) => setUser(element));
                 setIsFetching(false);
                 loadedOnce.current = true;
                 if (userResult) {
@@ -175,7 +168,6 @@ export default function UserDetail(props) {
                 );
             });
     }
-    console.log(user)
 
     if (isFetching) {
         return (

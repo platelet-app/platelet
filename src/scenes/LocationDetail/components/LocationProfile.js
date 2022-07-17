@@ -44,7 +44,6 @@ function LocationProfile(props) {
     const whoami = useSelector(getWhoami);
 
     useEffect(() => {
-      console.log(props)
         setState({ ...props.location });
         setOldState({ ...props.location });
     }, [props.location]);

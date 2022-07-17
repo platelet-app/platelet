@@ -14,6 +14,7 @@ import UserRolesAndSelector from "./UserRolesAndSelector";
 import { useTheme } from "@mui/styles";
 import {
     TextFieldControlled,
+    TextFieldUncontrolled,
 } from "../../../components/TextFields";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import { API, graphqlOperation } from "aws-amplify";
@@ -22,6 +23,10 @@ import {
 } from "../../../redux/Selectors";
 import { protectedFields } from "../../../apiConsts";
 import * as mutations from "../../../graphql/mutations";
+import { networkStatusSelector } from "../../../redux/Selectors";
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
 
 const fields = {
     name: "Name",
@@ -53,6 +58,7 @@ export default function UserProfile(props) {
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
     const tenantId = useSelector(tenantIdSelector);
+    const networkStatus = useSelector(networkStatusSelector);
 
     
     const theme = useTheme();
@@ -89,6 +95,7 @@ export default function UserProfile(props) {
     let editAddressToggle = <></>;
     let editRoleToggle = <></>;
 
+    //ADD warning if offline
     if (whoami.roles) {
         if (
             whoami.roles.includes(userRoles.admin) ||
@@ -133,35 +140,46 @@ export default function UserProfile(props) {
                     }
                     value={editAddressMode}
                     onChange={(v) => {
-                        setEditAddressMode(v);
                         if (!v) setState(oldState);
                     }}
                 />
             );
 
-            editRoleToggle = (
-                <Stack
-                    direction={"row"}
-                    alignItems={"top"}
-                    justifyContent={"space-between"}
-                    spacing={1}
-                >
-                    <Typography>Role</Typography>
-
-                    <EditModeToggleButton
-                        tooltipDefault={
-                            props.user.id === whoami.id
-                                ? "Edit your role"
-                                : "Edit this user"
-                        }
-                        value={editRoleMode}
-                        onChange={(v) => {
-                            setEditRoleMode(v);
-                            if (!v) setState(oldState);
-                        }}
-                    />
-                </Stack>
-            );
+            if (networkStatus){
+                editRoleToggle = (
+                    <Stack
+                        direction={"row"}
+                        alignItems={"top"}
+                        justifyContent={"space-between"}
+                        spacing={1}
+                    >
+                        <EditModeToggleButton
+                            tooltipDefault={
+                                props.user.id === whoami.id
+                                    ? "Edit your role"
+                                    : "Edit this user"
+                            }
+                            value={editRoleMode}
+                            onChange={(v) => {
+                                if (v) {
+                                    setEditRoleMode(v);
+                                    setState(oldState);
+                                } else {
+                                    onRoleConfirmation();
+                                }
+                            }}
+                        />
+                    </Stack>
+                );
+          }else{
+                editRoleToggle = (
+                    <Tooltip title={"Action Disabled When Offline"}>
+                        <IconButton aria-label="Action Disabled">
+                            <EditIcon />
+                        </IconButton>
+                    </Tooltip>
+                );
+          }
         }
     }
 
@@ -248,7 +266,7 @@ export default function UserProfile(props) {
                 );
             }
         } catch (error) {
-            console.error("Update request failed", error);
+            console.log("Update request failed", error);
             dispatch(displayErrorNotification("Sorry, an error occurred"));
         }
     }
@@ -263,6 +281,14 @@ export default function UserProfile(props) {
         setOldState(state);
       }
     }
+
+    const onRoleConfirmation = () => {
+        if (verifyUpdate(state)) {
+            onUpdate(state);
+            setEditRoleMode(false);
+            setOldState(state);
+        }
+    };
 
     const onCancel = () => {
         setEditNameMode(false);
@@ -281,8 +307,6 @@ export default function UserProfile(props) {
             onCancel={onCancel}
         />
     );
-    console.log(state)
-
 
     return (
         <Stack direction={"column"} spacing={3}>
@@ -415,10 +439,13 @@ export default function UserProfile(props) {
                     {Object.keys(state.contact ? contactFields : []).map(
                         (key) => {
                             return (
-                                <TextFieldControlled
+                                <TextFieldUncontrolled
                                     key={key}
                                     variant={"standard"}
-                                    tel={key === "telephoneNumber"}
+                                    tel={
+                                        key === "telephoneNumber" ||
+                                        key === "mobileNumber"
+                                    }
                                     value={state.contact[key]}
                                     fullWidth
                                     label={contactFields[key]}
@@ -476,19 +503,19 @@ export default function UserProfile(props) {
             </ConfirmationDialog>
             <Divider />
             <Stack
-                direction={editRoleMode ? "column-reverse" : "column"}
+                direction={"row"}
                 justifyContent={"space-between"}
                 alignItems={"top"}
                 spacing={1}
             >
 
-                    {saveButtons}
-
                 <UserRolesAndSelector
                     selectMode={editRoleMode}
                     onSelect={onSelectRole}
                     value={state.roles}
-                />
+                    />
+                
+                {editRoleToggle}
             </Stack>
         </Stack>
     );
