@@ -7,8 +7,9 @@ exports.updateUser = gql`
     ) {
         updateUser(input: $input, condition: $condition) {
             id
-            _version
             roles
+            username
+            _version
         }
     }
 `;
