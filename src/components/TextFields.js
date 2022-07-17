@@ -41,7 +41,7 @@ export function TextFieldControlled(props) {
         <TextField
             {...newProps}
             margin="dense"
-            error={errorState}
+            color={errorState ? "warning" : "primary"}
             helperText={errorState ? errorText : ""}
             onKeyUp={(ev) => {
                 switch (ev.key) {
@@ -139,8 +139,8 @@ export function TextFieldUncontrolled(props) {
         return (
             <TextField
                 {..._.omit(props, "tel", "onPressEnter", "onPressEscape")}
-                error={errorState}
                 helperText={errorState ? errorText : ""}
+                color={errorState ? "warning" : "primary"}
                 type={props.tel ? "tel" : ""}
                 onChange={(e) => {
                     if (props.tel) {

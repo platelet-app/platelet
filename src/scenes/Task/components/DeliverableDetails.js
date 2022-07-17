@@ -16,7 +16,8 @@ import {
     tenantIdSelector,
 } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
-import { deliverableUnits } from "../../../apiConsts";
+import { deliverableUnits, userRoles } from "../../../apiConsts";
+import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 
 const useStyles = makeStyles({
     button: { height: 30 },
@@ -41,6 +42,9 @@ function DeliverableDetails(props) {
     const deliverableTypesSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     ).DeliverableType;
+
+    const currentUserRole = useAssignmentRole(props.taskId);
+    const hasFullPermissions = currentUserRole === userRoles.coordinator;
 
     async function getDeliverables() {
         if (!loadedOnce.current) setIsFetching(true);
@@ -247,13 +251,14 @@ function DeliverableDetails(props) {
                         justifyContent={"space-between"}
                     >
                         <Typography variant={"h6"}>Inventory</Typography>
-                        <EditModeToggleButton
-                            className={classes.button}
-                            value={!collapsed}
-                            onChange={() =>
-                                setCollapsed((prevState) => !prevState)
-                            }
-                        />
+                        {hasFullPermissions && (
+                            <EditModeToggleButton
+                                value={!collapsed}
+                                onChange={() =>
+                                    setCollapsed((prevState) => !prevState)
+                                }
+                            />
+                        )}
                     </Stack>
                     <Divider />
                     {isFetching ? (
@@ -280,14 +285,14 @@ function DeliverableDetails(props) {
 
 DeliverableDetails.propTypes = {
     deliverables: PropTypes.arrayOf(PropTypes.object),
-    taskUUID: PropTypes.string,
+    taskId: PropTypes.string,
     onChange: PropTypes.func,
     onDelete: PropTypes.func,
 };
 
 DeliverableDetails.defaultProps = {
     deliverables: [],
-    taskUUID: "",
+    taskId: "",
     onChange: () => {},
     onDelete: () => {},
 };

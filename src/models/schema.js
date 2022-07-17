@@ -95,28 +95,12 @@ export const schema = {
                 "profilePictureURL": {
                     "name": "profilePictureURL",
                     "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "profilePictureThumbnailURL": {
-                    "name": "profilePictureThumbnailURL",
-                    "isArray": false,
-                    "type": "String",
+                    "type": "AWSURL",
                     "isRequired": false,
                     "attributes": []
                 },
                 "profilePicture": {
                     "name": "profilePicture",
-                    "isArray": false,
-                    "type": {
-                        "nonModel": "S3Object"
-                    },
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "profilePictureThumbnail": {
-                    "name": "profilePictureThumbnail",
                     "isArray": false,
                     "type": {
                         "nonModel": "S3Object"
@@ -842,6 +826,19 @@ export const schema = {
                         "targetName": "dropOffLocationId"
                     }
                 },
+                "establishmentLocation": {
+                    "name": "establishmentLocation",
+                    "isArray": false,
+                    "type": {
+                        "model": "Location"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "establishmentLocationId"
+                    }
+                },
                 "riderResponsibility": {
                     "name": "riderResponsibility",
                     "isArray": false,
@@ -957,6 +954,15 @@ export const schema = {
                         "name": "byDropOffLocation",
                         "fields": [
                             "dropOffLocationId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byEstasblishmentLocation",
+                        "fields": [
+                            "establishmentLocationId"
                         ]
                     }
                 },
@@ -1136,6 +1142,20 @@ export const schema = {
                     "association": {
                         "connectionType": "HAS_MANY",
                         "associatedWith": "dropOffLocation"
+                    }
+                },
+                "taskAsEstablishment": {
+                    "name": "taskAsEstablishment",
+                    "isArray": true,
+                    "type": {
+                        "model": "Task"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "establishmentLocation"
                     }
                 },
                 "comments": {
@@ -2001,5 +2021,5 @@ export const schema = {
             }
         }
     },
-    "version": "80201745af5ce2e8c7821fbcc3fea6d4"
+    "version": "0cadd3873cfe1b6b174da91856e5817d"
 };

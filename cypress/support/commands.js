@@ -27,6 +27,7 @@ import { syncExpression } from "aws-amplify";
 import "cypress-localstorage-commands";
 import _ from "lodash";
 import "@testing-library/cypress/add-commands";
+import "./auth-provider-commands/cognito";
 
 const Auth = require("aws-amplify").Auth;
 const Amplify = require("aws-amplify").Amplify;

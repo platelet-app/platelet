@@ -150,9 +150,7 @@ export declare class User {
   readonly riderResponsibility?: string | null;
   readonly possibleRiderResponsibilities?: (PossibleRiderResponsibilities | null)[] | null;
   readonly profilePictureURL?: string | null;
-  readonly profilePictureThumbnailURL?: string | null;
   readonly profilePicture?: S3Object | null;
-  readonly profilePictureThumbnail?: S3Object | null;
   readonly comments?: (Comment | null)[] | null;
   readonly assignments?: (TaskAssignee | null)[] | null;
   readonly createdTasks?: (Task | null)[] | null;
@@ -224,6 +222,7 @@ export declare class Task {
   readonly requesterContact?: AddressAndContactDetails | null;
   readonly pickUpLocation?: Location | null;
   readonly dropOffLocation?: Location | null;
+  readonly establishmentLocation?: Location | null;
   readonly riderResponsibility?: string | null;
   readonly assignees?: (TaskAssignee | null)[] | null;
   readonly priority?: Priority | keyof typeof Priority | null;
@@ -254,6 +253,7 @@ export declare class Location {
   readonly what3words?: string | null;
   readonly tasksAsPickUp?: (Task | null)[] | null;
   readonly tasksAsDropOff?: (Task | null)[] | null;
+  readonly taskAsEstablishment?: (Task | null)[] | null;
   readonly comments?: (Comment | null)[] | null;
   readonly disabled?: number | null;
   readonly createdAt?: string | null;

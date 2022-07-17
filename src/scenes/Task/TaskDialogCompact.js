@@ -15,9 +15,9 @@ import { Button, Hidden } from "@mui/material";
 import * as models from "../../models/index";
 import { DataStore } from "aws-amplify";
 import { dataStoreModelSyncedStatusSelector } from "../../redux/Selectors";
-import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { useHistory, useLocation, useParams } from "react-router";
 import PropTypes from "prop-types";
+import { setSelectionActionsPending } from "../../redux/selectionMode/selectionModeActions";
 
 const drawerWidth = 420;
 const drawerWidthMd = 420;
@@ -44,8 +44,6 @@ const useStyles = makeStyles((theme) => ({
         },
     },
 }));
-
-const errorMessage = "Sorry, an error occurred";
 
 const DialogWrapper = (props) => {
     const { handleClose } = props;
@@ -111,17 +109,13 @@ function TaskDialogCompact(props) {
     const classes = useStyles();
     const theme = useTheme();
     const isMd = useMediaQuery(theme.breakpoints.down("lg"));
+    const taskObserver = useRef({ unsubscribe: () => {} });
     const [isFetching, setIsFetching] = useState(false);
     const [errorState, setErrorState] = useState(null);
     const [state, setState] = useState(initialState);
     const taskRef = useRef();
     taskRef.current = state;
-    const taskObserver = useRef({ unsubscribe: () => {} });
     const tasksSynced = useSelector(dataStoreModelSyncedStatusSelector).Task;
-    const locationsSynced = useSelector(
-        dataStoreModelSyncedStatusSelector
-    ).Location;
-    const dispatch = useDispatch();
     let { task_uuid_b62 } = useParams();
     const taskUUID = decodeUUID(task_uuid_b62);
 
@@ -129,23 +123,17 @@ function TaskDialogCompact(props) {
         setIsFetching(true);
         try {
             const taskData = await DataStore.query(models.Task, taskUUID);
+            taskObserver.current.unsubscribe();
+            taskObserver.current = DataStore.observe(
+                models.Task,
+                taskUUID
+            ).subscribe(async (observeResult) => {
+                if (observeResult.opType === "DELETE") {
+                    setNotFound(true);
+                }
+            });
             if (taskData) {
-                setState(taskData);
                 setNotFound(false);
-                taskObserver.current.unsubscribe();
-                taskObserver.current = DataStore.observe(
-                    models.Task,
-                    taskUUID
-                ).subscribe(async (observeResult) => {
-                    const taskData = observeResult.element;
-                    if (["UPDATE", "INSERT"].includes(observeResult.opType)) {
-                        setState(taskData);
-                        setNotFound(false);
-                    } else if (observeResult.opType === "DELETE") {
-                        setNotFound(true);
-                        setState(initialState);
-                    }
-                });
             } else {
                 setNotFound(true);
             }
@@ -156,78 +144,7 @@ function TaskDialogCompact(props) {
             console.error("Request failed", error);
         }
     }
-    useEffect(() => getTask(), [props.taskId, tasksSynced, locationsSynced]);
-
-    useEffect(() => () => taskObserver.current.unsubscribe(), []);
-
-    async function setTimeOfCall(value) {
-        try {
-            const result = await DataStore.query(models.Task, taskUUID);
-            if (!result) throw new Error("Task doesn't exist");
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated.timeOfCall = value;
-                })
-            );
-            taskRef.current = { ...taskRef.current, timeOfCall: value };
-            setState((prevState) => ({
-                ...prevState,
-                timeOfCall: value,
-            }));
-        } catch (error) {
-            console.log(error);
-            dispatch(displayErrorNotification(errorMessage));
-        }
-    }
-
-    async function selectPriority(priority) {
-        try {
-            const result = await DataStore.query(models.Task, taskUUID);
-            if (!result) throw new Error("Task doesn't exist");
-            await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated.priority = priority;
-                })
-            );
-        } catch (error) {
-            console.log(error);
-            dispatch(displayErrorNotification(errorMessage));
-        }
-    }
-
-    async function updateRequesterContact(requesterValue) {
-        try {
-            const result = await DataStore.query(models.Task, taskUUID);
-            if (!result) throw new Error("Task doesn't exist");
-            if (!result.requesterContact) {
-                await DataStore.save(
-                    models.Task.copyOf(result, (updated) => {
-                        updated.requesterContact = requesterValue;
-                    })
-                );
-            } else {
-                await DataStore.save(
-                    models.Task.copyOf(result, (updated) => {
-                        for (const [key, value] of Object.entries(
-                            requesterValue
-                        )) {
-                            updated.requesterContact[key] = value;
-                        }
-                    })
-                );
-            }
-            taskRef.current = {
-                ...taskRef.current,
-                requesterContact: {
-                    ...taskRef.current.requesterContact,
-                    ...requesterValue,
-                },
-            };
-        } catch (error) {
-            console.log(error);
-            dispatch(displayErrorNotification(errorMessage));
-        }
-    }
+    useEffect(() => getTask(), [props.taskId, tasksSynced]);
 
     const history = useHistory();
     const location = useLocation();
@@ -248,6 +165,14 @@ function TaskDialogCompact(props) {
                 taskId={taskUUID}
             />
         );
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(setSelectionActionsPending(true));
+    }, [dispatch]);
+
+    useEffect(() => () => dispatch(setSelectionActionsPending(false)), []);
 
     if (notFound) {
         return (
@@ -281,10 +206,7 @@ function TaskDialogCompact(props) {
                     <TaskOverview
                         isFetching={isFetching}
                         task={state}
-                        taskUUID={taskUUID}
-                        onSelectPriority={selectPriority}
-                        onChangeTimeOfCall={setTimeOfCall}
-                        onChangeRequesterContact={updateRequesterContact}
+                        taskId={taskUUID}
                     />
                     <Hidden mdDown>
                         <CommentsSideBar

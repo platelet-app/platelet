@@ -32,8 +32,9 @@ export default function ProfilePicture(props) {
             canvasResult.toBlob(resolve, "image/jpeg")
         );
         const newImageURL = await canvasResult.toDataURL("image/jpeg");
-        setNewImage(newImageURL);
+
         await uploadProfilePicture(props.userId, blob);
+        setNewImage(newImageURL);
         setUploading(false);
         setImage(null);
     };
@@ -44,6 +45,7 @@ export default function ProfilePicture(props) {
                 const profilePicture = await generateS3Link(
                     props.profilePicture.key
                 );
+                console.log(profilePicture);
                 if (profilePicture) {
                     setImageUrl(profilePicture);
                 }

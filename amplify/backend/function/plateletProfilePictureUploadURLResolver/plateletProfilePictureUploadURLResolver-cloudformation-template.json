@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"Amplify\",\"createdWith\":\"7.6.8\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
+  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"Amplify\",\"createdWith\":\"8.0.3\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
   "Parameters": {
     "CloudWatchRule": {
       "Type": "String",
@@ -19,6 +19,14 @@
     "apiplateletGraphQLAPIIdOutput": {
       "Type": "String",
       "Default": "apiplateletGraphQLAPIIdOutput"
+    },
+    "apiplateletGraphQLAPIEndpointOutput": {
+      "Type": "String",
+      "Default": "apiplateletGraphQLAPIEndpointOutput"
+    },
+    "storageplateletStorageBucketName": {
+      "Type": "String",
+      "Default": "storageplateletStorageBucketName"
     }
   },
   "Conditions": {
@@ -51,12 +59,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "plateletCognitoPostConfirmation",
+            "plateletProfilePictureUploadURLResolver",
             {
               "Fn::Join": [
                 "",
                 [
-                  "plateletCognitoPostConfirmation",
+                  "plateletProfilePictureUploadURLResolver",
                   "-",
                   {
                     "Ref": "env"
@@ -74,60 +82,14 @@
             "REGION": {
               "Ref": "AWS::Region"
             },
-            "API_PLATELET_USERTABLE_NAME": {
-              "Fn::ImportValue": {
-                "Fn::Sub": "${apiplateletGraphQLAPIIdOutput}:GetAtt:UserTable:Name"
-              }
-            },
-            "API_PLATELET_USERTABLE_ARN": {
-              "Fn::Join": [
-                "",
-                [
-                  "arn:aws:dynamodb:",
-                  {
-                    "Ref": "AWS::Region"
-                  },
-                  ":",
-                  {
-                    "Ref": "AWS::AccountId"
-                  },
-                  ":table/",
-                  {
-                    "Fn::ImportValue": {
-                      "Fn::Sub": "${apiplateletGraphQLAPIIdOutput}:GetAtt:UserTable:Name"
-                    }
-                  }
-                ]
-              ]
-            },
             "API_PLATELET_GRAPHQLAPIIDOUTPUT": {
               "Ref": "apiplateletGraphQLAPIIdOutput"
             },
-            "API_PLATELET_ADDRESSANDCONTACTDETAILSTABLE_NAME": {
-              "Fn::ImportValue": {
-                "Fn::Sub": "${apiplateletGraphQLAPIIdOutput}:GetAtt:AddressAndContactDetailsTable:Name"
-              }
+            "API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT": {
+              "Ref": "apiplateletGraphQLAPIEndpointOutput"
             },
-            "API_PLATELET_ADDRESSANDCONTACTDETAILSTABLE_ARN": {
-              "Fn::Join": [
-                "",
-                [
-                  "arn:aws:dynamodb:",
-                  {
-                    "Ref": "AWS::Region"
-                  },
-                  ":",
-                  {
-                    "Ref": "AWS::AccountId"
-                  },
-                  ":table/",
-                  {
-                    "Fn::ImportValue": {
-                      "Fn::Sub": "${apiplateletGraphQLAPIIdOutput}:GetAtt:AddressAndContactDetailsTable:Name"
-                    }
-                  }
-                ]
-              ]
+            "STORAGE_PLATELETSTORAGE_BUCKETNAME": {
+              "Ref": "storageplateletStorageBucketName"
             }
           }
         },
@@ -148,12 +110,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "plateletLambdaRole20d01d74",
+            "plateletLambdaRolece5ae342",
             {
               "Fn::Join": [
                 "",
                 [
-                  "plateletLambdaRole20d01d74",
+                  "plateletLambdaRolece5ae342",
                   "-",
                   {
                     "Ref": "env"
@@ -242,25 +204,14 @@
             {
               "Effect": "Allow",
               "Action": [
-                "dynamodb:Put*",
-                "dynamodb:Create*",
-                "dynamodb:BatchWriteItem",
-                "dynamodb:Get*",
-                "dynamodb:BatchGetItem",
-                "dynamodb:List*",
-                "dynamodb:Describe*",
-                "dynamodb:Scan",
-                "dynamodb:Query",
-                "dynamodb:Update*",
-                "dynamodb:RestoreTable*",
-                "dynamodb:Delete*"
+                "appsync:GraphQL"
               ],
               "Resource": [
                 {
                   "Fn::Join": [
                     "",
                     [
-                      "arn:aws:dynamodb:",
+                      "arn:aws:appsync:",
                       {
                         "Ref": "AWS::Region"
                       },
@@ -268,34 +219,28 @@
                       {
                         "Ref": "AWS::AccountId"
                       },
-                      ":table/",
+                      ":apis/",
                       {
-                        "Fn::ImportValue": {
-                          "Fn::Sub": "${apiplateletGraphQLAPIIdOutput}:GetAtt:UserTable:Name"
-                        }
-                      }
+                        "Ref": "apiplateletGraphQLAPIIdOutput"
+                      },
+                      "/types/Query/*"
                     ]
                   ]
-                },
+                }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": "s3:ListBucket",
+              "Resource": [
                 {
                   "Fn::Join": [
                     "",
                     [
-                      "arn:aws:dynamodb:",
+                      "arn:aws:s3:::",
                       {
-                        "Ref": "AWS::Region"
-                      },
-                      ":",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":table/",
-                      {
-                        "Fn::ImportValue": {
-                          "Fn::Sub": "${apiplateletGraphQLAPIIdOutput}:GetAtt:UserTable:Name"
-                        }
-                      },
-                      "/index/*"
+                        "Ref": "storageplateletStorageBucketName"
+                      }
                     ]
                   ]
                 }
@@ -304,60 +249,19 @@
             {
               "Effect": "Allow",
               "Action": [
-                "dynamodb:Put*",
-                "dynamodb:Create*",
-                "dynamodb:BatchWriteItem",
-                "dynamodb:Get*",
-                "dynamodb:BatchGetItem",
-                "dynamodb:List*",
-                "dynamodb:Describe*",
-                "dynamodb:Scan",
-                "dynamodb:Query",
-                "dynamodb:Update*",
-                "dynamodb:RestoreTable*",
-                "dynamodb:Delete*"
+                "s3:PutObject",
+                "s3:GetObject"
               ],
               "Resource": [
                 {
                   "Fn::Join": [
                     "",
                     [
-                      "arn:aws:dynamodb:",
+                      "arn:aws:s3:::",
                       {
-                        "Ref": "AWS::Region"
+                        "Ref": "storageplateletStorageBucketName"
                       },
-                      ":",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":table/",
-                      {
-                        "Fn::ImportValue": {
-                          "Fn::Sub": "${apiplateletGraphQLAPIIdOutput}:GetAtt:AddressAndContactDetailsTable:Name"
-                        }
-                      }
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:aws:dynamodb:",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      ":",
-                      {
-                        "Ref": "AWS::AccountId"
-                      },
-                      ":table/",
-                      {
-                        "Fn::ImportValue": {
-                          "Fn::Sub": "${apiplateletGraphQLAPIIdOutput}:GetAtt:AddressAndContactDetailsTable:Name"
-                        }
-                      },
-                      "/index/*"
+                      "/*"
                     ]
                   ]
                 }

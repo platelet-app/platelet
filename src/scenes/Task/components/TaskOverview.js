@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function TaskOverview(props) {
-    const { taskUUID, task } = props;
+    const { taskId, task } = props;
     const classes = useStyles();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
@@ -58,70 +58,38 @@ function TaskOverview(props) {
                     <Stack direction={"column"} spacing={isSm ? 1 : 3}>
                         <TaskDetailsPanel
                             isFetching={props.isFetching}
-                            onSelectPriority={props.onSelectPriority}
-                            onChangeTimeOfCall={props.onChangeTimeOfCall}
-                            onChangeRequesterContact={
-                                props.onChangeRequesterContact
-                            }
-                            taskId={taskUUID}
-                            task={task}
+                            taskId={taskId}
                         />
-                        <TaskActions taskId={taskUUID} />
-                        <Hidden xlUp>
-                            <DeliverableDetails
-                                deliverables={
-                                    task.deliverables
-                                        ? Object.values(task.deliverables)
-                                        : []
-                                }
-                                taskId={taskUUID}
-                            />
-                        </Hidden>
+                        <TaskActions taskId={taskId} />
                     </Stack>
                 </Grid>
                 <Grid item className={classes.item}>
                     <Stack direction={"column"} spacing={isSm ? 1 : 3}>
                         <LocationDetailsPanel
-                            taskId={task ? task.id : null}
-                            task={task}
-                            locationId={
-                                task.pickUpLocation
-                                    ? task.pickUpLocation.id
-                                    : null
-                            }
+                            taskId={taskId}
                             locationKey={"pickUpLocation"}
                         />
 
                         <LocationDetailsPanel
-                            taskId={task ? task.id : null}
-                            task={task}
-                            locationId={
-                                task.dropOffLocation
-                                    ? task.dropOffLocation.id
-                                    : null
-                            }
+                            taskId={taskId}
                             locationKey={"dropOffLocation"}
                         />
-                        <Hidden mdUp>
-                            <TaskAssignmentsPanel taskId={taskUUID} />
-                        </Hidden>
-                    </Stack>
-                </Grid>
-                <Hidden xlDown>
-                    <Grid item className={classes.item}>
                         <DeliverableDetails
                             deliverables={
                                 task.deliverables
                                     ? Object.values(task.deliverables)
                                     : []
                             }
-                            taskId={taskUUID}
+                            taskId={taskId}
                         />
-                    </Grid>
-                </Hidden>
+                        <Hidden mdUp>
+                            <TaskAssignmentsPanel taskId={taskId} />
+                        </Hidden>
+                    </Stack>
+                </Grid>
                 <Hidden mdUp>
                     <Grid item className={classes.item}>
-                        <CommentsSection parentId={taskUUID} />
+                        <CommentsSection parentId={taskId} />
                     </Grid>
                 </Hidden>
             </Grid>
@@ -132,13 +100,15 @@ function TaskOverview(props) {
 TaskOverview.propTypes = {
     task: PropTypes.object,
     isFetching: PropTypes.bool,
-    taskUUID: PropTypes.string,
+    taskId: PropTypes.string,
     onChangeTimeOfCall: PropTypes.func,
+    assignmentRole: PropTypes.string,
 };
 
 TaskOverview.defaultProps = {
     isFetching: false,
     onChangeTimeOfCall: () => {},
+    assignmentRole: null,
 };
 
 export default TaskOverview;

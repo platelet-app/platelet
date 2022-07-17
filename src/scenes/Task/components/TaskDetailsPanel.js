@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
+import TaskDetailsEstablishment from "./TaskDetailsEstablishment";
 import Typography from "@mui/material/Typography";
 import LabelItemPair from "../../../components/LabelItemPair";
 import PrioritySelect from "./PrioritySelect";
 import PropTypes from "prop-types";
-import makeStyles from "@mui/styles/makeStyles";
 import TimePicker from "./TimePicker";
 import { Divider, Paper, Skeleton, Stack } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
@@ -13,17 +13,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
-import { saveTaskTimeWithKey } from "../utilities";
 import RequesterContact from "./RequesterContact";
-
-const useStyles = makeStyles({
-    requesterContact: {
-        paddingLeft: "20px",
-    },
-    priority: {
-        paddingLeft: "20px",
-    },
-});
+import { userRoles } from "../../../apiConsts";
+import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 
 function TaskDetailsPanel(props) {
     const cardClasses = dialogCardStyles();
@@ -35,6 +27,7 @@ function TaskDetailsPanel(props) {
         priority: null,
         riderResponsibility: null,
         id: null,
+        establishmentLocation: null,
         requesterContact: {
             name: null,
             telephoneNumber: null,
@@ -44,7 +37,8 @@ function TaskDetailsPanel(props) {
     const [errorState, setErrorState] = useState(null);
     const taskObserver = useRef({ unsubscribe: () => {} });
     const dispatch = useDispatch();
-    const classes = useStyles();
+    const currentUserRole = useAssignmentRole(state.id);
+    const hasFullPermissions = currentUserRole === userRoles.coordinator;
 
     const taskModelsSynced = useSelector(
         dataStoreModelSyncedStatusSelector
@@ -65,7 +59,15 @@ function TaskDetailsPanel(props) {
             ).subscribe(async (observeResult) => {
                 const taskData = observeResult.element;
                 if (["INSERT", "UPDATE"].includes(observeResult.opType)) {
-                    setState(taskData);
+                    if (taskData.establishmentLocationId) {
+                        const establishmentLocation = await DataStore.query(
+                            models.Location,
+                            taskData.establishmentLocationId
+                        );
+                        setState({ ...taskData, establishmentLocation });
+                    } else {
+                        setState(taskData);
+                    }
                 } else if (observeResult.opType === "DELETE") {
                     setErrorState(new Error("Task was deleted"));
                 }
@@ -79,28 +81,75 @@ function TaskDetailsPanel(props) {
     useEffect(() => getTask(), [props.taskId, taskModelsSynced]);
     useEffect(() => () => taskObserver.current.unsubscribe(), []);
 
-    async function setTimeWithKey(key, value) {
+    async function setTimeOfCall(value) {
         try {
-            saveTaskTimeWithKey(key, value, props.taskId);
-            setState((prevState) => ({
-                ...prevState,
-                [key]: value.toISOString(),
-            }));
+            const result = await DataStore.query(models.Task, props.taskId);
+            if (!result) throw new Error("Task doesn't exist");
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.timeOfCall = value.toISOString();
+                })
+            );
+        } catch (error) {
+            console.log(error);
+            dispatch(displayErrorNotification(errorMessage));
+        }
+    }
+    async function selectPriority(priority) {
+        try {
+            const result = await DataStore.query(models.Task, props.taskId);
+            if (!result) throw new Error("Task doesn't exist");
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.priority = priority;
+                })
+            );
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
         }
     }
 
-    function onChangeTimeOfCall(value) {
-        //check value is a Date object
-        if (value && value instanceof Date) {
-            setTimeWithKey("timeOfCall", value);
+    async function setEstablishmentLocation(value) {
+        try {
+            const result = await DataStore.query(models.Task, props.taskId);
+            if (!result) throw new Error("Task doesn't exist");
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.establishmentLocation = value;
+                })
+            );
+        } catch (error) {
+            console.log(error);
+            dispatch(displayErrorNotification(errorMessage));
         }
     }
 
-    function onSelectPriority(priority) {
-        props.onSelectPriority(priority);
+    async function updateRequesterContact(requesterValue) {
+        try {
+            const result = await DataStore.query(models.Task, props.taskId);
+            if (!result) throw new Error("Task doesn't exist");
+            if (!result.requesterContact) {
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        updated.requesterContact = requesterValue;
+                    })
+                );
+            } else {
+                await DataStore.save(
+                    models.Task.copyOf(result, (updated) => {
+                        for (const [key, value] of Object.entries(
+                            requesterValue
+                        )) {
+                            updated.requesterContact[key] = value;
+                        }
+                    })
+                );
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch(displayErrorNotification(errorMessage));
+        }
     }
 
     if (errorState) {
@@ -122,42 +171,58 @@ function TaskDetailsPanel(props) {
                     )}
                     <LabelItemPair label={"Time of call"}>
                         <TimePicker
-                            onChange={onChangeTimeOfCall}
-                            disableClear={true}
+                            onChange={setTimeOfCall}
+                            disableClear
                             time={state.timeOfCall}
+                            hideEditIcon={!hasFullPermissions}
                         />
                     </LabelItemPair>
-                    <Divider />
-                    <RequesterContact
-                        onChange={(value) =>
-                            props.onChangeRequesterContact(value)
-                        }
-                        telephoneNumber={
-                            state.requesterContact
-                                ? state.requesterContact.telephoneNumber
-                                : null
-                        }
-                        name={
-                            state.requesterContact
-                                ? state.requesterContact.name
-                                : null
-                        }
-                    />
-                    <Divider />
+                    {hasFullPermissions && (
+                        <TaskDetailsEstablishment
+                            value={state.establishmentLocation}
+                            onChange={setEstablishmentLocation}
+                        />
+                    )}
+                    {hasFullPermissions && <Divider />}
+                    {hasFullPermissions && (
+                        <>
+                            <RequesterContact
+                                onChange={(value) =>
+                                    updateRequesterContact(value)
+                                }
+                                telephoneNumber={
+                                    state.requesterContact
+                                        ? state.requesterContact.telephoneNumber
+                                        : null
+                                }
+                                hideEditIcon={!hasFullPermissions}
+                                name={
+                                    state.requesterContact
+                                        ? state.requesterContact.name
+                                        : null
+                                }
+                            />
+                            <Divider />
+                        </>
+                    )}
                     <Stack
                         direction="row"
                         alignItems="center"
                         justifyContent="space-between"
                     >
                         <Typography>Priority:</Typography>
-                        <PrioritySelect
-                            onSelect={onSelectPriority}
-                            priority={state.priority}
-                        />
+                        {hasFullPermissions ? (
+                            <PrioritySelect
+                                onSelect={selectPriority}
+                                priority={state.priority}
+                            />
+                        ) : (
+                            <Typography>{state.priority}</Typography>
+                        )}
                     </Stack>
+                    {hasFullPermissions && <Divider />}
                     {state.riderResponsibility && (
                         <>
-                            <Divider />
                             <LabelItemPair label={"Responsibility"}>
                                 <Typography>
                                     {state.riderResponsibility}

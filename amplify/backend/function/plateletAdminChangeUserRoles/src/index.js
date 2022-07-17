@@ -110,7 +110,10 @@ async function cleanUp(data) {
 }
 
 exports.handler = async (event) => {
-    const roles = event.arguments.roles;
+    // this is so admin can't give themselves super role
+    const roles = event.arguments.roles.filter((role) =>
+        ["USER", "COORDINATOR", "RIDER", "ADMIN"].includes(role)
+    );
     const userId = event.arguments.userId;
     const currentUserData = await getCurrentUserRoles(userId);
     try {

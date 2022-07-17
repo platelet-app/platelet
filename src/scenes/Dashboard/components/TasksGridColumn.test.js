@@ -2,7 +2,12 @@ import React from "react";
 import { render } from "../../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import TasksGridColumn from "./TasksGridColumn";
-import { priorities, tasksStatus, userRoles } from "../../../apiConsts";
+import {
+    commentVisibility,
+    priorities,
+    tasksStatus,
+    userRoles,
+} from "../../../apiConsts";
 import * as amplify from "aws-amplify";
 import * as models from "../../../models";
 import { mockAllIsIntersecting } from "react-intersection-observer/test-utils";
@@ -472,11 +477,10 @@ describe("TasksGridColumn", () => {
             status: tasksStatus.new,
             timeOfCall,
         });
+        const querySpy = jest.spyOn(DataStore, "query");
         render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
             preloadedState,
         });
-        const querySpy = jest.spyOn(DataStore, "query");
-        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(querySpy).toHaveBeenNthCalledWith(
                 1,
@@ -521,11 +525,10 @@ describe("TasksGridColumn", () => {
             status: tasksStatus.active,
             timeOfCall,
         });
+        const querySpy = jest.spyOn(DataStore, "query");
         render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
             preloadedState,
         });
-        const querySpy = jest.spyOn(DataStore, "query");
-        mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(querySpy).toHaveBeenNthCalledWith(
                 1,
@@ -1026,5 +1029,275 @@ describe("TasksGridColumn", () => {
             expect(card).not.toBeVisible();
         }
         userEvent.click(screen.getByRole("button", { name: "Clear Search" }));
+    });
+
+    test("select and unselect items by clicking the checkbox", async () => {
+        await DataStore.save(new models.Task({ status: tasksStatus.new }));
+        await DataStore.save(new models.Task({ status: tasksStatus.new }));
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 1,
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+            preloadedState,
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(3);
+        });
+        expect(
+            await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
+        ).toHaveLength(3);
+        const checks = await screen.findAllByTestId("task-item-select");
+        userEvent.click(checks[0]);
+        // both the taskitem and header checkbox will be changed
+        expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(1);
+        expect(
+            await screen.findAllByTestId("IndeterminateCheckBoxIcon")
+        ).toHaveLength(1);
+        userEvent.click(checks[1]);
+        expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(3);
+        expect(screen.queryByTestId("IndeterminateCheckBoxIcon")).toBeNull();
+        userEvent.click(checks[0]);
+        userEvent.click(checks[1]);
+        expect(
+            await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
+        ).toHaveLength(3);
+    });
+
+    test.skip("long press in mobile view to select", async () => {
+        // not working yet
+        global.innerWidth = 100;
+        global.dispatchEvent(new Event("resize"));
+        await DataStore.save(new models.Task({ status: tasksStatus.new }));
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 1,
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+            preloadedState,
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        // simulate a long press
+        const longPress = new MouseEvent("mousedown", {
+            bubbles: true,
+            cancelable: true,
+            clientX: 0,
+            clientY: 0,
+            button: 0,
+        });
+        const taskItem = await screen.findByTestId("task-item-parent");
+        taskItem.dispatchEvent(longPress);
+    });
+
+    test("select all the items in a column", async () => {
+        for (const i in _.range(0, 10)) {
+            await DataStore.save(new models.Task({ status: tasksStatus.new }));
+        }
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 1,
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(
+            <TasksGridColumn
+                taskKey={[tasksStatus.new]}
+                title={tasksStatus.new}
+            />,
+            {
+                preloadedState,
+            }
+        );
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(11);
+        });
+        expect(
+            await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
+        ).toHaveLength(11);
+        userEvent.click(screen.getByTestId(`${tasksStatus.new}-select-all`));
+
+        expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(11);
+    });
+
+    test("show the comment count", async () => {
+        const task = await DataStore.save(
+            new models.Task({
+                status: tasksStatus.new,
+            })
+        );
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        await DataStore.save(
+            new models.Comment({
+                parentId: task.id,
+                visibility: commentVisibility.everyone,
+                author: mockWhoami,
+                body: "test",
+            })
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 1,
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        const tooltip = await screen.findByTestId("comment-count-tooltip");
+        userEvent.hover(tooltip);
+        expect(await screen.findByText("1 comment")).toBeInTheDocument();
+        await DataStore.save(
+            new models.Comment({
+                parentId: task.id,
+                visibility: commentVisibility.everyone,
+                author: mockWhoami,
+                body: "test",
+            })
+        );
+        expect(await screen.findByText("2 comments")).toBeInTheDocument();
+    });
+
+    test("show the assignees", async () => {
+        const task = await DataStore.save(
+            new models.Task({
+                status: tasksStatus.new,
+            })
+        );
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        const mockAssignee1 = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "A Coordinator",
+            })
+        );
+        const mockAssignee2 = await DataStore.save(
+            new models.User({
+                roles: [userRoles.rider],
+                displayName: "A Rider",
+            })
+        );
+        const mockAssignment1 = await DataStore.save(
+            new models.TaskAssignee({
+                task: task,
+                assignee: mockAssignee1,
+                role: userRoles.coordinator,
+            })
+        );
+        const mockAssignment2 = await DataStore.save(
+            new models.TaskAssignee({
+                task: task,
+                assignee: mockAssignee2,
+                role: userRoles.rider,
+            })
+        );
+        const mockAssignmentMe = await DataStore.save(
+            new models.TaskAssignee({
+                task: task,
+                assignee: mockWhoami,
+                role: userRoles.coordinator,
+            })
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 1,
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [mockAssignment1, mockAssignment2, mockAssignmentMe],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        const tooltip = await screen.findByTestId("assignee-names-tooltip");
+        userEvent.hover(tooltip);
+        expect(await screen.findByText(/A Coordinator/)).toBeInTheDocument();
+        expect(await screen.findByText(/A Rider/)).toBeInTheDocument();
+        expect(screen.queryByText(/Someone Person/)).toBeNull();
     });
 });

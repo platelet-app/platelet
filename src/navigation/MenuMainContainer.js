@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "../index.css";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
@@ -15,7 +15,10 @@ import { clearDashboardFilter } from "../redux/dashboardFilter/DashboardFilterAc
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { DashboardDetailTabs } from "../scenes/Dashboard/components/DashboardDetailTabs";
 import MobileNavigationDrawer from "./MobileNavigationDrawer";
-import { menuIndexSelector } from "../redux/Selectors";
+import {
+    dashboardFilterTermSelector,
+    menuIndexSelector,
+} from "../redux/Selectors";
 
 const useStyles = makeStyles((theme) => {
     return {
@@ -38,6 +41,7 @@ export function MenuMainContainer() {
     const classes = useStyles();
     const [searchMode, setSearchMode] = useState(false);
     const menuIndex = useSelector(menuIndexSelector);
+    const currentFilter = useSelector(dashboardFilterTermSelector);
     const lightToggleProfileMenu = searchMode ? (
         <></>
     ) : (
@@ -54,6 +58,19 @@ export function MenuMainContainer() {
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
 
+    useEffect(() => {
+        if (menuIndex !== "dashboard") {
+            setSearchMode(false);
+            dispatch(clearDashboardFilter());
+        } else if (currentFilter && !searchMode && isSm) {
+            setSearchMode(true);
+        }
+    }, [currentFilter, isSm, menuIndex]);
+
+    useEffect(() => {
+        if (!isSm && searchMode) setSearchMode(false);
+    }, [isSm, searchMode]);
+
     return (
         <React.Fragment>
             <AppBar
@@ -66,22 +83,39 @@ export function MenuMainContainer() {
                     justifyContent="space-between"
                     className={classes.appBarComponents}
                 >
-                    <Stack sx={{ width: "100%" }} direction="row">
-                        <Box sx={{ width: 140 }}>
-                            <MobileNavigationDrawer />
-                        </Box>
-                        {menuIndex === "dashboard" && (
-                            <>
-                                <Hidden mdDown>
-                                    <Box sx={{ width: "100%", maxWidth: 1100 }}>
-                                        <DashboardDetailTabs />
-                                    </Box>
-                                </Hidden>
-                                <Hidden mdUp>
-                                    <Stack
-                                        alignItems={"center"}
-                                        direction={"row"}
-                                    >
+                    {searchMode ? (
+                        <Stack
+                            sx={{ width: "100%" }}
+                            direction="row"
+                            alignItems="center"
+                        >
+                            <IconButton
+                                onClick={toggleSearchMode}
+                                color="inherit"
+                                size="large"
+                            >
+                                {toggleIcon}
+                            </IconButton>
+                            <TaskFilterTextField />
+                        </Stack>
+                    ) : (
+                        <>
+                            <Box sx={{ width: 140 }}>
+                                <MobileNavigationDrawer />
+                            </Box>
+                            {menuIndex === "dashboard" && (
+                                <>
+                                    <Hidden mdDown>
+                                        <Box
+                                            sx={{
+                                                width: "100%",
+                                                maxWidth: 1100,
+                                            }}
+                                        >
+                                            <DashboardDetailTabs />
+                                        </Box>
+                                    </Hidden>
+                                    <Hidden mdUp>
                                         <IconButton
                                             onClick={toggleSearchMode}
                                             color="inherit"
@@ -89,13 +123,12 @@ export function MenuMainContainer() {
                                         >
                                             {toggleIcon}
                                         </IconButton>
-                                        {searchMode && <TaskFilterTextField />}
-                                    </Stack>
-                                </Hidden>
-                            </>
-                        )}
-                    </Stack>
-                    {lightToggleProfileMenu}
+                                    </Hidden>
+                                </>
+                            )}
+                            {lightToggleProfileMenu}
+                        </>
+                    )}
                 </Stack>
             </AppBar>
             <MainWindow />

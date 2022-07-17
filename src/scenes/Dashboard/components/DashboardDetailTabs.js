@@ -1,8 +1,6 @@
 import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 import PropTypes from "prop-types";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import { useDispatch, useSelector } from "react-redux";
 import IconButton from "@mui/material/IconButton";
@@ -19,12 +17,11 @@ import {
     setRoleView,
 } from "../../../redux/Actions";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
-import { Button, Chip, Fab, Hidden, Stack } from "@mui/material";
+import { Chip, Fab, Hidden, Stack } from "@mui/material";
 import { useTheme, useMediaQuery } from "@mui/material";
-import DoneIcon from "@mui/icons-material/Done";
-import ExploreIcon from "@mui/icons-material/Explore";
 import {
     dashboardFilteredUserSelector,
+    dashboardFilterTermSelector,
     dashboardTabIndexSelector,
     getWhoami,
     guidedSetupOpenSelector,
@@ -55,59 +52,49 @@ TabPanel.propTypes = {
     value: PropTypes.any.isRequired,
 };
 
-function a11yProps(index) {
-    return {
-        "aria-controls": `dashboard-tabpanel-${index}`,
-        "data-cy": `dashboard-tabpanel-${index}`,
-        "aria-labelledby": `dashboard-tabpanel-${index}`,
-    };
-}
-
 export function DashboardDetailTabs(props) {
     const dispatch = useDispatch();
     const [anchorElRoleMenu, setAnchorElRoleMenu] = React.useState(null);
     const whoami = useSelector(getWhoami);
-    const dashboardFilter = useSelector((state) => state.dashboardFilter);
+    const dashboardFilter = useSelector(dashboardFilterTermSelector);
     const roleView = useSelector((state) => state.roleView);
     const { show, hide } = showHide();
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
 
     const theme = useTheme();
-    const isXs = useMediaQuery(theme.breakpoints.down("sm"));
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
     const dashboardTabIndex = useSelector(dashboardTabIndexSelector);
 
-    const handleChange = (event, newValue) => {
+    const handleChange = (newValue) => {
         //props.onChange(event, newValue);
         dispatch(setDashboardTabIndex(newValue));
     };
-    const tabs = isXs ? (
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <Tabs
-                value={parseInt(dashboardTabIndex)}
-                onChange={handleChange}
-                aria-label={"dashboard-tabs"}
-            >
-                <Tab icon={<ExploreIcon />} {...a11yProps(0)} />
-                <Tab icon={<DoneIcon />} {...a11yProps(1)} />
-            </Tabs>
-        </Box>
-    ) : (
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <Tabs
-                value={parseInt(dashboardTabIndex)}
-                onChange={handleChange}
-                aria-label={"dashboard-tabs"}
-            >
-                <Tab label="In Progress" {...a11yProps(0)} />
-                <Tab label="Completed" {...a11yProps(1)} />
-            </Tabs>
-        </Box>
+    const tabs = (
+        <Stack spacing={isSm ? 1 : 2} direction="row">
+            <Chip
+                key="dashboard-tab-0"
+                aria-label="Dashboard in Progress"
+                sx={{ padding: 1 }}
+                label="IN PROGRESS"
+                color={dashboardTabIndex === 0 ? "primary" : "default"}
+                onClick={() => handleChange(0)}
+            />
+            <Chip
+                key="dashboard-tab-1"
+                aria-label="Dashboard Completed"
+                sx={{ padding: 1 }}
+                onClick={() => handleChange(1)}
+                color={dashboardTabIndex === 1 ? "primary" : "default"}
+                label="COMPLETED"
+            />
+        </Stack>
     );
 
     const addClearButton =
         !dashboardFilter && !dashboardFilteredUser ? (
             <Fab
+                key="dashboard-fab"
                 color="primary"
                 variant="extended"
                 data-cy="create-task-button"
@@ -122,6 +109,7 @@ export function DashboardDetailTabs(props) {
             </Fab>
         ) : (
             <Fab
+                key="dashboard-fab-clear"
                 variant="extended"
                 color="secondary"
                 data-cy="clear-search-button"
@@ -144,24 +132,21 @@ export function DashboardDetailTabs(props) {
             justifyContent={"space-between"}
             alignItems={"center"}
         >
+            <Box key="tabs">{tabs}</Box>
+            <Hidden key="taskfilter" mdDown>
+                <TaskFilterTextField
+                    key="taskfiltertextfield"
+                    sx={{ width: "40%" }}
+                />
+            </Hidden>
             <Stack
-                direction={"row"}
-                spacing={2}
-                justifyContent={"flex-start"}
-                alignItems={"flex-end"}
-            >
-                <Box>{tabs}</Box>
-                <Hidden mdDown>
-                    <TaskFilterTextField />
-                </Hidden>
-            </Stack>
-            <Stack
+                key="morestuff"
                 spacing={1}
                 direction={"row"}
                 justifyContent={"flex-start"}
                 alignItems={"center"}
             >
-                <Hidden mdDown>
+                <Hidden key="roleView" mdDown>
                     <Typography
                         onClick={(event) => {
                             setAnchorElRoleMenu(event.currentTarget);
@@ -172,7 +157,7 @@ export function DashboardDetailTabs(props) {
                         {`${roleView} view`.toUpperCase()}
                     </Typography>
                 </Hidden>
-                <Hidden mdUp>
+                <Hidden key="roleViewMobile" mdUp>
                     <Typography
                         onClick={(event) => {
                             setAnchorElRoleMenu(event.currentTarget);
@@ -185,6 +170,7 @@ export function DashboardDetailTabs(props) {
                     </Typography>
                 </Hidden>
                 <IconButton
+                    key="role-menu-button"
                     data-cy="role-menu-button"
                     aria-controls="simple-menu"
                     aria-haspopup="true"
@@ -195,11 +181,12 @@ export function DashboardDetailTabs(props) {
                 >
                     <ArrowDropDownIcon />
                 </IconButton>
-                <Hidden smDown>
+                <Hidden key="addclearbutton" smDown>
                     {["ALL", userRoles.coordinator].includes(roleView) &&
                         addClearButton}
                 </Hidden>
                 <Menu
+                    key="role-menu"
                     data-cy="role-menu"
                     anchorEl={anchorElRoleMenu}
                     keepMounted
@@ -209,6 +196,7 @@ export function DashboardDetailTabs(props) {
                     }}
                 >
                     <MenuItem
+                        key="menu-item-all"
                         className={
                             whoami.roles.includes(userRoles.coordinator)
                                 ? show
@@ -225,6 +213,7 @@ export function DashboardDetailTabs(props) {
                         All Tasks
                     </MenuItem>
                     <MenuItem
+                        key="menu-item-coordinator"
                         className={
                             whoami.roles.includes(userRoles.coordinator)
                                 ? show
@@ -241,6 +230,7 @@ export function DashboardDetailTabs(props) {
                         Coordinator
                     </MenuItem>
                     <MenuItem
+                        key="menu-item-rider"
                         className={
                             whoami.roles.includes(userRoles.rider) ? show : hide
                         }

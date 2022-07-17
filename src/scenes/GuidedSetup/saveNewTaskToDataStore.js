@@ -1,8 +1,10 @@
 import { tasksStatus, userRoles } from "../../apiConsts";
+import store from "../../redux/Store";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models";
 import { convertListDataToObject } from "../../utilities";
 import _ from "lodash";
+import * as assigneeActions from "../../redux/taskAssignees/taskAssigneesActions";
 
 export async function saveNewTaskToDataStore(
     data,
@@ -65,7 +67,9 @@ export async function saveNewTaskToDataStore(
                         role: userRoles.coordinator,
                         tenantId,
                     })
-                );
+                ).then((assignment) => {
+                    store.dispatch(assigneeActions.addTaskAssignee(assignment));
+                });
             }
             if (comment && comment.body) {
                 DataStore.save(

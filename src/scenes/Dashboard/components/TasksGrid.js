@@ -2,15 +2,10 @@ import React from "react";
 import _ from "lodash";
 import Grid from "@mui/material/Grid";
 import PropTypes from "prop-types";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import TasksGridColumn from "./TasksGridColumn";
 import { tasksStatus, userRoles } from "../../../apiConsts";
-import {
-    dashboardFilteredUserSelector,
-    getRoleView,
-} from "../../../redux/Selectors";
+import { dashboardFilteredUserSelector } from "../../../redux/Selectors";
 import { useSelector } from "react-redux";
 
 const getColumnTitle = (key) => {
@@ -52,7 +47,6 @@ const useStyles = makeStyles((theme) => ({
 
 function TasksGrid(props) {
     const classes = useStyles();
-    const theme = useTheme();
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
 
     let justifyContent = "flex-start";

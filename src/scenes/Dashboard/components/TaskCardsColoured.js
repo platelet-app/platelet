@@ -27,13 +27,13 @@ const generateClass = (theme, status) => {
         ${theme.palette.taskStatus[status]}
         ${colourBarPercent},
         ${theme.palette.taskStatus[status]} 100%)`,
-        cursor: "pointer",
     };
 };
 
 const useStyles = makeStyles((theme) => ({
     cardContent: {
         paddingTop: 5,
+        userSelect: "none",
     },
     NEW: generateClass(theme, "NEW"),
     ACTIVE: generateClass(theme, "ACTIVE"),
@@ -116,6 +116,7 @@ const TaskCard = React.memo((props) => {
                 >
                     {props.commentCount > 0 ? (
                         <Tooltip
+                            data-testId="comment-count-tooltip"
                             title={`${props.commentCount} ${
                                 props.commentCount === 1
                                     ? "comment"
@@ -132,7 +133,10 @@ const TaskCard = React.memo((props) => {
                     ) : (
                         <div></div>
                     )}
-                    <Tooltip title={assigneesDisplayString}>
+                    <Tooltip
+                        data-testId="assignee-names-tooltip"
+                        title={assigneesDisplayString}
+                    >
                         <AvatarGroup>
                             {props.assignees.map((u) => (
                                 <UserAvatar
@@ -141,8 +145,8 @@ const TaskCard = React.memo((props) => {
                                     userUUID={u.id}
                                     displayName={u.displayName}
                                     thumbnailKey={
-                                        u.profilePictureThumbnail
-                                            ? u.profilePictureThumbnail.key
+                                        u.profilePicture
+                                            ? u.profilePicture.key
                                             : null
                                     }
                                 />
@@ -218,16 +222,18 @@ const TaskCard = React.memo((props) => {
 });
 
 TaskCard.propTypes = {
-    pickUpAddress: PropTypes.object,
-    dropOffAddress: PropTypes.object,
+    pickUpLocation: PropTypes.object,
+    dropOffLocation: PropTypes.object,
     riderResponsibility: PropTypes.string,
     timeOfCall: PropTypes.string,
     priority: PropTypes.string,
+    assignees: PropTypes.arrayOf(PropTypes.object),
 };
 
 TaskCard.defaultProps = {
     riderResponsibility: "",
     priority: "",
+    assignees: [],
 };
 
 export default TaskCard;

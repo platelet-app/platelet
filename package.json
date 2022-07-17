@@ -8,6 +8,7 @@
         "@date-io/moment": "^2.11.0",
         "@emotion/react": "^11.4.1",
         "@emotion/styled": "^11.3.0",
+        "@fast-csv/format": "^4.3.5",
         "@fontsource/roboto": "^4.5.1",
         "@mui/icons-material": "^5.0.3",
         "@mui/lab": "^5.0.0-alpha.50",
@@ -78,7 +79,7 @@
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
-        "test": "react-scripts test --testTimeout=10000",
+        "test": "react-scripts test --testTimeout=20000",
         "test:debug": "react-scripts --inspect test --runInBand --no-cache --testTimeout=100000000",
         "eject": "react-scripts eject",
         "preserve:static": "npm run build",

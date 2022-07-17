@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import { useSelector } from "react-redux";
 import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
@@ -88,6 +89,18 @@ function NavDrawerItems(props) {
                         <LocationCityIcon />
                     </ListItemIcon>
                     <ListItemText primary={"Locations"} />
+                </ListItem>
+                <ListItem
+                    onClick={onSelect}
+                    selected={menuIndex === "reports"}
+                    component={Link}
+                    to="/reports"
+                    button
+                >
+                    <ListItemIcon>
+                        <BarChartIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Reports"} />
                 </ListItem>
                 {adminLink}
             </List>

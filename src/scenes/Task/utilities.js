@@ -17,7 +17,7 @@ export async function saveTaskTimeWithKey(key, value, taskId, taskAssignees) {
         },
         taskAssignees.filter((ta) => ta.role === userRoles.rider)
     );
-    return await DataStore.save(
+    return DataStore.save(
         models.Task.copyOf(existingTask, (updated) => {
             updated[key] = value ? isoString : null;
             updated.status = status;

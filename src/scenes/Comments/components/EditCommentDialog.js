@@ -37,8 +37,8 @@ function EditCommentDialog(props) {
                         uuid={props.author && props.author.id}
                         displayName={props.author && props.author.displayName}
                         thumbnailKey={
-                            props.author && props.author.profilePictureThumbnail
-                                ? props.author.profilePictureThumbnail.key
+                            props.author && props.author.profilePicture
+                                ? props.author.profilePicture.key
                                 : null
                         }
                     />

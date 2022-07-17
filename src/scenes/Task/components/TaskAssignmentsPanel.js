@@ -136,7 +136,7 @@ function TaskAssignmentsPanel(props) {
                     dispatch(displayInfoNotification("Task moved to ACTIVE"));
                 }
             }
-            //setState({ ...state, [result.id]: result });
+            setState({ ...state, [result.id]: result });
             setIsPosting(false);
         } catch (error) {
             console.log(error);
@@ -191,7 +191,7 @@ function TaskAssignmentsPanel(props) {
                     updated.riderResponsibility = riderResponsibility;
                 })
             );
-            //setState((prevState) => _.omit(prevState, assignmentId));
+            setState((prevState) => _.omit(prevState, assignmentId));
             setIsDeleting(false);
         } catch (error) {
             console.log(error);
@@ -202,11 +202,14 @@ function TaskAssignmentsPanel(props) {
 
     function setCollapsedOnFirstMount() {
         if (_.isEmpty(state)) {
+            if (!isFetching) setCollapsed(false);
             return;
         }
         if (!taskAssigneesReady || collapsed !== null) return;
         if (
             Object.values(state).filter((a) => a.role === userRoles.rider)
+                .length === 0 ||
+            Object.values(state).filter((a) => a.role === userRoles.coordinator)
                 .length === 0
         ) {
             setCollapsed(false);
@@ -267,7 +270,6 @@ function TaskAssignmentsPanel(props) {
                                                 item
                                             >
                                                 <UserChip
-                                                    key={assignment.assignee.id}
                                                     user={assignment.assignee}
                                                 />
                                             </Grid>

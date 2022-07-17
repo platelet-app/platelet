@@ -1,11 +1,16 @@
 import { Storage } from "aws-amplify";
 
-export async function generateS3Link(key) {
+export async function generateS3Link(key, thumbnail = false) {
     const imgKey = key.split("/").reverse()[0];
+    const imgExtension = imgKey.split(".")[1];
+    const imgName = imgKey.split(".")[0];
+    const finalKey = thumbnail
+        ? `${imgName}-128-128.${imgExtension}`
+        : `${imgName}-300-300.${imgExtension}`;
     const imgVisibility = key.split("/")[0];
 
     try {
-        const result = await Storage.get(imgKey, {
+        const result = await Storage.get(finalKey, {
             level: imgVisibility,
         });
         return result;

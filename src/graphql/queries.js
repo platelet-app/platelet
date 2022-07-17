@@ -38,13 +38,7 @@ export const getTenant = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -99,7 +93,6 @@ export const listTenants = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -147,7 +140,6 @@ export const syncTenants = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -211,13 +203,7 @@ export const getUser = /* GraphQL */ `
         startedAt
       }
       profilePictureURL
-      profilePictureThumbnailURL
       profilePicture {
-        bucket
-        key
-        region
-      }
-      profilePictureThumbnail {
         bucket
         key
         region
@@ -268,6 +254,7 @@ export const getUser = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status
@@ -328,13 +315,7 @@ export const listUsers = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -407,13 +388,7 @@ export const syncUsers = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -488,13 +463,7 @@ export const getUserByCognitoId = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -559,13 +528,7 @@ export const getPossibleRiderResponsibilities = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -639,7 +602,6 @@ export const listPossibleRiderResponsibilities = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -698,7 +660,6 @@ export const syncPossibleRiderResponsibilities = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -883,6 +844,7 @@ export const getLocation = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status
@@ -908,6 +870,33 @@ export const getLocation = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
+          riderResponsibility
+          priority
+          status
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedTasksId
+        }
+        nextToken
+        startedAt
+      }
+      taskAsEstablishment {
+        items {
+          id
+          tenantId
+          timeOfCall
+          timePickedUp
+          timeDroppedOff
+          timeCancelled
+          timeRejected
+          timeRiderHome
+          pickUpLocationId
+          dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status
@@ -994,6 +983,10 @@ export const listLocations = /* GraphQL */ `
           nextToken
           startedAt
         }
+        taskAsEstablishment {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -1062,6 +1055,10 @@ export const syncLocations = /* GraphQL */ `
           nextToken
           startedAt
         }
+        taskAsEstablishment {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -1114,13 +1111,7 @@ export const getTask = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -1168,6 +1159,7 @@ export const getTask = /* GraphQL */ `
       }
       pickUpLocationId
       dropOffLocationId
+      establishmentLocationId
       pickUpLocation {
         id
         tenantId
@@ -1204,6 +1196,10 @@ export const getTask = /* GraphQL */ `
           startedAt
         }
         tasksAsDropOff {
+          nextToken
+          startedAt
+        }
+        taskAsEstablishment {
           nextToken
           startedAt
         }
@@ -1254,6 +1250,64 @@ export const getTask = /* GraphQL */ `
           startedAt
         }
         tasksAsDropOff {
+          nextToken
+          startedAt
+        }
+        taskAsEstablishment {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      establishmentLocation {
+        id
+        tenantId
+        name
+        listed
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
+        taskAsEstablishment {
           nextToken
           startedAt
         }
@@ -1353,7 +1407,6 @@ export const listTasks = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -1385,6 +1438,7 @@ export const listTasks = /* GraphQL */ `
         }
         pickUpLocationId
         dropOffLocationId
+        establishmentLocationId
         pickUpLocation {
           id
           tenantId
@@ -1408,6 +1462,28 @@ export const listTasks = /* GraphQL */ `
           _lastChangedAt
         }
         dropOffLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        establishmentLocation {
           id
           tenantId
           name
@@ -1483,7 +1559,6 @@ export const syncTasks = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -1515,6 +1590,7 @@ export const syncTasks = /* GraphQL */ `
         }
         pickUpLocationId
         dropOffLocationId
+        establishmentLocationId
         pickUpLocation {
           id
           tenantId
@@ -1538,6 +1614,28 @@ export const syncTasks = /* GraphQL */ `
           _lastChangedAt
         }
         dropOffLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        establishmentLocation {
           id
           tenantId
           name
@@ -1615,7 +1713,6 @@ export const tasksByStatus = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -1647,6 +1744,7 @@ export const tasksByStatus = /* GraphQL */ `
         }
         pickUpLocationId
         dropOffLocationId
+        establishmentLocationId
         pickUpLocation {
           id
           tenantId
@@ -1670,6 +1768,28 @@ export const tasksByStatus = /* GraphQL */ `
           _lastChangedAt
         }
         dropOffLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        establishmentLocation {
           id
           tenantId
           name
@@ -1740,7 +1860,6 @@ export const getTaskAssignee = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -1772,6 +1891,7 @@ export const getTaskAssignee = /* GraphQL */ `
         }
         pickUpLocationId
         dropOffLocationId
+        establishmentLocationId
         pickUpLocation {
           id
           tenantId
@@ -1795,6 +1915,28 @@ export const getTaskAssignee = /* GraphQL */ `
           _lastChangedAt
         }
         dropOffLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        establishmentLocation {
           id
           tenantId
           name
@@ -1869,13 +2011,7 @@ export const getTaskAssignee = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -1931,6 +2067,7 @@ export const listTaskAssignees = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status
@@ -1952,7 +2089,6 @@ export const listTaskAssignees = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -2001,6 +2137,7 @@ export const syncTaskAssignees = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status
@@ -2022,7 +2159,6 @@ export const syncTaskAssignees = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -2079,13 +2215,7 @@ export const getComment = /* GraphQL */ `
           startedAt
         }
         profilePictureURL
-        profilePictureThumbnailURL
         profilePicture {
-          bucket
-          key
-          region
-        }
-        profilePictureThumbnail {
           bucket
           key
           region
@@ -2143,7 +2273,6 @@ export const listComments = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -2194,7 +2323,6 @@ export const syncComments = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -2359,7 +2487,6 @@ export const getDeliverable = /* GraphQL */ `
           dateOfBirth
           riderResponsibility
           profilePictureURL
-          profilePictureThumbnailURL
           disabled
           createdAt
           updatedAt
@@ -2391,6 +2518,7 @@ export const getDeliverable = /* GraphQL */ `
         }
         pickUpLocationId
         dropOffLocationId
+        establishmentLocationId
         pickUpLocation {
           id
           tenantId
@@ -2414,6 +2542,28 @@ export const getDeliverable = /* GraphQL */ `
           _lastChangedAt
         }
         dropOffLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        establishmentLocation {
           id
           tenantId
           name
@@ -2523,6 +2673,7 @@ export const listDeliverables = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status
@@ -2594,6 +2745,7 @@ export const syncDeliverables = /* GraphQL */ `
           timeRiderHome
           pickUpLocationId
           dropOffLocationId
+          establishmentLocationId
           riderResponsibility
           priority
           status
@@ -2716,6 +2868,11 @@ export const syncRiderResponsibilities = /* GraphQL */ `
       nextToken
       startedAt
     }
+  }
+`;
+export const profilePictureUploadURL = /* GraphQL */ `
+  query ProfilePictureUploadURL($userId: ID!) {
+    profilePictureUploadURL(userId: $userId)
   }
 `;
 export const getStatistics = /* GraphQL */ `

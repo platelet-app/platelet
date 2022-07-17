@@ -18,7 +18,7 @@ function FavouriteLocationsSelect(props) {
         dataStoreModelSyncedStatusSelector
     ).Location;
     const onSelect = (event, selectedItem) => {
-        if (selectedItem) props.onSelect(selectedItem);
+        props.onSelect(selectedItem);
     };
 
     async function getLocations() {
@@ -32,16 +32,16 @@ function FavouriteLocationsSelect(props) {
 
     return (
         <Autocomplete
-            disablePortal
             fullWidth
             aria-label={props.label}
             filterOptions={filterOptions}
             options={availableLocations}
             getOptionLabel={(option) => option.name}
-            size={"small"}
+            size={props.size}
             renderInput={(params) => (
                 <TextField
                     {...params}
+                    sx={props.sx}
                     label={props.label}
                     variant="outlined"
                     margin="none"
@@ -55,10 +55,14 @@ function FavouriteLocationsSelect(props) {
 FavouriteLocationsSelect.propTypes = {
     onSelect: PropTypes.func,
     label: PropTypes.string,
+    size: PropTypes.string,
+    sx: PropTypes.object,
 };
 FavouriteLocationsSelect.defaultProps = {
     onSelect: () => {},
     label: "Search locations...",
+    size: "small",
+    sx: {},
 };
 
 export default FavouriteLocationsSelect;
