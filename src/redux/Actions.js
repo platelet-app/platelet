@@ -8,12 +8,6 @@ export function setDarkMode(data) {
     return { type: SET_DARK_MODE, data };
 }
 
-export const SET_TENANT_ID = "SET_TENANT_ID";
-
-export function setTenantId(data) {
-    return { type: SET_TENANT_ID, data };
-}
-
 export const SET_GUIDED_SETUP_OPEN = "SET_GUIDED_SETUP_OPEN";
 
 export function setGuidedSetupOpen(data) {
@@ -69,32 +63,6 @@ export const CLEAR_LOADING = "CLEAR_LOADING";
 
 export function clearLoading() {
     return { type: CLEAR_LOADING };
-}
-
-export const GET_WHOAMI_REQUEST = "GET_WHOAMI_REQUEST";
-export const REFRESH_WHOAMI_REQUEST = "REFRESH_WHOAMI_REQUEST";
-export const GET_WHOAMI_SUCCESS = "GET_WHOAMI_SUCCESS";
-export const GET_WHOAMI_FAILURE = "GET_WHOAMI_FAILURE";
-export const CLEAR_WHOAMI = "CLEAR_WHOAMI";
-
-export function getWhoamiRequest() {
-    return { type: GET_WHOAMI_REQUEST };
-}
-
-export function refreshWhoamiRequest() {
-    return { type: REFRESH_WHOAMI_REQUEST };
-}
-
-export function clearWhoami() {
-    return { type: CLEAR_WHOAMI };
-}
-
-export function getWhoamiSuccess(data) {
-    return { type: GET_WHOAMI_SUCCESS, data };
-}
-
-export function getWhoamiFailure(error) {
-    return { type: GET_WHOAMI_FAILURE, error };
 }
 
 export const SET_VIEW_MODE = "SET_VIEW_MODE";

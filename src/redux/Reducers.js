@@ -1,14 +1,12 @@
 import { combineReducers } from "redux";
+import { whoami } from "./whoami/whoamiReducers";
 import {
     CLEAR_LOADING,
-    GET_WHOAMI_SUCCESS,
     SET_VIEW_MODE,
     SET_NEW_TASK_ADDED_VIEW,
     SET_MOBILE_VIEW,
     SET_MENU_INDEX,
     SET_COMMENTS_OBJECT_UUID,
-    CLEAR_WHOAMI,
-    GET_WHOAMI_FAILURE,
     SET_TASK_CONTEXT_MENU_SNACK,
     CLEAR_TASK_CONTEXT_MENU_SNACK,
     SET_ROLE_VIEW,
@@ -114,35 +112,6 @@ function guidedSetupOpen(state = false, action) {
     switch (action.type) {
         case "SET_GUIDED_SETUP_OPEN":
             return action.data;
-        default:
-            return state;
-    }
-}
-
-const whoamiInitialState = {
-    user: {
-        id: null,
-        address: null,
-        name: null,
-        email: null,
-        dateOfBirth: null,
-        riderResponsibility: null,
-        roles: [],
-        displayName: null,
-        createdAt: null,
-        modifiedAt: null,
-    },
-    error: null,
-};
-
-function whoami(state = whoamiInitialState, action) {
-    switch (action.type) {
-        case GET_WHOAMI_SUCCESS:
-            return { user: action.data, error: null };
-        case GET_WHOAMI_FAILURE:
-            return { ...whoamiInitialState, error: action.error };
-        case CLEAR_WHOAMI:
-            return whoamiInitialState;
         default:
             return state;
     }

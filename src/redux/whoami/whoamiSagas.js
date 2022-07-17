@@ -1,17 +1,20 @@
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, put, take, takeLatest } from "redux-saga/effects";
 import {
     GET_WHOAMI_REQUEST,
     getWhoamiFailure,
     getWhoamiSuccess,
     REFRESH_WHOAMI_REQUEST,
     setTenantId,
-} from "./Actions";
+    INIT_WHOAMI_OBSERVER,
+    initWhoamiObserver,
+} from "./whoamiActions";
 import API from "@aws-amplify/api";
-import { Auth, DataStore, syncExpression } from "aws-amplify";
-import * as models from "../models";
-import * as queries from "../graphql/queries";
+import { Auth, DataStore, Predicates, syncExpression } from "aws-amplify";
+import * as models from "../../models";
+import * as queries from "../../graphql/queries";
 import { NotFound } from "http-errors";
-import { userRoles } from "../apiConsts";
+import { userRoles } from "../../apiConsts";
+import { eventChannel } from "redux-saga";
 
 const fakeUser = {
     id: "offline",
@@ -33,6 +36,35 @@ const testUserModel = new models.User({
     profilePictureThumbnailURL: null,
 });
 const testUser = { ...testUserModel, id: "whoami" };
+
+function listener(userId) {
+    return eventChannel((emitter) => {
+        let observer = { unsubscribe: () => {} };
+        observer = DataStore.observe(models.User, userId).subscribe(
+            ({ element }) => emitter(element)
+        );
+        return () => {
+            observer.unsubscribe();
+        };
+    });
+}
+
+function* whoamiObserver(action) {
+    const channel = yield call(listener, action.whoamiId);
+    try {
+        while (true) {
+            const result = yield take(channel);
+            yield put(getWhoamiSuccess(result));
+        }
+    } finally {
+        console.log("stopping whoami observer");
+        channel.close();
+    }
+}
+
+export function* watchInitWhoamiObserver() {
+    yield takeLatest(INIT_WHOAMI_OBSERVER, whoamiObserver);
+}
 
 function* getWhoami() {
     if (process.env.NODE_ENV === "test") {
@@ -56,8 +88,10 @@ function* getWhoami() {
                 userModel
             );
             yield put(getWhoamiSuccess(newFakeUser));
+            yield put(initWhoamiObserver(newFakeUser.id));
         } else {
             yield put(getWhoamiSuccess(existingUser[0]));
+            yield put(initWhoamiObserver(existingUser[0].id));
         }
         yield put(setTenantId("offline"));
     } else {
@@ -135,11 +169,17 @@ function* getWhoami() {
                                 result.data.getUserByCognitoId.items[0]
                             )
                         );
+                        yield put(
+                            initWhoamiObserver(
+                                result.data.getUserByCognitoId.items[0].id
+                            )
+                        );
                     } else {
                         throw new NotFound("Could not find logged in user");
                     }
                 } else {
                     yield put(getWhoamiSuccess(result[0]));
+                    yield put(initWhoamiObserver(result[0].id));
                 }
                 yield put(setTenantId(tenantId));
             } else {

@@ -34,4 +34,8 @@ describe("LightToggleProfileMenu", () => {
             `/user/${encodeUUID(preloadedState.whoami.user.id)}`
         );
     });
+    it("shows the user's initials", () => {
+        render(<LightToggleProfileMenu />, { preloadedState });
+        expect(screen.getByText("TU")).toBeInTheDocument();
+    });
 });

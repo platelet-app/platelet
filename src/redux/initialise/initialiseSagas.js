@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import faker from "faker/locale/en_GB";
 import { initialiseAwsDataStoreListener } from "../awsHubListener/awsHubListenerActions";
 import { initialiseBroadcastAPIListener } from "../broadcastAPI/broadcastAPIActions";
-import { GET_WHOAMI_SUCCESS, getWhoamiRequest } from "../Actions";
+import { GET_WHOAMI_SUCCESS, getWhoamiRequest } from "../whoami/whoamiActions";
 import * as actions from "./initialiseActions";
 import * as fakeData from "../fakeOfflineData.json";
 import * as models from "../../models/index";
