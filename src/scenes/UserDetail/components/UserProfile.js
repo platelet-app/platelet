@@ -95,7 +95,6 @@ export default function UserProfile(props) {
     let editAddressToggle = <></>;
     let editRoleToggle = <></>;
 
-    //ADD warning if offline
     if (whoami.roles) {
         if (
             whoami.roles.includes(userRoles.admin) ||
@@ -140,12 +139,12 @@ export default function UserProfile(props) {
                     }
                     value={editAddressMode}
                     onChange={(v) => {
+                      setEditAddressMode(v)
                         if (!v) setState(oldState);
                     }}
                 />
             );
 
-            if (networkStatus){
                 editRoleToggle = (
                     <Stack
                         direction={"row"}
@@ -155,7 +154,11 @@ export default function UserProfile(props) {
                     >
                         <EditModeToggleButton
                             tooltipDefault={
-                                props.user.id === whoami.id
+                                !networkStatus
+                                    ? props.user.id === whoami.id
+                                        ? "Edit your role (Warning: Offline status, changes may not register.)"
+                                        : "Edit this user (Warning: Offline status, changes may not register.)"
+                                    : props.user.id === whoami.id
                                     ? "Edit your role"
                                     : "Edit this user"
                             }
@@ -171,15 +174,6 @@ export default function UserProfile(props) {
                         />
                     </Stack>
                 );
-          }else{
-                editRoleToggle = (
-                    <Tooltip title={"Action Disabled When Offline"}>
-                        <IconButton aria-label="Action Disabled">
-                            <EditIcon />
-                        </IconButton>
-                    </Tooltip>
-                );
-          }
         }
     }
 
@@ -234,14 +228,14 @@ export default function UserProfile(props) {
                     }
                 })
             );
-            if (roles) {
-                await API.graphql(
-                    graphqlOperation(mutations.updateUserRoles, {
-                        userId: state.id,
-                        roles,
-                    })
-                );
-            }
+            // if (roles) {
+            //     await API.graphql(
+            //         graphqlOperation(mutations.updateUserRoles, {
+            //             userId: state.id,
+            //             roles,
+            //         })
+            //     );
+            // }
             if (possibleRiderResponsibilities && tenantId) {
                 DataStore.query(models.PossibleRiderResponsibilities).then(
                     (result) => {

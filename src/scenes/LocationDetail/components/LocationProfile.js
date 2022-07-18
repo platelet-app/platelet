@@ -36,6 +36,7 @@ const contactFields = {
 function LocationProfile(props) {
     const [state, setState] = useState({ ...props.location });
     const [oldState, setOldState] = useState({ ...props.location });
+    const [editNameMode, setEditNameMode] = useState(false);
     const [editAddressMode, setEditAddressMode] = useState(false);
     const [editContactMode, setEditContactMode] = useState(false);
     const theme = useTheme();
@@ -56,6 +57,7 @@ function LocationProfile(props) {
     const onCancel = () => {
       setEditAddressMode(false);
       setEditContactMode(false);
+      setEditNameMode(false);
       setState(oldState);
     };
 
@@ -63,6 +65,7 @@ function LocationProfile(props) {
         props.onUpdate(state);
         setState(state);
         setOldState(state);
+        setEditNameMode(false);
         setEditAddressMode(false);
         setEditContactMode(false);
     };
@@ -93,6 +96,22 @@ function LocationProfile(props) {
     //         }}
     //     />
     // );
+
+    let editNameToggle = <></>;
+    if (whoami.roles) {
+        if (whoami.roles.includes(userRoles.admin)) {
+            editNameToggle = (
+                <EditModeToggleButton
+                    tooltipDefault={"Edit location name"}
+                    value={editNameMode}
+                    onChange={(v) => {
+                        setEditNameMode(v);
+                        if (!v) setState(oldState);
+                    }}
+                />
+            );
+        }
+    }
 
     let editAddressToggle = <></>;
     if (whoami.roles) {
@@ -137,10 +156,18 @@ function LocationProfile(props) {
                 <Typography noWrap align={"right"}>
                     {oldState["name"]}
                 </Typography>
-                {editAddressToggle}
+                {editNameToggle}
             </Stack>
             <Divider />
             <Box sx={{ width: "100%" }}>
+                <Stack
+                    direction={"row-reverse"}
+                    justifyContent={"space-between"}
+                    alignItems={"top"}
+                    spacing={3}
+                >
+                    {editAddressToggle}
+                </Stack>
                 {Object.entries(fields).map(([key, label]) => {
                     return (
                         <LabelItemPair key={key} label={label}>
@@ -171,6 +198,35 @@ function LocationProfile(props) {
                     );
                 })}
             </Box>
+            <ConfirmationDialog
+                fullScreen={isSm}
+                dialogTitle="Edit Location Name"
+                open={editNameMode}
+                onCancel={onCancel}
+                onConfirmation={onConfirmation}
+            >
+                <Stack
+                    sx={{ width: "100%", minWidth: isSm ? 0 : 400 }}
+                    spacing={1}
+                >
+                    {
+                        <TextField
+                            key={"Name"}
+                            fullWidth
+                            aria-label={"Name"}
+                            label={"Name"}
+                            margin="normal"
+                            value={state["name"]}
+                            onChange={(e) => {
+                                setState((prevState) => ({
+                                    ...prevState,
+                                    ["name"]: e.target.value,
+                                }));
+                            }}
+                        />
+                    }
+                </Stack>
+            </ConfirmationDialog>
             <ConfirmationDialog
                 fullScreen={isSm}
                 dialogTitle="Edit Location Information"
