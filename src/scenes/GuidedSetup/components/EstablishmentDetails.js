@@ -91,7 +91,7 @@ function EstablishmentDetails({
                 >
                     <TextField
                         fullWidth
-                        sx={{ minWidth: 340, marginTop: 1 }}
+                        sx={{ minWidth: isSm ? 240 : 340, marginTop: 1 }}
                         label="Name"
                         inputProps={{
                             "aria-label": "establishment name",

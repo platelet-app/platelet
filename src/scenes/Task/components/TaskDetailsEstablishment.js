@@ -8,17 +8,22 @@ import {
     Tooltip,
     Button,
     TextField,
+    useMediaQuery,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
 import * as models from "../../../models";
+import { useTheme } from "@mui/styles";
 
 function TaskDetailsEstablishment({ value, onChange }) {
     const [editMode, setEditMode] = React.useState(false);
     const [notListedName, setNotListedName] = React.useState("");
     const [editValue, setEditValue] = React.useState(null);
     const [notListedMode, setNotListedMode] = React.useState(false);
+    const theme = useTheme();
+
+    const isSm = useMediaQuery(theme.breakpoints.down("md"));
 
     const handleConfirm = () => {
         if (notListedMode) {
@@ -74,6 +79,7 @@ function TaskDetailsEstablishment({ value, onChange }) {
             </Tooltip>
             <ConfirmationDialog
                 onCancel={handleCancel}
+                fullScreen={isSm}
                 onConfirmation={handleConfirm}
                 open={editMode}
                 disabled={
@@ -82,7 +88,7 @@ function TaskDetailsEstablishment({ value, onChange }) {
                 }
             >
                 <Stack
-                    sx={{ marginTop: 1, minWidth: 340 }}
+                    sx={{ marginTop: 1, minWidth: isSm ? 240 : 340 }}
                     alignItems="flex-end"
                     direction="column"
                     spacing={1}
@@ -90,7 +96,6 @@ function TaskDetailsEstablishment({ value, onChange }) {
                     {!notListedMode && (
                         <FavouriteLocationsSelect
                             label="Select establishment"
-                            sx={{ minWidth: 340, marginTop: 1 }}
                             size="large"
                             onSelect={onSelect}
                         />
@@ -98,7 +103,6 @@ function TaskDetailsEstablishment({ value, onChange }) {
                     {notListedMode && (
                         <TextField
                             fullWidth
-                            sx={{ minWidth: 340, marginTop: 1 }}
                             label="Name"
                             inputProps={{
                                 "aria-label": "establishment name",
