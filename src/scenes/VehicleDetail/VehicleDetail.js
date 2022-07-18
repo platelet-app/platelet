@@ -88,6 +88,12 @@ export default function VehicleDetail(props) {
         [props.location.key, vehicleModelSynced]
     );
 
+    useEffect(() => {
+        return () => {
+            assignmentObserver.current.unsubscribe();
+        };
+    });
+
     async function onUpdate(value) {
         setIsPosting(true);
         try {
