@@ -4,11 +4,8 @@ import { decodeUUID } from "../../utilities";
 import { useDispatch, useSelector } from "react-redux";
 import FormSkeleton from "../../SharedLoadingSkeletons/FormSkeleton";
 import NotFound from "../../ErrorComponents/NotFound";
-import Typography from "@mui/material/Typography";
 import { PaddedPaper } from "../../styles/common";
 import CommentsSection from "../Comments/CommentsSection";
-import UserChip from "../../components/UserChip";
-import UserCard from "../../components/UserCard";
 import {
     dataStoreModelSyncedStatusSelector,
     getWhoami,
@@ -18,8 +15,7 @@ import { displayErrorNotification } from "../../redux/notifications/Notification
 import { DataStore } from "aws-amplify";
 import { protectedFields, userRoles } from "../../apiConsts";
 import { Divider, Stack } from "@mui/material";
-import RiderPicker from "../../components/RiderPicker";
-import AssignUserToVehicle from "./AssignUserToVehicle";
+import AssignUserToVehicle from "./components/AssignUserToVehicle";
 
 const initialVehicleState = {
     name: "",

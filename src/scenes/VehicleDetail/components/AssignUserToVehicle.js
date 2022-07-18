@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import React from "react";
-import RiderPicker from "../../components/RiderPicker";
-import UserChip from "../../components/UserChip";
+import RiderPicker from "../../../components/RiderPicker";
+import UserChip from "../../../components/UserChip";
 import PropTypes from "prop-types";
 
 function AssignUserToVehicle({
