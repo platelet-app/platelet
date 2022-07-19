@@ -9,6 +9,7 @@ import CommentsSection from "../Comments/CommentsSection";
 import {
     dataStoreModelSyncedStatusSelector,
     getWhoami,
+    tenantIdSelector,
 } from "../../redux/Selectors";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
@@ -30,6 +31,7 @@ export default function VehicleDetail(props) {
     const [isFetching, setIsFetching] = useState(false);
     const [notFound, setNotFound] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
+    const tenantId = useSelector(tenantIdSelector);
     const [vehicle, setVehicle] = useState(initialVehicleState);
     const [assignment, setAssignment] = useState(null);
     const whoami = useSelector(getWhoami);
@@ -120,10 +122,14 @@ export default function VehicleDetail(props) {
     async function onAssignUser(user) {
         setIsPosting(true);
         try {
+            if (!tenantId) throw new Error("Tenant ID is not set");
+            if (!user) throw new Error("User is not set");
+            if (!vehicle) throw new Error("Vehicle is not set");
             const result = await DataStore.save(
                 new models.VehicleAssignment({
                     vehicle: vehicle,
                     assignee: user,
+                    tenantId,
                 })
             );
             setAssignment(result);
