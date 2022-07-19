@@ -94,7 +94,7 @@ export default function VehicleDetail(props) {
         return () => {
             assignmentObserver.current.unsubscribe();
         };
-    });
+    }, []);
 
     async function onUpdate(value) {
         setIsPosting(true);
