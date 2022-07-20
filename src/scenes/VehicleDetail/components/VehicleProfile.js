@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
+import LabelItemPair from "../../../components/LabelItemPair";
+import ClickableTextField from "../../../components/ClickableTextField";
 import { createPostingSelector } from "../../../redux/LoadingSelectors";
 import UsersSelect from "../../../components/UsersSelect";
 import EditIcon from "@mui/icons-material/Edit";
@@ -10,7 +12,10 @@ import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
 import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import { getWhoami } from "../../../redux/Selectors";
-import { Stack, TextField, Typography } from "@mui/material";
+import { Stack, TextField, Typography, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/styles";
+
+import ConfirmationDialog from "../../../components/ConfirmationDialog";
 
 const fields = {
     name: "Name",
@@ -24,6 +29,10 @@ function VehicleProfile(props) {
     const [editMode, setEditMode] = useState(false);
     const [state, setState] = useState({ ...props.vehicle });
     const [oldState, setOldState] = useState({ ...props.vehicle });
+        const theme = useTheme();
+
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+
     const whoami = useSelector(getWhoami);
 
     function resetAfterPost() {
@@ -71,7 +80,7 @@ function VehicleProfile(props) {
                 }}
                 size="large"
             >
-                <EditIcon />
+                <EditIcon color={editMode ? "secondary" : "inherit"}/>
             </IconButton>
         ) : (
             <IconButton
@@ -88,25 +97,21 @@ function VehicleProfile(props) {
     }
 
     let header = (
-        <h2>{props.vehicle.name ? props.vehicle.name : "No name"}.</h2>
+        <h2>{props.vehicle.name ? props.vehicle.name : "No name."}</h2>
     );
 
-    const saveButtons = !editMode ? (
-        <></>
-    ) : (
-        <SaveCancelButtons
-            disabled={isPosting}
-            onSave={() => {
-                props.onUpdate(state);
-                setOldState(state);
-                setEditMode(false);
-            }}
-            onCancel={() => {
-                setEditMode(false);
-                setState(oldState);
-            }}
-        />
-    );
+    const onCancel = ()=>{
+      setEditMode(false);
+      setState(oldState);
+    }
+
+    const onConfirmation=()=>{
+      props.onUpdate(state);
+      setState(state);
+      setOldState(state);
+      setEditMode(false);
+    }
+
 
     const divider = editMode ? (
         <></>
@@ -125,46 +130,53 @@ function VehicleProfile(props) {
                 alignItems={"center"}
                 spacing={3}
             >
-                {header}
+                <h2>{oldState.name ? oldState.name : "No name."}</h2>
                 {editToggle}
             </Stack>
             <Divider />
 
             <Stack>
-                {Object.keys(fields).map((key) => {
-                    if (editMode) {
+                {Object.entries(fields).map(([key, label]) => {
+                    return (
+                        <LabelItemPair key={key} label={label}>
+                            <Typography noWrap align={"right"}>
+                                {oldState[key]}
+                            </Typography>
+                        </LabelItemPair>
+                    );
+                })}
+            </Stack>
+            <ConfirmationDialog
+                fullScreen={isSm}
+                dialogTitle="Edit Vehicle Information"
+                open={editMode}
+                onCancel={onCancel}
+                onConfirmation={onConfirmation}
+            >
+                <Stack
+                    sx={{ width: "100%", minWidth: isSm ? 0 : 400 }}
+                    spacing={1}
+                >
+                    {Object.entries(fields).map(([key, label]) => {
                         return (
                             <TextField
                                 key={key}
-                                value={state[key]}
-                                variant={"standard"}
                                 fullWidth
-                                label={fields[key]}
-                                id={key}
+                                aria-label={label}
+                                label={label}
+                                margin="normal"
+                                value={state[key]}
                                 onChange={(e) => {
-                                    setState({
-                                        ...state,
+                                    setState((prevState) => ({
+                                        ...prevState,
                                         [key]: e.target.value,
-                                    });
+                                    }));
                                 }}
                             />
                         );
-                    } else {
-                        return (
-                            <Stack
-                                direction={"row"}
-                                justifyContent={"space-between"}
-                                key={key}
-                            >
-                                <Typography>{fields[key]}</Typography>
-                                <Typography>{state[key]}</Typography>
-                            </Stack>
-                        );
-                    }
-                })}
-            </Stack>
-
-            {saveButtons}
+                    })}
+                </Stack>
+            </ConfirmationDialog>
         </Stack>
     );
 }
