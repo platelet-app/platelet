@@ -4,7 +4,6 @@ import _ from "lodash";
 import { useDispatch, useSelector } from "react-redux";
 import UserProfile from "./components/UserProfile";
 import { PaddedPaper } from "../../styles/common";
-import DetailSkeleton from "./components/DetailSkeleton";
 import ProfilePicture from "./components/ProfilePicture";
 import NotFound from "../../ErrorComponents/NotFound";
 import {
@@ -14,12 +13,10 @@ import {
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
-import { protectedFields } from "../../apiConsts";
-import { Stack, useMediaQuery } from "@mui/material";
+import { Stack, useMediaQuery,Divider } from "@mui/material";
 import { useTheme } from "@mui/styles";
-import * as mutations from "../../graphql/mutations";
-import { API, graphqlOperation } from "aws-amplify";
 import CurrentRiderResponsibilitySelector from "./components/CurrentRiderResponsibilitySelector";
+import Skeleton from "@mui/material/Skeleton";
 
 const initialUserState = {
     id: "",
@@ -52,6 +49,10 @@ export default function UserDetail(props) {
     const dispatch = useDispatch();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
+    const observer = useRef({
+            unsubscribe: () => {},
+        });
+
     const loadedOnce = useRef(false);
 
     const userModelSynced = useSelector(
@@ -101,21 +102,28 @@ export default function UserDetail(props) {
                         setPossibleRiderResponsibilities(filtered);
                     }
                 );
-            });
-            setIsFetching(false);
-            loadedOnce.current = true;
-            if (userResult) {
-                setUser(userResult);
-                setRiderResponsibility(userResult.riderResponsibility);
-            } else setNotFound(true);
-        } catch (error) {
-            setIsFetching(false);
-            dispatch(
-                displayErrorNotification(`Failed to get user: ${error.message}`)
-            );
-            console.log("Request failed", error);
-        }
-    }
+                  })
+                observer.current = DataStore
+                    .observe(models.User, userUUID)
+                    .subscribe(({ element }) => setUser(element));
+                setIsFetching(false);
+                loadedOnce.current = true;
+                if (userResult) {
+                    setUser(userResult);
+                    setRiderResponsibility(userResult.riderResponsibility);
+                }else{
+                  setNotFound(true)
+                }
+              }catch(error) {
+                setIsFetching(false);
+                dispatch(
+                    displayErrorNotification(
+                        `Failed to get user: ${error.message}`
+                    )
+                );
+                console.log("Request failed", error);
+            }
+      }
     useEffect(
         () => newUserProfile(),
         [props.location.key, userModelSynced, riderResponsibilityModelSynced]
@@ -141,6 +149,8 @@ export default function UserDetail(props) {
 
     useEffect(() => () => riderRespObserver.current.unsubscribe(), []);
 
+    useEffect(() => () => observer.current.unsubscribe(), []);
+
     function handleUpdateRiderResponsibility(riderResponsibility) {
         setRiderResponsibility(riderResponsibility);
         DataStore.query(models.User, user.id)
@@ -159,67 +169,66 @@ export default function UserDetail(props) {
             });
     }
 
-    async function onUpdate(value) {
-        setIsPosting(true);
-        try {
-            const existingUser = await DataStore.query(models.User, user.id);
-            const { roles, possibleRiderResponsibilities, contact, ...rest } =
-                value;
-
-            await DataStore.save(
-                models.User.copyOf(existingUser, (updated) => {
-                    for (const [key, newValue] of Object.entries(rest)) {
-                        if (!protectedFields.includes(key))
-                            updated[key] = newValue;
-                    }
-                    if (existingUser.contact && contact) {
-                        for (const [key, newValue] of Object.entries(contact)) {
-                            if (!protectedFields.includes(key))
-                                updated.contact[key] = newValue;
-                        }
-                    }
-                })
-            );
-            if (roles) {
-                await API.graphql(
-                    graphqlOperation(mutations.updateUserRoles, {
-                        userId: user.id,
-                        roles,
-                    })
-                );
-            }
-            if (possibleRiderResponsibilities && tenantId) {
-                DataStore.query(models.PossibleRiderResponsibilities).then(
-                    (result) => {
-                        const existing = result.filter(
-                            (r) => r.user && r.user.id === existingUser.id
-                        );
-                        for (const i of existing) {
-                            DataStore.delete(i);
-                        }
-                    }
-                );
-                await Promise.all(
-                    possibleRiderResponsibilities.map((riderResponsibility) => {
-                        return DataStore.save(
-                            new models.PossibleRiderResponsibilities({
-                                tenantId,
-                                riderResponsibility,
-                                user: existingUser,
-                            })
-                        );
-                    })
-                );
-            }
-            setIsPosting(false);
-        } catch (error) {
-            console.error("Update request failed", error);
-            dispatch(displayErrorNotification("Sorry, an error occurred"));
-            setIsPosting(false);
-        }
-    }
     if (isFetching) {
-        return <DetailSkeleton />;
+        return (
+            <Stack
+                alignItems={isSm ? "center" : "flex-start"}
+                direction={isSm ? "column" : "row"}
+                spacing={1}
+            >
+                <PaddedPaper maxWidth={700}>
+                    <Stack direction={"row"} spacing={3}>
+                        <Skeleton variant="text" width={300} height={50} />
+                    </Stack>
+                    <Divider />
+                    <Stack direction={"column"}>
+                        <Skeleton variant="text" maxWidth={700} height={50} />
+                        <Skeleton variant="text" maxWidth={700} height={50} />
+                    </Stack>
+                    <Divider />
+                    <Stack direction={"column"}>
+                        {[...Array(4)].map((ele) => (
+                            <Skeleton
+                                variant="text"
+                                maxWidth={700}
+                                height={50}
+                            />
+                        ))}
+                    </Stack>
+                    <Divider />
+                    <Stack direction={"column"}>
+                        {[...Array(4)].map((ele) => (
+                            <Skeleton
+                                variant="text"
+                                maxWidth={700}
+                                height={50}
+                            />
+                        ))}
+                    </Stack>
+                    <Divider />
+                    <Stack direction={"row"} spacing={2}>
+                        {[...Array(4)].map((ele) => (
+                            <Skeleton variant="text" width={50} height={50} />
+                        ))}
+                    </Stack>
+                </PaddedPaper>
+                <PaddedPaper maxWidth={400}>
+                    <Stack
+                        container
+                        direction={"column"}
+                        alignItems={"center"}
+                        spacing={2}
+                    >
+                        <Skeleton
+                            variant="rectangular"
+                            width={250}
+                            height={250}
+                        />
+                        <Skeleton variant="text" width={150} height={50} />
+                    </Stack>
+                </PaddedPaper>
+            </Stack>
+        );
     } else if (notFound) {
         return <NotFound>User {userUUID} could not be found.</NotFound>;
     } else {
@@ -241,7 +250,6 @@ export default function UserDetail(props) {
                         possibleRiderResponsibilities={
                             possibleRiderResponsibilities
                         }
-                        onUpdate={onUpdate}
                         isPosting={isPosting}
                     />
                 </PaddedPaper>
