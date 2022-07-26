@@ -239,19 +239,25 @@ export default function UserDetail(props) {
                 spacing={1}
             >
                 <PaddedPaper maxWidth={700}>
-                    <CurrentRiderResponsibilitySelector
-                        available={possibleRiderResponsibilities}
-                        value={riderResponsibility}
-                        onChange={handleUpdateRiderResponsibility}
-                    />
-                    <UserProfile
-                        displayNames={usersDisplayNames}
-                        user={user}
-                        possibleRiderResponsibilities={
-                            possibleRiderResponsibilities
-                        }
-                        isPosting={isPosting}
-                    />
+                    <Stack direction="column" spacing={3}>
+                        <CurrentRiderResponsibilitySelector
+                            available={possibleRiderResponsibilities}
+                            value={riderResponsibility}
+                            onChange={handleUpdateRiderResponsibility}
+                        />
+                        {possibleRiderResponsibilities &&
+                            possibleRiderResponsibilities.length > 0 && (
+                                <Divider />
+                            )}
+                        <UserProfile
+                            displayNames={usersDisplayNames}
+                            user={user}
+                            possibleRiderResponsibilities={
+                                possibleRiderResponsibilities
+                            }
+                            isPosting={isPosting}
+                        />
+                    </Stack>
                 </PaddedPaper>
                 <ProfilePicture
                     profilePicture={user.profilePicture}
