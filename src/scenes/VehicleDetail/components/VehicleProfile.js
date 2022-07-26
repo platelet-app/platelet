@@ -29,7 +29,7 @@ function VehicleProfile(props) {
     const [editMode, setEditMode] = useState(false);
     const [state, setState] = useState({ ...props.vehicle });
     const [oldState, setOldState] = useState({ ...props.vehicle });
-        const theme = useTheme();
+    const theme = useTheme();
 
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -80,7 +80,7 @@ function VehicleProfile(props) {
                 }}
                 size="large"
             >
-                <EditIcon color={editMode ? "secondary" : "inherit"}/>
+                <EditIcon color={editMode ? "secondary" : "inherit"} />
             </IconButton>
         ) : (
             <IconButton
@@ -97,21 +97,22 @@ function VehicleProfile(props) {
     }
 
     let header = (
-        <h2>{props.vehicle.name ? props.vehicle.name : "No name."}</h2>
+        <Typography variant="h5" noWrap align={"right"}>
+            {oldState.name ? oldState.name : "No name."}
+        </Typography>
     );
 
-    const onCancel = ()=>{
-      setEditMode(false);
-      setState(oldState);
-    }
+    const onCancel = () => {
+        setEditMode(false);
+        setState(oldState);
+    };
 
-    const onConfirmation=()=>{
-      props.onUpdate(state);
-      setState(state);
-      setOldState(state);
-      setEditMode(false);
-    }
-
+    const onConfirmation = () => {
+        props.onUpdate(state);
+        setState(state);
+        setOldState(state);
+        setEditMode(false);
+    };
 
     const divider = editMode ? (
         <></>
@@ -130,7 +131,7 @@ function VehicleProfile(props) {
                 alignItems={"center"}
                 spacing={3}
             >
-                <h2>{oldState.name ? oldState.name : "No name."}</h2>
+                {header}
                 {editToggle}
             </Stack>
             <Divider />

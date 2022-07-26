@@ -81,7 +81,11 @@ export default function UserProfile(props) {
         props.possibleRiderResponsibilities,
     ]);
 
-    let header = <h2>{oldState.displayName}</h2>;
+    let header = (
+        <Typography variant="h5" noWrap align={"right"}>
+            {oldState.displayName}
+        </Typography>
+    );
 
     let editNameToggle = <></>;
     let editContactToggle = <></>;
@@ -303,7 +307,7 @@ export default function UserProfile(props) {
             <Stack
                 direction={"row"}
                 justifyContent={"space-between"}
-                alignItems={"top"}
+                alignItems={"center"}
                 spacing={3}
             >
                 {header}

@@ -151,17 +151,21 @@ function LocationProfile(props) {
         }
     }
 
+    const header = (
+        <Typography variant="h5" noWrap align={"right"}>
+            {oldState["name"]}
+        </Typography>
+    );
+
     return (
         <Stack direction={"column"} spacing={3}>
             <Stack
                 direction={"row"}
                 justifyContent={"space-between"}
-                alignItems={"top"}
+                alignItems={"center"}
                 spacing={3}
             >
-                <Typography noWrap align={"right"}>
-                    {oldState["name"]}
-                </Typography>
+                {header}
                 {editNameToggle}
             </Stack>
             <Divider />
