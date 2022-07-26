@@ -15,7 +15,10 @@ function UserRolesAndSelector(props) {
                                         ? "default"
                                         : "outlined"
                                 }
-                                disabled={[userRoles.user].includes(role)}
+                                disabled={
+                                    props.disabled ||
+                                    [userRoles.user].includes(role)
+                                }
                                 color={
                                     props.value.includes(role)
                                         ? "primary"
@@ -42,5 +45,17 @@ function UserRolesAndSelector(props) {
         );
     }
 }
+
+UserRolesAndSelector.propTypes = {
+    value: React.PropTypes.array,
+    selectMode: React.PropTypes.bool,
+    disabled: React.PropTypes.bool,
+};
+
+UserRolesAndSelector.defaultProps = {
+    value: [],
+    selectMode: false,
+    disabled: false,
+};
 
 export default UserRolesAndSelector;

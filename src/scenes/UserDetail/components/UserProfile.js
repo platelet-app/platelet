@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
-import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import EditModeToggleButton from "../../../components/EditModeToggleButton";
 import { getWhoami } from "../../../redux/Selectors";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
@@ -22,9 +21,6 @@ import { tenantIdSelector } from "../../../redux/Selectors";
 import { protectedFields } from "../../../apiConsts";
 import * as mutations from "../../../graphql/mutations";
 import { networkStatusSelector } from "../../../redux/Selectors";
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
-import EditIcon from "@mui/icons-material/Edit";
 
 const fields = {
     name: "Name",
@@ -52,11 +48,13 @@ export default function UserProfile(props) {
     const [editAddressMode, setEditAddressMode] = useState(false);
     const [editRoleMode, setEditRoleMode] = useState(false);
     const [state, setState] = useState({ ...props.user });
+    const [isPostingRoles, setIsPostingRoles] = useState(false);
     const [oldState, setOldState] = useState({ ...props.user });
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
     const tenantId = useSelector(tenantIdSelector);
     const networkStatus = useSelector(networkStatusSelector);
+    const debouncedUpdateRole = useRef(() => {});
 
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
@@ -173,19 +171,40 @@ export default function UserProfile(props) {
         }
     }
 
-    function onSelectRole(role) {
-        if (state.roles.includes(role)) {
-            const result = state.roles.filter((r) => r !== role);
-            setState((prevState) => ({
-                ...prevState,
-                roles: result,
-            }));
-        } else {
-            const result = [...state.roles, role];
-            setState((prevState) => ({
-                ...prevState,
-                roles: result,
-            }));
+    async function onUpdateRoles(roles) {
+        setIsPostingRoles(true);
+        if (roles) {
+            await API.graphql(
+                graphqlOperation(mutations.updateUserRoles, {
+                    userId: state.id,
+                    roles,
+                })
+            );
+        }
+        setIsPostingRoles(false);
+    }
+
+    async function onSelectRole(role) {
+        try {
+            if (state.roles.includes(role)) {
+                const result = state.roles.filter((r) => r !== role);
+                await onUpdateRoles(result);
+                setState((prevState) => ({
+                    ...prevState,
+                    roles: result,
+                }));
+            } else {
+                const result = [...state.roles, role];
+                await onUpdateRoles(result);
+                setState((prevState) => ({
+                    ...prevState,
+                    roles: result,
+                }));
+            }
+        } catch (e) {
+            console.log(e);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+            setIsPostingRoles(false);
         }
     }
 
@@ -224,14 +243,6 @@ export default function UserProfile(props) {
                     }
                 })
             );
-            // if (roles) {
-            //     await API.graphql(
-            //         graphqlOperation(mutations.updateUserRoles, {
-            //             userId: state.id,
-            //             roles,
-            //         })
-            //     );
-            // }
             if (possibleRiderResponsibilities && tenantId) {
                 DataStore.query(models.PossibleRiderResponsibilities).then(
                     (result) => {
@@ -287,16 +298,6 @@ export default function UserProfile(props) {
         setEditRoleMode(false);
         setState(oldState);
     };
-
-    const saveButtons = !editRoleMode ? (
-        editRoleToggle
-    ) : (
-        <SaveCancelButtons
-            disabled={props.isPosting}
-            onSave={onConfirmation}
-            onCancel={onCancel}
-        />
-    );
 
     return (
         <Stack direction={"column"} spacing={3}>
@@ -499,6 +500,7 @@ export default function UserProfile(props) {
                 spacing={1}
             >
                 <UserRolesAndSelector
+                    disabled={isPostingRoles}
                     selectMode={editRoleMode}
                     onSelect={onSelectRole}
                     value={state.roles}
