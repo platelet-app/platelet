@@ -60,7 +60,6 @@ async function appSyncAmendRoles(userId, roles) {
         mutation: updateUser,
         variables: { input: updateUserInputActual },
     });
-    console.log("Updated roles:", result.data.updateUser);
     console.log("Updated user:", result.data.updateUser);
     return result.data.updateUser;
 }

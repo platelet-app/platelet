@@ -4,10 +4,15 @@ exports.getUser = gql`
     query GetUser($id: ID!) {
         getUser(id: $id) {
             id
-            _version
-            username
+            tenantId
+            cognitoId
+            displayName
             roles
             username
+            createdAt
+            updatedAt
+            _lastChangedAt
+            _version
         }
     }
 `;
