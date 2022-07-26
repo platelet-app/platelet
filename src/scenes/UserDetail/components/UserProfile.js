@@ -413,7 +413,6 @@ export default function UserProfile(props) {
                 >
                     <TextFieldControlled
                         key="name"
-                        variant={"standard"}
                         fullWidth
                         aria-label="name"
                         label={fields.name}
@@ -431,7 +430,6 @@ export default function UserProfile(props) {
                             return (
                                 <TextFieldUncontrolled
                                     key={key}
-                                    variant={"standard"}
                                     tel={
                                         key === "telephoneNumber" ||
                                         key === "mobileNumber"
@@ -471,7 +469,6 @@ export default function UserProfile(props) {
                             return (
                                 <TextField
                                     key={key}
-                                    variant={"standard"}
                                     value={state.contact[key]}
                                     fullWidth
                                     label={addressFields[key]}
