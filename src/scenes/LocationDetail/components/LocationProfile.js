@@ -1,4 +1,11 @@
-import { Box, Divider, Stack, TextField, Typography,useMediaQuery } from "@mui/material";
+import {
+    Box,
+    Divider,
+    Stack,
+    TextField,
+    Typography,
+    useMediaQuery,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import EditModeToggleButton from "../../../components/EditModeToggleButton";
@@ -7,12 +14,11 @@ import { getWhoami } from "../../../redux/Selectors";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import { userRoles } from "../../../apiConsts";
-import { TextFieldControlled} from "../../../components/TextFields";
+import { TextFieldControlled } from "../../../components/TextFields";
 import LabelItemPair from "../../../components/LabelItemPair";
 import { useTheme } from "@mui/styles";
 
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
-
 
 const fields = {
     ward: "Ward",
@@ -55,10 +61,10 @@ function LocationProfile(props) {
     }
 
     const onCancel = () => {
-      setEditAddressMode(false);
-      setEditContactMode(false);
-      setEditNameMode(false);
-      setState(oldState);
+        setEditAddressMode(false);
+        setEditContactMode(false);
+        setEditNameMode(false);
+        setState(oldState);
     };
 
     const onConfirmation = () => {
@@ -144,7 +150,7 @@ function LocationProfile(props) {
             );
         }
     }
-    
+
     return (
         <Stack direction={"column"} spacing={3}>
             <Stack
@@ -178,26 +184,30 @@ function LocationProfile(props) {
                     );
                 })}
             </Box>
-            <Divider />
-            <Stack
-                direction={"row-reverse"}
-                justifyContent={"space-between"}
-                alignItems={"top"}
-                spacing={1}
-            >
-                {editContactToggle}
-            </Stack>
-            <Box sx={{ width: "100%" }}>
-                {Object.entries(contactFields).map(([key, label]) => {
-                    return (
-                        <LabelItemPair key={key} label={label}>
-                            <Typography noWrap align={"right"}>
-                                {oldState.contact[key]}
-                            </Typography>
-                        </LabelItemPair>
-                    );
-                })}
-            </Box>
+            {oldState.contact && (
+                <>
+                    <Divider />
+                    <Stack
+                        direction={"row-reverse"}
+                        justifyContent={"space-between"}
+                        alignItems={"top"}
+                        spacing={1}
+                    >
+                        {editContactToggle}
+                    </Stack>
+                    <Box sx={{ width: "100%" }}>
+                        {Object.entries(contactFields).map(([key, label]) => {
+                            return (
+                                <LabelItemPair key={key} label={label}>
+                                    <Typography noWrap align={"right"}>
+                                        {oldState.contact[key]}
+                                    </Typography>
+                                </LabelItemPair>
+                            );
+                        })}
+                    </Box>
+                </>
+            )}
             <ConfirmationDialog
                 fullScreen={isSm}
                 dialogTitle="Edit Location Name"
@@ -220,7 +230,7 @@ function LocationProfile(props) {
                             onChange={(e) => {
                                 setState((prevState) => ({
                                     ...prevState,
-                                    ["name"]: e.target.value,
+                                    name: e.target.value,
                                 }));
                             }}
                         />
@@ -258,41 +268,43 @@ function LocationProfile(props) {
                     })}
                 </Stack>
             </ConfirmationDialog>
-            <ConfirmationDialog
-                fullScreen={isSm}
-                dialogTitle="Edit Contact Information"
-                open={editContactMode}
-                onCancel={onCancel}
-                onConfirmation={onConfirmation}
-            >
-                <Stack
-                    sx={{ width: "100%", minWidth: isSm ? 0 : 400 }}
-                    spacing={1}
+            {state.contact && (
+                <ConfirmationDialog
+                    fullScreen={isSm}
+                    dialogTitle="Edit Contact Information"
+                    open={editContactMode}
+                    onCancel={onCancel}
+                    onConfirmation={onConfirmation}
                 >
-                    {Object.entries(contactFields).map(([key, label]) => {
-                        return (
-                            <TextFieldControlled
-                                tel={key === "telephoneNumber"}
-                                key={key}
-                                fullWidth
-                                aria-label={label}
-                                label={label}
-                                margin="normal"
-                                value={state.contact[key]}
-                                onChange={(e) => {
-                                    setState((prevState) => ({
-                                        ...prevState,
-                                        contact: {
-                                            ...prevState.contact,
-                                            [key]: e.target.value,
-                                        },
-                                    }));
-                                }}
-                            />
-                        );
-                    })}
-                </Stack>
-            </ConfirmationDialog>
+                    <Stack
+                        sx={{ width: "100%", minWidth: isSm ? 0 : 400 }}
+                        spacing={1}
+                    >
+                        {Object.entries(contactFields).map(([key, label]) => {
+                            return (
+                                <TextFieldControlled
+                                    tel={key === "telephoneNumber"}
+                                    key={key}
+                                    fullWidth
+                                    aria-label={label}
+                                    label={label}
+                                    margin="normal"
+                                    value={state.contact[key]}
+                                    onChange={(e) => {
+                                        setState((prevState) => ({
+                                            ...prevState,
+                                            contact: {
+                                                ...prevState.contact,
+                                                [key]: e.target.value,
+                                            },
+                                        }));
+                                    }}
+                                />
+                            );
+                        })}
+                    </Stack>
+                </ConfirmationDialog>
+            )}
         </Stack>
     );
 }
