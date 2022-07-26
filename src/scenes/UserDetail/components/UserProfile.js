@@ -18,9 +18,7 @@ import {
 } from "../../../components/TextFields";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import { API, graphqlOperation } from "aws-amplify";
-import {
-    tenantIdSelector,
-} from "../../../redux/Selectors";
+import { tenantIdSelector } from "../../../redux/Selectors";
 import { protectedFields } from "../../../apiConsts";
 import * as mutations from "../../../graphql/mutations";
 import { networkStatusSelector } from "../../../redux/Selectors";
@@ -60,10 +58,8 @@ export default function UserProfile(props) {
     const tenantId = useSelector(tenantIdSelector);
     const networkStatus = useSelector(networkStatusSelector);
 
-    
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
-
 
     function updateStateFromProps() {
         if (props.user) {
@@ -76,11 +72,11 @@ export default function UserProfile(props) {
 
     function updateRiderResponsibilitiesFromProps() {
         if (props.possibleRiderResponsibilities) {
-            setState({
-                ...state,
+            setState((prevState) => ({
+                ...prevState,
                 possibleRiderResponsibilities:
                     props.possibleRiderResponsibilities,
-            });
+            }));
         }
     }
 
@@ -139,57 +135,57 @@ export default function UserProfile(props) {
                     }
                     value={editAddressMode}
                     onChange={(v) => {
-                      setEditAddressMode(v)
+                        setEditAddressMode(v);
                         if (!v) setState(oldState);
                     }}
                 />
             );
 
-                editRoleToggle = (
-                    <Stack
-                        direction={"row"}
-                        alignItems={"top"}
-                        justifyContent={"space-between"}
-                        spacing={1}
-                    >
-                        <EditModeToggleButton
-                            tooltipDefault={
-                                !networkStatus
-                                    ? props.user.id === whoami.id
-                                        ? "Edit your role (Warning: Offline status, changes may not register.)"
-                                        : "Edit this user (Warning: Offline status, changes may not register.)"
-                                    : props.user.id === whoami.id
-                                    ? "Edit your role"
-                                    : "Edit this user"
+            editRoleToggle = (
+                <Stack
+                    direction={"row"}
+                    alignItems={"top"}
+                    justifyContent={"space-between"}
+                    spacing={1}
+                >
+                    <EditModeToggleButton
+                        tooltipDefault={
+                            !networkStatus
+                                ? props.user.id === whoami.id
+                                    ? "Edit your role (Warning: Offline status, changes may not register.)"
+                                    : "Edit this user (Warning: Offline status, changes may not register.)"
+                                : props.user.id === whoami.id
+                                ? "Edit your role"
+                                : "Edit this user"
+                        }
+                        value={editRoleMode}
+                        onChange={(v) => {
+                            if (v) {
+                                setEditRoleMode(v);
+                                setState(oldState);
+                            } else {
+                                onRoleConfirmation();
                             }
-                            value={editRoleMode}
-                            onChange={(v) => {
-                                if (v) {
-                                    setEditRoleMode(v);
-                                    setState(oldState);
-                                } else {
-                                    onRoleConfirmation();
-                                }
-                            }}
-                        />
-                    </Stack>
-                );
+                        }}
+                    />
+                </Stack>
+            );
         }
     }
 
     function onSelectRole(role) {
         if (state.roles.includes(role)) {
             const result = state.roles.filter((r) => r !== role);
-            setState({
-                ...state,
+            setState((prevState) => ({
+                ...prevState,
                 roles: result,
-            });
+            }));
         } else {
             const result = [...state.roles, role];
-            setState({
-                ...state,
+            setState((prevState) => ({
+                ...prevState,
                 roles: result,
-            });
+            }));
         }
     }
 
@@ -265,16 +261,16 @@ export default function UserProfile(props) {
         }
     }
 
-    const onConfirmation = ()=>{
-      if(verifyUpdate(state)){
-        onUpdate(state);
-        setEditNameMode(false);
-        setEditContactMode(false);
-        setEditAddressMode(false);
-        setEditRoleMode(false);
-        setOldState(state);
-      }
-    }
+    const onConfirmation = () => {
+        if (verifyUpdate(state)) {
+            onUpdate(state);
+            setEditNameMode(false);
+            setEditContactMode(false);
+            setEditAddressMode(false);
+            setEditRoleMode(false);
+            setOldState(state);
+        }
+    };
 
     const onRoleConfirmation = () => {
         if (verifyUpdate(state)) {
@@ -396,10 +392,10 @@ export default function UserProfile(props) {
                         margin="normal"
                         value={state.displayName}
                         onChange={(e) => {
-                            setState({
-                                ...state,
+                            setState((prevState) => ({
+                                ...prevState,
                                 displayName: e.target.value,
-                            });
+                            }));
                         }}
                     />
                 </Stack>
@@ -424,10 +420,10 @@ export default function UserProfile(props) {
                         margin="normal"
                         value={state.name}
                         onChange={(e) => {
-                            setState({
-                                ...state,
+                            setState((prevState) => ({
+                                ...prevState,
                                 name: e.target.value,
-                            });
+                            }));
                         }}
                     />
                     {Object.keys(state.contact ? contactFields : []).map(
@@ -445,13 +441,13 @@ export default function UserProfile(props) {
                                     label={contactFields[key]}
                                     id={key}
                                     onChange={(e) => {
-                                        setState({
-                                            ...state,
+                                        setState((prevState) => ({
+                                            ...prevState,
                                             contact: {
                                                 ...state.contact,
                                                 [key]: e.target.value,
                                             },
-                                        });
+                                        }));
                                     }}
                                 />
                             );
@@ -481,13 +477,13 @@ export default function UserProfile(props) {
                                     label={addressFields[key]}
                                     id={key}
                                     onChange={(e) => {
-                                        setState({
-                                            ...state,
+                                        setState((prevState) => ({
+                                            ...prevState,
                                             contact: {
                                                 ...state.contact,
                                                 [key]: e.target.value,
                                             },
-                                        });
+                                        }));
                                     }}
                                 />
                             );
@@ -502,13 +498,12 @@ export default function UserProfile(props) {
                 alignItems={"top"}
                 spacing={1}
             >
-
                 <UserRolesAndSelector
                     selectMode={editRoleMode}
                     onSelect={onSelectRole}
                     value={state.roles}
-                    />
-                
+                />
+
                 {editRoleToggle}
             </Stack>
         </Stack>
