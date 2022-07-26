@@ -54,7 +54,6 @@ export default function UserProfile(props) {
     const whoami = useSelector(getWhoami);
     const tenantId = useSelector(tenantIdSelector);
     const networkStatus = useSelector(networkStatusSelector);
-    const debouncedUpdateRole = useRef(() => {});
 
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));

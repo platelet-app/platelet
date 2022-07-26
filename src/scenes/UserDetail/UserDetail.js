@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { decodeUUID } from "../../utilities";
-import _ from "lodash";
 import { useDispatch, useSelector } from "react-redux";
 import UserProfile from "./components/UserProfile";
 import { PaddedPaper } from "../../styles/common";
@@ -13,7 +12,7 @@ import {
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
-import { Stack, useMediaQuery,Divider } from "@mui/material";
+import { Stack, useMediaQuery, Divider } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import CurrentRiderResponsibilitySelector from "./components/CurrentRiderResponsibilitySelector";
 import Skeleton from "@mui/material/Skeleton";
@@ -43,15 +42,14 @@ export default function UserDetail(props) {
     const [possibleRiderResponsibilities, setPossibleRiderResponsibilities] =
         useState([]);
     const riderRespObserver = useRef({ unsubscribe: () => {} });
-    const tenantId = useSelector(tenantIdSelector);
     const [notFound, setNotFound] = useState(false);
     const [usersDisplayNames, setUsersDisplayNames] = useState([]);
     const dispatch = useDispatch();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const observer = useRef({
-            unsubscribe: () => {},
-        });
+        unsubscribe: () => {},
+    });
 
     const loadedOnce = useRef(false);
 
@@ -86,7 +84,7 @@ export default function UserDetail(props) {
             riderRespObserver.current.unsubscribe();
             riderRespObserver.current = DataStore.observe(
                 models.PossibleRiderResponsibilities
-            ).subscribe((result) => {
+            ).subscribe(() => {
                 DataStore.query(models.PossibleRiderResponsibilities).then(
                     (result) => {
                         const filtered = result
@@ -102,28 +100,30 @@ export default function UserDetail(props) {
                         setPossibleRiderResponsibilities(filtered);
                     }
                 );
-                  })
-                observer.current = DataStore
-                    .observe(models.User, userUUID)
-                    .subscribe(({ element }) => setUser(element));
-                setIsFetching(false);
-                loadedOnce.current = true;
-                if (userResult) {
-                    setUser(userResult);
-                    setRiderResponsibility(userResult.riderResponsibility);
-                }else{
-                  setNotFound(true)
-                }
-              }catch(error) {
-                setIsFetching(false);
-                dispatch(
-                    displayErrorNotification(
-                        `Failed to get user: ${error.message}`
-                    )
-                );
-                console.log("Request failed", error);
+            });
+            observer.current = DataStore.observe(
+                models.User,
+                userUUID
+            ).subscribe(({ element }) => {
+                console.log("element", element);
+                setUser(element);
+            });
+            setIsFetching(false);
+            loadedOnce.current = true;
+            if (userResult) {
+                setUser(userResult);
+                setRiderResponsibility(userResult.riderResponsibility);
+            } else {
+                setNotFound(true);
             }
-      }
+        } catch (error) {
+            setIsFetching(false);
+            dispatch(
+                displayErrorNotification(`Failed to get user: ${error.message}`)
+            );
+            console.log("Request failed", error);
+        }
+    }
     useEffect(
         () => newUserProfile(),
         [props.location.key, userModelSynced, riderResponsibilityModelSynced]

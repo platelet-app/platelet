@@ -1,6 +1,7 @@
 import { Chip, Grid } from "@mui/material";
 import React from "react";
 import { userRoles } from "../../../apiConsts";
+import PropTypes from "prop-types";
 
 function UserRolesAndSelector(props) {
     if (props.selectMode) {
@@ -47,9 +48,9 @@ function UserRolesAndSelector(props) {
 }
 
 UserRolesAndSelector.propTypes = {
-    value: React.PropTypes.array,
-    selectMode: React.PropTypes.bool,
-    disabled: React.PropTypes.bool,
+    value: PropTypes.array,
+    selectMode: PropTypes.bool,
+    disabled: PropTypes.bool,
 };
 
 UserRolesAndSelector.defaultProps = {
