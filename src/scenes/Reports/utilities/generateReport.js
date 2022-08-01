@@ -8,6 +8,7 @@ import { writeToString } from "@fast-csv/format";
 const taskFields = {
     id: "",
     createdAt: "",
+    timeOfCall: "",
     priority: "",
     status: "",
     riderResponsibility: "",
