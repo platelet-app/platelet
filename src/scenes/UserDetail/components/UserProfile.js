@@ -56,7 +56,6 @@ export default function UserProfile(props) {
     const [isPostingRoles, setIsPostingRoles] = useState(false);
     const [isPostingRiderResponsibilities, setIsPostingRiderResponsibilities] =
         useState(false);
-    const [oldState, setOldState] = useState({ ...props.user });
     const [dialogState, setDialogState] = useState(null);
     const updateValues = useRef(null);
     const dispatch = useDispatch();
@@ -74,7 +73,6 @@ export default function UserProfile(props) {
     function updateStateFromProps() {
         if (props.user) {
             setState(props.user);
-            setOldState(props.user);
         }
     }
 
@@ -96,7 +94,7 @@ export default function UserProfile(props) {
 
     let header = (
         <Typography variant="h5" noWrap align={"right"}>
-            {oldState.displayName}
+            {state.displayName}
         </Typography>
     );
 
@@ -149,7 +147,6 @@ export default function UserProfile(props) {
                         onChange={(v) => {
                             if (v) {
                                 setEditRoleMode(v);
-                                setState(oldState);
                             } else {
                                 onRoleConfirmation();
                             }
@@ -182,7 +179,7 @@ export default function UserProfile(props) {
     } else if (dialogState === dialogStates.displayName) {
         dialogContents = (
             <UserDisplayNameDialog
-                values={state.displayName}
+                values={{ displayName: state.displayName }}
                 onChange={onChangeUpdateValues}
             />
         );
@@ -338,7 +335,6 @@ export default function UserProfile(props) {
         if (verifyUpdate(state)) {
             onUpdate();
             setEditRoleMode(false);
-            setOldState(state);
         }
     };
 
@@ -346,13 +342,7 @@ export default function UserProfile(props) {
         if (verifyUpdate(state)) {
             onUpdate(state);
             setEditRoleMode(false);
-            setOldState(state);
         }
-    };
-
-    const onCancel = () => {
-        setEditRoleMode(false);
-        setState(oldState);
     };
 
     let dialogTitle = null;
@@ -388,7 +378,7 @@ export default function UserProfile(props) {
                 {editNameToggle}
             </Stack>
             <Divider />
-            {oldState.contact && (
+            {state.contact && (
                 <Stack
                     direction={"row"}
                     justifyContent={"space-between"}
@@ -403,25 +393,23 @@ export default function UserProfile(props) {
             <Box sx={{ width: "100%" }}>
                 <Stack direction={"row"} justifyContent={"space-between"}>
                     <Typography>{fields.name}</Typography>
-                    <Typography>{oldState.name}</Typography>
+                    <Typography>{state.name}</Typography>
                 </Stack>
-                {Object.keys(oldState.contact ? contactFields : []).map(
-                    (key) => {
-                        return (
-                            <Stack
-                                direction={"row"}
-                                justifyContent={"space-between"}
-                                key={key}
-                            >
-                                <Typography>{contactFields[key]}</Typography>
-                                <Typography>{oldState.contact[key]}</Typography>
-                            </Stack>
-                        );
-                    }
-                )}
+                {Object.keys(state.contact ? contactFields : []).map((key) => {
+                    return (
+                        <Stack
+                            direction={"row"}
+                            justifyContent={"space-between"}
+                            key={key}
+                        >
+                            <Typography>{contactFields[key]}</Typography>
+                            <Typography>{state.contact[key]}</Typography>
+                        </Stack>
+                    );
+                })}
             </Box>
             <Divider />
-            {oldState.contact && (
+            {state.contact && (
                 <Stack
                     direction={"row"}
                     justifyContent={"space-between"}
@@ -435,7 +423,7 @@ export default function UserProfile(props) {
             )}
             <Stack direction={"row"} justifyContent={"space-between"}>
                 <Box sx={{ width: "100%" }}>
-                    {Object.keys(oldState.contact ? addressFields : []).map(
+                    {Object.keys(state.contact ? addressFields : []).map(
                         (key) => (
                             <Stack
                                 direction={"row"}
@@ -444,7 +432,7 @@ export default function UserProfile(props) {
                             >
                                 <Typography>{addressFields[key]}</Typography>
                                 <Typography align={"right"}>
-                                    {oldState.contact[key]}
+                                    {state.contact[key]}
                                 </Typography>
                             </Stack>
                         )
