@@ -24,34 +24,48 @@ function RiderResponsibilitySelect(props) {
         props.onSelect(value);
     };
 
-    return (
-        <Grid direction="row" spacing={1} container>
-            {responsibilities
-                .filter((value) => !props.exclude.includes(value.label))
-                .map((value) => (
-                    <Grid item key={value.label}>
-                        <Chip
-                            variant={
-                                valueIds.includes(value.id)
-                                    ? "default"
-                                    : "outlined"
-                            }
-                            color={
-                                valueIds.includes(value.id)
-                                    ? "primary"
-                                    : "default"
-                            }
-                            onClick={() => handleChange(value)}
-                            label={value.label}
-                        />
+    if (props.editMode) {
+        return (
+            <Grid direction="row" spacing={1} container>
+                {responsibilities
+                    .filter((value) => !props.exclude.includes(value.label))
+                    .map((value) => (
+                        <Grid item key={value.label}>
+                            <Chip
+                                disabled={props.disabled}
+                                variant={
+                                    valueIds.includes(value.id)
+                                        ? "default"
+                                        : "outlined"
+                                }
+                                color={
+                                    valueIds.includes(value.id)
+                                        ? "primary"
+                                        : "default"
+                                }
+                                onClick={() => handleChange(value)}
+                                label={value.label}
+                            />
+                        </Grid>
+                    ))}
+            </Grid>
+        );
+    } else {
+        return (
+            <Grid container direction={"row"} spacing={1}>
+                {props.value.map((r) => (
+                    <Grid item key={r.id}>
+                        <Chip label={r.label} />
                     </Grid>
                 ))}
-        </Grid>
-    );
+            </Grid>
+        );
+    }
 }
 
 RiderResponsibilitySelect.propTypes = {
     exclude: PropTypes.arrayOf(PropTypes.string),
+    editMode: PropTypes.bool,
     onSelect: PropTypes.func,
     value: PropTypes.array,
     disabled: PropTypes.bool,
@@ -59,6 +73,7 @@ RiderResponsibilitySelect.propTypes = {
 
 RiderResponsibilitySelect.defaultProps = {
     exclude: [],
+    editMode: false,
     onSelect: () => {},
     value: [],
     disabled: false,
