@@ -32,12 +32,6 @@ export const userContactFields = {
     mobileNumber: "Mobile",
 };
 
-const dialogStates = {
-    contact: "contact",
-    address: "address",
-    displayName: "displayName",
-};
-
 export const userAddressFields = {
     line1: "Line 1",
     line2: "Line 2",
@@ -46,6 +40,12 @@ export const userAddressFields = {
     county: "County",
     country: "Country",
     postcode: "Postcode",
+};
+
+const dialogStates = {
+    contact: "contact",
+    address: "address",
+    displayName: "displayName",
 };
 
 export default function UserProfile(props) {
@@ -66,12 +66,9 @@ export default function UserProfile(props) {
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
-    useEffect(() => {
-        console.log(state.possibleRiderResponsibilities);
-    }, [state.possibleRiderResponsibilities]);
-
     function updateStateFromProps() {
         if (props.user) {
+            console.log("USER", props.user);
             setState(props.user);
         }
     }
@@ -80,6 +77,10 @@ export default function UserProfile(props) {
 
     function updateRiderResponsibilitiesFromProps() {
         if (props.possibleRiderResponsibilities) {
+            console.log(
+                "POSSIBLE RIDER RESPONSIBILITIES",
+                props.possibleRiderResponsibilities
+            );
             setState((prevState) => ({
                 ...prevState,
                 possibleRiderResponsibilities:
@@ -239,21 +240,20 @@ export default function UserProfile(props) {
 
     async function onChangePossibleResponsibilities(value) {
         if (value && tenantId) {
-            console.log("onChangePossibleResponsibilities", value);
             setIsPostingRiderResponsibilities(true);
             let possibleRiderResponsibilities = [];
             if (
-                state.possibleRiderResponsibilities
+                props.possibleRiderResponsibilities
                     .map((r) => r.label)
                     .includes(value.label)
             ) {
                 possibleRiderResponsibilities =
-                    state.possibleRiderResponsibilities.filter(
+                    props.possibleRiderResponsibilities.filter(
                         (r) => r.label !== value.label
                     );
             } else {
                 possibleRiderResponsibilities = [
-                    ...state.possibleRiderResponsibilities,
+                    ...props.possibleRiderResponsibilities,
                     value,
                 ];
             }
@@ -457,7 +457,7 @@ export default function UserProfile(props) {
                         <RiderResponsibilitySelect
                             editMode={editResponsibilitiesMode}
                             onSelect={onChangePossibleResponsibilities}
-                            value={state.possibleRiderResponsibilities}
+                            value={props.possibleRiderResponsibilities}
                             disabled={isPostingRiderResponsibilities}
                         />
                         <EditModeToggleButton

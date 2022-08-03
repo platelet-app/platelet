@@ -4,7 +4,6 @@ import { Route, Switch, useLocation } from "react-router-dom";
 import Dashboard from "../scenes/Dashboard/Dashboard";
 import VehicleList from "../scenes/VehiclesList";
 import UsersList from "../scenes/UsersList";
-import UserDetail from "../scenes/UserDetail/UserDetail";
 import VehicleDetail from "../scenes/VehicleDetail/VehicleDetail";
 import NotFound from "../ErrorComponents/NotFound";
 import LocationsList from "../scenes/LocationsList";
@@ -23,6 +22,7 @@ import { AdminControl } from "../scenes/AdminControl/AdminControl";
 import { guidedSetupOpenSelector, menuIndexSelector } from "../redux/Selectors";
 import { Box } from "@mui/material";
 import Reports from "../scenes/Reports/Reports";
+import UserDetailRoute from "../scenes/UserDetail/UserDetailRoute";
 
 function MainWindowContainer(props) {
     const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
@@ -154,7 +154,7 @@ export default function MainWindow(_props) {
                         path="/user/:user_uuid_b62"
                         render={(props) => {
                             dispatch(setMenuIndex("users"));
-                            return <UserDetail {...props} />;
+                            return <UserDetailRoute {...props} />;
                         }}
                     />
                     <Route

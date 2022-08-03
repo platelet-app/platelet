@@ -1,20 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
-import { decodeUUID } from "../../utilities";
+import { decodeUUID } from "../../../utilities";
 import { useDispatch, useSelector } from "react-redux";
-import UserProfile from "./components/UserProfile";
-import { PaddedPaper } from "../../styles/common";
-import ProfilePicture from "./components/ProfilePicture";
-import NotFound from "../../ErrorComponents/NotFound";
-import {
-    dataStoreModelSyncedStatusSelector,
-    tenantIdSelector,
-} from "../../redux/Selectors";
+import UserProfile from "./UserProfile";
+import { PaddedPaper } from "../../../styles/common";
+import ProfilePicture from "./ProfilePicture";
+import NotFound from "../../../ErrorComponents/NotFound";
+import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
 import { DataStore } from "aws-amplify";
-import * as models from "../../models/index";
-import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
+import * as models from "../../../models";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { Stack, useMediaQuery, Divider } from "@mui/material";
 import { useTheme } from "@mui/styles";
-import CurrentRiderResponsibilitySelector from "./components/CurrentRiderResponsibilitySelector";
+import CurrentRiderResponsibilitySelector from "./CurrentRiderResponsibilitySelector";
 import Skeleton from "@mui/material/Skeleton";
 
 const initialUserState = {
@@ -33,8 +30,7 @@ const initialUserState = {
     disabled: 0,
 };
 
-export default function UserDetail(props) {
-    const userUUID = decodeUUID(props.match.params.user_uuid_b62);
+export default function UserDetail({ userId }) {
     const [isFetching, setIsFetching] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
     const [user, setUser] = useState(initialUserState);
@@ -64,7 +60,7 @@ export default function UserDetail(props) {
         setNotFound(false);
         if (!loadedOnce.current) setIsFetching(true);
         try {
-            const userResult = await DataStore.query(models.User, userUUID);
+            const userResult = await DataStore.query(models.User, userId);
             // TODO: make this observeQuery when https://github.com/aws-amplify/amplify-js/issues/9682 is fixed
             DataStore.query(models.PossibleRiderResponsibilities).then(
                 (result) => {
@@ -101,13 +97,12 @@ export default function UserDetail(props) {
                     }
                 );
             });
-            observer.current = DataStore.observe(
-                models.User,
-                userUUID
-            ).subscribe(({ element }) => {
-                console.log("element", element);
-                setUser(element);
-            });
+            observer.current = DataStore.observe(models.User, userId).subscribe(
+                ({ element }) => {
+                    console.log("element", element);
+                    setUser(element);
+                }
+            );
             setIsFetching(false);
             loadedOnce.current = true;
             if (userResult) {
@@ -126,7 +121,7 @@ export default function UserDetail(props) {
     }
     useEffect(
         () => newUserProfile(),
-        [props.location.key, userModelSynced, riderResponsibilityModelSynced]
+        [userId, userModelSynced, riderResponsibilityModelSynced]
     );
 
     async function getDisplayNames() {
@@ -230,7 +225,7 @@ export default function UserDetail(props) {
             </Stack>
         );
     } else if (notFound) {
-        return <NotFound>User {userUUID} could not be found.</NotFound>;
+        return <NotFound>User {userId} could not be found.</NotFound>;
     } else {
         return (
             <Stack

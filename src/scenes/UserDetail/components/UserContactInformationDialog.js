@@ -22,6 +22,18 @@ function UserContactInformationDialog({ values, onChange }) {
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
     return (
         <Stack sx={{ width: "100%", minWidth: isSm ? 0 : 400 }} spacing={1}>
+            <TextField
+                key={"name"}
+                value={state.name}
+                fullWidth
+                label={"Name"}
+                onChange={(e) => {
+                    setState((prevState) => ({
+                        ...prevState,
+                        name: e.target.value,
+                    }));
+                }}
+            />
             {Object.entries(userContactFields).map(([key, value]) => {
                 return (
                     <TextFieldUncontrolled
@@ -32,7 +44,6 @@ function UserContactInformationDialog({ values, onChange }) {
                         value={state[key]}
                         fullWidth
                         label={value}
-                        id={key}
                         onChange={(e) => {
                             setState((prevState) => ({
                                 ...prevState,
