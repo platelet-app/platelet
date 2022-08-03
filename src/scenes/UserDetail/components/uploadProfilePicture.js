@@ -16,7 +16,7 @@ if (
         process.env.REACT_APP_OFFLINE_ONLY === "false") &&
     (!process.env.REACT_APP_DEMO_MODE ||
         process.env.REACT_APP_DEMO_MODE === "false") &&
-    process.env.JEST_WORKER_ID !== undefined
+    process.env.JEST_WORKER_ID === undefined
 ) {
     aws_config = require("../../../aws-exports");
 }
