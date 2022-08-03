@@ -111,6 +111,7 @@ export default function UserProfile(props) {
         ) {
             editNameToggle = (
                 <EditModeToggleButton
+                    aria-label="Edit Display Name"
                     value={dialogState === dialogStates.displayName}
                     onChange={(v) => {
                         if (v) setDialogState(dialogStates.displayName);
@@ -120,6 +121,7 @@ export default function UserProfile(props) {
 
             editContactToggle = (
                 <EditModeToggleButton
+                    aria-label="Edit Contact Information"
                     value={dialogStates === dialogStates.contact}
                     onChange={(v) => {
                         if (v) setDialogState(dialogStates.contact);
@@ -129,6 +131,7 @@ export default function UserProfile(props) {
 
             editAddressToggle = (
                 <EditModeToggleButton
+                    aria-label="Edit Address Information"
                     value={dialogStates === dialogStates.address}
                     onChange={(v) => {
                         if (v) setDialogState(dialogStates.address);
