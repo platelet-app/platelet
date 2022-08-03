@@ -19,7 +19,7 @@ function EditModeToggleButton(props) {
         <Tooltip title={props.tooltipDefault}>
             <IconButton
                 className={props.className}
-                aria-label="Edit"
+                aria-label={props["aria-label"]}
                 onClick={() => props.onChange(true)}
             >
                 <EditIcon />
@@ -34,6 +34,7 @@ EditModeToggleButton.propTypes = {
     tooltipDefault: PropTypes.string,
     tooltipEdit: PropTypes.string,
     className: PropTypes.string,
+    "aria-label": PropTypes.string,
 };
 
 EditModeToggleButton.defaultProps = {
@@ -42,6 +43,7 @@ EditModeToggleButton.defaultProps = {
     tooltipDefault: "Edit",
     tooltipEdit: "Finish",
     className: "",
+    "aria-label": "Edit",
 };
 
 export default EditModeToggleButton;
