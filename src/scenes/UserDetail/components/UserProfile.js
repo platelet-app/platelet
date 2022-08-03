@@ -21,12 +21,12 @@ import UserContactInformationDialog from "./UserContactInformationDialog";
 import UserAddressInformationDialog from "./UserAddressInformationDialog";
 import UserDisplayNameDialog from "./UserDisplayNameDialog";
 
-const fields = {
+const userFields = {
     name: "Name",
     displayName: "Display Name",
 };
 
-const contactFields = {
+export const userContactFields = {
     emailAddress: "Email Address",
     telephoneNumber: "Telephone",
     mobileNumber: "Mobile",
@@ -38,7 +38,7 @@ const dialogStates = {
     displayName: "displayName",
 };
 
-const addressFields = {
+export const userAddressFields = {
     line1: "Line 1",
     line2: "Line 2",
     line3: "Line 3",
@@ -392,21 +392,25 @@ export default function UserProfile(props) {
             )}
             <Box sx={{ width: "100%" }}>
                 <Stack direction={"row"} justifyContent={"space-between"}>
-                    <Typography>{fields.name}</Typography>
+                    <Typography>{userFields.name}</Typography>
                     <Typography>{state.name}</Typography>
                 </Stack>
-                {Object.keys(state.contact ? contactFields : []).map((key) => {
-                    return (
-                        <Stack
-                            direction={"row"}
-                            justifyContent={"space-between"}
-                            key={key}
-                        >
-                            <Typography>{contactFields[key]}</Typography>
-                            <Typography>{state.contact[key]}</Typography>
-                        </Stack>
-                    );
-                })}
+                {Object.keys(state.contact ? userContactFields : []).map(
+                    (key) => {
+                        return (
+                            <Stack
+                                direction={"row"}
+                                justifyContent={"space-between"}
+                                key={key}
+                            >
+                                <Typography>
+                                    {userContactFields[key]}
+                                </Typography>
+                                <Typography>{state.contact[key]}</Typography>
+                            </Stack>
+                        );
+                    }
+                )}
             </Box>
             <Divider />
             {state.contact && (
@@ -423,14 +427,16 @@ export default function UserProfile(props) {
             )}
             <Stack direction={"row"} justifyContent={"space-between"}>
                 <Box sx={{ width: "100%" }}>
-                    {Object.keys(state.contact ? addressFields : []).map(
+                    {Object.keys(state.contact ? userAddressFields : []).map(
                         (key) => (
                             <Stack
                                 direction={"row"}
                                 justifyContent={"space-between"}
                                 key={key}
                             >
-                                <Typography>{addressFields[key]}</Typography>
+                                <Typography>
+                                    {userAddressFields[key]}
+                                </Typography>
                                 <Typography align={"right"}>
                                     {state.contact[key]}
                                 </Typography>

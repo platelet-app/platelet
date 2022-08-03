@@ -2,13 +2,7 @@ import { Stack, TextField, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import React, { useEffect, useState } from "react";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
-
-const fields = {
-    name: "Name",
-    emailAddress: "Email Address",
-    telephoneNumber: "Telephone",
-    mobileNumber: "Mobile",
-};
+import { userContactFields } from "./UserProfile";
 
 function UserContactInformationDialog({ values, onChange }) {
     const [state, setState] = useState(values);
@@ -28,7 +22,7 @@ function UserContactInformationDialog({ values, onChange }) {
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
     return (
         <Stack sx={{ width: "100%", minWidth: isSm ? 0 : 400 }} spacing={1}>
-            {Object.entries(fields).map(([key, value]) => {
+            {Object.entries(userContactFields).map(([key, value]) => {
                 return (
                     <TextFieldUncontrolled
                         key={key}

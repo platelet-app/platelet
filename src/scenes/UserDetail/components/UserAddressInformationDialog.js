@@ -1,16 +1,7 @@
 import { Stack, TextField, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import React, { useState, useEffect } from "react";
-
-const addressFields = {
-    line1: "Line 1",
-    line2: "Line 2",
-    line3: "Line 3",
-    town: "Town",
-    county: "County",
-    country: "Country",
-    postcode: "Postcode",
-};
+import { userAddressFields } from "./UserProfile";
 
 function UserAddressInformationDialog({ values, onChange }) {
     const [state, setState] = useState(values);
@@ -23,13 +14,13 @@ function UserAddressInformationDialog({ values, onChange }) {
 
     return (
         <Stack sx={{ width: "100%", minWidth: isSm ? 0 : 400 }} spacing={1}>
-            {Object.keys(state ? addressFields : []).map((key) => {
+            {Object.keys(state ? userAddressFields : []).map((key) => {
                 return (
                     <TextField
                         key={key}
                         value={state[key]}
                         fullWidth
-                        label={addressFields[key]}
+                        label={userAddressFields[key]}
                         id={key}
                         onChange={(e) => {
                             setState((prevState) => ({
