@@ -99,7 +99,6 @@ export default function UserDetail({ userId }) {
             });
             observer.current = DataStore.observe(models.User, userId).subscribe(
                 ({ element }) => {
-                    console.log("element", element);
                     setUser(element);
                 }
             );

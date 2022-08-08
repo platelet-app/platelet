@@ -1,6 +1,6 @@
 import { Stack, TextField, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/styles";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { userAddressFields } from "./UserProfile";
 
 function UserAddressInformationDialog({ values, onChange }) {
@@ -8,9 +8,13 @@ function UserAddressInformationDialog({ values, onChange }) {
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
-    useEffect(() => {
-        onChange({ contact: state });
-    }, [state, onChange]);
+    const handleChange = (key, value) => {
+        setState((prevState) => ({
+            ...prevState,
+            [key]: value,
+        }));
+        onChange({ contact: { ...state, [key]: value } });
+    };
 
     return (
         <Stack sx={{ width: "100%", minWidth: isSm ? 0 : 400 }} spacing={1}>
@@ -23,10 +27,8 @@ function UserAddressInformationDialog({ values, onChange }) {
                         label={userAddressFields[key]}
                         id={key}
                         onChange={(e) => {
-                            setState((prevState) => ({
-                                ...prevState,
-                                [key]: e.target.value,
-                            }));
+                            const { value } = e.target;
+                            handleChange(key, value);
                         }}
                     />
                 );

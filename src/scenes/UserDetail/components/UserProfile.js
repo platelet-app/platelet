@@ -61,14 +61,13 @@ export default function UserProfile(props) {
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
     const tenantId = useSelector(tenantIdSelector);
-    const networkStatus = useSelector(networkStatusSelector);
+    //const networkStatus = useSelector(networkStatusSelector);
 
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     function updateStateFromProps() {
         if (props.user) {
-            console.log("USER", props.user);
             setState(props.user);
         }
     }
@@ -77,10 +76,6 @@ export default function UserProfile(props) {
 
     function updateRiderResponsibilitiesFromProps() {
         if (props.possibleRiderResponsibilities) {
-            console.log(
-                "POSSIBLE RIDER RESPONSIBILITIES",
-                props.possibleRiderResponsibilities
-            );
             setState((prevState) => ({
                 ...prevState,
                 possibleRiderResponsibilities:
@@ -169,7 +164,7 @@ export default function UserProfile(props) {
     if (dialogState === dialogStates.contact) {
         dialogContents = (
             <UserContactInformationDialog
-                values={{ ...state.contact, name: state.name }}
+                values={{ contact: { ...state.contact }, name: state.name }}
                 onChange={onChangeUpdateValues}
             />
         );
@@ -334,6 +329,11 @@ export default function UserProfile(props) {
         }
     }
 
+    const onCancelDialog = () => {
+        setDialogState(null);
+        updateValues.current = null;
+    };
+
     const onConfirmation = () => {
         if (verifyUpdate(state)) {
             onUpdate();
@@ -362,7 +362,7 @@ export default function UserProfile(props) {
             fullScreen={isSm}
             dialogTitle={dialogTitle}
             open={dialogState !== null}
-            onCancel={() => setDialogState(null)}
+            onCancel={onCancelDialog}
             onConfirmation={onConfirmation}
         >
             {dialogContents}
