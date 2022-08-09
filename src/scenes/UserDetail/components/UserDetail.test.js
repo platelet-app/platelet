@@ -69,6 +69,19 @@ describe("UserDetail", () => {
         }
     });
 
+    test("user not found", async () => {
+        const user = new models.User(testUser);
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<UserDetail userId={user.id} />);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(3);
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledWith(models.User, user.id);
+        });
+        expect(screen.getByText(/could not be found/)).toBeInTheDocument();
+    });
+
     test("changing the display name", async () => {
         const user = await DataStore.save(new models.User(testUser));
         const updateSpy = jest.spyOn(DataStore, "save");
@@ -94,6 +107,43 @@ describe("UserDetail", () => {
                 displayName: `${user.displayName}${moreDisplayName}`,
             });
         });
+    });
+
+    test("failure on changing the display name", async () => {
+        const user = await DataStore.save(new models.User(testUser));
+        const updateSpy = jest
+            .spyOn(DataStore, "save")
+            .mockRejectedValue(new Error());
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(4);
+        });
+        const moreDisplayName = "more name";
+        userEvent.click(
+            screen.getByRole("button", { name: "Edit Display Name" })
+        );
+        const textBox = screen.getByRole("textbox", { name: "display name" });
+        await waitFor(() => {
+            expect(textBox).toHaveValue(testUser.displayName);
+        });
+        userEvent.type(textBox, moreDisplayName);
+        expect(textBox).toHaveValue(`${user.displayName}${moreDisplayName}`);
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(updateSpy).toHaveBeenNthCalledWith(1, {
+                ...user,
+                displayName: `${user.displayName}${moreDisplayName}`,
+            });
+        });
+        await waitFor(() => {
+            expect(
+                screen.getByText("Sorry, something went wrong")
+            ).toBeInTheDocument();
+        });
+        expect(
+            screen.queryByText(`${user.displayName}${moreDisplayName}`)
+        ).toBeNull();
     });
 
     test("changing the contact information name", async () => {

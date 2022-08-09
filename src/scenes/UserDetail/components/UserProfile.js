@@ -325,7 +325,9 @@ export default function UserProfile(props) {
                 updateValues.current = null;
             } catch (error) {
                 console.log("Update request failed", error);
-                dispatch(displayErrorNotification("Sorry, an error occurred"));
+                dispatch(
+                    displayErrorNotification("Sorry, something went wrong")
+                );
             }
         }
     }
