@@ -1,21 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
-import VehicleProfile from "./components/VehicleProfile";
-import { decodeUUID } from "../../utilities";
+import VehicleProfile from "./VehicleProfile";
 import { useDispatch, useSelector } from "react-redux";
-import NotFound from "../../ErrorComponents/NotFound";
-import { PaddedPaper } from "../../styles/common";
-import CommentsSection from "../Comments/CommentsSection";
+import NotFound from "../../../ErrorComponents/NotFound";
+import { PaddedPaper } from "../../../styles/common";
+import CommentsSection from "../../Comments/CommentsSection";
 import {
     dataStoreModelSyncedStatusSelector,
     getWhoami,
     tenantIdSelector,
-} from "../../redux/Selectors";
-import * as models from "../../models/index";
-import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
+} from "../../../redux/Selectors";
+import * as models from "../../../models/index";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { DataStore } from "aws-amplify";
-import { protectedFields, userRoles } from "../../apiConsts";
+import { protectedFields, userRoles } from "../../../apiConsts";
 import { Divider, Stack, Skeleton } from "@mui/material";
-import AssignUserToVehicle from "./components/AssignUserToVehicle";
+import AssignUserToVehicle from "./AssignUserToVehicle";
 
 const initialVehicleState = {
     name: "",
@@ -25,7 +24,7 @@ const initialVehicleState = {
     dateOfRegistration: null,
 };
 
-export default function VehicleDetail(props) {
+export default function VehicleDetail({vehicleId}) {
     const dispatch = useDispatch();
     const [isFetching, setIsFetching] = useState(false);
     const [notFound, setNotFound] = useState(false);
@@ -34,7 +33,6 @@ export default function VehicleDetail(props) {
     const [vehicle, setVehicle] = useState(initialVehicleState);
     const [assignment, setAssignment] = useState(null);
     const whoami = useSelector(getWhoami);
-    const vehicleUUID = decodeUUID(props.match.params.vehicle_uuid_b62);
     const vehicleModelSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     ).Vehicle;
@@ -44,7 +42,7 @@ export default function VehicleDetail(props) {
         try {
             const newVehicle = await DataStore.query(
                 models.Vehicle,
-                vehicleUUID
+                vehicleId
             );
             assignmentObserver.current = DataStore.observeQuery(
                 models.VehicleAssignment
@@ -86,7 +84,7 @@ export default function VehicleDetail(props) {
     }
     useEffect(
         () => newVehicleProfile(),
-        [props.location.key, vehicleModelSynced]
+        [vehicleId, vehicleModelSynced]
     );
 
     useEffect(() => {
@@ -213,7 +211,7 @@ export default function VehicleDetail(props) {
             </React.Fragment>
         );
     } else if (notFound) {
-        return <NotFound>Vehicle {vehicleUUID} could not be found.</NotFound>;
+        return <NotFound>Vehicle {vehicleId} could not be found.</NotFound>;
     } else {
         return (
             <Stack spacing={3} direction={"column"}>
@@ -229,7 +227,7 @@ export default function VehicleDetail(props) {
                         />
                     </Stack>
                 </PaddedPaper>
-                <CommentsSection parentId={vehicleUUID} />
+                <CommentsSection parentId={vehicleId} />
             </Stack>
         );
     }

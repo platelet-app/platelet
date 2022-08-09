@@ -4,7 +4,7 @@ import { Route, Switch, useLocation } from "react-router-dom";
 import Dashboard from "../scenes/Dashboard/Dashboard";
 import VehicleList from "../scenes/VehiclesList";
 import UsersList from "../scenes/UsersList";
-import VehicleDetail from "../scenes/VehicleDetail/VehicleDetail";
+import VehicleDetailRoute from "../scenes/VehicleDetail/VehicleDetailRoute";
 import NotFound from "../ErrorComponents/NotFound";
 import LocationsList from "../scenes/LocationsList";
 import LocationDetail from "../scenes/LocationDetail/LocationDetail";
@@ -75,7 +75,7 @@ export default function MainWindow(_props) {
                         path="/vehicle/:vehicle_uuid_b62"
                         render={(props) => {
                             dispatch(setMenuIndex("vehicles"));
-                            return <VehicleDetail {...props} />;
+                            return <VehicleDetailRoute {...props} />;
                         }}
                     />
                     <Route
