@@ -105,6 +105,7 @@ RiderPicker.defaultProps = {
     label: "Search...",
     exclude: [],
     className: "",
+    size: "small",
 };
 RiderPicker.propTypes = {
     onSelect: PropTypes.func,

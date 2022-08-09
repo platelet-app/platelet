@@ -1,23 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import VehicleProfile from "./components/VehicleProfile";
 import { decodeUUID } from "../../utilities";
 import { useDispatch, useSelector } from "react-redux";
-import _ from "lodash";
 import NotFound from "../../ErrorComponents/NotFound";
-import Typography from "@mui/material/Typography";
 import { PaddedPaper } from "../../styles/common";
 import CommentsSection from "../Comments/CommentsSection";
-import UserCard from "../../components/UserCard";
 import {
     dataStoreModelSyncedStatusSelector,
     getWhoami,
+    tenantIdSelector,
 } from "../../redux/Selectors";
 import * as models from "../../models/index";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { DataStore } from "aws-amplify";
-import { protectedFields } from "../../apiConsts";
-import Skeleton from "@mui/material/Skeleton";
-import { Divider, Stack } from "@mui/material";
+import { protectedFields, userRoles } from "../../apiConsts";
+import { Divider, Stack, Skeleton } from "@mui/material";
+import AssignUserToVehicle from "./components/AssignUserToVehicle";
 
 const initialVehicleState = {
     name: "",
@@ -32,18 +30,49 @@ export default function VehicleDetail(props) {
     const [isFetching, setIsFetching] = useState(false);
     const [notFound, setNotFound] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
+    const tenantId = useSelector(tenantIdSelector);
     const [vehicle, setVehicle] = useState(initialVehicleState);
+    const [assignment, setAssignment] = useState(null);
+    const whoami = useSelector(getWhoami);
     const vehicleUUID = decodeUUID(props.match.params.vehicle_uuid_b62);
-    const assignedUser = false;
     const vehicleModelSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     ).Vehicle;
+    const assignmentObserver = useRef({ unsubscribe: () => {} });
 
     async function newVehicleProfile() {
         try {
-            const vehicle = await DataStore.query(models.Vehicle, vehicleUUID);
+            const newVehicle = await DataStore.query(
+                models.Vehicle,
+                vehicleUUID
+            );
+            assignmentObserver.current = DataStore.observeQuery(
+                models.VehicleAssignment
+            ).subscribe(({ items }) => {
+                // TODO: simplify this workaround when DataStore is updated
+                const assignedUser = items.find(
+                    (item) =>
+                        (item.vehicle && item.vehicle.id === newVehicle.id) ||
+                        item.vehicleAssignmentsId === newVehicle.id
+                );
+                if (assignedUser) {
+                    DataStore.query(
+                        models.VehicleAssignment,
+                        assignedUser.id
+                    ).then((ass) => {
+                        if (ass) {
+                            setAssignment(ass);
+                        } else {
+                            console.log("The assignment was not found");
+                            setAssignment(null);
+                        }
+                    });
+                } else {
+                    setAssignment(null);
+                }
+            });
             setIsFetching(false);
-            if (vehicle) setVehicle(vehicle);
+            if (newVehicle) setVehicle(newVehicle);
             else setNotFound(true);
         } catch (error) {
             setIsFetching(false);
@@ -60,35 +89,75 @@ export default function VehicleDetail(props) {
         [props.location.key, vehicleModelSynced]
     );
 
-    function onAssignUser(user) {
-        return;
+    useEffect(() => {
+        return () => {
+            assignmentObserver.current.unsubscribe();
+        };
+    }, []);
+
+    async function onUpdate(value) {
+        setIsPosting(true);
+        try {
+            const existingVehicle = await DataStore.query(
+                models.Vehicle,
+                vehicle.id
+            );
+            await DataStore.save(
+                models.Vehicle.copyOf(existingVehicle, (updated) => {
+                    for (const [key, newValue] of Object.entries(value)) {
+                        if (!protectedFields.includes(key))
+                            updated[key] = newValue;
+                    }
+                })
+            );
+            setIsPosting(false);
+        } catch (error) {
+            console.log("Vehicle update failed:", error);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+            setIsPosting(false);
+        }
     }
 
+    async function onAssignUser(user) {
+        setIsPosting(true);
+        try {
+            if (!tenantId) throw new Error("Tenant ID is not set");
+            if (!user) throw new Error("User is not set");
+            if (!vehicle) throw new Error("Vehicle is not set");
+            const result = await DataStore.save(
+                new models.VehicleAssignment({
+                    vehicle: vehicle,
+                    assignee: user,
+                    tenantId,
+                })
+            );
+            setAssignment(result);
+            setIsPosting(false);
+        } catch (error) {
+            console.log("Vehicle assignment failed:", error);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+            setIsPosting(false);
+        }
+    }
 
-  async function onUpdate(value) {
-      setIsPosting(true);
-      try {
-          const existingVehicle = await DataStore.query(
-              models.Vehicle,
-              vehicle.id
-          );
-          await DataStore.save(
-              models.Vehicle.copyOf(existingVehicle, (updated) => {
-                  for (const [key, newValue] of Object.entries(value)) {
-                      if (!protectedFields.includes(key))
-                          updated[key] = newValue;
-                  }
-              })
-          );
-          setIsPosting(false);
-      } catch (error) {
-          console.log("Update request failed", error);
-          dispatch(displayErrorNotification(error.message));
-          setIsPosting(false);
-      }
-  }
+    async function handleDeleteAssignment() {
+        setIsPosting(true);
+        try {
+            await DataStore.delete(assignment);
+            setAssignment(null);
+            setIsPosting(false);
+        } catch (error) {
+            console.log("Vehicle assignment deletion failed:", error);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+            setIsPosting(false);
+        }
+    }
 
-
+    const canAssign =
+        whoami.roles &&
+        [userRoles.admin, userRoles.coordinator, userRoles.rider].some(
+            (role) => whoami.roles && whoami.roles.includes(role)
+        );
 
     if (isFetching) {
         return (
@@ -109,9 +178,21 @@ export default function VehicleDetail(props) {
                             alignItems={"top"}
                             maxWidth={700}
                         >
-                          <Skeleton variant="text" maxWidth={700} height={50}/>
-                          <Skeleton variant="text" maxWidth={700} height={50}/>
-                          <Skeleton variant="text" maxWidth={700} height={50}/>
+                            <Skeleton
+                                variant="text"
+                                maxWidth={700}
+                                height={50}
+                            />
+                            <Skeleton
+                                variant="text"
+                                maxWidth={700}
+                                height={50}
+                            />
+                            <Skeleton
+                                variant="text"
+                                maxWidth={700}
+                                height={50}
+                            />
                         </Stack>
                     </Stack>
                 </PaddedPaper>
@@ -137,24 +218,15 @@ export default function VehicleDetail(props) {
         return (
             <Stack spacing={3} direction={"column"}>
                 <PaddedPaper maxWidth={700}>
-                    <VehicleProfile
-                        vehicle={vehicle}
-                        onUpdate={onUpdate}
-                    />
-                </PaddedPaper>
-                <PaddedPaper width={"400px"}>
-                    <Stack
-                        direction={"column"}
-                        spacing={3}
-                        justifyContent={"center"}
-                        alignItems={"flex-start"}
-                    >
-                        <Typography variant={"h5"}>Assignee</Typography>
-                        {assignedUser ? (
-                            <UserCard user={assignedUser} />
-                        ) : (
-                            <Typography>No assignee.</Typography>
-                        )}
+                    <Stack divider={<Divider />} direction="column" spacing={3}>
+                        <VehicleProfile onUpdate={onUpdate} vehicle={vehicle} />
+                        <AssignUserToVehicle
+                            assignment={assignment}
+                            onAssignUser={onAssignUser}
+                            handleDeleteAssignment={handleDeleteAssignment}
+                            isPosting={isPosting}
+                            canAssign={canAssign}
+                        />
                     </Stack>
                 </PaddedPaper>
                 <CommentsSection parentId={vehicleUUID} />

@@ -136,6 +136,20 @@ export const schema = {
                         "associatedWith": "assignee"
                     }
                 },
+                "vehicleAssignments": {
+                    "name": "vehicleAssignments",
+                    "isArray": true,
+                    "type": {
+                        "model": "VehicleAssignment"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "userVehicleAssignmentsId"
+                    }
+                },
                 "createdTasks": {
                     "name": "createdTasks",
                     "isArray": true,
@@ -1516,8 +1530,8 @@ export const schema = {
                 }
             ]
         },
-        "Tenant": {
-            "name": "Tenant",
+        "VehicleAssignment": {
+            "name": "VehicleAssignment",
             "fields": {
                 "id": {
                     "name": "id",
@@ -1526,22 +1540,28 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "name": {
-                    "name": "name",
+                "tenantId": {
+                    "name": "tenantId",
                     "isArray": false,
-                    "type": "String",
+                    "type": "ID",
                     "isRequired": true,
                     "attributes": []
                 },
-                "referenceIdentifier": {
-                    "name": "referenceIdentifier",
+                "vehicle": {
+                    "name": "vehicle",
                     "isArray": false,
-                    "type": "String",
+                    "type": {
+                        "model": "Vehicle"
+                    },
                     "isRequired": true,
-                    "attributes": []
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "vehicleAssignmentsId"
+                    }
                 },
-                "admin": {
-                    "name": "admin",
+                "assignee": {
+                    "name": "assignee",
                     "isArray": false,
                     "type": {
                         "model": "User"
@@ -1549,9 +1569,8 @@ export const schema = {
                     "isRequired": true,
                     "attributes": [],
                     "association": {
-                        "connectionType": "HAS_ONE",
-                        "associatedWith": "id",
-                        "targetName": "tenantAdminId"
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "userVehicleAssignmentsId"
                     }
                 },
                 "createdAt": {
@@ -1569,21 +1588,23 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
-                },
-                "tenantAdminId": {
-                    "name": "tenantAdminId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
                 }
             },
             "syncable": true,
-            "pluralName": "Tenants",
+            "pluralName": "VehicleAssignments",
             "attributes": [
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantId",
+                        "fields": [
+                            "tenantId"
+                        ]
+                    }
                 },
                 {
                     "type": "auth",
@@ -1593,6 +1614,21 @@ export const schema = {
                                 "allow": "private",
                                 "operations": [
                                     "read"
+                                ]
+                            },
+                            {
+                                "groupClaim": "cognito:groups",
+                                "provider": "userPools",
+                                "allow": "groups",
+                                "groups": [
+                                    "ADMIN",
+                                    "COORDINATOR",
+                                    "RIDER"
+                                ],
+                                "operations": [
+                                    "create",
+                                    "read",
+                                    "delete"
                                 ]
                             }
                         ]
@@ -1617,12 +1653,19 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "assignedUserID": {
-                    "name": "assignedUserID",
-                    "isArray": false,
-                    "type": "ID",
+                "assignments": {
+                    "name": "assignments",
+                    "isArray": true,
+                    "type": {
+                        "model": "VehicleAssignment"
+                    },
                     "isRequired": false,
-                    "attributes": []
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "vehicleAssignmentsId"
+                    }
                 },
                 "name": {
                     "name": "name",
@@ -1714,15 +1757,6 @@ export const schema = {
                     }
                 },
                 {
-                    "type": "key",
-                    "properties": {
-                        "name": "byAssignedUser",
-                        "fields": [
-                            "assignedUserID"
-                        ]
-                    }
-                },
-                {
                     "type": "auth",
                     "properties": {
                         "rules": [
@@ -1743,6 +1777,90 @@ export const schema = {
                                     "create",
                                     "read",
                                     "update"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "Tenant": {
+            "name": "Tenant",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "name": {
+                    "name": "name",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "referenceIdentifier": {
+                    "name": "referenceIdentifier",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "admin": {
+                    "name": "admin",
+                    "isArray": false,
+                    "type": {
+                        "model": "User"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
+                        "targetName": "tenantAdminId"
+                    }
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "tenantAdminId": {
+                    "name": "tenantAdminId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                }
+            },
+            "syncable": true,
+            "pluralName": "Tenants",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "read"
                                 ]
                             }
                         ]
@@ -2021,5 +2139,5 @@ export const schema = {
             }
         }
     },
-    "version": "0cadd3873cfe1b6b174da91856e5817d"
+    "version": "da446f3a8dc5b195c0763fe2598a200e"
 };
