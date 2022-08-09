@@ -391,7 +391,9 @@ export default function UserProfile(props) {
                     alignItems={"top"}
                     spacing={3}
                 >
-                    <Typography>Contact Information</Typography>
+                    <Typography fontWeight="bold">
+                        Contact Information
+                    </Typography>
 
                     {editContactToggle}
                 </Stack>
@@ -426,7 +428,7 @@ export default function UserProfile(props) {
                     alignItems={"top"}
                     spacing={3}
                 >
-                    <Typography>Address</Typography>
+                    <Typography fontWeight="bold">Address</Typography>
 
                     {editAddressToggle}
                 </Stack>
@@ -460,12 +462,18 @@ export default function UserProfile(props) {
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        <RiderResponsibilitySelect
-                            editMode={editResponsibilitiesMode}
-                            onSelect={onChangePossibleResponsibilities}
-                            value={props.possibleRiderResponsibilities}
-                            disabled={isPostingRiderResponsibilities}
-                        />
+                        {(props.possibleRiderResponsibilities &&
+                            props.possibleRiderResponsibilities.length > 0) ||
+                        editResponsibilitiesMode ? (
+                            <RiderResponsibilitySelect
+                                editMode={editResponsibilitiesMode}
+                                onSelect={onChangePossibleResponsibilities}
+                                value={props.possibleRiderResponsibilities}
+                                disabled={isPostingRiderResponsibilities}
+                            />
+                        ) : (
+                            <Typography>No rider roles.</Typography>
+                        )}
                         <EditModeToggleButton
                             value={editResponsibilitiesMode}
                             aria-label="Edit Rider Roles"

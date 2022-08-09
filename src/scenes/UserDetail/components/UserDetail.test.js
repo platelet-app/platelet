@@ -59,7 +59,7 @@ describe("UserDetail", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />);
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledWith(models.User, user.id);
@@ -88,7 +88,7 @@ describe("UserDetail", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         const moreDisplayName = "more name";
         userEvent.click(
@@ -117,7 +117,7 @@ describe("UserDetail", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         const moreDisplayName = "more name";
         userEvent.click(
@@ -152,7 +152,7 @@ describe("UserDetail", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         userEvent.click(
             screen.getByRole("button", { name: "Edit Contact Information" })
@@ -183,7 +183,7 @@ describe("UserDetail", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         userEvent.click(
             screen.getByRole("button", { name: "Edit Contact Information" })
@@ -222,7 +222,7 @@ describe("UserDetail", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         userEvent.click(
             screen.getByRole("button", { name: "Edit Contact Information" })
@@ -267,7 +267,7 @@ describe("UserDetail", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         userEvent.click(
             screen.getByRole("button", { name: "Edit Address Information" })
@@ -329,7 +329,7 @@ describe("UserDetail", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         expect(
             screen.getByRole("button", { name: "testResp" })
@@ -362,13 +362,16 @@ describe("UserDetail", () => {
         const deleteSpy = jest.spyOn(DataStore, "delete");
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         expect(screen.queryByText("testResp")).toBeNull();
         expect(screen.queryByText("second one")).toBeNull();
         userEvent.click(
             screen.getByRole("button", { name: "Edit Rider Roles" })
         );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(4);
+        });
         userEvent.click(
             screen.getByRole("button", { name: "Add Rider Role testResp" })
         );
@@ -421,7 +424,7 @@ describe("UserDetail", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         userEvent.click(screen.getByRole("button", { name: "testResp" }));
         await waitFor(() => {
@@ -438,7 +441,7 @@ describe("UserDetail", () => {
         const apiSpy = jest.spyOn(API, "graphql").mockResolvedValueOnce({});
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         userEvent.click(screen.getByRole("button", { name: "Edit Roles" }));
         const adminButton = screen.getByRole("button", { name: "ADMIN" });
@@ -463,7 +466,7 @@ describe("UserDetail", () => {
         const apiSpy = jest.spyOn(API, "graphql").mockRejectedValueOnce({});
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         userEvent.click(screen.getByRole("button", { name: "Edit Roles" }));
         const adminButton = screen.getByRole("button", { name: "ADMIN" });
@@ -487,7 +490,7 @@ describe("UserDetail", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         expect(screen.getByText(testUser.name)).toBeInTheDocument();
         await DataStore.save(
@@ -503,7 +506,7 @@ describe("UserDetail", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         expect(screen.queryByText("ADMIN")).toBeNull();
         await DataStore.save(
@@ -531,7 +534,7 @@ describe("UserDetail", () => {
         );
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         const respButton = screen.getByRole("button", { name: "testResp" });
         expect(respButton).toHaveClass("MuiChip-outlinedDefault");
@@ -566,7 +569,7 @@ describe("UserDetail", () => {
             preloadedState,
         });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
+            expect(querySpy).toHaveBeenCalledTimes(3);
         });
         component.unmount();
         expect(unsubscribe).toHaveBeenCalledTimes(1);
