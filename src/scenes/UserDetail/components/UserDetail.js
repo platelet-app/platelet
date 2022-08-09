@@ -34,7 +34,6 @@ export default function UserDetail({ userId }) {
     const [isFetching, setIsFetching] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
     const [user, setUser] = useState(initialUserState);
-    const [riderResponsibility, setRiderResponsibility] = useState(null);
     const [possibleRiderResponsibilities, setPossibleRiderResponsibilities] =
         useState([]);
     const riderRespObserver = useRef({ unsubscribe: () => {} });
@@ -106,7 +105,6 @@ export default function UserDetail({ userId }) {
             loadedOnce.current = true;
             if (userResult) {
                 setUser(userResult);
-                setRiderResponsibility(userResult.riderResponsibility);
             } else {
                 setNotFound(true);
             }
@@ -142,11 +140,11 @@ export default function UserDetail({ userId }) {
     useEffect(() => getDisplayNames(), []);
 
     useEffect(() => () => riderRespObserver.current.unsubscribe(), []);
-
     useEffect(() => () => observer.current.unsubscribe(), []);
 
     function handleUpdateRiderResponsibility(riderResponsibility) {
-        setRiderResponsibility(riderResponsibility);
+        const oldState = { ...user };
+        setUser({ ...user, riderResponsibility });
         DataStore.query(models.User, user.id)
             .then((currentUser) => {
                 DataStore.save(
@@ -160,6 +158,7 @@ export default function UserDetail({ userId }) {
                 dispatch(
                     displayErrorNotification("Sorry, something went wrong")
                 );
+                setUser(oldState);
             });
     }
 
@@ -236,7 +235,7 @@ export default function UserDetail({ userId }) {
                     <Stack direction="column" spacing={3}>
                         <CurrentRiderResponsibilitySelector
                             available={possibleRiderResponsibilities}
-                            value={riderResponsibility}
+                            value={user.riderResponsibility}
                             onChange={handleUpdateRiderResponsibility}
                         />
                         {possibleRiderResponsibilities &&

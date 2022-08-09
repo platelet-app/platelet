@@ -1,4 +1,5 @@
-import { DataStore } from "aws-amplify";
+import { API, DataStore, graphqlOperation } from "aws-amplify";
+import * as mutations from "../../../graphql/mutations";
 import { v4 as uuidv4 } from "uuid";
 import { screen, waitFor } from "@testing-library/react";
 import * as models from "../../../models";
@@ -379,5 +380,146 @@ describe("UserDetail", () => {
                 riderResponsibility: riderResponsibility.label,
             });
         });
+    });
+
+    test("change the user's roles", async () => {
+        const user = await DataStore.save(new models.User(testUser));
+        const querySpy = jest.spyOn(DataStore, "query");
+        const apiSpy = jest.spyOn(API, "graphql").mockResolvedValueOnce({});
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(4);
+        });
+        userEvent.click(screen.getByRole("button", { name: "Edit Roles" }));
+        const adminButton = screen.getByRole("button", { name: "ADMIN" });
+        expect(adminButton).toHaveClass("MuiChip-outlinedDefault");
+        userEvent.click(adminButton);
+        expect(adminButton).toHaveAttribute("aria-disabled", "true");
+        await waitFor(() => {
+            expect(apiSpy).toHaveBeenCalledWith(
+                graphqlOperation(mutations.updateUserRoles, {
+                    userId: user.id,
+                    roles: [userRoles.user, userRoles.rider, userRoles.admin],
+                })
+            );
+        });
+        expect(adminButton).not.toHaveAttribute("aria-disabled", "true");
+        expect(adminButton).toHaveClass("MuiChip-default");
+    });
+
+    test("change the user's roles failure", async () => {
+        const user = await DataStore.save(new models.User(testUser));
+        const querySpy = jest.spyOn(DataStore, "query");
+        const apiSpy = jest.spyOn(API, "graphql").mockRejectedValueOnce({});
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(4);
+        });
+        userEvent.click(screen.getByRole("button", { name: "Edit Roles" }));
+        const adminButton = screen.getByRole("button", { name: "ADMIN" });
+        expect(adminButton).toHaveClass("MuiChip-outlinedDefault");
+        userEvent.click(adminButton);
+        expect(adminButton).toHaveAttribute("aria-disabled", "true");
+        await waitFor(() => {
+            expect(apiSpy).toHaveBeenCalledTimes(1);
+        });
+        await waitFor(() => {
+            expect(
+                screen.getByText("Sorry, something went wrong")
+            ).toBeInTheDocument();
+        });
+        expect(adminButton).not.toHaveAttribute("aria-disabled", "true");
+        expect(adminButton).toHaveClass("MuiChip-outlinedDefault");
+    });
+
+    it("updates the name on remote change", async () => {
+        const user = await DataStore.save(new models.User(testUser));
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(4);
+        });
+        expect(screen.getByText(testUser.name)).toBeInTheDocument();
+        await DataStore.save(
+            models.User.copyOf(user, (upd) => (upd.name = "new name"))
+        );
+        await waitFor(() => {
+            expect(screen.getByText("new name")).toBeInTheDocument();
+        });
+    });
+
+    it("updates the roles on remote change", async () => {
+        const user = await DataStore.save(new models.User(testUser));
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(4);
+        });
+        expect(screen.queryByText("ADMIN")).toBeNull();
+        await DataStore.save(
+            models.User.copyOf(
+                user,
+                (upd) => (upd.roles = [...user.roles, userRoles.admin])
+            )
+        );
+        await waitFor(() => {
+            expect(screen.getByText("ADMIN")).toBeInTheDocument();
+        });
+    });
+
+    it("updates the current responsibility on remote change", async () => {
+        const user = await DataStore.save(new models.User(testUser));
+        const querySpy = jest.spyOn(DataStore, "query");
+        const riderResponsibility = await DataStore.save(
+            new models.RiderResponsibility({ label: "testResp" })
+        );
+        await DataStore.save(
+            new models.PossibleRiderResponsibilities({
+                user,
+                riderResponsibility,
+            })
+        );
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(4);
+        });
+        const respButton = screen.getByRole("button", { name: "testResp" });
+        expect(respButton).toHaveClass("MuiChip-outlinedDefault");
+        await DataStore.save(
+            models.User.copyOf(
+                user,
+                (upd) => (upd.riderResponsibility = riderResponsibility.label)
+            )
+        );
+        await waitFor(() => {
+            expect(respButton).toHaveClass("MuiChip-default");
+        });
+    });
+
+    test("unsubscribe observers on unmount", async () => {
+        const user = await DataStore.save(new models.User(testUser));
+        const querySpy = jest.spyOn(DataStore, "query");
+        const unsubscribe = jest.fn();
+        const unsubscribe2 = jest.fn();
+        jest.spyOn(DataStore, "observe")
+            .mockImplementationOnce(() => {
+                return {
+                    subscribe: () => ({ unsubscribe }),
+                };
+            })
+            .mockImplementation(() => {
+                return {
+                    subscribe: () => ({ unsubscribe: unsubscribe2 }),
+                };
+            });
+        const { component } = render(<UserDetail userId={user.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(4);
+        });
+        component.unmount();
+        expect(unsubscribe).toHaveBeenCalledTimes(1);
+        expect(unsubscribe2).toHaveBeenCalledTimes(1);
     });
 });

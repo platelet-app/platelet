@@ -143,6 +143,7 @@ export default function UserProfile(props) {
                 >
                     <EditModeToggleButton
                         value={editRoleMode}
+                        aria-label="Edit Roles"
                         onChange={(v) => {
                             if (v) {
                                 setEditRoleMode(v);
