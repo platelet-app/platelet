@@ -9,6 +9,7 @@ import { userRoles } from "../../../apiConsts";
 import { userAddressFields } from "./UserProfile";
 import { userContactFields } from "./UserProfile";
 
+const tenantId = uuidv4();
 const testUser = new models.User({
     contact: {
         emailAddress: uuidv4(),
@@ -24,6 +25,8 @@ const testUser = new models.User({
     },
     name: uuidv4(),
     displayName: uuidv4(),
+    roles: [userRoles.user, userRoles.rider],
+    tenantId,
 });
 
 const whoami = new models.User({
@@ -33,6 +36,7 @@ const whoami = new models.User({
 
 const preloadedState = {
     whoami: { user: whoami },
+    tenantId,
 };
 
 describe("UserDetail", () => {
@@ -54,7 +58,7 @@ describe("UserDetail", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />);
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(3);
+            expect(querySpy).toHaveBeenCalledTimes(4);
         });
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledWith(models.User, user.id);
@@ -70,7 +74,7 @@ describe("UserDetail", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(3);
+            expect(querySpy).toHaveBeenCalledTimes(4);
         });
         const moreDisplayName = "more name";
         userEvent.click(
@@ -97,7 +101,7 @@ describe("UserDetail", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(3);
+            expect(querySpy).toHaveBeenCalledTimes(4);
         });
         userEvent.click(
             screen.getByRole("button", { name: "Edit Contact Information" })
@@ -128,7 +132,7 @@ describe("UserDetail", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(3);
+            expect(querySpy).toHaveBeenCalledTimes(4);
         });
         userEvent.click(
             screen.getByRole("button", { name: "Edit Contact Information" })
@@ -167,7 +171,7 @@ describe("UserDetail", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(3);
+            expect(querySpy).toHaveBeenCalledTimes(4);
         });
         userEvent.click(
             screen.getByRole("button", { name: "Edit Contact Information" })
@@ -212,7 +216,7 @@ describe("UserDetail", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(3);
+            expect(querySpy).toHaveBeenCalledTimes(4);
         });
         userEvent.click(
             screen.getByRole("button", { name: "Edit Address Information" })
@@ -248,6 +252,132 @@ describe("UserDetail", () => {
             expect(
                 screen.getByText(`${user.contact.line1}${extra}`)
             ).toBeInTheDocument();
+        });
+    });
+
+    test("display available rider responsibilities", async () => {
+        const user = await DataStore.save(new models.User(testUser));
+        const riderResponsibility = await DataStore.save(
+            new models.RiderResponsibility({ label: "testResp" })
+        );
+        const riderResponsibility2 = await DataStore.save(
+            new models.RiderResponsibility({ label: "second one" })
+        );
+        await DataStore.save(
+            new models.PossibleRiderResponsibilities({
+                user,
+                riderResponsibility,
+            })
+        );
+        await DataStore.save(
+            new models.PossibleRiderResponsibilities({
+                user,
+                riderResponsibility: riderResponsibility2,
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(4);
+        });
+        expect(
+            screen.getByRole("button", { name: "testResp" })
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole("button", { name: "second one" })
+        ).toBeInTheDocument();
+    });
+
+    test("add rider responsibilities to a user", async () => {
+        const user = await DataStore.save(new models.User(testUser));
+        const riderResponsibility = await DataStore.save(
+            new models.RiderResponsibility({ label: "testResp", tenantId })
+        );
+        const riderResponsibility2 = await DataStore.save(
+            new models.RiderResponsibility({ label: "second one", tenantId })
+        );
+        const mockResultOne = new models.PossibleRiderResponsibilities({
+            user,
+            riderResponsibility,
+            tenantId,
+        });
+        const mockResultTwo = new models.PossibleRiderResponsibilities({
+            user,
+            riderResponsibility: riderResponsibility2,
+            tenantId,
+        });
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        const deleteSpy = jest.spyOn(DataStore, "delete");
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(4);
+        });
+        expect(screen.queryByText("testResp")).toBeNull();
+        expect(screen.queryByText("second one")).toBeNull();
+        userEvent.click(
+            screen.getByRole("button", { name: "Edit Rider Roles" })
+        );
+        userEvent.click(
+            screen.getByRole("button", { name: "Add Rider Role testResp" })
+        );
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    ...mockResultOne,
+                    id: expect.any(String),
+                })
+            );
+        });
+        userEvent.click(
+            screen.getByRole("button", { name: "Add Rider Role second one" })
+        );
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(3);
+        });
+        expect(deleteSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                ...mockResultOne,
+                id: expect.any(String),
+            })
+        );
+        expect(saveSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                ...mockResultOne,
+                id: expect.any(String),
+            })
+        );
+        expect(saveSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                ...mockResultTwo,
+                id: expect.any(String),
+            })
+        );
+    });
+
+    test("change the current rider responsibility", async () => {
+        const user = await DataStore.save(new models.User(testUser));
+        const riderResponsibility = await DataStore.save(
+            new models.RiderResponsibility({ label: "testResp" })
+        );
+        await DataStore.save(
+            new models.PossibleRiderResponsibilities({
+                user,
+                riderResponsibility,
+            })
+        );
+        const saveSpy = jest.spyOn(DataStore, "save");
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(4);
+        });
+        userEvent.click(screen.getByRole("button", { name: "testResp" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
+                ...user,
+                riderResponsibility: riderResponsibility.label,
+            });
         });
     });
 });

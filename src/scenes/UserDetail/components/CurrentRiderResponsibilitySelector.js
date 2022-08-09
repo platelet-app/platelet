@@ -17,6 +17,7 @@ function CurrentRiderResponsibilitySelector(props) {
                 <Grid item key={resp.id}>
                     <Chip
                         sx={{ maxWidth: 300, height: 40 }}
+                        aria-label={resp.label}
                         label={resp.label}
                         key={resp.id}
                         variant={value === resp.label ? "default" : "outlined"}

@@ -45,6 +45,7 @@ function RiderResponsibilitySelect(props) {
                                 }
                                 onClick={() => handleChange(value)}
                                 label={value.label}
+                                aria-label={`Add Rider Role ${value.label}`}
                             />
                         </Grid>
                     ))}

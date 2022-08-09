@@ -465,6 +465,7 @@ export default function UserProfile(props) {
                         />
                         <EditModeToggleButton
                             value={editResponsibilitiesMode}
+                            aria-label="Edit Rider Roles"
                             onChange={() =>
                                 setEditResponsibilitiesMode(
                                     (prevState) => !prevState
