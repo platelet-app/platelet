@@ -20,6 +20,7 @@ import RiderResponsibilitySelect from "./RiderResponsibilitySelect";
 import UserContactInformationDialog from "./UserContactInformationDialog";
 import UserAddressInformationDialog from "./UserAddressInformationDialog";
 import UserDisplayNameDialog from "./UserDisplayNameDialog";
+import PropTypes from "prop-types";
 
 const userFields = {
     name: "Name",
@@ -48,11 +49,10 @@ const dialogStates = {
     displayName: "displayName",
 };
 
-export default function UserProfile(props) {
+function UserProfile(props) {
     const [editRoleMode, setEditRoleMode] = useState(false);
     const [editResponsibilitiesMode, setEditResponsibilitiesMode] =
         useState(false);
-    const [state, setState] = useState({ ...props.user });
     const [isPostingRoles, setIsPostingRoles] = useState(false);
     const [isPostingRiderResponsibilities, setIsPostingRiderResponsibilities] =
         useState(false);
@@ -66,31 +66,9 @@ export default function UserProfile(props) {
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
-    function updateStateFromProps() {
-        if (props.user) {
-            setState(props.user);
-        }
-    }
-
-    useEffect(updateStateFromProps, [props.user]);
-
-    function updateRiderResponsibilitiesFromProps() {
-        if (props.possibleRiderResponsibilities) {
-            setState((prevState) => ({
-                ...prevState,
-                possibleRiderResponsibilities:
-                    props.possibleRiderResponsibilities,
-            }));
-        }
-    }
-
-    useEffect(updateRiderResponsibilitiesFromProps, [
-        props.possibleRiderResponsibilities,
-    ]);
-
     let header = (
         <Typography variant="h5" noWrap align={"right"}>
-            {state.displayName}
+            {props.user.displayName}
         </Typography>
     );
 
@@ -145,11 +123,7 @@ export default function UserProfile(props) {
                         value={editRoleMode}
                         aria-label="Edit Roles"
                         onChange={(v) => {
-                            if (v) {
-                                setEditRoleMode(v);
-                            } else {
-                                onRoleConfirmation();
-                            }
+                            setEditRoleMode(v);
                         }}
                     />
                 </Stack>
@@ -165,21 +139,21 @@ export default function UserProfile(props) {
     if (dialogState === dialogStates.contact) {
         dialogContents = (
             <UserContactInformationDialog
-                values={{ contact: { ...state.contact }, name: state.name }}
+                values={{ contact: { ...props.user.contact }, name: props.user.name }}
                 onChange={onChangeUpdateValues}
             />
         );
     } else if (dialogState === dialogStates.address) {
         dialogContents = (
             <UserAddressInformationDialog
-                values={state.contact}
+                values={props.user.contact}
                 onChange={onChangeUpdateValues}
             />
         );
     } else if (dialogState === dialogStates.displayName) {
         dialogContents = (
             <UserDisplayNameDialog
-                values={{ displayName: state.displayName }}
+                values={{ displayName: props.user.displayName }}
                 onChange={onChangeUpdateValues}
             />
         );
@@ -190,7 +164,7 @@ export default function UserProfile(props) {
         if (roles) {
             await API.graphql(
                 graphqlOperation(mutations.updateUserRoles, {
-                    userId: state.id,
+                    userId: props.user.id,
                     roles,
                 })
             );
@@ -200,20 +174,14 @@ export default function UserProfile(props) {
 
     async function onSelectRole(role) {
         try {
-            if (state.roles.includes(role)) {
-                const result = state.roles.filter((r) => r !== role);
+            if (props.user.roles.includes(role)) {
+                const result = props.user.roles.filter((r) => r !== role);
                 await onUpdateRoles(result);
-                setState((prevState) => ({
-                    ...prevState,
-                    roles: result,
-                }));
+                props.quickUpdateRolesState(result);
             } else {
-                const result = [...state.roles, role];
+                const result = [...props.user.roles, role];
                 await onUpdateRoles(result);
-                setState((prevState) => ({
-                    ...prevState,
-                    roles: result,
-                }));
+                props.quickUpdateRolesState(result);
             }
         } catch (e) {
             console.log(e);
@@ -222,16 +190,25 @@ export default function UserProfile(props) {
         }
     }
 
-    function verifyUpdate(value) {
-        const existing = props.displayNames.find(
-            (u) => u.displayName === value.displayName
-        );
-        if (existing) {
-            if (state.id !== existing.id) {
-                dispatch(
-                    displayErrorNotification("Display name is already in use.")
-                );
-                return false;
+    async function verifyUpdate(value) {
+        if (!value) return false;
+        if (value.displayName) {
+            const users = await DataStore.query(models.User);
+            const displayNames = users.map((u) => ({
+                displayName: u.displayName,
+                id: u.id,
+            }));
+            const existing = displayNames.find(
+                (u) => u.displayName === value.displayName
+            );
+            if (existing) {
+                if (props.user.id !== existing.id) {
+                    dispatch(
+                        displayErrorNotification("Sorry, that display name is already taken")
+                    );
+                    console.log("display name taken");
+                    return false;
+                }
             }
         }
         return true;
@@ -260,7 +237,7 @@ export default function UserProfile(props) {
             try {
                 const existingUser = await DataStore.query(
                     models.User,
-                    state.id
+                    props.user.id
                 );
                 DataStore.query(models.PossibleRiderResponsibilities).then(
                     (result) => {
@@ -294,14 +271,14 @@ export default function UserProfile(props) {
         }
     }
 
-    const isRider = state.roles && state.roles.includes(userRoles.rider);
+    const isRider = props.user.roles && props.user.roles.includes(userRoles.rider);
 
     async function onUpdate() {
         if (updateValues.current) {
             try {
                 const existingUser = await DataStore.query(
                     models.User,
-                    state.id
+                    props.user.id
                 );
                 const { roles, contact, ...rest } = updateValues.current;
 
@@ -338,17 +315,11 @@ export default function UserProfile(props) {
     };
 
     const onConfirmation = () => {
-        if (verifyUpdate(state)) {
-            onUpdate();
-            setEditRoleMode(false);
-        }
-    };
-
-    const onRoleConfirmation = () => {
-        if (verifyUpdate(state)) {
-            onUpdate(state);
-            setEditRoleMode(false);
-        }
+        verifyUpdate(updateValues.current).then((verify) => {
+            if (verify) {
+                onUpdate();
+            }
+        });
     };
 
     let dialogTitle = null;
@@ -384,7 +355,7 @@ export default function UserProfile(props) {
                 {editNameToggle}
             </Stack>
             <Divider />
-            {state.contact && (
+            {props.user.contact && (
                 <Stack
                     direction={"row"}
                     justifyContent={"space-between"}
@@ -401,9 +372,9 @@ export default function UserProfile(props) {
             <Box sx={{ width: "100%" }}>
                 <Stack direction={"row"} justifyContent={"space-between"}>
                     <Typography>{userFields.name}</Typography>
-                    <Typography>{state.name}</Typography>
+                    <Typography>{props.user.name}</Typography>
                 </Stack>
-                {Object.keys(state.contact ? userContactFields : []).map(
+                {Object.keys(props.user.contact ? userContactFields : []).map(
                     (key) => {
                         return (
                             <Stack
@@ -414,14 +385,14 @@ export default function UserProfile(props) {
                                 <Typography>
                                     {userContactFields[key]}
                                 </Typography>
-                                <Typography>{state.contact[key]}</Typography>
+                                <Typography>{props.user.contact[key]}</Typography>
                             </Stack>
                         );
                     }
                 )}
             </Box>
             <Divider />
-            {state.contact && (
+            {props.user.contact && (
                 <Stack
                     direction={"row"}
                     justifyContent={"space-between"}
@@ -435,7 +406,7 @@ export default function UserProfile(props) {
             )}
             <Stack direction={"row"} justifyContent={"space-between"}>
                 <Box sx={{ width: "100%" }}>
-                    {Object.keys(state.contact ? userAddressFields : []).map(
+                    {Object.keys(props.user.contact ? userAddressFields : []).map(
                         (key) => (
                             <Stack
                                 direction={"row"}
@@ -446,7 +417,7 @@ export default function UserProfile(props) {
                                     {userAddressFields[key]}
                                 </Typography>
                                 <Typography align={"right"}>
-                                    {state.contact[key]}
+                                    {props.user.contact[key]}
                                 </Typography>
                             </Stack>
                         )
@@ -497,7 +468,7 @@ export default function UserProfile(props) {
                     disabled={isPostingRoles}
                     selectMode={editRoleMode}
                     onSelect={onSelectRole}
-                    value={state.roles}
+                    value={props.user.roles}
                 />
 
                 {editRoleToggle}
@@ -505,3 +476,16 @@ export default function UserProfile(props) {
         </Stack>
     );
 }
+
+UserProfile.propTypes = {
+    user: PropTypes.object.isRequired,
+    possibleRiderResponsibilities: PropTypes.array,
+    quickUpdateRolesState: PropTypes.func,
+};
+
+UserProfile.defaultProps = {
+    possibleRiderResponsibilities: [],
+    quickUpdateRolesState: () => {},
+};
+
+export default UserProfile;

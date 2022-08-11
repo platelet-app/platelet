@@ -32,13 +32,11 @@ const initialUserState = {
 
 export default function UserDetail({ userId }) {
     const [isFetching, setIsFetching] = useState(false);
-    const [isPosting, setIsPosting] = useState(false);
     const [user, setUser] = useState(initialUserState);
     const [possibleRiderResponsibilities, setPossibleRiderResponsibilities] =
         useState([]);
     const riderRespObserver = useRef({ unsubscribe: () => {} });
     const [notFound, setNotFound] = useState(false);
-    const [usersDisplayNames, setUsersDisplayNames] = useState([]);
     const dispatch = useDispatch();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
@@ -120,24 +118,6 @@ export default function UserDetail({ userId }) {
         () => newUserProfile(),
         [userId, userModelSynced, riderResponsibilityModelSynced]
     );
-
-    async function getDisplayNames() {
-        try {
-            const users = await DataStore.query(models.User);
-            const displayNames = users.map((u) => ({
-                displayName: u.displayName,
-                id: u.id,
-            }));
-            setUsersDisplayNames(displayNames);
-        } catch (error) {
-            dispatch(
-                displayErrorNotification(
-                    `Failed to get users list: ${error.message}`
-                )
-            );
-        }
-    }
-    useEffect(() => getDisplayNames(), []);
 
     useEffect(() => () => riderRespObserver.current.unsubscribe(), []);
     useEffect(() => () => observer.current.unsubscribe(), []);
@@ -243,12 +223,14 @@ export default function UserDetail({ userId }) {
                                 <Divider />
                             )}
                         <UserProfile
-                            displayNames={usersDisplayNames}
+                            key={user.id}
                             user={user}
+                            quickUpdateRolesState={(roles) =>
+                                setUser({ ...user, roles })
+                            }
                             possibleRiderResponsibilities={
                                 possibleRiderResponsibilities
                             }
-                            isPosting={isPosting}
                         />
                     </Stack>
                 </PaddedPaper>
