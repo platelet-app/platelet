@@ -86,6 +86,7 @@ export function PaddedPaper(props) {
                 maxHeight: maxHeight,
                 minHeight: minHeight,
                 padding: padding,
+                borderRadius: "1em",
             }}
         >
             {props.children}
