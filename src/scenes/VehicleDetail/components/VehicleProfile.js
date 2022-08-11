@@ -1,128 +1,107 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import { TextFieldUncontrolled } from "../../../components/TextFields";
 import LabelItemPair from "../../../components/LabelItemPair";
-import ClickableTextField from "../../../components/ClickableTextField";
-import { createPostingSelector } from "../../../redux/LoadingSelectors";
-import UsersSelect from "../../../components/UsersSelect";
-import EditIcon from "@mui/icons-material/Edit";
-import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
 import Divider from "@mui/material/Divider";
-import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import { getWhoami } from "../../../redux/Selectors";
-import { Stack, TextField, Typography, useMediaQuery } from "@mui/material";
+import { Stack, Typography, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/styles";
 
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
+import EditModeToggleButton from "../../../components/EditModeToggleButton";
+import VehicleEditNameDialog from "./VehicleEditNameDialog";
+import VehicleEditDetailsDialog from "./VehicleEditDetailsDialog";
 
-const fields = {
+export const vehicleNameFields = {
     name: "Name",
+};
+
+export const vehicleDetailFields = {
     manufacturer: "Manufacturer",
     model: "Model",
 };
 
-function VehicleProfile(props) {
-    const postingSelector = createPostingSelector(["UPDATE_VEHICLE"]);
-    const isPosting = useSelector((state) => postingSelector(state));
-    const [editMode, setEditMode] = useState(false);
-    const [state, setState] = useState({ ...props.vehicle });
-    const [oldState, setOldState] = useState({ ...props.vehicle });
-    const theme = useTheme();
+export const vehicleDateFields = {
+    dateOfManufacture: "Date of Manufacture",
+    dateOfRegistration: "Date of Registration",
+};
 
+const editActions = {
+    editName: "editName",
+    editDetails: "editDetails",
+};
+
+function VehicleProfile(props) {
+    const [editAction, setEditAction] = useState(null);
+    const [state, setState] = useState({ ...props.vehicle });
+    const updateValues = useRef({});
+
+    const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     const whoami = useSelector(getWhoami);
 
-    function resetAfterPost() {
-        if (!isPosting && editMode) {
-            setEditMode(false);
-        }
-    }
-    useEffect(resetAfterPost, [isPosting]);
-
     function copyVehicleToState() {
         setState({ ...props.vehicle });
-        setOldState({ ...props.vehicle });
     }
     useEffect(copyVehicleToState, [props.vehicle]);
 
-    function onAssignUser(selectedUser) {
-        if (selectedUser)
-            setState({
-                ...state,
-                assigned_user_uuid: selectedUser.uuid,
-                assigned_user: selectedUser,
-            });
-        //dispatch(updateVehicle({vehicleUUID: state.uuid, payload: {assigned_user: selectedUser}}));
-    }
-
-    const userAssign = editMode ? (
-        <UsersSelect
-            roles={["rider"]}
-            label={"Assign this vehicle to a user."}
-            onSelect={onAssignUser}
-        />
-    ) : (
-        <></>
-    );
-    let editToggle = <></>;
+    let editNameToggle = <></>;
+    let editDetailsToggle = <></>;
     if (whoami.roles && whoami.roles.includes("ADMIN")) {
-        editToggle = editMode ? (
-            <IconButton
-                color="inherit"
-                aria-controls="simple-menu"
-                aria-haspopup="true"
-                onClick={() => {
-                    setEditMode(!editMode);
-                    setState(oldState);
-                }}
-                size="large"
-            >
-                <EditIcon color={editMode ? "secondary" : "inherit"} />
-            </IconButton>
-        ) : (
-            <IconButton
-                aria-controls="simple-menu"
-                aria-haspopup="true"
-                onClick={() => {
-                    setEditMode(!editMode);
-                }}
-                size="large"
-            >
-                <EditIcon />
-            </IconButton>
+        editNameToggle = (
+            <EditModeToggleButton
+                value={editAction === editActions.editName}
+                onChange={(v) => setEditAction(v ? editActions.editName : null)}
+            />
+        );
+        editDetailsToggle = (
+            <EditModeToggleButton
+                value={editAction === editActions.editDetails}
+                onChange={(v) =>
+                    setEditAction(v ? editActions.editDetails : null)
+                }
+            />
         );
     }
 
     let header = (
         <Typography variant="h5" noWrap align={"right"}>
-            {oldState.name ? oldState.name : "No name."}
+            {state.name ? state.name : "No name."}
         </Typography>
     );
 
+    let dialogContents = <></>;
+    if (editAction === editActions.editName) {
+        dialogContents = (
+            <VehicleEditNameDialog
+                values={state}
+                onChange={(values) => {
+                    updateValues.current = values;
+                }}
+            />
+        );
+    } else if (editAction === editActions.editDetails) {
+        dialogContents = (
+            <VehicleEditDetailsDialog
+                values={state}
+                onChange={(values) => {
+                    updateValues.current = values;
+                }}
+            />
+        );
+    }
+
     const onCancel = () => {
-        setEditMode(false);
-        setState(oldState);
+        setEditAction(null);
     };
 
     const onConfirmation = () => {
-        props.onUpdate(state);
-        setState(state);
-        setOldState(state);
-        setEditMode(false);
+        props.onUpdate(updateValues.current);
+        updateValues.current = {};
+        setEditAction(null);
     };
 
-    const divider = editMode ? (
-        <></>
-    ) : (
-        <div style={{ width: "460px" }}>
-            <Grid item>
-                <Divider />
-            </Grid>
-        </div>
-    );
     return (
         <Stack spacing={3} direction={"column"}>
             <Stack
@@ -132,16 +111,37 @@ function VehicleProfile(props) {
                 spacing={3}
             >
                 {header}
-                {editToggle}
+                {editNameToggle}
             </Stack>
             <Divider />
+            <Stack
+                direction={"row"}
+                justifyContent={"space-between"}
+                alignItems={"top"}
+                spacing={3}
+            >
+                <Typography fontWeight="bold">Vehicle detail</Typography>
 
-            <Stack>
-                {Object.entries(fields).map(([key, label]) => {
+                {editDetailsToggle}
+            </Stack>
+
+            <Stack justifyContent={"flex-end"} alignItems={"center"}>
+                {Object.entries(vehicleDetailFields).map(([key, label]) => {
                     return (
                         <LabelItemPair key={key} label={label}>
                             <Typography noWrap align={"right"}>
-                                {oldState[key]}
+                                {state[key]}
+                            </Typography>
+                        </LabelItemPair>
+                    );
+                })}
+            </Stack>
+            <Stack>
+                {Object.entries(vehicleDateFields).map(([key, label]) => {
+                    return (
+                        <LabelItemPair key={key} label={label}>
+                            <Typography noWrap align={"right"}>
+                                {state[key]}
                             </Typography>
                         </LabelItemPair>
                     );
@@ -150,33 +150,11 @@ function VehicleProfile(props) {
             <ConfirmationDialog
                 fullScreen={isSm}
                 dialogTitle="Edit Vehicle Information"
-                open={editMode}
+                open={editAction !== null}
                 onCancel={onCancel}
                 onConfirmation={onConfirmation}
             >
-                <Stack
-                    sx={{ width: "100%", minWidth: isSm ? 0 : 400 }}
-                    spacing={1}
-                >
-                    {Object.entries(fields).map(([key, label]) => {
-                        return (
-                            <TextField
-                                key={key}
-                                fullWidth
-                                aria-label={label}
-                                label={label}
-                                margin="normal"
-                                value={state[key]}
-                                onChange={(e) => {
-                                    setState((prevState) => ({
-                                        ...prevState,
-                                        [key]: e.target.value,
-                                    }));
-                                }}
-                            />
-                        );
-                    })}
-                </Stack>
+                {dialogContents}
             </ConfirmationDialog>
         </Stack>
     );
