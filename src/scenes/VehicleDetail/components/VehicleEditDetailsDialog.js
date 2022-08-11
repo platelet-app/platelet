@@ -3,10 +3,7 @@ import PropTypes from "prop-types";
 import { vehicleDetailFields, vehicleDateFields } from "./VehicleProfile";
 import { useTheme } from "@mui/styles";
 import { Stack, TextField, useMediaQuery } from "@mui/material";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
-import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+import DatePicker from "@mui/lab/DatePicker";
 
 function VehicleEditDetailsDialog({ values, onChange }) {
     const [state, setState] = useState({
@@ -51,15 +48,14 @@ function VehicleEditDetailsDialog({ values, onChange }) {
             })}
             {Object.entries(vehicleDateFields).map(([key, label]) => {
                 return (
-                    <LocalizationProvider dateAdapter={AdapterMoment}>
-                        <DesktopDatePicker
-                            label={label}
-                            value={new Date(state[key])}
-                            inputFormat="DD/MM/YYYY"
-                            onChange={(value) => handleChange(key, value)}
-                            renderInput={(params) => <TextField {...params} />}
-                        />
-                    </LocalizationProvider>
+                    <DatePicker
+                        disableFuture
+                        label={label}
+                        value={new Date(state[key])}
+                        inputFormat={"dd/MM/yyyy"}
+                        onChange={(value) => handleChange(key, value)}
+                        renderInput={(params) => <TextField {...params} />}
+                    />
                 );
             })}
         </Stack>
