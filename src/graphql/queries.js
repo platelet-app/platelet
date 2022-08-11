@@ -51,6 +51,10 @@ export const getTenant = /* GraphQL */ `
           nextToken
           startedAt
         }
+        vehicleAssignments {
+          nextToken
+          startedAt
+        }
         createdTasks {
           nextToken
           startedAt
@@ -242,6 +246,21 @@ export const getUser = /* GraphQL */ `
         nextToken
         startedAt
       }
+      vehicleAssignments {
+        items {
+          id
+          tenantId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userVehicleAssignmentsId
+          vehicleAssignmentsId
+        }
+        nextToken
+        startedAt
+      }
       createdTasks {
         items {
           id
@@ -328,6 +347,10 @@ export const listUsers = /* GraphQL */ `
           nextToken
           startedAt
         }
+        vehicleAssignments {
+          nextToken
+          startedAt
+        }
         createdTasks {
           nextToken
           startedAt
@@ -398,6 +421,10 @@ export const syncUsers = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        vehicleAssignments {
           nextToken
           startedAt
         }
@@ -476,6 +503,10 @@ export const getUserByCognitoId = /* GraphQL */ `
           nextToken
           startedAt
         }
+        vehicleAssignments {
+          nextToken
+          startedAt
+        }
         createdTasks {
           nextToken
           startedAt
@@ -538,6 +569,10 @@ export const getPossibleRiderResponsibilities = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        vehicleAssignments {
           nextToken
           startedAt
         }
@@ -696,12 +731,26 @@ export const getVehicle = /* GraphQL */ `
     getVehicle(id: $id) {
       id
       tenantId
-      assignedUserID
       name
       manufacturer
       model
       dateOfManufacture
       dateOfRegistration
+      assignments {
+        items {
+          id
+          tenantId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userVehicleAssignmentsId
+          vehicleAssignmentsId
+        }
+        nextToken
+        startedAt
+      }
       comments {
         items {
           id
@@ -739,12 +788,15 @@ export const listVehicles = /* GraphQL */ `
       items {
         id
         tenantId
-        assignedUserID
         name
         manufacturer
         model
         dateOfManufacture
         dateOfRegistration
+        assignments {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -777,12 +829,15 @@ export const syncVehicles = /* GraphQL */ `
       items {
         id
         tenantId
-        assignedUserID
         name
         manufacturer
         model
         dateOfManufacture
         dateOfRegistration
+        assignments {
+          nextToken
+          startedAt
+        }
         comments {
           nextToken
           startedAt
@@ -793,6 +848,225 @@ export const syncVehicles = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+export const getVehicleAssignment = /* GraphQL */ `
+  query GetVehicleAssignment($id: ID!) {
+    getVehicleAssignment(id: $id) {
+      id
+      tenantId
+      vehicle {
+        id
+        tenantId
+        name
+        manufacturer
+        model
+        dateOfManufacture
+        dateOfRegistration
+        assignments {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      assignee {
+        id
+        username
+        cognitoId
+        tenantId
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
+        profilePictureURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        assignments {
+          nextToken
+          startedAt
+        }
+        vehicleAssignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
+          nextToken
+          startedAt
+        }
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userVehicleAssignmentsId
+      vehicleAssignmentsId
+    }
+  }
+`;
+export const listVehicleAssignments = /* GraphQL */ `
+  query ListVehicleAssignments(
+    $filter: ModelVehicleAssignmentFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listVehicleAssignments(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        tenantId
+        vehicle {
+          id
+          tenantId
+          name
+          manufacturer
+          model
+          dateOfManufacture
+          dateOfRegistration
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        assignee {
+          id
+          username
+          cognitoId
+          tenantId
+          displayName
+          name
+          roles
+          dateOfBirth
+          riderResponsibility
+          profilePictureURL
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userVehicleAssignmentsId
+        vehicleAssignmentsId
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+export const syncVehicleAssignments = /* GraphQL */ `
+  query SyncVehicleAssignments(
+    $filter: ModelVehicleAssignmentFilterInput
+    $limit: Int
+    $nextToken: String
+    $lastSync: AWSTimestamp
+  ) {
+    syncVehicleAssignments(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      lastSync: $lastSync
+    ) {
+      items {
+        id
+        tenantId
+        vehicle {
+          id
+          tenantId
+          name
+          manufacturer
+          model
+          dateOfManufacture
+          dateOfRegistration
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        assignee {
+          id
+          username
+          cognitoId
+          tenantId
+          displayName
+          name
+          roles
+          dateOfBirth
+          riderResponsibility
+          profilePictureURL
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userVehicleAssignmentsId
+        vehicleAssignmentsId
       }
       nextToken
       startedAt
@@ -1121,6 +1395,10 @@ export const getTask = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        vehicleAssignments {
           nextToken
           startedAt
         }
@@ -2024,6 +2302,10 @@ export const getTaskAssignee = /* GraphQL */ `
           nextToken
           startedAt
         }
+        vehicleAssignments {
+          nextToken
+          startedAt
+        }
         createdTasks {
           nextToken
           startedAt
@@ -2225,6 +2507,10 @@ export const getComment = /* GraphQL */ `
           startedAt
         }
         assignments {
+          nextToken
+          startedAt
+        }
+        vehicleAssignments {
           nextToken
           startedAt
         }

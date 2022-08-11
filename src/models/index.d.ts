@@ -311,12 +311,12 @@ export declare class VehicleAssignment {
 export declare class Vehicle {
   readonly id: string;
   readonly tenantId: string;
-  readonly assignments?: (VehicleAssignment | null)[] | null;
   readonly name?: string | null;
   readonly manufacturer?: string | null;
   readonly model?: string | null;
   readonly dateOfManufacture?: string | null;
   readonly dateOfRegistration?: string | null;
+  readonly assignments?: (VehicleAssignment | null)[] | null;
   readonly comments?: (Comment | null)[] | null;
   readonly disabled?: number | null;
   readonly createdAt?: string | null;

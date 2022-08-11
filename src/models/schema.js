@@ -1653,20 +1653,6 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "assignments": {
-                    "name": "assignments",
-                    "isArray": true,
-                    "type": {
-                        "model": "VehicleAssignment"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "vehicleAssignmentsId"
-                    }
-                },
                 "name": {
                     "name": "name",
                     "isArray": false,
@@ -1701,6 +1687,20 @@ export const schema = {
                     "type": "AWSDate",
                     "isRequired": false,
                     "attributes": []
+                },
+                "assignments": {
+                    "name": "assignments",
+                    "isArray": true,
+                    "type": {
+                        "model": "VehicleAssignment"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "vehicleAssignmentsId"
+                    }
                 },
                 "comments": {
                     "name": "comments",
