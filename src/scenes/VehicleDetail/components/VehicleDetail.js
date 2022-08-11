@@ -24,7 +24,7 @@ const initialVehicleState = {
     dateOfRegistration: null,
 };
 
-export default function VehicleDetail({vehicleId}) {
+export default function VehicleDetail({ vehicleId }) {
     const dispatch = useDispatch();
     const [isFetching, setIsFetching] = useState(false);
     const [notFound, setNotFound] = useState(false);
@@ -37,13 +37,19 @@ export default function VehicleDetail({vehicleId}) {
         dataStoreModelSyncedStatusSelector
     ).Vehicle;
     const assignmentObserver = useRef({ unsubscribe: () => {} });
+    const vehicleObserver = useRef({ unsubscribe: () => {} });
 
     async function newVehicleProfile() {
         try {
-            const newVehicle = await DataStore.query(
+            const newVehicle = await DataStore.query(models.Vehicle, vehicleId);
+            vehicleObserver.current.unsubscribe();
+            vehicleObserver.current = DataStore.observe(
                 models.Vehicle,
                 vehicleId
-            );
+            ).subscribe(({ element }) => {
+                setVehicle(element);
+            });
+            assignmentObserver.current.unsubscribe();
             assignmentObserver.current = DataStore.observeQuery(
                 models.VehicleAssignment
             ).subscribe(({ items }) => {
@@ -82,14 +88,12 @@ export default function VehicleDetail({vehicleId}) {
             console.log("Request failed", error);
         }
     }
-    useEffect(
-        () => newVehicleProfile(),
-        [vehicleId, vehicleModelSynced]
-    );
+    useEffect(() => newVehicleProfile(), [vehicleId, vehicleModelSynced]);
 
     useEffect(() => {
         return () => {
             assignmentObserver.current.unsubscribe();
+            vehicleObserver.current.unsubscribe();
         };
     }, []);
 
