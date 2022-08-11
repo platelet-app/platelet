@@ -33,18 +33,12 @@ const editActions = {
 
 function VehicleProfile(props) {
     const [editAction, setEditAction] = useState(null);
-    const [state, setState] = useState({ ...props.vehicle });
     const updateValues = useRef({});
 
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     const whoami = useSelector(getWhoami);
-
-    function copyVehicleToState() {
-        setState({ ...props.vehicle });
-    }
-    useEffect(copyVehicleToState, [props.vehicle]);
 
     let editNameToggle = <></>;
     let editDetailsToggle = <></>;
@@ -67,7 +61,7 @@ function VehicleProfile(props) {
 
     let header = (
         <Typography variant="h5" noWrap align={"right"}>
-            {state.name ? state.name : "No name."}
+            {props.vehicle.name ? props.vehicle.name : "No name."}
         </Typography>
     );
 
@@ -75,7 +69,7 @@ function VehicleProfile(props) {
     if (editAction === editActions.editName) {
         dialogContents = (
             <VehicleEditNameDialog
-                values={state}
+                values={props.vehicle}
                 onChange={(values) => {
                     updateValues.current = values;
                 }}
@@ -84,7 +78,7 @@ function VehicleProfile(props) {
     } else if (editAction === editActions.editDetails) {
         dialogContents = (
             <VehicleEditDetailsDialog
-                values={state}
+                values={props.vehicle}
                 onChange={(values) => {
                     updateValues.current = values;
                 }}
@@ -130,7 +124,7 @@ function VehicleProfile(props) {
                     return (
                         <LabelItemPair key={key} label={label}>
                             <Typography noWrap align={"right"}>
-                                {state[key]}
+                                {props.vehicle[key]}
                             </Typography>
                         </LabelItemPair>
                     );
@@ -141,7 +135,7 @@ function VehicleProfile(props) {
                     return (
                         <LabelItemPair key={key} label={label}>
                             <Typography noWrap align={"right"}>
-                                {state[key]}
+                                {props.vehicle[key]}
                             </Typography>
                         </LabelItemPair>
                     );
