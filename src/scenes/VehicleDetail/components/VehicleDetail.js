@@ -221,7 +221,11 @@ export default function VehicleDetail({ vehicleId }) {
             <Stack spacing={3} direction={"column"}>
                 <PaddedPaper maxWidth={700}>
                     <Stack divider={<Divider />} direction="column" spacing={3}>
-                        <VehicleProfile onUpdate={onUpdate} vehicle={vehicle} />
+                        <VehicleProfile
+                            key={vehicle.id}
+                            onUpdate={onUpdate}
+                            vehicle={vehicle}
+                        />
                         <AssignUserToVehicle
                             assignment={assignment}
                             onAssignUser={onAssignUser}

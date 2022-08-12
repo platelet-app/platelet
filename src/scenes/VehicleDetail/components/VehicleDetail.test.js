@@ -33,13 +33,25 @@ describe("VehicleDetail", () => {
         jest.restoreAllMocks();
         const vehicles = await DataStore.query(models.Vehicle);
         const assigns = await DataStore.query(models.VehicleAssignment);
+        const users = await DataStore.query(models.User);
         await Promise.all(
-            [...vehicles, ...assigns].map((item) => DataStore.delete(item))
+            [...vehicles, ...assigns, ...users].map((item) =>
+                DataStore.delete(item)
+            )
         );
     });
 
-    it("shows vehicle information", async () => {
+    it("shows vehicle information and assignee", async () => {
         const vehicle = await DataStore.save(new models.Vehicle(testVehicle));
+        const assignee = await DataStore.save(
+            new models.User({ displayName: "some rider" })
+        );
+        await DataStore.save(
+            new models.VehicleAssignment({
+                assignee,
+                vehicle,
+            })
+        );
         const querySpy = jest.spyOn(DataStore, "query");
         render(<VehicleDetail vehicleId={vehicle.id} />);
         await waitFor(() => {
@@ -53,6 +65,7 @@ describe("VehicleDetail", () => {
         expect(
             screen.getByText(vehicle.dateOfRegistration)
         ).toBeInTheDocument();
+        expect(screen.getByText(assignee.displayName)).toBeInTheDocument();
     });
 
     test("change the name", async () => {
@@ -110,6 +123,56 @@ describe("VehicleDetail", () => {
                 ...vehicle,
                 manufacturer: `${vehicle.manufacturer}${more}`,
                 model: `${vehicle.model}${more}`,
+            });
+        });
+    });
+
+    test("assign and unassign a user to the vehicle", async () => {
+        const vehicle = await DataStore.save(new models.Vehicle(testVehicle));
+        const assignUser = await DataStore.save(
+            new models.User({
+                displayName: "assignUser",
+                roles: [userRoles.user, userRoles.rider],
+            })
+        );
+        const mockAssignment = new models.VehicleAssignment({
+            vehicle,
+            assignee: assignUser,
+        });
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        const deleteSpy = jest.spyOn(DataStore, "delete");
+        render(<VehicleDetail vehicleId={vehicle.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(3);
+        });
+        const textBox = screen.getByRole("textbox", {
+            name: "Assign someone?",
+        });
+        userEvent.type(textBox, assignUser.displayName);
+        userEvent.click(screen.getByText(assignUser.displayName));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockAssignment,
+                id: expect.any(String),
+                tenantId,
+            });
+        });
+        expect(
+            screen.queryByRole("textbox", { name: "Assign someone?" })
+        ).toBeNull();
+        await waitFor(() => {
+            expect(
+                screen.getByText(assignUser.displayName)
+            ).toBeInTheDocument();
+        });
+        const deleteButton = screen.getByTestId("CancelIcon");
+        userEvent.click(deleteButton);
+        await waitFor(() => {
+            expect(deleteSpy).toHaveBeenCalledWith({
+                ...mockAssignment,
+                id: expect.any(String),
+                tenantId,
             });
         });
     });
