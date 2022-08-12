@@ -7,7 +7,7 @@ import UsersList from "../scenes/UsersList";
 import VehicleDetailRoute from "../scenes/VehicleDetail/VehicleDetailRoute";
 import NotFound from "../ErrorComponents/NotFound";
 import LocationsList from "../scenes/LocationsList";
-import LocationDetail from "../scenes/LocationDetail/LocationDetail";
+import LocationDetailRoute from "../scenes/LocationDetail/LocationDetailRoute";
 import StatisticsDashboard from "../scenes/Statistics/StatisticsDashboard";
 import { useDispatch, useSelector } from "react-redux";
 import { setMenuIndex } from "../redux/Actions";
@@ -90,7 +90,7 @@ export default function MainWindow(_props) {
                         path="/location/:location_uuid_b62"
                         render={(props) => {
                             dispatch(setMenuIndex("locations"));
-                            return <LocationDetail {...props} />;
+                            return <LocationDetailRoute {...props} />;
                         }}
                     />
                     <Route

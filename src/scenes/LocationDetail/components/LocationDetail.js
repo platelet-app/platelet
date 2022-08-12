@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
-import CommentsSection from "../Comments/CommentsSection";
-import { decodeUUID } from "../../utilities";
-import { PaddedPaper } from "../../styles/common";
+import CommentsSection from "../../Comments/CommentsSection";
+import { PaddedPaper } from "../../../styles/common";
 import { useDispatch, useSelector } from "react-redux";
-import NotFound from "../../ErrorComponents/NotFound";
+import NotFound from "../../../ErrorComponents/NotFound";
 import Skeleton from "@mui/material/Skeleton";
 import { DataStore } from "aws-amplify";
-import * as models from "../../models/index";
-import { dataStoreModelSyncedStatusSelector } from "../../redux/Selectors";
-import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
-import LocationProfile from "./components/LocationProfile";
-import { protectedFields } from "../../apiConsts";
+import * as models from "../../../models/index";
+import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import LocationProfile from "./LocationProfile";
+import { protectedFields } from "../../../apiConsts";
 import { Divider, Stack } from "@mui/material";
 
 const initialLocationState = {
@@ -28,8 +27,7 @@ const initialLocationState = {
     what3words: null,
 };
 
-export default function LocationDetail(props) {
-    const locationUUID = decodeUUID(props.match.params.location_uuid_b62);
+export default function LocationDetail({ locationId }) {
     const dispatch = useDispatch();
     const [isFetching, setIsFetching] = useState(false);
     const [location, setLocation] = useState(initialLocationState);
@@ -42,7 +40,7 @@ export default function LocationDetail(props) {
         try {
             const locationResult = await DataStore.query(
                 models.Location,
-                locationUUID
+                locationId
             );
             setIsFetching(false);
             if (locationResult) {
@@ -60,10 +58,7 @@ export default function LocationDetail(props) {
             console.log("Request failed", error);
         }
     }
-    useEffect(
-        () => newLocationProfile(),
-        [props.location.key, locationModelSynced]
-    );
+    useEffect(() => newLocationProfile(), [locationId, locationModelSynced]);
 
     async function onUpdate(value) {
         const { contact, ...rest } = value;
@@ -156,14 +151,14 @@ export default function LocationDetail(props) {
             </React.Fragment>
         );
     } else if (notFound) {
-        return <NotFound>Location {locationUUID} could not be found.</NotFound>;
+        return <NotFound>Location {locationId} could not be found.</NotFound>;
     } else {
         return (
             <React.Fragment>
                 <PaddedPaper maxWidth={700}>
                     <LocationProfile onUpdate={onUpdate} location={location} />
                 </PaddedPaper>
-                <CommentsSection parentId={locationUUID} />
+                <CommentsSection parentId={locationId} />
             </React.Fragment>
         );
     }
