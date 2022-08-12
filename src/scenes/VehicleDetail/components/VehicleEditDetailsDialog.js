@@ -31,7 +31,9 @@ function VehicleEditDetailsDialog({ values, onChange }) {
                     <TextField
                         key={key}
                         fullWidth
-                        aria-label={label}
+                        inputProps={{
+                            "aria-label": label,
+                        }}
                         label={label}
                         margin="normal"
                         value={state[key]}
@@ -48,14 +50,17 @@ function VehicleEditDetailsDialog({ values, onChange }) {
             })}
             {Object.entries(vehicleDateFields).map(([key, label]) => {
                 return (
-                    <DatePicker
-                        disableFuture
-                        label={label}
-                        value={new Date(state[key])}
-                        inputFormat={"dd/MM/yyyy"}
-                        onChange={(value) => handleChange(key, value)}
-                        renderInput={(params) => <TextField {...params} />}
-                    />
+                    // doesn't like key on DatePicker for some reason
+                    <React.Fragment key={key}>
+                        <DatePicker
+                            disableFuture
+                            label={label}
+                            value={new Date(state[key])}
+                            inputFormat={"dd/MM/yyyy"}
+                            onChange={(value) => handleChange(key, value)}
+                            renderInput={(params) => <TextField {...params} />}
+                        />
+                    </React.Fragment>
                 );
             })}
         </Stack>

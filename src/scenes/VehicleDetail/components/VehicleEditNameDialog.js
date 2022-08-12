@@ -16,7 +16,9 @@ function VehicleEditNameDialog({ values, onChange }) {
                     <TextField
                         key={key}
                         fullWidth
-                        aria-label={label}
+                        inputProps={{
+                            "aria-label": label,
+                        }}
                         label={label}
                         margin="normal"
                         value={state[key]}

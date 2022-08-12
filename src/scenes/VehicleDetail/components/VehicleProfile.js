@@ -45,12 +45,14 @@ function VehicleProfile(props) {
     if (whoami.roles && whoami.roles.includes("ADMIN")) {
         editNameToggle = (
             <EditModeToggleButton
+            aria-label="Edit Vehicle Name"
                 value={editAction === editActions.editName}
                 onChange={(v) => setEditAction(v ? editActions.editName : null)}
             />
         );
         editDetailsToggle = (
             <EditModeToggleButton
+            aria-label="Edit Vehicle Details"
                 value={editAction === editActions.editDetails}
                 onChange={(v) =>
                     setEditAction(v ? editActions.editDetails : null)
@@ -156,7 +158,6 @@ function VehicleProfile(props) {
 
 VehicleProfile.propTypes = {
     onUpdate: PropTypes.func,
-    location: PropTypes.object,
 };
 
 VehicleProfile.defaultProps = {
