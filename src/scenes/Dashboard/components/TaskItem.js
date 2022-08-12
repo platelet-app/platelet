@@ -283,7 +283,7 @@ function TaskItem(props) {
 
     const contents = visibility ? (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>
-            <Box data-testId="task-item-parent" className={classes.root}>
+            <Box data-testid="task-item-parent" className={classes.root}>
                 <ItemWrapper
                     isSm={isSm}
                     location={props.location}
@@ -317,7 +317,7 @@ function TaskItem(props) {
                         </div>
                         <div className={classes.select}>
                             <ToggleButton
-                                data-testId="task-item-select"
+                                data-testid="task-item-select"
                                 aria-label="select task"
                                 sx={{ border: 0 }}
                                 size="small"

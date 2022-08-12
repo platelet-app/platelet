@@ -297,7 +297,7 @@ function MultipleSelectionActionsMenu() {
                         >
                             {Object.values(buttonActions).map((action) => (
                                 <Button
-                                    data-testId="select-action-button"
+                                    data-testid="select-action-button"
                                     aria-label={`Selection ${action}`}
                                     key={action}
                                     size="small"

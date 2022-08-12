@@ -116,7 +116,7 @@ const TaskCard = React.memo((props) => {
                 >
                     {props.commentCount > 0 ? (
                         <Tooltip
-                            data-testId="comment-count-tooltip"
+                            data-testid="comment-count-tooltip"
                             title={`${props.commentCount} ${
                                 props.commentCount === 1
                                     ? "comment"
@@ -134,7 +134,7 @@ const TaskCard = React.memo((props) => {
                         <div></div>
                     )}
                     <Tooltip
-                        data-testId="assignee-names-tooltip"
+                        data-testid="assignee-names-tooltip"
                         title={assigneesDisplayString}
                     >
                         <AvatarGroup>

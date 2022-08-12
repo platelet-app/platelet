@@ -70,7 +70,7 @@ function LoadingSpinner({ progress, tooltip, size, delay, error, ...props }) {
         return (
             <Box sx={props.sx}>
                 <Fade
-                    data-testId="progressive-loading-spinner"
+                    data-testid="progressive-loading-spinner"
                     in={error || fade}
                     unmountOnExit
                 >
