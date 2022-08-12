@@ -9,18 +9,16 @@ import {
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import EditModeToggleButton from "../../../components/EditModeToggleButton";
-import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import { getWhoami } from "../../../redux/Selectors";
-import _ from "lodash";
 import PropTypes from "prop-types";
 import { userRoles } from "../../../apiConsts";
-import { TextFieldControlled } from "../../../components/TextFields";
+import { TextFieldUncontrolled } from "../../../components/TextFields";
 import LabelItemPair from "../../../components/LabelItemPair";
 import { useTheme } from "@mui/styles";
 
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 
-const fields = {
+export const locationFields = {
     ward: "Ward",
     line1: "Line 1",
     line2: "Line 2",
@@ -75,40 +73,13 @@ function LocationProfile(props) {
         setEditAddressMode(false);
         setEditContactMode(false);
     };
-    // const saveButtons = !editAddressMode ? (
-    //     <></>
-    // ) : (
-    //     <SaveCancelButtons
-    //         disabled={props.isPosting}
-    //         onSave={async () => {
-    //             if (verifyUpdate(state)) {
-    //                 await props.onUpdate(
-    //                     _.omit(
-    //                         state,
-    //                         "_deleted",
-    //                         "_lastChangedAt",
-    //                         "_version",
-    //                         "createdAt",
-    //                         "updatedAt"
-    //                     )
-    //                 );
-    //                 setEditAddressMode(false);
-    //                 setOldState(state);
-    //             }
-    //         }}
-    //         onCancel={() => {
-    //             setEditAddressMode(false);
-    //             setState(oldState);
-    //         }}
-    //     />
-    // );
 
     let editNameToggle = <></>;
     if (whoami.roles) {
         if (whoami.roles.includes(userRoles.admin)) {
             editNameToggle = (
                 <EditModeToggleButton
-                    tooltipDefault={"Edit location name"}
+                    aria-label="Edit Location Name"
                     value={editNameMode}
                     onChange={(v) => {
                         setEditNameMode(v);
@@ -124,7 +95,6 @@ function LocationProfile(props) {
         if (whoami.roles.includes(userRoles.admin)) {
             editAddressToggle = (
                 <EditModeToggleButton
-                    tooltipDefault={"Edit this location"}
                     value={editAddressMode}
                     onChange={(v) => {
                         setEditAddressMode(v);
@@ -178,7 +148,7 @@ function LocationProfile(props) {
                 >
                     {editAddressToggle}
                 </Stack>
-                {Object.entries(fields).map(([key, label]) => {
+                {Object.entries(locationFields).map(([key, label]) => {
                     return (
                         <LabelItemPair key={key} label={label}>
                             <Typography noWrap align={"right"}>
@@ -227,14 +197,17 @@ function LocationProfile(props) {
                         <TextField
                             key={"Name"}
                             fullWidth
-                            aria-label={"Name"}
+                            inputProps={{
+                                "aria-label": "Name",
+                            }}
                             label={"Name"}
                             margin="normal"
                             value={state["name"]}
                             onChange={(e) => {
+                                const { value } = e.target;
                                 setState((prevState) => ({
                                     ...prevState,
-                                    name: e.target.value,
+                                    name: value,
                                 }));
                             }}
                         />
@@ -252,7 +225,7 @@ function LocationProfile(props) {
                     sx={{ width: "100%", minWidth: isSm ? 0 : 400 }}
                     spacing={1}
                 >
-                    {Object.entries(fields).map(([key, label]) => {
+                    {Object.entries(locationFields).map(([key, label]) => {
                         return (
                             <TextField
                                 key={key}
@@ -286,7 +259,7 @@ function LocationProfile(props) {
                     >
                         {Object.entries(contactFields).map(([key, label]) => {
                             return (
-                                <TextFieldControlled
+                                <TextFieldUncontrolled
                                     tel={key === "telephoneNumber"}
                                     key={key}
                                     fullWidth
@@ -295,11 +268,12 @@ function LocationProfile(props) {
                                     margin="normal"
                                     value={state.contact[key]}
                                     onChange={(e) => {
+                                        const { value } = e.target;
                                         setState((prevState) => ({
                                             ...prevState,
                                             contact: {
                                                 ...prevState.contact,
-                                                [key]: e.target.value,
+                                                [key]: value,
                                             },
                                         }));
                                     }}
@@ -315,7 +289,7 @@ function LocationProfile(props) {
 
 LocationProfile.propTypes = {
     onUpdate: PropTypes.func,
-    location: PropTypes.object,
+    location: PropTypes.object.isRequired,
 };
 
 LocationProfile.defaultProps = {
