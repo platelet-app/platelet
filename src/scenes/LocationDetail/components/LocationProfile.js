@@ -37,6 +37,12 @@ const contactFields = {
     telephoneNumber: "Telephone",
 };
 
+const actions = {
+    editName: "editName",
+    editDetails: "editDetails",
+    editContact: "editContact",
+};
+
 function LocationProfile(props) {
     const [state, setState] = useState({ ...props.location });
     const [oldState, setOldState] = useState({ ...props.location });
@@ -95,6 +101,7 @@ function LocationProfile(props) {
         if (whoami.roles.includes(userRoles.admin)) {
             editAddressToggle = (
                 <EditModeToggleButton
+                    aria-label="Edit Location Details"
                     value={editAddressMode}
                     onChange={(v) => {
                         setEditAddressMode(v);
@@ -110,7 +117,7 @@ function LocationProfile(props) {
         if (whoami.roles.includes(userRoles.admin)) {
             editContactToggle = (
                 <EditModeToggleButton
-                    tooltipDefault={"Edit this contact"}
+                    aria-label="Edit Location Contact"
                     value={editContactMode}
                     onChange={(v) => {
                         setEditContactMode(v);
@@ -230,14 +237,17 @@ function LocationProfile(props) {
                             <TextField
                                 key={key}
                                 fullWidth
-                                aria-label={label}
+                                inputProps={{
+                                    "aria-label": label,
+                                }}
                                 label={label}
                                 margin="normal"
                                 value={state[key]}
                                 onChange={(e) => {
+                                    const { value } = e.target;
                                     setState((prevState) => ({
                                         ...prevState,
-                                        [key]: e.target.value,
+                                        [key]: value,
                                     }));
                                 }}
                             />
@@ -248,7 +258,7 @@ function LocationProfile(props) {
             {state.contact && (
                 <ConfirmationDialog
                     fullScreen={isSm}
-                    dialogTitle="Edit Contact Information"
+                    dialogTitle="Edit Contact"
                     open={editContactMode}
                     onCancel={onCancel}
                     onConfirmation={onConfirmation}
@@ -263,7 +273,9 @@ function LocationProfile(props) {
                                     tel={key === "telephoneNumber"}
                                     key={key}
                                     fullWidth
-                                    aria-label={label}
+                                    inputProps={{
+                                        "aria-label": label,
+                                    }}
                                     label={label}
                                     margin="normal"
                                     value={state.contact[key]}

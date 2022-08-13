@@ -85,4 +85,91 @@ describe("LocationDetail", () => {
             });
         });
     });
+
+    test("change the details", async () => {
+        const location = await DataStore.save(
+            new models.Location(mockLocation)
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<LocationDetail locationId={location.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        userEvent.click(
+            screen.getByRole("button", { name: "Edit Location Details" })
+        );
+        const more = "more text";
+        for (const [key, value] of Object.entries(locationFields)) {
+            const textBox = screen.getByRole("textbox", { name: value });
+            await waitFor(() => {
+                expect(textBox).toHaveValue(location[key]);
+            });
+            userEvent.type(textBox, more);
+            await waitFor(() => {
+                expect(textBox).toHaveValue(`${location[key]}${more}`);
+            });
+        }
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        const newValues = Object.keys(locationFields).reduce((acc, key) => {
+            return { ...acc, [key]: `${location[key]}${more}` };
+        }, {});
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...location,
+                ...newValues,
+            });
+        });
+    });
+
+    test("change the contact information", async () => {
+        const location = await DataStore.save(
+            new models.Location(mockLocation)
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<LocationDetail locationId={location.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        userEvent.click(
+            screen.getByRole("button", {
+                name: "Edit Location Contact",
+            })
+        );
+        const more = "more text";
+        const email = screen.getByRole("textbox", { name: "Email" });
+        userEvent.type(email, more);
+        await waitFor(() => {
+            expect(email).toHaveValue(
+                `${mockLocation.contact.emailAddress}${more}`
+            );
+        });
+        const name = screen.getByRole("textbox", { name: "Name" });
+        userEvent.type(name, more);
+        await waitFor(() => {
+            expect(name).toHaveValue(`${mockLocation.contact.name}${more}`);
+        });
+        const telephone = screen.getByRole("textbox", {
+            name: "Telephone",
+        });
+        userEvent.type(telephone, "12345");
+        await waitFor(() => {
+            expect(telephone).toHaveValue(
+                `${mockLocation.contact.telephoneNumber}12345`
+            );
+        });
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...location,
+                contact: {
+                    ...mockLocation.contact,
+                    emailAddress: `${mockLocation.contact.emailAddress}${more}`,
+                    name: `${mockLocation.contact.name}${more}`,
+                    telephoneNumber: `${mockLocation.contact.telephoneNumber}12345`,
+                },
+            });
+        });
+    });
 });
