@@ -193,4 +193,41 @@ describe("LocationDetail", () => {
             ).toBeInTheDocument();
         });
     });
+
+    it("stops the observer on unmount", async () => {
+        const location = await DataStore.save(
+            new models.Location(mockLocation)
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        const unsubscribe = jest.fn();
+        const observeSpy = jest
+            .spyOn(DataStore, "observe")
+            .mockImplementationOnce(() => {
+                return {
+                    subscribe: () => ({ unsubscribe }),
+                };
+            })
+            .mockImplementation(() => {
+                return {
+                    subscribe: () => ({ unsubscribe: jest.fn() }),
+                };
+            });
+        const { component } = render(
+            <LocationDetail locationId={location.id} />,
+            {
+                preloadedState,
+            }
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        await waitFor(() => {
+            // comment observer too
+            expect(observeSpy).toHaveBeenCalledTimes(2);
+        });
+        component.unmount();
+        await waitFor(() => {
+            expect(unsubscribe).toHaveBeenCalledTimes(1);
+        });
+    });
 });
