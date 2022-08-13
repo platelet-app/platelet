@@ -176,4 +176,31 @@ describe("VehicleDetail", () => {
             });
         });
     });
+
+    it("stops the observers on unmount", async () => {
+        const vehicle = await DataStore.save(new models.Vehicle(testVehicle));
+        const querySpy = jest.spyOn(DataStore, "query");
+        const unsubscribe = jest.fn();
+        const observeSpy = jest
+            .spyOn(DataStore, "observe")
+            .mockImplementation(() => {
+                return {
+                    subscribe: () => ({ unsubscribe }),
+                };
+            });
+        const { component } = render(<VehicleDetail vehicleId={vehicle.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(3);
+        });
+        await waitFor(() => {
+            // comment and assignments
+            expect(observeSpy).toHaveBeenCalledTimes(3);
+        });
+        component.unmount();
+        await waitFor(() => {
+            expect(unsubscribe).toHaveBeenCalledTimes(3);
+        });
+    });
 });
