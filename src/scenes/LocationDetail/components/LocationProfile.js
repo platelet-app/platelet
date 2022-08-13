@@ -6,7 +6,8 @@ import {
     Typography,
     useMediaQuery,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
+import LocationEditNameDialog from "./LocationEditNameDialog";
 import { useSelector } from "react-redux";
 import EditModeToggleButton from "../../../components/EditModeToggleButton";
 import { getWhoami } from "../../../redux/Selectors";
@@ -17,6 +18,8 @@ import LabelItemPair from "../../../components/LabelItemPair";
 import { useTheme } from "@mui/styles";
 
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
+import LocationEditContactDialog from "./LocationEditContactDialog";
+import LocationEditDetailsDialog from "./LocationEditDetailsDialog";
 
 export const locationFields = {
     ward: "Ward",
@@ -31,7 +34,7 @@ export const locationFields = {
     // what3words: "What 3 Words",
 };
 
-const contactFields = {
+export const locationContactFields = {
     name: "Name",
     emailAddress: "Email",
     telephoneNumber: "Telephone",
@@ -44,20 +47,15 @@ const actions = {
 };
 
 function LocationProfile(props) {
-    const [state, setState] = useState({ ...props.location });
-    const [oldState, setOldState] = useState({ ...props.location });
     const [editNameMode, setEditNameMode] = useState(false);
     const [editAddressMode, setEditAddressMode] = useState(false);
     const [editContactMode, setEditContactMode] = useState(false);
+    const [action, setAction] = useState(null);
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+    const updateValues = useRef({});
 
     const whoami = useSelector(getWhoami);
-
-    useEffect(() => {
-        setState({ ...props.location });
-        setOldState({ ...props.location });
-    }, [props.location]);
 
     function verifyUpdate() {
         // TODO: verify name is unique
@@ -65,19 +63,14 @@ function LocationProfile(props) {
     }
 
     const onCancel = () => {
-        setEditAddressMode(false);
-        setEditContactMode(false);
-        setEditNameMode(false);
-        setState(oldState);
+        setAction(null);
     };
 
     const onConfirmation = () => {
-        props.onUpdate(state);
-        setState(state);
-        setOldState(state);
-        setEditNameMode(false);
-        setEditAddressMode(false);
-        setEditContactMode(false);
+        console.log("onConfirmation", updateValues.current);
+        props.onUpdate(updateValues.current);
+        updateValues.current = {};
+        setAction(null);
     };
 
     let editNameToggle = <></>;
@@ -88,8 +81,9 @@ function LocationProfile(props) {
                     aria-label="Edit Location Name"
                     value={editNameMode}
                     onChange={(v) => {
-                        setEditNameMode(v);
-                        if (!v) setState(oldState);
+                        if (v) {
+                            setAction(actions.editName);
+                        }
                     }}
                 />
             );
@@ -104,8 +98,9 @@ function LocationProfile(props) {
                     aria-label="Edit Location Details"
                     value={editAddressMode}
                     onChange={(v) => {
-                        setEditAddressMode(v);
-                        if (!v) setState(oldState);
+                        if (v) {
+                            setAction(actions.editDetails);
+                        }
                     }}
                 />
             );
@@ -120,17 +115,48 @@ function LocationProfile(props) {
                     aria-label="Edit Location Contact"
                     value={editContactMode}
                     onChange={(v) => {
-                        setEditContactMode(v);
-                        if (!v) setState(oldState);
+                        if (v) {
+                            setAction(actions.editContact);
+                        }
                     }}
                 />
             );
         }
     }
 
+    let dialogContents = <></>;
+    let dialogTitle = "";
+    if (action === actions.editName) {
+        dialogContents = (
+            <LocationEditNameDialog
+                values={{ name: props.location.name }}
+                onChange={(v) => (updateValues.current = v)}
+            />
+        );
+        dialogTitle = "Edit Location Name";
+    } else if (action === actions.editContact) {
+        if (props.location && props.location.contact) {
+            dialogContents = (
+                <LocationEditContactDialog
+                    values={props.location.contact}
+                    onChange={(v) => (updateValues.current = v)}
+                />
+            );
+            dialogTitle = "Edit Location Contact";
+        }
+    } else if (action === actions.editDetails) {
+        dialogContents = (
+            <LocationEditDetailsDialog
+                values={props.location}
+                onChange={(v) => (updateValues.current = v)}
+            />
+        );
+        dialogTitle = "Edit Location Details";
+    }
+
     const header = (
         <Typography variant="h5" noWrap align={"right"}>
-            {oldState["name"]}
+            {props.location.name}
         </Typography>
     );
 
@@ -159,13 +185,13 @@ function LocationProfile(props) {
                     return (
                         <LabelItemPair key={key} label={label}>
                             <Typography noWrap align={"right"}>
-                                {oldState[key]}
+                                {props.location[key]}
                             </Typography>
                         </LabelItemPair>
                     );
                 })}
             </Box>
-            {oldState.contact && (
+            {props.location.contact && (
                 <>
                     <Divider />
                     <Stack
@@ -177,124 +203,29 @@ function LocationProfile(props) {
                         {editContactToggle}
                     </Stack>
                     <Box sx={{ width: "100%" }}>
-                        {Object.entries(contactFields).map(([key, label]) => {
-                            return (
-                                <LabelItemPair key={key} label={label}>
-                                    <Typography noWrap align={"right"}>
-                                        {oldState.contact[key]}
-                                    </Typography>
-                                </LabelItemPair>
-                            );
-                        })}
+                        {Object.entries(locationContactFields).map(
+                            ([key, label]) => {
+                                return (
+                                    <LabelItemPair key={key} label={label}>
+                                        <Typography noWrap align={"right"}>
+                                            {props.location.contact[key]}
+                                        </Typography>
+                                    </LabelItemPair>
+                                );
+                            }
+                        )}
                     </Box>
                 </>
             )}
             <ConfirmationDialog
                 fullScreen={isSm}
-                dialogTitle="Edit Location Name"
-                open={editNameMode}
+                dialogTitle={dialogTitle}
+                open={action !== null}
                 onCancel={onCancel}
                 onConfirmation={onConfirmation}
             >
-                <Stack
-                    sx={{ width: "100%", minWidth: isSm ? 0 : 400 }}
-                    spacing={1}
-                >
-                    {
-                        <TextField
-                            key={"Name"}
-                            fullWidth
-                            inputProps={{
-                                "aria-label": "Name",
-                            }}
-                            label={"Name"}
-                            margin="normal"
-                            value={state["name"]}
-                            onChange={(e) => {
-                                const { value } = e.target;
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    name: value,
-                                }));
-                            }}
-                        />
-                    }
-                </Stack>
+                {dialogContents}
             </ConfirmationDialog>
-            <ConfirmationDialog
-                fullScreen={isSm}
-                dialogTitle="Edit Location Information"
-                open={editAddressMode}
-                onCancel={onCancel}
-                onConfirmation={onConfirmation}
-            >
-                <Stack
-                    sx={{ width: "100%", minWidth: isSm ? 0 : 400 }}
-                    spacing={1}
-                >
-                    {Object.entries(locationFields).map(([key, label]) => {
-                        return (
-                            <TextField
-                                key={key}
-                                fullWidth
-                                inputProps={{
-                                    "aria-label": label,
-                                }}
-                                label={label}
-                                margin="normal"
-                                value={state[key]}
-                                onChange={(e) => {
-                                    const { value } = e.target;
-                                    setState((prevState) => ({
-                                        ...prevState,
-                                        [key]: value,
-                                    }));
-                                }}
-                            />
-                        );
-                    })}
-                </Stack>
-            </ConfirmationDialog>
-            {state.contact && (
-                <ConfirmationDialog
-                    fullScreen={isSm}
-                    dialogTitle="Edit Contact"
-                    open={editContactMode}
-                    onCancel={onCancel}
-                    onConfirmation={onConfirmation}
-                >
-                    <Stack
-                        sx={{ width: "100%", minWidth: isSm ? 0 : 400 }}
-                        spacing={1}
-                    >
-                        {Object.entries(contactFields).map(([key, label]) => {
-                            return (
-                                <TextFieldUncontrolled
-                                    tel={key === "telephoneNumber"}
-                                    key={key}
-                                    fullWidth
-                                    inputProps={{
-                                        "aria-label": label,
-                                    }}
-                                    label={label}
-                                    margin="normal"
-                                    value={state.contact[key]}
-                                    onChange={(e) => {
-                                        const { value } = e.target;
-                                        setState((prevState) => ({
-                                            ...prevState,
-                                            contact: {
-                                                ...prevState.contact,
-                                                [key]: value,
-                                            },
-                                        }));
-                                    }}
-                                />
-                            );
-                        })}
-                    </Stack>
-                </ConfirmationDialog>
-            )}
         </Stack>
     );
 }

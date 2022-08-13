@@ -84,6 +84,11 @@ describe("LocationDetail", () => {
                 name: `${mockLocation.name}${more}`,
             });
         });
+        await waitFor(() => {
+            expect(
+                screen.getByText(`${mockLocation.name}${more}`)
+            ).toBeInTheDocument();
+        });
     });
 
     test("change the details", async () => {
@@ -119,6 +124,11 @@ describe("LocationDetail", () => {
                 ...location,
                 ...newValues,
             });
+        });
+        await waitFor(() => {
+            for (const value of Object.values(newValues)) {
+                expect(screen.getByText(value)).toBeInTheDocument();
+            }
         });
     });
 
@@ -170,6 +180,17 @@ describe("LocationDetail", () => {
                     telephoneNumber: `${mockLocation.contact.telephoneNumber}12345`,
                 },
             });
+        });
+        await waitFor(() => {
+            expect(
+                screen.getByText(`${mockLocation.contact.emailAddress}${more}`)
+            ).toBeInTheDocument();
+            expect(
+                screen.getByText(`${mockLocation.contact.name}${more}`)
+            ).toBeInTheDocument();
+            expect(
+                screen.getByText(`${mockLocation.contact.telephoneNumber}12345`)
+            ).toBeInTheDocument();
         });
     });
 });

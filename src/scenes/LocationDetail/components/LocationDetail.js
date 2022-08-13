@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CommentsSection from "../../Comments/CommentsSection";
 import { PaddedPaper } from "../../../styles/common";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,6 +35,7 @@ export default function LocationDetail({ locationId }) {
     const locationModelSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     ).Location;
+    const observer = useRef({ unsubscribe: () => {} });
 
     async function newLocationProfile() {
         try {
@@ -42,6 +43,13 @@ export default function LocationDetail({ locationId }) {
                 models.Location,
                 locationId
             );
+            observer.current.unsubscribe();
+            observer.current = DataStore.observe(
+                models.Location,
+                locationId
+            ).subscribe(({ element }) => {
+                setLocation(element);
+            });
             setIsFetching(false);
             if (locationResult) {
                 setLocation(locationResult);
@@ -60,12 +68,14 @@ export default function LocationDetail({ locationId }) {
     }
     useEffect(() => newLocationProfile(), [locationId, locationModelSynced]);
 
+    useEffect(() => () => observer.current.unsubscribe(), []);
+
     async function onUpdate(value) {
         const { contact, ...rest } = value;
         try {
             const existingLocation = await DataStore.query(
                 models.Location,
-                rest.id
+                locationId
             );
             await DataStore.save(
                 models.Location.copyOf(existingLocation, (updated) => {
