@@ -43,7 +43,7 @@ type User
 type PossibleRiderResponsibilities
 @auth(rules: [
   {allow: private, operations: [read]},
-  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, delete]},
+  {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
 ])
 @model {
   id: ID!

@@ -340,8 +340,6 @@ export const schema = {
                                 "provider": "userPools",
                                 "allow": "groups",
                                 "groups": [
-                                    "COORDINATOR",
-                                    "RIDER",
                                     "ADMIN"
                                 ],
                                 "operations": [
