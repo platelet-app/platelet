@@ -325,6 +325,5 @@
         ]
       }
     }
-  },
-  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"Amplify\",\"createdWith\":\"8.0.3\",\"stackType\":\"geo-PlaceIndex\",\"metadata\":{}}"
+  }
 }
