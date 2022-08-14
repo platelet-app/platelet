@@ -482,6 +482,37 @@ describe("UserDetail", () => {
         });
     });
 
+    test("disallow editing when not an admin", async () => {
+        const user = await DataStore.save(new models.User(testUser));
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<UserDetail userId={user.id} />, {
+            preloadedState: {
+                whoami: {
+                    user: {
+                        displayName: "test",
+                        roles: [userRoles.user],
+                    },
+                },
+            },
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        expect(
+            screen.queryByRole("button", { name: "Edit Display Name" })
+        ).toBeNull();
+        expect(
+            screen.queryByRole("button", { name: "Edit Contact Information" })
+        ).toBeNull();
+        expect(
+            screen.queryByRole("button", { name: "Edit Rider Roles" })
+        ).toBeNull();
+        expect(screen.queryByRole("button", { name: "Edit Roles" })).toBeNull();
+        expect(
+            screen.queryByRole("button", { name: "Edit Address Information" })
+        ).toBeNull();
+    });
+
     test("change the user's roles", async () => {
         const user = await DataStore.save(new models.User(testUser));
         const querySpy = jest.spyOn(DataStore, "query");

@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { decodeUUID } from "../../../utilities";
 import { useDispatch, useSelector } from "react-redux";
 import UserProfile from "./UserProfile";
 import { PaddedPaper } from "../../../styles/common";

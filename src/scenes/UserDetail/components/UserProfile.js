@@ -76,6 +76,7 @@ function UserProfile(props) {
     let editContactToggle = <></>;
     let editAddressToggle = <></>;
     let editRoleToggle = <></>;
+    let editPossibleResponsibilitiesToggle = <></>;
 
     if (whoami.roles) {
         if (
@@ -113,20 +114,22 @@ function UserProfile(props) {
             );
 
             editRoleToggle = (
-                <Stack
-                    direction={"row"}
-                    alignItems={"top"}
-                    justifyContent={"space-between"}
-                    spacing={1}
-                >
-                    <EditModeToggleButton
-                        value={editRoleMode}
-                        aria-label="Edit Roles"
-                        onChange={(v) => {
-                            setEditRoleMode(v);
-                        }}
-                    />
-                </Stack>
+                <EditModeToggleButton
+                    value={editRoleMode}
+                    aria-label="Edit Roles"
+                    onChange={(v) => {
+                        setEditRoleMode(v);
+                    }}
+                />
+            );
+            editPossibleResponsibilitiesToggle = (
+                <EditModeToggleButton
+                    value={editResponsibilitiesMode}
+                    aria-label="Edit Rider Roles"
+                    onChange={() =>
+                        setEditResponsibilitiesMode((prevState) => !prevState)
+                    }
+                />
             );
         }
     }
@@ -139,7 +142,10 @@ function UserProfile(props) {
     if (dialogState === dialogStates.contact) {
         dialogContents = (
             <UserContactInformationDialog
-                values={{ contact: { ...props.user.contact }, name: props.user.name }}
+                values={{
+                    contact: { ...props.user.contact },
+                    name: props.user.name,
+                }}
                 onChange={onChangeUpdateValues}
             />
         );
@@ -204,7 +210,9 @@ function UserProfile(props) {
             if (existing) {
                 if (props.user.id !== existing.id) {
                     dispatch(
-                        displayErrorNotification("Sorry, that display name is already taken")
+                        displayErrorNotification(
+                            "Sorry, that display name is already taken"
+                        )
                     );
                     console.log("display name taken");
                     return false;
@@ -271,7 +279,8 @@ function UserProfile(props) {
         }
     }
 
-    const isRider = props.user.roles && props.user.roles.includes(userRoles.rider);
+    const isRider =
+        props.user.roles && props.user.roles.includes(userRoles.rider);
 
     async function onUpdate() {
         if (updateValues.current) {
@@ -385,7 +394,9 @@ function UserProfile(props) {
                                 <Typography>
                                     {userContactFields[key]}
                                 </Typography>
-                                <Typography>{props.user.contact[key]}</Typography>
+                                <Typography>
+                                    {props.user.contact[key]}
+                                </Typography>
                             </Stack>
                         );
                     }
@@ -406,22 +417,13 @@ function UserProfile(props) {
             )}
             <Stack direction={"row"} justifyContent={"space-between"}>
                 <Box sx={{ width: "100%" }}>
-                    {Object.keys(props.user.contact ? userAddressFields : []).map(
-                        (key) => (
-                            <Stack
-                                direction={"row"}
-                                justifyContent={"space-between"}
-                                key={key}
-                            >
-                                <Typography>
-                                    {userAddressFields[key]}
-                                </Typography>
-                                <Typography align={"right"}>
-                                    {props.user.contact[key]}
-                                </Typography>
-                            </Stack>
-                        )
-                    )}
+                    {Object.keys(
+                        props.user.contact ? userAddressFields : []
+                    ).map((key) => (
+                        <Typography key={key}>
+                            {props.user.contact[key]}
+                        </Typography>
+                    ))}
                 </Box>
             </Stack>
             {dialog}
@@ -445,15 +447,7 @@ function UserProfile(props) {
                         ) : (
                             <Typography>No rider roles.</Typography>
                         )}
-                        <EditModeToggleButton
-                            value={editResponsibilitiesMode}
-                            aria-label="Edit Rider Roles"
-                            onChange={() =>
-                                setEditResponsibilitiesMode(
-                                    (prevState) => !prevState
-                                )
-                            }
-                        />
+                        {editPossibleResponsibilitiesToggle}
                     </Stack>
                 </>
             )}
