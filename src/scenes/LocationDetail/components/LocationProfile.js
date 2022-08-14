@@ -47,9 +47,6 @@ const actions = {
 };
 
 function LocationProfile(props) {
-    const [editNameMode, setEditNameMode] = useState(false);
-    const [editAddressMode, setEditAddressMode] = useState(false);
-    const [editContactMode, setEditContactMode] = useState(false);
     const [action, setAction] = useState(null);
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
@@ -79,7 +76,6 @@ function LocationProfile(props) {
             editNameToggle = (
                 <EditModeToggleButton
                     aria-label="Edit Location Name"
-                    value={editNameMode}
                     onChange={(v) => {
                         if (v) {
                             setAction(actions.editName);
@@ -96,7 +92,6 @@ function LocationProfile(props) {
             editAddressToggle = (
                 <EditModeToggleButton
                     aria-label="Edit Location Details"
-                    value={editAddressMode}
                     onChange={(v) => {
                         if (v) {
                             setAction(actions.editDetails);
@@ -113,7 +108,6 @@ function LocationProfile(props) {
             editContactToggle = (
                 <EditModeToggleButton
                     aria-label="Edit Location Contact"
-                    value={editContactMode}
                     onChange={(v) => {
                         if (v) {
                             setAction(actions.editContact);
@@ -180,14 +174,13 @@ function LocationProfile(props) {
                     spacing={3}
                 >
                     {editAddressToggle}
+                    <Typography fontWeight="bold">Address</Typography>
                 </Stack>
                 {Object.entries(locationFields).map(([key, label]) => {
                     return (
-                        <LabelItemPair key={key} label={label}>
-                            <Typography noWrap align={"right"}>
-                                {props.location[key]}
-                            </Typography>
-                        </LabelItemPair>
+                        <Typography key={key} noWrap>
+                            {props.location[key]}
+                        </Typography>
                     );
                 })}
             </Box>
@@ -201,6 +194,7 @@ function LocationProfile(props) {
                         spacing={1}
                     >
                         {editContactToggle}
+                        <Typography fontWeight="bold">Contact</Typography>
                     </Stack>
                     <Box sx={{ width: "100%" }}>
                         {Object.entries(locationContactFields).map(
