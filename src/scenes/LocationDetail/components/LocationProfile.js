@@ -171,12 +171,11 @@ function LocationProfile(props) {
                     direction={"row-reverse"}
                     justifyContent={"space-between"}
                     alignItems={"top"}
-                    spacing={3}
                 >
                     {editAddressToggle}
                     <Typography fontWeight="bold">Address</Typography>
                 </Stack>
-                {Object.entries(locationFields).map(([key, label]) => {
+                {Object.keys(locationFields).map((key) => {
                     return (
                         <Typography key={key} noWrap>
                             {props.location[key]}
@@ -184,32 +183,29 @@ function LocationProfile(props) {
                     );
                 })}
             </Box>
+            {props.location && props.location.contact && <Divider />}
             {props.location.contact && (
-                <>
-                    <Divider />
+                <Box sx={{ width: "100%" }}>
                     <Stack
                         direction={"row-reverse"}
                         justifyContent={"space-between"}
                         alignItems={"top"}
-                        spacing={1}
                     >
                         {editContactToggle}
                         <Typography fontWeight="bold">Contact</Typography>
                     </Stack>
-                    <Box sx={{ width: "100%" }}>
-                        {Object.entries(locationContactFields).map(
-                            ([key, label]) => {
-                                return (
-                                    <LabelItemPair key={key} label={label}>
-                                        <Typography noWrap align={"right"}>
-                                            {props.location.contact[key]}
-                                        </Typography>
-                                    </LabelItemPair>
-                                );
-                            }
-                        )}
-                    </Box>
-                </>
+                    {Object.entries(locationContactFields).map(
+                        ([key, label]) => {
+                            return (
+                                <LabelItemPair key={key} label={label}>
+                                    <Typography noWrap align={"right"}>
+                                        {props.location.contact[key]}
+                                    </Typography>
+                                </LabelItemPair>
+                            );
+                        }
+                    )}
+                </Box>
             )}
             <ConfirmationDialog
                 fullScreen={isSm}
