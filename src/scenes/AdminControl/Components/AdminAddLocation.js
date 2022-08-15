@@ -91,6 +91,7 @@ function AdminAddLocation() {
             models.Location,
             (l) => l.listed === 1
         );
+        if (!locations) return true;
         const existingLocation = locations.find((l) => l.name === name);
         return !existingLocation;
     };
