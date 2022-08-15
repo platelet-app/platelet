@@ -14,6 +14,7 @@ const filterOptions = (options, { inputValue }) => {
 
 function FavouriteLocationsSelect(props) {
     const [availableLocations, setAvailableLocations] = useState([]);
+    const [inputValue, setInputValue] = useState("");
     const locationModelSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     ).Location;
@@ -22,10 +23,14 @@ function FavouriteLocationsSelect(props) {
     };
 
     async function getLocations() {
-        const locations = await DataStore.query(models.Location, (l) =>
-            l.listed("eq", 1)
-        );
-        setAvailableLocations(locations);
+        try {
+            const locations = await DataStore.query(models.Location, (l) =>
+                l.listed("eq", 1)
+            );
+            setAvailableLocations(locations);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     useEffect(() => getLocations(), [locationModelSynced]);
@@ -38,6 +43,10 @@ function FavouriteLocationsSelect(props) {
             options={availableLocations}
             getOptionLabel={(option) => option.name}
             size={props.size}
+            inputValue={inputValue}
+            onInputChange={(event, newInputValue) => {
+                setInputValue(newInputValue);
+            }}
             renderInput={(params) => (
                 <TextField
                     {...params}
