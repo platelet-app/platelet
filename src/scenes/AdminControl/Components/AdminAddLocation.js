@@ -1,5 +1,5 @@
-import { DataStore } from "aws-amplify";
-import { Button, Grid, Stack, TextField, Typography } from "@mui/material";
+import { DataStore, Geo } from "aws-amplify";
+import { Button, Divider, Stack, TextField, Typography } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,6 +15,7 @@ import Forbidden from "../../../ErrorComponents/Forbidden";
 import { getWhoami, tenantIdSelector } from "../../../redux/Selectors";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
 import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
+import OnlineLocationSearch from "../../../components/OnlineLocationSearch";
 
 const initialLocationState = {
     name: "",
@@ -55,7 +56,6 @@ const fields = {
     town: "Town",
     county: "County",
     country: "Country",
-    state: "State",
     postcode: "Postcode",
     what3words: "What 3 Words",
 };
@@ -67,6 +67,7 @@ const contactFields = {
 
 function AdminAddLocation() {
     const [state, setState] = useState(initialLocationState);
+    const [locationSearchReset, setLocationSearchReset] = useState(false);
     const whoami = useSelector(getWhoami);
     const tenantId = useSelector(tenantIdSelector);
     const [isPosting, setIsPosting] = useState(false);
@@ -81,21 +82,42 @@ function AdminAddLocation() {
     }
     useEffect(verifyInput, [state]);
 
+    const onSelectFromSearch = (location) => {
+        setState({ ...initialLocationState, ...location });
+    };
+
+    const verifyUniqueName = async (name) => {
+        const locations = await DataStore.query(
+            models.Location,
+            (l) => l.listed === 1
+        );
+        const existingLocation = locations.find((l) => l.name === name);
+        return !existingLocation;
+    };
+
     async function addNewLocation() {
         try {
             setIsPosting(true);
-            const newLocation = await DataStore.save(
-                new models.Location({ ...state, tenantId, disabled: 0 })
-            );
-            setState(initialLocationState);
-            setIsPosting(false);
-            dispatch(
-                displayInfoNotification(
-                    "Location added",
-                    undefined,
-                    `/location/${encodeUUID(newLocation.id)}`
-                )
-            );
+            if (await verifyUniqueName(state.name)) {
+                const newLocation = await DataStore.save(
+                    new models.Location({ ...state, tenantId, disabled: 0 })
+                );
+                setState(initialLocationState);
+                setLocationSearchReset((prevState) => !prevState);
+                setIsPosting(false);
+                dispatch(
+                    displayInfoNotification(
+                        "Location added",
+                        undefined,
+                        `/location/${encodeUUID(newLocation.id)}`
+                    )
+                );
+            } else {
+                dispatch(
+                    displayErrorNotification("Location name must be unique")
+                );
+                setIsPosting(false);
+            }
         } catch (error) {
             console.log("error adding location:", error);
             setIsPosting(false);
@@ -118,6 +140,12 @@ function AdminAddLocation() {
                     spacing={3}
                 >
                     <Typography variant={"h5"}>Add a new location</Typography>
+                    <OnlineLocationSearch
+                        key={locationSearchReset}
+                        onSelect={onSelectFromSearch}
+                    />
+                    <Divider />
+
                     {Object.entries(fields).map(([key, value]) => {
                         return (
                             <TextField

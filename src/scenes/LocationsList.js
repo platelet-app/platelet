@@ -96,12 +96,13 @@ export default function LocationsList() {
         );
     } else {
         return (
-          <Stack
+            <Stack
                 direction={"column"}
                 spacing={3}
                 alignItems={"flex-start"}
                 justifyContent={"center"}
             >
+                {addButton}
                 <TextField
                     variant={"standard"}
                     placeholder={"Filter locations"}
@@ -109,27 +110,27 @@ export default function LocationsList() {
                     color={"secondary"}
                     className={classes.root}
                     InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <SearchIcon className={classes.searchIcon} />
-                        </InputAdornment>
-                    ),
-                }}
-            />
-            <PaddedPaper maxWidth={"800px"}>
-                <Stack direction={"column"} spacing={1}>
-                    {Object.values(filteredLocations).map((loc) => {
-                        return (
-                            <LocationCard
-                                key={loc.id}
-                                uuid={loc.id}
-                                name={loc.name}
-                            />
-                        );
-                    })}
-                </Stack>
-            </PaddedPaper>
-        </Stack>
-    );
-}
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon className={classes.searchIcon} />
+                            </InputAdornment>
+                        ),
+                    }}
+                />
+                <PaddedPaper maxWidth={"800px"}>
+                    <Stack direction={"column"} spacing={1}>
+                        {Object.values(filteredLocations).map((loc) => {
+                            return (
+                                <LocationCard
+                                    key={loc.id}
+                                    uuid={loc.id}
+                                    name={loc.name}
+                                />
+                            );
+                        })}
+                    </Stack>
+                </PaddedPaper>
+            </Stack>
+        );
+    }
 }

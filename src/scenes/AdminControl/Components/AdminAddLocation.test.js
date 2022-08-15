@@ -20,7 +20,6 @@ const fields = {
     town: "Town",
     county: "County",
     country: "Country",
-    state: "State",
     postcode: "Postcode",
     what3words: "What 3 Words",
 };
