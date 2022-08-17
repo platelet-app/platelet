@@ -162,6 +162,11 @@ describe("TaskActions", () => {
                 timePickedUpSenderName: "someone person",
             });
         });
+        // check the tooltip
+        userEvent.hover(screen.getByRole("button", { name: "picked up from" }));
+        await waitFor(() => {
+            expect(screen.getByText("someone person")).toBeInTheDocument();
+        });
     });
 
     test("delivered button is disabled without timePickedUp set", async () => {
@@ -263,6 +268,11 @@ describe("TaskActions", () => {
                 status: tasksStatus.droppedOff,
                 timeDroppedOffRecipientName: "someone person",
             });
+        });
+        // check the tooltip
+        userEvent.hover(screen.getByRole("button", { name: "dropped off to" }));
+        await waitFor(() => {
+            expect(screen.getByText("someone person")).toBeInTheDocument();
         });
     });
 

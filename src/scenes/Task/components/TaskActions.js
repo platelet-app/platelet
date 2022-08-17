@@ -314,7 +314,14 @@ function TaskActions(props) {
                                                                 "No recorded name"
                                                             }
                                                         >
-                                                            <IconButton>
+                                                            <IconButton
+                                                                aria-label={
+                                                                    key ===
+                                                                    "timePickedUp"
+                                                                        ? "picked up from"
+                                                                        : "dropped off to"
+                                                                }
+                                                            >
                                                                 <InfoIcon />
                                                             </IconButton>
                                                         </Tooltip>
