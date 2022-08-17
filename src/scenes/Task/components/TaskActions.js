@@ -27,6 +27,7 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import { saveTaskTimeWithKey } from "../utilities";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
+import { determineTaskStatus } from "../../../utilities";
 
 const fields = {
     timePickedUp: "Picked up",
@@ -35,33 +36,6 @@ const fields = {
     timeRejected: "Rejected",
     timeRiderHome: "Rider home",
 };
-
-function humanReadableConfirmation(field, nullify) {
-    switch (field) {
-        case "timePickedUp":
-            return nullify
-                ? "Clear the picked up time?"
-                : "Set the picked up time?";
-        case "timeDroppedOff":
-            return nullify
-                ? "Clear the delivered time?"
-                : "Set the delivered time?";
-        case "timeCancelled":
-            return nullify
-                ? "Clear the cancelled time?"
-                : "Set the cancelled time?";
-        case "timeRejected":
-            return nullify
-                ? "Clear the rejected time?"
-                : "Set the rejected time?";
-        case "timeRiderHome":
-            return nullify
-                ? "Clear the rider home time?"
-                : "Set the rider home time?";
-        default:
-            return "";
-    }
-}
 
 function TaskActions(props) {
     const [state, setState] = useState([]);
@@ -72,7 +46,6 @@ function TaskActions(props) {
     const taskAssignees = useSelector(taskAssigneesSelector).items;
     const [confirmationKey, setConfirmationKey] = useState(null);
     const taskObserver = useRef({ unsubscribe: () => {} });
-    const timeSet = useRef(new Date());
     const dispatch = useDispatch();
     const cardClasses = dialogCardStyles();
     const taskModelsSynced = useSelector(
@@ -90,16 +63,11 @@ function TaskActions(props) {
 
     function onClickToggle(key) {
         setConfirmationKey(key);
-        timeSet.current = new Date();
     }
 
-    function onAdjustTimeSet(time) {
-        timeSet.current = time;
-    }
-
-    function onChange(key) {
-        const value = state.includes(key) ? null : timeSet.current;
+    function onChange(key, value) {
         setTimeWithKey(key, value);
+        setConfirmationKey(null);
     }
 
     async function setTimeWithKey(key, value) {
@@ -118,6 +86,27 @@ function TaskActions(props) {
             setIsPosting(false);
             dispatch(displayErrorNotification(errorMessage));
         }
+    }
+
+    async function saveValues(values) {
+        setConfirmationKey(null);
+        const existingTask = await DataStore.query(models.Task, props.taskId);
+        const riderAssignees = taskAssignees.filter(
+            (assignee) => assignee.role === userRoles.rider
+        );
+        const status = await determineTaskStatus(
+            { ...existingTask, ...values },
+            riderAssignees
+        );
+        const updatedTask = await DataStore.save(
+            models.Task.copyOf(existingTask, (upd) => {
+                upd.status = status;
+                for (const key in values) {
+                    upd[key] = values[key];
+                }
+            })
+        );
+        setTask(updatedTask);
     }
 
     function calculateState() {
@@ -306,29 +295,14 @@ function TaskActions(props) {
                         </Stack>
                     </Stack>
                 </Paper>
-                <ConfirmationDialog
-                    open={confirmationKey !== null}
-                    dialogTitle={humanReadableConfirmation(
-                        confirmationKey,
-                        state.includes(confirmationKey)
-                    )}
-                    onConfirmation={() => {
-                        const conf = confirmationKey;
-                        onChange(conf);
-                        setConfirmationKey(null);
-                    }}
-                    onClose={() => {
-                        if (state.includes(confirmationKey))
-                            setConfirmationKey(null);
-                    }}
-                    onCancel={() => setConfirmationKey(null)}
-                >
-                    <TaskActionConfirmationDialogContents
-                        onChange={(v) => onAdjustTimeSet(v)}
-                        nullify={state.includes(confirmationKey)}
-                        field={confirmationKey}
-                    />
-                </ConfirmationDialog>
+                <TaskActionConfirmationDialogContents
+                    onConfirmation={saveValues}
+                    key={confirmationKey}
+                    nullify={state.includes(confirmationKey)}
+                    timeKey={confirmationKey}
+                    taskId={props.taskId}
+                    onClose={() => setConfirmationKey(null)}
+                />
             </>
         );
     }
