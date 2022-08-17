@@ -51,13 +51,13 @@ function TaskActionConfirmationDialogContents(props) {
 
     let nameField = null;
     if (needsName) {
-        const label =
+        const textfieldLabel =
             props.timeKey === "timePickedUp" ? "Sender name" : "Recipient name";
         nameField = (
             <TextField
-                label={label}
+                label={textfieldLabel}
                 inputProps={{
-                    "aria-label": label,
+                    "aria-label": textfieldLabel,
                 }}
                 fullWidth
                 value={nameInput}

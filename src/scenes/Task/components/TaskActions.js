@@ -1,11 +1,14 @@
 import {
     Divider,
+    Tooltip,
     Paper,
     Stack,
     ToggleButton,
     ToggleButtonGroup,
     Typography,
+    IconButton,
 } from "@mui/material";
+import InfoIcon from "@mui/icons-material/Info";
 import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import PropTypes from "prop-types";
@@ -249,6 +252,11 @@ function TaskActions(props) {
                                         isPosting ||
                                         isFetching ||
                                         checkDisabled(key);
+
+                                    const tooltipKey =
+                                        key === "timePickedUp"
+                                            ? "timePickedUpSenderName"
+                                            : "timeDroppedOffRecipientName";
                                     return (
                                         <Stack
                                             key={key}
@@ -274,20 +282,44 @@ function TaskActions(props) {
                                             >
                                                 {value.toUpperCase()}
                                             </Typography>
-                                            <TimePicker
-                                                onChange={(newValue) =>
-                                                    setTimeWithKey(
-                                                        key,
-                                                        newValue
-                                                    )
-                                                }
-                                                disableClear
-                                                disableUnsetMessage
-                                                time={task && task[key]}
-                                                hideEditIcon={
-                                                    !hasFullPermissions
-                                                }
-                                            />
+                                            <Stack
+                                                alignItems="center"
+                                                direction="row"
+                                            >
+                                                <TimePicker
+                                                    onChange={(newValue) =>
+                                                        setTimeWithKey(
+                                                            key,
+                                                            newValue
+                                                        )
+                                                    }
+                                                    disableClear
+                                                    disableUnsetMessage
+                                                    time={task && task[key]}
+                                                    hideEditIcon={
+                                                        !hasFullPermissions
+                                                    }
+                                                />
+                                                {[
+                                                    "timePickedUp",
+                                                    "timeDroppedOff",
+                                                ].includes(key) &&
+                                                    task &&
+                                                    task[tooltipKey] && (
+                                                        <Tooltip
+                                                            title={
+                                                                task[
+                                                                    tooltipKey
+                                                                ] ||
+                                                                "No recorded name"
+                                                            }
+                                                        >
+                                                            <IconButton>
+                                                                <InfoIcon />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    )}
+                                            </Stack>
                                         </Stack>
                                     );
                                 })}
