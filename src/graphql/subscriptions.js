@@ -327,7 +327,9 @@ export const onCreateUser = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -460,7 +462,9 @@ export const onUpdateUser = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -593,7 +597,9 @@ export const onDeleteUser = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1375,7 +1381,9 @@ export const onCreateLocation = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1401,7 +1409,9 @@ export const onCreateLocation = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1427,7 +1437,9 @@ export const onCreateLocation = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1513,7 +1525,9 @@ export const onUpdateLocation = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1539,7 +1553,9 @@ export const onUpdateLocation = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1565,7 +1581,9 @@ export const onUpdateLocation = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1651,7 +1669,9 @@ export const onDeleteLocation = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1677,7 +1697,9 @@ export const onDeleteLocation = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1703,7 +1725,9 @@ export const onDeleteLocation = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1816,7 +1840,9 @@ export const onCreateTask = /* GraphQL */ `
       }
       timeOfCall
       timePickedUp
+      timePickedUpSenderName
       timeDroppedOff
+      timeDroppedOffRecipientName
       timeCancelled
       timeRejected
       timeRiderHome
@@ -2131,7 +2157,9 @@ export const onUpdateTask = /* GraphQL */ `
       }
       timeOfCall
       timePickedUp
+      timePickedUpSenderName
       timeDroppedOff
+      timeDroppedOffRecipientName
       timeCancelled
       timeRejected
       timeRiderHome
@@ -2446,7 +2474,9 @@ export const onDeleteTask = /* GraphQL */ `
       }
       timeOfCall
       timePickedUp
+      timePickedUpSenderName
       timeDroppedOff
+      timeDroppedOffRecipientName
       timeCancelled
       timeRejected
       timeRiderHome
@@ -2726,7 +2756,9 @@ export const onCreateTaskAssignee = /* GraphQL */ `
         }
         timeOfCall
         timePickedUp
+        timePickedUpSenderName
         timeDroppedOff
+        timeDroppedOffRecipientName
         timeCancelled
         timeRejected
         timeRiderHome
@@ -2935,7 +2967,9 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
         }
         timeOfCall
         timePickedUp
+        timePickedUpSenderName
         timeDroppedOff
+        timeDroppedOffRecipientName
         timeCancelled
         timeRejected
         timeRiderHome
@@ -3144,7 +3178,9 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
         }
         timeOfCall
         timePickedUp
+        timePickedUpSenderName
         timeDroppedOff
+        timeDroppedOffRecipientName
         timeCancelled
         timeRejected
         timeRiderHome
@@ -3707,7 +3743,9 @@ export const onCreateDeliverable = /* GraphQL */ `
         }
         timeOfCall
         timePickedUp
+        timePickedUpSenderName
         timeDroppedOff
+        timeDroppedOffRecipientName
         timeCancelled
         timeRejected
         timeRiderHome
@@ -3895,7 +3933,9 @@ export const onUpdateDeliverable = /* GraphQL */ `
         }
         timeOfCall
         timePickedUp
+        timePickedUpSenderName
         timeDroppedOff
+        timeDroppedOffRecipientName
         timeCancelled
         timeRejected
         timeRiderHome
@@ -4083,7 +4123,9 @@ export const onDeleteDeliverable = /* GraphQL */ `
         }
         timeOfCall
         timePickedUp
+        timePickedUpSenderName
         timeDroppedOff
+        timeDroppedOffRecipientName
         timeCancelled
         timeRejected
         timeRiderHome

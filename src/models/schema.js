@@ -775,10 +775,24 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "timePickedUpSenderName": {
+                    "name": "timePickedUpSenderName",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "timeDroppedOff": {
                     "name": "timeDroppedOff",
                     "isArray": false,
                     "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "timeDroppedOffRecipientName": {
+                    "name": "timeDroppedOffRecipientName",
+                    "isArray": false,
+                    "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
@@ -2137,5 +2151,5 @@ export const schema = {
             }
         }
     },
-    "version": "da446f3a8dc5b195c0763fe2598a200e"
+    "version": "b8e16456957de18e93d8ddf39d8b2200"
 };
