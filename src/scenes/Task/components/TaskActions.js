@@ -69,9 +69,8 @@ function TaskActions(props) {
     const [isFetching, setIsFetching] = useState(true);
     const [isPosting, setIsPosting] = useState(false);
     const [errorState, setErrorState] = useState(null);
-    const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
     const taskAssignees = useSelector(taskAssigneesSelector).items;
-    const confirmationKey = useRef(null);
+    const [confirmationKey, setConfirmationKey] = useState(null);
     const taskObserver = useRef({ unsubscribe: () => {} });
     const timeSet = useRef(new Date());
     const dispatch = useDispatch();
@@ -90,9 +89,8 @@ function TaskActions(props) {
     const errorMessage = "Sorry, something went wrong";
 
     function onClickToggle(key) {
-        confirmationKey.current = key;
+        setConfirmationKey(key);
         timeSet.current = new Date();
-        setConfirmDialogOpen(true);
     }
 
     function onAdjustTimeSet(time) {
@@ -309,25 +307,26 @@ function TaskActions(props) {
                     </Stack>
                 </Paper>
                 <ConfirmationDialog
-                    open={confirmDialogOpen}
+                    open={confirmationKey !== null}
                     dialogTitle={humanReadableConfirmation(
-                        confirmationKey.current,
-                        state.includes(confirmationKey.current)
+                        confirmationKey,
+                        state.includes(confirmationKey)
                     )}
                     onConfirmation={() => {
-                        setConfirmDialogOpen(false);
-                        onChange(confirmationKey.current);
+                        const conf = confirmationKey;
+                        onChange(conf);
+                        setConfirmationKey(null);
                     }}
                     onClose={() => {
-                        if (state.includes(confirmationKey.current))
-                            setConfirmDialogOpen(false);
+                        if (state.includes(confirmationKey))
+                            setConfirmationKey(null);
                     }}
-                    onCancel={() => setConfirmDialogOpen(false)}
+                    onCancel={() => setConfirmationKey(null)}
                 >
                     <TaskActionConfirmationDialogContents
                         onChange={(v) => onAdjustTimeSet(v)}
-                        nullify={state.includes(confirmationKey.current)}
-                        field={confirmationKey.current}
+                        nullify={state.includes(confirmationKey)}
+                        field={confirmationKey}
                     />
                 </ConfirmationDialog>
             </>

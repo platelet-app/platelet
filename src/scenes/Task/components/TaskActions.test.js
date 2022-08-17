@@ -536,20 +536,29 @@ describe("TaskActions", () => {
         });
     });
 
-    test.skip("observer is unsubscribed on unmount", async () => {
-        const mockTask = new models.Task({
-            timePickedUp: new Date().toISOString(),
-        });
+    test("observer is unsubscribed on unmount", async () => {
+        const mockTask = await DataStore.save(
+            new models.Task({
+                timePickedUp: new Date().toISOString(),
+            })
+        );
         const unsubscribe = jest.fn();
-        const observerSpy = jest
-            .spyOn(DataStore.observe, "subscribe")
-            .mockImplementation(() => ({ unsubscribe }));
+        const observeSpy = jest
+            .spyOn(DataStore, "observe")
+            .mockImplementation(() => {
+                return {
+                    subscribe: () => ({ unsubscribe }),
+                };
+            });
         const querySpy = jest.spyOn(DataStore, "query");
         const { component } = render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
         expect(unsubscribe).toHaveBeenCalledTimes(0);
+        await waitFor(() => {
+            expect(observeSpy).toHaveBeenCalledTimes(1);
+        });
         component.unmount();
         await waitFor(() => {
             expect(unsubscribe).toHaveBeenCalledTimes(1);
