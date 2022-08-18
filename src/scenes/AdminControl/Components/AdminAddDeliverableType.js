@@ -4,10 +4,7 @@ import React, { useEffect, useState } from "react";
 import { PaddedPaper } from "../../../styles/common";
 import * as models from "../../../models/index";
 import { DataStore } from "aws-amplify";
-import {
-    displayErrorNotification,
-    displayInfoNotification,
-} from "../../../redux/notifications/NotificationsActions";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { useDispatch, useSelector } from "react-redux";
 import { getWhoami, tenantIdSelector } from "../../../redux/Selectors";
 import Forbidden from "../../../ErrorComponents/Forbidden";

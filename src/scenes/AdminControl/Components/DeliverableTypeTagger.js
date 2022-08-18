@@ -26,43 +26,37 @@ export default function DeliverableTypeTagger(props) {
     const [suggestions, setSuggestions] = useState([]);
     const [forceRerender, setForceRerender] = useState(null);
     const deliverableObserver = useRef({ unsubscribe: () => {} });
-    const allSuggestions = useRef([]);
+    const [allSuggestions, setAllSuggestions] = useState([]);
 
     const [inputRef, setInputFocus] = useFocus();
 
     async function calculateSuggestions() {
         try {
-            const existingDeliverableTypes = await DataStore.query(
+            deliverableObserver.current.unsubscribe();
+            deliverableObserver.current = DataStore.observeQuery(
                 models.DeliverableType
-            );
-            const existingTags = existingDeliverableTypes.map(
-                (deliverableType) => deliverableType.tags
-            );
-            const suggestions = existingTags.reduce(tagsReducer, []);
-            setSuggestions(suggestions);
-            allSuggestions.current = suggestions;
+            ).subscribe(({ items }) => {
+                const existingTags = items.map(
+                    (deliverableType) => deliverableType.tags
+                );
+                const suggestions = existingTags.reduce(tagsReducer, []);
+                setAllSuggestions(suggestions);
+            });
         } catch (e) {
             console.log(e);
             setErrorState(e);
         }
     }
+    useEffect(() => calculateSuggestions(), []);
 
-    function observeChanges() {
-        deliverableObserver.current = DataStore.observe(
-            models.DeliverableType
-        ).subscribe(() => {
-            calculateSuggestions();
-        });
+    function observeChangesUnsubscribe() {
         return () => deliverableObserver.current.unsubscribe();
     }
+    useEffect(observeChangesUnsubscribe, []);
 
-    useEffect(() => calculateSuggestions(), []);
-    useEffect(observeChanges, []);
     useEffect(() => {
-        setSuggestions(
-            allSuggestions.current.filter((s) => !props.value.includes(s))
-        );
-    }, [props.value]);
+        setSuggestions(allSuggestions.filter((s) => !props.value.includes(s)));
+    }, [props.value, allSuggestions]);
 
     const handleAddition = (value) => {
         props.onAdd(value);
@@ -74,7 +68,7 @@ export default function DeliverableTypeTagger(props) {
         if (forceRerender !== null) {
             setInputFocus();
         }
-    }, [forceRerender]);
+    }, [forceRerender, setInputFocus]);
 
     if (errorState) {
         return <GetError />;

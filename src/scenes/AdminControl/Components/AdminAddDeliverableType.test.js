@@ -2,6 +2,7 @@ import React from "react";
 import AdminAddDeliverableType from "./AdminAddDeliverableType";
 import { render } from "../../../test-utils";
 import * as amplify from "aws-amplify";
+import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import {
     deliverableIcons,
@@ -10,9 +11,6 @@ import {
 } from "../../../apiConsts";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import _ from "lodash";
-
-jest.mock("aws-amplify");
 
 const preloadedState = {
     whoami: {
@@ -25,35 +23,25 @@ const preloadedState = {
 };
 
 describe("AdminAddDeliverableType", () => {
-    it("renders without crashing", async () => {
-        amplify.DataStore.query.mockResolvedValue([]);
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
-        render(<AdminAddDeliverableType />, { preloadedState });
-        await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                1,
-                models.DeliverableType
-            )
-        );
-        expect(amplify.DataStore.query).toHaveBeenCalledTimes(1);
+    beforeEach(async () => {
+        jest.restoreAllMocks();
+        const types = await DataStore.query(models.DeliverableType);
+        await Promise.all(types.map((type) => DataStore.delete(type)));
     });
 
     test("add and remove a deliverable tag", async () => {
-        amplify.DataStore.query.mockResolvedValue([]);
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
         const mockNewDeliverable = new models.DeliverableType({
             label: "test",
             icon: deliverableIcons.other,
             defaultUnit: deliverableUnits.none,
             tags: [],
             disabled: 0,
+            tenantId: "tenant-id",
         });
+        const observeQuerySpy = jest.spyOn(DataStore, "observeQuery");
+        const saveSpy = jest.spyOn(DataStore, "save");
         render(<AdminAddDeliverableType />, { preloadedState });
-        await waitFor(() => expect(amplify.DataStore.query).toHaveBeenCalled());
+        await waitFor(() => expect(observeQuerySpy).toHaveBeenCalled());
         userEvent.type(
             screen.getByRole("textbox", { name: "Label" }),
             mockNewDeliverable.label
@@ -69,42 +57,38 @@ describe("AdminAddDeliverableType", () => {
             screen.getByRole("button", { name: "Add deliverable type" })
         );
         await waitFor(() =>
-            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
-                1,
-                expect.objectContaining(_.omit(mockNewDeliverable, "id"))
-            )
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockNewDeliverable,
+                id: expect.any(String),
+            })
         );
     });
 
     test("tag suggestions in combobox", async () => {
-        const mockDeliverableTypes = [
-            new models.DeliverableType({
-                label: "deliverable-type-1",
-                tags: ["tag-1", "tag-2"],
-            }),
-            new models.DeliverableType({
-                label: "deliverable-type-2",
-                tags: ["tag-3", "tag-4"],
-            }),
-            new models.DeliverableType({
-                label: "deliverable-type-3",
-                tags: ["tag-1", "tag-2"],
-            }),
-            new models.DeliverableType({
-                label: "deliverable-type-4",
-                tags: ["tag-3", "tag-4"],
-            }),
-        ];
-        amplify.DataStore.query.mockResolvedValue(mockDeliverableTypes);
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
+        await Promise.all(
+            [
+                new models.DeliverableType({
+                    label: "deliverable-type-1",
+                    tags: ["tag-1", "tag-2"],
+                }),
+                new models.DeliverableType({
+                    label: "deliverable-type-2",
+                    tags: ["tag-3", "tag-4"],
+                }),
+                new models.DeliverableType({
+                    label: "deliverable-type-3",
+                    tags: ["tag-1", "tag-2"],
+                }),
+                new models.DeliverableType({
+                    label: "deliverable-type-4",
+                    tags: ["tag-3", "tag-4"],
+                }),
+            ].map((deliverableType) => DataStore.save(deliverableType))
+        );
+        const observeQuerySpy = jest.spyOn(DataStore, "observeQuery");
         render(<AdminAddDeliverableType />, { preloadedState });
         await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenNthCalledWith(
-                1,
-                models.DeliverableType
-            )
+            expect(observeQuerySpy).toHaveBeenCalledWith(models.DeliverableType)
         );
         userEvent.type(screen.getByRole("combobox"), "t");
         expect(screen.getByText("tag-1")).toBeInTheDocument();
@@ -112,20 +96,22 @@ describe("AdminAddDeliverableType", () => {
         expect(screen.getByText("tag-3")).toBeInTheDocument();
         expect(screen.getByText("tag-4")).toBeInTheDocument();
     });
+
     test("add a deliverable type", async () => {
-        amplify.DataStore.query.mockResolvedValue([]);
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
         const mockNewDeliverable = new models.DeliverableType({
             label: "test",
             icon: deliverableIcons.bug,
             defaultUnit: deliverableUnits.item,
             tags: ["tag1", "tag2"],
             disabled: 0,
+            tenantId: "tenant-id",
         });
+        const observeQuerySpy = jest.spyOn(DataStore, "observeQuery");
+        const saveSpy = jest.spyOn(DataStore, "save");
         render(<AdminAddDeliverableType />, { preloadedState });
-        await waitFor(() => expect(amplify.DataStore.query).toHaveBeenCalled());
+        await waitFor(() =>
+            expect(observeQuerySpy).toHaveBeenCalledWith(models.DeliverableType)
+        );
 
         userEvent.type(
             screen.getByRole("textbox", { name: "Label" }),
@@ -153,10 +139,10 @@ describe("AdminAddDeliverableType", () => {
             screen.getByRole("button", { name: "Add deliverable type" })
         );
         await waitFor(() =>
-            expect(amplify.DataStore.save).toHaveBeenNthCalledWith(
-                1,
-                expect.objectContaining(_.omit(mockNewDeliverable, "id"))
-            )
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockNewDeliverable,
+                id: expect.any(String),
+            })
         );
         expect(screen.getByRole("textbox", { name: "Label" })).toHaveValue("");
         expect(
@@ -164,10 +150,6 @@ describe("AdminAddDeliverableType", () => {
         ).toBeDisabled();
     });
     test("forbidden if you don't have ADMIN role", async () => {
-        amplify.DataStore.query.mockResolvedValue([]);
-        amplify.DataStore.observe.mockReturnValue({
-            subscribe: () => ({ unsubscribe: () => {} }),
-        });
         render(<AdminAddDeliverableType />, {
             preloadedState: {
                 ...preloadedState,
