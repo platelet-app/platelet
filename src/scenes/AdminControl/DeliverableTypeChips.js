@@ -2,18 +2,25 @@ import { DataStore } from "aws-amplify";
 import { Box, Chip, Grid } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import * as models from "../../models";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { dataStoreModelSyncedStatusSelector } from "../../redux/Selectors";
 import { convertListDataToObject } from "../../utilities";
 import { getDeliverableIconByEnum } from "../../utilities";
+import AdminEditDeliverableType from "./Components/AdminEditDeliverableType";
+import ConfirmationDialog from "../../components/ConfirmationDialog";
+import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 
 export function DeliverableTypeChips() {
     const [state, setState] = useState([]);
+    const [itemToEdit, setItemToEdit] = useState(null);
+    const updateValues = useRef({});
     const observer = useRef({ unsubscribe: () => {} });
 
     const deliverableTypeModelSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     ).DeliverableType;
+
+    const dispatch = useDispatch();
 
     async function getDeliverableChips() {
         const deliverables = await DataStore.query(models.DeliverableType);
@@ -47,6 +54,31 @@ export function DeliverableTypeChips() {
 
     useEffect(() => getDeliverableChips(), [deliverableTypeModelSynced]);
 
+    const onChangeEditItem = (values) => {
+        updateValues.current = values;
+    };
+
+    const onConfirmEditItem = async () => {
+        try {
+            const existing = await DataStore.query(
+                models.DeliverableType,
+                itemToEdit.id
+            );
+            await DataStore.save(
+                models.DeliverableType.copyOf(existing, (upd) => {
+                    upd.label = updateValues.current.label;
+                    upd.icon = updateValues.current.icon;
+                    upd.defaultUnit = updateValues.current.defaultUnit;
+                    upd.tags = updateValues.current.tags;
+                })
+            );
+        } catch (error) {
+            console.log("error updating deliverable type:", error);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+        }
+        setItemToEdit(null);
+    };
+
     return (
         <Box sx={{ maxWidth: 1280 }}>
             <Grid container spacing={1} direction="row">
@@ -60,10 +92,25 @@ export function DeliverableTypeChips() {
                             }
                             key={key}
                             label={value.label}
+                            onClick={() => {
+                                setItemToEdit(value);
+                                updateValues.current = { ...value };
+                            }}
                         />
                     </Grid>
                 ))}
             </Grid>
+            <ConfirmationDialog
+                open={itemToEdit !== null}
+                onCancel={() => setItemToEdit(null)}
+                onConfirmation={onConfirmEditItem}
+            >
+                <AdminEditDeliverableType
+                    deliverableType={itemToEdit}
+                    key={itemToEdit ? itemToEdit.id : null}
+                    onChange={onChangeEditItem}
+                />
+            </ConfirmationDialog>
         </Box>
     );
 }

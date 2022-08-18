@@ -1,7 +1,6 @@
 import React from "react";
 import AdminAddDeliverableType from "./AdminAddDeliverableType";
 import { render } from "../../../test-utils";
-import * as amplify from "aws-amplify";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import {
