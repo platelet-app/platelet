@@ -12,6 +12,12 @@ const whoami = new models.User({
     roles: [userRoles.coordinator],
 });
 
+Object.assign(navigator, {
+  clipboard: {
+    writeText: () => {},
+  },
+});
+
 describe("TaskActions", () => {
     const RealDate = Date;
     const isoDate = "2021-11-29T23:24:58.987Z";
@@ -327,6 +333,45 @@ describe("TaskActions", () => {
             expect(screen.getByText(/someone person/)).toBeInTheDocument();
         });
     });
+
+    test("copy recipient and sender names to clipboard", async () => {
+        const mockTask = new models.Task({
+            timePickedUp: isoDate,
+            timePickedUpSenderName: "another one",
+            timeDroppedOff: isoDate,
+            timeDroppedOffRecipientName: "someone person",
+            status: tasksStatus.droppedOff,
+        });
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            role: userRoles.rider,
+        });
+        const preloadedState = {
+            roleView: "ALL",
+            whoami: { user: whoami },
+            taskAssigneesReducer: {
+                items: [mockAssignment],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        await DataStore.save(mockTask);
+        await DataStore.save(mockAssignment);
+        const spy = jest.spyOn(DataStore, "query");
+        const clipboardSpy = jest.spyOn(navigator.clipboard, "writeText");
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(spy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(screen.getByRole("button", { name: "another one" }));
+        await waitFor(() => {
+            expect(clipboardSpy).toHaveBeenCalledWith("another one");
+        })
+        userEvent.click(screen.getByRole("button", { name: "someone person" }));
+        await waitFor(() => {
+            expect(clipboardSpy).toHaveBeenCalledWith("someone person");
+        })
+    })
 
     it("changes the recipient name", async () => {
         const mockTask = new models.Task({

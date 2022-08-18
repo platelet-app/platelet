@@ -11,6 +11,8 @@ import makeStyles from "@mui/styles/makeStyles";
 import { DateTimePicker } from "@mui/lab";
 import moment from "moment";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
+import { displayInfoNotification } from "../../../redux/notifications/NotificationsActions";
+import { useDispatch } from "react-redux";
 
 const useStyles = makeStyles({
     button: {
@@ -28,6 +30,7 @@ function TimeAndNamePicker(props) {
         name: props.name,
     });
     const classes = useStyles();
+    const dispatch = useDispatch();
 
     function toggleEditMode() {
         setEditMode(!editMode);
@@ -83,6 +86,19 @@ function TimeAndNamePicker(props) {
                                 aria-label={props.name}
                                 disabled={props.disabled}
                                 size="small"
+                                onClick={
+                                    // copy to clipboard
+                                    () => {
+                                        navigator.clipboard.writeText(
+                                            props.name
+                                        );
+                                        dispatch(
+                                            displayInfoNotification(
+                                                "Copied name to clipboard"
+                                            )
+                                        );
+                                    }
+                                }
                             >
                                 <InfoIcon />
                             </IconButton>
