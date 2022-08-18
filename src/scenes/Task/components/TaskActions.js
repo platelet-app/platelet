@@ -22,7 +22,6 @@ import {
     taskAssigneesSelector,
 } from "../../../redux/Selectors";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
-import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import TaskActionConfirmationDialogContents from "./TaskActionConfirmationDialogContents";
 import TimePicker from "./TimePicker";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
@@ -31,6 +30,7 @@ import { saveTaskTimeWithKey } from "../utilities";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 import { determineTaskStatus } from "../../../utilities";
+import TimeAndNamePicker from "./TimeAndNamePicker";
 
 const fields = {
     timePickedUp: "Picked up",
@@ -248,6 +248,10 @@ function TaskActions(props) {
                             </ToggleButtonGroup>
                             <Stack sx={{ width: "100%" }} direction="column">
                                 {Object.entries(fields).map(([key, value]) => {
+                                    const textfieldNameLabel =
+                                        key === "timePickedUp"
+                                            ? "Sender name"
+                                            : "Recipient name";
                                     const disabled =
                                         isPosting ||
                                         isFetching ||
@@ -257,6 +261,53 @@ function TaskActions(props) {
                                         key === "timePickedUp"
                                             ? "timePickedUpSenderName"
                                             : "timeDroppedOffRecipientName";
+
+                                    let picker = (
+                                        <TimePicker
+                                            onChange={(newValue) =>
+                                                setTimeWithKey(key, newValue)
+                                            }
+                                            disableClear
+                                            disableUnsetMessage
+                                            time={task && task[key]}
+                                            hideEditIcon={!hasFullPermissions}
+                                        />
+                                    );
+                                    if (
+                                        [
+                                            "timePickedUp",
+                                            "timeDroppedOff",
+                                        ].includes(key)
+                                    ) {
+                                        picker = (
+                                            <TimeAndNamePicker
+                                                onChange={(newValue) => {
+                                                    console.log(newValue);
+                                                    const { name, time } =
+                                                        newValue;
+                                                    const isoString = time
+                                                        ? time.toISOString()
+                                                        : null;
+                                                    const nameKey =
+                                                        key === "timePickedUp"
+                                                            ? "timePickedUpSenderName"
+                                                            : "timeDroppedOffRecipientName";
+                                                    saveValues({
+                                                        [key]: isoString,
+                                                        [nameKey]: name,
+                                                    });
+                                                }}
+                                                name={task && task[tooltipKey]}
+                                                nameLabel={textfieldNameLabel}
+                                                disableClear
+                                                disableUnsetMessage
+                                                time={task && task[key]}
+                                                hideEditIcon={
+                                                    !hasFullPermissions
+                                                }
+                                            />
+                                        );
+                                    }
                                     return (
                                         <Stack
                                             key={key}
@@ -282,51 +333,7 @@ function TaskActions(props) {
                                             >
                                                 {value.toUpperCase()}
                                             </Typography>
-                                            <Stack
-                                                alignItems="center"
-                                                direction="row"
-                                            >
-                                                <TimePicker
-                                                    onChange={(newValue) =>
-                                                        setTimeWithKey(
-                                                            key,
-                                                            newValue
-                                                        )
-                                                    }
-                                                    disableClear
-                                                    disableUnsetMessage
-                                                    time={task && task[key]}
-                                                    hideEditIcon={
-                                                        !hasFullPermissions
-                                                    }
-                                                />
-                                                {[
-                                                    "timePickedUp",
-                                                    "timeDroppedOff",
-                                                ].includes(key) &&
-                                                    task &&
-                                                    task[tooltipKey] && (
-                                                        <Tooltip
-                                                            title={
-                                                                task[
-                                                                    tooltipKey
-                                                                ] ||
-                                                                "No recorded name"
-                                                            }
-                                                        >
-                                                            <IconButton
-                                                                aria-label={
-                                                                    key ===
-                                                                    "timePickedUp"
-                                                                        ? "picked up from"
-                                                                        : "dropped off to"
-                                                                }
-                                                            >
-                                                                <InfoIcon />
-                                                            </IconButton>
-                                                        </Tooltip>
-                                                    )}
-                                            </Stack>
+                                            {task && picker}
                                         </Stack>
                                     );
                                 })}
