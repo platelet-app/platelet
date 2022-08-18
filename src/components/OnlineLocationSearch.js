@@ -14,7 +14,6 @@ const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || "";
 
 const extractAddressComponents = (addressComponents) => {
     const address = {};
-    console.log(addressComponents);
     addressComponents.forEach((component) => {
         if (component.types.includes("street_number")) {
             address.streetNumber = component.long_name;
@@ -164,7 +163,6 @@ export default function OnlineLocationSearch({ onSelect }) {
 
     return (
         <Autocomplete
-            id="google-map-demo"
             sx={{ width: 300 }}
             getOptionLabel={(option) =>
                 typeof option === "string" ? option : option.description
