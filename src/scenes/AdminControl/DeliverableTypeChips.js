@@ -13,6 +13,7 @@ import { displayErrorNotification } from "../../redux/notifications/Notification
 export function DeliverableTypeChips() {
     const [state, setState] = useState([]);
     const [itemToEdit, setItemToEdit] = useState(null);
+    const [verifyEdit, setVerifyEdit] = useState(true);
     const updateValues = useRef({});
     const observer = useRef({ unsubscribe: () => {} });
 
@@ -57,6 +58,8 @@ export function DeliverableTypeChips() {
 
     const onChangeEditItem = (values) => {
         updateValues.current = values;
+        if (values.label.length === 0) setVerifyEdit(false);
+        else setVerifyEdit(true);
     };
 
     const onConfirmEditItem = async () => {
@@ -103,6 +106,7 @@ export function DeliverableTypeChips() {
             <ConfirmationDialog
                 open={itemToEdit !== null}
                 onCancel={() => setItemToEdit(null)}
+                disabled={!verifyEdit}
                 onConfirmation={onConfirmEditItem}
             >
                 <AdminEditDeliverableType

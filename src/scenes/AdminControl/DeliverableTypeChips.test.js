@@ -81,6 +81,25 @@ describe("DeliverableTypeChips", () => {
         expect(screen.getByTestId("BugReportIcon")).toBeInTheDocument();
     });
 
+    it("disables OK if the label is empty", async () => {
+        const deliverable = await DataStore.save(
+            new models.DeliverableType({
+                label: "deliverable-type-1",
+                icon: deliverableIcons.other,
+                tags: ["tag-1", "tag-2"],
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<DeliverableTypeChips />);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(screen.getByText(deliverable.label));
+        expect(screen.getByRole("button", { name: "OK" })).toBeEnabled();
+        userEvent.clear(screen.getByRole("textbox", { name: "edit label" }));
+        expect(screen.getByRole("button", { name: "OK" })).toBeDisabled();
+    });
+
     test("updates from observer", async () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<DeliverableTypeChips />);
