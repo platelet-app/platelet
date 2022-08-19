@@ -337,6 +337,7 @@ export const createUser = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -473,6 +474,7 @@ export const updateUser = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -609,6 +611,7 @@ export const deleteUser = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1421,6 +1424,7 @@ export const createLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1447,6 +1451,7 @@ export const createLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1473,6 +1478,7 @@ export const createLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1562,6 +1568,7 @@ export const updateLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1588,6 +1595,7 @@ export const updateLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1614,6 +1622,7 @@ export const updateLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1703,6 +1712,7 @@ export const deleteLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1729,6 +1739,7 @@ export const deleteLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1755,6 +1766,7 @@ export const deleteLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1812,6 +1824,7 @@ export const createTask = /* GraphQL */ `
     createTask(input: $input, condition: $condition) {
       id
       tenantId
+      dateCreated
       createdBy {
         id
         username
@@ -2130,6 +2143,7 @@ export const updateTask = /* GraphQL */ `
     updateTask(input: $input, condition: $condition) {
       id
       tenantId
+      dateCreated
       createdBy {
         id
         username
@@ -2448,6 +2462,7 @@ export const deleteTask = /* GraphQL */ `
     deleteTask(input: $input, condition: $condition) {
       id
       tenantId
+      dateCreated
       createdBy {
         id
         username
@@ -2772,6 +2787,7 @@ export const createTaskAssignee = /* GraphQL */ `
       task {
         id
         tenantId
+        dateCreated
         createdBy {
           id
           username
@@ -2984,6 +3000,7 @@ export const updateTaskAssignee = /* GraphQL */ `
       task {
         id
         tenantId
+        dateCreated
         createdBy {
           id
           username
@@ -3196,6 +3213,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
       task {
         id
         tenantId
+        dateCreated
         createdBy {
           id
           username
@@ -3780,6 +3798,7 @@ export const createDeliverable = /* GraphQL */ `
       task {
         id
         tenantId
+        dateCreated
         createdBy {
           id
           username
@@ -3971,6 +3990,7 @@ export const updateDeliverable = /* GraphQL */ `
       task {
         id
         tenantId
+        dateCreated
         createdBy {
           id
           username
@@ -4162,6 +4182,7 @@ export const deleteDeliverable = /* GraphQL */ `
       task {
         id
         tenantId
+        dateCreated
         createdBy {
           id
           username
@@ -4535,6 +4556,7 @@ export const registerUser = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -4750,6 +4772,7 @@ export const updateUserRoles = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff

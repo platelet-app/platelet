@@ -628,7 +628,7 @@ export const schema = {
                     "type": {
                         "model": "Task"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
@@ -641,7 +641,7 @@ export const schema = {
                     "type": {
                         "model": "User"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
@@ -746,6 +746,13 @@ export const schema = {
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
+                    "attributes": []
+                },
+                "dateCreated": {
+                    "name": "dateCreated",
+                    "isArray": false,
+                    "type": "AWSDate",
+                    "isRequired": false,
                     "attributes": []
                 },
                 "createdBy": {
@@ -948,6 +955,15 @@ export const schema = {
                         "name": "byTenantId",
                         "fields": [
                             "tenantId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byDateCreated",
+                        "fields": [
+                            "dateCreated"
                         ]
                     }
                 },
@@ -2137,5 +2153,5 @@ export const schema = {
             }
         }
     },
-    "version": "da446f3a8dc5b195c0763fe2598a200e"
+    "version": "a32c790b72bd61c82ae92ff68504457d"
 };

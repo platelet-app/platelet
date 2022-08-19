@@ -265,6 +265,7 @@ export const getUser = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1110,6 +1111,7 @@ export const getLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1136,6 +1138,7 @@ export const getLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1162,6 +1165,7 @@ export const getLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -1354,6 +1358,7 @@ export const getTask = /* GraphQL */ `
     getTask(id: $id) {
       id
       tenantId
+      dateCreated
       createdBy {
         id
         username
@@ -1674,6 +1679,7 @@ export const listTasks = /* GraphQL */ `
       items {
         id
         tenantId
+        dateCreated
         createdBy {
           id
           username
@@ -1826,6 +1832,7 @@ export const syncTasks = /* GraphQL */ `
       items {
         id
         tenantId
+        dateCreated
         createdBy {
           id
           username
@@ -1980,6 +1987,7 @@ export const tasksByStatus = /* GraphQL */ `
       items {
         id
         tenantId
+        dateCreated
         createdBy {
           id
           username
@@ -2127,6 +2135,7 @@ export const getTaskAssignee = /* GraphQL */ `
       task {
         id
         tenantId
+        dateCreated
         createdBy {
           id
           username
@@ -2341,6 +2350,7 @@ export const listTaskAssignees = /* GraphQL */ `
         task {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2411,6 +2421,7 @@ export const syncTaskAssignees = /* GraphQL */ `
         task {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -2762,6 +2773,7 @@ export const getDeliverable = /* GraphQL */ `
       task {
         id
         tenantId
+        dateCreated
         createdBy {
           id
           username
@@ -2951,6 +2963,7 @@ export const listDeliverables = /* GraphQL */ `
         task {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff
@@ -3023,6 +3036,7 @@ export const syncDeliverables = /* GraphQL */ `
         task {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timeDroppedOff

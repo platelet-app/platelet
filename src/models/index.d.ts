@@ -206,8 +206,8 @@ export declare class TaskAssignee {
   readonly id: string;
   readonly tenantId: string;
   readonly role: Role | keyof typeof Role;
-  readonly task: Task;
-  readonly assignee: User;
+  readonly task?: Task | null;
+  readonly assignee?: User | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   constructor(init: ModelInit<TaskAssignee, TaskAssigneeMetaData>);
@@ -217,6 +217,7 @@ export declare class TaskAssignee {
 export declare class Task {
   readonly id: string;
   readonly tenantId: string;
+  readonly dateCreated?: string | null;
   readonly createdBy?: User | null;
   readonly timeOfCall?: string | null;
   readonly timePickedUp?: string | null;
