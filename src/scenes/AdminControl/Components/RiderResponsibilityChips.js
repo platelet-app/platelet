@@ -1,10 +1,10 @@
 import { DataStore } from "aws-amplify";
-import { Box, Chip, Grid, Stack, TextField } from "@mui/material";
+import { Box, Chip, Grid, TextField } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
-import * as models from "../../models";
-import { convertListDataToObject } from "../../utilities";
-import ConfirmationDialog from "../../components/ConfirmationDialog";
-import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
+import * as models from "../../../models";
+import { convertListDataToObject } from "../../../utilities";
+import ConfirmationDialog from "../../../components/ConfirmationDialog";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { useDispatch } from "react-redux";
 
 export function RiderResponsibilityChips() {

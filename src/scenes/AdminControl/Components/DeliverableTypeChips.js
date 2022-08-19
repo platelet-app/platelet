@@ -1,14 +1,14 @@
 import { DataStore } from "aws-amplify";
 import { Box, Chip, Grid } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
-import * as models from "../../models";
+import * as models from "../../../models";
 import { useDispatch, useSelector } from "react-redux";
-import { dataStoreModelSyncedStatusSelector } from "../../redux/Selectors";
-import { convertListDataToObject } from "../../utilities";
-import { getDeliverableIconByEnum } from "../../utilities";
-import AdminEditDeliverableType from "./Components/AdminEditDeliverableType";
-import ConfirmationDialog from "../../components/ConfirmationDialog";
-import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
+import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
+import { convertListDataToObject } from "../../../utilities";
+import { getDeliverableIconByEnum } from "../../../utilities";
+import AdminEditDeliverableType from "./AdminEditDeliverableType";
+import ConfirmationDialog from "../../../components/ConfirmationDialog";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 
 export function DeliverableTypeChips() {
     const [state, setState] = useState([]);
