@@ -1,7 +1,7 @@
 import { DataStore } from "aws-amplify";
-import { deliverableIcons, deliverableUnits } from "../../apiConsts";
-import { render } from "../../test-utils";
-import * as models from "../../models";
+import { deliverableIcons, deliverableUnits } from "../../../apiConsts";
+import { render } from "../../../test-utils";
+import * as models from "../../../models";
 import { DeliverableTypeChips } from "./DeliverableTypeChips";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
