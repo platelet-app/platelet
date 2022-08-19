@@ -41,7 +41,7 @@ export function DeliverableTypeChips() {
                             ...update.element,
                         },
                     }));
-                } else if (update.opType === "REMOVE") {
+                } else if (update.opType === "DELETE") {
                     setState((prevState) => {
                         const { [update.element.id]: value, ...rest } =
                             prevState;
@@ -51,8 +51,9 @@ export function DeliverableTypeChips() {
             }
         );
     }
-
     useEffect(() => getDeliverableChips(), [deliverableTypeModelSynced]);
+
+    useEffect(() => () => observer.current.unsubscribe(), []);
 
     const onChangeEditItem = (values) => {
         updateValues.current = values;
@@ -83,14 +84,13 @@ export function DeliverableTypeChips() {
         <Box sx={{ maxWidth: 1280 }}>
             <Grid container spacing={1} direction="row">
                 {Object.entries(state).map(([key, value]) => (
-                    <Grid item>
+                    <Grid key={key} item>
                         <Chip
                             avatar={
                                 <Box>
                                     {getDeliverableIconByEnum(value.icon, 3)}
                                 </Box>
                             }
-                            key={key}
                             label={value.label}
                             onClick={() => {
                                 setItemToEdit(value);

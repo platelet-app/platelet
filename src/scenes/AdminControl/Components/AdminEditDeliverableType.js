@@ -25,9 +25,15 @@ function AdminEditDeliverableType({ deliverableType, onChange }) {
     return (
         <Stack spacing={3}>
             <TextField
-                label="Name"
+                label="Label"
+                inputProps={{
+                    "aria-label": "edit label",
+                }}
                 value={state.label}
-                onChange={(e) => setState({ ...state, label: e.target.value })}
+                onChange={(e) => {
+                    setState({ ...state, label: e.target.value });
+                    onChange({ ...state, label: e.target.value });
+                }}
             />
             <DeliverableIconPicker
                 value={state.icon}
@@ -60,11 +66,12 @@ function AdminEditDeliverableType({ deliverableType, onChange }) {
 }
 
 AdminEditDeliverableType.propTypes = {
-    deliverableType: PropTypes.object.isRequired,
+    deliverableType: PropTypes.object,
     onChange: PropTypes.func,
 };
 
 AdminEditDeliverableType.defaultProps = {
+    deliverableType: null,
     onChange: () => {},
 };
 
