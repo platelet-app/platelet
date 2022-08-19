@@ -11,38 +11,44 @@ export function RiderResponsibilityChips() {
     const [state, setState] = useState({});
     const [inputValue, setInputValue] = useState("");
     const [editItem, setEditItem] = useState(null);
+    const [errorState, setErrorState] = useState(null);
     const dispatch = useDispatch();
 
     const observer = useRef({ unsubscribe: () => {} });
 
     async function getResponsibilityChips() {
-        const responsibilities = await DataStore.query(
-            models.RiderResponsibility
-        );
-        setState(convertListDataToObject(responsibilities));
-        observer.current = DataStore.observe(
-            models.RiderResponsibility
-        ).subscribe(({ element, opType }) => {
-            if (opType === "INSERT") {
-                setState((prevState) => ({
-                    ...prevState,
-                    [element.id]: element,
-                }));
-            } else if (opType === "UPDATE") {
-                setState((prevState) => ({
-                    ...prevState,
-                    [element.id]: {
-                        ...prevState[element.id],
-                        ...element,
-                    },
-                }));
-            } else if (opType === "DELETE") {
-                setState((prevState) => {
-                    const { [element.id]: value, ...rest } = prevState;
-                    return rest;
-                });
-            }
-        });
+        try {
+            const responsibilities = await DataStore.query(
+                models.RiderResponsibility
+            );
+            setState(convertListDataToObject(responsibilities));
+            observer.current = DataStore.observe(
+                models.RiderResponsibility
+            ).subscribe(({ element, opType }) => {
+                if (opType === "INSERT") {
+                    setState((prevState) => ({
+                        ...prevState,
+                        [element.id]: element,
+                    }));
+                } else if (opType === "UPDATE") {
+                    setState((prevState) => ({
+                        ...prevState,
+                        [element.id]: {
+                            ...prevState[element.id],
+                            ...element,
+                        },
+                    }));
+                } else if (opType === "DELETE") {
+                    setState((prevState) => {
+                        const { [element.id]: value, ...rest } = prevState;
+                        return rest;
+                    });
+                }
+            });
+        } catch (error) {
+            console.log(error);
+            setErrorState(error);
+        }
     }
 
     useEffect(() => getResponsibilityChips(), []);
@@ -69,31 +75,35 @@ export function RiderResponsibilityChips() {
         }
     };
 
-    return (
-        <Box sx={{ maxWidth: 1280 }}>
-            <Grid container spacing={1} direction="row">
-                {Object.entries(state).map(([key, value]) => (
-                    <Grid key={key} item>
-                        <Chip
-                            onClick={() => handleClickChip(value)}
-                            label={value.label}
-                        />
-                    </Grid>
-                ))}
-            </Grid>
-            <ConfirmationDialog
-                disabled={!!!inputValue}
-                onConfirmation={onSave}
-                onCancel={() => setEditItem(null)}
-                open={!!editItem}
-            >
-                <TextField
-                    value={inputValue}
-                    label="Label"
-                    inputProps={{ "aria-label": "edit label" }}
-                    onChange={(e) => setInputValue(e.target.value)}
-                />
-            </ConfirmationDialog>
-        </Box>
-    );
+    if (errorState) {
+        return <div>Sorry, something went wrong</div>;
+    } else {
+        return (
+            <Box sx={{ maxWidth: 1280 }}>
+                <Grid container spacing={1} direction="row">
+                    {Object.entries(state).map(([key, value]) => (
+                        <Grid key={key} item>
+                            <Chip
+                                onClick={() => handleClickChip(value)}
+                                label={value.label}
+                            />
+                        </Grid>
+                    ))}
+                </Grid>
+                <ConfirmationDialog
+                    disabled={!!!inputValue}
+                    onConfirmation={onSave}
+                    onCancel={() => setEditItem(null)}
+                    open={!!editItem}
+                >
+                    <TextField
+                        value={inputValue}
+                        label="Label"
+                        inputProps={{ "aria-label": "edit label" }}
+                        onChange={(e) => setInputValue(e.target.value)}
+                    />
+                </ConfirmationDialog>
+            </Box>
+        );
+    }
 }

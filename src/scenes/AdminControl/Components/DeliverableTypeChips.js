@@ -14,6 +14,7 @@ export function DeliverableTypeChips() {
     const [state, setState] = useState([]);
     const [itemToEdit, setItemToEdit] = useState(null);
     const [verifyEdit, setVerifyEdit] = useState(true);
+    const [errorState, setErrorState] = useState(null);
     const updateValues = useRef({});
     const observer = useRef({ unsubscribe: () => {} });
 
@@ -24,11 +25,13 @@ export function DeliverableTypeChips() {
     const dispatch = useDispatch();
 
     async function getDeliverableChips() {
-        const deliverables = await DataStore.query(models.DeliverableType);
-        setState(convertListDataToObject(deliverables));
-        observer.current.unsubscribe();
-        observer.current = DataStore.observe(models.DeliverableType).subscribe(
-            (update) => {
+        try {
+            const deliverables = await DataStore.query(models.DeliverableType);
+            setState(convertListDataToObject(deliverables));
+            observer.current.unsubscribe();
+            observer.current = DataStore.observe(
+                models.DeliverableType
+            ).subscribe((update) => {
                 if (update.opType === "INSERT") {
                     setState((prevState) => ({
                         ...prevState,
@@ -49,8 +52,11 @@ export function DeliverableTypeChips() {
                         return rest;
                     });
                 }
-            }
-        );
+            });
+        } catch (error) {
+            console.log(error);
+            setErrorState(error);
+        }
     }
     useEffect(() => getDeliverableChips(), [deliverableTypeModelSynced]);
 
@@ -76,45 +82,52 @@ export function DeliverableTypeChips() {
                     upd.tags = updateValues.current.tags;
                 })
             );
+            setItemToEdit(null);
         } catch (error) {
             console.log("error updating deliverable type:", error);
             dispatch(displayErrorNotification("Sorry, something went wrong"));
         }
-        setItemToEdit(null);
     };
 
-    return (
-        <Box sx={{ maxWidth: 1280 }}>
-            <Grid container spacing={1} direction="row">
-                {Object.entries(state).map(([key, value]) => (
-                    <Grid key={key} item>
-                        <Chip
-                            avatar={
-                                <Box>
-                                    {getDeliverableIconByEnum(value.icon, 3)}
-                                </Box>
-                            }
-                            label={value.label}
-                            onClick={() => {
-                                setItemToEdit(value);
-                                updateValues.current = { ...value };
-                            }}
-                        />
-                    </Grid>
-                ))}
-            </Grid>
-            <ConfirmationDialog
-                open={itemToEdit !== null}
-                onCancel={() => setItemToEdit(null)}
-                disabled={!verifyEdit}
-                onConfirmation={onConfirmEditItem}
-            >
-                <AdminEditDeliverableType
-                    deliverableType={itemToEdit}
-                    key={itemToEdit ? itemToEdit.id : null}
-                    onChange={onChangeEditItem}
-                />
-            </ConfirmationDialog>
-        </Box>
-    );
+    if (errorState) {
+        return <div>Sorry, something went wrong</div>;
+    } else {
+        return (
+            <Box sx={{ maxWidth: 1280 }}>
+                <Grid container spacing={1} direction="row">
+                    {Object.entries(state).map(([key, value]) => (
+                        <Grid key={key} item>
+                            <Chip
+                                avatar={
+                                    <Box>
+                                        {getDeliverableIconByEnum(
+                                            value.icon,
+                                            3
+                                        )}
+                                    </Box>
+                                }
+                                label={value.label}
+                                onClick={() => {
+                                    setItemToEdit(value);
+                                    updateValues.current = { ...value };
+                                }}
+                            />
+                        </Grid>
+                    ))}
+                </Grid>
+                <ConfirmationDialog
+                    open={itemToEdit !== null}
+                    onCancel={() => setItemToEdit(null)}
+                    disabled={!verifyEdit}
+                    onConfirmation={onConfirmEditItem}
+                >
+                    <AdminEditDeliverableType
+                        deliverableType={itemToEdit}
+                        key={itemToEdit ? itemToEdit.id : null}
+                        onChange={onChangeEditItem}
+                    />
+                </ConfirmationDialog>
+            </Box>
+        );
+    }
 }

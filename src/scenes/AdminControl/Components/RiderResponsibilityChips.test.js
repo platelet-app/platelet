@@ -11,6 +11,7 @@ describe("RiderResponsibilityChips", () => {
         const types = await DataStore.query(models.RiderResponsibility);
         await Promise.all(types.map((type) => DataStore.delete(type)));
     });
+
     test("display the rider responsibilities", async () => {
         await Promise.all(
             [
@@ -29,6 +30,19 @@ describe("RiderResponsibilityChips", () => {
         });
         expect(screen.getByText("rider-responsibility-1")).toBeInTheDocument();
         expect(screen.getByText("rider-responsibility-2")).toBeInTheDocument();
+    });
+
+    test("display the rider responsibilities failure", async () => {
+        const querySpy = jest
+            .spyOn(DataStore, "query")
+            .mockRejectedValue(new Error());
+        render(<RiderResponsibilityChips />);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledWith(models.RiderResponsibility);
+        });
+        expect(
+            screen.getByText("Sorry, something went wrong")
+        ).toBeInTheDocument();
     });
 
     test("edit a rider responsibility", async () => {
@@ -61,6 +75,40 @@ describe("RiderResponsibilityChips", () => {
                 screen.getByText(`${resp.label}${more}`)
             ).toBeInTheDocument();
         });
+    });
+
+    test("edit a rider responsibility failure", async () => {
+        const resp = await DataStore.save(
+            new models.RiderResponsibility({
+                label: "rider-responsibility-1",
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest
+            .spyOn(DataStore, "save")
+            .mockRejectedValue(new Error());
+        render(<RiderResponsibilityChips />);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledWith(models.RiderResponsibility);
+        });
+        const more = "more text";
+        userEvent.click(screen.getByText(resp.label));
+        userEvent.type(
+            screen.getByRole("textbox", { name: "edit label" }),
+            more
+        );
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalled();
+        });
+        await waitFor(() => {
+            expect(
+                screen.getByText("Sorry, something went wrong")
+            ).toBeInTheDocument();
+        });
+        expect(
+            screen.getByRole("textbox", { name: "edit label" })
+        ).toBeInTheDocument();
     });
 
     test("observer works", async () => {

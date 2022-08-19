@@ -37,6 +37,19 @@ describe("DeliverableTypeChips", () => {
         expect(screen.getByTestId("BugReportIcon")).toBeInTheDocument();
     });
 
+    test("display the deliverable types failure", async () => {
+        const querySpy = jest
+            .spyOn(DataStore, "query")
+            .mockRejectedValue(new Error());
+        render(<DeliverableTypeChips />);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalled();
+        });
+        expect(
+            screen.getByText("Sorry, something went wrong")
+        ).toBeInTheDocument();
+    });
+
     test("edit a deliverable type", async () => {
         const deliverable = await DataStore.save(
             new models.DeliverableType({
@@ -79,6 +92,40 @@ describe("DeliverableTypeChips", () => {
             await screen.findByText(`${deliverable.label}${moreText}`)
         ).toBeInTheDocument();
         expect(screen.getByTestId("BugReportIcon")).toBeInTheDocument();
+    });
+
+    test("edit a deliverable type failure", async () => {
+        const deliverable = await DataStore.save(
+            new models.DeliverableType({
+                label: "deliverable-type-1",
+                icon: deliverableIcons.other,
+                tags: ["tag-1", "tag-2"],
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest
+            .spyOn(DataStore, "save")
+            .mockRejectedValue(new Error());
+        render(<DeliverableTypeChips />);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        const moreText = "more text";
+        userEvent.click(screen.getByText(deliverable.label));
+        userEvent.type(
+            screen.getByRole("textbox", { name: "edit label" }),
+            moreText
+        );
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalled();
+        });
+        expect(
+            screen.getByText("Sorry, something went wrong")
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole("textbox", { name: "edit label" })
+        ).toBeInTheDocument();
     });
 
     it("disables OK if the label is empty", async () => {
