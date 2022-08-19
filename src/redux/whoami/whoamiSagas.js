@@ -13,9 +13,8 @@ import { Auth, DataStore, Predicates, syncExpression } from "aws-amplify";
 import * as models from "../../models";
 import * as queries from "../../graphql/queries";
 import { NotFound } from "http-errors";
-import { userRoles } from "../../apiConsts";
 import { eventChannel } from "redux-saga";
-import { tasksStatus, userRoles } from "../apiConsts";
+import { tasksStatus, userRoles } from "../../apiConsts";
 import moment from "moment";
 
 const fakeUser = {
