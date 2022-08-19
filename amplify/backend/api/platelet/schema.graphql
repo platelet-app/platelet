@@ -141,6 +141,7 @@ type Task
 @model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
+  dateCreated: AWSDate @index(name: "byDateCreated")
   createdBy: User @belongsTo
   timeOfCall: AWSDateTime
   timePickedUp: AWSDateTime
@@ -207,11 +208,11 @@ type TaskAssignee
 @model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
-  taskId: ID! @index(name: "byTask", sortKeyFields: ["assigneeId"])
-  assigneeId: ID! @index(name: "byAssignee", sortKeyFields: ["taskId"])
+  taskId: ID @index(name: "byTask", sortKeyFields: ["assigneeId"])
+  assigneeId: ID @index(name: "byAssignee", sortKeyFields: ["taskId"])
   role: Role!
-  task: Task! @belongsTo(fields: ["taskId"])
-  assignee: User! @belongsTo(fields: ["assigneeId"])
+  task: Task @belongsTo(fields: ["taskId"])
+  assignee: User @belongsTo(fields: ["assigneeId"])
 }
 
 type Comment
