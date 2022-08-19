@@ -184,7 +184,7 @@ export function saveDashboardRoleMode(mode) {
 }
 
 export function getDashboardRoleMode() {
-    return localStorage.getItem("dashboardRoleMode") || "ALL";
+    return localStorage.getItem("dashboardRoleMode") || userRoles.coordinator;
 }
 
 export function saveLogin(apiBearer) {
