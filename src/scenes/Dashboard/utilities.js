@@ -34,7 +34,7 @@ export async function addTask(whoamiId, tenantId) {
             timeOfCall,
             createdBy,
             tenantId,
-            dateCreated: today,
+            dateCreated: today.toISOString().split("T")[0],
         })
     );
     await DataStore.save(

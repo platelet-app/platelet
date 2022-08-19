@@ -38,7 +38,7 @@ export async function saveNewTaskToDataStore(
             dropOffLocation,
             status: tasksStatus.new,
             tenantId,
-            dateCreated: today,
+            dateCreated: today.toISOString().split("T")[0],
         })
     );
 
