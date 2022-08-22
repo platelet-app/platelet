@@ -117,7 +117,6 @@ function* getWhoami() {
                     if (
                         [
                             "User",
-                            "TaskAssignee",
                             "RiderResponsibility",
                             "Comment",
                             "Location",
@@ -149,6 +148,15 @@ function* getWhoami() {
                         syncExpression(models.Tenant, (m) =>
                             m.id("eq", tenantId)
                         ),
+                        syncExpression(models.TaskAssignee, (m) =>
+                            m
+                                .tenantId("eq", tenantId)
+                                .or((assign) =>
+                                    assign
+                                        .taskIsCompleted("eq", 0)
+                                        .dateTaskCreated("gt", oneWeekAgo)
+                                )
+                        ),
                         syncExpression(models.Task, (m) =>
                             m
                                 .tenantId("eq", tenantId)
@@ -158,7 +166,6 @@ function* getWhoami() {
                                         .status("eq", tasksStatus.active)
                                         .status("eq", tasksStatus.pickedUp)
                                         .status("eq", tasksStatus.droppedOff)
-                                        .dateCreated("eq", null)
                                         .dateCreated("gt", oneWeekAgo)
                                 )
                         ),
