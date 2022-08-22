@@ -237,6 +237,7 @@ export const getUser = /* GraphQL */ `
           taskId
           assigneeId
           role
+          dateTaskCreatedIfCompleted
           createdAt
           updatedAt
           _version
@@ -1613,6 +1614,7 @@ export const getTask = /* GraphQL */ `
           taskId
           assigneeId
           role
+          dateTaskCreatedIfCompleted
           createdAt
           updatedAt
           _version
@@ -2326,6 +2328,7 @@ export const getTaskAssignee = /* GraphQL */ `
         _deleted
         _lastChangedAt
       }
+      dateTaskCreatedIfCompleted
       createdAt
       updatedAt
       _version
@@ -2388,6 +2391,7 @@ export const listTaskAssignees = /* GraphQL */ `
           _deleted
           _lastChangedAt
         }
+        dateTaskCreatedIfCompleted
         createdAt
         updatedAt
         _version
@@ -2459,6 +2463,7 @@ export const syncTaskAssignees = /* GraphQL */ `
           _deleted
           _lastChangedAt
         }
+        dateTaskCreatedIfCompleted
         createdAt
         updatedAt
         _version

@@ -648,6 +648,13 @@ export const schema = {
                         "targetName": "assigneeId"
                     }
                 },
+                "dateTaskCreatedIfCompleted": {
+                    "name": "dateTaskCreatedIfCompleted",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -702,6 +709,15 @@ export const schema = {
                     }
                 },
                 {
+                    "type": "key",
+                    "properties": {
+                        "name": "byDateTaskCreatedIfCompleted",
+                        "fields": [
+                            "dateTaskCreatedIfCompleted"
+                        ]
+                    }
+                },
+                {
                     "type": "auth",
                     "properties": {
                         "rules": [
@@ -723,6 +739,7 @@ export const schema = {
                                 "operations": [
                                     "create",
                                     "read",
+                                    "update",
                                     "delete"
                                 ]
                             }
@@ -2153,5 +2170,5 @@ export const schema = {
             }
         }
     },
-    "version": "a32c790b72bd61c82ae92ff68504457d"
+    "version": "ec047d14646954f2121e76bfebbb9c42"
 };

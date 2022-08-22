@@ -297,6 +297,7 @@ export const onCreateUser = /* GraphQL */ `
           taskId
           assigneeId
           role
+          dateTaskCreatedIfCompleted
           createdAt
           updatedAt
           _version
@@ -431,6 +432,7 @@ export const onUpdateUser = /* GraphQL */ `
           taskId
           assigneeId
           role
+          dateTaskCreatedIfCompleted
           createdAt
           updatedAt
           _version
@@ -565,6 +567,7 @@ export const onDeleteUser = /* GraphQL */ `
           taskId
           assigneeId
           role
+          dateTaskCreatedIfCompleted
           createdAt
           updatedAt
           _version
@@ -2022,6 +2025,7 @@ export const onCreateTask = /* GraphQL */ `
           taskId
           assigneeId
           role
+          dateTaskCreatedIfCompleted
           createdAt
           updatedAt
           _version
@@ -2338,6 +2342,7 @@ export const onUpdateTask = /* GraphQL */ `
           taskId
           assigneeId
           role
+          dateTaskCreatedIfCompleted
           createdAt
           updatedAt
           _version
@@ -2654,6 +2659,7 @@ export const onDeleteTask = /* GraphQL */ `
           taskId
           assigneeId
           role
+          dateTaskCreatedIfCompleted
           createdAt
           updatedAt
           _version
@@ -2912,6 +2918,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
         _deleted
         _lastChangedAt
       }
+      dateTaskCreatedIfCompleted
       createdAt
       updatedAt
       _version
@@ -3122,6 +3129,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
         _deleted
         _lastChangedAt
       }
+      dateTaskCreatedIfCompleted
       createdAt
       updatedAt
       _version
@@ -3332,6 +3340,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
         _deleted
         _lastChangedAt
       }
+      dateTaskCreatedIfCompleted
       createdAt
       updatedAt
       _version
