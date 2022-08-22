@@ -1,4 +1,4 @@
-import { Button, Grid, TextField, Typography } from "@mui/material";
+import { Button, Grid, Skeleton, TextField, Typography } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import DatePicker from "@mui/lab/DatePicker";
 import React, { useEffect, useState } from "react";
@@ -15,7 +15,6 @@ import { encodeUUID } from "../../../utilities";
 import { getWhoami, tenantIdSelector } from "../../../redux/Selectors";
 import Forbidden from "../../../ErrorComponents/Forbidden";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
-import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
 
 const initialVehicleState = {
     name: "",
@@ -94,7 +93,14 @@ function AdminAddVehicle() {
     useEffect(verifyInput, [state]);
 
     if (whoamiFetching) {
-        return <FormSkeleton />;
+        return (
+            <PaddedPaper>
+                <Skeleton
+                    sx={{ height: 500, width: "100%" }}
+                    variant="rectangle"
+                />
+            </PaddedPaper>
+        );
     } else if (!whoami.roles.includes("ADMIN")) {
         return <Forbidden />;
     } else {

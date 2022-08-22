@@ -1,12 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-    Autocomplete,
-    Button,
-    Chip,
-    Grid,
-    TextField,
-    Typography,
-} from "@mui/material";
+import { Autocomplete, Chip, Grid, TextField, Typography } from "@mui/material";
+import PropTypes from "prop-types";
 import * as models from "../../../models";
 import { DataStore } from "aws-amplify";
 import GetError from "../../../ErrorComponents/GetError";
@@ -20,49 +14,43 @@ const tagsReducer = (previousValue, currentValue = []) => {
     return [...previousValue, ...filtered];
 };
 
-export default function DeliverableTypeTagger(props) {
+function DeliverableTypeTagger(props) {
     const [inputValue, setInputValue] = useState("");
     const [errorState, setErrorState] = useState(null);
     const [suggestions, setSuggestions] = useState([]);
     const [forceRerender, setForceRerender] = useState(null);
     const deliverableObserver = useRef({ unsubscribe: () => {} });
-    const allSuggestions = useRef([]);
+    const [allSuggestions, setAllSuggestions] = useState([]);
 
     const [inputRef, setInputFocus] = useFocus();
 
     async function calculateSuggestions() {
         try {
-            const existingDeliverableTypes = await DataStore.query(
+            deliverableObserver.current.unsubscribe();
+            deliverableObserver.current = DataStore.observeQuery(
                 models.DeliverableType
-            );
-            const existingTags = existingDeliverableTypes.map(
-                (deliverableType) => deliverableType.tags
-            );
-            const suggestions = existingTags.reduce(tagsReducer, []);
-            setSuggestions(suggestions);
-            allSuggestions.current = suggestions;
+            ).subscribe(({ items }) => {
+                const existingTags = items.map(
+                    (deliverableType) => deliverableType.tags
+                );
+                const suggestions = existingTags.reduce(tagsReducer, []);
+                setAllSuggestions(suggestions);
+            });
         } catch (e) {
             console.log(e);
             setErrorState(e);
         }
     }
+    useEffect(() => calculateSuggestions(), []);
 
-    function observeChanges() {
-        deliverableObserver.current = DataStore.observe(
-            models.DeliverableType
-        ).subscribe(() => {
-            calculateSuggestions();
-        });
+    function observeChangesUnsubscribe() {
         return () => deliverableObserver.current.unsubscribe();
     }
+    useEffect(observeChangesUnsubscribe, []);
 
-    useEffect(() => calculateSuggestions(), []);
-    useEffect(observeChanges, []);
     useEffect(() => {
-        setSuggestions(
-            allSuggestions.current.filter((s) => !props.value.includes(s))
-        );
-    }, [props.value]);
+        setSuggestions(allSuggestions.filter((s) => !props.value.includes(s)));
+    }, [props.value, allSuggestions]);
 
     const handleAddition = (value) => {
         props.onAdd(value);
@@ -74,7 +62,7 @@ export default function DeliverableTypeTagger(props) {
         if (forceRerender !== null) {
             setInputFocus();
         }
-    }, [forceRerender]);
+    }, [forceRerender, setInputFocus]);
 
     if (errorState) {
         return <GetError />;
@@ -120,6 +108,7 @@ export default function DeliverableTypeTagger(props) {
                         }}
                         id="deliverable-type-tags"
                         disableClearable
+                        aria-label="add deliverable type tag"
                         fullWidth
                         options={suggestions}
                         renderInput={(params) => (
@@ -156,3 +145,17 @@ export default function DeliverableTypeTagger(props) {
         );
     }
 }
+
+DeliverableTypeTagger.propTypes = {
+    value: PropTypes.arrayOf(PropTypes.string),
+    onAdd: PropTypes.func,
+    onDelete: PropTypes.func,
+};
+
+DeliverableTypeTagger.defaultProps = {
+    value: [],
+    onAdd: () => {},
+    onDelete: () => {},
+};
+
+export default DeliverableTypeTagger;

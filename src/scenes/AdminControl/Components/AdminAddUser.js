@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Chip, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Skeleton } from "@mui/material";
 import { Button, TextField, Typography, Stack } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
@@ -13,10 +13,7 @@ import {
 import Forbidden from "../../../ErrorComponents/Forbidden";
 import { getWhoami, tenantIdSelector } from "../../../redux/Selectors";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
-import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
 import { userRoles } from "../../../apiConsts";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import * as mutations from "../../../graphql/mutations";
 import { API, graphqlOperation } from "aws-amplify";
 import UserRoleSelect from "../../../components/UserRoleSelect";
@@ -109,7 +106,14 @@ function AdminAddUser() {
         }
     }
     if (whoamiFetching) {
-        return <FormSkeleton />;
+        return (
+            <PaddedPaper>
+                <Skeleton
+                    sx={{ height: 350, width: "100%" }}
+                    variant="rectangle"
+                />
+            </PaddedPaper>
+        );
     } else if (!whoami.roles.includes("ADMIN")) {
         return <Forbidden />;
     } else {
