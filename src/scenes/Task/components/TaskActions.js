@@ -31,6 +31,7 @@ import { tasksStatus, userRoles } from "../../../apiConsts";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 import { determineTaskStatus } from "../../../utilities";
 import TimeAndNamePicker from "./TimeAndNamePicker";
+import { date } from "faker/lib/locales/en";
 
 const fields = {
     timePickedUp: "Picked up",
@@ -101,6 +102,30 @@ function TaskActions(props) {
             { ...existingTask, ...values },
             riderAssignees
         );
+        let taskIsCompleted = 0;
+        DataStore.query(models.TaskAssignee).then((assignees) => {
+            if (
+                [
+                    tasksStatus.cancelled,
+                    tasksStatus.rejected,
+                    tasksStatus.completed,
+                    tasksStatus.abandoned,
+                ].includes(status)
+            ) {
+                taskIsCompleted = 1;
+            }
+            const filtered = assignees.filter(
+                (a) => a.task && a.task.id === existingTask.id
+            );
+            filtered.map((a) =>
+                DataStore.save(
+                    models.TaskAssignee.copyOf(
+                        a,
+                        (ass) => (ass.taskIsCompleted = taskIsCompleted)
+                    )
+                )
+            );
+        });
         const updatedTask = await DataStore.save(
             models.Task.copyOf(existingTask, (upd) => {
                 upd.status = status;

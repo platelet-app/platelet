@@ -69,6 +69,7 @@ export async function saveNewTaskToDataStore(
                         task: newTask,
                         assignee: result,
                         role: userRoles.coordinator,
+                        dateTaskCreated: newTask.dateCreated,
                         tenantId,
                     })
                 ).then((assignment) => {

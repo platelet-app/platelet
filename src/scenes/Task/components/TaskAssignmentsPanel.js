@@ -102,6 +102,14 @@ function TaskAssignmentsPanel(props) {
         try {
             const assignee = await DataStore.query(models.User, user.id);
             const task = await DataStore.query(models.Task, props.taskId);
+            const taskIsCompleted = [
+                tasksStatus.completed,
+                tasksStatus.rejected,
+                tasksStatus.cancelled,
+                tasksStatus.abandoned,
+            ].includes(task.status)
+                ? 1
+                : 0;
             if (!assignee || !task)
                 throw new Error(
                     `Can't find assignee or task: ${props.taskId}, userId: ${user.id}`
@@ -112,6 +120,8 @@ function TaskAssignmentsPanel(props) {
                     task,
                     role,
                     tenantId,
+                    taskIsCompleted,
+                    dateTaskCreated: task.dateCreated,
                 })
             );
             if (role === userRoles.rider) {
