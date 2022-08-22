@@ -7,7 +7,9 @@ async function generateMultipleTaskTimeModels(
     selectedItems,
     timeKey,
     time,
-    riderAssignees
+    riderAssignees,
+    nameKey = null,
+    name = null
 ) {
     if (!selectedItems || _.isEmpty(selectedItems) || !timeKey) return;
     const filteredTasks = await DataStore.query(models.Task, (task) =>
@@ -26,10 +28,18 @@ async function generateMultipleTaskTimeModels(
                 },
                 riderAssignees
             );
-            return models.Task.copyOf(item, (updated) => {
-                updated[timeKey] = time.toISOString();
-                updated.status = status;
-            });
+            if (nameKey) {
+                return models.Task.copyOf(item, (updated) => {
+                    updated[timeKey] = time.toISOString();
+                    updated.status = status;
+                    updated[nameKey] = name;
+                });
+            } else {
+                return models.Task.copyOf(item, (updated) => {
+                    updated[timeKey] = time.toISOString();
+                    updated.status = status;
+                });
+            }
         })
     );
 }
