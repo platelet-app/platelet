@@ -141,7 +141,7 @@ type Task
 @model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
-  dateCreated: AWSDate @index(name: "byDateCreated")
+  dateCreated: AWSDate!
   createdBy: User @belongsTo
   timeOfCall: AWSDateTime
   timePickedUp: AWSDateTime
@@ -207,7 +207,7 @@ timePickedUpSenderName: String
 ])
   deliverables: [Deliverable] @hasMany
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
-  status: TaskStatus @index(name: "byStatus", queryField: "tasksByStatus")
+  status: TaskStatus @index(name: "byStatus", sortKeyFields: ["dateCreated"])
 }
 
 type TaskAssignee
@@ -223,7 +223,7 @@ type TaskAssignee
   role: Role!
   task: Task @belongsTo(fields: ["taskId"])
   assignee: User @belongsTo(fields: ["assigneeId"])
-  dateTaskCreatedIfCompleted: AWSDateTime @index(name: "byDateTaskCreatedIfCompleted")
+  dateTaskCreatedIfCompleted: AWSDate! @index(name: "byDateTaskCreatedIfCompleted")
 }
 
 type Comment
