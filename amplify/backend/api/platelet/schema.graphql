@@ -203,7 +203,7 @@ type Task
 type TaskAssignee
 @auth(rules: [
   {allow: private, operations: [read]},
-  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, delete]},
+  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
 ])
 @model {
   id: ID!
@@ -213,6 +213,7 @@ type TaskAssignee
   role: Role!
   task: Task @belongsTo(fields: ["taskId"])
   assignee: User @belongsTo(fields: ["assigneeId"])
+  dateTaskCreatedIfCompleted: AWSDateTime @index(name: "byDateTaskCreatedIfCompleted")
 }
 
 type Comment
