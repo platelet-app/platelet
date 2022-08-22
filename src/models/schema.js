@@ -648,10 +648,17 @@ export const schema = {
                         "targetName": "assigneeId"
                     }
                 },
-                "dateTaskCreatedIfCompleted": {
-                    "name": "dateTaskCreatedIfCompleted",
+                "dateTaskCreated": {
+                    "name": "dateTaskCreated",
                     "isArray": false,
-                    "type": "AWSDateTime",
+                    "type": "AWSDate",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "taskIsCompleted": {
+                    "name": "taskIsCompleted",
+                    "isArray": false,
+                    "type": "Int",
                     "isRequired": false,
                     "attributes": []
                 },
@@ -711,9 +718,10 @@ export const schema = {
                 {
                     "type": "key",
                     "properties": {
-                        "name": "byDateTaskCreatedIfCompleted",
+                        "name": "byTaskIsCompleted",
                         "fields": [
-                            "dateTaskCreatedIfCompleted"
+                            "taskIsCompleted",
+                            "dateTaskCreated"
                         ]
                     }
                 },
@@ -769,7 +777,7 @@ export const schema = {
                     "name": "dateCreated",
                     "isArray": false,
                     "type": "AWSDate",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "createdBy": {
@@ -992,15 +1000,6 @@ export const schema = {
                 {
                     "type": "key",
                     "properties": {
-                        "name": "byDateCreated",
-                        "fields": [
-                            "dateCreated"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
                         "name": "byPickUpLocation",
                         "fields": [
                             "pickUpLocationId"
@@ -1029,9 +1028,9 @@ export const schema = {
                     "type": "key",
                     "properties": {
                         "name": "byStatus",
-                        "queryField": "tasksByStatus",
                         "fields": [
-                            "status"
+                            "status",
+                            "dateCreated"
                         ]
                     }
                 },
@@ -2184,5 +2183,5 @@ export const schema = {
             }
         }
     },
-    "version": "116b67ea0e5d733cb0f2e2e48dd42135"
+    "version": "c152e3584a9afc6b59e1bc6ffb016e88"
 };

@@ -237,7 +237,8 @@ export const getUser = /* GraphQL */ `
           taskId
           assigneeId
           role
-          dateTaskCreatedIfCompleted
+          dateTaskCreated
+          taskIsCompleted
           createdAt
           updatedAt
           _version
@@ -1624,7 +1625,8 @@ export const getTask = /* GraphQL */ `
           taskId
           assigneeId
           role
-          dateTaskCreatedIfCompleted
+          dateTaskCreated
+          taskIsCompleted
           createdAt
           updatedAt
           _version
@@ -1985,163 +1987,6 @@ export const syncTasks = /* GraphQL */ `
     }
   }
 `;
-export const tasksByStatus = /* GraphQL */ `
-  query TasksByStatus(
-    $status: TaskStatus!
-    $sortDirection: ModelSortDirection
-    $filter: ModelTaskFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    tasksByStatus(
-      status: $status
-      sortDirection: $sortDirection
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        tenantId
-        dateCreated
-        createdBy {
-          id
-          username
-          cognitoId
-          tenantId
-          displayName
-          name
-          roles
-          dateOfBirth
-          riderResponsibility
-          profilePictureURL
-          disabled
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        timeOfCall
-        timePickedUp
-        timePickedUpSenderName
-        timeDroppedOff
-        timeDroppedOffRecipientName
-        timeCancelled
-        timeRejected
-        timeRiderHome
-        requesterContact {
-          name
-          telephoneNumber
-          mobileNumber
-          emailAddress
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-        }
-        pickUpLocationId
-        dropOffLocationId
-        establishmentLocationId
-        pickUpLocation {
-          id
-          tenantId
-          name
-          listed
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          disabled
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        dropOffLocation {
-          id
-          tenantId
-          name
-          listed
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          disabled
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        establishmentLocation {
-          id
-          tenantId
-          name
-          listed
-          ward
-          line1
-          line2
-          line3
-          town
-          county
-          state
-          country
-          postcode
-          what3words
-          disabled
-          createdAt
-          updatedAt
-          _version
-          _deleted
-          _lastChangedAt
-        }
-        riderResponsibility
-        assignees {
-          nextToken
-          startedAt
-        }
-        priority
-        deliverables {
-          nextToken
-          startedAt
-        }
-        comments {
-          nextToken
-          startedAt
-        }
-        status
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        userCreatedTasksId
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
 export const getTaskAssignee = /* GraphQL */ `
   query GetTaskAssignee($id: ID!) {
     getTaskAssignee(id: $id) {
@@ -2346,7 +2191,8 @@ export const getTaskAssignee = /* GraphQL */ `
         _deleted
         _lastChangedAt
       }
-      dateTaskCreatedIfCompleted
+      dateTaskCreated
+      taskIsCompleted
       createdAt
       updatedAt
       _version
@@ -2411,7 +2257,8 @@ export const listTaskAssignees = /* GraphQL */ `
           _deleted
           _lastChangedAt
         }
-        dateTaskCreatedIfCompleted
+        dateTaskCreated
+        taskIsCompleted
         createdAt
         updatedAt
         _version
@@ -2485,7 +2332,8 @@ export const syncTaskAssignees = /* GraphQL */ `
           _deleted
           _lastChangedAt
         }
-        dateTaskCreatedIfCompleted
+        dateTaskCreated
+        taskIsCompleted
         createdAt
         updatedAt
         _version
