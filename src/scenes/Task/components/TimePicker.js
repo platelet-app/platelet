@@ -42,10 +42,6 @@ function TimePicker(props) {
         setEditMode(!editMode);
     }
 
-    function onChange(value) {
-        setState(value);
-    }
-
     // check if props.time is today
     function isToday() {
         const today = new Date();

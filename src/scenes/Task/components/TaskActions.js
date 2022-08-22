@@ -1,11 +1,14 @@
 import {
     Divider,
+    Tooltip,
     Paper,
     Stack,
     ToggleButton,
     ToggleButtonGroup,
     Typography,
+    IconButton,
 } from "@mui/material";
+import InfoIcon from "@mui/icons-material/Info";
 import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import PropTypes from "prop-types";
@@ -19,7 +22,6 @@ import {
     taskAssigneesSelector,
 } from "../../../redux/Selectors";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
-import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import TaskActionConfirmationDialogContents from "./TaskActionConfirmationDialogContents";
 import TimePicker from "./TimePicker";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
@@ -27,6 +29,8 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import { saveTaskTimeWithKey } from "../utilities";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
+import { determineTaskStatus } from "../../../utilities";
+import TimeAndNamePicker from "./TimeAndNamePicker";
 
 const fields = {
     timePickedUp: "Picked up",
@@ -36,44 +40,15 @@ const fields = {
     timeRiderHome: "Rider home",
 };
 
-function humanReadableConfirmation(field, nullify) {
-    switch (field) {
-        case "timePickedUp":
-            return nullify
-                ? "Clear the picked up time?"
-                : "Set the picked up time?";
-        case "timeDroppedOff":
-            return nullify
-                ? "Clear the delivered time?"
-                : "Set the delivered time?";
-        case "timeCancelled":
-            return nullify
-                ? "Clear the cancelled time?"
-                : "Set the cancelled time?";
-        case "timeRejected":
-            return nullify
-                ? "Clear the rejected time?"
-                : "Set the rejected time?";
-        case "timeRiderHome":
-            return nullify
-                ? "Clear the rider home time?"
-                : "Set the rider home time?";
-        default:
-            return "";
-    }
-}
-
 function TaskActions(props) {
     const [state, setState] = useState([]);
     const [task, setTask] = useState(null);
     const [isFetching, setIsFetching] = useState(true);
     const [isPosting, setIsPosting] = useState(false);
     const [errorState, setErrorState] = useState(null);
-    const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
     const taskAssignees = useSelector(taskAssigneesSelector).items;
-    const confirmationKey = useRef(null);
+    const [confirmationKey, setConfirmationKey] = useState(null);
     const taskObserver = useRef({ unsubscribe: () => {} });
-    const timeSet = useRef(new Date());
     const dispatch = useDispatch();
     const cardClasses = dialogCardStyles();
     const taskModelsSynced = useSelector(
@@ -90,18 +65,12 @@ function TaskActions(props) {
     const errorMessage = "Sorry, something went wrong";
 
     function onClickToggle(key) {
-        confirmationKey.current = key;
-        timeSet.current = new Date();
-        setConfirmDialogOpen(true);
+        setConfirmationKey(key);
     }
 
-    function onAdjustTimeSet(time) {
-        timeSet.current = time;
-    }
-
-    function onChange(key) {
-        const value = state.includes(key) ? null : timeSet.current;
+    function onChange(key, value) {
         setTimeWithKey(key, value);
+        setConfirmationKey(null);
     }
 
     async function setTimeWithKey(key, value) {
@@ -120,6 +89,27 @@ function TaskActions(props) {
             setIsPosting(false);
             dispatch(displayErrorNotification(errorMessage));
         }
+    }
+
+    async function saveValues(values) {
+        setConfirmationKey(null);
+        const existingTask = await DataStore.query(models.Task, props.taskId);
+        const riderAssignees = taskAssignees.filter(
+            (assignee) => assignee.role === userRoles.rider
+        );
+        const status = await determineTaskStatus(
+            { ...existingTask, ...values },
+            riderAssignees
+        );
+        const updatedTask = await DataStore.save(
+            models.Task.copyOf(existingTask, (upd) => {
+                upd.status = status;
+                for (const key in values) {
+                    upd[key] = values[key];
+                }
+            })
+        );
+        setTask(updatedTask);
     }
 
     function calculateState() {
@@ -258,10 +248,66 @@ function TaskActions(props) {
                             </ToggleButtonGroup>
                             <Stack sx={{ width: "100%" }} direction="column">
                                 {Object.entries(fields).map(([key, value]) => {
+                                    const textfieldNameLabel =
+                                        key === "timePickedUp"
+                                            ? "Sender name"
+                                            : "Recipient name";
                                     const disabled =
                                         isPosting ||
                                         isFetching ||
                                         checkDisabled(key);
+
+                                    const tooltipKey =
+                                        key === "timePickedUp"
+                                            ? "timePickedUpSenderName"
+                                            : "timeDroppedOffRecipientName";
+
+                                    let picker = (
+                                        <TimePicker
+                                            onChange={(newValue) =>
+                                                setTimeWithKey(key, newValue)
+                                            }
+                                            disableClear
+                                            disableUnsetMessage
+                                            time={task && task[key]}
+                                            hideEditIcon={!hasFullPermissions}
+                                        />
+                                    );
+                                    if (
+                                        [
+                                            "timePickedUp",
+                                            "timeDroppedOff",
+                                        ].includes(key)
+                                    ) {
+                                        picker = (
+                                            <TimeAndNamePicker
+                                                onChange={(newValue) => {
+                                                    console.log(newValue);
+                                                    const { name, time } =
+                                                        newValue;
+                                                    const isoString = time
+                                                        ? time.toISOString()
+                                                        : null;
+                                                    const nameKey =
+                                                        key === "timePickedUp"
+                                                            ? "timePickedUpSenderName"
+                                                            : "timeDroppedOffRecipientName";
+                                                    saveValues({
+                                                        [key]: isoString,
+                                                        [nameKey]: name,
+                                                    });
+                                                }}
+                                                name={task && task[tooltipKey]}
+                                                nameLabel={textfieldNameLabel}
+                                                disableClear
+                                                disableUnsetMessage
+                                                time={task && task[key]}
+                                                hideEditIcon={
+                                                    !hasFullPermissions
+                                                }
+                                            />
+                                        );
+                                    }
                                     return (
                                         <Stack
                                             key={key}
@@ -287,20 +333,7 @@ function TaskActions(props) {
                                             >
                                                 {value.toUpperCase()}
                                             </Typography>
-                                            <TimePicker
-                                                onChange={(newValue) =>
-                                                    setTimeWithKey(
-                                                        key,
-                                                        newValue
-                                                    )
-                                                }
-                                                disableClear
-                                                disableUnsetMessage
-                                                time={task && task[key]}
-                                                hideEditIcon={
-                                                    !hasFullPermissions
-                                                }
-                                            />
+                                            {task && picker}
                                         </Stack>
                                     );
                                 })}
@@ -308,28 +341,14 @@ function TaskActions(props) {
                         </Stack>
                     </Stack>
                 </Paper>
-                <ConfirmationDialog
-                    open={confirmDialogOpen}
-                    dialogTitle={humanReadableConfirmation(
-                        confirmationKey.current,
-                        state.includes(confirmationKey.current)
-                    )}
-                    onConfirmation={() => {
-                        setConfirmDialogOpen(false);
-                        onChange(confirmationKey.current);
-                    }}
-                    onClose={() => {
-                        if (state.includes(confirmationKey.current))
-                            setConfirmDialogOpen(false);
-                    }}
-                    onCancel={() => setConfirmDialogOpen(false)}
-                >
-                    <TaskActionConfirmationDialogContents
-                        onChange={(v) => onAdjustTimeSet(v)}
-                        nullify={state.includes(confirmationKey.current)}
-                        field={confirmationKey.current}
-                    />
-                </ConfirmationDialog>
+                <TaskActionConfirmationDialogContents
+                    onConfirmation={saveValues}
+                    key={confirmationKey}
+                    nullify={state.includes(confirmationKey)}
+                    timeKey={confirmationKey}
+                    taskId={props.taskId}
+                    onClose={() => setConfirmationKey(null)}
+                />
             </>
         );
     }

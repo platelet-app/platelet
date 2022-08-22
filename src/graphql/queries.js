@@ -267,7 +267,9 @@ export const getUser = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1112,7 +1114,9 @@ export const getLocation = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1138,7 +1142,9 @@ export const getLocation = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1164,7 +1170,9 @@ export const getLocation = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1415,7 +1423,9 @@ export const getTask = /* GraphQL */ `
       }
       timeOfCall
       timePickedUp
+      timePickedUpSenderName
       timeDroppedOff
+      timeDroppedOffRecipientName
       timeCancelled
       timeRejected
       timeRiderHome
@@ -1694,7 +1704,9 @@ export const listTasks = /* GraphQL */ `
         }
         timeOfCall
         timePickedUp
+        timePickedUpSenderName
         timeDroppedOff
+        timeDroppedOffRecipientName
         timeCancelled
         timeRejected
         timeRiderHome
@@ -1846,7 +1858,9 @@ export const syncTasks = /* GraphQL */ `
         }
         timeOfCall
         timePickedUp
+        timePickedUpSenderName
         timeDroppedOff
+        timeDroppedOffRecipientName
         timeCancelled
         timeRejected
         timeRiderHome
@@ -2000,7 +2014,9 @@ export const tasksByStatus = /* GraphQL */ `
         }
         timeOfCall
         timePickedUp
+        timePickedUpSenderName
         timeDroppedOff
+        timeDroppedOffRecipientName
         timeCancelled
         timeRejected
         timeRiderHome
@@ -2147,7 +2163,9 @@ export const getTaskAssignee = /* GraphQL */ `
         }
         timeOfCall
         timePickedUp
+        timePickedUpSenderName
         timeDroppedOff
+        timeDroppedOffRecipientName
         timeCancelled
         timeRejected
         timeRiderHome
@@ -2343,7 +2361,9 @@ export const listTaskAssignees = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -2413,7 +2433,9 @@ export const syncTaskAssignees = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -2782,7 +2804,9 @@ export const getDeliverable = /* GraphQL */ `
         }
         timeOfCall
         timePickedUp
+        timePickedUpSenderName
         timeDroppedOff
+        timeDroppedOffRecipientName
         timeCancelled
         timeRejected
         timeRiderHome
@@ -2953,7 +2977,9 @@ export const listDeliverables = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -3025,7 +3051,9 @@ export const syncDeliverables = /* GraphQL */ `
           tenantId
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome

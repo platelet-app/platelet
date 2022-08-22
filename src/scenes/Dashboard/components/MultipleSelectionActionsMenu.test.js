@@ -9,7 +9,6 @@ import _ from "lodash";
 import userEvent from "@testing-library/user-event";
 import { DataStore } from "aws-amplify";
 import MultipleSelectionActionsMenu from "./MultipleSelectionActionsMenu";
-import { DashboardDetailTabs } from "./DashboardDetailTabs";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
 import ActiveRidersChips from "./ActiveRidersChips";
 
@@ -504,7 +503,6 @@ describe("MultipleSelectionActionsMenu", () => {
         };
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
-        const modelSpy = jest.spyOn(models.Task, "copyOf");
         render(
             <>
                 <MultipleSelectionActionsMenu />
@@ -537,20 +535,190 @@ describe("MultipleSelectionActionsMenu", () => {
         expect(okButton).toBeDisabled();
         // this should really check the time
         // but I can't get the stupid mocking to work
-        await waitFor(() => {
-            expect(saveSpy).toHaveBeenCalledWith({
-                ...mockTask,
-                status: newStatus,
-                [timeToSet]: expect.any(String),
+        if (timeToSet === "timePickedUp") {
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                    status: newStatus,
+                    [timeToSet]: expect.any(String),
+                    timePickedUpSenderName: null,
+                });
             });
-        });
-        await waitFor(() => {
-            expect(saveSpy).toHaveBeenCalledWith({
-                ...mockTask2,
-                status: newStatus,
-                [timeToSet]: expect.any(String),
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask2,
+                    status: newStatus,
+                    [timeToSet]: expect.any(String),
+                    timePickedUpSenderName: null,
+                });
             });
+        } else if (timeToSet === "timeDroppedOff") {
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                    status: newStatus,
+                    [timeToSet]: expect.any(String),
+                    timeDroppedOffRecipientName: null,
+                });
+            });
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask2,
+                    status: newStatus,
+                    [timeToSet]: expect.any(String),
+                    timeDroppedOffRecipientName: null,
+                });
+            });
+        } else {
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                    status: newStatus,
+                    [timeToSet]: expect.any(String),
+                });
+            });
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask2,
+                    status: newStatus,
+                    [timeToSet]: expect.any(String),
+                });
+            });
+        }
+        expect(screen.queryByTestId("CheckBoxIcon")).toBeNull();
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(5);
         });
+        expect(
+            await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
+        ).toHaveLength(1);
+    });
+
+    it.each`
+        timeToSet
+        ${"timePickedUp"} | ${"timeDroppedOff"}
+    `("set the time on two tasks with names", async ({ timeToSet }) => {
+        let taskData = {};
+        let buttonLabel = null;
+        let newStatus = null;
+        if (timeToSet === "timePickedUp") {
+            taskData = { status: tasksStatus.active };
+            buttonLabel = "Picked Up";
+            newStatus = tasksStatus.pickedUp;
+        } else if (timeToSet === "timeDroppedOff") {
+            taskData = {
+                status: tasksStatus.pickedUp,
+                timePickedUp: new Date().toISOString(),
+            };
+            buttonLabel = "Delivered";
+            newStatus = tasksStatus.droppedOff;
+        }
+        const mockTask = await DataStore.save(new models.Task(taskData));
+        const mockTask2 = await DataStore.save(new models.Task(taskData));
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        const mockRider = await DataStore.save(
+            new models.User({ roles: [userRoles.rider], displayName: "Rider" })
+        );
+        const assignments = await Promise.all(
+            [mockTask, mockTask2].map((t) =>
+                DataStore.save(
+                    new models.TaskAssignee({
+                        task: t,
+                        assignee: mockRider,
+                        role: userRoles.rider,
+                    })
+                )
+            )
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 0,
+            tenantId: "tenantId",
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: assignments,
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(
+            <>
+                <MultipleSelectionActionsMenu />
+                <TasksGridColumn
+                    title={mockTask.status}
+                    taskKey={[mockTask.status]}
+                />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(3);
+        });
+        userEvent.click(screen.getByRole("button", { name: "Select All" }));
+        expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(4);
+        const buttonToClick = screen.getByRole("button", {
+            name: "Selection " + buttonLabel,
+        });
+        expect(buttonToClick).toBeEnabled();
+        userEvent.click(buttonToClick);
+        const textBoxName =
+            timeToSet === "timePickedUp" ? "Sender name" : "Recipient name";
+        userEvent.type(
+            screen.getByRole("textbox", { name: textBoxName }),
+            "someone person"
+        );
+        const okButton = screen.getByRole("button", { name: "OK" });
+        expect(okButton).toBeEnabled();
+        userEvent.click(okButton);
+        expect(okButton).toBeDisabled();
+        if (timeToSet === "timePickedUp") {
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                    status: newStatus,
+                    [timeToSet]: expect.any(String),
+                    timePickedUpSenderName: "someone person",
+                });
+            });
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask2,
+                    status: newStatus,
+                    [timeToSet]: expect.any(String),
+                    timePickedUpSenderName: "someone person",
+                });
+            });
+        } else if (timeToSet === "timeDroppedOff") {
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                    status: newStatus,
+                    [timeToSet]: expect.any(String),
+                    timeDroppedOffRecipientName: "someone person",
+                });
+            });
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask2,
+                    status: newStatus,
+                    [timeToSet]: expect.any(String),
+                    timeDroppedOffRecipientName: "someone person",
+                });
+            });
+        }
         expect(screen.queryByTestId("CheckBoxIcon")).toBeNull();
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(5);

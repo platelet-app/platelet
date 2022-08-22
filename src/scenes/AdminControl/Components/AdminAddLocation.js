@@ -1,5 +1,12 @@
 import { DataStore, Geo } from "aws-amplify";
-import { Button, Divider, Stack, TextField, Typography } from "@mui/material";
+import {
+    Button,
+    Divider,
+    Skeleton,
+    Stack,
+    TextField,
+    Typography,
+} from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,7 +21,6 @@ import * as models from "../../../models/index";
 import Forbidden from "../../../ErrorComponents/Forbidden";
 import { getWhoami, tenantIdSelector } from "../../../redux/Selectors";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
-import FormSkeleton from "../../../SharedLoadingSkeletons/FormSkeleton";
 import OnlineLocationSearch from "../../../components/OnlineLocationSearch";
 
 const initialLocationState = {
@@ -127,7 +133,14 @@ function AdminAddLocation() {
     }
 
     if (whoamiFetching) {
-        return <FormSkeleton />;
+        return (
+            <PaddedPaper>
+                <Skeleton
+                    sx={{ height: 1200, width: "100%" }}
+                    variant="rectangle"
+                />
+            </PaddedPaper>
+        );
     } else if (!whoami.roles.includes("ADMIN")) {
         return <Forbidden />;
     } else {

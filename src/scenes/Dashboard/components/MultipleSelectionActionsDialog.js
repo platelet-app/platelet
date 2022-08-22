@@ -51,6 +51,7 @@ const MultipleSelectionActionsDialog = ({
 }) => {
     const [isDisabled, setIsDisabled] = useState(true);
     const [reasonBody, setReasonBody] = useState("");
+    const [nameInput, setNameInput] = React.useState("");
     const dispatch = useDispatch();
     const tenantId = useSelector(tenantIdSelector);
     const whoami = useSelector(getWhoami);
@@ -84,15 +85,24 @@ const MultipleSelectionActionsDialog = ({
                 );
                 onConfirmation(generatedModels);
             } else if (timeAction) {
+                debugger;
+                let nameKey;
+                if (action === actions.markPickedUp) {
+                    nameKey = "timePickedUpSenderName";
+                } else if (action === actions.markDelivered) {
+                    nameKey = "timeDroppedOffRecipientName";
+                }
+                const finalName = nameInput || null;
+                const assigneesForFunction = assignees.items
+                    ? assignees.items.filter((a) => a.role === userRoles.rider)
+                    : [];
                 const generatedModels = await generateMultipleTaskTimeModels(
                     items,
                     getKey(action),
                     saveData.current,
-                    assignees.items
-                        ? assignees.items.filter(
-                              (a) => a.role === userRoles.rider
-                          )
-                        : []
+                    assigneesForFunction,
+                    nameKey,
+                    finalName
                 );
                 let generatedComments = [];
                 if (reasonBody) {
@@ -153,6 +163,8 @@ const MultipleSelectionActionsDialog = ({
             </ConfirmationDialog>
         );
     } else if (timeAction) {
+        const nameLabel =
+            action === actions.markPickedUp ? "Sender name" : "Recipient name";
         return (
             <ConfirmationDialog
                 onCancel={onCancel}
@@ -183,6 +195,19 @@ const MultipleSelectionActionsDialog = ({
                                 placeholder="Enter a reason"
                                 value={reasonBody}
                                 onChange={(e) => setReasonBody(e.target.value)}
+                            />
+                        )}
+                        {[actions.markPickedUp, actions.markDelivered].includes(
+                            action
+                        ) && (
+                            <TextField
+                                label={nameLabel}
+                                inputProps={{
+                                    "aria-label": nameLabel,
+                                }}
+                                fullWidth
+                                value={nameInput}
+                                onChange={(e) => setNameInput(e.target.value)}
                             />
                         )}
                     </Stack>

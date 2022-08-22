@@ -5,7 +5,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import PropTypes from "prop-types";
-import { Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 
 function ConfirmationDialog(props) {
     return (
@@ -15,7 +15,9 @@ function ConfirmationDialog(props) {
             onClose={props.onClose}
         >
             <DialogTitle>{props.dialogTitle}</DialogTitle>
-            <DialogContent>{props.children}</DialogContent>
+            <DialogContent>
+                <Box sx={{ padding: 1 }}>{props.children}</Box>
+            </DialogContent>
             <DialogActions>
                 <Stack
                     direction="row"
