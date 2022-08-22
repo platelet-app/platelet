@@ -223,7 +223,8 @@ type TaskAssignee
   role: Role!
   task: Task @belongsTo(fields: ["taskId"])
   assignee: User @belongsTo(fields: ["assigneeId"])
-  dateTaskCreatedIfCompleted: AWSDate! @index(name: "byDateTaskCreatedIfCompleted")
+  dateTaskCreated: AWSDate!
+  taskIsCompleted: Int @default(value: "0") @index(name: "byTaskIsCompleted", sortKeyFields: ["dateTaskCreated"])
 }
 
 type Comment
