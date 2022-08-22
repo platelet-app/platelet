@@ -340,6 +340,7 @@ function MultipleSelectionActionsMenu() {
             </Box>
             <MultipleSelectionActionsDialog
                 onCancel={() => setCurrentAction(null)}
+                key={currentAction}
                 open={currentAction !== null}
                 items={selectedItems}
                 action={currentAction}

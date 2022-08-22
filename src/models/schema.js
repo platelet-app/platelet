@@ -628,7 +628,7 @@ export const schema = {
                     "type": {
                         "model": "Task"
                     },
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
@@ -641,19 +641,12 @@ export const schema = {
                     "type": {
                         "model": "User"
                     },
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
                         "targetName": "assigneeId"
                     }
-                },
-                "dateTaskCreatedIfCompleted": {
-                    "name": "dateTaskCreatedIfCompleted",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": []
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -709,15 +702,6 @@ export const schema = {
                     }
                 },
                 {
-                    "type": "key",
-                    "properties": {
-                        "name": "byDateTaskCreatedIfCompleted",
-                        "fields": [
-                            "dateTaskCreatedIfCompleted"
-                        ]
-                    }
-                },
-                {
                     "type": "auth",
                     "properties": {
                         "rules": [
@@ -739,7 +723,6 @@ export const schema = {
                                 "operations": [
                                     "create",
                                     "read",
-                                    "update",
                                     "delete"
                                 ]
                             }
@@ -763,13 +746,6 @@ export const schema = {
                     "isArray": false,
                     "type": "ID",
                     "isRequired": true,
-                    "attributes": []
-                },
-                "dateCreated": {
-                    "name": "dateCreated",
-                    "isArray": false,
-                    "type": "AWSDate",
-                    "isRequired": false,
                     "attributes": []
                 },
                 "createdBy": {
@@ -799,10 +775,24 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "timePickedUpSenderName": {
+                    "name": "timePickedUpSenderName",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "timeDroppedOff": {
                     "name": "timeDroppedOff",
                     "isArray": false,
                     "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "timeDroppedOffRecipientName": {
+                    "name": "timeDroppedOffRecipientName",
+                    "isArray": false,
+                    "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
@@ -972,15 +962,6 @@ export const schema = {
                         "name": "byTenantId",
                         "fields": [
                             "tenantId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byDateCreated",
-                        "fields": [
-                            "dateCreated"
                         ]
                     }
                 },
@@ -2170,5 +2151,5 @@ export const schema = {
             }
         }
     },
-    "version": "ec047d14646954f2121e76bfebbb9c42"
+    "version": "b8e16456957de18e93d8ddf39d8b2200"
 };

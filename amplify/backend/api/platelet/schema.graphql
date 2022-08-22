@@ -149,7 +149,17 @@ type Task
   {allow: private, operations: [read]},
   {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
 ])
+timePickedUpSenderName: String
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+])
   timeDroppedOff: AWSDateTime
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+])
+  timeDroppedOffRecipientName: String
 @auth(rules: [
   {allow: private, operations: [read]},
   {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},

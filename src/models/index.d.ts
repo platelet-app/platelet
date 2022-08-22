@@ -222,7 +222,9 @@ export declare class Task {
   readonly createdBy?: User | null;
   readonly timeOfCall?: string | null;
   readonly timePickedUp?: string | null;
+  readonly timePickedUpSenderName?: string | null;
   readonly timeDroppedOff?: string | null;
+  readonly timeDroppedOffRecipientName?: string | null;
   readonly timeCancelled?: string | null;
   readonly timeRejected?: string | null;
   readonly timeRiderHome?: string | null;

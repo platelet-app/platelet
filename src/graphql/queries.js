@@ -269,7 +269,9 @@ export const getUser = /* GraphQL */ `
           dateCreated
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1115,7 +1117,9 @@ export const getLocation = /* GraphQL */ `
           dateCreated
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1142,7 +1146,9 @@ export const getLocation = /* GraphQL */ `
           dateCreated
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1169,7 +1175,9 @@ export const getLocation = /* GraphQL */ `
           dateCreated
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -1421,7 +1429,9 @@ export const getTask = /* GraphQL */ `
       }
       timeOfCall
       timePickedUp
+      timePickedUpSenderName
       timeDroppedOff
+      timeDroppedOffRecipientName
       timeCancelled
       timeRejected
       timeRiderHome
@@ -1702,7 +1712,9 @@ export const listTasks = /* GraphQL */ `
         }
         timeOfCall
         timePickedUp
+        timePickedUpSenderName
         timeDroppedOff
+        timeDroppedOffRecipientName
         timeCancelled
         timeRejected
         timeRiderHome
@@ -1855,7 +1867,9 @@ export const syncTasks = /* GraphQL */ `
         }
         timeOfCall
         timePickedUp
+        timePickedUpSenderName
         timeDroppedOff
+        timeDroppedOffRecipientName
         timeCancelled
         timeRejected
         timeRiderHome
@@ -2010,7 +2024,9 @@ export const tasksByStatus = /* GraphQL */ `
         }
         timeOfCall
         timePickedUp
+        timePickedUpSenderName
         timeDroppedOff
+        timeDroppedOffRecipientName
         timeCancelled
         timeRejected
         timeRiderHome
@@ -2158,7 +2174,9 @@ export const getTaskAssignee = /* GraphQL */ `
         }
         timeOfCall
         timePickedUp
+        timePickedUpSenderName
         timeDroppedOff
+        timeDroppedOffRecipientName
         timeCancelled
         timeRejected
         timeRiderHome
@@ -2356,7 +2374,9 @@ export const listTaskAssignees = /* GraphQL */ `
           dateCreated
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -2428,7 +2448,9 @@ export const syncTaskAssignees = /* GraphQL */ `
           dateCreated
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -2799,7 +2821,9 @@ export const getDeliverable = /* GraphQL */ `
         }
         timeOfCall
         timePickedUp
+        timePickedUpSenderName
         timeDroppedOff
+        timeDroppedOffRecipientName
         timeCancelled
         timeRejected
         timeRiderHome
@@ -2971,7 +2995,9 @@ export const listDeliverables = /* GraphQL */ `
           dateCreated
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome
@@ -3044,7 +3070,9 @@ export const syncDeliverables = /* GraphQL */ `
           dateCreated
           timeOfCall
           timePickedUp
+          timePickedUpSenderName
           timeDroppedOff
+          timeDroppedOffRecipientName
           timeCancelled
           timeRejected
           timeRiderHome

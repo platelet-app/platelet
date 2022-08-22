@@ -12,6 +12,12 @@ const whoami = new models.User({
     roles: [userRoles.coordinator],
 });
 
+Object.assign(navigator, {
+  clipboard: {
+    writeText: () => {},
+  },
+});
+
 describe("TaskActions", () => {
     const RealDate = Date;
     const isoDate = "2021-11-29T23:24:58.987Z";
@@ -118,7 +124,106 @@ describe("TaskActions", () => {
                 ...mockTask,
                 timePickedUp: isoDate,
                 status: tasksStatus.pickedUp,
+                timePickedUpSenderName: "",
             });
+        });
+    });
+
+    it("clicks the picked up button and adds a sender name", async () => {
+        const mockTask = new models.Task({});
+        await DataStore.save(mockTask);
+        const spy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            role: userRoles.rider,
+        });
+        const preloadedState = {
+            roleView: "ALL",
+            whoami: { user: whoami },
+            taskAssigneesReducer: {
+                items: [mockAssignment],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(spy).toHaveBeenCalledTimes(1);
+        });
+        const button = screen.getByRole("button", { name: "Picked up" });
+        userEvent.click(button);
+        expect(screen.getByText(/Set the picked up time/)).toBeInTheDocument();
+        userEvent.type(
+            screen.getByRole("textbox", { name: "Sender name" }),
+            "someone person"
+        );
+        const okButton = screen.getByRole("button", { name: "OK" });
+        userEvent.click(okButton);
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockTask,
+                timePickedUp: isoDate,
+                status: tasksStatus.pickedUp,
+                timePickedUpSenderName: "someone person",
+            });
+        });
+        // check the tooltip
+        userEvent.hover(screen.getByRole("button", { name: "someone person" }));
+        await waitFor(() => {
+            expect(screen.getByText(/someone person/)).toBeInTheDocument();
+        });
+    });
+
+    it("changes the sender name", async () => {
+        const mockTask = new models.Task({
+            timePickedUp: isoDate,
+            timePickedUpSenderName: "someone person",
+            status: tasksStatus.pickedUp,
+        });
+        await DataStore.save(mockTask);
+        const spy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            role: userRoles.rider,
+        });
+        const preloadedState = {
+            roleView: "ALL",
+            whoami: { user: whoami },
+            taskAssigneesReducer: {
+                items: [mockAssignment],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(spy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(screen.getByRole("button", { name: "Edit" }));
+        const more = "more stuff";
+        userEvent.type(
+            screen.getByRole("textbox", { name: "Sender name" }),
+            more
+        );
+        const okButton = screen.getByRole("button", { name: "OK" });
+        userEvent.click(okButton);
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockTask,
+                timePickedUpSenderName: `someone person${more}`,
+            });
+        });
+        // check the tooltip
+        const tooltip = await screen.findByRole("button", {
+            name: "someone personmore stuff",
+        });
+        userEvent.hover(tooltip);
+        await waitFor(() => {
+            expect(
+                screen.getByText(/someone personmore stuff/)
+            ).toBeInTheDocument();
         });
     });
 
@@ -175,10 +280,153 @@ describe("TaskActions", () => {
                 ...mockTask,
                 timeDroppedOff: isoDate,
                 status: tasksStatus.droppedOff,
+                timeDroppedOffRecipientName: "",
             });
         });
     });
 
+    it("clicks the delivered button and adds recipient name", async () => {
+        const mockTask = new models.Task({ timePickedUp: isoDate });
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            role: userRoles.rider,
+        });
+        const preloadedState = {
+            roleView: "ALL",
+            whoami: { user: whoami },
+            taskAssigneesReducer: {
+                items: [mockAssignment],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        await DataStore.save(mockTask);
+        await DataStore.save(mockAssignment);
+        const spy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(spy).toHaveBeenCalledTimes(1);
+        });
+        const button = screen.getByRole("button", { name: "Delivered" });
+        expect(button).toBeInTheDocument();
+        userEvent.click(button);
+        expect(screen.getByText(/Set the delivered time/)).toBeInTheDocument();
+        userEvent.type(
+            screen.getByRole("textbox", { name: "Recipient name" }),
+            "someone person"
+        );
+        const okButton = screen.getByRole("button", { name: "OK" });
+        expect(okButton).toBeInTheDocument();
+        userEvent.click(okButton);
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockTask,
+                timeDroppedOff: isoDate,
+                status: tasksStatus.droppedOff,
+                timeDroppedOffRecipientName: "someone person",
+            });
+        });
+        // check the tooltip
+        userEvent.hover(screen.getByRole("button", { name: "someone person" }));
+        await waitFor(() => {
+            expect(screen.getByText(/someone person/)).toBeInTheDocument();
+        });
+    });
+
+    test("copy recipient and sender names to clipboard", async () => {
+        const mockTask = new models.Task({
+            timePickedUp: isoDate,
+            timePickedUpSenderName: "another one",
+            timeDroppedOff: isoDate,
+            timeDroppedOffRecipientName: "someone person",
+            status: tasksStatus.droppedOff,
+        });
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            role: userRoles.rider,
+        });
+        const preloadedState = {
+            roleView: "ALL",
+            whoami: { user: whoami },
+            taskAssigneesReducer: {
+                items: [mockAssignment],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        await DataStore.save(mockTask);
+        await DataStore.save(mockAssignment);
+        const spy = jest.spyOn(DataStore, "query");
+        const clipboardSpy = jest.spyOn(navigator.clipboard, "writeText");
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(spy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(screen.getByRole("button", { name: "another one" }));
+        await waitFor(() => {
+            expect(clipboardSpy).toHaveBeenCalledWith("another one");
+        })
+        userEvent.click(screen.getByRole("button", { name: "someone person" }));
+        await waitFor(() => {
+            expect(clipboardSpy).toHaveBeenCalledWith("someone person");
+        })
+    })
+
+    it("changes the recipient name", async () => {
+        const mockTask = new models.Task({
+            timePickedUp: isoDate,
+            timeDroppedOff: isoDate,
+            timeDroppedOffRecipientName: "someone person",
+            status: tasksStatus.droppedOff,
+        });
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            role: userRoles.rider,
+        });
+        const preloadedState = {
+            roleView: "ALL",
+            whoami: { user: whoami },
+            taskAssigneesReducer: {
+                items: [mockAssignment],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        await DataStore.save(mockTask);
+        await DataStore.save(mockAssignment);
+        const spy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(spy).toHaveBeenCalledTimes(1);
+        });
+
+        userEvent.click(screen.getAllByRole("button", { name: "Edit" })[1]);
+        const more = "more stuff";
+        userEvent.type(
+            screen.getByRole("textbox", { name: "Recipient name" }),
+            more
+        );
+        const okButton = screen.getByRole("button", { name: "OK" });
+        userEvent.click(okButton);
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockTask,
+                timeDroppedOffRecipientName: `someone person${more}`,
+            });
+        });
+        // check the tooltip
+        const tooltip = await screen.findByRole("button", {
+            name: `someone person${more}`,
+        });
+        userEvent.hover(tooltip);
+        await waitFor(() => {
+            expect(
+                screen.getByText(/someone personmore stuff/)
+            ).toBeInTheDocument();
+        });
+    });
     it("clicks the rider home button", async () => {
         const mockTask = new models.Task({
             timePickedUp: isoDate,
@@ -536,20 +784,29 @@ describe("TaskActions", () => {
         });
     });
 
-    test.skip("observer is unsubscribed on unmount", async () => {
-        const mockTask = new models.Task({
-            timePickedUp: new Date().toISOString(),
-        });
+    test("observer is unsubscribed on unmount", async () => {
+        const mockTask = await DataStore.save(
+            new models.Task({
+                timePickedUp: new Date().toISOString(),
+            })
+        );
         const unsubscribe = jest.fn();
-        const observerSpy = jest
-            .spyOn(DataStore.observe, "subscribe")
-            .mockImplementation(() => ({ unsubscribe }));
+        const observeSpy = jest
+            .spyOn(DataStore, "observe")
+            .mockImplementation(() => {
+                return {
+                    subscribe: () => ({ unsubscribe }),
+                };
+            });
         const querySpy = jest.spyOn(DataStore, "query");
         const { component } = render(<TaskActions taskId={mockTask.id} />);
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
         expect(unsubscribe).toHaveBeenCalledTimes(0);
+        await waitFor(() => {
+            expect(observeSpy).toHaveBeenCalledTimes(1);
+        });
         component.unmount();
         await waitFor(() => {
             expect(unsubscribe).toHaveBeenCalledTimes(1);
@@ -655,6 +912,7 @@ describe("TaskActions", () => {
                 ...mockTask,
                 timePickedUp: isoDate,
                 status: tasksStatus.pickedUp,
+                timePickedUpSenderName: "",
             });
         });
         userEvent.click(buttonDroppedOff);
@@ -664,6 +922,8 @@ describe("TaskActions", () => {
             expect(saveSpy).toHaveBeenNthCalledWith(2, {
                 ...mockTask,
                 timePickedUp: isoDate,
+                timePickedUpSenderName: "",
+                timeDroppedOffRecipientName: "",
                 timeDroppedOff: isoDate,
                 status: tasksStatus.droppedOff,
             });
@@ -683,6 +943,8 @@ describe("TaskActions", () => {
                 timePickedUp: isoDate,
                 timeDroppedOff: isoDate,
                 timeRiderHome: isoDate,
+                timePickedUpSenderName: "",
+                timeDroppedOffRecipientName: "",
                 status: tasksStatus.completed,
             });
         });
