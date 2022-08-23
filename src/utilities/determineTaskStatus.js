@@ -2,7 +2,7 @@ import * as models from "../models";
 import { tasksStatus, userRoles } from "../apiConsts";
 import { DataStore } from "aws-amplify";
 
-export async function determineTaskStatus(task, riderAssignees = null) {
+export default async function determineTaskStatus(task, riderAssignees = null) {
     // sort out cancelled and rejected first
     if (!!task.timeCancelled) {
         return !!task.timePickedUp
