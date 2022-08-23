@@ -57,7 +57,7 @@ function TaskContextMenu(props) {
                 copyTaskDataToClipboard(result).then(
                     function () {
                         dispatch(
-                            displayInfoNotification("Copied to clipboard.")
+                            displayInfoNotification("Copied to clipboard")
                         );
                         /* clipboard successfully set */
                     },
@@ -73,10 +73,6 @@ function TaskContextMenu(props) {
             dispatch(displayErrorNotification("Copy failed."));
         }
     }
-
-    const addRelay = (e) => {
-        handleClose(e);
-    };
 
     const handleClick = (event) => {
         event.preventDefault();
@@ -176,7 +172,7 @@ function TaskContextMenu(props) {
     return (
         <>
             <IconButton
-                aria-label="more"
+                aria-label="task options"
                 aria-controls="long-menu"
                 aria-haspopup="true"
                 onClick={handleClick}
