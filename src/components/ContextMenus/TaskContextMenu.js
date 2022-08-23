@@ -1,12 +1,10 @@
 import React from "react";
-import moment from "moment";
 import Menu from "@mui/material/Menu";
 import makeStyles from "@mui/styles/makeStyles";
 import MenuItem from "@mui/material/MenuItem";
 import { useDispatch, useSelector } from "react-redux";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import IconButton from "@mui/material/IconButton";
-import { createPostingSelector } from "../../redux/LoadingSelectors";
 import { deleteButtonStyles } from "./contextMenuCSS";
 import PropTypes from "prop-types";
 import * as models from "../../models/index";
@@ -15,13 +13,11 @@ import {
     displayInfoNotification,
 } from "../../redux/notifications/NotificationsActions";
 import { DataStore } from "aws-amplify";
-import {
-    convertListDataToObject,
-    copyTaskDataToClipboard,
-    determineTaskStatus,
-} from "../../utilities";
+import { copyTaskDataToClipboard } from "../../utilities";
+
 import { tasksStatus, userRoles } from "../../apiConsts";
 import { taskAssigneesSelector } from "../../redux/Selectors";
+import determineTaskStatus from "../../utilities/determineTaskStatus";
 
 const initialState = {
     mouseX: null,

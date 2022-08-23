@@ -1,7 +1,7 @@
 import { DataStore } from "aws-amplify";
 import { userRoles } from "../../apiConsts";
 import * as models from "../../models";
-import { determineTaskStatus } from "../../utilities";
+import determineTaskStatus from "../../utilities/determineTaskStatus";
 
 export async function saveTaskTimeWithKey(key, value, taskId, taskAssignees) {
     let isoString = null;

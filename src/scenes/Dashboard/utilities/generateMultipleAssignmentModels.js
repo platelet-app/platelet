@@ -2,7 +2,7 @@ import { DataStore } from "aws-amplify";
 import _ from "lodash";
 import { userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
-import { determineTaskStatus } from "../../../utilities";
+import determineTaskStatus from "../../../utilities/determineTaskStatus";
 
 async function generateMultipleAssignmentModels(
     selectedItems,
