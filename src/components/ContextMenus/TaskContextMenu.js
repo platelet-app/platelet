@@ -266,9 +266,6 @@ function TaskContextMenu(props) {
                 >
                     Mark cancelled
                 </MenuItem>
-                <MenuItem disabled={task === null} onClick={copyToClipboard}>
-                    Copy to clipboard
-                </MenuItem>
                 <MenuItem
                     disabled={
                         task === null ||
@@ -282,6 +279,9 @@ function TaskContextMenu(props) {
                     onClick={onDuplicate}
                 >
                     Duplicate
+                </MenuItem>
+                <MenuItem disabled={task === null} onClick={copyToClipboard}>
+                    Copy to clipboard
                 </MenuItem>
                 <MenuItem
                     className={

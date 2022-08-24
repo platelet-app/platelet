@@ -329,10 +329,10 @@ describe("TaskContextMenu", () => {
             })
         );
         const mockLocation = await DataStore.save(
-            new models.Location({ name: "woop" })
+            new models.Location({ name: "woop", listed: 1 })
         );
         const mockLocation2 = await DataStore.save(
-            new models.Location({ name: "ohp" })
+            new models.Location({ name: "ohp", listed: 1 })
         );
         const task = await DataStore.save(
             new models.Task({
@@ -383,17 +383,67 @@ describe("TaskContextMenu", () => {
         expect(saveSpy).toHaveBeenCalledWith({
             ...deliverables[0],
             id: expect.any(String),
-            task: { ...task, id: expect.any(String) },
+            task: {
+                ...task,
+                id: expect.any(String),
+            },
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...deliverables[1],
             id: expect.any(String),
-            task: { ...task, id: expect.any(String) },
+            task: {
+                ...task,
+                id: expect.any(String),
+            },
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockTaskAssignee,
             id: expect.any(String),
-            task: { ...task, id: expect.any(String) },
+            task: {
+                ...task,
+                id: expect.any(String),
+            },
+        });
+    });
+
+    test("duplicate a task with unlisted locations", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                displayName: "someone person",
+                roles: [userRoles.user, userRoles.coordinator],
+            })
+        );
+        const mockLocation = await DataStore.save(
+            new models.Location({ name: "woop", listed: 0 })
+        );
+        const mockLocation2 = await DataStore.save(
+            new models.Location({ name: "ohp", listed: 0 })
+        );
+        const task = await DataStore.save(
+            new models.Task({
+                status: tasksStatus.new,
+                pickUpLocation: mockLocation,
+                dropOffLocation: mockLocation2,
+            })
+        );
+        const saveSpy = jest.spyOn(DataStore, "save");
+        const preloadedState = {
+            whoami: { user: whoami },
+        };
+        render(<TaskContextMenu task={task} assignedRiders={[]} />, {
+            preloadedState,
+        });
+        const button = screen.getByRole("button", { name: "task options" });
+        userEvent.click(button);
+        userEvent.click(screen.getByRole("menuitem", { name: "Duplicate" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(2);
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...task,
+            id: expect.any(String),
+            pickUpLocation: { ...mockLocation, id: expect.any(String) },
+            dropOffLocation: { ...mockLocation2, id: expect.any(String) },
         });
     });
 
