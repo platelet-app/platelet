@@ -1,10 +1,9 @@
 import { DataStore } from "aws-amplify";
 import _ from "lodash";
-import { protectedFields, tasksStatus } from "../apiConsts";
+import { tasksStatus } from "../apiConsts";
 import * as models from "../models";
 
-export default async function duplicateTask(taskId) {
-    const task = await DataStore.query(models.Task, taskId);
+export default async function duplicateTask(task) {
     let {
         id,
         _version,
@@ -22,22 +21,14 @@ export default async function duplicateTask(taskId) {
         pickUpLocation,
         ...rest
     } = { ...task };
-    const ignoreFields = [
-        "id",
-        "_version",
-        "_lastChangedAt",
-        "_deleted",
-        "updatedAt",
-        "createdAt",
-    ];
     if (pickUpLocation?.listed === 0) {
         pickUpLocation = new models.Location({
-            ..._.omit(pickUpLocation, ...ignoreFields),
+            ...pickUpLocation,
         });
     }
     if (dropOffLocation?.listed === 0) {
         dropOffLocation = new models.Location({
-            ..._.omit(dropOffLocation, ...ignoreFields),
+            ...dropOffLocation,
         });
     }
     const newTaskData = new models.Task({

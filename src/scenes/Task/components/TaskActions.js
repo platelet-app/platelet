@@ -1,14 +1,11 @@
 import {
     Divider,
-    Tooltip,
     Paper,
     Stack,
     ToggleButton,
     ToggleButtonGroup,
     Typography,
-    IconButton,
 } from "@mui/material";
-import InfoIcon from "@mui/icons-material/Info";
 import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import PropTypes from "prop-types";

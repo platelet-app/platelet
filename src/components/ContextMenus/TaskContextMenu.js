@@ -168,7 +168,7 @@ function TaskContextMenu(props) {
 
     async function onDuplicate(e) {
         try {
-            const dupTask = await duplicateTask(task.id);
+            const dupTask = await duplicateTask(task);
             const assignee = await DataStore.query(models.User, whoami.id);
             await DataStore.save(
                 new models.TaskAssignee({

@@ -11,6 +11,7 @@ import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import MultipleSelectionActionsInformation from "./MultipleSelectionActionsInformation";
 import MultipleSelectionActionsAssignUser from "./MultipleSelectionActionsAssignUser";
 import MultipleSelectionActionsSetTime from "./MultipleSelectionActionsSetTime";
+import MultipleSelectionActionsDuplicateTask from "./MultipleSelectionActionsDuplicateTask";
 import { useDispatch, useSelector } from "react-redux";
 import {
     getWhoami,
@@ -23,11 +24,11 @@ import generateMultipleTaskTimeModels from "../utilities/generateMultipleTaskTim
 import generateMultipleTaskComments from "../utilities/generateMultipleTaskComments";
 import { DataStore } from "aws-amplify";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import duplicateTask from "../../../utilities/duplicateTask";
+import generateMultipleDuplicatedTaskModels from "../utilities/generateMultipleDuplicatedTaskModels";
 
 const getKey = (action) => {
     switch (action) {
-        case actions.assignUser:
-            return null;
         case actions.markPickedUp:
             return "timePickedUp";
         case actions.markDelivered:
@@ -39,7 +40,20 @@ const getKey = (action) => {
         case dotActions.markRejected:
             return "timeRejected";
         default:
+            return null;
     }
+};
+
+const duplicateInitialState = {
+    copyAssignees: false,
+    copyComments: false,
+    assignMe: true,
+};
+
+export const duplicateFields = {
+    copyAssignees: "Copy assignees",
+    copyComments: "Copy my comments",
+    assignMe: "Assign me",
 };
 
 const MultipleSelectionActionsDialog = ({
@@ -52,6 +66,7 @@ const MultipleSelectionActionsDialog = ({
     const [isDisabled, setIsDisabled] = useState(true);
     const [reasonBody, setReasonBody] = useState("");
     const [nameInput, setNameInput] = React.useState("");
+    const [duplicateState, setDuplicateState] = useState(duplicateInitialState);
     const dispatch = useDispatch();
     const tenantId = useSelector(tenantIdSelector);
     const whoami = useSelector(getWhoami);
@@ -71,6 +86,24 @@ const MultipleSelectionActionsDialog = ({
         dotActions.markRejected,
     ].includes(action);
 
+    const handleDuplicateConfirmation = async () => {
+        try {
+            setIsDisabled(true);
+            const coordId = duplicateState.assignMe ? whoami.id : null;
+            const models = await generateMultipleDuplicatedTaskModels(
+                items,
+                duplicateState.copyAssignees,
+                coordId
+            );
+            onConfirmation(models);
+            setIsDisabled(false);
+        } catch (error) {
+            console.log(error);
+            setIsDisabled(false);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+        }
+    };
+
     const handleConfirmation = async () => {
         try {
             if (!saveData.current) return;
@@ -85,7 +118,6 @@ const MultipleSelectionActionsDialog = ({
                 );
                 onConfirmation(generatedModels);
             } else if (timeAction) {
-                debugger;
                 let nameKey;
                 if (action === actions.markPickedUp) {
                     nameKey = "timePickedUpSenderName";
@@ -120,7 +152,6 @@ const MultipleSelectionActionsDialog = ({
                 onConfirmation([...generatedModels, ...generatedComments]);
             }
             setReasonBody("");
-
             setIsDisabled(false);
         } catch (error) {
             console.log(error);
@@ -128,6 +159,19 @@ const MultipleSelectionActionsDialog = ({
             dispatch(displayErrorNotification("Sorry, something went wrong"));
         }
     };
+
+    const onChangeDuplicateState = (key) => {
+        setDuplicateState((prevState) => ({
+            ...prevState,
+            [key]: !prevState[key],
+        }));
+    };
+
+    React.useEffect(() => {
+        if (action === dotActions.duplicate) {
+            setIsDisabled(false);
+        }
+    }, [action]);
 
     const handleChange = React.useCallback((value) => {
         if (value) {
@@ -157,6 +201,29 @@ const MultipleSelectionActionsDialog = ({
                         <MultipleSelectionActionsAssignUser
                             onChange={handleChange}
                             selectedItems={items}
+                        />
+                    </Stack>
+                </Paper>
+            </ConfirmationDialog>
+        );
+    } else if (action === dotActions.duplicate) {
+        return (
+            <ConfirmationDialog
+                onCancel={onCancel}
+                disabled={isDisabled}
+                open={open}
+                fullScreen={isSm}
+                onConfirmation={handleDuplicateConfirmation}
+            >
+                <Paper sx={sx}>
+                    <Stack divider={<Divider />} direction="column" spacing={2}>
+                        <MultipleSelectionActionsInformation
+                            selectedItems={items}
+                            action={action}
+                        />
+                        <MultipleSelectionActionsDuplicateTask
+                            options={duplicateState}
+                            onChange={onChangeDuplicateState}
                         />
                     </Stack>
                 </Paper>

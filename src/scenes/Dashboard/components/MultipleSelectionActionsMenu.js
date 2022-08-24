@@ -41,6 +41,7 @@ export const actions = {
 export const dotActions = {
     markCancelled: "Cancelled",
     markRejected: "Rejected",
+    duplicate: "Duplicate",
 };
 
 const initialState = {
@@ -226,6 +227,7 @@ function MultipleSelectionActionsMenu() {
     }
 
     async function handleConfirmation(models) {
+        console.log(models);
         setCurrentAction(null);
         dispatch(selectionActions.setSelectionActionsPending(true));
         await saveModels(models);
