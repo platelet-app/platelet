@@ -16,8 +16,9 @@ import { DataStore } from "aws-amplify";
 import { copyTaskDataToClipboard } from "../../utilities";
 
 import { tasksStatus, userRoles } from "../../apiConsts";
-import { taskAssigneesSelector } from "../../redux/Selectors";
+import { getWhoami, taskAssigneesSelector } from "../../redux/Selectors";
 import determineTaskStatus from "../../utilities/determineTaskStatus";
+import duplicateTask from "../../utilities/duplicateTask";
 
 const initialState = {
     mouseX: null,
@@ -29,6 +30,7 @@ function TaskContextMenu(props) {
     const { task } = props;
     const [state, setState] = React.useState(initialState);
     const [isPosting, setIsPosting] = React.useState(false);
+    const whoami = useSelector(getWhoami);
     const deleteButtonClasses = deleteButtonStyles();
     const taskAssignees = useSelector(taskAssigneesSelector).items;
     const useStyles = makeStyles({
@@ -103,7 +105,7 @@ function TaskContextMenu(props) {
         } catch (e) {
             console.log(e);
             setIsPosting(false);
-            dispatch(displayErrorNotification("Sorry, an error occurred."));
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
         }
     }
 
@@ -161,6 +163,24 @@ function TaskContextMenu(props) {
     }
 
     function onDelete(e) {
+        handleClose(e);
+    }
+
+    async function onDuplicate(e) {
+        try {
+            const dupTask = await duplicateTask(task.id);
+            const assignee = await DataStore.query(models.User, whoami.id);
+            await DataStore.save(
+                new models.TaskAssignee({
+                    task: dupTask,
+                    assignee,
+                    role: userRoles.coordinator,
+                })
+            );
+        } catch (e) {
+            console.log(e);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+        }
         handleClose(e);
     }
 
@@ -246,7 +266,23 @@ function TaskContextMenu(props) {
                 >
                     Mark cancelled
                 </MenuItem>
-                <MenuItem onClick={copyToClipboard}>Copy to clipboard</MenuItem>
+                <MenuItem disabled={task === null} onClick={copyToClipboard}>
+                    Copy to clipboard
+                </MenuItem>
+                <MenuItem
+                    disabled={
+                        task === null ||
+                        [
+                            tasksStatus.cancelled,
+                            tasksStatus.abandoned,
+                            tasksStatus.rejected,
+                            tasksStatus.completed,
+                        ].includes(task.status)
+                    }
+                    onClick={onDuplicate}
+                >
+                    Duplicate
+                </MenuItem>
                 <MenuItem
                     className={
                         props.disableDeleted

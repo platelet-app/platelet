@@ -63,6 +63,31 @@ describe("TaskContextMenu", () => {
         });
     });
 
+    test("cancel a task failure", async () => {
+        const task = await DataStore.save(
+            new models.Task({
+                status: tasksStatus.new,
+            })
+        );
+        const saveSpy = jest
+            .spyOn(DataStore, "save")
+            .mockRejectedValue(new Error());
+        render(<TaskContextMenu task={task} assignedRiders={[]} />);
+        const button = screen.getByRole("button", { name: "task options" });
+        userEvent.click(button);
+        userEvent.click(
+            screen.getByRole("menuitem", { name: "Mark cancelled" })
+        );
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(1);
+        });
+        await waitFor(() => {
+            expect(
+                screen.getByText("Sorry, something went wrong")
+            ).toBeInTheDocument();
+        });
+    });
+
     test("reject a task", async () => {
         const task = await DataStore.save(
             new models.Task({
@@ -273,7 +298,7 @@ describe("TaskContextMenu", () => {
             });
         });
     });
-    test.only("copy to clipboard", async () => {
+    test("copy to clipboard", async () => {
         const task = await DataStore.save(
             new models.Task({
                 status: tasksStatus.new,
@@ -294,5 +319,121 @@ describe("TaskContextMenu", () => {
         await waitFor(() => {
             expect(screen.getByText("Copied to clipboard")).toBeInTheDocument();
         });
+    });
+
+    test("duplicate a task", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                displayName: "someone person",
+                roles: [userRoles.user, userRoles.coordinator],
+            })
+        );
+        const mockLocation = await DataStore.save(
+            new models.Location({ name: "woop" })
+        );
+        const mockLocation2 = await DataStore.save(
+            new models.Location({ name: "ohp" })
+        );
+        const task = await DataStore.save(
+            new models.Task({
+                status: tasksStatus.new,
+                pickUpLocation: mockLocation,
+                dropOffLocation: mockLocation2,
+            })
+        );
+        const mockTaskAssignee = new models.TaskAssignee({
+            task,
+            assignee: whoami,
+            role: userRoles.coordinator,
+        });
+        const deliverableTypes = await Promise.all(
+            ["test deliverable", "another one"].map((d) =>
+                DataStore.save(new models.DeliverableType({ label: d }))
+            )
+        );
+        const deliverables = await Promise.all(
+            deliverableTypes.map((deliverableType) =>
+                DataStore.save(
+                    new models.Deliverable({
+                        deliverableType,
+                        count: 3,
+                        unit: deliverableType.defaultUnit,
+                        task,
+                    })
+                )
+            )
+        );
+        const saveSpy = jest.spyOn(DataStore, "save");
+        const preloadedState = {
+            whoami: { user: whoami },
+        };
+        render(<TaskContextMenu task={task} assignedRiders={[]} />, {
+            preloadedState,
+        });
+        const button = screen.getByRole("button", { name: "task options" });
+        userEvent.click(button);
+        userEvent.click(screen.getByRole("menuitem", { name: "Duplicate" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(4);
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...task,
+            id: expect.any(String),
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...deliverables[0],
+            id: expect.any(String),
+            task: { ...task, id: expect.any(String) },
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...deliverables[1],
+            id: expect.any(String),
+            task: { ...task, id: expect.any(String) },
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockTaskAssignee,
+            id: expect.any(String),
+            task: { ...task, id: expect.any(String) },
+        });
+    });
+
+    test("duplicate a task failure", async () => {
+        const task = await DataStore.save(
+            new models.Task({
+                status: tasksStatus.new,
+            })
+        );
+        const saveSpy = jest
+            .spyOn(DataStore, "save")
+            .mockRejectedValue(new Error());
+        render(<TaskContextMenu task={task} assignedRiders={[]} />);
+        const button = screen.getByRole("button", { name: "task options" });
+        userEvent.click(button);
+        userEvent.click(screen.getByRole("menuitem", { name: "Duplicate" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(1);
+        });
+        await waitFor(() => {
+            expect(
+                screen.getByText("Sorry, something went wrong")
+            ).toBeInTheDocument();
+        });
+    });
+
+    test.each`
+        taskStatus
+        ${tasksStatus.completed} | ${tasksStatus.abandoned} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
+    `("disable duplicate if completed", async ({ taskStatus }) => {
+        const task = await DataStore.save(
+            new models.Task({
+                status: taskStatus,
+            })
+        );
+        render(<TaskContextMenu task={task} assignedRiders={[]} />);
+        const button = screen.getByRole("button", { name: "task options" });
+        userEvent.click(button);
+        expect(
+            screen.getByRole("menuitem", { name: "Duplicate" })
+        ).toHaveAttribute("aria-disabled", "true");
     });
 });
