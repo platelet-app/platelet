@@ -71,8 +71,8 @@ describe("MultipleSelectionActionsMenu", () => {
     });
     test.each`
         taskStatus
-        ${tasksStatus.completed} | ${tasksStatus.droppedOff} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
-        ${tasksStatus.active}    | ${tasksStatus.pickedUp}   | ${tasksStatus.new}      | ${tasksStatus.droppedOff}
+        ${tasksStatus.completed} | ${tasksStatus.abandoned} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
+        ${tasksStatus.active}    | ${tasksStatus.pickedUp}  | ${tasksStatus.new}      | ${tasksStatus.droppedOff}
     `(
         "enables and disables the menu based on status",
         async ({ taskStatus }) => {
@@ -85,7 +85,7 @@ describe("MultipleSelectionActionsMenu", () => {
             );
             const dashboardTabIndex = [
                 tasksStatus.completed,
-                tasksStatus.droppedOff,
+                tasksStatus.abandoned,
                 tasksStatus.rejected,
                 tasksStatus.cancelled,
             ].includes(taskStatus)
@@ -233,8 +233,8 @@ describe("MultipleSelectionActionsMenu", () => {
 
     test.each`
         taskStatus
-        ${tasksStatus.completed} | ${tasksStatus.droppedOff} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
-        ${tasksStatus.active}    | ${tasksStatus.pickedUp}   | ${tasksStatus.new}      | ${tasksStatus.droppedOff}
+        ${tasksStatus.completed} | ${tasksStatus.abandoned} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
+        ${tasksStatus.active}    | ${tasksStatus.pickedUp}  | ${tasksStatus.new}      | ${tasksStatus.droppedOff}
     `(
         "cancelled and rejected are disabled based on status",
         async ({ taskStatus }) => {
@@ -247,7 +247,7 @@ describe("MultipleSelectionActionsMenu", () => {
             );
             const dashboardTabIndex = [
                 tasksStatus.completed,
-                tasksStatus.droppedOff,
+                tasksStatus.abandoned,
                 tasksStatus.rejected,
                 tasksStatus.cancelled,
             ].includes(taskStatus)
