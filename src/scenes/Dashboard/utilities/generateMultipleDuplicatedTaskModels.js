@@ -6,10 +6,12 @@ import * as models from "../../../models";
 export default async function generateMultipleDuplicatedTaskModels(
     tasks,
     copyAssignees = false,
-    assignCoordinatorId = null,
+    assigneeId = null,
+    assigneeRole = null,
     copyCommentsUserId = null
 ) {
     const allAssignees = await DataStore.query(models.TaskAssignee);
+    const deliverables = await DataStore.query(models.Deliverable);
     const result = await Promise.all(
         Object.values(tasks).map(async (task) => {
             let {
@@ -47,7 +49,6 @@ export default async function generateMultipleDuplicatedTaskModels(
                 dropOffLocation,
             });
 
-            const deliverables = await DataStore.query(models.Deliverable);
             const filteredDeliverables = deliverables.filter(
                 (d) => d.task?.id === task.id
             );
@@ -56,40 +57,54 @@ export default async function generateMultipleDuplicatedTaskModels(
                 const assignees = allAssignees.filter(
                     (a) => a.task?.id === task.id
                 );
-                // if there is a rider then make it active
-                // and set the rider role back to original
-                if (assignees.find((a) => a.role === userRoles.rider)) {
-                    newTaskData = new models.Task({
-                        ...newTaskData,
-                        riderResponsibility,
-                        status: tasksStatus.active,
-                    });
-                }
                 assigneeModels = assignees.map(
                     (a) => new models.TaskAssignee({ ...a, task: newTaskData })
                 );
             }
-            if (assignCoordinatorId) {
+            if (assigneeId && assigneeRole) {
                 if (
                     !assigneeModels.find(
-                        (a) => a.assignee?.id === assignCoordinatorId
+                        (a) =>
+                            a.assignee?.id === assigneeId &&
+                            a.role === assigneeRole
                     )
                 ) {
-                    const user = await DataStore.query(
-                        models.User,
-                        assignCoordinatorId
-                    );
+                    const user = await DataStore.query(models.User, assigneeId);
                     if (user) {
-                        const coordAssignee = new models.TaskAssignee({
+                        const newAssignee = new models.TaskAssignee({
                             task: newTaskData,
                             assignee: user,
-                            role: userRoles.coordinator,
+                            role: assigneeRole,
                         });
-                        assigneeModels = [...assigneeModels, coordAssignee];
+                        assigneeModels = [...assigneeModels, newAssignee];
                     }
                 }
             }
-            // only refer to the new task model after this point
+            // if there is a rider then make it active
+            // and set the rider role back to the last rider
+            if (assigneeModels.find((a) => a.role === userRoles.rider)) {
+                const riders = assigneeModels
+                    .filter((a) => a.role === userRoles.rider)
+                    .map((a) => a.assignee);
+                if (riders.length > 0) {
+                    const rider = riders[riders.length - 1];
+                    if (rider && rider.riderResponsibility) {
+                        riderResponsibility = rider.riderResponsibility;
+                    }
+                } else {
+                    riderResponsibility = null;
+                }
+                newTaskData = new models.Task({
+                    ...newTaskData,
+                    riderResponsibility,
+                    status: tasksStatus.active,
+                });
+                // go back and update the now out of date task references
+                assigneeModels = assigneeModels.map((a) => ({
+                    ...a,
+                    task: newTaskData,
+                }));
+            }
             const deliverablesResult = filteredDeliverables.map(
                 (del) => new models.Deliverable({ ...del, task: newTaskData })
             );

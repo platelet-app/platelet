@@ -1060,6 +1060,135 @@ describe("MultipleSelectionActionsMenu", () => {
         }
     );
 
+    test.each`
+        role
+        ${userRoles.rider} | ${userRoles.coordinator} | ${"ALL"}
+    `("duplicate some tasks and assign self", async ({ role }) => {
+        let actualRole = [userRoles.coordinator, "ALL"].includes(role)
+            ? userRoles.coordinator
+            : userRoles.rider;
+
+        const status =
+            actualRole !== userRoles.rider
+                ? tasksStatus.new
+                : tasksStatus.active;
+
+        const mockTasks = await Promise.all(
+            _.range(2).map(() =>
+                DataStore.save(
+                    new models.Task({
+                        status,
+                        tenantId: "tenantId",
+                    })
+                )
+            )
+        );
+        const mockDeliverableTypes = await Promise.all(
+            _.range(2).map((i) =>
+                DataStore.save(
+                    new models.DeliverableType({ label: `test-${i}` })
+                )
+            )
+        );
+        const deliverable1 = await DataStore.save(
+            new models.Deliverable({
+                task: mockTasks[0],
+                deliverableType: mockDeliverableTypes[0],
+                count: 1,
+            })
+        );
+        const deliverable2 = await DataStore.save(
+            new models.Deliverable({
+                task: mockTasks[1],
+                deliverableType: mockDeliverableTypes[0],
+                count: 2,
+            })
+        );
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator, userRoles.rider],
+                displayName: "Someone Person",
+                riderRole: "some role",
+            })
+        );
+
+        const mockAssignments = await Promise.all(
+            mockTasks.map((task) =>
+                DataStore.save(
+                    new models.TaskAssignee({
+                        task,
+                        assignee: mockWhoami,
+                        role: actualRole,
+                    })
+                )
+            )
+        );
+
+        const preloadedState = {
+            roleView: role,
+            dashboardTabIndex: 0,
+            tenantId: "tenantId",
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: mockAssignments,
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(
+            <>
+                <MultipleSelectionActionsMenu />
+                <TasksGridColumn title={status} taskKey={[status]} />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(screen.getByRole("button", { name: "Select All" }));
+        userEvent.click(
+            screen.getByRole("button", { name: "Selection Duplicate" })
+        );
+        const okButton = screen.getByRole("button", { name: "OK" });
+        userEvent.click(okButton);
+        expect(okButton).toBeDisabled();
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(6);
+        });
+        mockTasks.forEach((t) => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...t,
+                id: expect.not.stringMatching(t.id),
+            });
+        });
+        const mockAssigns = mockTasks.map(
+            (task) =>
+                new models.TaskAssignee({
+                    task,
+                    assignee: mockWhoami,
+                    role: actualRole,
+                })
+        );
+        mockAssigns.forEach((a) => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...a,
+                id: expect.any(String),
+                task: { ...a.task, id: expect.not.stringMatching(a.task.id) },
+            });
+        });
+        [deliverable1, deliverable2].forEach((d) => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...d,
+                task: { ...d.task, id: expect.not.stringMatching(d.task.id) },
+                id: expect.not.stringMatching(d.id),
+            });
+        });
+    });
+
     test("the checkboxes are disabled when filters are applied", async () => {
         const mockTask = await DataStore.save(
             new models.Task({ status: tasksStatus.active })

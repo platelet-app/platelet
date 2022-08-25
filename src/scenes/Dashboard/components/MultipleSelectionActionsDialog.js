@@ -14,6 +14,7 @@ import MultipleSelectionActionsSetTime from "./MultipleSelectionActionsSetTime";
 import MultipleSelectionActionsDuplicateTask from "./MultipleSelectionActionsDuplicateTask";
 import { useDispatch, useSelector } from "react-redux";
 import {
+    getRoleView,
     getWhoami,
     taskAssigneesSelector,
     tenantIdSelector,
@@ -24,7 +25,6 @@ import generateMultipleTaskTimeModels from "../utilities/generateMultipleTaskTim
 import generateMultipleTaskComments from "../utilities/generateMultipleTaskComments";
 import { DataStore } from "aws-amplify";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
-import duplicateTask from "../../../utilities/duplicateTask";
 import generateMultipleDuplicatedTaskModels from "../utilities/generateMultipleDuplicatedTaskModels";
 
 const getKey = (action) => {
@@ -67,6 +67,7 @@ const MultipleSelectionActionsDialog = ({
     const [reasonBody, setReasonBody] = useState("");
     const [nameInput, setNameInput] = React.useState("");
     const [duplicateState, setDuplicateState] = useState(duplicateInitialState);
+    const roleView = useSelector(getRoleView);
     const dispatch = useDispatch();
     const tenantId = useSelector(tenantIdSelector);
     const whoami = useSelector(getWhoami);
@@ -89,11 +90,17 @@ const MultipleSelectionActionsDialog = ({
     const handleDuplicateConfirmation = async () => {
         try {
             setIsDisabled(true);
-            const coordId = duplicateState.assignMe ? whoami.id : null;
+            const assigneeId = duplicateState.assignMe ? whoami.id : null;
+            const assigneeRole = [userRoles.coordinator, "ALL"].includes(
+                roleView
+            )
+                ? userRoles.coordinator
+                : userRoles.rider;
             const models = await generateMultipleDuplicatedTaskModels(
                 items,
                 duplicateState.copyAssignees,
-                coordId
+                assigneeId,
+                assigneeRole
             );
             onConfirmation(models);
             setIsDisabled(false);
