@@ -1424,7 +1424,7 @@ describe("MultipleSelectionActionsMenu", () => {
         });
     });
 
-    test.only("double confirm if affecting a lot of items", async () => {
+    test("double confirm if affecting a lot of items", async () => {
         const mockTasks = await Promise.all(
             _.range(10).map(() =>
                 DataStore.save(new models.Task({ status: tasksStatus.new }))

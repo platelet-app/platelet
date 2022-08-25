@@ -23,6 +23,8 @@ export default async function generateMultipleDuplicatedTaskModels(
                 createdAt,
                 timePickedUp,
                 timeDroppedOff,
+                timePickedUpSenderName,
+                timeDroppedOffRecipientName,
                 timeRiderHome,
                 timeRejected,
                 timeCancelled,
