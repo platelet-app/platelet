@@ -1061,7 +1061,7 @@ describe("MultipleSelectionActionsMenu", () => {
         }
     );
 
-    test.only.each`
+    test.each`
         role
         ${userRoles.rider} | ${userRoles.coordinator} | ${"ALL"}
     `("duplicate some tasks and assign self", async ({ role }) => {
@@ -1422,5 +1422,83 @@ describe("MultipleSelectionActionsMenu", () => {
         await waitFor(() => {
             expect(okButton).toBeDisabled();
         });
+    });
+
+    test.only("double confirm if affecting a lot of items", async () => {
+        const mockTasks = await Promise.all(
+            _.range(10).map(() =>
+                DataStore.save(new models.Task({ status: tasksStatus.new }))
+            )
+        );
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        const assignee = await DataStore.save(
+            new models.User({
+                roles: [userRoles.rider],
+                displayName: "Other Person",
+                riderResponsibility: "test",
+            })
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 0,
+            tenantId: "tenantId",
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(
+            <>
+                <MultipleSelectionActionsMenu />
+                <TasksGridColumn
+                    title={tasksStatus.new}
+                    taskKey={[tasksStatus.new]}
+                />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(11);
+        });
+        userEvent.click(screen.getByRole("button", { name: "Select All" }));
+        userEvent.click(
+            screen.getByRole("button", { name: "Selection Assign User" })
+        );
+        const textBox = screen.getByRole("textbox");
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(12);
+        });
+        userEvent.type(textBox, assignee.displayName);
+        userEvent.click(screen.getByText(assignee.displayName));
+        const okButton = screen.getByRole("button", { name: "OK" });
+        userEvent.click(okButton);
+        expect(
+            screen.getByText("You have 10 items selected.")
+        ).toBeInTheDocument();
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(0);
+        });
+        expect(screen.getByText("Are you sure?")).toBeInTheDocument();
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(20);
+        });
+        console.log(saveSpy.mock.calls);
+        expect(screen.queryByTestId("CheckBoxIcon")).toBeNull();
     });
 });
