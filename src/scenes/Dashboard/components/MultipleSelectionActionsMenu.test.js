@@ -1498,7 +1498,6 @@ describe("MultipleSelectionActionsMenu", () => {
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledTimes(20);
         });
-        console.log(saveSpy.mock.calls);
         expect(screen.queryByTestId("CheckBoxIcon")).toBeNull();
     });
 });
