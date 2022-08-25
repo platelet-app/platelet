@@ -100,15 +100,36 @@ export default async function generateMultipleDuplicatedTaskModels(
                     status: tasksStatus.active,
                 });
                 // go back and update the now out of date task references
-                assigneeModels = assigneeModels.map((a) => ({
-                    ...a,
-                    task: newTaskData,
-                }));
+                assigneeModels = assigneeModels.map(
+                    (a) =>
+                        new models.TaskAssignee({
+                            ...a,
+                            task: newTaskData,
+                        })
+                );
             }
             const deliverablesResult = filteredDeliverables.map(
                 (del) => new models.Deliverable({ ...del, task: newTaskData })
             );
-            return [...deliverablesResult, ...assigneeModels, newTaskData];
+            let newComments = [];
+            if (copyCommentsUserId) {
+                const oldComments = await DataStore.query(models.Comment, (c) =>
+                    c.parentId("eq", task.id)
+                );
+                const filteredComments = oldComments.filter(
+                    (c) => c.author?.id === copyCommentsUserId
+                );
+                newComments = filteredComments.map(
+                    (c) =>
+                        new models.Comment({ ...c, parentId: newTaskData.id })
+                );
+            }
+            return [
+                ...deliverablesResult,
+                ...assigneeModels,
+                ...newComments,
+                newTaskData,
+            ];
         })
     );
     return result.flat();

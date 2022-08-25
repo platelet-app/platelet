@@ -1061,7 +1061,7 @@ describe("MultipleSelectionActionsMenu", () => {
         }
     );
 
-    test.each`
+    test.only.each`
         role
         ${userRoles.rider} | ${userRoles.coordinator} | ${"ALL"}
     `("duplicate some tasks and assign self", async ({ role }) => {
@@ -1069,16 +1069,11 @@ describe("MultipleSelectionActionsMenu", () => {
             ? userRoles.coordinator
             : userRoles.rider;
 
-        const status =
-            actualRole !== userRoles.rider
-                ? tasksStatus.new
-                : tasksStatus.active;
-
         const mockTasks = await Promise.all(
             _.range(2).map(() =>
                 DataStore.save(
                     new models.Task({
-                        status,
+                        status: tasksStatus.active,
                         tenantId: "tenantId",
                     })
                 )
@@ -1113,6 +1108,10 @@ describe("MultipleSelectionActionsMenu", () => {
             })
         );
 
+        const someoneElse = await DataStore.save(
+            new models.User({ displayName: "eee" })
+        );
+
         const mockAssignments = await Promise.all(
             mockTasks.map((task) =>
                 DataStore.save(
@@ -1120,6 +1119,41 @@ describe("MultipleSelectionActionsMenu", () => {
                         task,
                         assignee: mockWhoami,
                         role: actualRole,
+                    })
+                )
+            )
+        );
+        const mockAssignmentsSomeoneElse = await Promise.all(
+            mockTasks.map((task) =>
+                DataStore.save(
+                    new models.TaskAssignee({
+                        task,
+                        assignee: someoneElse,
+                        role: userRoles.rider,
+                    })
+                )
+            )
+        );
+
+        const myComments = await Promise.all(
+            mockTasks.map((t) =>
+                DataStore.save(
+                    new models.Comment({
+                        parentId: t.id,
+                        body: "something",
+                        author: mockWhoami,
+                    })
+                )
+            )
+        );
+
+        const notMyComments = await Promise.all(
+            mockTasks.map((t) =>
+                DataStore.save(
+                    new models.Comment({
+                        parentId: t.id,
+                        body: "something",
+                        author: someoneElse,
                     })
                 )
             )
@@ -1141,7 +1175,10 @@ describe("MultipleSelectionActionsMenu", () => {
         render(
             <>
                 <MultipleSelectionActionsMenu />
-                <TasksGridColumn title={status} taskKey={[status]} />
+                <TasksGridColumn
+                    title={tasksStatus.active}
+                    taskKey={[tasksStatus.active]}
+                />
             </>,
             {
                 preloadedState,
@@ -1154,11 +1191,15 @@ describe("MultipleSelectionActionsMenu", () => {
         userEvent.click(
             screen.getByRole("button", { name: "Selection Duplicate" })
         );
+        userEvent.click(
+            screen.getByRole("button", { name: "Copy my comments" })
+        );
+        userEvent.click(screen.getByRole("button", { name: "Copy assignees" }));
         const okButton = screen.getByRole("button", { name: "OK" });
         userEvent.click(okButton);
         expect(okButton).toBeDisabled();
         await waitFor(() => {
-            expect(saveSpy).toHaveBeenCalledTimes(6);
+            expect(saveSpy).toHaveBeenCalledTimes(10);
         });
         mockTasks.forEach((t) => {
             expect(saveSpy).toHaveBeenCalledWith({
@@ -1174,6 +1215,18 @@ describe("MultipleSelectionActionsMenu", () => {
                     role: actualRole,
                 })
         );
+
+        mockAssignmentsSomeoneElse.forEach((a) => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...a,
+                id: expect.any(String),
+                task: {
+                    ...a.task,
+                    id: expect.not.stringMatching(a.task.id),
+                },
+            });
+        });
+
         mockAssigns.forEach((a) => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...a,
@@ -1181,12 +1234,36 @@ describe("MultipleSelectionActionsMenu", () => {
                 task: { ...a.task, id: expect.not.stringMatching(a.task.id) },
             });
         });
-        [deliverable1, deliverable2].forEach((d) => {
+        [(deliverable1, deliverable2)].forEach((d) => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...d,
-                task: { ...d.task, id: expect.not.stringMatching(d.task.id) },
+                task: {
+                    ...d.task,
+                    id: expect.not.stringMatching(d.task.id),
+                },
                 id: expect.not.stringMatching(d.id),
             });
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...myComments[0],
+            id: expect.not.stringMatching(myComments[0].id),
+            parentId: expect.not.stringMatching(mockTasks[0].id),
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...myComments[1],
+            id: expect.not.stringMatching(myComments[1].id),
+            parentId: expect.not.stringMatching(mockTasks[1].id),
+        });
+        // doesn't save the comments that aren't mine
+        expect(saveSpy).not.toHaveBeenCalledWith({
+            ...notMyComments[0],
+            id: expect.not.stringMatching(notMyComments[0].id),
+            parentId: expect.not.stringMatching(mockTasks[0].id),
+        });
+        expect(saveSpy).not.toHaveBeenCalledWith({
+            ...notMyComments[1],
+            id: expect.not.stringMatching(notMyComments[1].id),
+            parentId: expect.not.stringMatching(mockTasks[1].id),
         });
     });
 

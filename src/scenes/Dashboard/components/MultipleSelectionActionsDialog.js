@@ -91,6 +91,7 @@ const MultipleSelectionActionsDialog = ({
         try {
             setIsDisabled(true);
             const assigneeId = duplicateState.assignMe ? whoami.id : null;
+            const commentsId = duplicateState.copyComments ? whoami.id : null;
             const assigneeRole = [userRoles.coordinator, "ALL"].includes(
                 roleView
             )
@@ -100,7 +101,8 @@ const MultipleSelectionActionsDialog = ({
                 items,
                 duplicateState.copyAssignees,
                 assigneeId,
-                assigneeRole
+                assigneeRole,
+                commentsId
             );
             onConfirmation(models);
             setIsDisabled(false);
