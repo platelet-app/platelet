@@ -146,6 +146,7 @@ describe("MultipleSelectionActionsMenu", () => {
             const name = `Selection ${stringMatch}`;
             const actionButtonsFiltered = actionButtons
                 .filter((button) => !button.textContent.includes("Assign User"))
+                .filter((button) => !button.textContent.includes("Duplicate"))
                 .filter((button) => !button.textContent.includes("Cancelled"))
                 .filter((button) => !button.textContent.includes("Rejected"))
                 .filter((button) => !button.textContent.includes(stringMatch));
