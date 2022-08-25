@@ -378,23 +378,17 @@ describe("TaskContextMenu", () => {
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...task,
-            id: expect.any(String),
+            id: expect.not.stringMatching(task.id),
         });
-        expect(saveSpy).toHaveBeenCalledWith({
-            ...deliverables[0],
-            id: expect.any(String),
-            task: {
-                ...task,
-                id: expect.any(String),
-            },
-        });
-        expect(saveSpy).toHaveBeenCalledWith({
-            ...deliverables[1],
-            id: expect.any(String),
-            task: {
-                ...task,
-                id: expect.any(String),
-            },
+        deliverables.forEach((del) => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...del,
+                id: expect.not.stringMatching(del.id),
+                task: {
+                    ...task,
+                    id: expect.not.stringMatching(task.id),
+                },
+            });
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockTaskAssignee,
