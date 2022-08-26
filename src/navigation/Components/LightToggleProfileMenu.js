@@ -104,7 +104,10 @@ function LightToggleProfileMenu() {
                     </MenuItem>
                 </Menu>
             </div>
-            <UserFeedbackDialog open={feedbackOpen} />
+            <UserFeedbackDialog
+                onClose={() => setFeedbackOpen(false)}
+                open={feedbackOpen}
+            />
         </Stack>
     );
 }

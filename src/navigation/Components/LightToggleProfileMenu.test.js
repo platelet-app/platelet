@@ -39,6 +39,7 @@ describe("LightToggleProfileMenu", () => {
         render(<LightToggleProfileMenu />, { preloadedState });
         expect(screen.getByText("TU")).toBeInTheDocument();
     });
+
     test("send feedback", async () => {
         const opSpy = jest.spyOn(amplify, "graphqlOperation").mockReturnValue();
         const apiSpy = jest
@@ -48,6 +49,44 @@ describe("LightToggleProfileMenu", () => {
                     sendUserFeedback: { successState: true },
                 },
             });
+        render(<LightToggleProfileMenu />, { preloadedState });
+        userEvent.click(screen.getByRole("button", { name: "send feedback" }));
+        const sendButton = screen.getByRole("button", {
+            name: "send feedback",
+        });
+        // disabled while empty body
+        expect(sendButton).toBeDisabled();
+        userEvent.type(
+            screen.getByRole("textbox", { name: "feedback body" }),
+            "some feedback"
+        );
+        userEvent.type(
+            screen.getByRole("textbox", { name: "email address" }),
+            "test@example.com"
+        );
+        userEvent.click(sendButton);
+        expect(sendButton).toBeDisabled();
+        await waitFor(() => {
+            expect(opSpy).toHaveBeenCalledWith(queries.sendUserFeedback, {
+                emailAddress: "test@example.com",
+                body: "some feedback",
+            });
+        });
+        await waitFor(() => {
+            expect(apiSpy).toHaveBeenCalled();
+        });
+        return;
+        await waitFor(() => {
+            expect(
+                screen.queryByRole("button", { name: "send feedback" })
+            ).toBeNull();
+        });
+    });
+
+    test("send feedback failure", async () => {
+        const apiSpy = jest
+            .spyOn(amplify.API, "graphql")
+            .mockRejectedValue(new Error());
         render(<LightToggleProfileMenu />, { preloadedState });
         userEvent.click(screen.getByRole("button", { name: "send feedback" }));
         userEvent.type(
@@ -60,13 +99,13 @@ describe("LightToggleProfileMenu", () => {
         );
         userEvent.click(screen.getByRole("button", { name: "send feedback" }));
         await waitFor(() => {
-            expect(opSpy).toHaveBeenCalledWith(queries.sendUserFeedback, {
-                emailAddress: "test@example.com",
-                body: "some feedback",
-            });
-        });
-        await waitFor(() => {
             expect(apiSpy).toHaveBeenCalled();
         });
+        expect(
+            screen.getByText("Sorry, something went wrong")
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole("button", { name: "send feedback" })
+        ).toBeInTheDocument();
     });
 });

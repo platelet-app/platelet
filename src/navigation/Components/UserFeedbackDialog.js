@@ -7,33 +7,75 @@ import {
     IconButton,
     Stack,
     TextField,
+    useMediaQuery,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import React from "react";
 import PropTypes from "prop-types";
 import * as queries from "../../graphql/queries";
 import { API, graphqlOperation } from "aws-amplify";
+import { useTheme } from "@mui/styles";
+import {
+    displayErrorNotification,
+    displayInfoNotification,
+} from "../../redux/notifications/NotificationsActions";
+import { useDispatch } from "react-redux";
 
-function UserFeedbackDialog({ open, fullScreen, onClose }) {
-    const [state, setState] = React.useState({
-        email: "",
-        body: "",
-    });
+const initialState = {
+    email: "",
+    body: "",
+};
 
-    const sendFeedback = React.useCallback((emailAddress, body) => {
-        const input = {
-            emailAddress,
-            body,
-        };
-        API.graphql(graphqlOperation(queries.sendUserFeedback, input));
-    }, []);
+function UserFeedbackDialog({ open, onClose }) {
+    const [state, setState] = React.useState(initialState);
+    const [isPosting, setIsPosting] = React.useState(false);
+
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+    const dispatch = useDispatch();
+
+    const sendFeedback = React.useCallback(
+        (emailAddress, body) => {
+            setIsPosting(true);
+            const input = {
+                emailAddress,
+                body,
+            };
+            API.graphql(graphqlOperation(queries.sendUserFeedback, input))
+                .then(() => {
+                    dispatch(
+                        displayInfoNotification("Thanks for your feedback!")
+                    );
+                    setIsPosting(false);
+                    onClose();
+                })
+                .catch((e) => {
+                    console.log("Failed to send feedback:", e);
+                    dispatch(
+                        displayErrorNotification("Sorry, something went wrong")
+                    );
+                    setIsPosting(false);
+                });
+        },
+        [dispatch, onClose]
+    );
+
+    const handleCancel = () => {
+        setState(initialState);
+        onClose();
+    };
 
     return (
-        <Dialog open={open} fullScreen={fullScreen} onClose={onClose}>
+        <Dialog open={open} fullScreen={isSm} onClose={onClose}>
             <DialogTitle>Send feedback</DialogTitle>
             <DialogContent>
-                <Stack>
+                <Stack
+                    sx={{ minWidth: !isSm ? 400 : 0, marginTop: 1 }}
+                    spacing={3}
+                >
                     <TextField
+                        fullWidth
+                        label="Email (optional)"
                         onChange={(e) => {
                             const { value } = e.target;
                             setState((prevState) => ({
@@ -47,6 +89,8 @@ function UserFeedbackDialog({ open, fullScreen, onClose }) {
                         value={state.email}
                     />
                     <TextField
+                        fullWidth
+                        label="Body"
                         onChange={(e) => {
                             const { value } = e.target;
                             setState((prevState) => ({
@@ -68,10 +112,15 @@ function UserFeedbackDialog({ open, fullScreen, onClose }) {
                     sx={{ width: "100%" }}
                     justifyContent="space-between"
                 >
-                    <Button aria-label="Cancel" onClick={onClose} autoFocus>
+                    <Button
+                        aria-label="Cancel"
+                        onClick={handleCancel}
+                        autoFocus
+                    >
                         Cancel
                     </Button>
                     <IconButton
+                        disabled={isPosting || !!!state.body}
                         onClick={() => sendFeedback(state.email, state.body)}
                         aria-label="send feedback"
                     >
