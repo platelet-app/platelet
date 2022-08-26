@@ -155,6 +155,22 @@ describe("MultipleSelectionActionsMenu", () => {
                     button.textContent.includes("Cancelled") ||
                     button.textContent.includes("Rejected")
             );
+            const duplicateButton = screen.getByRole("button", {
+                name: "Selection Duplicate",
+            });
+            if (
+                [
+                    tasksStatus.new,
+                    tasksStatus.active,
+                    tasksStatus.pickedUp,
+                    tasksStatus.droppedOff,
+                ].includes(taskStatus)
+            ) {
+                expect(duplicateButton).toBeEnabled();
+            } else {
+                expect(duplicateButton).toBeDisabled();
+            }
+
             const assignButton = screen.getByRole("button", {
                 name: "Selection Assign User",
             });
