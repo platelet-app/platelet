@@ -1208,10 +1208,11 @@ describe("MultipleSelectionActionsMenu", () => {
         });
         expect(buttonToClick).toBeEnabled();
         userEvent.click(buttonToClick);
-        const dateBox = screen.getByRole("textbox");
+        const dateBox = screen.getByRole("textbox", { name: /Choose date/ });
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeEnabled();
-        userEvent.type(dateBox, "invalid date");
+        userEvent.clear(dateBox);
+        expect(dateBox).toHaveValue("");
         await waitFor(() => {
             expect(okButton).toBeDisabled();
         });
