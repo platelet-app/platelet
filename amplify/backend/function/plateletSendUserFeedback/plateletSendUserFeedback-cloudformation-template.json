@@ -15,6 +15,9 @@
     },
     "s3Key": {
       "Type": "String"
+    },
+    "plateletSendToEmailAddress": {
+      "Type": "String"
     }
   },
   "Conditions": {
@@ -69,6 +72,9 @@
             },
             "REGION": {
               "Ref": "AWS::Region"
+            },
+            "PLATELET_SEND_TO_EMAIL_ADDRESS": {
+              "Ref": "plateletSendToEmailAddress"
             }
           }
         },
