@@ -88,7 +88,9 @@ function TimeAndNamePicker(props) {
                                 size="small"
                                 onClick={
                                     // copy to clipboard
+                                    // have this do nothing for now
                                     () => {
+                                        return;
                                         navigator.clipboard.writeText(
                                             props.name
                                         );
