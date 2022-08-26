@@ -2,12 +2,13 @@ import React from "react";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { encodeUUID } from "../../utilities";
 import { Box, Stack, Tooltip } from "@mui/material";
 import { setDarkMode } from "../../redux/Actions";
 import BrightnessHighIcon from "@mui/icons-material/BrightnessHigh";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
+import FeedbackIcon from "@mui/icons-material/Feedback";
 import UserAvatar from "../../components/UserAvatar";
 import { useDispatch, useSelector } from "react-redux";
 import { getWhoami } from "../../redux/Selectors";
@@ -15,13 +16,14 @@ import SignalWifiOff from "@mui/icons-material/SignalWifiOff";
 import { networkStatusSelector } from "../../redux/Selectors";
 import { logoutUser } from "../../redux/login/LoginActions";
 import SyncStatusCircleLoader from "./SyncStatusCircleLoader";
+import UserFeedbackDialog from "./UserFeedbackDialog";
 
 function LightToggleProfileMenu() {
     const whoami = useSelector(getWhoami);
     const darkMode = useSelector((state) => state.darkMode);
     const [anchorElProfileMenu, setAnchorElProfileMenu] = React.useState(null);
+    const [feedbackOpen, setFeedbackOpen] = React.useState(false);
     const dispatch = useDispatch();
-    const history = useHistory();
     const networkStatus = useSelector(networkStatusSelector);
 
     return (
@@ -31,6 +33,17 @@ function LightToggleProfileMenu() {
             alignItems={"center"}
             spacing={1}
         >
+            <Tooltip title={"Send feedback"}>
+                <IconButton
+                    onClick={() => {
+                        setFeedbackOpen(true);
+                    }}
+                    aria-label="send feedback"
+                    size="large"
+                >
+                    <FeedbackIcon />
+                </IconButton>
+            </Tooltip>
             <Box sx={{ width: 40 }}>
                 <SyncStatusCircleLoader />
                 {!networkStatus && (
@@ -91,6 +104,7 @@ function LightToggleProfileMenu() {
                     </MenuItem>
                 </Menu>
             </div>
+            <UserFeedbackDialog open={feedbackOpen} />
         </Stack>
     );
 }

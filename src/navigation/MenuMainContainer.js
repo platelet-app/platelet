@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../index.css";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
@@ -6,7 +6,7 @@ import AppBar from "@mui/material/AppBar";
 import IconButton from "@mui/material/IconButton";
 import MainWindow from "./MainWindow";
 import { useDispatch, useSelector } from "react-redux";
-import { Box, Grid, Hidden, Stack } from "@mui/material";
+import { Box, Hidden, Stack } from "@mui/material";
 import TaskFilterTextField from "../components/TaskFilterTextfield";
 import LightToggleProfileMenu from "./Components/LightToggleProfileMenu";
 import SearchIcon from "@mui/icons-material/Search";
