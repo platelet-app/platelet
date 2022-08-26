@@ -34,6 +34,11 @@ function UserFeedbackDialog({ open, onClose }) {
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
     const dispatch = useDispatch();
 
+    const handleFinished = React.useCallback(() => {
+        setState((prevState) => ({ ...prevState, body: "" }));
+        onClose();
+    }, [onClose]);
+
     const sendFeedback = React.useCallback(
         (emailAddress, body) => {
             setIsPosting(true);
@@ -47,7 +52,7 @@ function UserFeedbackDialog({ open, onClose }) {
                         displayInfoNotification("Thanks for your feedback!")
                     );
                     setIsPosting(false);
-                    onClose();
+                    handleFinished();
                 })
                 .catch((e) => {
                     console.log("Failed to send feedback:", e);
@@ -57,13 +62,8 @@ function UserFeedbackDialog({ open, onClose }) {
                     setIsPosting(false);
                 });
         },
-        [dispatch, onClose]
+        [dispatch, handleFinished]
     );
-
-    const handleCancel = () => {
-        setState(initialState);
-        onClose();
-    };
 
     return (
         <Dialog open={open} fullScreen={isSm} onClose={onClose}>
@@ -114,7 +114,7 @@ function UserFeedbackDialog({ open, onClose }) {
                 >
                     <Button
                         aria-label="Cancel"
-                        onClick={handleCancel}
+                        onClick={handleFinished}
                         autoFocus
                     >
                         Cancel

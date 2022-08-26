@@ -1,4 +1,5 @@
 import React from "react";
+import RateReviewIcon from "@mui/icons-material/RateReview";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -8,7 +9,6 @@ import { Box, Stack, Tooltip } from "@mui/material";
 import { setDarkMode } from "../../redux/Actions";
 import BrightnessHighIcon from "@mui/icons-material/BrightnessHigh";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
-import FeedbackIcon from "@mui/icons-material/Feedback";
 import UserAvatar from "../../components/UserAvatar";
 import { useDispatch, useSelector } from "react-redux";
 import { getWhoami } from "../../redux/Selectors";
@@ -41,7 +41,7 @@ function LightToggleProfileMenu() {
                     aria-label="send feedback"
                     size="large"
                 >
-                    <FeedbackIcon />
+                    <RateReviewIcon />
                 </IconButton>
             </Tooltip>
             <Box sx={{ width: 40 }}>
