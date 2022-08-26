@@ -2021,6 +2021,18 @@ export const schema = {
                 }
             }
         },
+        "SendFeedback": {
+            "name": "SendFeedback",
+            "fields": {
+                "successState": {
+                    "name": "successState",
+                    "isArray": false,
+                    "type": "Boolean",
+                    "isRequired": false,
+                    "attributes": []
+                }
+            }
+        },
         "AddressAndContactDetails": {
             "name": "AddressAndContactDetails",
             "fields": {
@@ -2151,5 +2163,5 @@ export const schema = {
             }
         }
     },
-    "version": "b8e16456957de18e93d8ddf39d8b2200"
+    "version": "b12b49a018fee9013455dfda1d023f30"
 };

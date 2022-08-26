@@ -68,6 +68,11 @@ export declare class Statistics {
   constructor(init: ModelInit<Statistics>);
 }
 
+export declare class SendFeedback {
+  readonly successState?: boolean | null;
+  constructor(init: ModelInit<SendFeedback>);
+}
+
 export declare class AddressAndContactDetails {
   readonly name?: string | null;
   readonly telephoneNumber?: string | null;
