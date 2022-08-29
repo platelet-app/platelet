@@ -14,21 +14,31 @@ async function sendFeedbackEmail(body, senderEmail = null) {
         apiVersion: "2010-12-01",
         region: process.env.REGION,
     });
+    const plateletEmail = process.env.PLATELET_SEND_TO_EMAIL_ADDRESS;
     const returnEmailAddress =
         senderEmail || process.env.PLATELET_SEND_TO_EMAIL_ADDRESS;
+
+    const sender = senderEmail || "No email.";
+
+    let actualBody = `From: ${sender}
+
+    ${body}`;
+
+    actualBody = actualBody.split("\n").join("<br />");
+
     const params = {
         Destination: {
-            ToAddresses: [returnEmailAddress],
+            ToAddresses: [plateletEmail],
         },
         Message: {
             Body: {
                 Html: {
                     Charset: "UTF-8",
-                    Data: body,
+                    Data: actualBody,
                 },
                 Text: {
                     Charset: "UTF-8",
-                    Data: body,
+                    Data: actualBody,
                 },
             },
             Subject: {
@@ -36,9 +46,9 @@ async function sendFeedbackEmail(body, senderEmail = null) {
                 Data: "Feedback from",
             },
         },
-        Source: returnEmailAddress,
+        Source: plateletEmail,
         ReplyToAddresses: [returnEmailAddress],
-        ReturnPath: returnEmailAddress,
+        ReturnPath: plateletEmail,
     };
 
     return await ses.sendEmail(params).promise();
