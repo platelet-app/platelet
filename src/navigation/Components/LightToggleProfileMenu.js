@@ -33,17 +33,19 @@ function LightToggleProfileMenu() {
             alignItems={"center"}
             spacing={1}
         >
-            <Tooltip title={"Send feedback"}>
-                <IconButton
-                    onClick={() => {
-                        setFeedbackOpen(true);
-                    }}
-                    aria-label="send feedback"
-                    size="large"
-                >
-                    <RateReviewIcon />
-                </IconButton>
-            </Tooltip>
+            {process.env.REACT_APP_DEMO_MODE !== "true" && (
+                <Tooltip title={"Send feedback"}>
+                    <IconButton
+                        onClick={() => {
+                            setFeedbackOpen(true);
+                        }}
+                        aria-label="send feedback"
+                        size="large"
+                    >
+                        <RateReviewIcon />
+                    </IconButton>
+                </Tooltip>
+            )}
             <Box sx={{ width: 40 }}>
                 <SyncStatusCircleLoader />
                 {!networkStatus && (
