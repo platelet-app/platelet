@@ -3204,3 +3204,10 @@ export const getStatistics = /* GraphQL */ `
     }
   }
 `;
+export const sendUserFeedback = /* GraphQL */ `
+  query SendUserFeedback($emailAddress: AWSEmail, $body: String) {
+    sendUserFeedback(emailAddress: $emailAddress, body: $body) {
+      successState
+    }
+  }
+`;
