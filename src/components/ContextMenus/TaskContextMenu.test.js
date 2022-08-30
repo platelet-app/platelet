@@ -366,6 +366,7 @@ describe("TaskContextMenu", () => {
         const saveSpy = jest.spyOn(DataStore, "save");
         const preloadedState = {
             whoami: { user: whoami },
+            roleView: userRoles.coordinator,
         };
         render(<TaskContextMenu task={task} assignedRiders={[]} />, {
             preloadedState,
@@ -389,6 +390,52 @@ describe("TaskContextMenu", () => {
                     id: expect.not.stringMatching(task.id),
                 },
             });
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockTaskAssignee,
+            id: expect.any(String),
+            task: {
+                ...task,
+                id: expect.any(String),
+            },
+        });
+    });
+
+    test("duplicate a task in rider role view", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                displayName: "someone person",
+                roles: [userRoles.user, userRoles.rider],
+            })
+        );
+        const task = await DataStore.save(
+            new models.Task({
+                status: tasksStatus.active,
+                riderResponsibility: "something",
+            })
+        );
+        const mockTaskAssignee = new models.TaskAssignee({
+            task,
+            assignee: whoami,
+            role: userRoles.rider,
+        });
+        const saveSpy = jest.spyOn(DataStore, "save");
+        const preloadedState = {
+            whoami: { user: whoami },
+            roleView: userRoles.rider,
+        };
+        render(<TaskContextMenu task={task} assignedRiders={[]} />, {
+            preloadedState,
+        });
+        const button = screen.getByRole("button", { name: "task options" });
+        userEvent.click(button);
+        userEvent.click(screen.getByRole("menuitem", { name: "Duplicate" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(2);
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...task,
+            id: expect.not.stringMatching(task.id),
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockTaskAssignee,

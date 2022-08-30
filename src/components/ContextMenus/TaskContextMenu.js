@@ -16,7 +16,11 @@ import { DataStore } from "aws-amplify";
 import { copyTaskDataToClipboard } from "../../utilities";
 
 import { tasksStatus, userRoles } from "../../apiConsts";
-import { getWhoami, taskAssigneesSelector } from "../../redux/Selectors";
+import {
+    getRoleView,
+    getWhoami,
+    taskAssigneesSelector,
+} from "../../redux/Selectors";
 import determineTaskStatus from "../../utilities/determineTaskStatus";
 import duplicateTask from "../../utilities/duplicateTask";
 
@@ -30,6 +34,7 @@ function TaskContextMenu(props) {
     const { task } = props;
     const [state, setState] = React.useState(initialState);
     const [isPosting, setIsPosting] = React.useState(false);
+    const roleView = useSelector(getRoleView);
     const whoami = useSelector(getWhoami);
     const deleteButtonClasses = deleteButtonStyles();
     const taskAssignees = useSelector(taskAssigneesSelector).items;
@@ -168,15 +173,10 @@ function TaskContextMenu(props) {
 
     async function onDuplicate(e) {
         try {
-            const dupTask = await duplicateTask(task);
-            const assignee = await DataStore.query(models.User, whoami.id);
-            await DataStore.save(
-                new models.TaskAssignee({
-                    task: dupTask,
-                    assignee,
-                    role: userRoles.coordinator,
-                })
-            );
+            const role = ["ALL", userRoles.coordinator].includes(roleView)
+                ? userRoles.coordinator
+                : userRoles.rider;
+            await duplicateTask(task, whoami.id, role);
         } catch (e) {
             console.log(e);
             dispatch(displayErrorNotification("Sorry, something went wrong"));

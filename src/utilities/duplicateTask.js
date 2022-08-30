@@ -1,9 +1,13 @@
 import { DataStore } from "aws-amplify";
 import _ from "lodash";
-import { tasksStatus } from "../apiConsts";
+import { tasksStatus, userRoles } from "../apiConsts";
 import * as models from "../models";
 
-export default async function duplicateTask(task) {
+export default async function duplicateTask(
+    task,
+    assigneeId = null,
+    assigneeRole = null
+) {
     let {
         id,
         _version,
@@ -31,12 +35,31 @@ export default async function duplicateTask(task) {
             ...dropOffLocation,
         });
     }
-    const newTaskData = new models.Task({
+    let newTaskData = new models.Task({
         ...rest,
         status: tasksStatus.new,
         pickUpLocation,
         dropOffLocation,
     });
+    if (assigneeId && assigneeRole) {
+        if (assigneeRole === userRoles.rider) {
+            newTaskData = new models.Task({
+                ...rest,
+                status: tasksStatus.active,
+                pickUpLocation,
+                dropOffLocation,
+                riderResponsibility,
+            });
+        }
+        const assignee = await DataStore.query(models.User, assigneeId);
+        await DataStore.save(
+            new models.TaskAssignee({
+                task: newTaskData,
+                assignee,
+                role: assigneeRole,
+            })
+        );
+    }
 
     const newTask = await DataStore.save(newTaskData);
 
