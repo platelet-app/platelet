@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "../../../test-utils";
+import { createMatchMedia, render } from "../../../test-utils";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import TasksGridColumn from "./TasksGridColumn";
 import { commentVisibility, tasksStatus, userRoles } from "../../../apiConsts";
@@ -1078,8 +1078,88 @@ describe("MultipleSelectionActionsMenu", () => {
     );
 
     test.each`
+        view
+        ${"mobile"} | ${"desktop"}
+    `("no duplicate button in rider view", async ({ view }) => {
+        const mockTasks = await Promise.all(
+            _.range(2).map(() =>
+                DataStore.save(
+                    new models.Task({
+                        status: tasksStatus.active,
+                        tenantId: "tenantId",
+                    })
+                )
+            )
+        );
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator, userRoles.rider],
+                displayName: "Someone Person",
+                riderRole: "some role",
+            })
+        );
+        const mockAssignments = await Promise.all(
+            mockTasks.map((task) =>
+                DataStore.save(
+                    new models.TaskAssignee({
+                        task,
+                        assignee: mockWhoami,
+                        role: userRoles.rider,
+                    })
+                )
+            )
+        );
+        const preloadedState = {
+            roleView: userRoles.rider,
+            dashboardTabIndex: 0,
+            tenantId: "tenantId",
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: mockAssignments,
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(
+            <>
+                <MultipleSelectionActionsMenu />
+                <TasksGridColumn
+                    title={tasksStatus.active}
+                    taskKey={[tasksStatus.active]}
+                />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        if (view === "mobile") window.matchMedia = createMatchMedia(128);
+        else window.matchMedia = createMatchMedia(1280);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        if (view === "desktop") {
+            userEvent.click(screen.getByRole("button", { name: "Select All" }));
+            expect(
+                screen.queryByRole("button", { name: "Selection Duplicate" })
+            ).toBeNull();
+        } else {
+            userEvent.click(
+                screen.getByRole("button", { name: "ACTIVE Select All" })
+            );
+            userEvent.click(
+                screen.getByRole("button", { name: "More Selection Actions" })
+            );
+            expect(
+                screen.queryByRole("menuitem", { name: "Duplicate" })
+            ).toBeNull();
+        }
+    });
+
+    // removed rider role for now
+    test.each`
         role
-        ${userRoles.rider} | ${userRoles.coordinator} | ${"ALL"}
+        ${userRoles.coordinator} | ${"ALL"}
     `("duplicate some tasks and assign self", async ({ role }) => {
         let actualRole = [userRoles.coordinator, "ALL"].includes(role)
             ? userRoles.coordinator

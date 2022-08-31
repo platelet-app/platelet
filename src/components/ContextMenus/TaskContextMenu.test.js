@@ -401,7 +401,35 @@ describe("TaskContextMenu", () => {
         });
     });
 
-    test("duplicate a task in rider role view", async () => {
+    test("can't duplicate in rider role view", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                displayName: "someone person",
+                roles: [userRoles.user, userRoles.rider],
+            })
+        );
+        const task = await DataStore.save(
+            new models.Task({
+                status: tasksStatus.active,
+                riderResponsibility: "something",
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+            roleView: userRoles.rider,
+        };
+        render(<TaskContextMenu task={task} assignedRiders={[]} />, {
+            preloadedState,
+        });
+        const button = screen.getByRole("button", { name: "task options" });
+        userEvent.click(button);
+        expect(
+            screen.queryByRole("menuitem", { name: "Duplicate" })
+        ).toBeNull();
+    });
+
+    test.skip("duplicate a task in rider role view", async () => {
+        // at the moment riders can't duplicate tasks
         const whoami = await DataStore.save(
             new models.User({
                 displayName: "someone person",

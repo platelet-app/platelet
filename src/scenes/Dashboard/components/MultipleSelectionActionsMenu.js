@@ -24,9 +24,10 @@ import {
     dashboardFilteredUserSelector,
     dashboardFilterTermSelector,
     dashboardTabIndexSelector,
+    getRoleView,
     selectedItemsSelector,
 } from "../../../redux/Selectors";
-import { tasksStatus } from "../../../apiConsts";
+import { tasksStatus, userRoles } from "../../../apiConsts";
 import { DataStore } from "aws-amplify";
 import MultipleSelectionActionsDialog from "./MultipleSelectionActionsDialog";
 import LoadingSpinner from "../../../components/LoadingSpinner";
@@ -65,6 +66,18 @@ function MultipleSelectionActionsMenu() {
     const [errorState, setErrorState] = useState(null);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const availableItemsWithoutFilterRef = useRef(availableSelectionItems);
+    const roleView = useSelector(getRoleView);
+
+    const actualRole = ["ALL", userRoles.coordinator].includes(roleView)
+        ? userRoles.coordinator
+        : userRoles.rider;
+
+    const actualDotActions =
+        actualRole === userRoles.rider
+            ? _.omit(dotActions, "duplicate")
+            : dotActions;
+
+    let buttonActions = isMd ? actions : { ...actions, ...actualDotActions };
 
     const handleClick = (event) => {
         event.preventDefault();
@@ -227,7 +240,6 @@ function MultipleSelectionActionsMenu() {
     }
 
     async function handleConfirmation(models) {
-        console.log(models);
         setCurrentAction(null);
         dispatch(selectionActions.setSelectionActionsPending(true));
         await saveModels(models);
@@ -236,8 +248,6 @@ function MultipleSelectionActionsMenu() {
     }
 
     const dispatch = useDispatch();
-
-    const buttonActions = isMd ? actions : { ...actions, ...dotActions };
 
     return (
         <>

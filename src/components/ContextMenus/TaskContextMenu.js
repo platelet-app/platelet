@@ -45,6 +45,10 @@ function TaskContextMenu(props) {
     });
     const classes = useStyles();
 
+    const actualRole = ["ALL", userRoles.coordinator].includes(roleView)
+        ? userRoles.coordinator
+        : userRoles.rider;
+
     async function copyToClipboard(e) {
         handleClose(e);
         if (!props.task || !props.task.id) {
@@ -173,10 +177,7 @@ function TaskContextMenu(props) {
 
     async function onDuplicate(e) {
         try {
-            const role = ["ALL", userRoles.coordinator].includes(roleView)
-                ? userRoles.coordinator
-                : userRoles.rider;
-            await duplicateTask(task, whoami.id, role);
+            await duplicateTask(task, whoami.id, actualRole);
         } catch (e) {
             console.log(e);
             dispatch(displayErrorNotification("Sorry, something went wrong"));
@@ -266,20 +267,22 @@ function TaskContextMenu(props) {
                 >
                     Mark cancelled
                 </MenuItem>
-                <MenuItem
-                    disabled={
-                        task === null ||
-                        [
-                            tasksStatus.cancelled,
-                            tasksStatus.abandoned,
-                            tasksStatus.rejected,
-                            tasksStatus.completed,
-                        ].includes(task.status)
-                    }
-                    onClick={onDuplicate}
-                >
-                    Duplicate
-                </MenuItem>
+                {actualRole === userRoles.coordinator && (
+                    <MenuItem
+                        disabled={
+                            task === null ||
+                            [
+                                tasksStatus.cancelled,
+                                tasksStatus.abandoned,
+                                tasksStatus.rejected,
+                                tasksStatus.completed,
+                            ].includes(task.status)
+                        }
+                        onClick={onDuplicate}
+                    >
+                        Duplicate
+                    </MenuItem>
+                )}
                 <MenuItem disabled={task === null} onClick={copyToClipboard}>
                     Copy to clipboard
                 </MenuItem>
