@@ -27,7 +27,7 @@ import {
     tenantIdSelector,
 } from "../../../redux/Selectors";
 import generateMultipleAssignmentModels from "../utilities/generateMultipleAssignmentModels";
-import { userRoles } from "../../../apiConsts";
+import { tasksStatus, userRoles } from "../../../apiConsts";
 import generateMultipleTaskTimeModels from "../utilities/generateMultipleTaskTimeModels";
 import generateMultipleTaskComments from "../utilities/generateMultipleTaskComments";
 import { DataStore } from "aws-amplify";
@@ -262,6 +262,9 @@ const MultipleSelectionActionsDialog = ({
             </>
         );
     } else if (action === dotActions.duplicate) {
+        const showHint = Object.values(items).some((t) =>
+            [tasksStatus.pickedUp, tasksStatus.droppedOff].includes(t.status)
+        );
         return (
             <>
                 <ConfirmationDialog
@@ -284,6 +287,7 @@ const MultipleSelectionActionsDialog = ({
                             <MultipleSelectionActionsDuplicateTask
                                 options={duplicateState}
                                 onChange={onChangeDuplicateState}
+                                showHint={showHint}
                             />
                         </Stack>
                     </Paper>

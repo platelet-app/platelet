@@ -1077,6 +1077,65 @@ describe("MultipleSelectionActionsMenu", () => {
         }
     );
 
+    test.only("show hint on duplicate if some picked up or dropped off tasks", async () => {
+        const mockTasks = await Promise.all(
+            _.range(2).map((i) =>
+                DataStore.save(
+                    new models.Task({
+                        status:
+                            i === 0
+                                ? tasksStatus.pickedUp
+                                : tasksStatus.droppedOff,
+                        tenantId: "tenantId",
+                    })
+                )
+            )
+        );
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator, userRoles.rider],
+                displayName: "Someone Person",
+                riderRole: "some role",
+            })
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 0,
+            tenantId: "tenantId",
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(
+            <>
+                <MultipleSelectionActionsMenu />
+                <TasksGridColumn
+                    title={tasksStatus.pickedUp}
+                    taskKey={[tasksStatus.pickedUp, tasksStatus.droppedOff]}
+                />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(screen.getByRole("button", { name: "Select All" }));
+        userEvent.click(
+            screen.getByRole("button", { name: "Selection Duplicate" })
+        );
+        expect(
+            screen.getByText(
+                "Picked up and delivered times will not be copied."
+            )
+        ).toBeInTheDocument();
+    });
+
     test.each`
         view
         ${"mobile"} | ${"desktop"}
