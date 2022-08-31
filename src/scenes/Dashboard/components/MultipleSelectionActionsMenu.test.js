@@ -1077,8 +1077,8 @@ describe("MultipleSelectionActionsMenu", () => {
         }
     );
 
-    test.only("show hint on duplicate if some picked up or dropped off tasks", async () => {
-        const mockTasks = await Promise.all(
+    test("show hint on duplicate if some picked up or dropped off tasks", async () => {
+        await Promise.all(
             _.range(2).map((i) =>
                 DataStore.save(
                     new models.Task({
