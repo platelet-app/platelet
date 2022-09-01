@@ -33,6 +33,16 @@ function LightToggleProfileMenu() {
             alignItems={"center"}
             spacing={1}
         >
+            <Box sx={{ width: 40 }}>
+                <SyncStatusCircleLoader />
+                {!networkStatus && (
+                    <Tooltip title={"You are working offline"}>
+                        <IconButton size="large">
+                            <SignalWifiOff />
+                        </IconButton>
+                    </Tooltip>
+                )}
+            </Box>
             {process.env.REACT_APP_DEMO_MODE !== "true" && (
                 <Tooltip title={"Send feedback"}>
                     <IconButton
@@ -46,16 +56,6 @@ function LightToggleProfileMenu() {
                     </IconButton>
                 </Tooltip>
             )}
-            <Box sx={{ width: 40 }}>
-                <SyncStatusCircleLoader />
-                {!networkStatus && (
-                    <Tooltip title={"You are working offline"}>
-                        <IconButton size="large">
-                            <SignalWifiOff />
-                        </IconButton>
-                    </Tooltip>
-                )}
-            </Box>
             <Tooltip title={"Toggle dark/light mode"}>
                 <IconButton
                     onClick={() => {
