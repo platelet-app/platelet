@@ -23,7 +23,7 @@ function UserChip(props) {
     }
     useEffect(() => getThumbnail(), [props.user]);
 
-    async function setText() {
+    const setText = React.useCallback(async () => {
         try {
             if (props.showResponsibility && riderResponsibility) {
                 setLabel(`${displayName} (${riderResponsibility})`);
@@ -34,8 +34,8 @@ function UserChip(props) {
             console.log(error);
             setLabel(displayName);
         }
-    }
-    useEffect(() => setText(), [props.showResponsibility, props.user]);
+    }, [props.showResponsibility, displayName, riderResponsibility]);
+    useEffect(() => setText(), [props.showResponsibility, props.user, setText]);
 
     if (thumbnail) {
         return (
