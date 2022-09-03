@@ -46,7 +46,6 @@ function AdminAddUser() {
     const [passwordVerified, setPasswordVerified] = useState(true);
     const [inputVerified, setInputVerified] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
-    const [message, setMessage] = useState("");
     const dispatch = useDispatch();
     const classes = useStyles();
     const [rolesState, setRolesState] = useState([]);
@@ -73,9 +72,6 @@ function AdminAddUser() {
     }
 
     useEffect(verifyPassword, [state.passwordCheck, state.password]);
-    useEffect(() => {
-        if (message) setMessage("");
-    }, [state]);
     async function signUp() {
         try {
             if (!tenantId) {
@@ -197,7 +193,6 @@ function AdminAddUser() {
                     >
                         Add user
                     </Button>
-                    <Typography>{message}</Typography>
                 </Stack>
             </PaddedPaper>
         );
