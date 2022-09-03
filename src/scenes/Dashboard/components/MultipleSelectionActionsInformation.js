@@ -45,7 +45,7 @@ function MultipleSelectionActionsInformation({ selectedItems, action }) {
     const theme = useTheme();
     const isMd = useMediaQuery(theme.breakpoints.down("md"));
 
-    function generateLink() {
+    const generateLink = React.useCallback((selectedItems) => {
         const items = Object.values(selectedItems);
         const plural = items.length > 1 ? "items" : "item";
         return (
@@ -58,29 +58,36 @@ function MultipleSelectionActionsInformation({ selectedItems, action }) {
                 {items.length} {plural}
             </Link>
         );
-    }
+    }, []);
 
-    function generateMessage() {
-        const items = Object.values(selectedItems);
-        if (items.length === 0) {
-            setMessage("No items selected");
-            return;
-        }
-        if (action === actions.assignUser) {
-            setMessage(
-                <Typography variant="h6">
-                    Assign users to {generateLink()}
-                </Typography>
-            );
-        } else {
-            setMessage(
-                <Typography variant="h6">
-                    Updating {generateLink()} as {humanReadableAction(action)}
-                </Typography>
-            );
-        }
-    }
-    useEffect(generateMessage, [selectedItems, action]);
+    const generateMessage = React.useCallback(
+        (action, selectedItems) => {
+            const items = Object.values(selectedItems);
+            if (items.length === 0) {
+                setMessage("No items selected");
+                return;
+            }
+            if (action === actions.assignUser) {
+                setMessage(
+                    <Typography variant="h6">
+                        Assign users to {generateLink(selectedItems)}
+                    </Typography>
+                );
+            } else {
+                setMessage(
+                    <Typography variant="h6">
+                        Updating {generateLink(selectedItems)} as{" "}
+                        {humanReadableAction(action)}
+                    </Typography>
+                );
+            }
+        },
+        [generateLink]
+    );
+    useEffect(
+        () => generateMessage(action, selectedItems),
+        [selectedItems, action, generateMessage]
+    );
 
     const itemLength = Object.values(selectedItems).length;
 
