@@ -4,8 +4,7 @@ import "./index.css";
 import "./App.css";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useDispatch, useSelector } from "react-redux";
-import { useIdleTimer } from "react-idle-timer";
-import { setIdleStatus, setMobileView } from "./redux/Actions";
+import { setMobileView } from "./redux/Actions";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
@@ -15,7 +14,6 @@ import { SnackbarProvider, withSnackbar } from "notistack";
 import { Helmet } from "react-helmet";
 import moment from "moment-timezone";
 import "moment/locale/en-gb";
-import { DismissButton } from "./styles/common";
 import {
     ThemeProvider,
     StyledEngineProvider,
@@ -45,97 +43,43 @@ window.amplifyLogger = Logger;
 window.DataStore = DataStore;
 window.models = models;
 
-function AppContents(props) {
+let didInit = false;
+
+function AppContents({ closeSnackbar, enqueueSnackbar }) {
     const incomingNotification = useSelector((state) => state.notification);
-    const error = useSelector((state) => state.error);
     const dispatch = useDispatch();
 
     function initialise() {
-        dispatch(initialiseApp());
+        if (!didInit) {
+            dispatch(initialiseApp());
+            didInit = true;
+        }
     }
-    useEffect(initialise, []);
+    useEffect(initialise, [dispatch]);
 
-    const handleOnIdle = (event) => {
-        dispatch(setIdleStatus(true));
-    };
-
-    const handleOnActive = (event) => {
-        dispatch(setIdleStatus(false));
-    };
-
-    useIdleTimer({
-        timeout: 1000 * 60 * 5,
-        onIdle: handleOnIdle,
-        onActive: handleOnActive,
-        debounce: 500,
-    });
-
-    const snackDismissAction = (key) => (
-        <React.Fragment>
-            <DismissButton onClick={() => props.closeSnackbar(key)} />
-        </React.Fragment>
+    const showNotification = React.useCallback(
+        (notification) => {
+            if (notification) {
+                const { message, options, restoreCallback, viewLink } =
+                    notification;
+                options.action = (key) => (
+                    <SnackNotificationButtons
+                        restoreCallback={restoreCallback}
+                        viewLink={viewLink}
+                        snackKey={key}
+                        closeSnackbar={closeSnackbar}
+                    />
+                );
+                enqueueSnackbar(message, options);
+            }
+        },
+        [enqueueSnackbar, closeSnackbar]
     );
-    const snackOptions = {
-        action: snackDismissAction,
-        preventDuplicate: true,
-        autoHideDuration: 6000,
-    };
 
-    function handleError() {
-        // any saga that returns with an error object that is not null will be handled here
-        if (error) {
-            if (
-                error.status_code === 404 ||
-                error.status_code === 401 ||
-                error.status_code === 425
-            ) {
-                // do nothing if not found, unauthorised or too early (token refresh error)
-            }
-            // TODO: fix error messages not showing up here
-            else if (error.status_code) {
-                if (error.response)
-                    error.response.then((data) => {
-                        if (data.message) {
-                            props.enqueueSnackbar(`${data.message}`, {
-                                ...snackOptions,
-                                variant: "error",
-                            });
-                        } else {
-                            props.enqueueSnackbar(
-                                `No message returned from the server.`,
-                                {
-                                    ...snackOptions,
-                                    variant: "error",
-                                }
-                            );
-                        }
-                    });
-            } else {
-                if (process.env.REACT_APP_THROW_ERRORS === "true") throw error;
-                else console.error(error);
-            }
-        }
-    }
-
-    useEffect(handleError, [error]);
-
-    function showNotification() {
-        if (incomingNotification) {
-            const { message, options, restoreCallback, viewLink } =
-                incomingNotification;
-            options.action = (key) => (
-                <SnackNotificationButtons
-                    restoreCallback={restoreCallback}
-                    viewLink={viewLink}
-                    snackKey={key}
-                    closeSnackbar={props.closeSnackbar}
-                />
-            );
-            props.enqueueSnackbar(message, options);
-        }
-    }
-
-    useEffect(showNotification, [incomingNotification]);
+    useEffect(
+        () => showNotification(incomingNotification),
+        [showNotification, incomingNotification]
+    );
 
     function checkServerSettings() {
         Moment.globalMoment = moment;
