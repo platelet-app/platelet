@@ -69,7 +69,7 @@ function CommentsSection(props) {
             if (commentsSubscription.current)
                 commentsSubscription.current.unsubscribe();
         };
-    }, []);
+    }, [props.parentId]);
 
     if (isFetching) {
         return <CommentsSkeleton />;
