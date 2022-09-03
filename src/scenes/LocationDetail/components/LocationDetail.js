@@ -37,7 +37,7 @@ export default function LocationDetail({ locationId }) {
     ).Location;
     const observer = useRef({ unsubscribe: () => {} });
 
-    async function newLocationProfile() {
+    const newLocationProfile = React.useCallback(async () => {
         try {
             const locationResult = await DataStore.query(
                 models.Location,
@@ -65,8 +65,11 @@ export default function LocationDetail({ locationId }) {
             );
             console.log("Request failed", error);
         }
-    }
-    useEffect(() => newLocationProfile(), [locationId, locationModelSynced]);
+    }, [dispatch, locationId]);
+    useEffect(
+        () => newLocationProfile(),
+        [locationId, locationModelSynced, newLocationProfile]
+    );
 
     useEffect(() => () => observer.current.unsubscribe(), []);
 
