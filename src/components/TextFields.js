@@ -24,7 +24,7 @@ export function TextFieldControlled(props) {
         if (!currentValue) setErrorState(false);
         else if (props.tel && currentValue)
             setErrorState(!validateNumber(currentValue));
-    }, [currentValue]);
+    }, [currentValue, props.tel]);
 
     const {
         forceUppercase,
@@ -116,7 +116,7 @@ export function TextFieldUncontrolled(props) {
         if (!props.value) setErrorState(false);
         else if (props.tel && props.value !== "")
             setErrorState(!validateNumber(props.value));
-    }, [props.value]);
+    }, [props.value, props.tel]);
 
     if (multiline && !props.tel) {
         return (
