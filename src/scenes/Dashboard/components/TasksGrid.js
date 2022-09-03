@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import PropTypes from "prop-types";
 import makeStyles from "@mui/styles/makeStyles";
 import TasksGridColumn from "./TasksGridColumn";
-import { tasksStatus, userRoles } from "../../../apiConsts";
+import { tasksStatus } from "../../../apiConsts";
 import { dashboardFilteredUserSelector } from "../../../redux/Selectors";
 import { useSelector } from "react-redux";
 
@@ -97,7 +97,6 @@ TasksGrid.propTypes = {
     fullScreenModal: PropTypes.bool,
     modalView: PropTypes.string,
     hideRelayIcons: PropTypes.bool,
-    hideAddButton: PropTypes.bool,
     excludeColumnList: PropTypes.arrayOf(PropTypes.string),
     isFetching: PropTypes.bool,
 };

@@ -9,10 +9,7 @@ import * as models from "../../../models/index";
 import { API, DataStore, graphqlOperation } from "aws-amplify";
 import _ from "lodash";
 import { protectedFields, userRoles } from "../../../apiConsts";
-import {
-    dataStoreModelSyncedStatusSelector,
-    tenantIdSelector,
-} from "../../../redux/Selectors";
+import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
 import EditModeToggleButton from "../../../components/EditModeToggleButton";
 import * as mutations from "../../../graphql/mutations";

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { encodeUUID } from "../utilities";
 import Typography from "@mui/material/Typography";
 import UserAvatar from "./UserAvatar";

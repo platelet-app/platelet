@@ -9,7 +9,7 @@ import {
     initWhoamiObserver,
 } from "./whoamiActions";
 import API from "@aws-amplify/api";
-import { Auth, DataStore, Predicates, syncExpression } from "aws-amplify";
+import { Auth, DataStore, syncExpression } from "aws-amplify";
 import * as models from "../../models";
 import * as queries from "../../graphql/queries";
 import { NotFound } from "http-errors";

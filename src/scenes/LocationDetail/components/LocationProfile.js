@@ -1,11 +1,4 @@
-import {
-    Box,
-    Divider,
-    Stack,
-    TextField,
-    Typography,
-    useMediaQuery,
-} from "@mui/material";
+import { Box, Divider, Stack, Typography, useMediaQuery } from "@mui/material";
 import React, { useRef, useState } from "react";
 import LocationEditNameDialog from "./LocationEditNameDialog";
 import { useSelector } from "react-redux";
@@ -13,7 +6,6 @@ import EditModeToggleButton from "../../../components/EditModeToggleButton";
 import { getWhoami } from "../../../redux/Selectors";
 import PropTypes from "prop-types";
 import { userRoles } from "../../../apiConsts";
-import { TextFieldUncontrolled } from "../../../components/TextFields";
 import LabelItemPair from "../../../components/LabelItemPair";
 import { useTheme } from "@mui/styles";
 
@@ -54,10 +46,10 @@ function LocationProfile(props) {
 
     const whoami = useSelector(getWhoami);
 
-    function verifyUpdate() {
-        // TODO: verify name is unique
-        return true;
-    }
+    //function verifyUpdate() {
+    //    // TODO: verify name is unique
+    //    return true;
+    //}
 
     const onCancel = () => {
         setAction(null);

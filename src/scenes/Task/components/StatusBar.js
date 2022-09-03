@@ -2,9 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { AppBar, Box, Chip, Hidden, Stack } from "@mui/material";
+import { AppBar, Chip, Hidden, Stack } from "@mui/material";
 import { ArrowButton } from "../../../components/Buttons";
-import AssignmentIcon from "@mui/icons-material/Assignment";
 import {
     copyTaskDataToClipboard,
     taskStatusHumanReadable,
@@ -13,16 +12,10 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import IconButton from "@mui/material/IconButton";
-import clsx from "clsx";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    displayErrorNotification,
-    displayInfoNotification,
-} from "../../../redux/notifications/NotificationsActions";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
-import Tooltip from "@mui/material/Tooltip";
-import { tasksStatus } from "../../../apiConsts";
 import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
 
 const colourBarPercent = "90%";

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import "../../App.css";
 import Paper from "@mui/material/Paper";
 import {
@@ -72,7 +72,6 @@ function AddClearFab() {
 function Dashboard() {
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
-    const [postPermission, setPostPermission] = useState(true);
     const roleView = useSelector(getRoleView);
     const dashboardTabIndex = useSelector(dashboardTabIndexSelector);
 
@@ -115,7 +114,6 @@ function Dashboard() {
                 <TasksGrid
                     modalView={"edit"}
                     hideRelayIcons={roleView === userRoles.rider}
-                    hideAddButton={!postPermission}
                     excludeColumnList={
                         dashboardTabIndex === 1
                             ? [

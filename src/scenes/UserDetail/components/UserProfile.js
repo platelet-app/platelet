@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Divider from "@mui/material/Divider";
 import EditModeToggleButton from "../../../components/EditModeToggleButton";
@@ -15,7 +15,6 @@ import { API, graphqlOperation } from "aws-amplify";
 import { tenantIdSelector } from "../../../redux/Selectors";
 import { protectedFields } from "../../../apiConsts";
 import * as mutations from "../../../graphql/mutations";
-import { networkStatusSelector } from "../../../redux/Selectors";
 import RiderResponsibilitySelect from "./RiderResponsibilitySelect";
 import UserContactInformationDialog from "./UserContactInformationDialog";
 import UserAddressInformationDialog from "./UserAddressInformationDialog";

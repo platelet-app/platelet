@@ -156,7 +156,7 @@ async function populateFakeData() {
     }
     const checker = await DataStore.query(models.User);
     if (checker.length < 2) {
-        for (const i in _.range(5)) {
+        _.range(5).forEach(async () => {
             const generatedName = faker.name.findName();
             let userToSave = {
                 name: generatedName,
@@ -223,7 +223,7 @@ async function populateFakeData() {
                     })
                 );
             }
-        }
+        });
     }
     if (fakeData.vehicles) {
         const checker = await DataStore.query(models.Vehicle);
@@ -319,7 +319,7 @@ async function populateTasks() {
     );
     if (tasksNewCheck.length === 0) {
         let timeOfCall = null;
-        for (const i in _.range(2)) {
+        _.range(2).forEach(async () => {
             const pickUpLocation = _.sample(availableLocations);
             const dropOffLocation = _.sample(
                 availableLocations.filter((l) => l.id !== pickUpLocation.id)
@@ -355,7 +355,7 @@ async function populateTasks() {
                     role: userRoles.coordinator,
                 })
             );
-        }
+        });
     }
     // tasksCancelledRejected
     const tasksCancelledCheck = await DataStore.query(models.Task, (t) =>
@@ -414,7 +414,7 @@ async function populateTasks() {
     );
     if (tasksActiveCheck.length === 0) {
         let timeOfCall = null;
-        for (const i in _.range(10)) {
+        _.range(10).forEach(async () => {
             timeOfCall = generateTimes(timeOfCall, 3).timeOfCall;
             const requesterContact = generateRequesterContact();
             const rider = _.sample(availableRiders);
@@ -460,7 +460,7 @@ async function populateTasks() {
                 })
             );
             randomComment(newTask);
-        }
+        });
     }
     // tasksPickedUp
     const tasksPickedUpCheck = await DataStore.query(models.Task, (task) =>
@@ -468,7 +468,7 @@ async function populateTasks() {
     );
     if (tasksPickedUpCheck.length === 0) {
         let timeOfCall = null;
-        for (const i in _.range(5)) {
+        _.range(5).forEach(async () => {
             const times = generateTimes(timeOfCall, 3);
             timeOfCall = times.timeOfCall;
             const requesterContact = generateRequesterContact();
@@ -518,7 +518,7 @@ async function populateTasks() {
                 })
             );
             randomComment(newTask);
-        }
+        });
     }
     // tasksDroppedOff
     const tasksDroppedOffCheck = await DataStore.query(models.Task, (task) =>

@@ -1,4 +1,4 @@
-import { DataStore, Geo } from "aws-amplify";
+import { DataStore } from "aws-amplify";
 import {
     Button,
     Divider,

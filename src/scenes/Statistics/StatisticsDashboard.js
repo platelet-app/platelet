@@ -3,7 +3,6 @@ import { PaddedPaper } from "../../styles/common";
 import TasksStatistics from "./components/TasksStatistics";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useDispatch, useSelector } from "react-redux";
-import { DateAndTimePicker } from "../../components/DateTimePickers";
 import makeStyles from "@mui/styles/makeStyles";
 import FormControl from "@mui/material/FormControl";
 import { Fade, InputLabel, MenuItem, Select, Stack } from "@mui/material";
@@ -44,13 +43,10 @@ const initialState = {
 };
 
 function StatisticsDashboard() {
-    const [dateMode, setDateMode] = useState(false);
     const [state, setState] = useState(initialState);
     const classes = useStyles();
     const [isFetching, setIsFetching] = useState(false);
     const whoami = useSelector(getWhoami);
-    const [endDateTime, setEndDateTime] = useState(new Date());
-    const [startDateTime, setStartDateTime] = useState(new Date());
     const [role, setRole] = useState(userRoles.coordinator);
     const [days, setDays] = useState(3);
     const dispatch = useDispatch();
@@ -59,22 +55,7 @@ function StatisticsDashboard() {
         setDays(event.target.value);
     };
 
-    const picker = dateMode ? (
-        <>
-            <DateAndTimePicker
-                visible={true}
-                label={"Start date"}
-                onChange={(value) => setStartDateTime(value)}
-                value={startDateTime}
-            />
-            <DateAndTimePicker
-                visible={true}
-                label={"End date"}
-                value={endDateTime}
-                onChange={(value) => setEndDateTime(value)}
-            />
-        </>
-    ) : (
+    const picker = (
         <div>
             <FormControl className={classes.formControl}>
                 <InputLabel id="demo-simple-select-label">Days</InputLabel>

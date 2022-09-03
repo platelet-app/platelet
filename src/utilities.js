@@ -350,24 +350,6 @@ export function orderTaskList(tasks) {
     };
 }
 
-function determineTaskFinishedState(task) {
-    if (task.relay_next) {
-        return determineTaskFinishedState(task.relay_next);
-    } else {
-        return !!task.time_dropped_off;
-    }
-}
-
-function recursiveRelaySearch(uuidToFind, task) {
-    if (task.uuid === uuidToFind) {
-        return true;
-    } else if (task.relay_next) {
-        return recursiveRelaySearch(uuidToFind, task.relay_next);
-    } else {
-        return false;
-    }
-}
-
 export function spliceExistingTask(tasks, uuid) {
     let result = {};
     let listType = undefined;

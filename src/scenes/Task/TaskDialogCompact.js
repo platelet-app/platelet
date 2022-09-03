@@ -72,38 +72,6 @@ const DialogWrapper = (props) => {
     );
 };
 
-const initialState = {
-    id: null,
-    reference: "",
-    etag: "",
-    author: null,
-    author_uuid: null,
-    pickUpLocation: null,
-    dropOffLocation: null,
-    patch: null,
-    requesterContact: {
-        name: null,
-        telephoneNumber: null,
-    },
-    priority: null,
-    timeOfCall: null,
-    deliverables: null,
-    comments: null,
-    links: null,
-    timePickedUp: null,
-    timeDroppedOff: null,
-    rider: null,
-    assignedRiders: [],
-    assignedCoordinators: [],
-    timeCancelled: null,
-    timeRejected: null,
-    createdAt: null,
-    updatedAt: null,
-    orderInRelay: 0,
-    assignedRidersDisplayString: "",
-    assignedCoordinatorsDisplayString: "",
-};
-
 function TaskDialogCompact(props) {
     const [notFound, setNotFound] = useState(false);
     const classes = useStyles();
@@ -112,9 +80,6 @@ function TaskDialogCompact(props) {
     const taskObserver = useRef({ unsubscribe: () => {} });
     const [isFetching, setIsFetching] = useState(false);
     const [errorState, setErrorState] = useState(null);
-    const [state, setState] = useState(initialState);
-    const taskRef = useRef();
-    taskRef.current = state;
     const tasksSynced = useSelector(dataStoreModelSyncedStatusSelector).Task;
     let { task_uuid_b62 } = useParams();
     const taskUUID = decodeUUID(task_uuid_b62);
@@ -155,16 +120,11 @@ function TaskDialogCompact(props) {
         else history.push("/");
     }
 
-    const statusBar =
-        !state || notFound ? (
-            <Button onClick={onClose}>Close</Button>
-        ) : (
-            <StatusBar
-                handleClose={onClose}
-                status={state.status}
-                taskId={taskUUID}
-            />
-        );
+    const statusBar = notFound ? (
+        <Button onClick={onClose}>Close</Button>
+    ) : (
+        <StatusBar handleClose={onClose} taskId={taskUUID} />
+    );
 
     const dispatch = useDispatch();
 
@@ -203,11 +163,7 @@ function TaskDialogCompact(props) {
             <DialogWrapper handleClose={onClose}>
                 <div className={classes.overview}>
                     {statusBar}
-                    <TaskOverview
-                        isFetching={isFetching}
-                        task={state}
-                        taskId={taskUUID}
-                    />
+                    <TaskOverview isFetching={isFetching} taskId={taskUUID} />
                     <Hidden mdDown>
                         <CommentsSideBar
                             taskId={taskUUID}

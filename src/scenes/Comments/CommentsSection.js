@@ -10,7 +10,6 @@ import {
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
 import { convertListDataToObject } from "../../utilities";
-import _ from "lodash";
 import { commentVisibility } from "../../apiConsts";
 import GetError from "../../ErrorComponents/GetError";
 

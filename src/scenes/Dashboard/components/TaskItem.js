@@ -164,7 +164,7 @@ function TaskItem(props) {
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const classes = useStyles(isSelected)();
 
-    const { ref, inView, entry } = useInView({
+    const { ref, inView } = useInView({
         threshold: 0,
     });
 

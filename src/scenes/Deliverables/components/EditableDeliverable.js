@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
 import DeliverableCard from "./DeliverableCard";
 import IncreaseDecreaseCounter from "../../../components/IncreaseDecreaseCounter";

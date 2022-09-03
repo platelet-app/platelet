@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import LabelItemPair from "../../../components/LabelItemPair";
@@ -45,14 +45,14 @@ function VehicleProfile(props) {
     if (whoami.roles && whoami.roles.includes("ADMIN")) {
         editNameToggle = (
             <EditModeToggleButton
-            aria-label="Edit Vehicle Name"
+                aria-label="Edit Vehicle Name"
                 value={editAction === editActions.editName}
                 onChange={(v) => setEditAction(v ? editActions.editName : null)}
             />
         );
         editDetailsToggle = (
             <EditModeToggleButton
-            aria-label="Edit Vehicle Details"
+                aria-label="Edit Vehicle Details"
                 value={editAction === editActions.editDetails}
                 onChange={(v) =>
                     setEditAction(v ? editActions.editDetails : null)

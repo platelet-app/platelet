@@ -10,7 +10,6 @@ import { convertListDataToObject } from "../../../utilities";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
-import { makeStyles } from "@mui/styles";
 import {
     dataStoreModelSyncedStatusSelector,
     tenantIdSelector,
@@ -18,10 +17,6 @@ import {
 import GetError from "../../../ErrorComponents/GetError";
 import { deliverableUnits, userRoles } from "../../../apiConsts";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
-
-const useStyles = makeStyles({
-    button: { height: 30 },
-});
 
 function DeliverableDetails(props) {
     const cardClasses = dialogCardStyles();
@@ -234,7 +229,6 @@ function DeliverableDetails(props) {
         />
     );
 
-    const classes = useStyles();
     if (errorState) {
         return <GetError />;
     } else {
@@ -284,14 +278,12 @@ function DeliverableDetails(props) {
 }
 
 DeliverableDetails.propTypes = {
-    deliverables: PropTypes.arrayOf(PropTypes.object),
     taskId: PropTypes.string,
     onChange: PropTypes.func,
     onDelete: PropTypes.func,
 };
 
 DeliverableDetails.defaultProps = {
-    deliverables: [],
     taskId: "",
     onChange: () => {},
     onDelete: () => {},

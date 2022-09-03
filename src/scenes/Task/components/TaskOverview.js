@@ -8,7 +8,7 @@ import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
 import DeliverableDetails from "./DeliverableDetails";
 import TaskActions from "./TaskActions";
-import { Divider, Hidden, Stack } from "@mui/material";
+import { Hidden, Stack } from "@mui/material";
 import LocationDetailsPanel from "./LocationDetailsPanel";
 import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
 import CommentsSection from "../../Comments/CommentsSection";
@@ -40,8 +40,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function TaskOverview(props) {
-    const { taskId, task } = props;
+function TaskOverview({ taskId, isFetching }) {
     const classes = useStyles();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
@@ -57,7 +56,7 @@ function TaskOverview(props) {
                 <Grid item className={classes.item}>
                     <Stack direction={"column"} spacing={isSm ? 1 : 3}>
                         <TaskDetailsPanel
-                            isFetching={props.isFetching}
+                            isFetching={isFetching}
                             taskId={taskId}
                         />
                         <TaskActions taskId={taskId} />
@@ -74,14 +73,7 @@ function TaskOverview(props) {
                             taskId={taskId}
                             locationKey={"dropOffLocation"}
                         />
-                        <DeliverableDetails
-                            deliverables={
-                                task.deliverables
-                                    ? Object.values(task.deliverables)
-                                    : []
-                            }
-                            taskId={taskId}
-                        />
+                        <DeliverableDetails taskId={taskId} />
                         <Hidden mdUp>
                             <TaskAssignmentsPanel taskId={taskId} />
                         </Hidden>
@@ -98,7 +90,6 @@ function TaskOverview(props) {
 }
 
 TaskOverview.propTypes = {
-    task: PropTypes.object,
     isFetching: PropTypes.bool,
     taskId: PropTypes.string,
     onChangeTimeOfCall: PropTypes.func,

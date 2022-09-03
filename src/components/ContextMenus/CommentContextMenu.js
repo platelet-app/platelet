@@ -1,6 +1,5 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import Menu from "@mui/material/Menu";
-import Linkify from "react-linkify";
 import MenuItem from "@mui/material/MenuItem";
 import { useDispatch } from "react-redux";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -11,8 +10,6 @@ import * as models from "../../models/index";
 import { displayInfoNotification } from "../../redux/notifications/NotificationsActions";
 import ConfirmationDialog from "../ConfirmationDialog";
 import Comment from "../../scenes/Comments/components/Comment";
-import CommentCard from "../../scenes/Comments/components/CommentCard";
-import { Typography } from "@mui/material";
 
 const initialState = {
     mouseX: null,

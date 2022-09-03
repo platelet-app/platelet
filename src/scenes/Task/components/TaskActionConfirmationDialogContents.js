@@ -3,8 +3,6 @@ import { Stack, TextField } from "@mui/material";
 import PropTypes from "prop-types";
 import { DateTimePicker } from "@mui/lab";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
-import { DataStore } from "aws-amplify";
-import * as models from "../../../models";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { useDispatch } from "react-redux";
 

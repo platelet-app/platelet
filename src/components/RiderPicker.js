@@ -8,7 +8,6 @@ import { userRoles } from "../apiConsts";
 import * as models from "../models/index";
 import { Box } from "@mui/material";
 import { matchSorter } from "match-sorter";
-import { convertListDataToObject } from "../utilities";
 
 const filterOptions = (options, { inputValue }) => {
     return matchSorter(options, inputValue, { keys: ["displayName"] });

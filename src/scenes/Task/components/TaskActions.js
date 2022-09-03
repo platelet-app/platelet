@@ -65,11 +65,6 @@ function TaskActions(props) {
         setConfirmationKey(key);
     }
 
-    function onChange(key, value) {
-        setTimeWithKey(key, value);
-        setConfirmationKey(null);
-    }
-
     async function setTimeWithKey(key, value) {
         setIsPosting(true);
         try {

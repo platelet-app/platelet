@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Chip, Grid, Stack } from "@mui/material";
+import { Chip, Grid } from "@mui/material";
 
 const days = {
     1: "1 day",

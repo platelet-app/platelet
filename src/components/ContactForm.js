@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import makeStyles from "@mui/styles/makeStyles";
-import TextField from "@mui/material/TextField";
-import { TextFieldControlled, TextFieldUncontrolled } from "./TextFields";
+import { TextFieldUncontrolled } from "./TextFields";
 
 const useStyles = makeStyles((theme) => ({
     root: {

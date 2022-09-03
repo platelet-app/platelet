@@ -1,5 +1,4 @@
 import { saveLocalStorageViewMode } from "../utilities";
-import { setDarkModePreference } from "./redux_utilities";
 
 export const SET_GUIDED_SETUP_OPEN = "SET_GUIDED_SETUP_OPEN";
 

@@ -1,8 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { TransitionGroup } from "react-transition-group";
 import Fade from "@mui/material/Fade";
-import { DataStore } from "aws-amplify";
-import * as models from "../../../models";
 import { useDispatch, useSelector } from "react-redux";
 import {
     dashboardFilteredUserSelector,
@@ -24,7 +22,6 @@ import { ScrollMenu, VisibilityContext } from "react-horizontal-scrolling-menu";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import UserChip from "../../../components/UserChip";
-import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { setDashboardFilteredUser } from "../../../redux/Actions";
 import moment from "moment";
 
@@ -174,7 +171,6 @@ function ActiveRidersChips() {
     const whoami = useSelector(getWhoami);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const dashboardTabIndex = useSelector(dashboardTabIndexSelector);
-    const timeSet = useRef(null);
     const allAssignees = useSelector(taskAssigneesSelector).items;
     const animate = useRef(false);
     const roleView = useSelector(getRoleView);
@@ -240,12 +236,6 @@ function ActiveRidersChips() {
         return convertListDataToObject(sorted);
     }
 
-    // debounce the call in case multiple tasks are being updated at once
-    const debouncedCalculateRidersStatus = _.debounce(
-        async () => setActiveRiders(await calculateRidersStatus()),
-        1000
-    );
-
     async function getActiveRiders() {
         try {
             setActiveRiders(await calculateRidersStatus());
@@ -259,31 +249,6 @@ function ActiveRidersChips() {
     useEffect(() => {
         getActiveRiders();
     }, [roleView, allAssignees, dashboardTabIndex]);
-
-    async function updateRiderHome(userId) {
-        try {
-            const allRiderAssignedTasks = (
-                await DataStore.query(models.TaskAssignee, (a) =>
-                    a.role("eq", userRoles.rider)
-                )
-            ).filter((a) => a.assignee && a.assignee.id === userId);
-            const tasksToUpdate = allRiderAssignedTasks
-                .map((a) => a.task)
-                .filter((t) => t.status === tasksStatus.droppedOff);
-            // for every task in the list, update the task status to completed
-            for (const task of tasksToUpdate) {
-                await DataStore.save(
-                    models.Task.copyOf(task, (updated) => {
-                        updated.status = tasksStatus.completed;
-                        updated.timeRiderHome = timeSet.current.toISOString();
-                    })
-                );
-            }
-        } catch (error) {
-            console.log(error);
-            dispatch(displayErrorNotification("Sorry, an error occurred"));
-        }
-    }
 
     if (errorState) {
         return <Typography>Sorry, something went wrong.</Typography>;

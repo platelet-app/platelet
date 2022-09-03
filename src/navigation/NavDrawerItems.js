@@ -1,5 +1,4 @@
 import React from "react";
-import AssessmentIcon from "@mui/icons-material/Assessment";
 import { useSelector } from "react-redux";
 import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";

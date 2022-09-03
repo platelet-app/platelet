@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import PropTypes from "prop-types";
 import Linkify from "react-linkify";
-import { CommentCardStyled, commentStyles } from "../styles/CommentCards";
+import { commentStyles } from "../styles/CommentCards";
 import CommentCard from "./CommentCard";
 import CommentContextMenu from "../../../components/ContextMenus/CommentContextMenu";
-import { TextFieldUncontrolled } from "../../../components/TextFields";
-import SaveCancelButtons from "../../../components/SaveCancelButtons";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
 import { commentVisibility } from "../../../apiConsts";
-import { useDispatch, useSelector } from "react-redux";
-import { getWhoami } from "../../../redux/Selectors";
+import { useDispatch } from "react-redux";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import EditCommentDialog from "./EditCommentDialog";
 
@@ -73,21 +70,17 @@ const initialCommentState = {
 
 function Comment(props) {
     const { comment } = props;
-    const whoami = useSelector(getWhoami);
     const dispatch = useDispatch();
     const [state, setState] = useState(initialCommentState);
-    const [oldState, setOldState] = useState(initialCommentState);
     const [editMode, setEditMode] = useState(false);
     const contextClasses = contextCreateStyles({
         ...props,
         editMode: editMode,
     });
-    const [isPosting, setIsPosting] = useState(false);
     const classes = commentStyles();
 
     useEffect(() => {
         setState(props.comment);
-        setOldState(props.comment);
     }, [props.comment]);
 
     async function onEditComment(value) {

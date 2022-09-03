@@ -6,11 +6,10 @@ import { getWhoami } from "../redux/Selectors";
 import { DataStore } from "aws-amplify";
 import * as models from "../models/index";
 import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
-import { Button, Stack, Skeleton, TextField } from "@mui/material";
+import { Button, Stack, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
 import { matchSorter } from "match-sorter";
 import makeStyles from "@mui/styles/makeStyles";
-import { TextFieldControlled } from "../components/TextFields";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment } from "@mui/material";
 
@@ -35,7 +34,6 @@ function sortByName(a, b) {
 
 export default function LocationsList() {
     const locationsRef = useRef([]);
-    const [isFetching, setIsFetching] = useState(false);
 
     const [filteredLocations, setFilteredLocations] = useState([]);
     const whoami = useSelector(getWhoami);
@@ -76,61 +74,41 @@ export default function LocationsList() {
         <></>
     );
 
-    if (isFetching) {
-        return (
-            <Stack
-                direction={"column"}
-                spacing={3}
-                alignItems={"flex-start"}
-                justifyContent={"center"}
-            >
-                <PaddedPaper maxWidth={"800px"}>
-                    <Stack direction={"column"}>
-                        <Skeleton variant="text" maxWidth={700} height={50} />
-                        <Skeleton variant="text" maxWidth={500} height={50} />
-                        <Skeleton variant="text" maxWidth={500} height={50} />
-                        <Skeleton variant="text" maxWidth={500} height={50} />
-                    </Stack>
-                </PaddedPaper>
-            </Stack>
-        );
-    } else {
-        return (
-            <Stack
-                direction={"column"}
-                spacing={3}
-                alignItems={"flex-start"}
-                justifyContent={"center"}
-            >
-                {addButton}
-                <TextField
-                    variant={"standard"}
-                    placeholder={"Filter locations"}
-                    onChange={onChangeFilterText}
-                    color={"secondary"}
-                    className={classes.root}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon className={classes.searchIcon} />
-                            </InputAdornment>
-                        ),
-                    }}
-                />
-                <PaddedPaper maxWidth={"800px"}>
-                    <Stack direction={"column"} spacing={1}>
-                        {Object.values(filteredLocations).map((loc) => {
-                            return (
-                                <LocationCard
-                                    key={loc.id}
-                                    uuid={loc.id}
-                                    name={loc.name}
-                                />
-                            );
-                        })}
-                    </Stack>
-                </PaddedPaper>
-            </Stack>
-        );
-    }
+    return (
+        <Stack
+            direction={"column"}
+            spacing={3}
+            alignItems={"flex-start"}
+            justifyContent={"center"}
+        >
+            {addButton}
+            <TextField
+                variant={"standard"}
+                placeholder={"Filter locations"}
+                onChange={onChangeFilterText}
+                color={"secondary"}
+                className={classes.root}
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <SearchIcon className={classes.searchIcon} />
+                        </InputAdornment>
+                    ),
+                }}
+            />
+            <PaddedPaper maxWidth={"800px"}>
+                <Stack direction={"column"} spacing={1}>
+                    {Object.values(filteredLocations).map((loc) => {
+                        return (
+                            <LocationCard
+                                key={loc.id}
+                                uuid={loc.id}
+                                name={loc.name}
+                            />
+                        );
+                    })}
+                </Stack>
+            </PaddedPaper>
+        </Stack>
+    );
 }
