@@ -206,53 +206,54 @@ function TaskItem(props) {
 
     useEffect(addItemToAvailableSelection, [task, addItemToAvailableSelection]);
 
-    const getAssignees = React.useCallback(() => {
-        if (!visibility || !roleView || !task) return;
-        // inefficient method of getting assignees
-        /*const allAssignments = (
+    const getAssignees = React.useCallback(
+        (visibility, roleView, task, allAssignees) => {
+            if (!visibility || !roleView || !task) return;
+            // inefficient method of getting assignees
+            /*const allAssignments = (
             await DataStore.query(models.TaskAssignee)
         ).filter(
             (assignment) => assignment.task && assignment.task.id === task.id
         );
         */
-        const taskAssignees =
-            allAssignees && allAssignees.items
-                ? allAssignees.items.filter(
-                      (assignment) =>
-                          assignment.task && assignment.task.id === task.id
-                  )
+            const taskAssignees =
+                allAssignees && allAssignees.items
+                    ? allAssignees.items.filter(
+                          (assignment) =>
+                              assignment.task && assignment.task.id === task.id
+                      )
+                    : [];
+            const assignmentsNotMe = allAssignees
+                ? Object.values(taskAssignees).filter((assignment) => {
+                      const actualRole =
+                          roleView === "ALL" ? userRoles.coordinator : roleView;
+                      if (
+                          assignment.role.toLowerCase() !==
+                              actualRole.toLowerCase() ||
+                          assignment.assignee.id !== whoami.id
+                      ) {
+                          return true;
+                      }
+                      return false;
+                  })
                 : [];
-        const assignmentsNotMe = allAssignees
-            ? Object.values(taskAssignees).filter((assignment) => {
-                  const actualRole =
-                      roleView === "ALL" ? userRoles.coordinator : roleView;
-                  if (
-                      assignment.role.toLowerCase() !==
-                          actualRole.toLowerCase() ||
-                      assignment.assignee.id !== whoami.id
-                  ) {
-                      return true;
-                  }
-                  return false;
-              })
-            : [];
-        const assignees = assignmentsNotMe.map((a) => a.assignee);
-        setAssignees(assignees);
-        const riders =
-            task && task.assignees
-                ? Object.values(task.assignees)
-                      .filter((a) => a.role === userRoles.rider)
-                      .map((a) => a.assignee)
-                : [];
-        setAssignedRiders(riders);
-    }, [allAssignees, task, roleView, visibility, whoami.id]);
+            const assignees = assignmentsNotMe.map((a) => a.assignee);
+            setAssignees(assignees);
+            const riders =
+                task && task.assignees
+                    ? Object.values(task.assignees)
+                          .filter((a) => a.role === userRoles.rider)
+                          .map((a) => a.assignee)
+                    : [];
+            setAssignedRiders(riders);
+        },
+        [whoami.id]
+    );
 
-    useEffect(getAssignees, [
-        visibility,
-        task,
-        allAssignees.items,
-        getAssignees,
-    ]);
+    useEffect(
+        () => getAssignees(visibility, roleView, task, allAssignees),
+        [visibility, task, allAssignees, getAssignees, roleView]
+    );
 
     const getCommentCount = React.useCallback(async () => {
         if (!task || !task.id) return 0;
