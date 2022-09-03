@@ -26,6 +26,7 @@ import SnackNotificationButtons from "./components/SnackNotificationButtons";
 import { getWhoami } from "./redux/Selectors";
 import { DataStore } from "aws-amplify";
 import * as models from "./models";
+import useCurrentTheme from "./hooks/useCurrentTheme";
 
 if (
     (!process.env.REACT_APP_OFFLINE_ONLY ||
@@ -170,11 +171,13 @@ const taskStatus = {
 };
 
 function AppDefault(props) {
-    const darkMode = useSelector((state) => state.darkMode);
+    //const themePreference = useSelector((state) => state.darkMode);
     const whoami = useSelector(getWhoami);
     let theme;
 
-    if (darkMode) {
+    const themePreference = useCurrentTheme();
+
+    if (themePreference === "dark") {
         theme = createTheme({
             palette: {
                 mode: "dark",
