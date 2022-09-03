@@ -55,7 +55,7 @@ function NewCommentCard(props) {
 
     function clearCommentOnPost() {
         if (!isPosting) {
-            setState({ ...state, body: "" });
+            setState((prevState) => ({ ...prevState, body: "" }));
         }
     }
 
