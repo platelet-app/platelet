@@ -4,14 +4,12 @@ import { PaddedPaper, ThemedLink } from "../styles/common";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
 import { encodeUUID, sortByCreatedTime } from "../utilities";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import VehicleCard from "../components/VehicleCard";
 import { DataStore } from "aws-amplify";
 import * as models from "../models/index";
-import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
 import { getWhoami } from "../redux/Selectors";
 import { Stack } from "@mui/material";
-import Skeleton from "@mui/material/Skeleton";
 import { TextFieldControlled } from "../components/TextFields";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment } from "@mui/material";
@@ -89,7 +87,7 @@ function VehicleList() {
                     ),
                 }}
             />
-            <PaddedPaper width={"800px"}>
+            <PaddedPaper maxWidth={"800px"}>
                 <Stack
                     spacing={1}
                     direction={"column"}
