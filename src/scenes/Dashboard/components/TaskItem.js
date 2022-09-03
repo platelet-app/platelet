@@ -169,9 +169,13 @@ function TaskItem(props) {
     });
 
     useEffect(() => {
-        if (inView && !visibility) {
-            setVisibility(true);
-        }
+        setVisibility((prevState) => {
+            if (inView && !prevState) {
+                return true;
+            } else {
+                return prevState;
+            }
+        });
     }, [inView]);
 
     function calculateIsSelected() {
@@ -184,9 +188,9 @@ function TaskItem(props) {
         }
         setIsSelected(result);
     }
-    useEffect(calculateIsSelected, [selectedItems, tabIndex]);
+    useEffect(calculateIsSelected, [selectedItems, tabIndex, task.id]);
 
-    function handleSelectItem(e) {
+    function handleSelectItem() {
         if (isSelected) {
             dispatch(selectionActions.unselectItem(task.id, tabIndex));
         } else {
@@ -194,15 +198,16 @@ function TaskItem(props) {
         }
     }
 
-    function addItemToAvailableSelection() {
+    const addItemToAvailableSelection = React.useCallback(() => {
         dispatch(selectionActions.addToAvailableItems(task));
         return () =>
             dispatch(selectionActions.removeFromAvailableItems(task.id));
-    }
-    useEffect(addItemToAvailableSelection, [task]);
+    }, [dispatch, task]);
 
-    async function getAssignees() {
-        if (!visibility || !roleView || !props.task) return;
+    useEffect(addItemToAvailableSelection, [task, addItemToAvailableSelection]);
+
+    const getAssignees = React.useCallback(() => {
+        if (!visibility || !roleView || !task) return;
         // inefficient method of getting assignees
         /*const allAssignments = (
             await DataStore.query(models.TaskAssignee)
@@ -234,22 +239,26 @@ function TaskItem(props) {
         const assignees = assignmentsNotMe.map((a) => a.assignee);
         setAssignees(assignees);
         const riders =
-            props.task && props.task.assignees
-                ? Object.values(props.task.assignees)
+            task && task.assignees
+                ? Object.values(task.assignees)
                       .filter((a) => a.role === userRoles.rider)
                       .map((a) => a.assignee)
                 : [];
         setAssignedRiders(riders);
-    }
-    useEffect(() => {
-        getAssignees();
-    }, [visibility, props.task, allAssignees.items]);
+    }, [allAssignees, task, roleView, visibility, whoami.id]);
 
-    async function getCommentCount() {
-        if (!props.task || !props.task.id) return 0;
+    useEffect(getAssignees, [
+        visibility,
+        task,
+        allAssignees.items,
+        getAssignees,
+    ]);
+
+    const getCommentCount = React.useCallback(async () => {
+        if (!task || !task.id) return 0;
         const commentsResult = (
             await DataStore.query(models.Comment, (c) =>
-                c.parentId("eq", props.task.id)
+                c.parentId("eq", task.id)
             )
         ).filter(
             (c) =>
@@ -259,25 +268,25 @@ function TaskItem(props) {
                     c.author.id === whoami.id)
         );
         return commentsResult.length;
-    }
+    }, [task, whoami.id]);
 
-    async function calculateCommentCount() {
-        if (!visibility || !props.task) return;
+    const calculateCommentCount = React.useCallback(async () => {
+        if (!visibility || !task) return;
         const commentCount = await getCommentCount();
         setCommentCount(commentCount);
         // TODO: change this to observeQuery when the bug is fixed
         commentObserver.current.unsubscribe();
         commentObserver.current = DataStore.observe(models.Comment, (c) =>
-            c.parentId("eq", props.task.id)
+            c.parentId("eq", task.id)
         ).subscribe(async () => {
             getCommentCount().then((count) => {
                 setCommentCount(count);
             });
         });
-    }
+    }, [task, getCommentCount, visibility]);
     useEffect(() => {
         calculateCommentCount();
-    }, [visibility, props.task, commentModelSynced]);
+    }, [visibility, task, commentModelSynced, calculateCommentCount]);
 
     useEffect(() => () => commentObserver.current.unsubscribe(), []);
 
