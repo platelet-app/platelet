@@ -180,7 +180,7 @@ function ActiveRidersChips() {
 
     const dispatch = useDispatch();
 
-    async function calculateRidersStatus() {
+    const calculateRidersStatus = React.useCallback(() => {
         let activeRidersResult = [];
         if (roleView === "ALL") {
             const assignments = allAssignees.filter(
@@ -234,9 +234,9 @@ function ActiveRidersChips() {
             a.displayName.localeCompare(b.displayName)
         );
         return convertListDataToObject(sorted);
-    }
+    }, [allAssignees, dispatch, roleView, dashboardTabIndex, whoami]);
 
-    async function getActiveRiders() {
+    const getActiveRiders = React.useCallback(async () => {
         try {
             setActiveRiders(await calculateRidersStatus());
             animate.current = true;
@@ -244,11 +244,11 @@ function ActiveRidersChips() {
             console.log(error);
             setErrorState(error);
         }
-    }
+    }, [calculateRidersStatus]);
 
     useEffect(() => {
         getActiveRiders();
-    }, [roleView, allAssignees, dashboardTabIndex]);
+    }, [roleView, allAssignees, dashboardTabIndex, getActiveRiders]);
 
     if (errorState) {
         return <Typography>Sorry, something went wrong.</Typography>;
