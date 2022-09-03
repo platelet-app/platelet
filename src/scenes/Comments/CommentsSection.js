@@ -29,7 +29,7 @@ function CommentsSection(props) {
         dataStoreModelSyncedStatusSelector
     ).Comment;
 
-    async function getComments() {
+    const getComments = React.useCallback(async () => {
         //TODO: see if a more secure way to restrict private comment access
         console.log("comm", commentsSynced);
         try {
@@ -51,8 +51,11 @@ function CommentsSection(props) {
             setErrorState(error);
             console.error("Request failed", error);
         }
-    }
-    useEffect(() => getComments(), [props.parentId, commentsSynced]);
+    }, [commentsSynced, props.parentId, whoami.id]);
+    useEffect(
+        () => getComments(),
+        [props.parentId, commentsSynced, getComments]
+    );
     getCommentsRef.current = getComments;
 
     useEffect(() => {
