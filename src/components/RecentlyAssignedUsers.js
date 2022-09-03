@@ -25,7 +25,7 @@ function RecentlyAssignedUsers(props) {
 
     const selectedId = props.value && props.value.id;
 
-    async function calculateRidersStatus() {
+    const calculateRidersStatus = React.useCallback(async () => {
         setIsFetching(true);
         let activeRidersResult = [];
         if (roleView === "ALL") {
@@ -66,9 +66,9 @@ function RecentlyAssignedUsers(props) {
         }
         setIsFetching(false);
         return convertListDataToObject(activeRidersResult);
-    }
+    }, [allAssignees, roleView, whoami, props.role, props.limit]);
 
-    async function getActiveRiders() {
+    const getActiveRiders = React.useCallback(async () => {
         try {
             if (!roleView) return;
             setActiveRiders(await calculateRidersStatus());
@@ -77,11 +77,11 @@ function RecentlyAssignedUsers(props) {
             console.log(error);
             setErrorState(error);
         }
-    }
+    }, [calculateRidersStatus, roleView]);
 
     useEffect(() => {
         getActiveRiders();
-    }, [roleView, props.role, allAssigneesReady]);
+    }, [roleView, props.role, allAssigneesReady, getActiveRiders]);
 
     if (errorState) {
         return <Typography>Sorry, something went wrong.</Typography>;
