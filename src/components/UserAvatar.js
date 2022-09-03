@@ -31,7 +31,7 @@ const UserAvatar = React.memo((props) => {
     const avatarFallbackColor = generateColorFromString(props.userUUID);
     const [avatarURL, setAvatarURL] = useState(null);
 
-    async function getThumbnail() {
+    const getThumbnail = React.useCallback(async () => {
         if (props.thumbnailKey) {
             try {
                 const result = await generateS3Link(props.thumbnailKey, true);
@@ -42,9 +42,9 @@ const UserAvatar = React.memo((props) => {
                 console.log(e);
             }
         }
-    }
+    }, [props.thumbnailKey]);
 
-    useEffect(() => getThumbnail(), [props.thumbnailKey]);
+    useEffect(() => getThumbnail(), [props.thumbnailKey, getThumbnail]);
 
     const useStyles = makeStyles((theme) => ({
         card: {
