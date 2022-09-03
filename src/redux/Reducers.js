@@ -7,15 +7,11 @@ import {
     SET_MOBILE_VIEW,
     SET_MENU_INDEX,
     SET_COMMENTS_OBJECT_UUID,
-    SET_TASK_CONTEXT_MENU_SNACK,
-    CLEAR_TASK_CONTEXT_MENU_SNACK,
     SET_ROLE_VIEW,
     SET_IDLE_STATUS,
-    SET_DARK_MODE,
 } from "./Actions";
 import { dashboardFilter } from "./dashboardFilter/DashboardFilterReducers";
 import { notification } from "./notifications/NotificationsReducers";
-import { getDarkModePreference } from "./redux_utilities";
 import {
     awsHubDataStoreEventsReducer,
     awsHubDataStoreModelsSyncedStatusReducer,
@@ -26,33 +22,6 @@ import {
     selectionModeAvailableItemsReducer,
     selectionActionsPendingReducer,
 } from "./selectionMode/selectionModeReducers";
-
-const darkModeInitialState = getDarkModePreference();
-
-function darkMode(state = darkModeInitialState, action) {
-    switch (action.type) {
-        case SET_DARK_MODE:
-            return action.data;
-        default:
-            return state;
-    }
-}
-
-const taskContextMenuSnackInitialState = { snack: () => {}, uuid: "" };
-
-function taskContextMenuSnack(
-    state = taskContextMenuSnackInitialState,
-    action
-) {
-    switch (action.type) {
-        case SET_TASK_CONTEXT_MENU_SNACK:
-            return { snack: action.func, uuid: action.uuid };
-        case CLEAR_TASK_CONTEXT_MENU_SNACK:
-            return taskContextMenuSnackInitialState;
-        default:
-            return state;
-    }
-}
 
 function viewMode(state = null, action) {
     switch (action.type) {
@@ -265,7 +234,6 @@ const appReducer = combineReducers({
     notification,
     dashboardFilter,
     idleStatus,
-    darkMode,
     dashboardTabIndex,
     dashboardFilteredUser,
     awsHubDataStoreEventsReducer,
