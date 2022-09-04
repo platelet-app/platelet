@@ -75,7 +75,7 @@ function Dashboard() {
     const roleView = useSelector(getRoleView);
     const dashboardTabIndex = useSelector(dashboardTabIndexSelector);
 
-    function setInitialRoleView() {
+    const setInitialRoleView = React.useCallback(() => {
         if (whoami.id) {
             const savedRoleMode = getDashboardRoleMode();
             if (
@@ -93,8 +93,8 @@ function Dashboard() {
                 saveDashboardRoleMode(userRoles.rider);
             }
         }
-    }
-    useEffect(setInitialRoleView, [whoami]);
+    }, [dispatch, whoami.id, whoami.roles]);
+    useEffect(setInitialRoleView, [whoami, setInitialRoleView]);
 
     return (
         <Stack>
