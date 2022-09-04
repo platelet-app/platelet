@@ -41,12 +41,12 @@ function DeliverableDetails(props) {
     const currentUserRole = useAssignmentRole(props.taskId);
     const hasFullPermissions = currentUserRole === userRoles.coordinator;
 
-    async function getDeliverables() {
+    const getDeliverables = React.useCallback(async (taskId) => {
         if (!loadedOnce.current) setIsFetching(true);
         try {
             const result = await DataStore.query(models.Deliverable);
             const filtered = result.filter(
-                (d) => d.task && d.task.id === props.taskId
+                (d) => d.task && d.task.id === taskId
             );
             setState(convertListDataToObject(filtered));
             setIsFetching(false);
@@ -64,7 +64,7 @@ function DeliverableDetails(props) {
                             );
                             return;
                         }
-                        if (element.taskDeliverablesId !== props.taskId) return;
+                        if (element.taskDeliverablesId !== taskId) return;
                         if (opType === "INSERT") {
                             setState((prevState) => ({
                                 ...prevState,
@@ -84,11 +84,16 @@ function DeliverableDetails(props) {
             setErrorState(true);
             setIsFetching(false);
         }
-    }
+    }, []);
 
     useEffect(() => {
-        getDeliverables();
-    }, [props.taskId, deliverablesSynced, deliverableTypesSynced]);
+        getDeliverables(props.taskId);
+    }, [
+        props.taskId,
+        deliverablesSynced,
+        deliverableTypesSynced,
+        getDeliverables,
+    ]);
 
     // stop observer when component unmounts
     useEffect(() => () => deliverablesObserver.current.unsubscribe(), []);
