@@ -70,7 +70,7 @@ function TasksGridColumn(props) {
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
     const [filteredTasksIds, setFilteredTasksIds] = useState(null);
-    const [width, height] = useWindowSize();
+    const [width] = useWindowSize();
     const whoami = useSelector(getWhoami);
     const dashboardFilter = useSelector(dashboardFilterTermSelector);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
@@ -84,7 +84,6 @@ function TasksGridColumn(props) {
     const selectionActionsPending = useSelector(
         selectionActionsPendingSelector
     );
-    const getTasksRef = useRef(null);
     const tasksSubscription = useRef({
         unsubscribe: () => {},
     });
@@ -129,7 +128,7 @@ function TasksGridColumn(props) {
     }
     useEffect(doSearch, [dashboardFilter, state]);
 
-    async function getTasks() {
+    const getTasks = React.useCallback(async () => {
         if (!roleView || !taskAssigneesReady || selectionActionsPending) {
             return;
         } else {
@@ -175,15 +174,20 @@ function TasksGridColumn(props) {
                 console.log(error);
             }
         }
-    }
+    }, [
+        dashboardFilteredUser,
+        props.taskKey,
+        roleView,
+        selectionActionsPending,
+        taskAssignees.items,
+        taskAssigneesReady,
+        whoami.id,
+    ]);
 
-    getTasksRef.current = getTasks;
+    const tasksKeyJSON = JSON.stringify(props.taskKey);
 
     useEffect(
-        () => {
-            getTasks();
-        },
-        // JSON.stringify prevents component remount from an array prop
+        () => getTasks(),
         [
             dataStoreModelSynced.Task,
             dataStoreModelSynced.Location,
@@ -191,7 +195,9 @@ function TasksGridColumn(props) {
             dashboardFilteredUser,
             taskAssigneesReady,
             roleView,
-            JSON.stringify(props.taskKey),
+            // JSON.stringify prevents component remount from an array prop
+            tasksKeyJSON,
+            getTasks,
         ]
     );
 
@@ -217,7 +223,7 @@ function TasksGridColumn(props) {
                     (item) => item.assignee && item.assignee.id === whoami.id
                 ).length > 0
             ) {
-                getTasksRef.current();
+                getTasks();
             }
         } catch (error) {
             console.log(error);
@@ -240,9 +246,7 @@ function TasksGridColumn(props) {
                             !(newTask.element.id in stateRef.current)
                         ) {
                             animate.current = true;
-                            getTasksRef
-                                .current()
-                                .then(() => (animate.current = false));
+                            getTasks().then(() => (animate.current = false));
                             return;
                         } else if (
                             newTask.element.status &&
@@ -259,7 +263,7 @@ function TasksGridColumn(props) {
                                     stateRef.current[newTask.element.id]
                                         .dropOffLocationId
                             ) {
-                                getTasksRef.current();
+                                getTasks();
                             } else {
                                 addTaskToState(newTask.element);
                             }
@@ -268,7 +272,7 @@ function TasksGridColumn(props) {
                         // if roleView is rider or coordinator, let the assignments observer deal with it
                         if (roleView !== "ALL") return;
                         if (props.taskKey.includes(newTask.element.status)) {
-                            getTasksRef.current();
+                            getTasks();
                         }
                     }
                 } catch (error) {
@@ -332,7 +336,7 @@ function TasksGridColumn(props) {
                             (result) => {
                                 if (props.taskKey.includes(result.status)) {
                                     animate.current = true;
-                                    getTasksRef.current();
+                                    getTasks();
                                 }
                             }
                         );

@@ -603,7 +603,7 @@ describe("TasksGridColumn", () => {
                 })
             );
             await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(1);
+                expect(querySpy).toHaveBeenCalledTimes(2);
             });
             mockAllIsIntersecting(true);
             expect(await screen.findAllByRole("link")).toHaveLength(1);
@@ -740,7 +740,7 @@ describe("TasksGridColumn", () => {
                 })
             );
             await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(1);
+                expect(querySpy).toHaveBeenCalledTimes(2);
             });
             mockAllIsIntersecting(true);
             expect(screen.queryAllByRole("link")).toHaveLength(0);
