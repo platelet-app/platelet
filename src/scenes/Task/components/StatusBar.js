@@ -84,12 +84,12 @@ function StatusBar(props) {
     const [status, setStatus] = useState(null);
     const classes = dialogComponent(status)();
 
-    async function getTask() {
+    const getTask = React.useCallback(async (taskId) => {
         try {
-            const task = await DataStore.query(models.Task, props.taskId);
+            const task = await DataStore.query(models.Task, taskId);
             taskObserver.current = DataStore.observe(
                 models.Task,
-                props.taskId
+                taskId
             ).subscribe(({ element }) => {
                 setStatus(element.status);
             });
@@ -97,9 +97,12 @@ function StatusBar(props) {
         } catch (e) {
             console.log(e);
         }
-    }
+    }, []);
 
-    useEffect(() => getTask(), [props.taskId, taskModelsSynced]);
+    useEffect(
+        () => getTask(props.taskId),
+        [props.taskId, taskModelsSynced, getTask]
+    );
 
     async function copyToClipboard() {
         if (!props.taskId) {
