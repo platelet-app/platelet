@@ -16,7 +16,6 @@ import * as models from "../../models/index";
 import { DataStore } from "aws-amplify";
 import { dataStoreModelSyncedStatusSelector } from "../../redux/Selectors";
 import { useHistory, useLocation, useParams } from "react-router";
-import PropTypes from "prop-types";
 import { setSelectionActionsPending } from "../../redux/selectionMode/selectionModeActions";
 
 const drawerWidth = 420;
@@ -82,16 +81,16 @@ function TaskDialogCompact(props) {
     const [errorState, setErrorState] = useState(null);
     const tasksSynced = useSelector(dataStoreModelSyncedStatusSelector).Task;
     let { task_uuid_b62 } = useParams();
-    const taskUUID = decodeUUID(task_uuid_b62);
+    const taskId = decodeUUID(task_uuid_b62);
 
-    async function getTask() {
+    const getTask = React.useCallback(async (taskId) => {
         setIsFetching(true);
         try {
-            const taskData = await DataStore.query(models.Task, taskUUID);
+            const taskData = await DataStore.query(models.Task, taskId);
             taskObserver.current.unsubscribe();
             taskObserver.current = DataStore.observe(
                 models.Task,
-                taskUUID
+                taskId
             ).subscribe(async (observeResult) => {
                 if (observeResult.opType === "DELETE") {
                     setNotFound(true);
@@ -108,8 +107,8 @@ function TaskDialogCompact(props) {
             setErrorState(error);
             console.error("Request failed", error);
         }
-    }
-    useEffect(() => getTask(), [props.taskId, tasksSynced]);
+    }, []);
+    useEffect(() => getTask(taskId), [taskId, tasksSynced, getTask]);
 
     const history = useHistory();
     const location = useLocation();
@@ -123,7 +122,7 @@ function TaskDialogCompact(props) {
     const statusBar = notFound ? (
         <Button onClick={onClose}>Close</Button>
     ) : (
-        <StatusBar handleClose={onClose} taskId={taskUUID} />
+        <StatusBar handleClose={onClose} taskId={taskId} />
     );
 
     const dispatch = useDispatch();
@@ -139,9 +138,7 @@ function TaskDialogCompact(props) {
             <DialogWrapper handleClose={onClose}>
                 {statusBar}
                 <NotFound>
-                    <Typography>
-                        Task with UUID {taskUUID} not found.
-                    </Typography>
+                    <Typography>Task with UUID {taskId} not found.</Typography>
                 </NotFound>
             </DialogWrapper>
         );
@@ -163,12 +160,12 @@ function TaskDialogCompact(props) {
             <DialogWrapper handleClose={onClose}>
                 <div className={classes.overview}>
                     {statusBar}
-                    <TaskOverview isFetching={isFetching} taskId={taskUUID} />
+                    <TaskOverview isFetching={isFetching} taskId={taskId} />
                     <Hidden mdDown>
                         <CommentsSideBar
-                            taskId={taskUUID}
+                            taskId={taskId}
                             width={isMd ? drawerWidthMd : drawerWidth}
-                            parentUUID={taskUUID}
+                            parentUUID={taskId}
                         />
                     </Hidden>
                 </div>
@@ -176,9 +173,5 @@ function TaskDialogCompact(props) {
         );
     }
 }
-
-TaskDialogCompact.propTypes = {
-    taskId: PropTypes.string.isRequired,
-};
 
 export default TaskDialogCompact;
