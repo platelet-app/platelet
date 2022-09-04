@@ -268,7 +268,7 @@ function TasksGridColumn(props) {
     const selectionActionsPendingRef = useRef(false);
     selectionActionsPendingRef.current = selectionActionsPending;
 
-    function setUpObservers() {
+    const setUpObservers = React.useCallback((roleView, taskKey) => {
         tasksSubscription.current.unsubscribe();
         tasksSubscription.current = DataStore.observe(models.Task).subscribe(
             (newTask) => {
@@ -277,7 +277,7 @@ function TasksGridColumn(props) {
                     if (newTask.opType === "UPDATE") {
                         if (
                             newTask.element.status &&
-                            props.taskKey.includes(newTask.element.status) &&
+                            taskKey.includes(newTask.element.status) &&
                             !(newTask.element.id in stateRef.current)
                         ) {
                             animate.current = true;
@@ -287,7 +287,7 @@ function TasksGridColumn(props) {
                             return;
                         } else if (
                             newTask.element.status &&
-                            !props.taskKey.includes(newTask.element.status)
+                            !taskKey.includes(newTask.element.status)
                         ) {
                             removeTaskFromState(newTask.element);
                             return;
@@ -308,7 +308,7 @@ function TasksGridColumn(props) {
                     } else {
                         // if roleView is rider or coordinator, let the assignments observer deal with it
                         if (roleView !== "ALL") return;
-                        if (props.taskKey.includes(newTask.element.status)) {
+                        if (taskKey.includes(newTask.element.status)) {
                             getTasksRef.current();
                         }
                     }
@@ -371,7 +371,7 @@ function TasksGridColumn(props) {
                         if (!element.taskId) return;
                         DataStore.query(models.Task, element.taskId).then(
                             (result) => {
-                                if (props.taskKey.includes(result.status)) {
+                                if (taskKey.includes(result.status)) {
                                     animate.current = true;
                                     getTasks();
                                 }
@@ -395,11 +395,11 @@ function TasksGridColumn(props) {
             }
         });
         */
-    }
+    }, []);
 
     useEffect(() => {
-        setUpObservers();
-    }, [roleView]);
+        setUpObservers(roleView, props.taskKey);
+    }, [roleView, setUpObservers, props.taskKey]);
 
     useEffect(() => {
         return () => {
