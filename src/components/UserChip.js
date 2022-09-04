@@ -8,10 +8,9 @@ function UserChip(props) {
     const [thumbnail, setThumbnail] = useState(null);
     const [label, setLabel] = useState(displayName);
 
-    async function getThumbnail() {
-        if (profilePicture && profilePicture.key) {
+    const getThumbnail = React.useCallback(async (profilePictureKey) => {
+        if (profilePictureKey) {
             try {
-                const profilePictureKey = profilePicture.key;
                 const result = await generateS3Link(profilePictureKey);
                 if (result) {
                     setThumbnail(result);
@@ -20,8 +19,13 @@ function UserChip(props) {
                 console.log(e);
             }
         }
-    }
-    useEffect(() => getThumbnail(), [props.user]);
+    }, []);
+
+    useEffect(() => {
+        if (profilePicture && profilePicture.key) {
+            getThumbnail(profilePicture.key);
+        }
+    }, [props.user, getThumbnail, profilePicture]);
 
     const setText = React.useCallback(async () => {
         try {
