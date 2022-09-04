@@ -58,14 +58,25 @@ export function MenuMainContainer() {
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
 
-    useEffect(() => {
-        if (menuIndex !== "dashboard") {
-            setSearchMode(false);
-            dispatch(clearDashboardFilter());
-        } else if (currentFilter && !searchMode && isSm) {
-            setSearchMode(true);
-        }
-    }, [currentFilter, isSm, menuIndex]);
+    const updateSearchMode = React.useCallback(
+        (currentFilter, menuIndex, isSm) => {
+            if (menuIndex !== "dashboard") {
+                setSearchMode(false);
+                dispatch(clearDashboardFilter());
+            } else if (currentFilter && isSm) {
+                setSearchMode((prevState) => {
+                    if (!prevState) return true;
+                    else return prevState;
+                });
+            }
+        },
+        [dispatch]
+    );
+
+    useEffect(
+        () => updateSearchMode(currentFilter, menuIndex, isSm),
+        [currentFilter, isSm, menuIndex, updateSearchMode]
+    );
 
     useEffect(() => {
         if (!isSm && searchMode) setSearchMode(false);
