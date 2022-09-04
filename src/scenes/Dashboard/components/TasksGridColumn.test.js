@@ -24,18 +24,6 @@ import { setTaskAssignees } from "../../../redux/taskAssignees/taskAssigneesActi
 
 Logger.LOG_LEVEL = "ERROR";
 
-function addAssigneesAndConvertToObject(tasks, allAssignees) {
-    const finalResult = {};
-    for (const t of tasks) {
-        const assignmentsFiltered = allAssignees.filter(
-            (a) => a.task.id === t.id
-        );
-        const assignees = convertListDataToObject(assignmentsFiltered);
-        finalResult[t.id] = { ...t, assignees };
-    }
-
-    return finalResult;
-}
 const testUserModel = new models.User({
     name: "whoami",
     displayName: "Mock User",
@@ -612,6 +600,68 @@ describe("TasksGridColumn", () => {
             ).toBeInTheDocument();
         }
     );
+
+    test.each`
+        roleView
+        ${userRoles.coordinator} | ${userRoles.rider}
+    `("the observer reacts to changes in status", async ({ roleView }) => {
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [roleView],
+            })
+        );
+        const timeOfCall = new Date().toISOString();
+        const mockTask = await DataStore.save(
+            new models.Task({
+                status: tasksStatus.pickedUp,
+                timeOfCall,
+            })
+        );
+        const mockAssignees = new models.TaskAssignee({
+            tenantId: "tenant-id",
+            assignee: mockWhoami,
+            task: mockTask,
+            role: roleView,
+        });
+        const preloadedState = {
+            roleView,
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [mockAssignees],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const observeSpy = jest.spyOn(DataStore, "observe");
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<TasksGridColumn taskKey={[tasksStatus.droppedOff]} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(observeSpy).toHaveBeenNthCalledWith(1, models.Task);
+        });
+        await waitFor(() => {
+            expect(observeSpy).toHaveBeenNthCalledWith(2, models.Location);
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        expect(screen.queryByText(moment(timeOfCall).calendar())).toBeNull();
+        await DataStore.save(
+            models.Task.copyOf(
+                mockTask,
+                (upd) => (upd.status = tasksStatus.droppedOff)
+            )
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        mockAllIsIntersecting(true);
+        expect(await screen.findAllByRole("link")).toHaveLength(1);
+        expect(
+            screen.getByText(moment(timeOfCall).calendar())
+        ).toBeInTheDocument();
+    });
 
     test.each`
         roleView
