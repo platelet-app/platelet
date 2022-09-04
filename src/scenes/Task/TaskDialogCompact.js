@@ -129,9 +129,8 @@ function TaskDialogCompact(props) {
 
     useEffect(() => {
         dispatch(setSelectionActionsPending(true));
+        return () => dispatch(setSelectionActionsPending(false));
     }, [dispatch]);
-
-    useEffect(() => () => dispatch(setSelectionActionsPending(false)), []);
 
     if (notFound) {
         return (
