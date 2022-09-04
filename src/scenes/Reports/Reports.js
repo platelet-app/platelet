@@ -35,7 +35,7 @@ function Reports() {
     const [confirmation, setConfirmation] = useState(false);
     const dispatch = useDispatch();
 
-    const handleExport = async () => {
+    const handleExport = React.useCallback(async () => {
         try {
             setIsPosting(true);
             const timeStamp = moment().subtract(days, "days");
@@ -49,7 +49,7 @@ function Reports() {
             console.log(err);
             dispatch(displayErrorNotification("Sorry, something went wrong."));
         }
-    };
+    }, [whoami.id, whoami.name, days, dispatch, role]);
 
     const handleClick = () => {
         if (!dataStoreReadyStatus && networkStatus) {
@@ -64,7 +64,7 @@ function Reports() {
             setConfirmation(false);
             handleExport();
         }
-    }, [dataStoreReadyStatus, confirmation]);
+    }, [dataStoreReadyStatus, confirmation, handleExport]);
 
     const downloadCSVFile = (data, fileName) => {
         if (data) {
