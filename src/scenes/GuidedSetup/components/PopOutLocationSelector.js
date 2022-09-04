@@ -65,8 +65,10 @@ function PopOutLocationSelector(props) {
 
     useEffect(() => {
         if (props.override) {
-            oldState.current = state;
-            setState(props.override);
+            setState((prevState) => {
+                oldState.current = prevState;
+                return props.override;
+            });
         } else {
             setState(oldState.current);
         }
