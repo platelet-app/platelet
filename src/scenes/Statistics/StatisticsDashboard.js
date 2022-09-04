@@ -76,26 +76,34 @@ function StatisticsDashboard() {
         </div>
     );
 
-    async function getStatsData() {
-        try {
-            setIsFetching(true);
-            const newMoment = moment();
-            const start = newMoment.toISOString();
-            const end = newMoment.subtract(days, "day").toISOString();
-            const range = {
-                start,
-                end,
-            };
-            setState(await getStats(role, range, whoami.id));
-            setIsFetching(false);
-        } catch (e) {
-            dispatch(displayErrorNotification("Sorry, something went wrong"));
-            setState(initialState);
-            console.log(e);
-        }
-    }
+    const getStatsData = React.useCallback(
+        async (role, days, whoami) => {
+            try {
+                setIsFetching(true);
+                const newMoment = moment();
+                const start = newMoment.toISOString();
+                const end = newMoment.subtract(days, "day").toISOString();
+                const range = {
+                    start,
+                    end,
+                };
+                setState(await getStats(role, range, whoami.id));
+                setIsFetching(false);
+            } catch (e) {
+                dispatch(
+                    displayErrorNotification("Sorry, something went wrong")
+                );
+                setState(initialState);
+                console.log(e);
+            }
+        },
+        [dispatch]
+    );
 
-    useEffect(() => getStatsData(), [role, days, whoami]);
+    useEffect(
+        () => getStatsData(role, days, whoami),
+        [role, days, whoami, getStatsData]
+    );
 
     return (
         <PaddedPaper>
