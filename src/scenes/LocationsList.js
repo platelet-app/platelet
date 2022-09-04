@@ -49,7 +49,7 @@ export default function LocationsList() {
         );
     }
 
-    async function getLocations() {
+    const getLocations = React.useCallback(() => {
         try {
             observer.current = DataStore.observeQuery(models.Location, (loc) =>
                 loc.listed("eq", 1)
@@ -63,8 +63,8 @@ export default function LocationsList() {
             if (error && error.message)
                 dispatch(displayErrorNotification(error.message));
         }
-    }
-    useEffect(() => getLocations(), []);
+    }, [dispatch]);
+    useEffect(() => getLocations(), [getLocations]);
 
     const addButton = whoami.roles.includes("ADMIN") ? (
         <Button component={Link} to={`/admin/add-location`}>
