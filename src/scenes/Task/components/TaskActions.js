@@ -114,16 +114,16 @@ function TaskActions(props) {
 
     useEffect(calculateState, [task]);
 
-    async function getTaskAndUpdateState() {
+    const getTaskAndUpdateState = React.useCallback(async (taskId) => {
         try {
-            const task = await DataStore.query(models.Task, props.taskId);
+            const task = await DataStore.query(models.Task, taskId);
             if (!task) throw new Error("Task not found");
             setTask(task);
             setIsFetching(false);
             taskObserver.current.unsubscribe();
             taskObserver.current = DataStore.observe(
                 models.Task,
-                props.taskId
+                taskId
             ).subscribe(async ({ opType, element }) => {
                 if (["INSERT", "UPDATE"].includes(opType)) {
                     setTask(element);
@@ -137,9 +137,12 @@ function TaskActions(props) {
             console.log(e);
             setErrorState(e);
         }
-    }
+    }, []);
 
-    useEffect(() => getTaskAndUpdateState(), [props.taskId, taskModelsSynced]);
+    useEffect(
+        () => getTaskAndUpdateState(props.taskId),
+        [props.taskId, taskModelsSynced, getTaskAndUpdateState]
+    );
 
     useEffect(() => () => taskObserver.current.unsubscribe(), []);
 
