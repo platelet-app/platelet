@@ -78,24 +78,27 @@ function TaskAssignmentsPanel(props) {
         if (value) addAssignee(value, role);
     }
 
-    async function getAssignees() {
-        setIsFetching(true);
-        if (!taskAssigneesReady) return;
-        try {
-            const result = taskAssignees.filter(
-                (assignee) => assignee.task && assignee.task.id === props.taskId
-            );
-            setState(convertListDataToObject(result));
-            setIsFetching(false);
-        } catch (e) {
-            console.error(e);
-            setErrorState(true);
-            setIsFetching(false);
-        }
-    }
+    const getAssignees = React.useCallback(
+        (taskId, taskAssignees) => {
+            setIsFetching(true);
+            if (!taskAssigneesReady) return;
+            try {
+                const result = taskAssignees.filter(
+                    (assignee) => assignee.task && assignee.task.id === taskId
+                );
+                setState(convertListDataToObject(result));
+                setIsFetching(false);
+            } catch (e) {
+                console.error(e);
+                setErrorState(true);
+                setIsFetching(false);
+            }
+        },
+        [taskAssigneesReady]
+    );
     useEffect(() => {
-        getAssignees();
-    }, [props.taskId, taskAssigneesReady, taskAssignees]);
+        getAssignees(props.taskId, taskAssignees);
+    }, [props.taskId, taskAssigneesReady, taskAssignees, getAssignees]);
 
     async function addAssignee(user, role) {
         setIsPosting(true);
