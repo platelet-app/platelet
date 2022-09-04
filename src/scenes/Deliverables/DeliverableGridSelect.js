@@ -56,18 +56,18 @@ function DeliverableGridSelect(props) {
     const [isFetching, setIsFetching] = useState(false);
     const classes = useStyles();
 
-    async function calculateTags() {
-        const existingTags = Object.values(deliverablesSorted.defaults).map(
+    const calculateTags = React.useCallback((currentTag, defaults) => {
+        const existingTags = Object.values(defaults).map(
             (deliverableType) => deliverableType.tags
         );
         const suggestions = existingTags.reduce(tagsReducer, []);
         if (!suggestions.includes(currentTag)) setCurrentTag(null);
         setTags(suggestions);
-    }
+    }, []);
 
     useEffect(() => {
-        calculateTags();
-    }, [deliverablesSorted.defaults]);
+        calculateTags(currentTag, deliverablesSorted.defaults);
+    }, [deliverablesSorted.defaults, calculateTags, currentTag]);
 
     function convertExistingDeliverablesToState() {
         const result = {};
