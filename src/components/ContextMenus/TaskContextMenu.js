@@ -13,9 +13,15 @@ import {
     displayInfoNotification,
 } from "../../redux/notifications/NotificationsActions";
 import { DataStore } from "aws-amplify";
-import { copyTaskDataToClipboard, determineTaskStatus } from "../../utilities";
+import { copyTaskDataToClipboard } from "../../utilities";
 import { tasksStatus, userRoles } from "../../apiConsts";
-import { taskAssigneesSelector } from "../../redux/Selectors";
+import {
+    getRoleView,
+    getWhoami,
+    taskAssigneesSelector,
+} from "../../redux/Selectors";
+import determineTaskStatus from "../../utilities/determineTaskStatus";
+import duplicateTask from "../../utilities/duplicateTask";
 
 const initialState = {
     mouseX: null,
@@ -27,6 +33,8 @@ function TaskContextMenu(props) {
     const { task } = props;
     const [state, setState] = React.useState(initialState);
     const [isPosting, setIsPosting] = React.useState(false);
+    const roleView = useSelector(getRoleView);
+    const whoami = useSelector(getWhoami);
     const deleteButtonClasses = deleteButtonStyles();
     const taskAssignees = useSelector(taskAssigneesSelector).items;
     const useStyles = makeStyles({
@@ -35,6 +43,10 @@ function TaskContextMenu(props) {
         },
     });
     const classes = useStyles();
+
+    const actualRole = ["ALL", userRoles.coordinator].includes(roleView)
+        ? userRoles.coordinator
+        : userRoles.rider;
 
     async function copyToClipboard(e) {
         handleClose(e);
@@ -55,7 +67,7 @@ function TaskContextMenu(props) {
                 copyTaskDataToClipboard(result).then(
                     function () {
                         dispatch(
-                            displayInfoNotification("Copied to clipboard.")
+                            displayInfoNotification("Copied to clipboard")
                         );
                         /* clipboard successfully set */
                     },
@@ -101,7 +113,7 @@ function TaskContextMenu(props) {
         } catch (e) {
             console.log(e);
             setIsPosting(false);
-            dispatch(displayErrorNotification("Sorry, an error occurred."));
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
         }
     }
 
@@ -162,6 +174,16 @@ function TaskContextMenu(props) {
         handleClose(e);
     }
 
+    async function onDuplicate(e) {
+        try {
+            await duplicateTask(task, whoami.id, actualRole);
+        } catch (e) {
+            console.log(e);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+        }
+        handleClose(e);
+    }
+
     const handleClose = (e) => {
         e.preventDefault();
         setState(initialState);
@@ -170,7 +192,7 @@ function TaskContextMenu(props) {
     return (
         <>
             <IconButton
-                aria-label="more"
+                aria-label="task options"
                 aria-controls="long-menu"
                 aria-haspopup="true"
                 onClick={handleClick}
@@ -244,7 +266,25 @@ function TaskContextMenu(props) {
                 >
                     Mark cancelled
                 </MenuItem>
-                <MenuItem onClick={copyToClipboard}>Copy to clipboard</MenuItem>
+                {actualRole === userRoles.coordinator && (
+                    <MenuItem
+                        disabled={
+                            task === null ||
+                            [
+                                tasksStatus.cancelled,
+                                tasksStatus.abandoned,
+                                tasksStatus.rejected,
+                                tasksStatus.completed,
+                            ].includes(task.status)
+                        }
+                        onClick={onDuplicate}
+                    >
+                        Duplicate
+                    </MenuItem>
+                )}
+                <MenuItem disabled={task === null} onClick={copyToClipboard}>
+                    Copy to clipboard
+                </MenuItem>
                 <MenuItem
                     className={
                         props.disableDeleted

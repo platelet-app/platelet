@@ -26,7 +26,7 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import { saveTaskTimeWithKey } from "../utilities";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
-import { determineTaskStatus } from "../../../utilities";
+import determineTaskStatus from "../../../utilities/determineTaskStatus";
 import TimeAndNamePicker from "./TimeAndNamePicker";
 
 const fields = {

@@ -46,11 +46,11 @@ SnackNotificationButtons.propTypes = {
     restoreCallback: PropTypes.func,
     closeSnackbar: PropTypes.func,
     viewLink: PropTypes.string,
-    snackKey: PropTypes.string,
+    snackKey: PropTypes.number,
 };
 
 SnackNotificationButtons.defaultProps = {
-    snackKey: "",
+    snackKey: 0,
 };
 
 export default SnackNotificationButtons;

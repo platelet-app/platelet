@@ -228,7 +228,7 @@ function TaskItem(props) {
                       const actualRole =
                           roleView === "ALL" ? userRoles.coordinator : roleView;
                       if (
-                          assignment.role.toLowerCase() !==
+                          assignment.role?.toLowerCase() !==
                               actualRole.toLowerCase() ||
                           assignment.assignee.id !== whoami.id
                       ) {

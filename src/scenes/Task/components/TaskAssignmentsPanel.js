@@ -19,11 +19,8 @@ import UserRoleSelect from "../../../components/UserRoleSelect";
 import TaskAssignees from "./TaskAssignees";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
-import {
-    convertListDataToObject,
-    determineTaskStatus,
-    sortByCreatedTime,
-} from "../../../utilities";
+import { convertListDataToObject, sortByCreatedTime } from "../../../utilities";
+import determineTaskStatus from "../../../utilities/determineTaskStatus";
 import { useDispatch, useSelector } from "react-redux";
 import {
     displayErrorNotification,

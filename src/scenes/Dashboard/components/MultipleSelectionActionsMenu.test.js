@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "../../../test-utils";
+import { createMatchMedia, render } from "../../../test-utils";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import TasksGridColumn from "./TasksGridColumn";
 import { commentVisibility, tasksStatus, userRoles } from "../../../apiConsts";
@@ -71,8 +71,8 @@ describe("MultipleSelectionActionsMenu", () => {
     });
     test.each`
         taskStatus
-        ${tasksStatus.completed} | ${tasksStatus.droppedOff} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
-        ${tasksStatus.active}    | ${tasksStatus.pickedUp}   | ${tasksStatus.new}      | ${tasksStatus.droppedOff}
+        ${tasksStatus.completed} | ${tasksStatus.abandoned} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
+        ${tasksStatus.active}    | ${tasksStatus.pickedUp}  | ${tasksStatus.new}      | ${tasksStatus.droppedOff}
     `(
         "enables and disables the menu based on status",
         async ({ taskStatus }) => {
@@ -85,7 +85,7 @@ describe("MultipleSelectionActionsMenu", () => {
             );
             const dashboardTabIndex = [
                 tasksStatus.completed,
-                tasksStatus.droppedOff,
+                tasksStatus.abandoned,
                 tasksStatus.rejected,
                 tasksStatus.cancelled,
             ].includes(taskStatus)
@@ -146,6 +146,7 @@ describe("MultipleSelectionActionsMenu", () => {
             const name = `Selection ${stringMatch}`;
             const actionButtonsFiltered = actionButtons
                 .filter((button) => !button.textContent.includes("Assign User"))
+                .filter((button) => !button.textContent.includes("Duplicate"))
                 .filter((button) => !button.textContent.includes("Cancelled"))
                 .filter((button) => !button.textContent.includes("Rejected"))
                 .filter((button) => !button.textContent.includes(stringMatch));
@@ -154,6 +155,22 @@ describe("MultipleSelectionActionsMenu", () => {
                     button.textContent.includes("Cancelled") ||
                     button.textContent.includes("Rejected")
             );
+            const duplicateButton = screen.getByRole("button", {
+                name: "Selection Duplicate",
+            });
+            if (
+                [
+                    tasksStatus.new,
+                    tasksStatus.active,
+                    tasksStatus.pickedUp,
+                    tasksStatus.droppedOff,
+                ].includes(taskStatus)
+            ) {
+                expect(duplicateButton).toBeEnabled();
+            } else {
+                expect(duplicateButton).toBeDisabled();
+            }
+
             const assignButton = screen.getByRole("button", {
                 name: "Selection Assign User",
             });
@@ -233,8 +250,8 @@ describe("MultipleSelectionActionsMenu", () => {
 
     test.each`
         taskStatus
-        ${tasksStatus.completed} | ${tasksStatus.droppedOff} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
-        ${tasksStatus.active}    | ${tasksStatus.pickedUp}   | ${tasksStatus.new}      | ${tasksStatus.droppedOff}
+        ${tasksStatus.completed} | ${tasksStatus.abandoned} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
+        ${tasksStatus.active}    | ${tasksStatus.pickedUp}  | ${tasksStatus.new}      | ${tasksStatus.droppedOff}
     `(
         "cancelled and rejected are disabled based on status",
         async ({ taskStatus }) => {
@@ -247,7 +264,7 @@ describe("MultipleSelectionActionsMenu", () => {
             );
             const dashboardTabIndex = [
                 tasksStatus.completed,
-                tasksStatus.droppedOff,
+                tasksStatus.abandoned,
                 tasksStatus.rejected,
                 tasksStatus.cancelled,
             ].includes(taskStatus)
@@ -1060,6 +1077,351 @@ describe("MultipleSelectionActionsMenu", () => {
         }
     );
 
+    test("show hint on duplicate if some picked up or dropped off tasks", async () => {
+        await Promise.all(
+            _.range(2).map((i) =>
+                DataStore.save(
+                    new models.Task({
+                        status:
+                            i === 0
+                                ? tasksStatus.pickedUp
+                                : tasksStatus.droppedOff,
+                        tenantId: "tenantId",
+                    })
+                )
+            )
+        );
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator, userRoles.rider],
+                displayName: "Someone Person",
+                riderRole: "some role",
+            })
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 0,
+            tenantId: "tenantId",
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(
+            <>
+                <MultipleSelectionActionsMenu />
+                <TasksGridColumn
+                    title={tasksStatus.pickedUp}
+                    taskKey={[tasksStatus.pickedUp, tasksStatus.droppedOff]}
+                />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(screen.getByRole("button", { name: "Select All" }));
+        userEvent.click(
+            screen.getByRole("button", { name: "Selection Duplicate" })
+        );
+        expect(
+            screen.getByText(
+                "Picked up and delivered times will not be copied."
+            )
+        ).toBeInTheDocument();
+    });
+
+    test.each`
+        view
+        ${"mobile"} | ${"desktop"}
+    `("no duplicate button in rider view", async ({ view }) => {
+        const mockTasks = await Promise.all(
+            _.range(2).map(() =>
+                DataStore.save(
+                    new models.Task({
+                        status: tasksStatus.active,
+                        tenantId: "tenantId",
+                    })
+                )
+            )
+        );
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator, userRoles.rider],
+                displayName: "Someone Person",
+                riderRole: "some role",
+            })
+        );
+        const mockAssignments = await Promise.all(
+            mockTasks.map((task) =>
+                DataStore.save(
+                    new models.TaskAssignee({
+                        task,
+                        assignee: mockWhoami,
+                        role: userRoles.rider,
+                    })
+                )
+            )
+        );
+        const preloadedState = {
+            roleView: userRoles.rider,
+            dashboardTabIndex: 0,
+            tenantId: "tenantId",
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: mockAssignments,
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(
+            <>
+                <MultipleSelectionActionsMenu />
+                <TasksGridColumn
+                    title={tasksStatus.active}
+                    taskKey={[tasksStatus.active]}
+                />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        if (view === "mobile") window.matchMedia = createMatchMedia(128);
+        else window.matchMedia = createMatchMedia(1280);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        if (view === "desktop") {
+            userEvent.click(screen.getByRole("button", { name: "Select All" }));
+            expect(
+                screen.queryByRole("button", { name: "Selection Duplicate" })
+            ).toBeNull();
+        } else {
+            userEvent.click(
+                screen.getByRole("button", { name: "ACTIVE Select All" })
+            );
+            userEvent.click(
+                screen.getByRole("button", { name: "More Selection Actions" })
+            );
+            expect(
+                screen.queryByRole("menuitem", { name: "Duplicate" })
+            ).toBeNull();
+        }
+    });
+
+    // removed rider role for now
+    test.each`
+        role
+        ${userRoles.coordinator} | ${"ALL"}
+    `("duplicate some tasks and assign self", async ({ role }) => {
+        let actualRole = [userRoles.coordinator, "ALL"].includes(role)
+            ? userRoles.coordinator
+            : userRoles.rider;
+
+        const mockTasks = await Promise.all(
+            _.range(2).map(() =>
+                DataStore.save(
+                    new models.Task({
+                        status: tasksStatus.active,
+                        tenantId: "tenantId",
+                    })
+                )
+            )
+        );
+        const mockDeliverableTypes = await Promise.all(
+            _.range(2).map((i) =>
+                DataStore.save(
+                    new models.DeliverableType({ label: `test-${i}` })
+                )
+            )
+        );
+        const deliverable1 = await DataStore.save(
+            new models.Deliverable({
+                task: mockTasks[0],
+                deliverableType: mockDeliverableTypes[0],
+                count: 1,
+            })
+        );
+        const deliverable2 = await DataStore.save(
+            new models.Deliverable({
+                task: mockTasks[1],
+                deliverableType: mockDeliverableTypes[0],
+                count: 2,
+            })
+        );
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator, userRoles.rider],
+                displayName: "Someone Person",
+                riderRole: "some role",
+            })
+        );
+
+        const someoneElse = await DataStore.save(
+            new models.User({ displayName: "eee" })
+        );
+
+        const mockAssignments = await Promise.all(
+            mockTasks.map((task) =>
+                DataStore.save(
+                    new models.TaskAssignee({
+                        task,
+                        assignee: mockWhoami,
+                        role: actualRole,
+                    })
+                )
+            )
+        );
+        const mockAssignmentsSomeoneElse = await Promise.all(
+            mockTasks.map((task) =>
+                DataStore.save(
+                    new models.TaskAssignee({
+                        task,
+                        assignee: someoneElse,
+                        role: userRoles.rider,
+                    })
+                )
+            )
+        );
+
+        const myComments = await Promise.all(
+            mockTasks.map((t) =>
+                DataStore.save(
+                    new models.Comment({
+                        parentId: t.id,
+                        body: "something",
+                        author: mockWhoami,
+                    })
+                )
+            )
+        );
+
+        const notMyComments = await Promise.all(
+            mockTasks.map((t) =>
+                DataStore.save(
+                    new models.Comment({
+                        parentId: t.id,
+                        body: "something",
+                        author: someoneElse,
+                    })
+                )
+            )
+        );
+
+        const preloadedState = {
+            roleView: role,
+            dashboardTabIndex: 0,
+            tenantId: "tenantId",
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: mockAssignments,
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(
+            <>
+                <MultipleSelectionActionsMenu />
+                <TasksGridColumn
+                    title={tasksStatus.active}
+                    taskKey={[tasksStatus.active]}
+                />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(screen.getByRole("button", { name: "Select All" }));
+        userEvent.click(
+            screen.getByRole("button", { name: "Selection Duplicate" })
+        );
+        userEvent.click(
+            screen.getByRole("button", { name: "Copy my comments" })
+        );
+        userEvent.click(screen.getByRole("button", { name: "Copy assignees" }));
+        const okButton = screen.getByRole("button", { name: "OK" });
+        userEvent.click(okButton);
+        expect(okButton).toBeDisabled();
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(10);
+        });
+        mockTasks.forEach((t) => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...t,
+                id: expect.not.stringMatching(t.id),
+            });
+        });
+        const mockAssigns = mockTasks.map(
+            (task) =>
+                new models.TaskAssignee({
+                    task,
+                    assignee: mockWhoami,
+                    role: actualRole,
+                })
+        );
+
+        mockAssignmentsSomeoneElse.forEach((a) => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...a,
+                id: expect.any(String),
+                task: {
+                    ...a.task,
+                    id: expect.not.stringMatching(a.task.id),
+                },
+            });
+        });
+
+        mockAssigns.forEach((a) => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...a,
+                id: expect.any(String),
+                task: { ...a.task, id: expect.not.stringMatching(a.task.id) },
+            });
+        });
+        [(deliverable1, deliverable2)].forEach((d) => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...d,
+                task: {
+                    ...d.task,
+                    id: expect.not.stringMatching(d.task.id),
+                },
+                id: expect.not.stringMatching(d.id),
+            });
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...myComments[0],
+            id: expect.not.stringMatching(myComments[0].id),
+            parentId: expect.not.stringMatching(mockTasks[0].id),
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...myComments[1],
+            id: expect.not.stringMatching(myComments[1].id),
+            parentId: expect.not.stringMatching(mockTasks[1].id),
+        });
+        // doesn't save the comments that aren't mine
+        expect(saveSpy).not.toHaveBeenCalledWith({
+            ...notMyComments[0],
+            id: expect.not.stringMatching(notMyComments[0].id),
+            parentId: expect.not.stringMatching(mockTasks[0].id),
+        });
+        expect(saveSpy).not.toHaveBeenCalledWith({
+            ...notMyComments[1],
+            id: expect.not.stringMatching(notMyComments[1].id),
+            parentId: expect.not.stringMatching(mockTasks[1].id),
+        });
+    });
+
     test("the checkboxes are disabled when filters are applied", async () => {
         const mockTask = await DataStore.save(
             new models.Task({ status: tasksStatus.active })
@@ -1216,5 +1578,82 @@ describe("MultipleSelectionActionsMenu", () => {
         await waitFor(() => {
             expect(okButton).toBeDisabled();
         });
+    });
+
+    test("double confirm if affecting a lot of items", async () => {
+        const mockTasks = await Promise.all(
+            _.range(10).map(() =>
+                DataStore.save(new models.Task({ status: tasksStatus.new }))
+            )
+        );
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator],
+                displayName: "Someone Person",
+            })
+        );
+        const assignee = await DataStore.save(
+            new models.User({
+                roles: [userRoles.rider],
+                displayName: "Other Person",
+                riderResponsibility: "test",
+            })
+        );
+        const preloadedState = {
+            roleView: "ALL",
+            dashboardTabIndex: 0,
+            tenantId: "tenantId",
+            whoami: { user: mockWhoami },
+            taskAssigneesReducer: {
+                items: [],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(
+            <>
+                <MultipleSelectionActionsMenu />
+                <TasksGridColumn
+                    title={tasksStatus.new}
+                    taskKey={[tasksStatus.new]}
+                />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(11);
+        });
+        userEvent.click(screen.getByRole("button", { name: "Select All" }));
+        userEvent.click(
+            screen.getByRole("button", { name: "Selection Assign User" })
+        );
+        const textBox = screen.getByRole("textbox");
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(12);
+        });
+        userEvent.type(textBox, assignee.displayName);
+        userEvent.click(screen.getByText(assignee.displayName));
+        const okButton = screen.getByRole("button", { name: "OK" });
+        userEvent.click(okButton);
+        expect(
+            screen.getByText("You have 10 items selected.")
+        ).toBeInTheDocument();
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(0);
+        });
+        expect(screen.getByText("Are you sure?")).toBeInTheDocument();
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(20);
+        });
+        expect(screen.queryByTestId("CheckBoxIcon")).toBeNull();
     });
 });

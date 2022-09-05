@@ -1,4 +1,4 @@
-import { determineTaskStatus } from "../../../utilities";
+import determineTaskStatus from "../../../utilities/determineTaskStatus";
 import * as models from "../../../models";
 import { DataStore } from "aws-amplify";
 import _ from "lodash";

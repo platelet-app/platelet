@@ -96,6 +96,7 @@ function TaskGridColumnHeader(props) {
             {!!!dashboardFilter && Object.values(props.tasks).length > 0 && (
                 <Box sx={{ height: 0 }}>
                     <IconButton
+                        aria-label={`${props.title} Select All`}
                         data-testid={`${props.title}-select-all`}
                         onClick={handleSelectCheckBoxClick}
                     >

@@ -13,16 +13,10 @@ import {
 import TaskCard from "./TaskCardsColoured";
 import { useTheme } from "@mui/styles";
 
-const actions = {
-    assignUser: "Assign User",
-    markPickedUp: "Picked Up",
-    markDelivered: "Delivered",
-    markRiderHome: "Rider Home",
-};
-const dotActions = {
-    markCancelled: "Cancelled",
-    markRejected: "Rejected",
-};
+import {
+    actions,
+    dotActions,
+} from "../components/MultipleSelectionActionsMenu";
 
 function humanReadableAction(action) {
     if (action === actions.markPickedUp) {
@@ -71,6 +65,12 @@ function MultipleSelectionActionsInformation({ selectedItems, action }) {
                 setMessage(
                     <Typography variant="h6">
                         Assign users to {generateLink(selectedItems)}
+                    </Typography>
+                );
+            } else if (action === dotActions.duplicate) {
+                setMessage(
+                    <Typography variant="h6">
+                        Duplicate {generateLink(selectedItems)}
                     </Typography>
                 );
             } else {
