@@ -39,22 +39,24 @@ export default function ProfilePicture(props) {
         setImage(null);
     };
 
-    async function getProfilePicture() {
-        if (props.profilePicture && props.profilePicture.key) {
+    const getProfilePicture = React.useCallback(async (profilePicture) => {
+        if (profilePicture && profilePicture.key) {
             try {
-                const profilePicture = await generateS3Link(
-                    props.profilePicture.key
+                const profilePictureResult = await generateS3Link(
+                    profilePicture.key
                 );
-                console.log(profilePicture);
-                if (profilePicture) {
-                    setImageUrl(profilePicture);
+                if (profilePictureResult) {
+                    setImageUrl(profilePictureResult);
                 }
             } catch (e) {
                 console.log(e);
             }
         }
-    }
-    useEffect(() => getProfilePicture(), [props.profilePicture]);
+    }, []);
+    useEffect(
+        () => getProfilePicture(props.profilePicture),
+        [props.profilePicture, getProfilePicture]
+    );
 
     const profilePicture = image ? (
         <ProfilePictureCropper
