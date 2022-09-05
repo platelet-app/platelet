@@ -39,56 +39,66 @@ export default function VehicleDetail({ vehicleId }) {
     const assignmentObserver = useRef({ unsubscribe: () => {} });
     const vehicleObserver = useRef({ unsubscribe: () => {} });
 
-    async function newVehicleProfile() {
-        try {
-            const newVehicle = await DataStore.query(models.Vehicle, vehicleId);
-            vehicleObserver.current.unsubscribe();
-            vehicleObserver.current = DataStore.observe(
-                models.Vehicle,
-                vehicleId
-            ).subscribe(({ element }) => {
-                setVehicle(element);
-            });
-            assignmentObserver.current.unsubscribe();
-            assignmentObserver.current = DataStore.observeQuery(
-                models.VehicleAssignment
-            ).subscribe(({ items }) => {
-                // TODO: simplify this workaround when DataStore is updated
-                const assignedUser = items.find(
-                    (item) =>
-                        (item.vehicle && item.vehicle.id === newVehicle.id) ||
-                        item.vehicleAssignmentsId === newVehicle.id
+    const newVehicleProfile = React.useCallback(
+        async (vehicleId) => {
+            try {
+                const newVehicle = await DataStore.query(
+                    models.Vehicle,
+                    vehicleId
                 );
-                if (assignedUser) {
-                    DataStore.query(
-                        models.VehicleAssignment,
-                        assignedUser.id
-                    ).then((ass) => {
-                        if (ass) {
-                            setAssignment(ass);
-                        } else {
-                            console.log("The assignment was not found");
-                            setAssignment(null);
-                        }
-                    });
-                } else {
-                    setAssignment(null);
-                }
-            });
-            setIsFetching(false);
-            if (newVehicle) setVehicle(newVehicle);
-            else setNotFound(true);
-        } catch (error) {
-            setIsFetching(false);
-            dispatch(
-                displayErrorNotification(
-                    `Failed to get vehicle: ${error.message}`
-                )
-            );
-            console.log("Request failed", error);
-        }
-    }
-    useEffect(() => newVehicleProfile(), [vehicleId, vehicleModelSynced]);
+                vehicleObserver.current.unsubscribe();
+                vehicleObserver.current = DataStore.observe(
+                    models.Vehicle,
+                    vehicleId
+                ).subscribe(({ element }) => {
+                    setVehicle(element);
+                });
+                assignmentObserver.current.unsubscribe();
+                assignmentObserver.current = DataStore.observeQuery(
+                    models.VehicleAssignment
+                ).subscribe(({ items }) => {
+                    // TODO: simplify this workaround when DataStore is updated
+                    const assignedUser = items.find(
+                        (item) =>
+                            (item.vehicle &&
+                                item.vehicle.id === newVehicle.id) ||
+                            item.vehicleAssignmentsId === newVehicle.id
+                    );
+                    if (assignedUser) {
+                        DataStore.query(
+                            models.VehicleAssignment,
+                            assignedUser.id
+                        ).then((ass) => {
+                            if (ass) {
+                                setAssignment(ass);
+                            } else {
+                                console.log("The assignment was not found");
+                                setAssignment(null);
+                            }
+                        });
+                    } else {
+                        setAssignment(null);
+                    }
+                });
+                setIsFetching(false);
+                if (newVehicle) setVehicle(newVehicle);
+                else setNotFound(true);
+            } catch (error) {
+                setIsFetching(false);
+                dispatch(
+                    displayErrorNotification(
+                        `Failed to get vehicle: ${error.message}`
+                    )
+                );
+                console.log("Request failed", error);
+            }
+        },
+        [dispatch]
+    );
+    useEffect(
+        () => newVehicleProfile(vehicleId),
+        [vehicleId, vehicleModelSynced, newVehicleProfile]
+    );
 
     useEffect(() => {
         return () => {
