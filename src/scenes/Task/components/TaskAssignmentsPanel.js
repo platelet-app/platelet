@@ -226,6 +226,7 @@ function TaskAssignmentsPanel(props) {
         taskAssigneesReady,
         taskAssignees,
         collapsed,
+        isFetching,
     ]);
 
     if (errorState) {
