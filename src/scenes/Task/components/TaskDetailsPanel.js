@@ -46,16 +46,16 @@ function TaskDetailsPanel(props) {
 
     const errorMessage = "Sorry, something went wrong";
 
-    async function getTask() {
+    const getTask = React.useCallback(async (taskId) => {
         try {
-            const task = await DataStore.query(models.Task, props.taskId);
+            const task = await DataStore.query(models.Task, taskId);
             if (!task) throw new Error("Task not found");
             setState(task);
             setIsFetching(false);
             taskObserver.current.unsubscribe();
             taskObserver.current = DataStore.observe(
                 models.Task,
-                props.taskId
+                taskId
             ).subscribe(async (observeResult) => {
                 const taskData = observeResult.element;
                 if (["INSERT", "UPDATE"].includes(observeResult.opType)) {
@@ -77,8 +77,11 @@ function TaskDetailsPanel(props) {
             setErrorState(error);
             setIsFetching(false);
         }
-    }
-    useEffect(() => getTask(), [props.taskId, taskModelsSynced]);
+    }, []);
+    useEffect(
+        () => getTask(props.taskId),
+        [props.taskId, taskModelsSynced, getTask]
+    );
     useEffect(() => () => taskObserver.current.unsubscribe(), []);
 
     async function setTimeOfCall(value) {
