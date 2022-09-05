@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => {
     };
 });
 
-export default function UsersList(props) {
+export default function UsersList() {
     const usersRef = useRef([]);
     const [filteredUsers, setFilteredUsers] = useState([]);
     const observer = useRef({ unsubscribe: () => {} });
@@ -47,7 +47,7 @@ export default function UsersList(props) {
         );
     }
 
-    async function getUsers() {
+    const getUsers = React.useCallback(() => {
         try {
             observer.current = DataStore.observeQuery(models.User).subscribe(
                 (data) => {
@@ -60,9 +60,9 @@ export default function UsersList(props) {
             if (error && error.message)
                 dispatch(displayErrorNotification(error.message));
         }
-    }
+    }, [dispatch]);
 
-    useEffect(() => getUsers(), []);
+    useEffect(() => getUsers(), [getUsers]);
 
     const addButton = whoami.roles.includes(userRoles.admin) ? (
         <Button component={Link} to={`/admin/add-user`}>
