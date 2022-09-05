@@ -1,5 +1,4 @@
 import { DataStore } from "aws-amplify";
-import _ from "lodash";
 import { tasksStatus, userRoles } from "../apiConsts";
 import * as models from "../models";
 

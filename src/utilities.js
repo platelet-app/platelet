@@ -1,6 +1,5 @@
 import React from "react";
 import uuidBase62 from "uuid-base62";
-import * as models from "./models";
 import { v4 as uuidv4 } from "uuid";
 import { deliverableIcons, tasksStatus, userRoles } from "./apiConsts";
 import BugIcon from "./components/deliverableIcons/BugIcon";
@@ -9,7 +8,6 @@ import EquipmentIcon from "./components/deliverableIcons/EquipmentIcon";
 import OtherIcon from "./components/deliverableIcons/OtherIcon";
 import DocumentIcon from "./components/deliverableIcons/DocumentIcon";
 import moment from "moment";
-import { DataStore } from "aws-amplify";
 
 export function convertListDataToObject(list) {
     const result = {};
