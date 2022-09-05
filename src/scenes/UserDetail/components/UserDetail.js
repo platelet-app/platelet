@@ -52,31 +52,13 @@ export default function UserDetail({ userId }) {
         dataStoreModelSyncedStatusSelector
     ).RiderResponsibility;
 
-    async function newUserProfile() {
-        setNotFound(false);
-        if (!loadedOnce.current) setIsFetching(true);
-        try {
-            const userResult = await DataStore.query(models.User, userId);
-            // TODO: make this observeQuery when https://github.com/aws-amplify/amplify-js/issues/9682 is fixed
-            DataStore.query(models.PossibleRiderResponsibilities).then(
-                (result) => {
-                    const filtered = result
-                        .filter((responsibility) => {
-                            return (
-                                userResult &&
-                                responsibility.user &&
-                                responsibility.user.id &&
-                                userResult.id === responsibility.user.id
-                            );
-                        })
-                        .map((r) => r.riderResponsibility);
-                    setPossibleRiderResponsibilities(filtered);
-                }
-            );
-            riderRespObserver.current.unsubscribe();
-            riderRespObserver.current = DataStore.observe(
-                models.PossibleRiderResponsibilities
-            ).subscribe(() => {
+    const newUserProfile = React.useCallback(
+        async (userId) => {
+            setNotFound(false);
+            if (!loadedOnce.current) setIsFetching(true);
+            try {
+                const userResult = await DataStore.query(models.User, userId);
+                // TODO: make this observeQuery when https://github.com/aws-amplify/amplify-js/issues/9682 is fixed
                 DataStore.query(models.PossibleRiderResponsibilities).then(
                     (result) => {
                         const filtered = result
@@ -92,30 +74,59 @@ export default function UserDetail({ userId }) {
                         setPossibleRiderResponsibilities(filtered);
                     }
                 );
-            });
-            observer.current = DataStore.observe(models.User, userId).subscribe(
-                ({ element }) => {
+                riderRespObserver.current.unsubscribe();
+                riderRespObserver.current = DataStore.observe(
+                    models.PossibleRiderResponsibilities
+                ).subscribe(() => {
+                    DataStore.query(models.PossibleRiderResponsibilities).then(
+                        (result) => {
+                            const filtered = result
+                                .filter((responsibility) => {
+                                    return (
+                                        userResult &&
+                                        responsibility.user &&
+                                        responsibility.user.id &&
+                                        userResult.id === responsibility.user.id
+                                    );
+                                })
+                                .map((r) => r.riderResponsibility);
+                            setPossibleRiderResponsibilities(filtered);
+                        }
+                    );
+                });
+                observer.current = DataStore.observe(
+                    models.User,
+                    userId
+                ).subscribe(({ element }) => {
                     setUser(element);
+                });
+                setIsFetching(false);
+                loadedOnce.current = true;
+                if (userResult) {
+                    setUser(userResult);
+                } else {
+                    setNotFound(true);
                 }
-            );
-            setIsFetching(false);
-            loadedOnce.current = true;
-            if (userResult) {
-                setUser(userResult);
-            } else {
-                setNotFound(true);
+            } catch (error) {
+                setIsFetching(false);
+                dispatch(
+                    displayErrorNotification(
+                        `Failed to get user: ${error.message}`
+                    )
+                );
+                console.log("Request failed", error);
             }
-        } catch (error) {
-            setIsFetching(false);
-            dispatch(
-                displayErrorNotification(`Failed to get user: ${error.message}`)
-            );
-            console.log("Request failed", error);
-        }
-    }
+        },
+        [dispatch]
+    );
     useEffect(
-        () => newUserProfile(),
-        [userId, userModelSynced, riderResponsibilityModelSynced]
+        () => newUserProfile(userId),
+        [
+            userId,
+            userModelSynced,
+            riderResponsibilityModelSynced,
+            newUserProfile,
+        ]
     );
 
     useEffect(() => () => riderRespObserver.current.unsubscribe(), []);
