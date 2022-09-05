@@ -9,6 +9,8 @@ import userEvent from "@testing-library/user-event";
 import * as utils from "../../utilities";
 import TasksGridColumn from "../../scenes/Dashboard/components/TasksGridColumn";
 
+const tenantId = "tenantId";
+
 describe("TaskContextMenu", () => {
     const RealDate = Date;
     const isoDate = "2021-11-29T23:24:58.987Z";
@@ -328,25 +330,37 @@ describe("TaskContextMenu", () => {
             new models.User({
                 displayName: "someone person",
                 roles: [userRoles.user, userRoles.coordinator],
+                tenantId,
             })
         );
         const mockLocation = await DataStore.save(
-            new models.Location({ name: "woop", listed: 1 })
+            new models.Location({
+                name: "woop",
+                listed: 1,
+
+                tenantId,
+            })
         );
         const mockLocation2 = await DataStore.save(
-            new models.Location({ name: "ohp", listed: 1 })
+            new models.Location({
+                name: "ohp",
+                listed: 1,
+                tenantId,
+            })
         );
         const task = await DataStore.save(
             new models.Task({
                 status: tasksStatus.new,
                 pickUpLocation: mockLocation,
                 dropOffLocation: mockLocation2,
+                tenantId,
             })
         );
         const mockTaskAssignee = new models.TaskAssignee({
             task,
             assignee: whoami,
             role: userRoles.coordinator,
+            tenantId: whoami.tenantId,
         });
         const deliverableTypes = await Promise.all(
             ["test deliverable", "another one"].map((d) =>
@@ -361,6 +375,7 @@ describe("TaskContextMenu", () => {
                         count: 3,
                         unit: deliverableType.defaultUnit,
                         task,
+                        tenantId,
                     })
                 )
             )
@@ -374,6 +389,7 @@ describe("TaskContextMenu", () => {
                 ready: true,
                 isSynced: true,
             },
+            tenantId,
         };
         //render(<TaskContextMenu task={task} assignedRiders={[]} />, {
         //    preloadedState,
@@ -403,11 +419,13 @@ describe("TaskContextMenu", () => {
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...task,
+            tenantId,
             id: expect.not.stringMatching(task.id),
         });
         deliverables.forEach((del) => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...del,
+                tenantId,
                 id: expect.not.stringMatching(del.id),
                 task: {
                     ...task,
@@ -417,6 +435,7 @@ describe("TaskContextMenu", () => {
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockTaskAssignee,
+            tenantId,
             id: expect.any(String),
             task: {
                 ...task,
@@ -463,6 +482,7 @@ describe("TaskContextMenu", () => {
             new models.User({
                 displayName: "someone person",
                 roles: [userRoles.user, userRoles.rider],
+                tenantId,
             })
         );
         const task = await DataStore.save(
@@ -475,6 +495,7 @@ describe("TaskContextMenu", () => {
             task,
             assignee: whoami,
             role: userRoles.rider,
+            tenantId: whoami.tenantId,
         });
         const saveSpy = jest.spyOn(DataStore, "save");
         const preloadedState = {
@@ -509,6 +530,7 @@ describe("TaskContextMenu", () => {
             new models.User({
                 displayName: "someone person",
                 roles: [userRoles.user, userRoles.coordinator],
+                tenantId,
             })
         );
         const mockLocation = await DataStore.save(
@@ -522,11 +544,13 @@ describe("TaskContextMenu", () => {
                 status: tasksStatus.new,
                 pickUpLocation: mockLocation,
                 dropOffLocation: mockLocation2,
+                tenantId,
             })
         );
         const saveSpy = jest.spyOn(DataStore, "save");
         const preloadedState = {
             whoami: { user: whoami },
+            tenantId,
         };
         render(<TaskContextMenu task={task} assignedRiders={[]} />, {
             preloadedState,
@@ -542,6 +566,7 @@ describe("TaskContextMenu", () => {
             id: expect.any(String),
             pickUpLocation: { ...mockLocation, id: expect.any(String) },
             dropOffLocation: { ...mockLocation2, id: expect.any(String) },
+            tenantId,
         });
     });
 

@@ -115,6 +115,7 @@ const MultipleSelectionActionsDialog = ({
             onConfirmation(models);
             setIsDisabled(false);
         } catch (error) {
+            throw error;
             console.log(error);
             setIsDisabled(false);
             dispatch(displayErrorNotification("Sorry, something went wrong"));

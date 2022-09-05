@@ -1,6 +1,16 @@
 import { DataStore } from "aws-amplify";
+import _ from "lodash";
 import { tasksStatus, userRoles } from "../apiConsts";
 import * as models from "../models";
+
+const ignoredFields = [
+    "id",
+    "_version",
+    "_lastChangedAt",
+    "_deleted",
+    "updatedAt",
+    "createdAt",
+];
 
 export default async function duplicateTask(
     task,
@@ -26,12 +36,12 @@ export default async function duplicateTask(
     } = { ...task };
     if (pickUpLocation?.listed === 0) {
         pickUpLocation = new models.Location({
-            ...pickUpLocation,
+            ..._.omit(pickUpLocation, ...ignoredFields),
         });
     }
     if (dropOffLocation?.listed === 0) {
         dropOffLocation = new models.Location({
-            ...dropOffLocation,
+            ..._.omit(dropOffLocation, ...ignoredFields),
         });
     }
     let newTaskData = new models.Task({
@@ -57,6 +67,7 @@ export default async function duplicateTask(
                 task: newTaskData,
                 assignee,
                 role: assigneeRole,
+                tenantId: assignee.tenantId,
             })
         );
     }
@@ -69,7 +80,12 @@ export default async function duplicateTask(
     );
     const newDeliverables = await Promise.all(
         filteredDeliverables.map((del) =>
-            DataStore.save(new models.Deliverable({ ...del, task: newTask }))
+            DataStore.save(
+                new models.Deliverable({
+                    ..._.omit(del, ...ignoredFields),
+                    task: newTask,
+                })
+            )
         )
     );
     return { task: newTask, deliverables: newDeliverables, assignment };

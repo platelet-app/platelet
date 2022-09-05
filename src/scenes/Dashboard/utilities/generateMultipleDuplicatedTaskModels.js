@@ -1,6 +1,16 @@
 import { DataStore } from "aws-amplify";
+import _ from "lodash";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
+
+const ignoredFields = [
+    "id",
+    "_version",
+    "_lastChangedAt",
+    "_deleted",
+    "updatedAt",
+    "createdAt",
+];
 
 export default async function generateMultipleDuplicatedTaskModels(
     tasks,
@@ -34,12 +44,12 @@ export default async function generateMultipleDuplicatedTaskModels(
             } = { ...task };
             if (pickUpLocation?.listed === 0) {
                 pickUpLocation = new models.Location({
-                    ...pickUpLocation,
+                    ..._.omit(pickUpLocation, ...ignoredFields),
                 });
             }
             if (dropOffLocation?.listed === 0) {
                 dropOffLocation = new models.Location({
-                    ...dropOffLocation,
+                    ..._.omit(dropOffLocation, ...ignoredFields),
                 });
             }
 
@@ -59,7 +69,12 @@ export default async function generateMultipleDuplicatedTaskModels(
                     (a) => a.task?.id === task.id
                 );
                 assigneeModels = assignees.map(
-                    (a) => new models.TaskAssignee({ ...a, task: newTaskData })
+                    (a) =>
+                        new models.TaskAssignee({
+                            ..._.omit(a, ...ignoredFields),
+                            task: newTaskData,
+                            tenantId: a.tenantId,
+                        })
                 );
             }
             if (assigneeId && assigneeRole) {
@@ -76,6 +91,7 @@ export default async function generateMultipleDuplicatedTaskModels(
                             task: newTaskData,
                             assignee: user,
                             role: assigneeRole,
+                            tenantId: user.tenantId,
                         });
                         assigneeModels = [...assigneeModels, newAssignee];
                     }
@@ -104,13 +120,18 @@ export default async function generateMultipleDuplicatedTaskModels(
                 assigneeModels = assigneeModels.map(
                     (a) =>
                         new models.TaskAssignee({
-                            ...a,
+                            ..._.omit(a, ...ignoredFields),
                             task: newTaskData,
+                            tenantId: a.tenantId,
                         })
                 );
             }
             const deliverablesResult = filteredDeliverables.map(
-                (del) => new models.Deliverable({ ...del, task: newTaskData })
+                (del) =>
+                    new models.Deliverable({
+                        ..._.omit(del, ...ignoredFields),
+                        task: newTaskData,
+                    })
             );
             let newComments = [];
             if (copyCommentsUserId) {
@@ -122,7 +143,10 @@ export default async function generateMultipleDuplicatedTaskModels(
                 );
                 newComments = filteredComments.map(
                     (c) =>
-                        new models.Comment({ ...c, parentId: newTaskData.id })
+                        new models.Comment({
+                            ..._.omit(c, ...ignoredFields),
+                            parentId: newTaskData.id,
+                        })
                 );
             }
             return [
