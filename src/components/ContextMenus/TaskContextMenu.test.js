@@ -1,4 +1,5 @@
 import { render } from "../../test-utils";
+import { mockAllIsIntersecting } from "react-intersection-observer/test-utils";
 import TaskContextMenu from "./TaskContextMenu";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models";
@@ -6,6 +7,7 @@ import { tasksStatus, userRoles } from "../../apiConsts";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import * as utils from "../../utilities";
+import TasksGridColumn from "../../scenes/Dashboard/components/TasksGridColumn";
 
 describe("TaskContextMenu", () => {
     const RealDate = Date;
@@ -367,9 +369,31 @@ describe("TaskContextMenu", () => {
         const preloadedState = {
             whoami: { user: whoami },
             roleView: userRoles.coordinator,
+            taskAssigneesReducer: {
+                items: [mockTaskAssignee],
+                ready: true,
+                isSynced: true,
+            },
         };
-        render(<TaskContextMenu task={task} assignedRiders={[]} />, {
-            preloadedState,
+        //render(<TaskContextMenu task={task} assignedRiders={[]} />, {
+        //    preloadedState,
+        //});
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(
+            <>
+                <TaskContextMenu task={task} assignedRiders={[]} />
+                <TasksGridColumn taskKey={[tasksStatus.new]} />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
         });
         const button = screen.getByRole("button", { name: "task options" });
         userEvent.click(button);
@@ -399,6 +423,11 @@ describe("TaskContextMenu", () => {
                 id: expect.any(String),
             },
         });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(9);
+        });
+        expect(screen.queryAllByRole("link")).toHaveLength(2);
     });
 
     test("can't duplicate in rider role view", async () => {

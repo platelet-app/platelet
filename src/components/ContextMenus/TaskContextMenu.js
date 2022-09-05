@@ -7,6 +7,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import IconButton from "@mui/material/IconButton";
 import { deleteButtonStyles } from "./contextMenuCSS";
 import PropTypes from "prop-types";
+import * as assigneeActions from "../../redux/taskAssignees/taskAssigneesActions";
 import * as models from "../../models/index";
 import {
     displayErrorNotification,
@@ -176,7 +177,12 @@ function TaskContextMenu(props) {
 
     async function onDuplicate(e) {
         try {
-            await duplicateTask(task, whoami.id, actualRole);
+            const { assignment } = await duplicateTask(
+                task,
+                whoami.id,
+                actualRole
+            );
+            dispatch(assigneeActions.addTaskAssignee(assignment));
         } catch (e) {
             console.log(e);
             dispatch(displayErrorNotification("Sorry, something went wrong"));

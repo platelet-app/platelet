@@ -40,6 +40,7 @@ export default async function duplicateTask(
         pickUpLocation,
         dropOffLocation,
     });
+    let assignment = null;
     if (assigneeId && assigneeRole) {
         if (assigneeRole === userRoles.rider) {
             newTaskData = new models.Task({
@@ -51,7 +52,7 @@ export default async function duplicateTask(
             });
         }
         const assignee = await DataStore.query(models.User, assigneeId);
-        await DataStore.save(
+        assignment = await DataStore.save(
             new models.TaskAssignee({
                 task: newTaskData,
                 assignee,
@@ -66,10 +67,10 @@ export default async function duplicateTask(
     const filteredDeliverables = deliverables.filter(
         (d) => d.task && d.task.id === task.id
     );
-    await Promise.all(
+    const newDeliverables = await Promise.all(
         filteredDeliverables.map((del) =>
             DataStore.save(new models.Deliverable({ ...del, task: newTask }))
         )
     );
-    return newTask;
+    return { task: newTask, deliverables: newDeliverables, assignment };
 }
