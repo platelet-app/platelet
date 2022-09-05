@@ -52,7 +52,7 @@ const DialogWrapper = (props) => {
             onKeyUp={(e) => {
                 // could enable this to close the dialog on escape
                 return;
-                if (e.key === "Escape") handleClose(e);
+                // if (e.key === "Escape") handleClose(e);
             }}
             className={classes.root}
             disableEscapeKeyDown

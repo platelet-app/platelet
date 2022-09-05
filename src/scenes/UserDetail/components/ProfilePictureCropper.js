@@ -88,11 +88,11 @@ async function getCroppedImg(
 
     return canvas;
     // As a blob
-    return new Promise((resolve, reject) => {
+    /*return new Promise((resolve, reject) => {
         canvas.toBlob((file) => {
             resolve(URL.createObjectURL(file));
         }, "image/jpeg");
-    });
+    });*/
 }
 
 function ProfilePictureCropper(props) {

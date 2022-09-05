@@ -7,7 +7,7 @@ import useFocus from "../../../hooks/useFocus";
 
 function EditCommentDialog(props) {
     const [state, setState] = useState("");
-    const [inputRef, setInputFocus] = useFocus();
+    const [inputRef] = useFocus();
 
     function handleCancel() {
         props.onClose();

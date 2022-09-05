@@ -1,20 +1,22 @@
-import _ from 'lodash';
+import _ from "lodash";
 export const createErrorMessageSelector = (actions) => (state) => {
     // returns the first error messages for actions
     // * We assume when any request fails on a page that
     //   requires multiple API calls, we shows the first error
-    return _(actions)
-        .map((action) => _.get(state, `api.error.${action}`))
-        .compact()
-        .first() || '';
+    return (
+        _(actions)
+            .map((action) => _.get(state, `api.error.${action}`))
+            .compact()
+            .first() || ""
+    );
 };
 
-export const createSimpleLoadingSelector = actions => state => {
-    return actions.some(action => state.loadingReducer[action]);
-}
+export const createSimpleLoadingSelector = (actions) => (state) => {
+    return actions.some((action) => state.loadingReducer[action]);
+};
 
-export const createLoadingSelector = actions => state => {
-    if (Object.entries(_.get(state, 'loadingReducer')).length === 0) {
+export const createLoadingSelector = (actions) => (state) => {
+    if (Object.entries(_.get(state, "loadingReducer")).length === 0) {
         return true;
     }
     let found = false;
@@ -24,29 +26,27 @@ export const createLoadingSelector = actions => state => {
             break;
         }
     }
-    if (found)
-        return actions.some(action => state.loadingReducer[action]);
-    else
-        return true
+    if (found) return actions.some((action) => state.loadingReducer[action]);
+    else return true;
 };
 
-export const createPostingSelector = actions => state => {
-    return actions.some(action => state.postingReducer[action]);
+export const createPostingSelector = (actions) => (state) => {
+    return actions.some((action) => state.postingReducer[action]);
 };
 
-export const createDeletingSelector = actions => state => {
-    return actions.some(action => state.deletingReducer[action]);
+export const createDeletingSelector = (actions) => (state) => {
+    return actions.some((action) => state.deletingReducer[action]);
 };
 
-export const createNotFoundSelector = actions => state => {
-    return actions.some(action => state.notFoundReducer[action]);
+export const createNotFoundSelector = (actions) => (state) => {
+    return actions.some((action) => state.notFoundReducer[action]);
 };
 
-export const createErrorSelector = actions => state => {
-    return actions.some(action => state.errorReducer[action]);
+export const createErrorSelector = (actions) => (state) => {
+    return actions.some((action) => state.errorReducer[action]);
 };
 
-export const createContextMenuSnackSelector = uuid => state => {
+/*export const createContextMenuSnackSelector = uuid => state => {
     // This is redundant but kept in case I decide I need it after all
     return state.taskContextMenuSnack.uuid === uuid ? state.taskContextMenuSnack : undefined;
     const filt = state.taskContextMenuSnack.filter(snack => snack.uuid === uuid)
@@ -57,4 +57,4 @@ export const createContextMenuSnackSelector = uuid => state => {
     } else {
         return undefined;
     }
-};
+};*/
