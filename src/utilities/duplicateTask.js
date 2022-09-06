@@ -14,9 +14,12 @@ const ignoredFields = [
 
 export default async function duplicateTask(
     task,
+    tenantId,
     assigneeId = null,
     assigneeRole = null
 ) {
+    if (!tenantId) throw new Error("tenantId must exist");
+    if (!task) throw new Error("task must exist");
     let {
         id,
         _version,
@@ -37,11 +40,13 @@ export default async function duplicateTask(
     if (pickUpLocation?.listed === 0) {
         pickUpLocation = new models.Location({
             ..._.omit(pickUpLocation, ...ignoredFields),
+            tenantId,
         });
     }
     if (dropOffLocation?.listed === 0) {
         dropOffLocation = new models.Location({
             ..._.omit(dropOffLocation, ...ignoredFields),
+            tenantId,
         });
     }
     let newTaskData = new models.Task({
@@ -49,6 +54,7 @@ export default async function duplicateTask(
         status: tasksStatus.new,
         pickUpLocation,
         dropOffLocation,
+        tenantId,
     });
     let assignment = null;
     if (assigneeId && assigneeRole) {
@@ -59,6 +65,7 @@ export default async function duplicateTask(
                 pickUpLocation,
                 dropOffLocation,
                 riderResponsibility,
+                tenantId,
             });
         }
         const assignee = await DataStore.query(models.User, assigneeId);
@@ -67,7 +74,7 @@ export default async function duplicateTask(
                 task: newTaskData,
                 assignee,
                 role: assigneeRole,
-                tenantId: assignee.tenantId,
+                tenantId,
             })
         );
     }
@@ -84,6 +91,7 @@ export default async function duplicateTask(
                 new models.Deliverable({
                     ..._.omit(del, ...ignoredFields),
                     task: newTask,
+                    tenantId,
                 })
             )
         )

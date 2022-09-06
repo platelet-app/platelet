@@ -20,6 +20,7 @@ import {
     getRoleView,
     getWhoami,
     taskAssigneesSelector,
+    tenantIdSelector,
 } from "../../redux/Selectors";
 import determineTaskStatus from "../../utilities/determineTaskStatus";
 import duplicateTask from "../../utilities/duplicateTask";
@@ -38,6 +39,7 @@ function TaskContextMenu(props) {
     const whoami = useSelector(getWhoami);
     const deleteButtonClasses = deleteButtonStyles();
     const taskAssignees = useSelector(taskAssigneesSelector).items;
+    const tenantId = useSelector(tenantIdSelector);
     const useStyles = makeStyles({
         taskContextButton: {
             color: props.iconColor || "primary",
@@ -179,12 +181,13 @@ function TaskContextMenu(props) {
         try {
             const { assignment } = await duplicateTask(
                 task,
+                tenantId,
                 whoami.id,
                 actualRole
             );
             dispatch(assigneeActions.addTaskAssignee(assignment));
-        } catch (e) {
-            console.log(e);
+        } catch (error) {
+            console.log(error);
             dispatch(displayErrorNotification("Sorry, something went wrong"));
         }
         handleClose(e);

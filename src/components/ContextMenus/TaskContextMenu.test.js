@@ -337,7 +337,6 @@ describe("TaskContextMenu", () => {
             new models.Location({
                 name: "woop",
                 listed: 1,
-
                 tenantId,
             })
         );
@@ -360,7 +359,7 @@ describe("TaskContextMenu", () => {
             task,
             assignee: whoami,
             role: userRoles.coordinator,
-            tenantId: whoami.tenantId,
+            tenantId,
         });
         const deliverableTypes = await Promise.all(
             ["test deliverable", "another one"].map((d) =>
@@ -534,10 +533,10 @@ describe("TaskContextMenu", () => {
             })
         );
         const mockLocation = await DataStore.save(
-            new models.Location({ name: "woop", listed: 0 })
+            new models.Location({ name: "woop", listed: 0, tenantId })
         );
         const mockLocation2 = await DataStore.save(
-            new models.Location({ name: "ohp", listed: 0 })
+            new models.Location({ name: "ohp", listed: 0, tenantId })
         );
         const task = await DataStore.save(
             new models.Task({
@@ -576,10 +575,23 @@ describe("TaskContextMenu", () => {
                 status: tasksStatus.new,
             })
         );
+        const whoami = await DataStore.save(
+            new models.User({
+                displayName: "someone person",
+                roles: [userRoles.user, userRoles.coordinator],
+                tenantId,
+            })
+        );
         const saveSpy = jest
             .spyOn(DataStore, "save")
             .mockRejectedValue(new Error());
-        render(<TaskContextMenu task={task} assignedRiders={[]} />);
+        const preloadedState = {
+            whoami: { user: whoami },
+            tenantId,
+        };
+        render(<TaskContextMenu task={task} assignedRiders={[]} />, {
+            preloadedState,
+        });
         const button = screen.getByRole("button", { name: "task options" });
         userEvent.click(button);
         userEvent.click(screen.getByRole("menuitem", { name: "Duplicate" }));
