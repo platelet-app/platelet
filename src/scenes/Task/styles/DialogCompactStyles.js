@@ -5,6 +5,7 @@ export const dialogCardStyles = makeStyles((theme) => ({
         padding: 15,
         width: "100%",
         maxWidth: 400,
+        borderRadius: "1em",
         [theme.breakpoints.down("sm")]: {
             maxWidth: "100%",
         },
