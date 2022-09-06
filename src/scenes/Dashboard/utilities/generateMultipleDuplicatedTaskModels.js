@@ -14,11 +14,13 @@ const ignoredFields = [
 
 export default async function generateMultipleDuplicatedTaskModels(
     tasks,
+    tenantId,
     copyAssignees = false,
     assigneeId = null,
     assigneeRole = null,
     copyCommentsUserId = null
 ) {
+    if (!tenantId) throw new Error("tenantId is required");
     const allAssignees = await DataStore.query(models.TaskAssignee);
     const deliverables = await DataStore.query(models.Deliverable);
     const result = await Promise.all(
@@ -45,11 +47,13 @@ export default async function generateMultipleDuplicatedTaskModels(
             if (pickUpLocation?.listed === 0) {
                 pickUpLocation = new models.Location({
                     ..._.omit(pickUpLocation, ...ignoredFields),
+                    tenantId,
                 });
             }
             if (dropOffLocation?.listed === 0) {
                 dropOffLocation = new models.Location({
                     ..._.omit(dropOffLocation, ...ignoredFields),
+                    tenantId,
                 });
             }
 
@@ -58,6 +62,7 @@ export default async function generateMultipleDuplicatedTaskModels(
                 status: tasksStatus.new,
                 pickUpLocation,
                 dropOffLocation,
+                tenantId,
             });
 
             const filteredDeliverables = deliverables.filter(
@@ -73,7 +78,7 @@ export default async function generateMultipleDuplicatedTaskModels(
                         new models.TaskAssignee({
                             ..._.omit(a, ...ignoredFields),
                             task: newTaskData,
-                            tenantId: a.tenantId,
+                            tenantId,
                         })
                 );
             }
@@ -91,7 +96,7 @@ export default async function generateMultipleDuplicatedTaskModels(
                             task: newTaskData,
                             assignee: user,
                             role: assigneeRole,
-                            tenantId: user.tenantId,
+                            tenantId,
                         });
                         assigneeModels = [...assigneeModels, newAssignee];
                     }
@@ -115,6 +120,7 @@ export default async function generateMultipleDuplicatedTaskModels(
                     ...newTaskData,
                     riderResponsibility,
                     status: tasksStatus.active,
+                    tenantId,
                 });
                 // go back and update the now out of date task references
                 assigneeModels = assigneeModels.map(
@@ -122,7 +128,7 @@ export default async function generateMultipleDuplicatedTaskModels(
                         new models.TaskAssignee({
                             ..._.omit(a, ...ignoredFields),
                             task: newTaskData,
-                            tenantId: a.tenantId,
+                            tenantId,
                         })
                 );
             }
@@ -131,6 +137,7 @@ export default async function generateMultipleDuplicatedTaskModels(
                     new models.Deliverable({
                         ..._.omit(del, ...ignoredFields),
                         task: newTaskData,
+                        tenantId,
                     })
             );
             let newComments = [];
@@ -146,6 +153,7 @@ export default async function generateMultipleDuplicatedTaskModels(
                         new models.Comment({
                             ..._.omit(c, ...ignoredFields),
                             parentId: newTaskData.id,
+                            tenantId,
                         })
                 );
             }

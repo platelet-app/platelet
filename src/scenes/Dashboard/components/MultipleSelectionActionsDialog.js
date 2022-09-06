@@ -107,6 +107,7 @@ const MultipleSelectionActionsDialog = ({
                 : userRoles.rider;
             const models = await generateMultipleDuplicatedTaskModels(
                 items,
+                tenantId,
                 duplicateState.copyAssignees,
                 assigneeId,
                 assigneeRole,
@@ -115,7 +116,6 @@ const MultipleSelectionActionsDialog = ({
             onConfirmation(models);
             setIsDisabled(false);
         } catch (error) {
-            throw error;
             console.log(error);
             setIsDisabled(false);
             dispatch(displayErrorNotification("Sorry, something went wrong"));
