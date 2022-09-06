@@ -1219,6 +1219,188 @@ describe("MultipleSelectionActionsMenu", () => {
         }
     });
 
+    test.each`
+        listedType
+        ${"unlisted"} | ${"listed"}
+    `(
+        "duplicate with listed and unlisted locations",
+        async ({ listedType }) => {
+            const listed = listedType === "unlisted" ? 0 : 1;
+            const mockWhoami = await DataStore.save(
+                new models.User({
+                    roles: [userRoles.coordinator, userRoles.rider],
+                    displayName: "Someone Person",
+                    riderRole: "some role",
+                    tenantId,
+                })
+            );
+            const mockLocation1 = new models.Location({
+                listed,
+                line1: "some line",
+                tenantId,
+            });
+            const mockLocation2 = new models.Location({
+                listed,
+                line1: "some line 2",
+                tenantId,
+            });
+            const mockLocation3 = new models.Location({
+                listed,
+                line1: "woop 1",
+                tenantId,
+            });
+            const mockLocation4 = new models.Location({
+                listed,
+                line1: "woop 2",
+                tenantId,
+            });
+            const mockEstablishment1 = new models.Location({
+                listed,
+                line1: "est 1",
+                tenantId,
+            });
+            const mockEstablishment2 = new models.Location({
+                listed,
+                line1: "est 2",
+                tenantId,
+            });
+
+            const mockTasks = await Promise.all(
+                _.range(2).map((i) =>
+                    DataStore.save(
+                        new models.Task({
+                            status: tasksStatus.new,
+                            pickUpLocation:
+                                i === 0 ? mockLocation1 : mockLocation3,
+                            dropOffLocation:
+                                i === 0 ? mockLocation2 : mockLocation4,
+                            establishmentLocation:
+                                i === 0
+                                    ? mockEstablishment1
+                                    : mockEstablishment2,
+                            tenantId,
+                        })
+                    )
+                )
+            );
+
+            const preloadedState = {
+                roleView: "ALL",
+                dashboardTabIndex: 0,
+                tenantId,
+                whoami: { user: mockWhoami },
+                taskAssigneesReducer: {
+                    items: [],
+                    ready: true,
+                    isSynced: true,
+                },
+            };
+            const querySpy = jest.spyOn(DataStore, "query");
+            const saveSpy = jest.spyOn(DataStore, "save");
+            render(
+                <>
+                    <MultipleSelectionActionsMenu />
+
+                    <TasksGridColumn
+                        title={tasksStatus.new}
+                        taskKey={[tasksStatus.new]}
+                    />
+                </>,
+                {
+                    preloadedState,
+                }
+            );
+            await waitFor(() => {
+                expect(querySpy).toHaveBeenCalledTimes(1);
+            });
+            userEvent.click(screen.getByRole("button", { name: "Select All" }));
+            userEvent.click(
+                screen.getByRole("button", { name: "Selection Duplicate" })
+            );
+            userEvent.click(
+                screen.getByRole("button", { name: "Copy my comments" })
+            );
+            userEvent.click(
+                screen.getByRole("button", { name: "Copy assignees" })
+            );
+            const okButton = screen.getByRole("button", { name: "OK" });
+            userEvent.click(okButton);
+            expect(okButton).toBeDisabled();
+            if (listedType === "listed") {
+                await waitFor(() => {
+                    expect(saveSpy).toHaveBeenCalledTimes(4);
+                });
+            } else {
+                await waitFor(() => {
+                    expect(saveSpy).toHaveBeenCalledTimes(10);
+                });
+            }
+
+            if (listedType === "listed") {
+                mockTasks.forEach((t) => {
+                    expect(saveSpy).toHaveBeenCalledWith({
+                        ...t,
+                        id: expect.not.stringMatching(t.id),
+                        tenantId,
+                    });
+                });
+            } else {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTasks[0],
+                    tenantId,
+                    id: expect.not.stringMatching(mockTasks[0].id),
+                    pickUpLocation: {
+                        ...mockLocation1,
+                        id: expect.not.stringMatching(mockLocation1.id),
+                        tenantId,
+                    },
+                    dropOffLocation: {
+                        ...mockLocation2,
+                        id: expect.not.stringMatching(mockLocation2.id),
+                        tenantId,
+                    },
+                    establishmentLocation: {
+                        ...mockEstablishment1,
+                        id: expect.not.stringMatching(mockEstablishment1.id),
+                        tenantId,
+                    },
+                });
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTasks[1],
+                    tenantId,
+                    id: expect.not.stringMatching(mockTasks[1].id),
+                    pickUpLocation: {
+                        ...mockLocation3,
+                        id: expect.not.stringMatching(mockLocation3.id),
+                        tenantId,
+                    },
+                    dropOffLocation: {
+                        ...mockLocation4,
+                        id: expect.not.stringMatching(mockLocation4.id),
+                        tenantId,
+                    },
+                    establishmentLocation: {
+                        ...mockEstablishment2,
+                        id: expect.not.stringMatching(mockEstablishment2.id),
+                        tenantId,
+                    },
+                });
+                [
+                    mockLocation1,
+                    mockLocation2,
+                    mockLocation3,
+                    mockLocation4,
+                    mockEstablishment1,
+                    mockEstablishment2,
+                ].forEach((loc) => {
+                    expect(saveSpy).toHaveBeenCalledWith({
+                        ...loc,
+                        id: expect.not.stringMatching(loc.id),
+                    });
+                });
+            }
+        }
+    );
     // removed rider role for now
     test.each`
         role

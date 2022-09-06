@@ -42,19 +42,47 @@ export default async function generateMultipleDuplicatedTaskModels(
                 riderResponsibility,
                 dropOffLocation,
                 pickUpLocation,
+                establishmentLocation,
                 ...rest
             } = { ...task };
+
+            const locationModels = [];
+
             if (pickUpLocation?.listed === 0) {
                 pickUpLocation = new models.Location({
                     ..._.omit(pickUpLocation, ...ignoredFields),
                     tenantId,
                 });
+                locationModels.push(pickUpLocation);
+            } else if (pickUpLocation) {
+                pickUpLocation = await DataStore.query(
+                    models.Location,
+                    pickUpLocation.id
+                );
             }
             if (dropOffLocation?.listed === 0) {
                 dropOffLocation = new models.Location({
                     ..._.omit(dropOffLocation, ...ignoredFields),
                     tenantId,
                 });
+                locationModels.push(dropOffLocation);
+            } else if (dropOffLocation) {
+                dropOffLocation = await DataStore.query(
+                    models.Location,
+                    dropOffLocation.id
+                );
+            }
+            if (establishmentLocation?.listed === 0) {
+                establishmentLocation = new models.Location({
+                    ..._.omit(establishmentLocation, ...ignoredFields),
+                    tenantId,
+                });
+                locationModels.push(establishmentLocation);
+            } else if (establishmentLocation) {
+                establishmentLocation = await DataStore.query(
+                    models.Location,
+                    establishmentLocation.id
+                );
             }
 
             let newTaskData = new models.Task({
@@ -62,6 +90,7 @@ export default async function generateMultipleDuplicatedTaskModels(
                 status: tasksStatus.new,
                 pickUpLocation,
                 dropOffLocation,
+                establishmentLocation,
                 tenantId,
             });
 
@@ -157,7 +186,9 @@ export default async function generateMultipleDuplicatedTaskModels(
                         })
                 );
             }
+            // locations models go first, then tasks
             return [
+                ...locationModels,
                 newTaskData,
                 ...deliverablesResult,
                 ...assigneeModels,
