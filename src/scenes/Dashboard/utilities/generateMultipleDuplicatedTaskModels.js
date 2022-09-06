@@ -158,10 +158,10 @@ export default async function generateMultipleDuplicatedTaskModels(
                 );
             }
             return [
+                newTaskData,
                 ...deliverablesResult,
                 ...assigneeModels,
                 ...newComments,
-                newTaskData,
             ];
         })
     );
