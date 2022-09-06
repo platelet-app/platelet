@@ -13,15 +13,17 @@ import {
     userRoles,
 } from "../../apiConsts";
 
+const tenantId = "tenantId";
+
 const whoami = new models.User({
     displayName: "test user",
-    tenantId: "test-tenant",
+    tenantId,
 });
 
 const preloadedState = {
     guidedSetupOpen: true,
     whoami: { user: whoami },
-    tenantId: "test-tenant",
+    tenantId,
 };
 
 describe("GuidedSetup", () => {
@@ -126,7 +128,7 @@ describe("GuidedSetup", () => {
                 name: "",
                 telephoneNumber: "",
             },
-            tenantId: "test-tenant",
+            tenantId,
         });
 
         const mockAssignment = new models.TaskAssignee({
@@ -179,7 +181,7 @@ describe("GuidedSetup", () => {
     test("setting the contact details and priority", async () => {
         const mockWhoami = new models.User({
             displayName: "test user",
-            tenantId: "test-tenant",
+            tenantId,
         });
         const mockTask = new models.Task({
             dropOffLocation: null,
@@ -191,14 +193,14 @@ describe("GuidedSetup", () => {
                 name: "Someone Person",
                 telephoneNumber: "01234567890",
             },
-            tenantId: "test-tenant",
+            tenantId,
         });
 
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
             assignee: mockWhoami,
             role: userRoles.coordinator,
-            tenantId: "test-tenant",
+            tenantId,
         });
         await DataStore.save(mockWhoami);
 
@@ -255,7 +257,7 @@ describe("GuidedSetup", () => {
         const mockComment = new models.Comment({
             body: "This is a comment",
             author: whoami,
-            tenantId: "test-tenant",
+            tenantId,
             visibility: commentVisibility.everyone,
         });
 
@@ -288,7 +290,7 @@ describe("GuidedSetup", () => {
 
     test("saving the establishment", async () => {
         const mockLocation = await DataStore.save(
-            new models.Location({ name: "Test Location", listed: 1 })
+            new models.Location({ name: "Test Location", listed: 1, tenantId })
         );
         const mockTask = new models.Task({
             dropOffLocation: null,
@@ -297,7 +299,7 @@ describe("GuidedSetup", () => {
             establishmentLocation: mockLocation,
             status: tasksStatus.new,
             requesterContact: { name: "", telephoneNumber: "" },
-            tenantId: "test-tenant",
+            tenantId,
         });
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
@@ -334,7 +336,7 @@ describe("GuidedSetup", () => {
             establishmentLocation: null,
             status: tasksStatus.new,
             requesterContact: { name: "", telephoneNumber: "" },
-            tenantId: "test-tenant",
+            tenantId,
         });
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
@@ -364,6 +366,7 @@ describe("GuidedSetup", () => {
         const mockLocation = new models.Location({
             name: "Test Location",
             listed: 0,
+            tenantId,
         });
         const mockTask = new models.Task({
             dropOffLocation: null,
@@ -372,7 +375,7 @@ describe("GuidedSetup", () => {
             establishmentLocation: mockLocation,
             status: tasksStatus.new,
             requesterContact: { name: "", telephoneNumber: "" },
-            tenantId: "test-tenant",
+            tenantId,
         });
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
@@ -415,7 +418,7 @@ describe("GuidedSetup", () => {
             establishmentLocation: mockLocation,
             status: tasksStatus.new,
             requesterContact: { name: "", telephoneNumber: "" },
-            tenantId: "test-tenant",
+            tenantId,
         });
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
@@ -469,7 +472,7 @@ describe("GuidedSetup", () => {
                 name: "",
                 telephoneNumber: mockLocation.contact.telephoneNumber,
             },
-            tenantId: "test-tenant",
+            tenantId,
         });
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
@@ -504,30 +507,30 @@ describe("GuidedSetup", () => {
             establishmentLocation: null,
             status: tasksStatus.new,
             requesterContact: { name: "", telephoneNumber: "" },
-            tenantId: "test-tenant",
+            tenantId,
         });
 
         const mockDeliverableType = new models.DeliverableType({
             label: "some item",
-            tenantId: "test-tenant",
+            tenantId,
             disabled: 0,
         });
         const mockDeliverableType2 = new models.DeliverableType({
             label: "another thing",
-            tenantId: "test-tenant",
+            tenantId,
             disabled: 0,
         });
         const mockDeliverable = new models.Deliverable({
             deliverableType: mockDeliverableType,
             task: mockTask,
             count: 3,
-            tenantId: "test-tenant",
+            tenantId,
         });
         const mockDeliverable2 = new models.Deliverable({
             deliverableType: mockDeliverableType2,
             task: mockTask,
             count: 1,
-            tenantId: "test-tenant",
+            tenantId,
         });
 
         await DataStore.save(mockDeliverableType);
@@ -613,7 +616,7 @@ describe("GuidedSetup", () => {
     test("clicking the discard button when item data has been entered", async () => {
         const mockDeliverableType = new models.DeliverableType({
             label: "Fake Item",
-            tenantId: "test-tenant",
+            tenantId,
             disabled: 0,
         });
         await DataStore.save(mockDeliverableType);

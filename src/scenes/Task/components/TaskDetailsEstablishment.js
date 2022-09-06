@@ -15,17 +15,26 @@ import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
 import * as models from "../../../models";
 import { useTheme } from "@mui/styles";
+import { useDispatch, useSelector } from "react-redux";
+import { tenantIdSelector } from "../../../redux/Selectors";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 
 function TaskDetailsEstablishment({ value, onChange }) {
     const [editMode, setEditMode] = React.useState(false);
     const [notListedName, setNotListedName] = React.useState("");
     const [editValue, setEditValue] = React.useState(null);
     const [notListedMode, setNotListedMode] = React.useState(false);
+    const dispatch = useDispatch();
+    const tenantId = useSelector(tenantIdSelector);
     const theme = useTheme();
 
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
 
     const handleConfirm = () => {
+        if (!tenantId) {
+            console.log("tenantId is required");
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+        }
         if (notListedMode) {
             const newEstablishment = new models.Location({
                 name: notListedName,

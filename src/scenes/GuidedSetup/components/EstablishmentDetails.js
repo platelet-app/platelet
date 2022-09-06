@@ -14,6 +14,9 @@ import {
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import * as models from "../../../models";
 import { useTheme } from "@mui/styles";
+import { useDispatch, useSelector } from "react-redux";
+import { tenantIdSelector } from "../../../redux/Selectors";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 
 function EstablishmentDetails({
     value,
@@ -23,16 +26,23 @@ function EstablishmentDetails({
 }) {
     const [notListedWindow, setNotListedWindow] = useState(false);
     const [notListedName, setNotListedName] = useState("");
+    const dispatch = useDispatch();
+    const tenantId = useSelector(tenantIdSelector);
 
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     const handleNotListedConfirmation = () => {
+        if (!tenantId) {
+            console.log("tenantId is required");
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+        }
         setNotListedWindow(false);
         onChangeEstablishmentSameAsPickUp(false);
         const newEstablishment = new models.Location({
             name: notListedName,
             listed: 0,
+            tenantId,
         });
         onSelect(newEstablishment);
     };
