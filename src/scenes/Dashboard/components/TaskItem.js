@@ -143,7 +143,7 @@ function TaskItemWrapper(props) {
     return <TaskItem {...props} location={location} />;
 }
 
-function TaskItem(props) {
+const TaskItem = React.memo((props) => {
     const whoami = useSelector(getWhoami);
     const { task } = props;
     const [assignees, setAssignees] = useState([]);
@@ -349,7 +349,7 @@ function TaskItem(props) {
         <Skeleton variant="rectangle" width="100%" height={200} />
     );
     return <div ref={ref}>{contents}</div>;
-}
+});
 
 TaskItem.defaultProps = {
     animate: true,
