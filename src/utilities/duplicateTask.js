@@ -33,27 +33,56 @@ export default async function duplicateTask(
         timeRejected,
         timeCancelled,
         riderResponsibility,
+        establishmentLocation,
         dropOffLocation,
         pickUpLocation,
         ...rest
     } = { ...task };
     if (pickUpLocation?.listed === 0) {
-        pickUpLocation = new models.Location({
-            ..._.omit(pickUpLocation, ...ignoredFields),
-            tenantId,
-        });
+        pickUpLocation = await DataStore.save(
+            new models.Location({
+                ..._.omit(pickUpLocation, ...ignoredFields),
+                tenantId,
+            })
+        );
+    } else if (pickUpLocation) {
+        pickUpLocation = await DataStore.query(
+            models.Location,
+            pickUpLocation.id
+        );
     }
     if (dropOffLocation?.listed === 0) {
-        dropOffLocation = new models.Location({
-            ..._.omit(dropOffLocation, ...ignoredFields),
-            tenantId,
-        });
+        dropOffLocation = await DataStore.save(
+            new models.Location({
+                ..._.omit(dropOffLocation, ...ignoredFields),
+                tenantId,
+            })
+        );
+    } else if (dropOffLocation) {
+        dropOffLocation = await DataStore.query(
+            models.Location,
+            dropOffLocation.id
+        );
+    }
+    if (establishmentLocation?.listed === 0) {
+        establishmentLocation = await DataStore.save(
+            new models.Location({
+                ..._.omit(establishmentLocation, ...ignoredFields),
+                tenantId,
+            })
+        );
+    } else if (establishmentLocation) {
+        establishmentLocation = await DataStore.query(
+            models.Location,
+            establishmentLocation.id
+        );
     }
     let newTaskData = new models.Task({
         ...rest,
         status: tasksStatus.new,
         pickUpLocation,
         dropOffLocation,
+        establishmentLocation,
         tenantId,
     });
     let assignment = null;
@@ -65,21 +94,23 @@ export default async function duplicateTask(
                 pickUpLocation,
                 dropOffLocation,
                 riderResponsibility,
+                establishmentLocation,
                 tenantId,
             });
         }
         const assignee = await DataStore.query(models.User, assigneeId);
-        assignment = await DataStore.save(
-            new models.TaskAssignee({
-                task: newTaskData,
-                assignee,
-                role: assigneeRole,
-                tenantId,
-            })
-        );
+        assignment = new models.TaskAssignee({
+            task: newTaskData,
+            assignee,
+            role: assigneeRole,
+            tenantId,
+        });
     }
 
     const newTask = await DataStore.save(newTaskData);
+    if (assignment) {
+        assignment = await DataStore.save(assignment);
+    }
 
     const deliverables = await DataStore.query(models.Deliverable);
     const filteredDeliverables = deliverables.filter(

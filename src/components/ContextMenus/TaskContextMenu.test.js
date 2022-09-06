@@ -347,11 +347,19 @@ describe("TaskContextMenu", () => {
                 tenantId,
             })
         );
+        const mockEstablishment = await DataStore.save(
+            new models.Location({
+                name: "something",
+                listed: 1,
+                tenantId,
+            })
+        );
         const task = await DataStore.save(
             new models.Task({
                 status: tasksStatus.new,
                 pickUpLocation: mockLocation,
                 dropOffLocation: mockLocation2,
+                establishmentLocation: mockEstablishment,
                 tenantId,
             })
         );
@@ -443,7 +451,7 @@ describe("TaskContextMenu", () => {
         });
         mockAllIsIntersecting(true);
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(9);
+            expect(querySpy).toHaveBeenCalledTimes(12);
         });
         expect(screen.queryAllByRole("link")).toHaveLength(2);
     });
@@ -538,11 +546,15 @@ describe("TaskContextMenu", () => {
         const mockLocation2 = await DataStore.save(
             new models.Location({ name: "ohp", listed: 0, tenantId })
         );
+        const mockEstablishment = await DataStore.save(
+            new models.Location({ name: "something", listed: 0, tenantId })
+        );
         const task = await DataStore.save(
             new models.Task({
                 status: tasksStatus.new,
                 pickUpLocation: mockLocation,
                 dropOffLocation: mockLocation2,
+                establishmentLocation: mockEstablishment,
                 tenantId,
             })
         );
@@ -558,13 +570,21 @@ describe("TaskContextMenu", () => {
         userEvent.click(button);
         userEvent.click(screen.getByRole("menuitem", { name: "Duplicate" }));
         await waitFor(() => {
-            expect(saveSpy).toHaveBeenCalledTimes(2);
+            expect(saveSpy).toHaveBeenCalledTimes(5);
         });
         expect(saveSpy).toHaveBeenCalledWith({
-            ...task,
-            id: expect.any(String),
-            pickUpLocation: { ...mockLocation, id: expect.any(String) },
-            dropOffLocation: { ...mockLocation2, id: expect.any(String) },
+            ...mockLocation,
+            id: expect.not.stringMatching(mockLocation.id),
+            tenantId,
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockLocation2,
+            id: expect.not.stringMatching(mockLocation2.id),
+            tenantId,
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockEstablishment,
+            id: expect.not.stringMatching(mockEstablishment.id),
             tenantId,
         });
     });
