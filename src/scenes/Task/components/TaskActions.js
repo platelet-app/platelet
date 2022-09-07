@@ -37,6 +37,13 @@ const fields = {
     timeRiderHome: "Rider home",
 };
 
+function lowerCaseFirstLetter(string) {
+    return string.charAt(0).toLowerCase() + string.slice(1);
+}
+const getHumanReadableTimeLabel = (key) => {
+    return `Time ${lowerCaseFirstLetter(fields[key])}`;
+};
+
 function TaskActions(props) {
     const [state, setState] = useState([]);
     const [task, setTask] = useState(null);
@@ -45,6 +52,8 @@ function TaskActions(props) {
     const [errorState, setErrorState] = useState(null);
     const taskAssignees = useSelector(taskAssigneesSelector).items;
     const [confirmationKey, setConfirmationKey] = useState(null);
+    const [editKey, setEditKey] = useState(null);
+
     const taskObserver = useRef({ unsubscribe: () => {} });
     const dispatch = useDispatch();
     const cardClasses = dialogCardStyles();
@@ -65,6 +74,13 @@ function TaskActions(props) {
         setConfirmationKey(key);
     }
 
+    function onClickEdit(key) {
+        setEditKey(key);
+    }
+    function onCancelEdit() {
+        setEditKey(null);
+    }
+
     async function setTimeWithKey(key, value) {
         setIsPosting(true);
         try {
@@ -76,6 +92,7 @@ function TaskActions(props) {
             );
             setTask(updatedTask);
             setIsPosting(false);
+            setEditKey(null);
         } catch (error) {
             console.log(error);
             setIsPosting(false);
@@ -84,24 +101,36 @@ function TaskActions(props) {
     }
 
     async function saveValues(values) {
-        setConfirmationKey(null);
-        const existingTask = await DataStore.query(models.Task, props.taskId);
-        const riderAssignees = taskAssignees.filter(
-            (assignee) => assignee.role === userRoles.rider
-        );
-        const status = await determineTaskStatus(
-            { ...existingTask, ...values },
-            riderAssignees
-        );
-        const updatedTask = await DataStore.save(
-            models.Task.copyOf(existingTask, (upd) => {
-                upd.status = status;
-                for (const key in values) {
-                    upd[key] = values[key];
-                }
-            })
-        );
-        setTask(updatedTask);
+        setIsPosting(true);
+        try {
+            const existingTask = await DataStore.query(
+                models.Task,
+                props.taskId
+            );
+            const riderAssignees = taskAssignees.filter(
+                (assignee) => assignee.role === userRoles.rider
+            );
+            const status = await determineTaskStatus(
+                { ...existingTask, ...values },
+                riderAssignees
+            );
+            const updatedTask = await DataStore.save(
+                models.Task.copyOf(existingTask, (upd) => {
+                    upd.status = status;
+                    for (const key in values) {
+                        upd[key] = values[key];
+                    }
+                })
+            );
+            setConfirmationKey(null);
+            setEditKey(null);
+            setTask(updatedTask);
+            setIsPosting(false);
+        } catch (e) {
+            console.log(e);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+            setIsPosting(false);
+        }
     }
 
     function calculateState() {
@@ -257,11 +286,19 @@ function TaskActions(props) {
                                             ? "timePickedUpSenderName"
                                             : "timeDroppedOffRecipientName";
 
+                                    const label =
+                                        getHumanReadableTimeLabel(key);
+
                                     let picker = (
                                         <TimePicker
+                                            key={task && task[key]}
                                             onChange={(newValue) =>
                                                 setTimeWithKey(key, newValue)
                                             }
+                                            onCancelEdit={onCancelEdit}
+                                            label={label}
+                                            editMode={editKey === key}
+                                            onClickEdit={() => onClickEdit(key)}
                                             disableClear
                                             disableUnsetMessage
                                             time={task && task[key]}
@@ -291,9 +328,16 @@ function TaskActions(props) {
                                                         [nameKey]: name,
                                                     });
                                                 }}
+                                                onCancelEdit={onCancelEdit}
                                                 name={task && task[tooltipKey]}
+                                                editMode={editKey === key}
+                                                onClickEdit={() =>
+                                                    onClickEdit(key)
+                                                }
+                                                label={label}
                                                 nameLabel={textfieldNameLabel}
                                                 disableClear
+                                                disabled={isPosting}
                                                 disableUnsetMessage
                                                 time={task && task[key]}
                                                 hideEditIcon={

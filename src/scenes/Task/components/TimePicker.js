@@ -23,23 +23,16 @@ const useStyles = makeStyles({
 });
 
 function TimePicker(props) {
-    const [editMode, setEditMode] = useState(false);
     const [state, setState] = useState(new Date(props.time));
-    const originalTime = useRef(new Date(props.time));
     const classes = useStyles();
     const { show, hide } = showHide();
-
-    useEffect(() => {
-        setState(new Date(props.time));
-        originalTime.current = new Date(props.time);
-    }, [props.time]);
 
     function onClear() {
         props.onChange(null);
     }
 
     function toggleEditMode() {
-        setEditMode(!editMode);
+        props.onClickEdit();
     }
 
     // check if props.time is today
@@ -90,7 +83,7 @@ function TimePicker(props) {
                         <>
                             <Tooltip title={"Edit"}>
                                 <IconButton
-                                    aria-label={"Edit"}
+                                    aria-label={`edit ${props.label}`}
                                     disabled={props.disabled}
                                     onClick={toggleEditMode}
                                     size="small"
@@ -115,12 +108,11 @@ function TimePicker(props) {
                     )}
                 </Stack>
                 <ConfirmationDialog
-                    onCancel={() => setEditMode(false)}
+                    onCancel={props.onCancelEdit}
                     onConfirmation={() => {
-                        setEditMode(false);
                         props.onChange(state);
                     }}
-                    open={editMode}
+                    open={props.editMode}
                 >
                     <DateTimePicker
                         label={props.label}

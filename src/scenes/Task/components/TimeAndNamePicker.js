@@ -1,6 +1,5 @@
 import React from "react";
 import InfoIcon from "@mui/icons-material/Info";
-import { useState } from "react";
 import PropTypes from "prop-types";
 import Typography from "@mui/material/Typography";
 import Moment from "react-moment";
@@ -21,12 +20,7 @@ const useStyles = makeStyles({
 });
 
 function TimeAndNamePicker(props) {
-    const [editMode, setEditMode] = useState(false);
     const classes = useStyles();
-
-    function toggleEditMode() {
-        setEditMode(!editMode);
-    }
 
     // check if props.time is today
     function isToday() {
@@ -43,7 +37,6 @@ function TimeAndNamePicker(props) {
 
     const onConfirmation = React.useCallback(
         (values) => {
-            setEditMode(false);
             onChange(values);
         },
         [onChange]
@@ -111,9 +104,9 @@ function TimeAndNamePicker(props) {
                     {!props.hideEditIcon && (
                         <Tooltip title={"Edit"}>
                             <IconButton
-                                aria-label={"Edit"}
+                                aria-label={`edit ${props.label}`}
                                 disabled={props.disabled}
-                                onClick={toggleEditMode}
+                                onClick={props.onClickEdit}
                                 size="small"
                             >
                                 <EditIcon />
@@ -122,15 +115,16 @@ function TimeAndNamePicker(props) {
                     )}
                 </Stack>
                 <TimeAndNamePickerDialog
-                    key={editMode}
+                    key={props.editMode}
                     disableFuture
-                    open={editMode}
+                    disabled={props.disabled}
+                    open={props.editMode}
                     onConfirmation={onConfirmation}
                     time={props.time}
                     name={props.name}
                     nameLabel={props.nameLabel}
                     label={props.label}
-                    onCancel={() => setEditMode(false)}
+                    onCancel={props.onCancelEdit}
                 />
             </>
         );
@@ -146,20 +140,26 @@ function TimeAndNamePicker(props) {
 TimeAndNamePicker.propTypes = {
     time: PropTypes.string,
     onChange: PropTypes.func,
+    onClickEdit: PropTypes.func,
+    onCancelEdit: PropTypes.func,
     label: PropTypes.string,
     name: PropTypes.string,
     nameLabel: PropTypes.string,
     disabled: PropTypes.bool,
     disableUnsetMessage: PropTypes.bool,
+    editMode: PropTypes.bool,
 };
 TimeAndNamePicker.defaultProps = {
     time: "",
     onChange: () => {},
+    onClickEdit: () => {},
+    onCancelEdit: () => {},
     label: "",
     name: "",
     nameLabel: "Name",
     disabled: false,
     disableUnsetMessage: false,
+    editMode: false,
 };
 
 export default TimeAndNamePicker;

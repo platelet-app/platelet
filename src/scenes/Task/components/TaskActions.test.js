@@ -6,6 +6,7 @@ import userEvent from "@testing-library/user-event";
 import * as models from "../../../models";
 import { DataStore } from "aws-amplify";
 import { tasksStatus, userRoles } from "../../../apiConsts";
+import moment from "moment";
 
 const whoami = new models.User({
     displayName: "Test User",
@@ -175,58 +176,6 @@ describe("TaskActions", () => {
         });
     });
 
-    it("changes the sender name", async () => {
-        const mockTask = new models.Task({
-            timePickedUp: isoDate,
-            timePickedUpSenderName: "someone person",
-            status: tasksStatus.pickedUp,
-        });
-        await DataStore.save(mockTask);
-        const spy = jest.spyOn(DataStore, "query");
-        const saveSpy = jest.spyOn(DataStore, "save");
-        const mockAssignment = new models.TaskAssignee({
-            task: mockTask,
-            role: userRoles.rider,
-        });
-        const preloadedState = {
-            roleView: "ALL",
-            whoami: { user: whoami },
-            taskAssigneesReducer: {
-                items: [mockAssignment],
-                ready: true,
-                isSynced: true,
-            },
-        };
-        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
-        await waitFor(() => {
-            expect(spy).toHaveBeenCalledTimes(1);
-        });
-        userEvent.click(screen.getByRole("button", { name: "Edit" }));
-        const more = "more stuff";
-        userEvent.type(
-            screen.getByRole("textbox", { name: "Sender name" }),
-            more
-        );
-        const okButton = screen.getByRole("button", { name: "OK" });
-        userEvent.click(okButton);
-        await waitFor(() => {
-            expect(saveSpy).toHaveBeenCalledWith({
-                ...mockTask,
-                timePickedUpSenderName: `someone person${more}`,
-            });
-        });
-        // check the tooltip
-        const tooltip = await screen.findByRole("button", {
-            name: "someone personmore stuff",
-        });
-        userEvent.hover(tooltip);
-        await waitFor(() => {
-            expect(
-                screen.getByText(/someone personmore stuff/)
-            ).toBeInTheDocument();
-        });
-    });
-
     test("delivered button is disabled without timePickedUp set", async () => {
         const mockTask = new models.Task({});
         await DataStore.save(mockTask);
@@ -373,60 +322,6 @@ describe("TaskActions", () => {
         });
     });
 
-    it("changes the recipient name", async () => {
-        const mockTask = new models.Task({
-            timePickedUp: isoDate,
-            timeDroppedOff: isoDate,
-            timeDroppedOffRecipientName: "someone person",
-            status: tasksStatus.droppedOff,
-        });
-        const mockAssignment = new models.TaskAssignee({
-            task: mockTask,
-            role: userRoles.rider,
-        });
-        const preloadedState = {
-            roleView: "ALL",
-            whoami: { user: whoami },
-            taskAssigneesReducer: {
-                items: [mockAssignment],
-                ready: true,
-                isSynced: true,
-            },
-        };
-        await DataStore.save(mockTask);
-        await DataStore.save(mockAssignment);
-        const spy = jest.spyOn(DataStore, "query");
-        const saveSpy = jest.spyOn(DataStore, "save");
-        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
-        await waitFor(() => {
-            expect(spy).toHaveBeenCalledTimes(1);
-        });
-
-        userEvent.click(screen.getAllByRole("button", { name: "Edit" })[1]);
-        const more = "more stuff";
-        userEvent.type(
-            screen.getByRole("textbox", { name: "Recipient name" }),
-            more
-        );
-        const okButton = screen.getByRole("button", { name: "OK" });
-        userEvent.click(okButton);
-        await waitFor(() => {
-            expect(saveSpy).toHaveBeenCalledWith({
-                ...mockTask,
-                timeDroppedOffRecipientName: `someone person${more}`,
-            });
-        });
-        // check the tooltip
-        const tooltip = await screen.findByRole("button", {
-            name: `someone person${more}`,
-        });
-        userEvent.hover(tooltip);
-        await waitFor(() => {
-            expect(
-                screen.getByText(/someone personmore stuff/)
-            ).toBeInTheDocument();
-        });
-    });
     it("clicks the rider home button", async () => {
         const mockTask = new models.Task({
             timePickedUp: isoDate,
@@ -1009,5 +904,366 @@ describe("TaskActions", () => {
         await waitFor(() => {
             expect(button).toBeDisabled();
         });
+    });
+
+    test.each`
+        status
+        ${tasksStatus.cancelled} | ${tasksStatus.rejected} | ${tasksStatus.completed}
+    `("change the times without a name", async ({ status }) => {
+        const date = new Date();
+        let mockTask;
+        if (status === tasksStatus.cancelled) {
+            mockTask = new models.Task({
+                status,
+                timeCancelled: date.toISOString(),
+            });
+        } else if (status === tasksStatus.rejected) {
+            mockTask = new models.Task({
+                status,
+                timeRejected: date.toISOString(),
+            });
+        } else {
+            mockTask = new models.Task({
+                status,
+                timePickedUp: date.toISOString(),
+                timeDroppedOff: date.toISOString(),
+                timeRiderHome: date.toISOString(),
+            });
+        }
+
+        const fakeAssignee = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator, userRoles.user],
+                displayName: "test",
+            })
+        );
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            assignee: fakeAssignee,
+            role: userRoles.coordinator,
+        });
+        const mockAssignment2 = new models.TaskAssignee({
+            task: mockTask,
+            assignee: fakeAssignee,
+            role: userRoles.rider,
+        });
+        const preloadedState = {
+            roleView: userRoles.rider,
+            whoami: { user: fakeAssignee },
+            taskAssigneesReducer: {
+                items: [mockAssignment, mockAssignment2],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        if (status === tasksStatus.timeRejected) {
+            userEvent.click(
+                screen.getByRole("button", { name: "edit Time rejected" })
+            );
+            const dateField = screen.getByRole("textbox", {
+                name: /Choose date/,
+            });
+            expect(dateField).toHaveValue(
+                moment(date).format("DD/MM/YYYY HH:mm")
+            );
+            const okButton = screen.getByRole("button", { name: "OK" });
+            userEvent.click(okButton);
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                });
+            });
+        } else if (status === tasksStatus.cancelled) {
+            userEvent.click(
+                screen.getByRole("button", { name: "edit Time cancelled" })
+            );
+            const dateField = screen.getByRole("textbox", {
+                name: /Choose date/,
+            });
+            expect(dateField).toHaveValue(
+                moment(date).format("DD/MM/YYYY HH:mm")
+            );
+            const okButton = screen.getByRole("button", { name: "OK" });
+            userEvent.click(okButton);
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                });
+            });
+        } else if (status === tasksStatus.completed) {
+            userEvent.click(
+                screen.getByRole("button", { name: "edit Time rider home" })
+            );
+            const dateField = screen.getByRole("textbox", {
+                name: /Choose date/,
+            });
+            expect(dateField).toHaveValue(
+                moment(date).format("DD/MM/YYYY HH:mm")
+            );
+            const okButton = screen.getByRole("button", { name: "OK" });
+            userEvent.click(okButton);
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                });
+            });
+        }
+    });
+
+    test("change the times failure", async () => {
+        const date = new Date();
+        let mockTask;
+        const status = tasksStatus.cancelled;
+        mockTask = new models.Task({
+            status,
+            timeCancelled: date.toISOString(),
+        });
+
+        const fakeAssignee = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator, userRoles.user],
+                displayName: "test",
+            })
+        );
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            assignee: fakeAssignee,
+            role: userRoles.coordinator,
+        });
+        const mockAssignment2 = new models.TaskAssignee({
+            task: mockTask,
+            assignee: fakeAssignee,
+            role: userRoles.rider,
+        });
+        const preloadedState = {
+            roleView: userRoles.rider,
+            whoami: { user: fakeAssignee },
+            taskAssigneesReducer: {
+                items: [mockAssignment, mockAssignment2],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest
+            .spyOn(DataStore, "save")
+            .mockRejectedValue(new Error());
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(
+            screen.getByRole("button", { name: "edit Time cancelled" })
+        );
+        const dateField = screen.getByRole("textbox", {
+            name: /Choose date/,
+        });
+        expect(dateField).toHaveValue(moment(date).format("DD/MM/YYYY HH:mm"));
+        const okButton = screen.getByRole("button", { name: "OK" });
+        userEvent.click(okButton);
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalled();
+        });
+        expect(
+            screen.getByText("Sorry, something went wrong")
+        ).toBeInTheDocument();
+        expect(dateField).toBeInTheDocument();
+    });
+
+    test.each`
+        status
+        ${tasksStatus.pickedUp} | ${tasksStatus.droppedOff}
+    `("change the sender or recipient name and times", async ({ status }) => {
+        const date = new Date();
+        const date2 = moment(date).subtract(1, "day").toDate(); // date object
+        const mockTask = new models.Task({
+            status: tasksStatus.droppedOff,
+            timePickedUp: date.toISOString(),
+            timeDroppedOff: date2.toISOString(),
+            timePickedUpSenderName: "someone person",
+            timeDroppedOffRecipientName: "someone else",
+        });
+        const fakeAssignee = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator, userRoles.user],
+                displayName: "test",
+            })
+        );
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            assignee: fakeAssignee,
+            role: userRoles.coordinator,
+        });
+        const mockAssignment2 = new models.TaskAssignee({
+            task: mockTask,
+            assignee: fakeAssignee,
+            role: userRoles.rider,
+        });
+        const preloadedState = {
+            roleView: userRoles.rider,
+            whoami: { user: fakeAssignee },
+            taskAssigneesReducer: {
+                items: [mockAssignment, mockAssignment2],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        const more = "more text";
+        if (status === tasksStatus.pickedUp) {
+            userEvent.click(
+                screen.getByRole("button", { name: "edit Time picked up" })
+            );
+            const nameField = screen.getByRole("textbox", {
+                name: "Sender name",
+            });
+            const dateField = screen.getByRole("textbox", {
+                name: /Choose date/,
+            });
+            expect(dateField).toHaveValue(
+                moment(date).format("DD/MM/YYYY HH:mm")
+            );
+            expect(nameField).toHaveValue(mockTask.timePickedUpSenderName);
+            userEvent.type(nameField, more);
+            expect(nameField).toHaveValue(
+                `${mockTask.timePickedUpSenderName}${more}`
+            );
+            const okButton = screen.getByRole("button", { name: "OK" });
+            userEvent.click(okButton);
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                    timePickedUpSenderName: `${mockTask.timePickedUpSenderName}${more}`,
+                });
+            });
+            // check the tooltip
+            const tooltip = await screen.findByRole("button", {
+                name: `${mockTask.timePickedUpSenderName}${more}`,
+            });
+            userEvent.hover(tooltip);
+            await waitFor(() => {
+                expect(
+                    screen.getByText(/someone personmore text/)
+                ).toBeInTheDocument();
+            });
+        } else {
+            userEvent.click(
+                screen.getByRole("button", { name: "edit Time delivered" })
+            );
+            const nameField = screen.getByRole("textbox", {
+                name: "Recipient name",
+            });
+            expect(nameField).toHaveValue(mockTask.timeDroppedOffRecipientName);
+            const dateField = screen.getByRole("textbox", {
+                name: /Choose date/,
+            });
+            expect(dateField).toHaveValue(
+                moment(date2).format("DD/MM/YYYY HH:mm")
+            );
+            userEvent.type(nameField, more);
+            expect(nameField).toHaveValue(
+                `${mockTask.timeDroppedOffRecipientName}${more}`
+            );
+            const okButton = screen.getByRole("button", { name: "OK" });
+            userEvent.click(okButton);
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                    timeDroppedOffRecipientName: `${mockTask.timeDroppedOffRecipientName}${more}`,
+                });
+            });
+            // check the tooltip
+            const tooltip = await screen.findByRole("button", {
+                name: `${mockTask.timeDroppedOffRecipientName}${more}`,
+            });
+            userEvent.hover(tooltip);
+            await waitFor(() => {
+                expect(
+                    screen.getByText(/someone elsemore text/)
+                ).toBeInTheDocument();
+            });
+        }
+    });
+
+    test("change the sender details failure", async () => {
+        const date = new Date();
+        const mockTask = new models.Task({
+            status: tasksStatus.droppedOff,
+            timePickedUp: date.toISOString(),
+            timePickedUpSenderName: "someone person",
+        });
+        const fakeAssignee = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator, userRoles.user],
+                displayName: "test",
+            })
+        );
+        const mockAssignment = new models.TaskAssignee({
+            task: mockTask,
+            assignee: fakeAssignee,
+            role: userRoles.coordinator,
+        });
+        const mockAssignment2 = new models.TaskAssignee({
+            task: mockTask,
+            assignee: fakeAssignee,
+            role: userRoles.rider,
+        });
+        const preloadedState = {
+            roleView: userRoles.rider,
+            whoami: { user: fakeAssignee },
+            taskAssigneesReducer: {
+                items: [mockAssignment, mockAssignment2],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest
+            .spyOn(DataStore, "save")
+            .mockRejectedValue(new Error());
+        render(<TaskActions taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        const more = "more text";
+        userEvent.click(
+            screen.getByRole("button", { name: "edit Time picked up" })
+        );
+        const nameField = screen.getByRole("textbox", {
+            name: "Sender name",
+        });
+        const dateField = screen.getByRole("textbox", {
+            name: /Choose date/,
+        });
+        expect(dateField).toHaveValue(moment(date).format("DD/MM/YYYY HH:mm"));
+        expect(nameField).toHaveValue(mockTask.timePickedUpSenderName);
+        userEvent.type(nameField, more);
+        expect(nameField).toHaveValue(
+            `${mockTask.timePickedUpSenderName}${more}`
+        );
+        const okButton = screen.getByRole("button", { name: "OK" });
+        userEvent.click(okButton);
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalled();
+        });
+        expect(
+            screen.getByText("Sorry, something went wrong")
+        ).toBeInTheDocument();
+        expect(nameField).toBeInTheDocument();
     });
 });
