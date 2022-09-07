@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { useState } from "react";
 import PropTypes from "prop-types";
 import Typography from "@mui/material/Typography";
