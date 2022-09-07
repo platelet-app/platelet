@@ -113,11 +113,7 @@ function RiderConfirmationHomeContents({
                             openTo="hours"
                             onChange={handleTimeChange}
                             renderInput={(params) => (
-                                <TextField
-                                    variant={"standard"}
-                                    fullWidth
-                                    {...params}
-                                />
+                                <TextField fullWidth {...params} />
                             )}
                         />
                         <FormControlLabel

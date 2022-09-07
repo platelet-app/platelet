@@ -129,11 +129,7 @@ function TimePicker(props) {
                         openTo="hours"
                         onChange={(value) => setState(value)}
                         renderInput={(params) => (
-                            <TextField
-                                variant={"standard"}
-                                fullWidth
-                                {...params}
-                            />
+                            <TextField fullWidth {...params} />
                         )}
                     />
                 </ConfirmationDialog>

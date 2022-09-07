@@ -277,7 +277,6 @@ function TaskActions(props) {
                                         picker = (
                                             <TimeAndNamePicker
                                                 onChange={(newValue) => {
-                                                    console.log(newValue);
                                                     const { name, time } =
                                                         newValue;
                                                     const isoString = time

@@ -25,9 +25,7 @@ function MultipleSelectionActionsSetTime({ onChange }) {
             inputFormat={"dd/MM/yyyy HH:mm"}
             openTo="hours"
             onChange={handleTimeChange}
-            renderInput={(params) => (
-                <TextField variant={"standard"} fullWidth {...params} />
-            )}
+            renderInput={(params) => <TextField fullWidth {...params} />}
         />
     );
 }

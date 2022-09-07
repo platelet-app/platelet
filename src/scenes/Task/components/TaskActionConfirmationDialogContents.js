@@ -35,12 +35,14 @@ function humanReadableConfirmation(field, nullify) {
 
 function TaskActionConfirmationDialogContents(props) {
     const [time, setTime] = React.useState(new Date());
+    const [errorState, setErrorState] = React.useState(false);
     const [nameInput, setNameInput] = React.useState("");
     const dispatch = useDispatch();
 
     function handleTimeChange(value) {
         setTime(value);
         props.onChangeTime(value);
+        setErrorState(false);
     }
 
     const needsName =
@@ -91,6 +93,7 @@ function TaskActionConfirmationDialogContents(props) {
                 props.timeKey,
                 props.nullify
             )}
+            disabled={errorState}
             onConfirmation={handleConfirmation}
             onClose={() => {
                 if (props.nullify) props.onClose();
@@ -101,16 +104,14 @@ function TaskActionConfirmationDialogContents(props) {
                 {!props.nullify && (
                     <DateTimePicker
                         label={props.label}
+                        disableFuture
+                        onError={() => setErrorState(true)}
                         value={time}
                         inputFormat={"dd/MM/yyyy HH:mm"}
                         openTo="hours"
                         onChange={handleTimeChange}
                         renderInput={(params) => (
-                            <TextField
-                                variant={"standard"}
-                                fullWidth
-                                {...params}
-                            />
+                            <TextField fullWidth {...params} />
                         )}
                     />
                 )}

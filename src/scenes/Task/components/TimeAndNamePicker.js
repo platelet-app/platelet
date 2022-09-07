@@ -5,12 +5,11 @@ import PropTypes from "prop-types";
 import Typography from "@mui/material/Typography";
 import Moment from "react-moment";
 import IconButton from "@mui/material/IconButton";
-import { Stack, TextField, Tooltip } from "@mui/material";
+import { Stack, Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import makeStyles from "@mui/styles/makeStyles";
-import { DateTimePicker } from "@mui/lab";
 import moment from "moment";
-import ConfirmationDialog from "../../../components/ConfirmationDialog";
+import TimeAndNamePickerDialog from "./TimeAndNamePickerDialog";
 
 const useStyles = makeStyles({
     button: {
@@ -23,10 +22,6 @@ const useStyles = makeStyles({
 
 function TimeAndNamePicker(props) {
     const [editMode, setEditMode] = useState(false);
-    const [state, setState] = useState({
-        time: new Date(props.time),
-        name: props.name,
-    });
     const classes = useStyles();
 
     function toggleEditMode() {
@@ -43,6 +38,16 @@ function TimeAndNamePicker(props) {
             today.getFullYear() === date.getFullYear()
         );
     }
+
+    const { onChange } = props;
+
+    const onConfirmation = React.useCallback(
+        (values) => {
+            setEditMode(false);
+            onChange(values);
+        },
+        [onChange]
+    );
 
     if (props.time) {
         return (
@@ -116,50 +121,17 @@ function TimeAndNamePicker(props) {
                         </Tooltip>
                     )}
                 </Stack>
-                <ConfirmationDialog
-                    onCancel={() => setEditMode(false)}
-                    onConfirmation={() => {
-                        setEditMode(false);
-                        props.onChange(state);
-                    }}
+                <TimeAndNamePickerDialog
+                    key={editMode}
+                    disableFuture
                     open={editMode}
-                >
-                    <Stack sx={{ minWidth: 300 }} spacing={3}>
-                        <DateTimePicker
-                            label={props.label}
-                            value={state.time}
-                            inputFormat={"dd/MM/yyyy HH:mm"}
-                            openTo="hours"
-                            onChange={(value) =>
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    time: value,
-                                }))
-                            }
-                            renderInput={(params) => (
-                                <TextField
-                                    variant={"standard"}
-                                    fullWidth
-                                    {...params}
-                                />
-                            )}
-                        />
-                        <TextField
-                            onChange={(e) => {
-                                const { value } = e.target;
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    name: value,
-                                }));
-                            }}
-                            inputProps={{
-                                "aria-label": props.nameLabel,
-                            }}
-                            value={state.name}
-                            label={props.nameLabel}
-                        />
-                    </Stack>
-                </ConfirmationDialog>
+                    onConfirmation={onConfirmation}
+                    time={props.time}
+                    name={props.name}
+                    nameLabel={props.nameLabel}
+                    label={props.label}
+                    onCancel={() => setEditMode(false)}
+                />
             </>
         );
     } else {
