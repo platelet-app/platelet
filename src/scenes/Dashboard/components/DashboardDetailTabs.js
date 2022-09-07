@@ -1,4 +1,5 @@
 import React from "react";
+import * as selectionModeActions from "../../../redux/selectionMode/selectionModeActions";
 import AddIcon from "@mui/icons-material/Add";
 import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
@@ -90,6 +91,11 @@ export function DashboardDetailTabs(props) {
             />
         </Stack>
     );
+
+    const clearAllSelectedItems = () => {
+        dispatch(selectionModeActions.clearItems(0));
+        dispatch(selectionModeActions.clearItems(1));
+    };
 
     const addClearButton =
         !dashboardFilter && !dashboardFilteredUser ? (
@@ -207,6 +213,7 @@ export function DashboardDetailTabs(props) {
                             if (roleView !== "ALL") {
                                 dispatch(setRoleView("ALL"));
                                 saveDashboardRoleMode("ALL");
+                                clearAllSelectedItems();
                             }
                         }}
                     >
@@ -224,6 +231,7 @@ export function DashboardDetailTabs(props) {
                             if (roleView !== userRoles.coordinator) {
                                 dispatch(setRoleView(userRoles.coordinator));
                                 saveDashboardRoleMode(userRoles.coordinator);
+                                clearAllSelectedItems();
                             }
                         }}
                     >
@@ -240,6 +248,7 @@ export function DashboardDetailTabs(props) {
                                 dispatch(setRoleView(userRoles.rider));
                                 dispatch(setDashboardFilteredUser(null));
                                 saveDashboardRoleMode(userRoles.rider);
+                                clearAllSelectedItems();
                             }
                         }}
                     >
