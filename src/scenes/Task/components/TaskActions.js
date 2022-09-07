@@ -291,7 +291,7 @@ function TaskActions(props) {
 
                                     let picker = (
                                         <TimePicker
-                                            key={task && task[key]}
+                                            key={editKey}
                                             onChange={(newValue) =>
                                                 setTimeWithKey(key, newValue)
                                             }
