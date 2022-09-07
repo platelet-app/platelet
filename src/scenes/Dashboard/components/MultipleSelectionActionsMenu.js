@@ -199,7 +199,7 @@ function MultipleSelectionActionsMenu() {
                         : undefined
                 }
             >
-                {Object.values(dotActions).map((action) => {
+                {Object.values(actualDotActions).map((action) => {
                     return (
                         <MenuItem
                             aria-label={`Selection ${action}`}
