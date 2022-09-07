@@ -35,6 +35,7 @@ function TaskDetailsPanel(props) {
     });
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(null);
+    const [editTimeOfCall, setEditTimeOfCall] = useState(false);
     const taskObserver = useRef({ unsubscribe: () => {} });
     const dispatch = useDispatch();
     const currentUserRole = useAssignmentRole(state.id);
@@ -93,6 +94,7 @@ function TaskDetailsPanel(props) {
                     updated.timeOfCall = value.toISOString();
                 })
             );
+            setEditTimeOfCall(false);
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
@@ -174,7 +176,12 @@ function TaskDetailsPanel(props) {
                     )}
                     <LabelItemPair label={"Time of call"}>
                         <TimePicker
+                            key={editTimeOfCall}
                             onChange={setTimeOfCall}
+                            editMode={editTimeOfCall}
+                            label="Time of call"
+                            onClickEdit={() => setEditTimeOfCall(true)}
+                            onCancelEdit={() => setEditTimeOfCall(false)}
                             disableClear
                             time={state.timeOfCall}
                             hideEditIcon={!hasFullPermissions}

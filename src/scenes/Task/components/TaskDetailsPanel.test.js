@@ -88,6 +88,41 @@ describe("TaskDetailsPanel", () => {
         ).toBeInTheDocument();
     });
 
+    test("changing the requester contact details failure", async () => {
+        const timeOfCall = new Date().toISOString();
+        const mockTask = new models.Task({
+            timeOfCall,
+            priority: priorities.high,
+            reference: "test-reference",
+            requesterContact: {
+                telephoneNumber: "01234567890",
+                name: "Someone Person",
+            },
+        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        const saveSpy = jest
+            .spyOn(amplify.DataStore, "save")
+            .mockRejectedValue(new Error());
+        render(<TaskDetailsPanel taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(
+            screen.getByRole("button", { name: "edit caller details" })
+        );
+        userEvent.click(screen.getByText(mockTask.requesterContact.name));
+        const textBox = screen.getByRole("textbox");
+        userEvent.type(textBox, " more name");
+        userEvent.type(textBox, "{enter}");
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(1);
+        });
+        expect(
+            screen.getByText("Sorry, something went wrong")
+        ).toBeInTheDocument();
+    });
+
     test("changing the requester contact details", async () => {
         const timeOfCall = new Date().toISOString();
         const mockTask = new models.Task({
@@ -178,6 +213,59 @@ describe("TaskDetailsPanel", () => {
                 },
             });
         });
+    });
+    test("change the failure", async () => {
+        const timeOfCall = new Date().toISOString();
+        const mockEstablishment = await DataStore.save(
+            new models.Location({
+                name: "Test Establishment",
+                listed: 1,
+            })
+        );
+        const mockTask = new models.Task({
+            timeOfCall,
+            priority: priorities.high,
+            reference: "test-reference",
+            establishmentLocation: null,
+            requesterContact: {
+                telephoneNumber: "01234567890",
+                name: "Someone Person",
+            },
+        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        const saveSpy = jest
+            .spyOn(amplify.DataStore, "save")
+            .mockRejectedValue(new Error());
+        render(<TaskDetailsPanel taskId={mockTask.id} />, { preloadedState });
+
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(
+            screen.getByRole("button", { name: "edit establishment" })
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenNthCalledWith(
+                2,
+                models.Location,
+                expect.any(Function)
+            );
+        });
+        const textBox = screen.getByRole("textbox");
+        userEvent.type(textBox, "Test");
+        userEvent.click(screen.getByText(mockEstablishment.name));
+        userEvent.click(screen.getByTestId("confirmation-ok-button"));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockTask,
+                establishmentLocation: mockEstablishment,
+            });
+        });
+        expect(
+            screen.getByText("Sorry, something went wrong")
+        ).toBeInTheDocument();
+        expect(textBox).toBeInTheDocument();
     });
 
     test("change the establishment", async () => {
@@ -520,6 +608,72 @@ describe("TaskDetailsPanel", () => {
         expect(
             screen.getByText(moment(timeOfCall).format("HH:mm"))
         ).toBeInTheDocument();
+    });
+
+    test("view and set the time", async () => {
+        const timeOfCall = new Date().toISOString();
+        const mockTask = new models.Task({
+            riderResponsibility: "North",
+            timeOfCall,
+        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        const saveSpy = jest.spyOn(amplify.DataStore, "save");
+        render(<TaskDetailsPanel taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        expect(screen.getByText(/Today at/)).toBeInTheDocument();
+        expect(
+            screen.getByText(moment(timeOfCall).format("HH:mm"))
+        ).toBeInTheDocument();
+        userEvent.click(
+            screen.getByRole("button", { name: "edit Time of call" })
+        );
+        const dateField = screen.getByRole("textbox", { name: /Choose date/ });
+        expect(dateField).toHaveValue(
+            moment(timeOfCall).format("DD/MM/YYYY HH:mm")
+        );
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({ ...mockTask });
+        });
+    });
+
+    test("view and set the time failure", async () => {
+        const timeOfCall = new Date().toISOString();
+        const mockTask = new models.Task({
+            riderResponsibility: "North",
+            timeOfCall,
+        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        const saveSpy = jest
+            .spyOn(amplify.DataStore, "save")
+            .mockRejectedValue(new Error());
+        render(<TaskDetailsPanel taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        expect(screen.getByText(/Today at/)).toBeInTheDocument();
+        expect(
+            screen.getByText(moment(timeOfCall).format("HH:mm"))
+        ).toBeInTheDocument();
+        userEvent.click(
+            screen.getByRole("button", { name: "edit Time of call" })
+        );
+        const dateField = screen.getByRole("textbox", { name: /Choose date/ });
+        expect(dateField).toHaveValue(
+            moment(timeOfCall).format("DD/MM/YYYY HH:mm")
+        );
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({ ...mockTask });
+        });
+        expect(
+            screen.getByText("Sorry, something went wrong")
+        ).toBeInTheDocument();
+        expect(dateField).toBeInTheDocument();
     });
 
     test.each`
