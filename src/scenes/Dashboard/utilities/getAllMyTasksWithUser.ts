@@ -1,45 +1,26 @@
 import { DataStore } from "aws-amplify";
 import moment from "moment";
-import { tasksStatus, userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
 import { convertListDataToObject } from "../../../utilities";
 import { isCompletedTab } from "./functions";
 
-interface Task {
-    id: string;
-}
-interface Assignee {
-    id: string;
-}
-
-interface Assignee {
-    task: Task;
-    assignee: Assignee;
-    role: userRoles;
-}
-
 export default async function getAllMyTasksWithUser(
-    keys: tasksStatus[],
+    keys: models.TaskStatus[],
     userId: string,
-    roleView: userRoles,
+    roleView: models.Role,
     filteredUser: string,
-    allAssignments: Assignee[]
+    allAssignments: models.TaskAssignee[]
 ) {
     const myAssignments = allAssignments.filter(
         (a) => a.role === roleView && a.assignee && a.assignee.id === userId
     );
     const theirAssignments = allAssignments.filter(
-        (a) =>
-            a.role === userRoles.rider &&
-            a.assignee &&
-            a.assignee.id === filteredUser
+        (a) => a.role === models.Role.RIDER && a.assignee?.id === filteredUser
     );
     const intersectingTasks = myAssignments.filter((a) =>
-        theirAssignments.some((b) => b.task.id === a.task.id)
+        theirAssignments.some((b) => b.task?.id === a.task?.id)
     );
-    const intersectingTasksIds = intersectingTasks.map(
-        (a) => a.task && a.task.id
-    );
+    const intersectingTasksIds = intersectingTasks.map((a) => a.task?.id);
     let filteredTasks = [];
     if (!intersectingTasksIds || intersectingTasksIds.length === 0) {
         return {};

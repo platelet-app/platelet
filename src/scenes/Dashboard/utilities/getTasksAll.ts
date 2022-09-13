@@ -3,9 +3,8 @@ import { isCompletedTab } from "./functions";
 import * as models from "../../../models";
 import moment from "moment";
 import { convertListDataToObject } from "../../../utilities";
-import { tasksStatus } from "../../../apiConsts";
 
-export default async function getTasksAll(keys: tasksStatus[] = []) {
+export default async function getTasksAll(keys: models.TaskStatus[] = []) {
     let tasksResult = [];
     if (isCompletedTab(keys)) {
         const oneWeekAgo = moment.utc().subtract(7, "days").toISOString();

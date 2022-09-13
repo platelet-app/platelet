@@ -1,28 +1,14 @@
-import { DataStore, Predicates } from "aws-amplify";
+import { DataStore } from "aws-amplify";
 import moment from "moment";
 import * as models from "../../../models";
 import { isCompletedTab } from "./functions";
 import { convertListDataToObject } from "../../../utilities";
-import { tasksStatus, userRoles } from "../../../apiConsts";
-
-interface Task {
-    id: string;
-}
-interface Assignee {
-    id: string;
-}
-
-interface Assignee {
-    task: Task;
-    assignee: Assignee;
-    role: userRoles;
-}
 
 export default async function getAllMyTasks(
-    keys: tasksStatus[],
+    keys: models.TaskStatus[],
     userId: string,
-    roleView: userRoles,
-    allAssignees: Assignee[]
+    roleView: models.Role,
+    allAssignees: models.TaskAssignee[]
 ) {
     const roleViewAssignments = allAssignees.filter(
         (assignee) => assignee.role === roleView
