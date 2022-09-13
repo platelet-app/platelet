@@ -4,11 +4,11 @@ import { DataStore } from "aws-amplify";
 
 interface TaskInterface {
     id: string;
-    timeCancelled: string | null;
-    timeDroppedOff: string | null;
-    timePickedUp: string | null;
-    timeRiderHome: string | null;
-    timeRejected: string | null;
+    timeCancelled?: string | null;
+    timeDroppedOff?: string | null;
+    timePickedUp?: string | null;
+    timeRiderHome?: string | null;
+    timeRejected?: string | null;
 }
 
 interface Assignee {
