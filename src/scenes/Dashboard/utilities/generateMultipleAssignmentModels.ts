@@ -5,11 +5,11 @@ import * as models from "../../../models";
 import determineTaskStatus from "../../../utilities/determineTaskStatus";
 
 async function generateMultipleAssignmentModels(
-    selectedItems,
-    coordinators,
-    riders,
-    allAssignees,
-    tenantId
+    selectedItems: models.Task[],
+    coordinators: models.User[],
+    riders: models.User[],
+    allAssignees: models.TaskAssignee[],
+    tenantId: string
 ) {
     if (
         !selectedItems ||
@@ -42,7 +42,7 @@ async function generateMultipleAssignmentModels(
     });
     const result = [...ridersMapped, ...coordinatorsMapped].flat(2);
     const filtered = result.filter((assignment) => {
-        return !allAssignees.items.some((assignee) => {
+        return !allAssignees.some((assignee) => {
             return (
                 assignment.task.id === assignee.task.id &&
                 assignment.assignee.id === assignee.assignee.id &&
@@ -50,7 +50,7 @@ async function generateMultipleAssignmentModels(
             );
         });
     });
-    let newTasks = [];
+    let newTasks: models.Task[] = [];
     if (ridersMapped.flat().length > 0) {
         const filteredTasks = await DataStore.query(models.Task, (task) =>
             task.or((task) =>

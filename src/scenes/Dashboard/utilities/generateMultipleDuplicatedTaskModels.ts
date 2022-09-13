@@ -13,12 +13,12 @@ const ignoredFields = [
 ];
 
 export default async function generateMultipleDuplicatedTaskModels(
-    tasks,
-    tenantId,
+    tasks: models.Task[],
+    tenantId: string,
     copyAssignees = false,
-    assigneeId = null,
-    assigneeRole = null,
-    copyCommentsUserId = null
+    assigneeId: string | null = null,
+    assigneeRole: models.Role | null = null,
+    copyCommentsUserId: string | null = null
 ) {
     if (!tenantId) throw new Error("tenantId is required");
     const allAssignees = await DataStore.query(models.TaskAssignee);
@@ -27,9 +27,6 @@ export default async function generateMultipleDuplicatedTaskModels(
         Object.values(tasks).map(async (task) => {
             let {
                 id,
-                _version,
-                _lastChangedAt,
-                _deleted,
                 updatedAt,
                 createdAt,
                 timePickedUp,
@@ -97,7 +94,7 @@ export default async function generateMultipleDuplicatedTaskModels(
             const filteredDeliverables = deliverables.filter(
                 (d) => d.task?.id === task.id
             );
-            let assigneeModels = [];
+            let assigneeModels: models.TaskAssignee[] = [];
             if (copyAssignees) {
                 const assignees = allAssignees.filter(
                     (a) => a.task?.id === task.id
@@ -105,9 +102,10 @@ export default async function generateMultipleDuplicatedTaskModels(
                 assigneeModels = assignees.map(
                     (a) =>
                         new models.TaskAssignee({
-                            ..._.omit(a, ...ignoredFields),
                             task: newTaskData,
+                            assignee: a.assignee,
                             tenantId,
+                            role: a.role,
                         })
                 );
             }
@@ -155,8 +153,9 @@ export default async function generateMultipleDuplicatedTaskModels(
                 assigneeModels = assigneeModels.map(
                     (a) =>
                         new models.TaskAssignee({
-                            ..._.omit(a, ...ignoredFields),
                             task: newTaskData,
+                            assignee: a.assignee,
+                            role: a.role,
                             tenantId,
                         })
                 );
@@ -169,7 +168,7 @@ export default async function generateMultipleDuplicatedTaskModels(
                         tenantId,
                     })
             );
-            let newComments = [];
+            let newComments: models.Comment[] = [];
             if (copyCommentsUserId) {
                 const oldComments = await DataStore.query(models.Comment, (c) =>
                     c.parentId("eq", task.id)
@@ -187,6 +186,7 @@ export default async function generateMultipleDuplicatedTaskModels(
                 );
             }
             // locations models go first, then tasks
+            console.log("ASDFASDF", assigneeModels);
             return [
                 ...locationModels,
                 newTaskData,

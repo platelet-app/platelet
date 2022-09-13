@@ -2,14 +2,15 @@ import determineTaskStatus from "../../../utilities/determineTaskStatus";
 import * as models from "../../../models";
 import { DataStore } from "aws-amplify";
 import _ from "lodash";
+import { TaskTimeKey, TaskTimeName } from "../../../apiConsts";
 
 async function generateMultipleTaskTimeModels(
-    selectedItems,
-    timeKey,
-    time,
-    riderAssignees,
-    nameKey = null,
-    name = null
+    selectedItems: models.Task[],
+    timeKey: TaskTimeKey,
+    time: Date,
+    riderAssignees: models.TaskAssignee[],
+    nameKey: TaskTimeName = null,
+    name: string | null = null
 ) {
     if (!selectedItems || _.isEmpty(selectedItems) || !timeKey) return;
     const filteredTasks = await DataStore.query(models.Task, (task) =>

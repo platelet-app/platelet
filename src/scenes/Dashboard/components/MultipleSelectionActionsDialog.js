@@ -143,7 +143,7 @@ const MultipleSelectionActionsDialog = ({
                             items,
                             saveData.current[userRoles.coordinator] || [],
                             saveData.current[userRoles.rider] || [],
-                            assignees,
+                            assignees.items,
                             tenantId
                         );
                     onConfirmation(generatedModels);

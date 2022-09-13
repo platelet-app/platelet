@@ -1,12 +1,11 @@
 import _ from "lodash";
-import { commentVisibility } from "../../../apiConsts";
 import * as models from "../../../models";
 
 async function generateMultipleTaskComments(
-    selectedItems,
-    body,
-    author,
-    tenantId
+    selectedItems: models.Task[],
+    body: string,
+    author: models.User,
+    tenantId: string
 ) {
     if (!selectedItems || _.isEmpty(selectedItems) || !body || !author) return;
     if (!tenantId) throw new Error("TenantId is required");
@@ -15,7 +14,7 @@ async function generateMultipleTaskComments(
             return new models.Comment({
                 body: body,
                 parentId: item.id,
-                visibility: commentVisibility.everyone,
+                visibility: models.CommentVisibility.EVERYONE,
                 tenantId,
                 author: author,
             });
