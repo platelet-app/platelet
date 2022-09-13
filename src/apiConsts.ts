@@ -41,6 +41,20 @@ export enum tasksStatus {
     completed = "COMPLETED",
 }
 
+export type TaskTimeName =
+    | "timePickedUpSenderName"
+    | "timeDroppedOffRecipientName"
+    | null;
+
+export type TaskTimeKey =
+    | "timeOfCall"
+    | "timePickedUp"
+    | "timeDroppedOff"
+    | "timeCancelled"
+    | "timeRejected"
+    | "timeRiderHome"
+    | null;
+
 export enum priorities {
     high = "HIGH",
     medium = "MEDIUM",
