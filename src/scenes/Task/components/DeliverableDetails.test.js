@@ -4,7 +4,7 @@ import _ from "lodash";
 import { render } from "../../../test-utils";
 import DeliverableDetails from "./DeliverableDetails";
 import userEvent from "@testing-library/user-event";
-import { deliverableUnits, userRoles } from "../../../apiConsts";
+import { userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
 import { DataStore, Predicates } from "aws-amplify";
 
@@ -44,7 +44,7 @@ const mockData = [
         label: "Milk",
         icon: "CHILD",
         tags: ["other"],
-        defaultUnit: "LITRE",
+        defaultUnit: "LITER",
         tenantId: "tenant-id",
         disabled: 0,
     }),
@@ -81,7 +81,10 @@ async function saveMockDeliverables() {
             count: i + 1,
             orderInGrid: i,
             task,
-            unit: i === 0 ? deliverableUnits.item : _.sample(deliverableUnits),
+            unit:
+                i === 0
+                    ? models.DeliverableUnit.ITEM
+                    : _.sample(deliverableUnits),
             tenantId: "tenant-id",
         });
     });
@@ -395,13 +398,13 @@ describe("DeliverableDetails", () => {
                 name: `${mockDeliverable.unit}. Click to change`,
             })
         );
-        userEvent.click(screen.getByText(deliverableUnits.none));
+        userEvent.click(screen.getByText(models.DeliverableUnit.NONE));
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledTimes(1);
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockDeliverable,
-            unit: deliverableUnits.none,
+            unit: models.DeliverableUnit.NONE,
         });
         const unitButtonUpdated = await screen.findByRole("button", {
             name: "NONE. Click to change",
@@ -470,7 +473,7 @@ describe("DeliverableDetails", () => {
         ).toBeInTheDocument();
         await DataStore.save(
             models.Deliverable.copyOf(mockDeliverable, (upd) => {
-                upd.unit = deliverableUnits.litre;
+                upd.unit = models.DeliverableUnit.LITER;
                 upd.count = 20;
             })
         );
@@ -478,7 +481,7 @@ describe("DeliverableDetails", () => {
             await screen.findByText(`${mockDeliverable.deliverableType.label}`)
         ).toBeInTheDocument();
         expect(
-            await screen.findByText(`${20} x ${deliverableUnits.litre}`)
+            await screen.findByText(`${20} x ${models.DeliverableUnit.LITER}`)
         ).toBeInTheDocument();
     });
 

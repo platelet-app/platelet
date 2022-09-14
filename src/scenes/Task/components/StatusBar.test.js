@@ -86,7 +86,7 @@ describe("StatusBar", () => {
                 deliverableType: mockDeliverableType,
             },
             {
-                unit: "LITRE",
+                unit: models.DeliverableUnit.LITER,
                 count: 3,
                 orderInGrid: 0,
                 deliverableType: mockDeliverableType,

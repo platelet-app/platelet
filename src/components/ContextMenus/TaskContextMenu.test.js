@@ -336,19 +336,19 @@ describe("TaskContextMenu", () => {
         await DataStore.save(mockDeliverableType);
         const mockDeliverables = [
             {
-                unit: "ITEM",
+                unit: models.DeliverableUnit.ITEM,
                 count: 1,
                 orderInGrid: 0,
                 deliverableType: mockDeliverableType,
             },
             {
-                unit: "ITEM",
+                unit: models.DeliverableUnit.ITEM,
                 count: 2,
                 orderInGrid: 0,
                 deliverableType: mockDeliverableType,
             },
             {
-                unit: "LITRE",
+                unit: models.DeliverableUnit.LITER,
                 count: 3,
                 orderInGrid: 0,
                 deliverableType: mockDeliverableType,
