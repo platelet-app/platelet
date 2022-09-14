@@ -1,6 +1,5 @@
 import { DataStore } from "aws-amplify";
 import _ from "lodash";
-import { tasksStatus, userRoles } from "../apiConsts";
 import * as models from "../models";
 
 const ignoredFields = [
@@ -13,18 +12,15 @@ const ignoredFields = [
 ];
 
 export default async function duplicateTask(
-    task,
-    tenantId,
-    assigneeId = null,
-    assigneeRole = null
+    task: models.Task,
+    tenantId: string,
+    assigneeId: string | null = null,
+    assigneeRole: models.Role | null = null
 ) {
     if (!tenantId) throw new Error("tenantId must exist");
     if (!task) throw new Error("task must exist");
     let {
         id,
-        _version,
-        _lastChangedAt,
-        _deleted,
         updatedAt,
         createdAt,
         timePickedUp,
@@ -79,7 +75,7 @@ export default async function duplicateTask(
     }
     let newTaskData = new models.Task({
         ...rest,
-        status: tasksStatus.new,
+        status: models.TaskStatus.NEW,
         pickUpLocation,
         dropOffLocation,
         establishmentLocation,
@@ -87,10 +83,10 @@ export default async function duplicateTask(
     });
     let assignment = null;
     if (assigneeId && assigneeRole) {
-        if (assigneeRole === userRoles.rider) {
+        if (assigneeRole === models.Role.RIDER) {
             newTaskData = new models.Task({
                 ...rest,
-                status: tasksStatus.active,
+                status: models.TaskStatus.ACTIVE,
                 pickUpLocation,
                 dropOffLocation,
                 riderResponsibility,
@@ -99,12 +95,16 @@ export default async function duplicateTask(
             });
         }
         const assignee = await DataStore.query(models.User, assigneeId);
-        assignment = new models.TaskAssignee({
-            task: newTaskData,
-            assignee,
-            role: assigneeRole,
-            tenantId,
-        });
+        if (assignee) {
+            assignment = new models.TaskAssignee({
+                task: newTaskData,
+                assignee,
+                role: assigneeRole,
+                tenantId,
+            });
+        } else {
+            throw new Error("Assignee not found");
+        }
     }
 
     const newTask = await DataStore.save(newTaskData);
