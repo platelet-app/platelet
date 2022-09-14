@@ -10,13 +10,7 @@ exports[`TaskContextMenu copy to clipboard 1`] = `
   "results": Array [
     Object {
       "type": "return",
-      "value": Promise {
-        Symbol(async_id_symbol): 100839,
-        Symbol(trigger_async_id_symbol): 100743,
-        Symbol(destroyed): Object {
-          "destroyed": false,
-        },
-      },
+      "value": Promise {},
     },
   ],
 }
