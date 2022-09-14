@@ -14,7 +14,6 @@ import {
     displayInfoNotification,
 } from "../../redux/notifications/NotificationsActions";
 import { DataStore } from "aws-amplify";
-import { copyTaskDataToClipboard } from "../../utilities";
 import { tasksStatus, userRoles } from "../../apiConsts";
 import {
     getRoleView,
@@ -24,6 +23,7 @@ import {
 } from "../../redux/Selectors";
 import determineTaskStatus from "../../utilities/determineTaskStatus";
 import duplicateTask from "../../utilities/duplicateTask";
+import copyTaskDataToClipboard from "../../utilities/copyTaskDataToClipboard";
 
 const initialState = {
     mouseX: null,
@@ -52,12 +52,14 @@ function TaskContextMenu(props) {
         : userRoles.rider;
 
     async function copyToClipboard(e) {
+        debugger;
         handleClose(e);
         if (!props.task || !props.task.id) {
             dispatch(displayErrorNotification("Copy failed."));
             return;
         }
         try {
+            debugger;
             const taskResult = await DataStore.query(
                 models.Task,
                 props.task.id

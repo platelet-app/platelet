@@ -1,4 +1,3 @@
-import React from "react";
 import uuidBase62 from "uuid-base62";
 import { v4 as uuidv4 } from "uuid";
 import { deliverableIcons, tasksStatus, userRoles } from "./apiConsts";
@@ -7,7 +6,6 @@ import ChildIcon from "./components/deliverableIcons/ChildIcon";
 import EquipmentIcon from "./components/deliverableIcons/EquipmentIcon";
 import OtherIcon from "./components/deliverableIcons/OtherIcon";
 import DocumentIcon from "./components/deliverableIcons/DocumentIcon";
-import moment from "moment";
 
 export function convertListDataToObject(list) {
     const result = {};
@@ -15,50 +13,6 @@ export function convertListDataToObject(list) {
         result[item.id] = item;
     }
     return result;
-}
-
-export function copyTaskDataToClipboard(task) {
-    const {
-        pickUpLocation,
-        priority,
-        dropOffLocation,
-        timeOfCall,
-        deliverables,
-    } = task;
-    const data = {
-        TOC: timeOfCall ? moment(timeOfCall).format("HH:mm") : undefined,
-        FROM: pickUpLocation
-            ? `${pickUpLocation.ward || ""} - ${pickUpLocation.line1 || ""}, ${
-                  pickUpLocation.postcode || ""
-              }`
-            : undefined,
-        TO: dropOffLocation
-            ? `${dropOffLocation.ward || ""} - ${
-                  dropOffLocation.line1 || ""
-              }, ${dropOffLocation.postcode || ""}`
-            : undefined,
-        PRIORITY: priority ? priority.toLowerCase() : undefined,
-    };
-
-    if (deliverables) {
-        data["ITEMS"] = deliverables
-            .map((deliverable) => {
-                const { deliverableType, count } = deliverable;
-                return `${
-                    deliverableType ? deliverableType.label : ""
-                } x ${count}`;
-            })
-            .join(", ");
-    }
-
-    let result = "";
-    let first = true;
-    for (const [key, value] of Object.entries(data)) {
-        if (value) result += `${first ? "" : " "}${key}: ${value}`;
-        first = false;
-    }
-
-    return navigator.clipboard.writeText(result);
 }
 
 export function getDeliverableIconByEnum(deliverableType, size) {

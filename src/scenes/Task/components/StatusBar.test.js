@@ -1,4 +1,3 @@
-import React from "react";
 import StatusBar from "./StatusBar";
 import { render } from "../../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
@@ -7,18 +6,8 @@ import * as models from "../../../models/index";
 import userEvent from "@testing-library/user-event";
 import { createMatchMedia } from "../../../test-utils";
 import { DataStore } from "aws-amplify";
-
-const utils = require("../../../utilities");
-
-jest.mock("../../../utilities", () => {
-    return {
-        ...jest.requireActual("../../../utilities"),
-        copyTaskDataToClipboard: () =>
-            new Promise((resolve, reject) => {
-                resolve();
-            }),
-    };
-});
+import * as copyTaskDataToClipboard from "../../../utilities/copyTaskDataToClipboard";
+import moment from "moment";
 
 describe("StatusBar", () => {
     beforeAll(() => {
@@ -53,10 +42,30 @@ describe("StatusBar", () => {
         expect(screen.getByText(status)).toBeInTheDocument();
     });
     test("click the copy to clipboard button", async () => {
-        const timeOfCall = new Date().toISOString();
+        Object.assign(window.navigator, {
+            clipboard: {
+                writeText: jest
+                    .fn()
+                    .mockImplementation(() => Promise.resolve()),
+            },
+        });
+        const timeOfCall = "2022-09-14T07:55:07.473Z";
+        const pickUpLocation = new models.Location({
+            line1: "line one",
+            ward: "test ward",
+            postcode: "postcode",
+        });
+        const dropOffLocation = new models.Location({
+            line1: "something",
+            ward: "some ward",
+            postcode: "some postcode",
+        });
         const mockTask = new models.Task({
             timeOfCall,
             status: tasksStatus.new,
+            pickUpLocation,
+            dropOffLocation,
+            priority: models.Priority.HIGH,
         });
         await DataStore.save(mockTask);
         const mockDeliverableType = new models.DeliverableType({
@@ -91,6 +100,7 @@ describe("StatusBar", () => {
             )
         );
         const querySpy = jest.spyOn(DataStore, "query");
+        const clipboardSpy = jest.spyOn(navigator.clipboard, "writeText");
         render(<StatusBar taskId={mockTask.id} />);
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledWith(models.Task, mockTask.id);
@@ -98,14 +108,15 @@ describe("StatusBar", () => {
         const copyButton = screen.getByText("Copy to clipboard");
         expect(copyButton).toBeInTheDocument();
         userEvent.click(copyButton);
-        jest.spyOn(utils, "copyTaskDataToClipboard");
+        const copySpy = jest.spyOn(copyTaskDataToClipboard, "default");
         await waitFor(() =>
-            expect(utils.copyTaskDataToClipboard).toHaveBeenCalledWith({
+            expect(copySpy).toHaveBeenCalledWith({
                 ...mockTask,
                 deliverables: savedDeliverables,
             })
         );
         expect(await screen.findByText("Copy successful!")).toBeInTheDocument();
+        expect(clipboardSpy).toMatchSnapshot();
     });
     it("fails to copy task data to clipboard", async () => {
         jest.restoreAllMocks();

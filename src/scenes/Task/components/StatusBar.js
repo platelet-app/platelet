@@ -4,10 +4,8 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { AppBar, Chip, Hidden, Stack } from "@mui/material";
 import { ArrowButton } from "../../../components/Buttons";
-import {
-    copyTaskDataToClipboard,
-    taskStatusHumanReadable,
-} from "../../../utilities";
+import { taskStatusHumanReadable } from "../../../utilities";
+
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import makeStyles from "@mui/styles/makeStyles";
@@ -17,6 +15,7 @@ import { displayErrorNotification } from "../../../redux/notifications/Notificat
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
+import copyTaskDataToClipboard from "../../../utilities/copyTaskDataToClipboard";
 
 const colourBarPercent = "90%";
 

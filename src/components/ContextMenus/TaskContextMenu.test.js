@@ -6,8 +6,8 @@ import * as models from "../../models";
 import { tasksStatus, userRoles } from "../../apiConsts";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import * as utils from "../../utilities";
 import TasksGridColumn from "../../scenes/Dashboard/components/TasksGridColumn";
+import * as copyTaskDataToClipboard from "../../utilities/copyTaskDataToClipboard";
 
 const tenantId = "tenantId";
 
@@ -303,26 +303,83 @@ describe("TaskContextMenu", () => {
         });
     });
     test("copy to clipboard", async () => {
-        const task = await DataStore.save(
-            new models.Task({
-                status: tasksStatus.new,
-            })
+        Object.assign(window.navigator, {
+            clipboard: {
+                writeText: jest
+                    .fn()
+                    .mockImplementation(() => Promise.resolve()),
+            },
+        });
+
+        const timeOfCall = "2022-09-14T07:55:07.473Z";
+        const pickUpLocation = new models.Location({
+            line1: "line one",
+            ward: "test ward",
+            postcode: "postcode",
+        });
+        const dropOffLocation = new models.Location({
+            line1: "something",
+            ward: "some ward",
+            postcode: "some postcode",
+        });
+        const mockTask = new models.Task({
+            timeOfCall,
+            status: tasksStatus.new,
+            pickUpLocation,
+            dropOffLocation,
+            priority: models.Priority.HIGH,
+        });
+        await DataStore.save(mockTask);
+        const mockDeliverableType = new models.DeliverableType({
+            label: "test deliverable",
+        });
+        await DataStore.save(mockDeliverableType);
+        const mockDeliverables = [
+            {
+                unit: "ITEM",
+                count: 1,
+                orderInGrid: 0,
+                deliverableType: mockDeliverableType,
+            },
+            {
+                unit: "ITEM",
+                count: 2,
+                orderInGrid: 0,
+                deliverableType: mockDeliverableType,
+            },
+            {
+                unit: "LITRE",
+                count: 3,
+                orderInGrid: 0,
+                deliverableType: mockDeliverableType,
+            },
+        ];
+        const savedDeliverables = await Promise.all(
+            mockDeliverables.map((deliverable) =>
+                DataStore.save(
+                    new models.Deliverable({ task: mockTask, ...deliverable })
+                )
+            )
         );
-        const copySpy = jest
-            .spyOn(utils, "copyTaskDataToClipboard")
-            .mockResolvedValue({});
-        render(<TaskContextMenu task={task} assignedRiders={[]} />);
+
+        const copySpy = jest.spyOn(copyTaskDataToClipboard, "default");
+        const clipboardSpy = jest.spyOn(navigator.clipboard, "writeText");
+        render(<TaskContextMenu task={mockTask} assignedRiders={[]} />);
         const button = screen.getByRole("button", { name: "task options" });
         userEvent.click(button);
         userEvent.click(
             screen.getByRole("menuitem", { name: "Copy to clipboard" })
         );
         await waitFor(() => {
-            expect(copySpy).toHaveBeenCalledWith({ ...task, deliverables: [] });
+            expect(copySpy).toHaveBeenCalledWith({
+                ...mockTask,
+                deliverables: savedDeliverables,
+            });
         });
         await waitFor(() => {
             expect(screen.getByText("Copied to clipboard")).toBeInTheDocument();
         });
+        expect(clipboardSpy).toMatchSnapshot();
     });
 
     test("duplicate a task", async () => {
