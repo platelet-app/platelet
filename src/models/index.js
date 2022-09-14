@@ -30,8 +30,8 @@ const DeliverableTypeIcon = {
 
 const DeliverableUnit = {
   "NONE": "NONE",
-  "LITRE": "LITRE",
-  "MILLILITRE": "MILLILITRE",
+  "LITER": "LITER",
+  "MILLILITER": "MILLILITER",
   "GRAM": "GRAM",
   "ITEM": "ITEM",
   "BOX": "BOX"

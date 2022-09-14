@@ -28,8 +28,8 @@ export enum DeliverableTypeIcon {
 
 export enum DeliverableUnit {
   NONE = "NONE",
-  LITRE = "LITRE",
-  MILLILITRE = "MILLILITRE",
+  LITER = "LITER",
+  MILLILITER = "MILLILITER",
   GRAM = "GRAM",
   ITEM = "ITEM",
   BOX = "BOX"

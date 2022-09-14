@@ -320,8 +320,8 @@ enum Patch {
 
 enum DeliverableUnit {
   NONE
-  LITRE
-  MILLILITRE
+  LITER
+  MILLILITER
   GRAM
   ITEM
   BOX

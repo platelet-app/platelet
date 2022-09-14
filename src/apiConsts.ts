@@ -63,8 +63,8 @@ export enum priorities {
 
 export enum deliverableUnits {
     none = "NONE",
-    litre = "LITRE",
-    millilitre = "MILLILITRE",
+    liter = "LITER",
+    milliliter = "MILLILITER",
     gram = "GRAM",
     item = "ITEM",
     box = "BOX",

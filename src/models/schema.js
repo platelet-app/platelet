@@ -1920,8 +1920,8 @@ export const schema = {
             "name": "DeliverableUnit",
             "values": [
                 "NONE",
-                "LITRE",
-                "MILLILITRE",
+                "LITER",
+                "MILLILITER",
                 "GRAM",
                 "ITEM",
                 "BOX"
