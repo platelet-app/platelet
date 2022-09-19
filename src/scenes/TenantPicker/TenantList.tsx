@@ -2,6 +2,10 @@ import React, { useEffect } from "react";
 import { Stack, Typography } from "@mui/material";
 import { TenantCard } from "./components/TenantCard";
 import { PaddedPaper } from "../../styles/common";
+import Amplify from "aws-amplify";
+import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
+import { useDispatch } from "react-redux";
+import configureAmplify from "./utilities/configureAmplify";
 
 export const getTenant = /* GraphQL */ `
     query GetTenant($id: ID!) {
@@ -63,42 +67,69 @@ interface TenantListInterface {
     config: string;
 }
 
-function TenantList() {
-    const [tenants, setTenants] = React.useState([]);
+interface TenantListProps {
+    onSetupComplete: () => void;
+}
 
-    const getTenantList = React.useCallback(() => {
-        fetchData(listTenants).then((response) => {
-            response.json().then((data) => {
-                setTenants(data.data.listTenants.items);
-            });
-        });
+export const TenantList: React.FC<TenantListProps> = ({
+    onSetupComplete,
+}: TenantListProps) => {
+    const [tenants, setTenants] = React.useState([]);
+    const [errorState, setErrorState] = React.useState<null | Error>(null);
+    const dispatch = useDispatch();
+
+    const getTenantList = React.useCallback(async () => {
+        try {
+            const response = await fetchData(listTenants);
+            const { data } = await response.json();
+            setTenants(data.listTenants.items);
+        } catch (error) {
+            console.log("List tenant graphql error:", error);
+            if (error instanceof Error) {
+                setErrorState(error);
+            }
+        }
     }, []);
     useEffect(() => {
         getTenantList();
     }, [getTenantList]);
 
-    const onClickTenant = (id: string) => {
-        fetchData(getTenant, { id }).then((response) => {
-            response.json().then((data) => {
-                console.log(data);
-            });
-        });
+    const onClickTenant = async (id: string) => {
+        try {
+            const response = await fetchData(getTenant, { id });
+            const { data } = await response.json();
+            configureAmplify(data.getTenant.config);
+            onSetupComplete();
+        } catch (error) {
+            console.log("Get tenant graphql error:", error);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+        }
     };
 
-    return (
-        <PaddedPaper>
-            <Stack>
-                <Typography>Choose a tenant</Typography>
-                {tenants.map((tenant: TenantListInterface) => (
-                    <TenantCard
-                        onClick={() => onClickTenant(tenant.id)}
-                        key={tenant.id}
-                        name={tenant.name}
-                    />
-                ))}
-            </Stack>
-        </PaddedPaper>
-    );
-}
+    if (errorState) {
+        return (
+            <PaddedPaper>
+                <Typography variant="h6">
+                    There was an error while retrieving the list.
+                </Typography>
+            </PaddedPaper>
+        );
+    } else {
+        return (
+            <PaddedPaper>
+                <Stack>
+                    <Typography>Choose a tenant</Typography>
+                    {tenants.map((tenant: TenantListInterface) => (
+                        <TenantCard
+                            onClick={() => onClickTenant(tenant.id)}
+                            key={tenant.id}
+                            name={tenant.name}
+                        />
+                    ))}
+                </Stack>
+            </PaddedPaper>
+        );
+    }
+};
 
 export default TenantList;

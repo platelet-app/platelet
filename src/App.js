@@ -25,6 +25,7 @@ import { getWhoami } from "./redux/Selectors";
 import { DataStore } from "aws-amplify";
 import * as models from "./models";
 import useCurrentTheme from "./hooks/useCurrentTheme";
+import TenantList from "./scenes/TenantPicker/TenantList";
 
 if (
     (!process.env.REACT_APP_OFFLINE_ONLY ||
@@ -116,6 +117,7 @@ const taskStatus = {
 
 function AppDefault(props) {
     //const themePreference = useSelector((state) => state.darkMode);
+    const [setupComplete, setSetupComplete] = React.useState(false);
     const whoami = useSelector(getWhoami);
     let theme;
 
@@ -144,7 +146,9 @@ function AppDefault(props) {
         });
     }
 
-    if (!whoami) {
+    if (!setupComplete) {
+        return <TenantList onSetupComplete={() => setSetupComplete(true)} />;
+    } else if (!whoami) {
         return <></>;
     } else {
         return (
