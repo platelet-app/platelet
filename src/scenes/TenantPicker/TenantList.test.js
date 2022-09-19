@@ -113,6 +113,7 @@ describe("TenantList", () => {
                 })
             );
         const setupComplete = jest.fn();
+        const localStorageSpy = jest.spyOn(Storage.prototype, "setItem");
         render(<TenantList onSetupComplete={setupComplete} />);
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalled();
@@ -123,9 +124,14 @@ describe("TenantList", () => {
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(2);
         });
+        const parsedConfig = JSON.parse(fakeConfigData);
         await waitFor(() => {
-            expect(amplifySpy).toHaveBeenCalledWith(JSON.parse(fakeConfigData));
+            expect(amplifySpy).toHaveBeenCalledWith(parsedConfig);
         });
+        expect(localStorageSpy).toHaveBeenCalledWith(
+            "amplifyConfig",
+            fakeConfigData
+        );
         expect(setupComplete).toHaveBeenCalled();
     });
 });
