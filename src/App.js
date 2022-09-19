@@ -117,7 +117,6 @@ const taskStatus = {
 
 function AppDefault(props) {
     //const themePreference = useSelector((state) => state.darkMode);
-    const [setupComplete, setSetupComplete] = React.useState(false);
     const whoami = useSelector(getWhoami);
     let theme;
 
@@ -146,9 +145,7 @@ function AppDefault(props) {
         });
     }
 
-    if (!setupComplete) {
-        return <TenantList onSetupComplete={() => setSetupComplete(true)} />;
-    } else if (!whoami) {
+    if (!whoami) {
         return <></>;
     } else {
         return (
@@ -164,8 +161,18 @@ function AppDefault(props) {
     }
 }
 
-const App =
+const AppAuthenticated =
     process.env.REACT_APP_OFFLINE_ONLY === "true"
         ? AppDefault
         : withAuthenticator(AppDefault);
+
+const App = () => {
+    const [setupComplete, setSetupComplete] = React.useState(false);
+    if (!setupComplete) {
+        return <TenantList onSetupComplete={() => setSetupComplete(true)} />;
+    } else {
+        return <AppAuthenticated />;
+    }
+};
+
 export default App;
