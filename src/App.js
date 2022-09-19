@@ -33,10 +33,6 @@ if (
     (!process.env.REACT_APP_DEMO_MODE ||
         process.env.REACT_APP_DEMO_MODE === "false")
 ) {
-    const config = require("../src/aws-exports");
-    Amplify.configure({
-        ...config.default,
-    });
 }
 Logger.LOG_LEVEL = "ERROR";
 window.amplifyLogger = Logger;
@@ -161,17 +157,20 @@ function AppDefault(props) {
     }
 }
 
-const AppAuthenticated =
-    process.env.REACT_APP_OFFLINE_ONLY === "true"
-        ? AppDefault
-        : withAuthenticator(AppDefault);
+const AppAuthenticated = withAuthenticator(AppDefault);
 
 const App = () => {
     const [setupComplete, setSetupComplete] = React.useState(false);
-    if (!setupComplete) {
-        return <TenantList onSetupComplete={() => setSetupComplete(true)} />;
-    } else {
+    const offline =
+        process.env.REACT_APP_OFFLINE_ONLY &&
+        process.env.REACT_APP_OFFLINE_ONLY === "true";
+
+    if (offline) {
+        return <AppDefault />;
+    } else if (setupComplete) {
         return <AppAuthenticated />;
+    } else {
+        return <TenantList onSetupComplete={() => setSetupComplete(true)} />;
     }
 };
 

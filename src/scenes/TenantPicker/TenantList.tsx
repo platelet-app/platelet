@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { Stack, Typography } from "@mui/material";
 import { TenantCard } from "./components/TenantCard";
 import { PaddedPaper } from "../../styles/common";
-import Amplify from "aws-amplify";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { useDispatch } from "react-redux";
 import configureAmplify from "./utilities/configureAmplify";
@@ -37,6 +36,8 @@ export const listTenants = /* GraphQL */ `
 interface TenantQueryVariables {
     id: string;
 }
+
+const configFromLocalStorage = localStorage.getItem("amplifyConfig");
 
 const fetchData = (
     query: string,
@@ -98,7 +99,9 @@ export const TenantList: React.FC<TenantListProps> = ({
         try {
             const response = await fetchData(getTenant, { id });
             const { data } = await response.json();
-            configureAmplify(data.getTenant.config);
+            const { config } = data.getTenant;
+            localStorage.setItem("amplifyConfig", config);
+            configureAmplify(config);
             onSetupComplete();
         } catch (error) {
             console.log("Get tenant graphql error:", error);
@@ -106,7 +109,11 @@ export const TenantList: React.FC<TenantListProps> = ({
         }
     };
 
-    if (errorState) {
+    if (configFromLocalStorage) {
+        configureAmplify(configFromLocalStorage);
+        onSetupComplete();
+        return <></>;
+    } else if (errorState) {
         return (
             <PaddedPaper>
                 <Typography variant="h6">
