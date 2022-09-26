@@ -540,6 +540,25 @@ describe("UserDetail", () => {
         });
     });
 
+    test.only("can't remove admin role if they are primary admin", async () => {
+        const user = await DataStore.save(
+            new models.User({
+                ...testUser,
+                isPrimaryAdmin: 1,
+                roles: [userRoles.admin, userRoles.user],
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        userEvent.click(screen.getByRole("button", { name: "Edit Roles" }));
+        const adminButton = screen.getByRole("button", { name: "ADMIN" });
+        expect(adminButton).toHaveClass("MuiChip-default");
+        expect(adminButton).toHaveAttribute("aria-disabled", "true");
+    });
+
     test("change the user's roles failure", async () => {
         const user = await DataStore.save(new models.User(testUser));
         const querySpy = jest.spyOn(DataStore, "query");

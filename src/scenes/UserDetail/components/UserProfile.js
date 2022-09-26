@@ -462,6 +462,7 @@ function UserProfile(props) {
                     selectMode={editRoleMode}
                     onSelect={onSelectRole}
                     value={props.user.roles}
+                    isPrimaryAdmin={props.user.isPrimaryAdmin === 1}
                 />
 
                 {editRoleToggle}
