@@ -536,11 +536,11 @@ describe("UserDetail", () => {
         });
         expect(adminButton).not.toHaveAttribute("aria-disabled", "true");
         await waitFor(() => {
-            expect(adminButton).toHaveClass("MuiChip-default");
+            expect(adminButton).toHaveClass("MuiChip-filled");
         });
     });
 
-    test.only("can't remove admin role if they are primary admin", async () => {
+    test("can't remove admin role if they are primary admin", async () => {
         const user = await DataStore.save(
             new models.User({
                 ...testUser,
@@ -555,7 +555,7 @@ describe("UserDetail", () => {
         });
         userEvent.click(screen.getByRole("button", { name: "Edit Roles" }));
         const adminButton = screen.getByRole("button", { name: "ADMIN" });
-        expect(adminButton).toHaveClass("MuiChip-default");
+        expect(adminButton).toHaveClass("MuiChip-filled");
         expect(adminButton).toHaveAttribute("aria-disabled", "true");
     });
 
