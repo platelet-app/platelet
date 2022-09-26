@@ -95,12 +95,14 @@ export const TenantList: React.FC<TenantListProps> = ({
         getTenantList();
     }, [getTenantList]);
 
-    const onClickTenant = async (id: string) => {
+    const onClickTenant = async (tenantId: string) => {
         try {
-            const response = await fetchData(getTenant, { id });
+            const response = await fetchData(getTenant, { id: tenantId });
             const { data } = await response.json();
-            const { config } = data.getTenant;
+            const { config, name, id } = data.getTenant;
             localStorage.setItem("amplifyConfig", config);
+            localStorage.setItem("tenantName", name);
+            localStorage.setItem("tenantId", id);
             configureAmplify(config);
             onSetupComplete();
         } catch (error) {
