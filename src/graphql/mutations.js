@@ -15,6 +15,7 @@ export const createTenant = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -92,6 +93,7 @@ export const updateTenant = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -169,6 +171,7 @@ export const deleteTenant = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -242,6 +245,7 @@ export const createUser = /* GraphQL */ `
       username
       cognitoId
       tenantId
+      isPrimaryAdmin
       contact {
         name
         telephoneNumber
@@ -380,6 +384,7 @@ export const updateUser = /* GraphQL */ `
       username
       cognitoId
       tenantId
+      isPrimaryAdmin
       contact {
         name
         telephoneNumber
@@ -518,6 +523,7 @@ export const deleteUser = /* GraphQL */ `
       username
       cognitoId
       tenantId
+      isPrimaryAdmin
       contact {
         name
         telephoneNumber
@@ -659,6 +665,7 @@ export const createPossibleRiderResponsibilities = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -751,6 +758,7 @@ export const updatePossibleRiderResponsibilities = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -843,6 +851,7 @@ export const deletePossibleRiderResponsibilities = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -1123,6 +1132,7 @@ export const createVehicleAssignment = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -1223,6 +1233,7 @@ export const updateVehicleAssignment = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -1323,6 +1334,7 @@ export const deleteVehicleAssignment = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -1841,6 +1853,7 @@ export const createTask = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -2161,6 +2174,7 @@ export const updateTask = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -2481,6 +2495,7 @@ export const deleteTask = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -2807,6 +2822,7 @@ export const createTaskAssignee = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -2940,6 +2956,7 @@ export const createTaskAssignee = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -3021,6 +3038,7 @@ export const updateTaskAssignee = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -3154,6 +3172,7 @@ export const updateTaskAssignee = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -3235,6 +3254,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -3368,6 +3388,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -3445,6 +3466,7 @@ export const createComment = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -3525,6 +3547,7 @@ export const updateComment = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -3605,6 +3628,7 @@ export const deleteComment = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -3821,6 +3845,7 @@ export const createDeliverable = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -4014,6 +4039,7 @@ export const updateDeliverable = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -4207,6 +4233,7 @@ export const deleteDeliverable = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -4482,6 +4509,7 @@ export const registerUser = /* GraphQL */ `
       username
       cognitoId
       tenantId
+      isPrimaryAdmin
       contact {
         name
         telephoneNumber
@@ -4629,6 +4657,7 @@ export const registerTenant = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -4699,6 +4728,7 @@ export const updateUserRoles = /* GraphQL */ `
       username
       cognitoId
       tenantId
+      isPrimaryAdmin
       contact {
         name
         telephoneNumber

@@ -1,4 +1,4 @@
-import { ModelInit, MutableModel, PersistentModelConstructor } from "@aws-amplify/datastore";
+import { ModelInit, MutableModel } from "@aws-amplify/datastore";
 
 export enum Role {
   USER = "USER",
@@ -151,6 +151,7 @@ export declare class User {
   readonly username: string;
   readonly cognitoId: string;
   readonly tenantId: string;
+  readonly isPrimaryAdmin?: number | null;
   readonly contact?: AddressAndContactDetails | null;
   readonly displayName: string;
   readonly name?: string | null;

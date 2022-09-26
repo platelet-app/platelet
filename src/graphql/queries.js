@@ -12,6 +12,7 @@ export const getTenant = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -91,6 +92,7 @@ export const listTenants = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -138,6 +140,7 @@ export const syncTenants = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -170,6 +173,7 @@ export const getUser = /* GraphQL */ `
       username
       cognitoId
       tenantId
+      isPrimaryAdmin
       contact {
         name
         telephoneNumber
@@ -310,6 +314,7 @@ export const listUsers = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -387,6 +392,7 @@ export const syncUsers = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -466,6 +472,7 @@ export const getUserByCognitoId = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -535,6 +542,7 @@ export const getPossibleRiderResponsibilities = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -633,6 +641,7 @@ export const listPossibleRiderResponsibilities = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -691,6 +700,7 @@ export const syncPossibleRiderResponsibilities = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -889,6 +899,7 @@ export const getVehicleAssignment = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -987,6 +998,7 @@ export const listVehicleAssignments = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -1049,6 +1061,7 @@ export const syncVehicleAssignments = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -1367,6 +1380,7 @@ export const getTask = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -1689,6 +1703,7 @@ export const listTasks = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -1843,6 +1858,7 @@ export const syncTasks = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -1999,6 +2015,7 @@ export const tasksByStatus = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -2148,6 +2165,7 @@ export const getTaskAssignee = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -2281,6 +2299,7 @@ export const getTaskAssignee = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -2385,6 +2404,7 @@ export const listTaskAssignees = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -2457,6 +2477,7 @@ export const syncTaskAssignees = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -2493,6 +2514,7 @@ export const getComment = /* GraphQL */ `
         username
         cognitoId
         tenantId
+        isPrimaryAdmin
         contact {
           name
           telephoneNumber
@@ -2575,6 +2597,7 @@ export const listComments = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -2625,6 +2648,7 @@ export const syncComments = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles
@@ -2789,6 +2813,7 @@ export const getDeliverable = /* GraphQL */ `
           username
           cognitoId
           tenantId
+          isPrimaryAdmin
           displayName
           name
           roles

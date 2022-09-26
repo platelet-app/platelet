@@ -31,6 +31,13 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "isPrimaryAdmin": {
+                    "name": "isPrimaryAdmin",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "contact": {
                     "name": "contact",
                     "isArray": false,
@@ -2163,5 +2170,5 @@ export const schema = {
             }
         }
     },
-    "version": "b12b49a018fee9013455dfda1d023f30"
+    "version": "5a44416a51ceb6adaaf06d1fcf039f21"
 };
