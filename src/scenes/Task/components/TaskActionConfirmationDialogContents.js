@@ -1,5 +1,6 @@
 import React from "react";
-import { Stack, TextField } from "@mui/material";
+import { useTheme } from "@mui/styles";
+import { Stack, TextField, useMediaQuery } from "@mui/material";
 import PropTypes from "prop-types";
 import { DateTimePicker } from "@mui/lab";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
@@ -38,6 +39,9 @@ function TaskActionConfirmationDialogContents(props) {
     const [errorState, setErrorState] = React.useState(false);
     const [nameInput, setNameInput] = React.useState("");
     const dispatch = useDispatch();
+
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     function handleTimeChange(value) {
         setTime(value);
@@ -89,6 +93,7 @@ function TaskActionConfirmationDialogContents(props) {
     return (
         <ConfirmationDialog
             open={props.timeKey !== null}
+            fullScreen={isSm && needsName}
             dialogTitle={humanReadableConfirmation(
                 props.timeKey,
                 props.nullify
