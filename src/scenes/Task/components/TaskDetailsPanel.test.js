@@ -36,8 +36,13 @@ describe("TaskDetailsPanel", () => {
         jest.restoreAllMocks();
         const tasks = await DataStore.query(models.Task);
         const locations = await DataStore.query(models.Location);
+        const responsibilities = await DataStore.query(
+            models.RiderResponsibility
+        );
         await Promise.all(
-            [...tasks, ...locations].map((item) => DataStore.delete(item))
+            [...tasks, ...locations, ...responsibilities].map((item) =>
+                DataStore.delete(item)
+            )
         );
     });
 
@@ -174,6 +179,182 @@ describe("TaskDetailsPanel", () => {
                 telephoneNumber: "01234567890999999",
             },
         });
+    });
+
+    test.only("changing rider responsibility", async () => {
+        const timeOfCall = new Date().toISOString();
+        const resps = ["North", "South", "East", "West"];
+        const possibleRiderResponsibilities = await Promise.all(
+            resps.map((label) =>
+                DataStore.save(new models.RiderResponsibility({ label }))
+            )
+        );
+        console.log(possibleRiderResponsibilities);
+        const mockTask = new models.Task({
+            timeOfCall,
+            priority: priorities.high,
+            riderResponsibility: "North",
+            reference: "test-reference",
+            requesterContact: {
+                telephoneNumber: "01234567890",
+                name: "Someone Person",
+            },
+        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        const saveSpy = jest.spyOn(amplify.DataStore, "save");
+        render(<TaskDetailsPanel taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(
+            screen.getByRole("button", { name: "edit rider role" })
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        possibleRiderResponsibilities.forEach((resp) => {
+            expect(
+                screen.getByRole("button", { name: resp.label })
+            ).toBeInTheDocument();
+        });
+
+        possibleRiderResponsibilities
+            .filter((r) => r.label !== "North")
+            .forEach((resp) => {
+                expect(
+                    screen.getByRole("button", { name: resp.label })
+                ).toHaveClass("MuiChip-outlinedDefault");
+            });
+        const northButton = screen.getByRole("button", { name: "North" });
+        expect(northButton).toHaveClass("MuiChip-filled");
+        const southButton = screen.getByRole("button", { name: "South" });
+        userEvent.click(southButton);
+        expect(southButton).toHaveClass("MuiChip-filled");
+        expect(northButton).toHaveClass("MuiChip-outlinedDefault");
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(1);
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockTask,
+            riderResponsibility: "South",
+        });
+        expect(screen.getByText("South")).toBeInTheDocument();
+        expect(screen.queryByText("North")).toBeNull();
+    });
+
+    test.only("changing rider responsibility failure", async () => {
+        const timeOfCall = new Date().toISOString();
+        const resps = ["North", "South", "East", "West"];
+        const possibleRiderResponsibilities = await Promise.all(
+            resps.map((label) =>
+                DataStore.save(new models.RiderResponsibility({ label }))
+            )
+        );
+        console.log(possibleRiderResponsibilities);
+        const mockTask = new models.Task({
+            timeOfCall,
+            priority: priorities.high,
+            riderResponsibility: "North",
+            reference: "test-reference",
+            requesterContact: {
+                telephoneNumber: "01234567890",
+                name: "Someone Person",
+            },
+        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        const saveSpy = jest
+            .spyOn(amplify.DataStore, "save")
+            .mockRejectedValue(new Error());
+        render(<TaskDetailsPanel taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(
+            screen.getByRole("button", { name: "edit rider role" })
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        possibleRiderResponsibilities.forEach((resp) => {
+            expect(
+                screen.getByRole("button", { name: resp.label })
+            ).toBeInTheDocument();
+        });
+
+        possibleRiderResponsibilities
+            .filter((r) => r.label !== "North")
+            .forEach((resp) => {
+                expect(
+                    screen.getByRole("button", { name: resp.label })
+                ).toHaveClass("MuiChip-outlinedDefault");
+            });
+        const northButton = screen.getByRole("button", { name: "North" });
+        expect(northButton).toHaveClass("MuiChip-filled");
+        const southButton = screen.getByRole("button", { name: "South" });
+        userEvent.click(southButton);
+        expect(southButton).toHaveClass("MuiChip-filled");
+        expect(northButton).toHaveClass("MuiChip-outlinedDefault");
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(1);
+        });
+        expect(
+            screen.getByText("Sorry, something went wrong")
+        ).toBeInTheDocument();
+    });
+
+    test.only("unset the rider responsibility", async () => {
+        const timeOfCall = new Date().toISOString();
+        const resps = ["North", "South", "East", "West"];
+        const possibleRiderResponsibilities = await Promise.all(
+            resps.map((label) =>
+                DataStore.save(new models.RiderResponsibility({ label }))
+            )
+        );
+        console.log(possibleRiderResponsibilities);
+        const mockTask = new models.Task({
+            timeOfCall,
+            priority: priorities.high,
+            riderResponsibility: "North",
+            establishmentLocation: new models.Location({
+                name: "Test Location",
+            }),
+            reference: "test-reference",
+            requesterContact: {
+                telephoneNumber: "01234567890",
+                name: "Someone Person",
+            },
+        });
+        await DataStore.save(mockTask);
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        const saveSpy = jest.spyOn(amplify.DataStore, "save");
+        render(<TaskDetailsPanel taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        userEvent.click(
+            screen.getByRole("button", { name: "edit rider role" })
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        const northButton = screen.getByRole("button", { name: "North" });
+        expect(northButton).toHaveClass("MuiChip-filled");
+        userEvent.click(northButton);
+        expect(northButton).toHaveClass("MuiChip-outlinedDefault");
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(1);
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockTask,
+            riderResponsibility: null,
+        });
+        expect(screen.getByText("Unset")).toBeInTheDocument();
+        expect(screen.queryByText("North")).toBeNull();
     });
 
     test("changing the requester contact details in mobile view", async () => {
