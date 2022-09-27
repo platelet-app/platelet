@@ -67,6 +67,7 @@ ConfirmationDialog.propTypes = {
     hideOk: PropTypes.bool,
     fullScreen: PropTypes.bool,
     disabled: PropTypes.bool,
+    children: PropTypes.node,
 };
 
 ConfirmationDialog.defaultProps = {
@@ -79,6 +80,7 @@ ConfirmationDialog.defaultProps = {
     hideOk: false,
     fullScreen: false,
     disabled: false,
+    children: null,
 };
 
 export default ConfirmationDialog;
