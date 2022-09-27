@@ -181,7 +181,7 @@ describe("TaskDetailsPanel", () => {
         });
     });
 
-    test.only("changing rider responsibility", async () => {
+    test("changing rider responsibility", async () => {
         const timeOfCall = new Date().toISOString();
         const resps = ["North", "South", "East", "West"];
         const possibleRiderResponsibilities = await Promise.all(
@@ -244,7 +244,7 @@ describe("TaskDetailsPanel", () => {
         expect(screen.queryByText("North")).toBeNull();
     });
 
-    test.only("changing rider responsibility failure", async () => {
+    test("changing rider responsibility failure", async () => {
         const timeOfCall = new Date().toISOString();
         const resps = ["North", "South", "East", "West"];
         const possibleRiderResponsibilities = await Promise.all(
@@ -306,7 +306,7 @@ describe("TaskDetailsPanel", () => {
         ).toBeInTheDocument();
     });
 
-    test.only("unset the rider responsibility", async () => {
+    test("unset the rider responsibility", async () => {
         const timeOfCall = new Date().toISOString();
         const resps = ["North", "South", "East", "West"];
         const possibleRiderResponsibilities = await Promise.all(
