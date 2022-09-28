@@ -252,6 +252,14 @@
         {
             "label": "Relief",
             "disabled": 0
+        },
+        {
+            "label": "Air Ambulance",
+            "disabled": 0
+        },
+        {
+            "label": "Off-rota",
+            "disabled": 0
         }
     ],
     "deliverables": [
