@@ -170,75 +170,19 @@ ${task1.id},${task1.createdAt || ""},${task1.timeOfCall},${task1.priority},${
             task1.status
         },${task1.riderResponsibility},${task1.timePickedUp},${
             task1.timeDroppedOff
-        },${task1.timeRiderHome},${
-            task1.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task1.pickUpLocation.ward
-        },${
-            task1.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task1.pickUpLocation.line1
-        },${
-            task1.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task1.pickUpLocation.line2
-        },${
-            task1.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task1.pickUpLocation.line3
-        },${
-            task1.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task1.pickUpLocation.town
-        },${
-            task1.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task1.pickUpLocation.county
-        },${
-            task1.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task1.pickUpLocation.state
-        },${
-            task1.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task1.pickUpLocation.country
-        },${
-            task1.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task1.pickUpLocation.postcode
-        },${task1.dropOffLocation.ward},${
-            task1.dropOffLocation.listed === 0
-                ? "Unlisted"
-                : task1.dropOffLocation.line1
-        },${
-            task1.dropOffLocation.listed === 0
-                ? "Unlisted"
-                : task1.dropOffLocation.line2
-        },${
-            task1.dropOffLocation.listed === 0
-                ? "Unlisted"
-                : task1.dropOffLocation.line3
-        },${
-            task1.dropOffLocation.listed === 0
-                ? "Unlisted"
-                : task1.dropOffLocation.town
-        },${
-            task1.dropOffLocation.listed === 0
-                ? "Unlisted"
-                : task1.dropOffLocation.county
-        },${
-            task1.dropOffLocation.listed === 0
-                ? "Unlisted"
-                : task1.dropOffLocation.state
-        },${
-            task1.dropOffLocation.listed === 0
-                ? "Unlisted"
-                : task1.dropOffLocation.country
-        },${
-            task1.dropOffLocation.listed === 0
-                ? "Unlisted"
-                : task1.dropOffLocation.postcode
-        },${task1.requesterContact.name},${
+        },${task1.timeRiderHome},${task1.pickUpLocation.ward},${
+            task1.pickUpLocation.line1
+        },${task1.pickUpLocation.line2},${task1.pickUpLocation.line3},${
+            task1.pickUpLocation.town
+        },${task1.pickUpLocation.county},${task1.pickUpLocation.state},${
+            task1.pickUpLocation.country
+        },${task1.pickUpLocation.postcode},${task1.dropOffLocation.ward},${
+            task1.dropOffLocation.line1
+        },${task1.dropOffLocation.line2},${task1.dropOffLocation.line3},${
+            task1.dropOffLocation.town
+        },${task1.dropOffLocation.county},${task1.dropOffLocation.state},${
+            task1.dropOffLocation.country
+        },${task1.dropOffLocation.postcode},${task1.requesterContact.name},${
             task1.requesterContact.telephoneNumber
         },${comment1.id},${comment1.createdAt || ""},${
             comment1.author.displayName
@@ -259,79 +203,19 @@ ${task2.id},${task2.createdAt || ""},${task2.timeOfCall},${task2.priority},${
             task2.status
         },${task2.riderResponsibility},${task2.timePickedUp},${
             task2.timeDroppedOff
-        },${task2.timeRiderHome},${
-            task2.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task2.pickUpLocation.ward
-        },${
-            task2.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task2.pickUpLocation.line1
-        },${
-            task2.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task2.pickUpLocation.line2
-        },${
-            task2.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task2.pickUpLocation.line3
-        },${
-            task2.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task2.pickUpLocation.town
-        },${
-            task2.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task2.pickUpLocation.county
-        },${
-            task2.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task2.pickUpLocation.state
-        },${
-            task2.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task2.pickUpLocation.country
-        },${
-            task2.pickUpLocation.listed === 0
-                ? "Unlisted"
-                : task2.pickUpLocation.postcode
-        },${
-            task2.dropOffLocation.listed === 0
-                ? "Unlisted"
-                : task2.dropOffLocation.ward
-        },${
-            task2.dropOffLocation.listed === 0
-                ? "Unlisted"
-                : task2.dropOffLocation.line1
-        },${
-            task2.dropOffLocation.listed === 0
-                ? "Unlisted"
-                : task2.dropOffLocation.line2
-        },${
-            task2.dropOffLocation.listed === 0
-                ? "Unlisted"
-                : task2.dropOffLocation.line3
-        },${
-            task2.dropOffLocation.listed === 0
-                ? "Unlisted"
-                : task2.dropOffLocation.town
-        },${
-            task2.dropOffLocation.listed === 0
-                ? "Unlisted"
-                : task2.dropOffLocation.county
-        },${
-            task2.dropOffLocation.listed === 0
-                ? "Unlisted"
-                : task2.dropOffLocation.state
-        },${
-            task2.dropOffLocation.listed === 0
-                ? "Unlisted"
-                : task2.dropOffLocation.country
-        },${
-            task2.dropOffLocation.listed === 0
-                ? "Unlisted"
-                : task2.dropOffLocation.postcode
-        },${task2.requesterContact.name},${
+        },${task2.timeRiderHome},${task2.pickUpLocation.ward},${
+            task2.pickUpLocation.line1
+        },${task2.pickUpLocation.line2},${task2.pickUpLocation.line3},${
+            task2.pickUpLocation.town
+        },${task2.pickUpLocation.county},${task2.pickUpLocation.state},${
+            task2.pickUpLocation.country
+        },${task2.pickUpLocation.postcode},${task2.dropOffLocation.ward},${
+            task2.dropOffLocation.line1
+        },${task2.dropOffLocation.line2},${task2.dropOffLocation.line3},${
+            task2.dropOffLocation.town
+        },${task2.dropOffLocation.county},${task2.dropOffLocation.state},${
+            task2.dropOffLocation.country
+        },${task2.dropOffLocation.postcode},${task2.requesterContact.name},${
             task2.requesterContact.telephoneNumber
         },,,,,,,,,${item2.id},${item2.createdAt || ""},${
             item2.deliverableType.label

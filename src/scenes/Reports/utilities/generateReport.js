@@ -140,22 +140,22 @@ async function generateCSV(data) {
         Object.keys(taskFields).forEach((key) => {
             row.push(rest[key]);
         });
-        if (pickUpLocation && pickUpLocation.listed === 1)
+        if (pickUpLocation)
             Object.keys(locationFields).forEach((key) => {
                 row.push(pickUpLocation[key] || locationFields[key]);
             });
         else
             Object.values(locationFields).forEach((value) => {
-                row.push(pickUpLocation ? "Unlisted" : value);
+                row.push(value);
             });
 
-        if (dropOffLocation && dropOffLocation.listed === 1)
+        if (dropOffLocation)
             Object.keys(locationFields).forEach((key) => {
                 row.push(dropOffLocation[key] || locationFields[key]);
             });
         else
             Object.values(locationFields).forEach((value) => {
-                row.push(dropOffLocation ? "Unlisted" : value);
+                row.push(value);
             });
         if (requesterContact)
             Object.keys(requesterContactFields).forEach((key) => {
