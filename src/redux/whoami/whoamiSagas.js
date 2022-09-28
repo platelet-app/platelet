@@ -1,4 +1,5 @@
 import { call, put, take, takeLatest } from "redux-saga/effects";
+import { DISCARD } from "@aws-amplify/datastore";
 import {
     GET_WHOAMI_REQUEST,
     getWhoamiFailure,
@@ -146,6 +147,52 @@ function* getWhoami() {
                             m.id("eq", tenantId)
                         ),
                     ],
+                    conflictHandler: ({
+                        modelConstructor,
+                        remoteModel,
+                        localModel,
+                    }) => {
+                        console.log(
+                            "DataStore has found a conflict",
+                            modelConstructor,
+                            remoteModel,
+                            localModel
+                        );
+                        if (modelConstructor === models.Task) {
+                            const newModel = modelConstructor.copyOf(
+                                remoteModel,
+                                (task) => {
+                                    task.timePickedUp =
+                                        remoteModel.timePickedUp ||
+                                        localModel.timePickedUp;
+                                    task.timeDroppedOff =
+                                        remoteModel.timeDroppedOff ||
+                                        localModel.timeDroppedOff;
+                                    task.timeRiderHome =
+                                        remoteModel.timeRiderHome ||
+                                        localModel.timeRiderHome;
+                                    task.timeCancelled =
+                                        remoteModel.timeCancelled ||
+                                        localModel.timeCancelled;
+                                    task.timeRejected =
+                                        remoteModel.timeRejected ||
+                                        localModel.timeRejected;
+                                    task.timePickedUpSenderName =
+                                        remoteModel.timePickedUpSenderName ||
+                                        localModel.timePickedUpSenderName;
+                                    task.timeDroppedOffRecipientName =
+                                        remoteModel.timeDroppedOffRecipientName ||
+                                        localModel.timeDroppedOffRecipientName;
+                                }
+                            );
+                            console.log(
+                                "Resolved task conflict result:",
+                                newModel
+                            );
+                            return newModel;
+                        }
+                        return DISCARD;
+                    },
                 });
                 result = yield call(
                     [DataStore, DataStore.query],
