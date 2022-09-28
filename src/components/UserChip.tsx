@@ -1,13 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Avatar, Chip } from "@mui/material";
-import PropTypes from "prop-types";
 import { generateS3Link } from "../amplifyUtilities";
+import * as models from "../models";
 
-function UserChip(props) {
+type UserChipProps = {
+    user: models.User;
+    onClick?: () => models.User;
+    onDelete?: () => void;
+    variant?: "filled" | "outlined" | undefined;
+    color?:
+        | "primary"
+        | "secondary"
+        | "error"
+        | "info"
+        | "success"
+        | "warning"
+        | undefined;
+    showResponsibility?: boolean;
+    disabled?: boolean;
+};
+
+const UserChip: React.FC<UserChipProps> = (props) => {
     let { profilePicture, displayName, riderResponsibility } = props.user;
-    const [thumbnail, setThumbnail] = useState(null);
+    const [thumbnail, setThumbnail] = useState<string | null>(null);
     const [label, setLabel] = useState(displayName);
-
     const getThumbnail = React.useCallback(async (profilePictureKey) => {
         if (profilePictureKey) {
             try {
@@ -39,7 +55,10 @@ function UserChip(props) {
             setLabel(displayName);
         }
     }, [props.showResponsibility, displayName, riderResponsibility]);
-    useEffect(() => setText(), [props.showResponsibility, props.user, setText]);
+
+    useEffect(() => {
+        setText();
+    }, [props.showResponsibility, props.user, setText]);
 
     if (thumbnail) {
         return (
@@ -65,23 +84,9 @@ function UserChip(props) {
             />
         );
     }
-}
-
-UserChip.propTypes = {
-    user: PropTypes.object.isRequired,
-    onClick: PropTypes.func,
-    onDelete: PropTypes.func,
-    variant: PropTypes.string,
-    color: PropTypes.string,
-    showResponsibility: PropTypes.bool,
-    disabled: PropTypes.bool,
 };
 
 UserChip.defaultProps = {
-    onClick: () => {},
-    onDelete: null,
-    variant: "default",
-    color: "default",
     showResponsibility: false,
     disabled: false,
 };
