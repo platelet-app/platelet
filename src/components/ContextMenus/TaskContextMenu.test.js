@@ -510,6 +510,7 @@ describe("TaskContextMenu", () => {
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(12);
         });
+        expect(screen.getByText("Task duplicated to NEW")).toBeInTheDocument();
         expect(screen.queryAllByRole("link")).toHaveLength(2);
     });
 
