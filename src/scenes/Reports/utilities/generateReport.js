@@ -219,9 +219,13 @@ async function generateCSV(data) {
 }
 
 export default async function generateReport(userId, role, days) {
-    const timeStamp = moment.utc().subtract(days, "days").toISOString();
+    const timeStamp = moment
+        .utc()
+        .subtract(days.toString(), "days")
+        .toISOString();
     let finalTasks = [];
     const assignments = await DataStore.query(models.TaskAssignee);
+    debugger;
     if (role !== "ALL") {
         const filteredAssignments = assignments.filter(
             (assignment) =>
@@ -233,15 +237,21 @@ export default async function generateReport(userId, role, days) {
         const taskIds = filteredAssignments.map(
             (assignment) => assignment.task.id
         );
-        finalTasks = await DataStore.query(models.Task, (task) =>
-            task
-                .or((task) =>
-                    task.createdAt("eq", undefined).createdAt("gt", timeStamp)
-                )
-                .or((task) =>
-                    taskIds.reduce((task, id) => task.id("eq", id), task)
-                )
-        );
+        if (taskIds.length === 0) {
+            finalTasks = [];
+        } else {
+            finalTasks = await DataStore.query(models.Task, (task) =>
+                task
+                    .or((task) =>
+                        task
+                            .createdAt("eq", undefined)
+                            .createdAt("gt", timeStamp)
+                    )
+                    .or((task) =>
+                        taskIds.reduce((task, id) => task.id("eq", id), task)
+                    )
+            );
+        }
     } else if (role === "ALL") {
         finalTasks = await DataStore.query(models.Task, (task) =>
             task.or((task) =>

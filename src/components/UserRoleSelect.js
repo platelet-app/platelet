@@ -2,6 +2,7 @@ import React from "react";
 import { userRoles } from "../apiConsts";
 import PropTypes from "prop-types";
 import { Chip, Stack } from "@mui/material";
+import * as models from "../models";
 
 function UserRoleSelect(props) {
     const handleChange = (value) => {
@@ -16,6 +17,7 @@ function UserRoleSelect(props) {
                 .map((value) => (
                     <Chip
                         onClick={() => handleChange(value)}
+                        disabled={props.disabled}
                         label={value}
                         color={
                             props.value.includes(value) ? "primary" : "default"
@@ -29,6 +31,7 @@ function UserRoleSelect(props) {
             {props.all && (
                 <Chip
                     onClick={() => handleChange("ALL")}
+                    disabled={props.disabled}
                     label={"ALL"}
                     color={props.value.includes("ALL") ? "primary" : "default"}
                     key={"ALL"}
@@ -43,9 +46,10 @@ function UserRoleSelect(props) {
 
 UserRoleSelect.propTypes = {
     value: PropTypes.arrayOf(Object.values(userRoles)),
-    exclude: PropTypes.arrayOf(PropTypes.oneOf(Object.values(userRoles))),
+    exclude: PropTypes.arrayOf(PropTypes.oneOf(Object.values(models.Role))),
     onSelect: PropTypes.func,
     all: PropTypes.bool,
+    disabled: PropTypes.bool,
 };
 
 UserRoleSelect.defaultProps = {
@@ -53,6 +57,7 @@ UserRoleSelect.defaultProps = {
     exclude: [],
     onSelect: () => {},
     all: false,
+    disabled: false,
 };
 
 export default UserRoleSelect;
