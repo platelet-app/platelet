@@ -189,7 +189,8 @@ function* getWhoami() {
                                 "Resolved task conflict result:",
                                 newModel
                             );
-                            return newModel;
+                            const { createdAt, updatedAt, ...rest } = newModel;
+                            return rest;
                         }
                         return DISCARD;
                     },
