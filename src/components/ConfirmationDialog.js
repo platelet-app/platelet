@@ -13,6 +13,7 @@ function ConfirmationDialog(props) {
             open={props.open}
             fullScreen={props.fullScreen}
             onClose={props.onClose}
+            PaperProps={{ elevation: 1 }}
         >
             <DialogTitle>{props.dialogTitle}</DialogTitle>
             <DialogContent>
