@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import * as models from "../../../models";
 import {
     Divider,
-    Paper,
+    Box,
     Stack,
     TextField,
     Typography,
@@ -83,7 +83,7 @@ const MultipleSelectionActionsDialog = ({
     const assignees = useSelector(taskAssigneesSelector);
     const isSm = useMediaQuery(useTheme().breakpoints.down("sm"));
     const sx = {
-        padding: 2,
+        padding: 1,
         minWidth: { xs: 0, sm: 500 },
         minHeight: 300,
     };
@@ -242,7 +242,7 @@ const MultipleSelectionActionsDialog = ({
                     fullScreen={isSm}
                     onConfirmation={handleConfirmation}
                 >
-                    <Paper sx={sx}>
+                    <Box sx={sx}>
                         <Stack
                             divider={<Divider />}
                             direction="column"
@@ -257,7 +257,7 @@ const MultipleSelectionActionsDialog = ({
                                 selectedItems={items}
                             />
                         </Stack>
-                    </Paper>
+                    </Box>
                 </ConfirmationDialog>
                 {largeItemDialog}
             </>
@@ -275,7 +275,7 @@ const MultipleSelectionActionsDialog = ({
                     fullScreen={isSm}
                     onConfirmation={handleConfirmation}
                 >
-                    <Paper sx={sx}>
+                    <Box sx={sx}>
                         <Stack
                             divider={<Divider />}
                             direction="column"
@@ -291,7 +291,7 @@ const MultipleSelectionActionsDialog = ({
                                 showHint={showHint}
                             />
                         </Stack>
-                    </Paper>
+                    </Box>
                 </ConfirmationDialog>
                 {largeItemDialog}
             </>
@@ -308,7 +308,7 @@ const MultipleSelectionActionsDialog = ({
                     fullScreen={isSm}
                     onConfirmation={handleConfirmation}
                 >
-                    <Paper sx={sx}>
+                    <Box sx={sx}>
                         <Stack
                             divider={<Divider />}
                             direction="column"
@@ -355,7 +355,7 @@ const MultipleSelectionActionsDialog = ({
                                 />
                             )}
                         </Stack>
-                    </Paper>
+                    </Box>
                 </ConfirmationDialog>
                 {largeItemDialog}
             </>
