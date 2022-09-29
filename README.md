@@ -29,3 +29,31 @@ Some of Platelet's goals are:
 It can be deployed to AWS using Amplify or can be used fully offline with no online synchronization.
 
 If you're interested in developing on Platelet please take a look at [CONTRIBUTING](CONTRIBUTING.md).
+
+## Setting up
+
+The easiest way to install Platelet is to connect a branch on GitHub to Amplify through the AWS console.
+
+### Cognito
+
+Add these groups to Cognito with highest precedence for SUPER and ADMIN second:
+
+`SUPER`
+`ADMIN`
+`COORDINATOR`
+`RIDER`
+`USER`
+
+Under Sign-up experience, add a custom attribute: `tenantId`
+
+### Function parameters
+
+Set `PLATELET_WELCOME_EMAIL` and `PLATELET_DOMAIN_NAME` environment variables  using the Amplify CLI.
+
+`PLATELET_WELCOME_EMAIL` is the email address that any registration emails will be sent from.
+
+`PLATELET_DOMAIN_NAME` should be the URL (without "https://") where the app is hosted. This will be used to point users to the URL in registration emails.
+
+### AWS SES
+
+You will need to apply to AWS for unrestricted sending of emails.
