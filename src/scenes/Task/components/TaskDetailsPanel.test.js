@@ -395,7 +395,7 @@ describe("TaskDetailsPanel", () => {
             });
         });
     });
-    test("change the failure", async () => {
+    test("change the establishment failure", async () => {
         const timeOfCall = new Date().toISOString();
         const mockEstablishment = await DataStore.save(
             new models.Location({
@@ -729,6 +729,15 @@ describe("TaskDetailsPanel", () => {
         expect(
             screen.getByText(moment(timeOfCall).format("HH:mm"))
         ).toBeInTheDocument();
+        expect(screen.queryAllByRole("button")).toHaveLength(0);
+        await DataStore.save(
+            models.Task.copyOf(mockTask, (upd) => {
+                upd.riderResponsibility = null;
+            })
+        );
+        await waitFor(() => {
+            expect(screen.queryByText("North")).toBeNull();
+        });
     });
 
     test("the view for an assigned coordinator", async () => {

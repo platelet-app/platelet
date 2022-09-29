@@ -247,13 +247,21 @@ function TaskDetailsPanel(props) {
                         )}
                     </Stack>
                     {hasFullPermissions && <Divider />}
-                    <LabelItemPair label={"Rider role"}>
-                        <RiderResponsibilityDetail
-                            key={state.riderResponsibility}
-                            value={state.riderResponsibility}
-                            onSelect={setRiderResponsibility}
-                        />
-                    </LabelItemPair>
+                    {(hasFullPermissions || state.riderResponsibility) && (
+                        <LabelItemPair label={"Rider role"}>
+                            {hasFullPermissions ? (
+                                <RiderResponsibilityDetail
+                                    key={state.riderResponsibility}
+                                    value={state.riderResponsibility}
+                                    onSelect={setRiderResponsibility}
+                                />
+                            ) : (
+                                <Typography>
+                                    {state.riderResponsibility}
+                                </Typography>
+                            )}
+                        </LabelItemPair>
+                    )}
                 </Stack>
             </Paper>
         );
