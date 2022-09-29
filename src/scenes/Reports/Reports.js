@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import * as models from "../../models";
 import {
     Button,
     Stack,
@@ -23,6 +24,8 @@ import UserRoleSelect from "../../components/UserRoleSelect";
 import moment from "moment";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
+import CoordinatorPicker from "../../components/CoordinatorPicker";
+import UserChip from "../../components/UserChip";
 
 function Reports() {
     const [days, setDays] = useState("3");
@@ -33,7 +36,10 @@ function Reports() {
     const whoami = useSelector(getWhoami);
     const [isPosting, setIsPosting] = useState(false);
     const [confirmation, setConfirmation] = useState(false);
+    const [selectedCoordinator, setSelectedCoordinator] = useState(null);
     const dispatch = useDispatch();
+
+    const isAdmin = whoami?.roles?.includes(userRoles.admin);
 
     const handleExport = React.useCallback(async () => {
         try {
@@ -107,6 +113,17 @@ function Reports() {
                     onSelect={(v) => setRole(v)}
                     exclude={[userRoles.user, userRoles.admin, ...exclude]}
                 />
+                {isAdmin &&
+                    role === userRoles.coordinator &&
+                    !selectedCoordinator && (
+                        <CoordinatorPicker
+                            onSelect={(v) => setSelectedCoordinator(v)}
+                        />
+                    )}
+                {typeof setSelectedCoordinator === models.User && (
+                    <UserChip user={selectedCoordinator} />
+                )}
+
                 {
                     // TODO: add stats
                     false && (
