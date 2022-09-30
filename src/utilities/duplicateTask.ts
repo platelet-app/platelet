@@ -38,6 +38,7 @@ export default async function duplicateTask(
         ...rest
     } = { ...task };
     const author = await DataStore.query(models.User, createdById);
+    if (!author) throw new Error("author not found");
     if (pickUpLocation?.listed === 0) {
         pickUpLocation = await DataStore.save(
             new models.Location({
