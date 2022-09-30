@@ -5,13 +5,14 @@ import Typography from "@mui/material/Typography";
 import Moment from "react-moment";
 import CancelIcon from "@mui/icons-material/Cancel";
 import IconButton from "@mui/material/IconButton";
-import { Stack, TextField, Tooltip } from "@mui/material";
+import { Stack, TextField, Tooltip, useMediaQuery } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { showHide } from "../../../styles/common";
 import makeStyles from "@mui/styles/makeStyles";
 import { DateTimePicker } from "@mui/lab";
 import moment from "moment";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
+import { useTheme } from "@mui/styles";
 
 const useStyles = makeStyles({
     button: {
@@ -25,6 +26,8 @@ const useStyles = makeStyles({
 function TimePicker(props) {
     const [state, setState] = useState(new Date(props.time));
     const classes = useStyles();
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
     const { show, hide } = showHide();
 
     function onClear() {
@@ -108,6 +111,7 @@ function TimePicker(props) {
                     )}
                 </Stack>
                 <ConfirmationDialog
+                    fullScreen={isSm}
                     onCancel={props.onCancelEdit}
                     onConfirmation={() => {
                         props.onChange(state);

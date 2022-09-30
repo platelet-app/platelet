@@ -93,7 +93,7 @@ function TaskActionConfirmationDialogContents(props) {
     return (
         <ConfirmationDialog
             open={props.timeKey !== null}
-            fullScreen={isSm && needsName}
+            fullScreen={isSm && !props.nullify}
             dialogTitle={humanReadableConfirmation(
                 props.timeKey,
                 props.nullify
