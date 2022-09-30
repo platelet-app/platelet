@@ -165,6 +165,7 @@ export declare class User {
   readonly assignments?: (TaskAssignee | null)[] | null;
   readonly vehicleAssignments?: (VehicleAssignment | null)[] | null;
   readonly createdTasks?: (Task | null)[] | null;
+  readonly createdLocations?: (Location | null)[] | null;
   readonly disabled?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -251,6 +252,7 @@ export declare class Task {
 export declare class Location {
   readonly id: string;
   readonly tenantId: string;
+  readonly createdBy: User;
   readonly name?: string | null;
   readonly listed?: number | null;
   readonly contact?: AddressAndContactDetails | null;
