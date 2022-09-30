@@ -15,12 +15,17 @@ const ignoredFields = [
 export default async function generateMultipleDuplicatedTaskModels(
     tasks: models.Task[],
     tenantId: string,
+    whoamiId: string,
     copyAssignees = false,
     assigneeId: string | null = null,
     assigneeRole: models.Role | null = null,
     copyCommentsUserId: string | null = null
 ) {
+    debugger;
     if (!tenantId) throw new Error("tenantId is required");
+    if (!whoamiId) throw new Error("whoamiId is required");
+    const whoami = await DataStore.query(models.User, whoamiId);
+    if (!whoami) throw new Error("author not found");
     const allAssignees = await DataStore.query(models.TaskAssignee);
     const deliverables = await DataStore.query(models.Deliverable);
     const result = await Promise.all(
@@ -39,6 +44,7 @@ export default async function generateMultipleDuplicatedTaskModels(
                 riderResponsibility,
                 dropOffLocation,
                 pickUpLocation,
+                createdBy,
                 establishmentLocation,
                 ...rest
             } = { ...task };
@@ -87,6 +93,7 @@ export default async function generateMultipleDuplicatedTaskModels(
                 status: tasksStatus.new,
                 pickUpLocation,
                 dropOffLocation,
+                createdBy: whoami,
                 establishmentLocation,
                 tenantId,
             });
@@ -186,7 +193,6 @@ export default async function generateMultipleDuplicatedTaskModels(
                 );
             }
             // locations models go first, then tasks
-            console.log("ASDFASDF", assigneeModels);
             return [
                 ...locationModels,
                 newTaskData,

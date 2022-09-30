@@ -23,9 +23,10 @@ export async function addTask(whoamiId, tenantId) {
     }
     const date = new Date();
     const timeOfCall = date.toISOString();
-    const createdBy = whoamiId
-        ? await DataStore.query(models.User, whoamiId)
-        : null;
+    const createdBy = await DataStore.query(models.User, whoamiId);
+    if (!createdBy) {
+        throw new Error("Created by user not found");
+    }
     const newTask = await DataStore.save(
         new models.Task({
             status: tasksStatus.new,

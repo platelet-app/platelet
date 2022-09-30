@@ -379,7 +379,9 @@ describe("TaskContextMenu", () => {
         await waitFor(() => {
             expect(screen.getByText("Copied to clipboard")).toBeInTheDocument();
         });
-        expect(clipboardSpy).toMatchSnapshot();
+        expect(clipboardSpy).toHaveBeenCalledWith(
+            "TOC: 23:24 FROM: test ward - line one, postcode TO: some ward - something, some postcode PRIORITY: high ITEMS: test deliverable x 1, test deliverable x 2, test deliverable x 3"
+        );
     });
 
     test("duplicate a task", async () => {
@@ -483,6 +485,7 @@ describe("TaskContextMenu", () => {
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...task,
+            createdBy: whoami,
             tenantId,
             id: expect.not.stringMatching(task.id),
         });
@@ -493,6 +496,7 @@ describe("TaskContextMenu", () => {
                 id: expect.not.stringMatching(del.id),
                 task: {
                     ...task,
+                    createdBy: whoami,
                     id: expect.not.stringMatching(task.id),
                 },
             });
@@ -503,12 +507,13 @@ describe("TaskContextMenu", () => {
             id: expect.any(String),
             task: {
                 ...task,
+                createdBy: whoami,
                 id: expect.any(String),
             },
         });
         mockAllIsIntersecting(true);
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(12);
+            expect(querySpy).toHaveBeenCalledTimes(13);
         });
         expect(screen.getByText("Task duplicated to NEW")).toBeInTheDocument();
         expect(screen.queryAllByRole("link")).toHaveLength(2);

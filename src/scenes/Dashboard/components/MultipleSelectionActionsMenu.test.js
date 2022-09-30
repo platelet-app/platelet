@@ -1270,6 +1270,7 @@ describe("MultipleSelectionActionsMenu", () => {
                     DataStore.save(
                         new models.Task({
                             status: tasksStatus.new,
+                            createdBy: mockWhoami,
                             pickUpLocation:
                                 i === 0 ? mockLocation1 : mockLocation3,
                             dropOffLocation:
@@ -1410,6 +1411,15 @@ describe("MultipleSelectionActionsMenu", () => {
             ? userRoles.coordinator
             : userRoles.rider;
 
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                roles: [userRoles.coordinator, userRoles.rider],
+                displayName: "Someone Person",
+                riderRole: "some role",
+                tenantId,
+            })
+        );
+
         const mockTasks = await Promise.all(
             _.range(2).map(() =>
                 DataStore.save(
@@ -1440,14 +1450,6 @@ describe("MultipleSelectionActionsMenu", () => {
                 task: mockTasks[1],
                 deliverableType: mockDeliverableTypes[0],
                 count: 2,
-                tenantId,
-            })
-        );
-        const mockWhoami = await DataStore.save(
-            new models.User({
-                roles: [userRoles.coordinator, userRoles.rider],
-                displayName: "Someone Person",
-                riderRole: "some role",
                 tenantId,
             })
         );
@@ -1553,13 +1555,17 @@ describe("MultipleSelectionActionsMenu", () => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...t,
                 tenantId,
+                createdBy: mockWhoami,
                 id: expect.not.stringMatching(t.id),
             });
         });
         const mockAssigns = mockTasks.map(
             (task) =>
                 new models.TaskAssignee({
-                    task,
+                    task: {
+                        ...task,
+                        createdBy: mockWhoami,
+                    },
                     assignee: mockWhoami,
                     role: actualRole,
                     tenantId,
@@ -1573,6 +1579,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 id: expect.any(String),
                 task: {
                     ...a.task,
+                    createdBy: mockWhoami,
                     id: expect.not.stringMatching(a.task.id),
                 },
             });
@@ -1583,7 +1590,11 @@ describe("MultipleSelectionActionsMenu", () => {
                 ...a,
                 id: expect.any(String),
                 tenantId,
-                task: { ...a.task, id: expect.not.stringMatching(a.task.id) },
+                task: {
+                    ...a.task,
+                    createdBy: mockWhoami,
+                    id: expect.not.stringMatching(a.task.id),
+                },
             });
         });
         [(deliverable1, deliverable2)].forEach((d) => {
@@ -1592,6 +1603,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 tenantId,
                 task: {
                     ...d.task,
+                    createdBy: mockWhoami,
                     id: expect.not.stringMatching(d.task.id),
                 },
                 id: expect.not.stringMatching(d.id),

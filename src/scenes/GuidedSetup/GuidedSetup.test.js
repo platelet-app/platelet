@@ -122,6 +122,7 @@ describe("GuidedSetup", () => {
             dropOffLocation: null,
             pickUpLocation: null,
             priority: null,
+            createdBy: mockWhoami,
             status: tasksStatus.new,
             establishmentLocation: null,
             requesterContact: {
@@ -187,6 +188,7 @@ describe("GuidedSetup", () => {
             dropOffLocation: null,
             pickUpLocation: null,
             establishmentLocation: null,
+            createdBy: mockWhoami,
             priority: priorities.high,
             status: tasksStatus.new,
             requesterContact: {
@@ -296,6 +298,7 @@ describe("GuidedSetup", () => {
             dropOffLocation: null,
             pickUpLocation: null,
             priority: null,
+            createdBy: whoami,
             establishmentLocation: mockLocation,
             status: tasksStatus.new,
             requesterContact: { name: "", telephoneNumber: "" },
@@ -332,6 +335,7 @@ describe("GuidedSetup", () => {
         const mockTask = new models.Task({
             dropOffLocation: null,
             pickUpLocation: null,
+            createdBy: whoami,
             priority: null,
             establishmentLocation: null,
             status: tasksStatus.new,
@@ -371,6 +375,7 @@ describe("GuidedSetup", () => {
         const mockTask = new models.Task({
             dropOffLocation: null,
             pickUpLocation: null,
+            createdBy: whoami,
             priority: null,
             establishmentLocation: mockLocation,
             status: tasksStatus.new,
@@ -414,6 +419,7 @@ describe("GuidedSetup", () => {
         const mockTask = new models.Task({
             dropOffLocation: null,
             pickUpLocation: mockLocation,
+            createdBy: whoami,
             priority: null,
             establishmentLocation: mockLocation,
             status: tasksStatus.new,
@@ -465,6 +471,7 @@ describe("GuidedSetup", () => {
         const mockTask = new models.Task({
             dropOffLocation: null,
             pickUpLocation: null,
+            createdBy: whoami,
             priority: null,
             establishmentLocation: mockLocation,
             status: tasksStatus.new,
@@ -503,6 +510,7 @@ describe("GuidedSetup", () => {
         const mockTask = new models.Task({
             dropOffLocation: null,
             pickUpLocation: null,
+            createdBy: whoami,
             priority: null,
             establishmentLocation: null,
             status: tasksStatus.new,
@@ -561,7 +569,7 @@ describe("GuidedSetup", () => {
             )
         );
         await waitFor(() =>
-            expect(querySpy).toHaveBeenNthCalledWith(5, models.DeliverableType)
+            expect(querySpy).toHaveBeenNthCalledWith(6, models.DeliverableType)
         );
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledTimes(4);

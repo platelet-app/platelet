@@ -108,6 +108,7 @@ const MultipleSelectionActionsDialog = ({
             const models = await generateMultipleDuplicatedTaskModels(
                 items,
                 tenantId,
+                whoami.id,
                 duplicateState.copyAssignees,
                 assigneeId,
                 assigneeRole,

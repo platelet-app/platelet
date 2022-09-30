@@ -183,6 +183,7 @@ function TaskContextMenu(props) {
                 task,
                 tenantId,
                 whoami.id,
+                whoami.id,
                 actualRole
             );
             dispatch(assigneeActions.addTaskAssignee(assignment));

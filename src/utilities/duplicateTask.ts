@@ -14,11 +14,13 @@ const ignoredFields = [
 export default async function duplicateTask(
     task: models.Task,
     tenantId: string,
+    createdById: string,
     assigneeId: string | null = null,
     assigneeRole: models.Role | null = null
 ) {
     if (!tenantId) throw new Error("tenantId must exist");
     if (!task) throw new Error("task must exist");
+    if (!createdById) throw new Error("createdById must exist");
     let {
         id,
         updatedAt,
@@ -32,8 +34,10 @@ export default async function duplicateTask(
         establishmentLocation,
         dropOffLocation,
         pickUpLocation,
+        createdBy,
         ...rest
     } = { ...task };
+    const author = await DataStore.query(models.User, createdById);
     if (pickUpLocation?.listed === 0) {
         pickUpLocation = await DataStore.save(
             new models.Location({
@@ -80,6 +84,7 @@ export default async function duplicateTask(
         dropOffLocation,
         establishmentLocation,
         tenantId,
+        createdBy: author,
     });
     let assignment = null;
     if (assigneeId && assigneeRole) {
@@ -92,6 +97,7 @@ export default async function duplicateTask(
                 riderResponsibility,
                 establishmentLocation,
                 tenantId,
+                createdBy: author,
             });
         }
         const assignee = await DataStore.query(models.User, assigneeId);
