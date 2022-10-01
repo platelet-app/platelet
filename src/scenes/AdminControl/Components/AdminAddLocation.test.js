@@ -1,15 +1,12 @@
 import { screen, waitFor } from "@testing-library/dom";
-import React from "react";
 import { render } from "../../../test-utils";
 import AdminAddLocation from "./AdminAddLocation";
 import userEvent from "@testing-library/user-event";
 import { userRoles } from "../../../apiConsts";
-import * as amplify from "aws-amplify";
 import * as models from "../../../models";
 import _ from "lodash";
 import { encodeUUID } from "../../../utilities";
-
-jest.mock("aws-amplify");
+import { DataStore } from "aws-amplify";
 
 const fields = {
     name: "Name",
@@ -29,27 +26,7 @@ const contactFields = {
     emailAddress: "Contact email",
 };
 
-const preloadedState = {
-    whoami: {
-        error: null,
-        user: {
-            id: "user-id",
-            roles: [userRoles.admin, userRoles.user],
-        },
-    },
-    tenantId: "tenant-id",
-    loadingReducer: {
-        GET_WHOAMI: false,
-    },
-};
-
-const savedData = new models.Location({
-    ...fields,
-    contact: { ...contactFields, telephoneNumber: "01234567890" },
-    listed: 1,
-    tenantId: "tenant-id",
-    disabled: 0,
-});
+const tenantId = "tenant-id";
 
 describe("AdminAddLocation", () => {
     it("renders", () => {
@@ -57,7 +34,32 @@ describe("AdminAddLocation", () => {
     });
 
     test("adding a location", async () => {
-        amplify.DataStore.save.mockResolvedValue(savedData);
+        const whoami = await DataStore.save(
+            new models.User({
+                displayName: "someone person",
+                roles: [userRoles.admin, userRoles.user],
+            })
+        );
+        const savedData = new models.Location({
+            ...fields,
+            contact: { ...contactFields, telephoneNumber: "01234567890" },
+            listed: 1,
+            state: "",
+            createdBy: whoami,
+            tenantId: "tenant-id",
+            disabled: 0,
+        });
+        const preloadedState = {
+            loadingReducer: {
+                GET_WHOAMI: false,
+            },
+            tenantId,
+            whoami: { user: whoami },
+        };
+        const saveSpy = jest
+            .spyOn(DataStore, "save")
+            .mockResolvedValue(savedData);
+
         render(<AdminAddLocation />, { preloadedState });
         for (const value of Object.values(fields)) {
             userEvent.type(screen.getByRole("textbox", { name: value }), value);
@@ -71,9 +73,10 @@ describe("AdminAddLocation", () => {
         );
         userEvent.click(screen.getByRole("button", { name: "Add location" }));
         await waitFor(() =>
-            expect(amplify.DataStore.save).toHaveBeenCalledWith(
-                expect.objectContaining(_.omit(savedData, "id"))
-            )
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...savedData,
+                id: expect.any(String),
+            })
         );
         expect(screen.getByText("Location added")).toBeInTheDocument();
         const link = screen.getByRole("link", { name: "VIEW" });
@@ -93,10 +96,10 @@ describe("AdminAddLocation", () => {
                         roles: [userRoles.user],
                     },
                 },
+                tenantId,
                 loadingReducer: {
                     GET_WHOAMI: false,
                 },
-                tenantId: "tenant-id",
             },
         });
         expect(
@@ -108,6 +111,19 @@ describe("AdminAddLocation", () => {
     });
 
     test("Add location button should be disabled if the name is not set", async () => {
+        const preloadedState = {
+            whoami: {
+                error: null,
+                user: {
+                    id: "user-id",
+                    roles: [userRoles.user, userRoles.admin],
+                },
+            },
+            tenantId: "tenant-id",
+            loadingReducer: {
+                GET_WHOAMI: false,
+            },
+        };
         render(<AdminAddLocation />, { preloadedState });
         userEvent.type(screen.getByRole("textbox", { name: "Name" }), "");
         expect(
