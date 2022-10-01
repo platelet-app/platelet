@@ -252,7 +252,7 @@ export declare class Task {
 export declare class Location {
   readonly id: string;
   readonly tenantId: string;
-  readonly createdBy: User;
+  readonly createdBy?: User | null;
   readonly name?: string | null;
   readonly listed?: number | null;
   readonly contact?: AddressAndContactDetails | null;

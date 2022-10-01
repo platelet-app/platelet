@@ -115,7 +115,7 @@ type Location
 @model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
-  createdBy: User! @belongsTo
+  createdBy: User @belongsTo
   name: String
   listed: Int
   contact: AddressAndContactDetails

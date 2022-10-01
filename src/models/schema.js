@@ -1076,7 +1076,7 @@ export const schema = {
                     "type": {
                         "model": "User"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
@@ -2197,5 +2197,5 @@ export const schema = {
             }
         }
     },
-    "version": "8053aaee64637b633c08f4750bf0379a"
+    "version": "b8ce63b2ac0ebac8f325fd35cd36422b"
 };
