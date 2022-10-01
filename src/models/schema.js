@@ -185,6 +185,20 @@ export const schema = {
                         "associatedWith": "userCreatedLocationsId"
                     }
                 },
+                "createdVehicles": {
+                    "name": "createdVehicles",
+                    "isArray": true,
+                    "type": {
+                        "model": "Vehicle"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "userCreatedVehiclesId"
+                    }
+                },
                 "disabled": {
                     "name": "disabled",
                     "isArray": false,
@@ -1699,6 +1713,19 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "createdBy": {
+                    "name": "createdBy",
+                    "isArray": false,
+                    "type": {
+                        "model": "User"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "userCreatedVehiclesId"
+                    }
+                },
                 "name": {
                     "name": "name",
                     "isArray": false,
@@ -2197,5 +2224,5 @@ export const schema = {
             }
         }
     },
-    "version": "b8ce63b2ac0ebac8f325fd35cd36422b"
+    "version": "a9d580663de41093d4019156fb6f4fad"
 };

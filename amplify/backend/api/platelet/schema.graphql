@@ -39,6 +39,7 @@ type User
   vehicleAssignments: [VehicleAssignment] @hasMany
   createdTasks: [Task] @hasMany
   createdLocations: [Location] @hasMany
+  createdVehicles: [Vehicle] @hasMany
   disabled: Int @default(value: "0")
 }
 
@@ -68,6 +69,7 @@ type Vehicle
 @model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
+  createdBy: User @belongsTo
   name: String
   manufacturer: String
   model: String
