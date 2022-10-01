@@ -33,6 +33,9 @@ describe("AdminAddLocation", () => {
         render(<AdminAddLocation />);
     });
 
+    beforeEach(async () => {
+        jest.restoreAllMocks();
+    });
     test("adding a location", async () => {
         const whoami = await DataStore.save(
             new models.User({
