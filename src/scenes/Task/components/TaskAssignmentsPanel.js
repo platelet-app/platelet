@@ -35,6 +35,7 @@ import {
 import GetError from "../../../ErrorComponents/GetError";
 import UserChip from "../../../components/UserChip";
 import RecentlyAssignedUsers from "../../../components/RecentlyAssignedUsers";
+import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 
 export const useStyles = makeStyles(() => ({
     italic: {
@@ -68,6 +69,10 @@ function TaskAssignmentsPanel(props) {
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
     const [state, setState] = useState({});
+
+    const currentUserRole = useAssignmentRole(props.taskId);
+    const hasFullPermissions = currentUserRole === userRoles.coordinator;
+
     const dispatch = useDispatch();
     const errorMessage = "Sorry, something went wrong";
 
@@ -242,21 +247,25 @@ function TaskAssignmentsPanel(props) {
                         <Typography variant={"h6"}>
                             People assigned to this task
                         </Typography>
-                        <Tooltip title={"Edit Assignees"}>
-                            <IconButton
-                                aria-label={"Edit Assignees"}
-                                data-cy="edit-task-assignees"
-                                size={"small"}
-                                disabled={props.disabled}
-                                onClick={() =>
-                                    setCollapsed((prevState) => !prevState)
-                                }
-                            >
-                                <EditIcon
-                                    color={!collapsed ? "secondary" : "inherit"}
-                                />
-                            </IconButton>
-                        </Tooltip>
+                        {hasFullPermissions && (
+                            <Tooltip title={"Edit Assignees"}>
+                                <IconButton
+                                    aria-label={"Edit Assignees"}
+                                    data-cy="edit-task-assignees"
+                                    size={"small"}
+                                    disabled={props.disabled}
+                                    onClick={() =>
+                                        setCollapsed((prevState) => !prevState)
+                                    }
+                                >
+                                    <EditIcon
+                                        color={
+                                            !collapsed ? "secondary" : "inherit"
+                                        }
+                                    />
+                                </IconButton>
+                            </Tooltip>
+                        )}
                     </Stack>
                     {collapsed && (
                         <Grid container spacing={1} direction={"row"}>

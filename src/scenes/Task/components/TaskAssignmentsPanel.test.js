@@ -12,6 +12,9 @@ import { DataStore } from "aws-amplify";
 import { useDispatch } from "react-redux";
 import * as initActions from "../../../redux/taskAssignees/taskAssigneesActions";
 
+// For some reason in this file, the query mocks are not being reset properly
+// between tests, so need to run each one individually by adding only
+
 const FakeDispatchComponent = () => {
     const dispatch = useDispatch();
     React.useEffect(() => {
@@ -61,6 +64,7 @@ const preloadedState = {
     whoami: {
         user: new models.User({
             displayName: "some name",
+            roles: [userRoles.coordinator, userRoles.rider, userRoles.user],
             tenantId,
         }),
     },
@@ -106,7 +110,7 @@ describe("TaskAssignmentsPanel", () => {
         });
     });
 
-    it.only("displays chips of the assigned users", async () => {
+    it("displays chips of the assigned users", async () => {
         await saveAssignments();
         const querySpy = jest.spyOn(DataStore, "query");
         render(
@@ -519,5 +523,66 @@ describe("TaskAssignmentsPanel", () => {
         userEvent.click(deleteButtons[0]);
         await waitFor(() => expect(deleteSpy).toHaveBeenCalledTimes(1));
         expect(screen.getByText(errorMessage)).toBeInTheDocument();
+    });
+
+    test.each`
+        role
+        ${userRoles.rider} | ${userRoles.coordinator}
+    `("the views for different role views assigned", async ({ role }) => {
+        const mockTask = new models.Task({
+            status: tasksStatus.active,
+        });
+        await DataStore.save(mockTask);
+
+        const querySpy = jest.spyOn(amplify.DataStore, "query");
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                displayName: "test",
+                roles: [role],
+            })
+        );
+        const mockRoleAssign = new models.TaskAssignee({
+            task: mockTask,
+            role: role,
+            assignee: mockWhoami,
+        });
+        const mockOppositeRoleAssign = new models.TaskAssignee({
+            task: mockTask,
+            role:
+                role === userRoles.rider
+                    ? userRoles.coordinator
+                    : userRoles.rider,
+            assignee: new models.User({
+                displayName: "someone",
+                roles: [userRoles.coordinator, userRoles.rider],
+            }),
+        });
+        const preloadedState = {
+            roleView: role,
+            whoami: {
+                user: mockWhoami,
+            },
+            taskAssigneesReducer: {
+                ready: true,
+                isSynced: true,
+                items: [mockRoleAssign, mockOppositeRoleAssign],
+            },
+        };
+        render(<TaskAssignmentsPanel taskId={mockTask.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+
+        if (role === userRoles.rider) {
+            expect(
+                screen.queryByRole("button", { name: "Edit Assignees" })
+            ).toBeNull();
+        } else {
+            expect(
+                screen.getByRole("button", { name: "Edit Assignees" })
+            ).toBeInTheDocument();
+        }
     });
 });
