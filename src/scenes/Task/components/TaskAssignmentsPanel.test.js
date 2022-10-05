@@ -110,7 +110,7 @@ describe("TaskAssignmentsPanel", () => {
         });
     });
 
-    it("displays chips of the assigned users", async () => {
+    it.only("displays chips of the assigned users", async () => {
         await saveAssignments();
         const querySpy = jest.spyOn(DataStore, "query");
         render(
