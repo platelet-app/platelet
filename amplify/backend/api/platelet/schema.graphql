@@ -146,7 +146,7 @@ type Task
 @model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
-  createdBy: User! @belongsTo
+  createdBy: User @belongsTo
   timeOfCall: AWSDateTime
   timePickedUp: AWSDateTime
 @auth(rules: [
