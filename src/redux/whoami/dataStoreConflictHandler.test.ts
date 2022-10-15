@@ -3,10 +3,31 @@ import * as models from "../../models";
 import dataStoreConflictHandler from "./dataStoreConflictHandler";
 import { PersistentModelConstructor, OpType } from "@aws-amplify/datastore";
 import { DataStore } from "aws-amplify";
+import { DISCARD } from "@aws-amplify/datastore";
 
 const tenantId = "tenantId";
 
 describe("dataStoreConflictHandler", () => {
+    test("return DISCARD for location model", async () => {
+        const mockRemoteLocation = new models.Location({
+            name: "test",
+            tenantId,
+        });
+        const mockLocalLocation = new models.Location({
+            name: "testaaaa",
+            tenantId,
+        });
+
+        const result = await dataStoreConflictHandler({
+            modelConstructor:
+                models.Location as PersistentModelConstructor<models.Location>,
+            localModel: mockLocalLocation,
+            remoteModel: mockRemoteLocation,
+            operation: OpType.UPDATE,
+            attempts: 1,
+        });
+        expect(result).toBe(DISCARD);
+    });
     test.each`
         timeField
         ${"timePickedUp"} | ${"timeDroppedOff"} | ${"timeRiderHome"} | ${"timeCancelled"} | ${"timeRejected"}
