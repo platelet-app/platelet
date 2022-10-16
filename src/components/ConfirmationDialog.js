@@ -6,10 +6,22 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import PropTypes from "prop-types";
 import { Box, Stack } from "@mui/material";
+import { styled } from "@mui/styles";
+
+const RoundedDialog = styled(Dialog)(({ theme }) => ({
+    "& .MuiDialog-paper": {
+        [theme.breakpoints.down("sm")]: {
+            borderRadius: "0em",
+        },
+        [theme.breakpoints.up("sm")]: {
+            borderRadius: "1em",
+        },
+    },
+}));
 
 function ConfirmationDialog(props) {
     return (
-        <Dialog
+        <RoundedDialog
             open={props.open}
             fullScreen={props.fullScreen}
             onClose={props.onClose}
@@ -54,7 +66,7 @@ function ConfirmationDialog(props) {
                     )}
                 </Stack>
             </DialogActions>
-        </Dialog>
+        </RoundedDialog>
     );
 }
 
