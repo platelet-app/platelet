@@ -353,6 +353,7 @@ export const onCreateUser = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timePickedUpSenderName
@@ -536,6 +537,7 @@ export const onUpdateUser = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timePickedUpSenderName
@@ -719,6 +721,7 @@ export const onDeleteUser = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timePickedUpSenderName
@@ -1939,6 +1942,7 @@ export const onCreateLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timePickedUpSenderName
@@ -1967,6 +1971,7 @@ export const onCreateLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timePickedUpSenderName
@@ -1995,6 +2000,7 @@ export const onCreateLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timePickedUpSenderName
@@ -2152,6 +2158,7 @@ export const onUpdateLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timePickedUpSenderName
@@ -2180,6 +2187,7 @@ export const onUpdateLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timePickedUpSenderName
@@ -2208,6 +2216,7 @@ export const onUpdateLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timePickedUpSenderName
@@ -2365,6 +2374,7 @@ export const onDeleteLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timePickedUpSenderName
@@ -2393,6 +2403,7 @@ export const onDeleteLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timePickedUpSenderName
@@ -2421,6 +2432,7 @@ export const onDeleteLocation = /* GraphQL */ `
         items {
           id
           tenantId
+          dateCreated
           timeOfCall
           timePickedUp
           timePickedUpSenderName
@@ -2546,6 +2558,7 @@ export const onCreateTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
       }
+      dateCreated
       timeOfCall
       timePickedUp
       timePickedUpSenderName
@@ -2932,6 +2945,7 @@ export const onUpdateTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
       }
+      dateCreated
       timeOfCall
       timePickedUp
       timePickedUpSenderName
@@ -3318,6 +3332,7 @@ export const onDeleteTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
       }
+      dateCreated
       timeOfCall
       timePickedUp
       timePickedUpSenderName
@@ -3661,6 +3676,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           _deleted
           _lastChangedAt
         }
+        dateCreated
         timeOfCall
         timePickedUp
         timePickedUpSenderName
@@ -3885,6 +3901,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           _deleted
           _lastChangedAt
         }
+        dateCreated
         timeOfCall
         timePickedUp
         timePickedUpSenderName
@@ -4109,6 +4126,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           _deleted
           _lastChangedAt
         }
+        dateCreated
         timeOfCall
         timePickedUp
         timePickedUpSenderName
@@ -4714,6 +4732,7 @@ export const onCreateDeliverable = /* GraphQL */ `
           _deleted
           _lastChangedAt
         }
+        dateCreated
         timeOfCall
         timePickedUp
         timePickedUpSenderName
@@ -4908,6 +4927,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
           _deleted
           _lastChangedAt
         }
+        dateCreated
         timeOfCall
         timePickedUp
         timePickedUpSenderName
@@ -5102,6 +5122,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
           _deleted
           _lastChangedAt
         }
+        dateCreated
         timeOfCall
         timePickedUp
         timePickedUpSenderName
