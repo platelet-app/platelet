@@ -796,6 +796,13 @@ export const schema = {
                         "targetName": "userCreatedTasksId"
                     }
                 },
+                "dateCreated": {
+                    "name": "dateCreated",
+                    "isArray": false,
+                    "type": "AWSDate",
+                    "isRequired": true,
+                    "attributes": []
+                },
                 "timeOfCall": {
                     "name": "timeOfCall",
                     "isArray": false,
@@ -2224,5 +2231,5 @@ export const schema = {
             }
         }
     },
-    "version": "f772eeaa86a1dbaa572617c10eb63c89"
+    "version": "099efccc1630b061d2ff744c69255ee9"
 };
