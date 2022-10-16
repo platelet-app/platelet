@@ -27,11 +27,27 @@ const preloadedState = {
 };
 
 describe("GuidedSetup", () => {
+    const RealDate = Date;
+    const isoDate = "2021-11-29T23:24:58.987Z";
+    const dateString = "2021-11-29";
+    const timeStrings = { timeOfCall: isoDate, dateCreated: dateString };
+
+    function mockDate() {
+        global.Date = class extends RealDate {
+            constructor() {
+                super();
+                return new RealDate(isoDate);
+            }
+        };
+    }
+
     beforeEach(async () => {
         await DataStore.save(whoami);
+        mockDate();
     });
     afterEach(async () => {
         jest.restoreAllMocks();
+        global.Date = RealDate;
         const users = await DataStore.query(models.User);
         const tasks = await DataStore.query(models.Task);
         const comments = await DataStore.query(models.Comment);
@@ -158,8 +174,8 @@ describe("GuidedSetup", () => {
                 1,
                 expect.objectContaining({
                     ...mockTask,
+                    ...timeStrings,
                     id: expect.any(String),
-                    timeOfCall: expect.any(String),
                 })
             )
         );
@@ -171,8 +187,8 @@ describe("GuidedSetup", () => {
                     id: expect.any(String),
                     task: {
                         ...mockTask,
+                        ...timeStrings,
                         id: expect.any(String),
-                        timeOfCall: expect.any(String),
                     },
                 })
             )
@@ -234,7 +250,7 @@ describe("GuidedSetup", () => {
                 expect.objectContaining({
                     ...mockTask,
                     id: expect.any(String),
-                    timeOfCall: expect.any(String),
+                    ...timeStrings,
                 })
             )
         );
@@ -247,7 +263,7 @@ describe("GuidedSetup", () => {
                     task: {
                         ...mockTask,
                         id: expect.any(String),
-                        timeOfCall: expect.any(String),
+                        ...timeStrings,
                     },
                 })
             )
@@ -323,7 +339,7 @@ describe("GuidedSetup", () => {
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockTask,
-            timeOfCall: expect.any(String),
+            ...timeStrings,
             id: expect.any(String),
         });
     });
@@ -361,7 +377,7 @@ describe("GuidedSetup", () => {
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockTask,
-            timeOfCall: expect.any(String),
+            ...timeStrings,
             id: expect.any(String),
         });
     });
@@ -407,7 +423,7 @@ describe("GuidedSetup", () => {
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockTask,
             establishmentLocation: { ...mockLocation, id: expect.any(String) },
-            timeOfCall: expect.any(String),
+            ...timeStrings,
             id: expect.any(String),
         });
     });
@@ -455,7 +471,7 @@ describe("GuidedSetup", () => {
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockTask,
-            timeOfCall: expect.any(String),
+            ...timeStrings,
             id: expect.any(String),
         });
     });
@@ -501,7 +517,7 @@ describe("GuidedSetup", () => {
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockTask,
-            timeOfCall: expect.any(String),
+            ...timeStrings,
             id: expect.any(String),
         });
     });
@@ -564,7 +580,7 @@ describe("GuidedSetup", () => {
                 1,
                 expect.objectContaining({
                     ..._.omit(mockTask, "id"),
-                    timeOfCall: expect.any(String),
+                    ...timeStrings,
                 })
             )
         );
@@ -581,7 +597,7 @@ describe("GuidedSetup", () => {
                 task: {
                     ...mockTask,
                     id: expect.any(String),
-                    timeOfCall: expect.any(String),
+                    ...timeStrings,
                 },
             })
         );
@@ -592,7 +608,7 @@ describe("GuidedSetup", () => {
                 task: {
                     ...mockTask,
                     id: expect.any(String),
-                    timeOfCall: expect.any(String),
+                    ...timeStrings,
                 },
             })
         );
