@@ -21,13 +21,14 @@ export default async function generateMultipleDuplicatedTaskModels(
     assigneeRole: models.Role | null = null,
     copyCommentsUserId: string | null = null
 ) {
-    debugger;
     if (!tenantId) throw new Error("tenantId is required");
     if (!whoamiId) throw new Error("whoamiId is required");
     const whoami = await DataStore.query(models.User, whoamiId);
     if (!whoami) throw new Error("author not found");
     const allAssignees = await DataStore.query(models.TaskAssignee);
     const deliverables = await DataStore.query(models.Deliverable);
+    const date = new Date();
+    const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     const result = await Promise.all(
         Object.values(tasks).map(async (task) => {
             let {
@@ -95,6 +96,7 @@ export default async function generateMultipleDuplicatedTaskModels(
                 dropOffLocation,
                 createdBy: whoami,
                 establishmentLocation,
+                dateCreated: today.toISOString().split("T")[0],
                 tenantId,
             });
 
@@ -154,6 +156,7 @@ export default async function generateMultipleDuplicatedTaskModels(
                     ...newTaskData,
                     riderResponsibility,
                     status: tasksStatus.active,
+                    dateCreated: today.toISOString().split("T")[0],
                     tenantId,
                 });
                 // go back and update the now out of date task references

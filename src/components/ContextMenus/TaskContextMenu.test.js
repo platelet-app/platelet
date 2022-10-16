@@ -14,6 +14,7 @@ const tenantId = "tenantId";
 describe("TaskContextMenu", () => {
     const RealDate = Date;
     const isoDate = "2021-11-29T23:24:58.987Z";
+    const dateString = "2021-11-29";
 
     function mockDate() {
         global.Date = class extends RealDate {
@@ -485,6 +486,7 @@ describe("TaskContextMenu", () => {
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...task,
+            dateCreated: dateString,
             createdBy: whoami,
             tenantId,
             id: expect.not.stringMatching(task.id),
@@ -496,6 +498,7 @@ describe("TaskContextMenu", () => {
                 id: expect.not.stringMatching(del.id),
                 task: {
                     ...task,
+                    dateCreated: dateString,
                     createdBy: whoami,
                     id: expect.not.stringMatching(task.id),
                 },
@@ -508,6 +511,7 @@ describe("TaskContextMenu", () => {
             task: {
                 ...task,
                 createdBy: whoami,
+                dateCreated: dateString,
                 id: expect.any(String),
             },
         });
