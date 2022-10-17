@@ -1,4 +1,3 @@
-import React from "react";
 import { createMatchMedia, render } from "../../../test-utils";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import TasksGridColumn from "./TasksGridColumn";
@@ -15,11 +14,25 @@ import ActiveRidersChips from "./ActiveRidersChips";
 const tenantId = "tenantId";
 
 describe("MultipleSelectionActionsMenu", () => {
+    const RealDate = Date;
+    const isoDate = "2021-11-29T23:24:58.987Z";
+    const dateString = "2021-11-29";
+
+    function mockDate() {
+        global.Date = class extends RealDate {
+            constructor() {
+                super();
+                return new RealDate(isoDate);
+            }
+        };
+    }
+
     beforeEach(() => {
         jest.restoreAllMocks();
     });
     afterEach(async () => {
         jest.restoreAllMocks();
+        global.Date = RealDate;
         const tasks = await DataStore.query(models.Task);
         const users = await DataStore.query(models.User);
         const assignees = await DataStore.query(models.TaskAssignee);
@@ -1225,6 +1238,7 @@ describe("MultipleSelectionActionsMenu", () => {
     `(
         "duplicate with listed and unlisted locations",
         async ({ listedType }) => {
+            mockDate();
             const listed = listedType === "unlisted" ? 0 : 1;
             const mockWhoami = await DataStore.save(
                 new models.User({
@@ -1341,6 +1355,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 mockTasks.forEach((t) => {
                     expect(saveSpy).toHaveBeenCalledWith({
                         ...t,
+                        dateCreated: dateString,
                         id: expect.not.stringMatching(t.id),
                         tenantId,
                     });
@@ -1348,6 +1363,7 @@ describe("MultipleSelectionActionsMenu", () => {
             } else {
                 expect(saveSpy).toHaveBeenCalledWith({
                     ...mockTasks[0],
+                    dateCreated: dateString,
                     tenantId,
                     id: expect.not.stringMatching(mockTasks[0].id),
                     pickUpLocation: {
@@ -1368,6 +1384,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 });
                 expect(saveSpy).toHaveBeenCalledWith({
                     ...mockTasks[1],
+                    dateCreated: dateString,
                     tenantId,
                     id: expect.not.stringMatching(mockTasks[1].id),
                     pickUpLocation: {
@@ -1407,6 +1424,7 @@ describe("MultipleSelectionActionsMenu", () => {
         role
         ${userRoles.coordinator} | ${"ALL"}
     `("duplicate some tasks and assign self", async ({ role }) => {
+        mockDate();
         let actualRole = [userRoles.coordinator, "ALL"].includes(role)
             ? userRoles.coordinator
             : userRoles.rider;
@@ -1557,6 +1575,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 tenantId,
                 createdBy: mockWhoami,
                 id: expect.not.stringMatching(t.id),
+                dateCreated: dateString,
             });
         });
         const mockAssigns = mockTasks.map(
@@ -1565,6 +1584,7 @@ describe("MultipleSelectionActionsMenu", () => {
                     task: {
                         ...task,
                         createdBy: mockWhoami,
+                        dateCreated: dateString,
                     },
                     assignee: mockWhoami,
                     role: actualRole,
@@ -1580,6 +1600,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 task: {
                     ...a.task,
                     createdBy: mockWhoami,
+                    dateCreated: dateString,
                     id: expect.not.stringMatching(a.task.id),
                 },
             });
@@ -1593,6 +1614,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 task: {
                     ...a.task,
                     createdBy: mockWhoami,
+                    dateCreated: dateString,
                     id: expect.not.stringMatching(a.task.id),
                 },
             });
@@ -1604,6 +1626,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 task: {
                     ...d.task,
                     createdBy: mockWhoami,
+                    dateCreated: dateString,
                     id: expect.not.stringMatching(d.task.id),
                 },
                 id: expect.not.stringMatching(d.id),

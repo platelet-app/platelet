@@ -22,6 +22,7 @@ export async function addTask(whoamiId, tenantId) {
         throw new Error("Missing required parameters");
     }
     const date = new Date();
+    const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     const timeOfCall = date.toISOString();
     const createdBy = await DataStore.query(models.User, whoamiId);
     if (!createdBy) {
@@ -32,6 +33,7 @@ export async function addTask(whoamiId, tenantId) {
             status: tasksStatus.new,
             timeOfCall,
             createdBy,
+            dateCreated: today.toISOString().split("T")[0],
             tenantId,
         })
     );

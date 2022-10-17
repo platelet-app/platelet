@@ -789,12 +789,19 @@ export const schema = {
                     "type": {
                         "model": "User"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
                         "targetName": "userCreatedTasksId"
                     }
+                },
+                "dateCreated": {
+                    "name": "dateCreated",
+                    "isArray": false,
+                    "type": "AWSDate",
+                    "isRequired": true,
+                    "attributes": []
                 },
                 "timeOfCall": {
                     "name": "timeOfCall",
@@ -2224,5 +2231,5 @@ export const schema = {
             }
         }
     },
-    "version": "a9d580663de41093d4019156fb6f4fad"
+    "version": "099efccc1630b061d2ff744c69255ee9"
 };

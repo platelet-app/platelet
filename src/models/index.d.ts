@@ -225,7 +225,8 @@ export declare class TaskAssignee {
 export declare class Task {
   readonly id: string;
   readonly tenantId: string;
-  readonly createdBy: User;
+  readonly createdBy?: User | null;
+  readonly dateCreated: string;
   readonly timeOfCall?: string | null;
   readonly timePickedUp?: string | null;
   readonly timePickedUpSenderName?: string | null;

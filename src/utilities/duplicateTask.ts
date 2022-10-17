@@ -78,6 +78,8 @@ export default async function duplicateTask(
             establishmentLocation.id
         );
     }
+    const date = new Date();
+    const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     let newTaskData = new models.Task({
         ...rest,
         status: models.TaskStatus.NEW,
@@ -86,6 +88,7 @@ export default async function duplicateTask(
         establishmentLocation,
         tenantId,
         createdBy: author,
+        dateCreated: today.toISOString().split("T")[0],
     });
     let assignment = null;
     if (assigneeId && assigneeRole) {
@@ -99,6 +102,7 @@ export default async function duplicateTask(
                 establishmentLocation,
                 tenantId,
                 createdBy: author,
+                dateCreated: today.toISOString().split("T")[0],
             });
         }
         const assignee = await DataStore.query(models.User, assigneeId);
