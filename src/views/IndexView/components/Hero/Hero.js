@@ -77,6 +77,18 @@ const Hero = ({ themeMode = "light", className, ...rest }) => {
     </Button>
   );
 
+  const viewCode = (
+    <Button
+      variant="contained"
+      color="primary"
+      component="a"
+      target="_blank"
+      href="https://github.com/platelet-app/platelet"
+    >
+      View the code
+    </Button>
+  );
+
   const loginButton = (
     <Button
       style={{ display: "none" }}
@@ -99,7 +111,7 @@ const Hero = ({ themeMode = "light", className, ...rest }) => {
         variant: "h2",
         color: "textPrimary",
       }}
-      ctaGroup={[viewDemo]}
+      ctaGroup={[viewDemo, viewCode]}
       data-aos="fade-right"
       disableGutter
       className={classes.leftSideContent}
