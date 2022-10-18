@@ -65,7 +65,21 @@ export function DashboardDetailTabs(props) {
 
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMd = useMediaQuery(theme.breakpoints.down("md"));
     const dashboardTabIndex = useSelector(dashboardTabIndexSelector);
+
+    const isCoordinator =
+        whoami && whoami.roles.includes(userRoles.coordinator);
+
+    let roleViewText = "";
+
+    if (roleView) {
+        if (isMd) {
+            roleViewText = `${roleView.substring(0, 5).toUpperCase()}`;
+        } else {
+            roleViewText = roleView.toUpperCase();
+        }
+    }
 
     const handleChange = (newValue) => {
         //props.onChange(event, newValue);
@@ -152,41 +166,33 @@ export function DashboardDetailTabs(props) {
                 justifyContent={"flex-start"}
                 alignItems={"center"}
             >
-                <Hidden key="roleView" mdDown>
-                    <Typography
-                        onClick={(event) => {
-                            setAnchorElRoleMenu(event.currentTarget);
-                        }}
-                        sx={{ cursor: "pointer" }}
-                        data-cy="role-identifier"
-                    >
-                        {`${roleView} view`.toUpperCase()}
-                    </Typography>
-                </Hidden>
-                <Hidden key="roleViewMobile" mdUp>
-                    <Typography
-                        onClick={(event) => {
-                            setAnchorElRoleMenu(event.currentTarget);
-                        }}
-                        sx={{ cursor: "pointer" }}
-                        data-cy="role-identifier"
-                    >
-                        {roleView &&
-                            `${roleView.substring(0, 5).toUpperCase()}`}
-                    </Typography>
-                </Hidden>
-                <IconButton
-                    key="role-menu-button"
-                    data-cy="role-menu-button"
-                    aria-controls="simple-menu"
-                    aria-haspopup="true"
-                    onClick={(event) => {
-                        setAnchorElRoleMenu(event.currentTarget);
-                    }}
-                    size="large"
-                >
-                    <ArrowDropDownIcon />
-                </IconButton>
+                {isCoordinator && (
+                    <>
+                        <Typography
+                            key="roleView"
+                            onClick={(event) => {
+                                setAnchorElRoleMenu(event.currentTarget);
+                            }}
+                            sx={{ cursor: "pointer" }}
+                            data-cy="role-identifier"
+                        >
+                            {roleViewText}
+                        </Typography>
+                        <IconButton
+                            key="role-menu-button"
+                            data-cy="role-menu-button"
+                            aria-controls="simple-menu"
+                            aria-haspopup="true"
+                            onClick={(event) => {
+                                setAnchorElRoleMenu(event.currentTarget);
+                            }}
+                            size="large"
+                        >
+                            <ArrowDropDownIcon />
+                        </IconButton>
+                    </>
+                )}
+
                 <Hidden key="addclearbutton" smDown>
                     {["ALL", userRoles.coordinator].includes(roleView) &&
                         addClearButton}
