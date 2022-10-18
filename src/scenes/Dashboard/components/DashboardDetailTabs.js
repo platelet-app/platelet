@@ -86,7 +86,7 @@ export function DashboardDetailTabs(props) {
         dispatch(setDashboardTabIndex(newValue));
     };
     const tabs = (
-        <Stack spacing={isSm ? 1 : 2} direction="row">
+        <Stack sx={{ padding: 0.5 }} spacing={isSm ? 1 : 2} direction="row">
             <Chip
                 key="dashboard-tab-0"
                 aria-label="Dashboard in Progress"

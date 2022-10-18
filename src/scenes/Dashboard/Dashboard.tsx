@@ -101,9 +101,13 @@ function Dashboard() {
             <Hidden mdUp>
                 <DashboardDetailTabs />
             </Hidden>
-            <Divider />
+            <Hidden mdDown>
+                <Divider />
+            </Hidden>
             <MultipleSelectionActionsMenu />
-            <Divider />
+            <Hidden mdDown>
+                <Divider />
+            </Hidden>
             {[userRoles.coordinator, "ALL"].includes(roleView) && (
                 <>
                     <ActiveRidersChips />
