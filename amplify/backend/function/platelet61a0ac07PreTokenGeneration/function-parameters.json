@@ -1,0 +1,17 @@
+{
+  "trigger": true,
+  "modules": [
+    "alter-claims"
+  ],
+  "parentResource": "platelet61a0ac07",
+  "functionName": "platelet61a0ac07PreTokenGeneration",
+  "resourceName": "platelet61a0ac07PreTokenGeneration",
+  "parentStack": "auth",
+  "triggerEnvs": [],
+  "triggerDir": "/snapshot/repo/build/node_modules/@aws-amplify/amplify-category-auth/provider-utils/awscloudformation/triggers/PreTokenGeneration",
+  "triggerTemplate": "PreTokenGeneration.json.ejs",
+  "triggerEventPath": "PreTokenGeneration.event.json",
+  "roleName": "platelet61a0ac07PreTokenGeneration",
+  "skipEdit": true,
+  "enableCors": false
+}
