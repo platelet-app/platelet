@@ -9,12 +9,24 @@ export type AmplifyDependentResourcesAttributes = {
             "AppClientIDWeb": "string",
             "AppClientID": "string",
             "CreatedSNSRole": "string"
+        },
+        "userPoolGroups": {
+            "SUPERGroupRole": "string",
+            "ADMINGroupRole": "string",
+            "RIDERGroupRole": "string",
+            "COORDINATORGroupRole": "string",
+            "USERGroupRole": "string"
         }
     },
     "api": {
         "platelet": {
             "GraphQLAPIIdOutput": "string",
             "GraphQLAPIEndpointOutput": "string"
+        },
+        "AdminQueries": {
+            "RootUrl": "string",
+            "ApiName": "string",
+            "ApiId": "string"
         }
     },
     "function": {
@@ -61,6 +73,12 @@ export type AmplifyDependentResourcesAttributes = {
             "LambdaExecutionRole": "string"
         },
         "plateletSendUserFeedback": {
+            "Name": "string",
+            "Arn": "string",
+            "Region": "string",
+            "LambdaExecutionRole": "string"
+        },
+        "AdminQueriesfd2ab17a": {
             "Name": "string",
             "Arn": "string",
             "Region": "string",
