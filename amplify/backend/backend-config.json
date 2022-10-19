@@ -4,7 +4,40 @@
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
-      "customAuth": false
+      "customAuth": false,
+      "frontendAuthConfig": {
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": []
+        },
+        "mfaConfiguration": "OPTIONAL",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      }
+    },
+    "userPoolGroups": {
+      "service": "Cognito-UserPool-Groups",
+      "dependsOn": [
+        {
+          "category": "auth",
+          "resourceName": "platelet61a0ac07",
+          "attributes": [
+            "UserPoolId",
+            "AppClientIDWeb",
+            "AppClientID",
+            "IdentityPoolId"
+          ]
+        }
+      ]
     }
   },
   "api": {
@@ -32,6 +65,25 @@
           "resourceName": "platelet61a0ac07",
           "attributes": [
             "UserPoolId"
+          ]
+        }
+      ]
+    },
+    "AdminQueries": {
+      "dependsOn": [
+        {
+          "category": "auth",
+          "resourceName": "platelet61a0ac07",
+          "attributes": [
+            "UserPoolId"
+          ]
+        },
+        {
+          "category": "function",
+          "resourceName": "AdminQueriesfd2ab17a",
+          "attributes": [
+            "Arn",
+            "Name"
           ]
         }
       ]
