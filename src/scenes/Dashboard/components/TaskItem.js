@@ -50,6 +50,7 @@ const useStyles = (isSelected) =>
         },
         overlay: {
             position: "absolute",
+            borderRadius: "0.8em",
             display: isSelected ? "inline" : "none",
             top: 0,
             left: 0,
