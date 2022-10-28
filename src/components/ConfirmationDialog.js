@@ -8,14 +8,9 @@ import PropTypes from "prop-types";
 import { Box, Stack } from "@mui/material";
 import { styled } from "@mui/styles";
 
-const RoundedDialog = styled(Dialog)(({ theme }) => ({
+const RoundedDialog = styled(Dialog)(({ fullScreen }) => ({
     "& .MuiDialog-paper": {
-        [theme.breakpoints.down("sm")]: {
-            borderRadius: "0em",
-        },
-        [theme.breakpoints.up("sm")]: {
-            borderRadius: "1em",
-        },
+        borderRadius: fullScreen ? "0em" : "1em",
     },
 }));
 
