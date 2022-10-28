@@ -18,6 +18,9 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: Install dependencies
       run: npm ci
+    - name: Install aws amplify cli globally
+      with:
+        exec: npm install -g @aws-amplify/cli@latest
     - name: pull amplify environment
       uses: ambientlight/amplify-cli-action@0.3.0
       with:
