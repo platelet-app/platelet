@@ -21,9 +21,9 @@ jobs:
     - name: pull amplify environment
       uses: ambientlight/amplify-cli-action@0.3.0
       with:
-        exec: npm install -g @aws-amplify/cli@latest
         amplify_command: pull
         amplify_env: kikelia
+        amplify_cli_version: 'latest'
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
