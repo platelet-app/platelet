@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="app.platelet.platelet" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>platelet.app</name>
+    <description>platelet dispatch for blood bikes</description>
+    <author email="info@platelet.app" href="https://platelet.app">
+        platelet.app
+    </author>
+    <content src="/" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <platform name="android">
+        <!--
+            ldpi    : 36x36 px
+            mdpi    : 48x48 px
+            hdpi    : 72x72 px
+            xhdpi   : 96x96 px
+            xxhdpi  : 144x144 px
+            xxxhdpi : 192x192 px
+        -->
+        <icon src="icon/ldpi.png" density="ldpi" />
+        <icon src="icon/mdpi.png" density="mdpi" />
+        <icon src="icon/hdpi.png" density="hdpi" />
+        <icon src="icon/xhdpi.png" density="xhdpi" />
+        <icon src="icon/xxhdpi.png" density="xxhdpi" />
+        <icon src="icon/xxxhdpi.png" density="xxxhdpi" />
+    </platform>
+</widget>
