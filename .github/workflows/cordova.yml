@@ -3,7 +3,7 @@ name: Cordova Android builds
 on:
   push:
     branches:
-      - platelet_release
+      - cordova_builds
 jobs:
   build:
     runs-on: ubuntu-latest
