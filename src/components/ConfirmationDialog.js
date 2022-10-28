@@ -41,6 +41,8 @@ function ConfirmationDialog({ onCancel, open, ...props }) {
             dispatch(modalTrackerActions.removeModal(currentId));
         };
     }, [open, dispatch]);
+
+    // cordova back button
     const onBackKeyDown = React.useCallback(() => {
         if (modalTracker[modalTracker.length - 1] === modalId.current) {
             onCancel();
@@ -60,6 +62,7 @@ function ConfirmationDialog({ onCancel, open, ...props }) {
             };
         }
     }, [onBackKeyDown, open]);
+
     return (
         <RoundedDialog
             open={open}

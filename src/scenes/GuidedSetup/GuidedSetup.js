@@ -194,6 +194,12 @@ export const GuidedSetup = () => {
         setEstablishmentSameAsPickup((prevState) => !prevState);
     };
 
+    const onCloseForm = React.useCallback(() => {
+        dispatch(setGuidedSetupOpen(false));
+        setEstablishmentSameAsPickup(initialEstablishmentSameAsPickUpState);
+        setTabIndex(0);
+    }, [dispatch]);
+
     const handleSave = async () => {
         setIsPosting(true);
         try {
@@ -222,7 +228,7 @@ export const GuidedSetup = () => {
         onCloseForm();
     };
 
-    const handleDiscard = () => {
+    const handleDiscard = React.useCallback(() => {
         if (
             !_.isEqual(formValues, defaultValues) ||
             !_.isEqual(requesterContact.current, defaultContact) ||
@@ -235,7 +241,38 @@ export const GuidedSetup = () => {
         } else {
             onCloseForm();
         }
-    };
+    }, [
+        formValues,
+        deliverables,
+        locations,
+        requesterContact,
+        comment,
+        onCloseForm,
+    ]);
+
+    // cordova back button
+    React.useEffect(() => {
+        if (window.cordova) {
+            if (guidedSetupOpen) {
+                document.addEventListener("backbutton", handleDiscard, false);
+            } else {
+                document.removeEventListener(
+                    "backbutton",
+                    handleDiscard,
+                    false
+                );
+            }
+            return () => {
+                if (window.cordova) {
+                    document.removeEventListener(
+                        "backbutton",
+                        handleDiscard,
+                        false
+                    );
+                }
+            };
+        }
+    }, [handleDiscard, guidedSetupOpen]);
 
     const handleCommentVisibilityChange = (value) => {
         comment.current = { ...comment.current, visibility: value };
@@ -274,12 +311,6 @@ export const GuidedSetup = () => {
             return;
         }
         deliverables.current = _.omit(deliverables.current, value);
-    };
-
-    const onCloseForm = () => {
-        dispatch(setGuidedSetupOpen(false));
-        setEstablishmentSameAsPickup(initialEstablishmentSameAsPickUpState);
-        setTabIndex(0);
     };
 
     useEffect(() => {
