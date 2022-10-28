@@ -36,8 +36,8 @@ jobs:
         GENERATE_SOURCEMAP: false
     - name: NPM test
       run: npm test -- --silent
-    - name: Use oxr463/setup-cordova
-      uses: oxr463/setup-cordova@0.0.3
+    - name: Use duckbytes/setup-cordova
+      uses: duckbytes/setup-cordova@0.0.3
       with:
         exec: |
           cd cordova
