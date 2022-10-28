@@ -37,7 +37,7 @@ jobs:
     - name: NPM test
       run: npm test -- --silent
     - name: Use duckbytes/setup-cordova
-      uses: duckbytes/setup-cordova@0.0.3
+      uses: duckbytes/setup-cordova@0.0.4
       with:
         exec: |
           cd cordova
