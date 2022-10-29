@@ -5,10 +5,6 @@ import * as modalTrackerActions from "../redux/modalTracker/modalTrackerActions"
 import { useSelector } from "react-redux";
 import { modalTrackerSelector } from "../redux/Selectors";
 
-declare let window: {
-    cordova: any;
-};
-
 export function useCordovaBackButton(
     handler: () => void,
     enabled: boolean = true
@@ -48,7 +44,6 @@ export function useCordovaBackButton(
     );
 
     React.useEffect(() => {
-        const target = targetRef.current;
         if (enabled) {
             document.addEventListener("backbutton", onBackKeyDown, false);
             return () => {
