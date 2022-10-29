@@ -124,7 +124,7 @@ const ItemWrapper = ({
     // we want to use the long press event to select the item
     if (isSm || window.cordova)
         return (
-            <Box ref={boxRef} ionClick={handleClick}>
+            <Box ref={boxRef} onClick={handleClick}>
                 {children}
             </Box>
         );
