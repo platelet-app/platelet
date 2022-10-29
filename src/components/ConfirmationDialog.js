@@ -7,10 +7,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import PropTypes from "prop-types";
 import { Box, Stack } from "@mui/material";
 import { styled } from "@mui/styles";
-import { useDispatch, useSelector } from "react-redux";
-import { modalTrackerSelector } from "../redux/Selectors";
-import { v4 as uuidv4 } from "uuid";
-import * as modalTrackerActions from "../redux/modalTracker/modalTrackerActions";
+import { useCordovaBackButton } from "../hooks/useCordovaBackButton";
 
 const RoundedDialog = styled(Dialog)(({ theme }) => ({
     "& .MuiDialog-paper": {
@@ -24,45 +21,7 @@ const RoundedDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 function ConfirmationDialog({ onCancel, open, ...props }) {
-    const modalId = React.useRef(uuidv4());
-    const modalTracker = useSelector(modalTrackerSelector);
-    const dispatch = useDispatch();
-    React.useEffect(() => {
-        console.log("tracker", modalTracker);
-    }, [modalTracker]);
-    React.useEffect(() => {
-        const currentId = modalId.current;
-        if (open) {
-            dispatch(modalTrackerActions.appendModal(currentId));
-        } else {
-            dispatch(modalTrackerActions.removeModal(currentId));
-        }
-        return () => {
-            dispatch(modalTrackerActions.removeModal(currentId));
-        };
-    }, [open, dispatch]);
-
-    // cordova back button
-    const onBackKeyDown = React.useCallback(() => {
-        if (modalTracker[modalTracker.length - 1] === modalId.current) {
-            onCancel();
-        }
-    }, [onCancel, modalTracker]);
-    React.useEffect(() => {
-        if (window.cordova && open) {
-            document.addEventListener("backbutton", onBackKeyDown, false);
-            return () => {
-                if (window.cordova) {
-                    document.removeEventListener(
-                        "backbutton",
-                        onBackKeyDown,
-                        false
-                    );
-                }
-            };
-        }
-    }, [onBackKeyDown, open]);
-
+    useCordovaBackButton(onCancel, open);
     return (
         <RoundedDialog
             open={open}
