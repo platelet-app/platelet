@@ -31,6 +31,7 @@ import { commentVisibility } from "../../apiConsts";
 import { showHide } from "../../styles/common";
 import _ from "lodash";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
+import { useCordovaBackButton } from "../../hooks/useCordovaBackButton";
 
 const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -250,29 +251,7 @@ export const GuidedSetup = () => {
         onCloseForm,
     ]);
 
-    // cordova back button
-    React.useEffect(() => {
-        if (window.cordova) {
-            if (guidedSetupOpen) {
-                document.addEventListener("backbutton", handleDiscard, false);
-            } else {
-                document.removeEventListener(
-                    "backbutton",
-                    handleDiscard,
-                    false
-                );
-            }
-            return () => {
-                if (window.cordova) {
-                    document.removeEventListener(
-                        "backbutton",
-                        handleDiscard,
-                        false
-                    );
-                }
-            };
-        }
-    }, [handleDiscard, guidedSetupOpen]);
+    useCordovaBackButton(handleDiscard, guidedSetupOpen);
 
     const handleCommentVisibilityChange = (value) => {
         comment.current = { ...comment.current, visibility: value };
