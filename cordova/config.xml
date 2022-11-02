@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="app.platelet.platelet" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="app.platelet.platelet" version="1.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>platelet.app</name>
     <description>platelet dispatch for blood bikes</description>
     <author email="info@platelet.app" href="https://platelet.app">
@@ -17,6 +17,7 @@
             xxhdpi  : 144x144 px
             xxxhdpi : 192x192 px
         -->
+        <preference name="android-targetSdkVersion" value="31" />
         <icon src="icon/ldpi.png" density="ldpi" />
         <icon src="icon/mdpi.png" density="mdpi" />
         <icon src="icon/hdpi.png" density="hdpi" />
