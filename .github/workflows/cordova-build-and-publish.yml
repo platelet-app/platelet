@@ -2,8 +2,8 @@ name: Cordova Android builds
 
 on:
   push:
-    branches:
-      - cordova_builds
+    tags:
+      - v1.*
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -39,8 +39,8 @@ jobs:
         REACT_APP_POPULATE_FAKE_DATA: false
         CI: false
         GENERATE_SOURCEMAP: false
-          #- name: NPM test
-          #  run: npm test -- --silent
+    - name: NPM test
+      run: npm test -- --silent
     - name: Decode Keystore
       id: decode_keystore
       uses: timheuer/base64-to-file@v1.2
@@ -68,3 +68,13 @@ jobs:
       with:
         name: installers
         path: installers
+    - name: Publish aab file to Play
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+        packageName: app.platelet.platelet
+        releaseFiles: installers/app-release.aab
+        track: internal
+        status: inProgress
+        inAppUpdatePriority: 2
+        userFraction: 0.99
