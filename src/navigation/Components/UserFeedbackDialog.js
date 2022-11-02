@@ -20,6 +20,7 @@ import {
     displayInfoNotification,
 } from "../../redux/notifications/NotificationsActions";
 import { useDispatch } from "react-redux";
+import { useCordovaBackButton } from "../../hooks/useCordovaBackButton";
 
 const initialState = {
     email: "",
@@ -38,6 +39,8 @@ function UserFeedbackDialog({ open, onClose }) {
         setState((prevState) => ({ ...prevState, body: "" }));
         onClose();
     }, [onClose]);
+
+    useCordovaBackButton(handleFinished, open);
 
     const sendFeedback = React.useCallback(
         (emailAddress, body) => {
