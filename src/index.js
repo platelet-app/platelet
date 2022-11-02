@@ -16,15 +16,23 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import ServiceWorkerUpdater from "./ServiceWorkerUpdater";
 
-ReactDOM.render(
-    <Provider store={store}>
-        <ServiceWorkerUpdater />
-        <BrowserRouter>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <ReactNotification />
-                <App />
-            </LocalizationProvider>
-        </BrowserRouter>
-    </Provider>,
-    document.getElementById("root")
-);
+const startApp = () => {
+    ReactDOM.render(
+        <Provider store={store}>
+            <ServiceWorkerUpdater />
+            <BrowserRouter>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <ReactNotification />
+                    <App />
+                </LocalizationProvider>
+            </BrowserRouter>
+        </Provider>,
+        document.getElementById("root")
+    );
+};
+
+if (!window.cordova) {
+    startApp();
+} else {
+    document.addEventListener("deviceready", startApp, false);
+}
