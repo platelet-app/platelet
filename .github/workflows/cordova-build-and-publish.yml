@@ -7,15 +7,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.ref_name }}
+    environment: ${{ github.event.base.ref }}
     strategy:
       matrix:
         node-version: [14.x]
     steps:
     - name: test
       run: |
-        echo ${{ github.event.ref_name }}
-        echo ${{ secrets.AMPLIFY_APP_ID }}
+        echo ${{ github.event.base.ref }}
         #    - uses: actions/checkout@v3
         #    - name: Use Node.js ${{ matrix.node-version }}
         #      uses: actions/setup-node@v3
