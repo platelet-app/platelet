@@ -12,6 +12,10 @@ jobs:
       matrix:
         node-version: [14.x]
     steps:
+    - name: test
+      run: |
+        echo ${{ github.event.base_ref }}
+        echo ${{ secrets.AMPLIFY_APP_ID }}
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
