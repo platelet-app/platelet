@@ -74,6 +74,92 @@ function generateCountedHeader(count, fields, prefix) {
         .flat();
 }
 
+async function generateCSVAltForFreewheelersSheet(data) {
+    const rows = [];
+    data.sort((a, b) => {
+        return new Date(a.timeOfCall) - new Date(b.timeOfCall);
+    });
+    data.forEach((item) => {
+        let row = [];
+        const {
+            pickUpLocation,
+            dropOffLocation,
+            requesterContact,
+            comments,
+            items,
+            assignees,
+            createdBy,
+            ...rest
+        } = item;
+
+        row.push(moment(item.timeOfCall).format("DD-MM-YYYY"));
+        row.push(moment(item.timeOfCall).format("HH:mm"));
+        row.push(requesterContact.name);
+        row.push(requesterContact.telephoneNumber);
+        let prior = "";
+        if (["CANCELLED", "REJECTED"].includes(item.status)) {
+            prior = item.status === "REJECTED" ? "Rejected" : "Cancelled";
+        } else if (item.priority === "MEDIUM") {
+            prior = "Urgent";
+        } else if (item.priority === "LOW") {
+            prior = "Non-urgent";
+        }
+        row.push(prior);
+        let itemsString = "";
+        items.forEach((i) => {
+            if (i.deliverableType) {
+                if (items.length === 1) {
+                    itemsString = `${i.deliverableType.label}`;
+                } else {
+                    itemsString += `${i.deliverableType.label}, `;
+                }
+            }
+        });
+        row.push(itemsString);
+        if (pickUpLocation?.listed === 0 || dropOffLocation?.listed === 0) {
+            row.push("maybe patient?");
+        } else {
+            row.push("");
+        }
+        row.push(
+            pickUpLocation?.name ? pickUpLocation.name : pickUpLocation?.line1
+        );
+        row.push(
+            dropOffLocation?.name
+                ? dropOffLocation.name
+                : dropOffLocation?.line1
+        );
+        row.push("");
+        row.push("");
+        row.push(item.riderResponsibility);
+        let assignee = "";
+        assignees.forEach((a) => {
+            if (a.role === "RIDER") {
+                assignee = a.assignee.displayName;
+            }
+        });
+        row.push(assignee);
+        row.push(
+            item.timePickedUp ? moment(item.timePickedUp).format("HH:mm") : ""
+        );
+        row.push(
+            item.timeDroppedOff
+                ? moment(item.timeDroppedOff).format("HH:mm")
+                : ""
+        );
+        row.push(
+            item.timeRiderHome ? moment(item.timeRiderHome).format("HH:mm") : ""
+        );
+        let commentsString = "";
+        comments.forEach((c) => {
+            commentsString += `${c.body}, `;
+        });
+        row.push(commentsString);
+        rows.push(row);
+    });
+    return await writeToString(rows);
+}
+
 async function generateCSV(data) {
     const rows = [];
     const headers = [];
