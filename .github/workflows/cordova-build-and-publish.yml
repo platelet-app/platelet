@@ -2,8 +2,8 @@ name: Cordova Android builds
 
 on:
   push:
-    tags:
-      - v1.*
+    branch:
+      - 'release/**'
 jobs:
   build:
     runs-on: ubuntu-latest
