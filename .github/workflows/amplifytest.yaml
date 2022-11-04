@@ -19,6 +19,7 @@ jobs:
         branch-name: ${{ github.ref_name }}
         commit-id: ${{ github.sha }}
         wait: true
+        timeout: 100
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
