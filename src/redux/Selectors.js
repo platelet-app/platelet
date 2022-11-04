@@ -35,3 +35,4 @@ export const availableSelectionItemsSelector = (state) =>
     state.selectionModeAvailableItemsReducer;
 export const selectionActionsPendingSelector = (state) =>
     state.selectionActionsPendingReducer;
+export const modalTrackerSelector = (state) => state.modalTrackerReducer;

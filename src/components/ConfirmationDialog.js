@@ -7,22 +7,19 @@ import DialogTitle from "@mui/material/DialogTitle";
 import PropTypes from "prop-types";
 import { Box, Stack } from "@mui/material";
 import { styled } from "@mui/styles";
+import { useCordovaBackButton } from "../hooks/useCordovaBackButton";
 
-const RoundedDialog = styled(Dialog)(({ theme }) => ({
+const RoundedDialog = styled(Dialog)(({ fullScreen }) => ({
     "& .MuiDialog-paper": {
-        [theme.breakpoints.down("sm")]: {
-            borderRadius: "0em",
-        },
-        [theme.breakpoints.up("sm")]: {
-            borderRadius: "1em",
-        },
+        borderRadius: fullScreen ? "0em" : "1em",
     },
 }));
 
-function ConfirmationDialog(props) {
+function ConfirmationDialog({ onCancel, open, ...props }) {
+    useCordovaBackButton(onCancel, open);
     return (
         <RoundedDialog
-            open={props.open}
+            open={open}
             fullScreen={props.fullScreen}
             onClose={props.onClose}
             PaperProps={{ elevation: 1 }}
@@ -44,7 +41,7 @@ function ConfirmationDialog(props) {
                             data-testid="confirmation-cancel-button"
                             aria-label="Cancel"
                             onClick={() => {
-                                props.onCancel();
+                                onCancel();
                             }}
                             autoFocus
                         >

@@ -47,7 +47,7 @@ export const StyledColumn = styled(Box)({
 
 export const StyledCard = styled(Card)({
     border: 0,
-    borderRadius: 2,
+    borderRadius: "0.8em",
     boxShadow: "0 1px 2px 1px #7a7a7a",
     width: "100%",
     height: "200px",
