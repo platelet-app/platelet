@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: ${{ github.event.base_ref }}
+    environment: ${{ github.ref_name }}
     strategy:
       matrix:
         node-version: [14.x]
