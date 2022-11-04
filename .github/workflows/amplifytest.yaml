@@ -1,4 +1,4 @@
-name: Cordova Android builds
+name: Testing amplify
 
 on:
   push:
