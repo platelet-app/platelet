@@ -4,6 +4,8 @@ import { Section, SectionAlternate } from "components/organisms";
 import { GetStarted, Features, Hero, DialogShowcase } from "./components";
 import DashboardShowcase from "./components/DashboardShowcase";
 import MobileShowcase from "./components/MobileShowcase";
+import AboutPlatelet from "views/AboutPlatelet";
+import AboutBloodBikes from "views/AboutBloodBikes";
 
 const useStyles = makeStyles(() => ({
   sectionAlternateNoPaddingTop: {
@@ -32,6 +34,12 @@ const IndexView = ({ themeMode }) => {
       </SectionAlternate>
       <Section>
         <Features />
+      </Section>
+      <SectionAlternate>
+        <AboutPlatelet />
+      </SectionAlternate>
+      <Section>
+        <AboutBloodBikes />
       </Section>
     </div>
   );

@@ -1,8 +1,10 @@
 import React from "react";
-import { Grid, Typography, useMediaQuery } from "@material-ui/core";
+import { Grid, Typography, useMediaQuery, Link } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import showCaseStyles from "../../styles";
 import clsx from "clsx";
+import mobile_light from "../../../../assets/images/mobile-light.png";
+import mobile_dark from "../../../../assets/images/mobile-dark.png";
 
 const MobileShowcase = ({ themeMode = "light", ...rest }) => {
   const classes = showCaseStyles();
@@ -26,7 +28,12 @@ const MobileShowcase = ({ themeMode = "light", ...rest }) => {
       alignItems={"center"}
     >
       <Grid className={classes.item} item>
-        <div className={clsx(classes.background, mobileClass)} />
+        <Link
+          target="_blank"
+          href={themeMode === "dark" ? mobile_dark : mobile_light}
+        >
+          <div className={clsx(classes.background, mobileClass)} />
+        </Link>
       </Grid>
       <Grid
         container
@@ -43,8 +50,8 @@ const MobileShowcase = ({ themeMode = "light", ...rest }) => {
         </Grid>
         <Grid item>
           <Typography variant={"h6"}>
-            Responsive design and offline capabilities means platelet will work
-            on any device, anywhere.
+            Responsive design and offline capabilities means platelet.app will
+            work on any device, anywhere.
           </Typography>
         </Grid>
       </Grid>

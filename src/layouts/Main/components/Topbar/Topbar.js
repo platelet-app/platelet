@@ -9,12 +9,13 @@ import {
   ListItem,
   Button,
   Typography,
+  Link,
   Grid,
 } from "@material-ui/core";
 import { Image } from "components/atoms";
 import logo from "../../../../assets/images/platelet.png";
 import DarkModeToggle from "../../../../views/IndexView/components/DarkModeToggle";
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   flexGrow: {
@@ -145,29 +146,18 @@ const Topbar = ({
           </div>
         </Grid>
         <Grid item>
-          <Link to={"/"}>
+          <Link href={"#about-platelet"}>
             <Typography
               component={"a"}
               className={clsx(classes.navLink, "submenu-item")}
               color="textSecondary"
             >
-              Home
+              About platelet.app
             </Typography>
           </Link>
         </Grid>
         <Grid item>
-          <Link to={"/about-platelet"}>
-            <Typography
-              component={"a"}
-              className={clsx(classes.navLink, "submenu-item")}
-              color="textSecondary"
-            >
-              About platelet
-            </Typography>
-          </Link>
-        </Grid>
-        <Grid item>
-          <Link to={"/about-blood-bikes"}>
+          <Link href={"#about-bloodbikes"}>
             <Typography
               component={"a"}
               className={clsx(classes.navLink, "submenu-item")}

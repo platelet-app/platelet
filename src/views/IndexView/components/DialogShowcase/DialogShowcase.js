@@ -1,5 +1,7 @@
 import React from "react";
-import { Grid, Typography, useMediaQuery } from "@material-ui/core";
+import dialog_light from "../../../../assets/images/dialog-light-new.png";
+import dialog_dark from "../../../../assets/images/dialog-dark-new.png";
+import { Grid, Typography, useMediaQuery, Link } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import showCaseStyles from "../../styles";
 import clsx from "clsx";
@@ -25,7 +27,12 @@ const DialogShowcase = ({ themeMode = "light", ...rest }) => {
       alignItems={"center"}
     >
       <Grid className={classes.item} item>
-        <div className={clsx(classes.background, dialogClass)} />
+        <Link
+          target="_blank"
+          href={themeMode === "dark" ? dialog_dark : dialog_light}
+        >
+          <div className={clsx(classes.background, dialogClass)} />
+        </Link>
       </Grid>
       <Grid
         container
