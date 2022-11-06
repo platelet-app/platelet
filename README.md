@@ -52,11 +52,12 @@ Under Sign-up experience, add a custom attribute: `tenantId`
 
 ### Function parameters
 
-Edit the file `amplify/backend/function/plateletSendUserFeedback/parameters.json` and replace the example email address with an email address to receive feedback from.
+Edit the file `amplify/backend/function/plateletSendUserFeedback/parameters.json` and replace the example email address with an email address to receive feedback to.
 
 Edit the files:
 
 `amplify/backend/function/plateletAddNewTenant/parameters.json`
+
 `amplify/backend/function/plateletAdminAddNewUser/parameters.json`
 
 With an email address to send registration emails from.
