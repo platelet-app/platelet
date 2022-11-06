@@ -167,6 +167,17 @@ const Topbar = ({
             </Typography>
           </Link>
         </Grid>
+        <Grid item>
+          <Link href={"mailto:info@platelet.app"}>
+            <Typography
+              component={"a"}
+              className={clsx(classes.navLink, "submenu-item")}
+              color="textSecondary"
+            >
+              info@platelet.app
+            </Typography>
+          </Link>
+        </Grid>
       </Grid>
       <div className={classes.flexGrow} />
       <List disablePadding className={classes.navigationContainer}>
@@ -176,22 +187,6 @@ const Topbar = ({
             onClick={() => themeToggler()}
           />
         </ListItem>
-        <Hidden smDown>
-          <ListItem
-            className={clsx(classes.listItem, "menu-item--no-dropdown")}
-          >
-            <Button
-              variant="contained"
-              style={{ display: "none" }}
-              color="primary"
-              component="a"
-              href="/dashboard"
-              className={classes.listItemButton}
-            >
-              Open platelet
-            </Button>
-          </ListItem>
-        </Hidden>
       </List>
     </Toolbar>
   );
