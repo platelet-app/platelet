@@ -2,15 +2,19 @@
 
 Platelet is an offline first, cloud backed, dispatch software project for couriers and coordinators. It is being developed for Blood Bikers in the UK, but can be used for any delivery tracking.
 
-![dashboard](dashboard.png "Dashboard")
-
-![overview](overview.png "Overview")
-
 [Demo](https://demo.platelet.app)
 
 [Homepage](https://platelet.app)
 
 [Discord](https://discord.gg/tWhCM98ckB)
+
+## Screenshots
+
+![dashboard-dark](https://user-images.githubusercontent.com/32309223/200189562-b859fe2f-5345-4d49-8ebc-de48c04ff43d.png)
+
+![dialog-dark-new](https://user-images.githubusercontent.com/32309223/200189567-5ad321ea-a422-4517-8e77-9477a8c3a68e.png)
+
+![mobile-dark](https://user-images.githubusercontent.com/32309223/200189570-9002e4c0-2133-4d9d-8ae7-d92c260b328d.png)
 
 Some of Platelet's goals are:
 
