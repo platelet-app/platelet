@@ -48,11 +48,16 @@ Under Sign-up experience, add a custom attribute: `tenantId`
 
 ### Function parameters
 
-Set `PLATELET_WELCOME_EMAIL` and `PLATELET_DOMAIN_NAME` environment variables  using the Amplify CLI.
+Edit the file `amplify/backend/function/plateletSendUserFeedback/parameters.json` and replace the example email address with an email address to receive feedback from.
 
-`PLATELET_WELCOME_EMAIL` is the email address that any registration emails will be sent from.
+Edit the files:
 
-`PLATELET_DOMAIN_NAME` should be the URL (without "https://") where the app is hosted. This will be used to point users to the URL in registration emails.
+`amplify/backend/function/plateletAddNewTenant/parameters.json`
+`amplify/backend/function/plateletAdminAddNewUser/parameters.json`
+
+With an email address to send registration emails from.
+
+`plateletDomainName` should be the URL (without "https://") where the app is hosted. This will be used to point users to the URL in registration emails.
 
 ### AWS SES
 
