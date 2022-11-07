@@ -1,5 +1,6 @@
 import { combineReducers } from "redux";
 import { whoami } from "./whoami/whoamiReducers";
+import { modalTrackerReducer } from "./modalTracker/modalTrackerReducers";
 import {
     CLEAR_LOADING,
     SET_VIEW_MODE,
@@ -242,6 +243,7 @@ const appReducer = combineReducers({
     selectionModeReducer,
     selectionModeAvailableItemsReducer,
     selectionActionsPendingReducer,
+    modalTrackerReducer,
 });
 
 const rootReducer = (state, action) => {

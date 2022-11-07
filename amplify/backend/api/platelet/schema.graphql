@@ -20,6 +20,7 @@ type User
   username: String!
   cognitoId: ID! @index(name: "byCognitoId", queryField: "getUserByCognitoId")
   tenantId: ID! @index(name: "byTenantId")
+  isPrimaryAdmin: Int @default(value: "0")
   contact: AddressAndContactDetails
   displayName: String!
   name: String
@@ -37,6 +38,8 @@ type User
   assignments: [TaskAssignee] @hasMany(indexName: "byAssignee", fields: ["id"])
   vehicleAssignments: [VehicleAssignment] @hasMany
   createdTasks: [Task] @hasMany
+  createdLocations: [Location] @hasMany
+  createdVehicles: [Vehicle] @hasMany
   disabled: Int @default(value: "0")
 }
 
@@ -66,6 +69,7 @@ type Vehicle
 @model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
+  createdBy: User @belongsTo
   name: String
   manufacturer: String
   model: String
@@ -113,6 +117,7 @@ type Location
 @model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
+  createdBy: User @belongsTo
   name: String
   listed: Int
   contact: AddressAndContactDetails
@@ -142,6 +147,7 @@ type Task
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
   createdBy: User @belongsTo
+  dateCreated: AWSDate!
   timeOfCall: AWSDateTime
   timePickedUp: AWSDateTime
 @auth(rules: [
@@ -366,3 +372,4 @@ type Query {
   getStatistics(tenantId: ID!): Statistics @function(name: "plateletGetStatistics-${env}") @auth(rules: [{allow: private}])
   sendUserFeedback(emailAddress: AWSEmail, body: String): SendFeedback @function(name: "plateletSendUserFeedback-${env}") @auth(rules: [{allow: private}])
 }
+ 

@@ -14,6 +14,7 @@ const tenantId = "tenantId";
 describe("TaskContextMenu", () => {
     const RealDate = Date;
     const isoDate = "2021-11-29T23:24:58.987Z";
+    const dateString = "2021-11-29";
 
     function mockDate() {
         global.Date = class extends RealDate {
@@ -379,7 +380,9 @@ describe("TaskContextMenu", () => {
         await waitFor(() => {
             expect(screen.getByText("Copied to clipboard")).toBeInTheDocument();
         });
-        expect(clipboardSpy).toMatchSnapshot();
+        expect(clipboardSpy).toHaveBeenCalledWith(
+            "TOC: 23:24 FROM: test ward - line one, postcode TO: some ward - something, some postcode PRIORITY: high ITEMS: test deliverable x 1, test deliverable x 2, test deliverable x 3"
+        );
     });
 
     test("duplicate a task", async () => {
@@ -483,6 +486,8 @@ describe("TaskContextMenu", () => {
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...task,
+            dateCreated: dateString,
+            createdBy: whoami,
             tenantId,
             id: expect.not.stringMatching(task.id),
         });
@@ -493,6 +498,8 @@ describe("TaskContextMenu", () => {
                 id: expect.not.stringMatching(del.id),
                 task: {
                     ...task,
+                    dateCreated: dateString,
+                    createdBy: whoami,
                     id: expect.not.stringMatching(task.id),
                 },
             });
@@ -503,13 +510,16 @@ describe("TaskContextMenu", () => {
             id: expect.any(String),
             task: {
                 ...task,
+                createdBy: whoami,
+                dateCreated: dateString,
                 id: expect.any(String),
             },
         });
         mockAllIsIntersecting(true);
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(12);
+            expect(querySpy).toHaveBeenCalledTimes(13);
         });
+        expect(screen.getByText("Task duplicated to NEW")).toBeInTheDocument();
         expect(screen.queryAllByRole("link")).toHaveLength(2);
     });
 

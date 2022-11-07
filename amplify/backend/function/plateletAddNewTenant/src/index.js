@@ -229,6 +229,7 @@ async function createNewAdminUser(newUser) {
     const createUserInput = {
         tenantId: tenantId,
         disabled: 0,
+        isPrimaryAdmin: 1,
         cognitoId: uuid.v4(),
         username,
         name,

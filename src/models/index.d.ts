@@ -151,6 +151,7 @@ export declare class User {
   readonly username: string;
   readonly cognitoId: string;
   readonly tenantId: string;
+  readonly isPrimaryAdmin?: number | null;
   readonly contact?: AddressAndContactDetails | null;
   readonly displayName: string;
   readonly name?: string | null;
@@ -164,6 +165,8 @@ export declare class User {
   readonly assignments?: (TaskAssignee | null)[] | null;
   readonly vehicleAssignments?: (VehicleAssignment | null)[] | null;
   readonly createdTasks?: (Task | null)[] | null;
+  readonly createdLocations?: (Location | null)[] | null;
+  readonly createdVehicles?: (Vehicle | null)[] | null;
   readonly disabled?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -223,6 +226,7 @@ export declare class Task {
   readonly id: string;
   readonly tenantId: string;
   readonly createdBy?: User | null;
+  readonly dateCreated: string;
   readonly timeOfCall?: string | null;
   readonly timePickedUp?: string | null;
   readonly timePickedUpSenderName?: string | null;
@@ -250,6 +254,7 @@ export declare class Task {
 export declare class Location {
   readonly id: string;
   readonly tenantId: string;
+  readonly createdBy?: User | null;
   readonly name?: string | null;
   readonly listed?: number | null;
   readonly contact?: AddressAndContactDetails | null;
@@ -318,6 +323,7 @@ export declare class VehicleAssignment {
 export declare class Vehicle {
   readonly id: string;
   readonly tenantId: string;
+  readonly createdBy?: User | null;
   readonly name?: string | null;
   readonly manufacturer?: string | null;
   readonly model?: string | null;

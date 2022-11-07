@@ -2,7 +2,6 @@ import { Button, Grid, Skeleton, TextField, Typography } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import DatePicker from "@mui/lab/DatePicker";
 import React, { useEffect, useState } from "react";
-import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { PaddedPaper } from "../../../styles/common";
 import * as models from "../../../models/index";
 import { DataStore } from "aws-amplify";
@@ -68,8 +67,14 @@ function AdminAddVehicle() {
                     .toISOString()
                     .split("T")[0];
             }
+            const createdBy = await DataStore.query(models.User, whoami.id);
             const newVehicle = await DataStore.save(
-                new models.Vehicle({ ...result, tenantId, disabled: 0 })
+                new models.Vehicle({
+                    ...result,
+                    tenantId,
+                    disabled: 0,
+                    createdBy,
+                })
             );
             setState(initialVehicleState);
             setIsPosting(false);
@@ -123,9 +128,10 @@ function AdminAddVehicle() {
                     {Object.keys(fields).map((key) => {
                         return (
                             <Grid key={key} item>
-                                <TextFieldUncontrolled
+                                <TextField
                                     value={state[key]}
                                     fullWidth
+                                    aria-label={fields[key]}
                                     label={fields[key]}
                                     id={key}
                                     onChange={(e) => {
@@ -141,7 +147,15 @@ function AdminAddVehicle() {
                     <Grid item>
                         <DatePicker
                             inputFormat={"dd/mm/yyyy"}
-                            renderInput={(props) => <TextField {...props} />}
+                            renderInput={(props) => (
+                                <TextField
+                                    {...props}
+                                    inputProps={{
+                                        "aria-label":
+                                            "Date of registration input",
+                                    }}
+                                />
+                            )}
                             label={"Date of registration"}
                             onChange={(value) => {
                                 setState((prevState) => ({
@@ -155,8 +169,17 @@ function AdminAddVehicle() {
                     <Grid item>
                         <DatePicker
                             inputFormat={"dd/mm/yyyy"}
-                            renderInput={(props) => <TextField {...props} />}
+                            renderInput={(props) => (
+                                <TextField
+                                    {...props}
+                                    inputProps={{
+                                        "aria-label":
+                                            "Date of manufacture input",
+                                    }}
+                                />
+                            )}
                             label={"Date of manufacture"}
+                            aria-label={"Date of manufacture"}
                             onChange={(value) => {
                                 setState((prevState) => ({
                                     ...prevState,
@@ -168,6 +191,7 @@ function AdminAddVehicle() {
                     </Grid>
                     <Grid item>
                         <Button
+                            aria-label="Add vehicle"
                             disabled={!inputVerified || isPosting}
                             onClick={addVehicleToStore}
                         >

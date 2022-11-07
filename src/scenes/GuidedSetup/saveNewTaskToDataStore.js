@@ -9,11 +9,18 @@ import * as assigneeActions from "../../redux/taskAssignees/taskAssigneesActions
 export async function saveNewTaskToDataStore(
     data,
     tenantId,
-    author = null,
+    authorId,
     rider = null
 ) {
     if (!tenantId) {
-        throw new Error("TenantId is required");
+        throw new Error("tenantId is required");
+    }
+    if (!authorId) {
+        throw new Error("authorId is required");
+    }
+    const author = await DataStore.query(models.User, authorId);
+    if (!author) {
+        throw new Error("Author not found");
     }
     let { locations, deliverables, comment, ...rest } = data;
     let pickUpLocation = locations.pickUpLocation;
@@ -28,13 +35,18 @@ export async function saveNewTaskToDataStore(
             new models.Location({ ...dropOffLocation, listed: 0, tenantId })
         );
     }
+    // get the date today without time
+    const date = new Date();
+    const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     const newTask = await DataStore.save(
         new models.Task({
             ...rest,
             pickUpLocation,
+            createdBy: author,
             dropOffLocation,
             status: tasksStatus.new,
             tenantId,
+            dateCreated: today.toISOString().split("T")[0],
         })
     );
 
@@ -57,31 +69,26 @@ export async function saveNewTaskToDataStore(
         });
     }
 
-    if (author) {
-        DataStore.query(models.User, author).then((result) => {
-            if (result) {
-                DataStore.save(
-                    new models.TaskAssignee({
-                        task: newTask,
-                        assignee: result,
-                        role: userRoles.coordinator,
-                        tenantId,
-                    })
-                ).then((assignment) => {
-                    store.dispatch(assigneeActions.addTaskAssignee(assignment));
-                });
-            }
-            if (comment && comment.body) {
-                DataStore.save(
-                    new models.Comment({
-                        ...comment,
-                        parentId: newTask.id,
-                        author: result,
-                        tenantId,
-                    })
-                );
-            }
-        });
+    DataStore.save(
+        new models.TaskAssignee({
+            task: newTask,
+            assignee: author,
+            role: userRoles.coordinator,
+            tenantId,
+        })
+    ).then((assignment) => {
+        store.dispatch(assigneeActions.addTaskAssignee(assignment));
+    });
+
+    if (comment && comment.body) {
+        DataStore.save(
+            new models.Comment({
+                ...comment,
+                parentId: newTask.id,
+                author,
+                tenantId,
+            })
+        );
     }
 
     return newTask;

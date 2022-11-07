@@ -52,14 +52,12 @@ function TaskContextMenu(props) {
         : userRoles.rider;
 
     async function copyToClipboard(e) {
-        debugger;
         handleClose(e);
         if (!props.task || !props.task.id) {
             dispatch(displayErrorNotification("Copy failed."));
             return;
         }
         try {
-            debugger;
             const taskResult = await DataStore.query(
                 models.Task,
                 props.task.id
@@ -185,9 +183,11 @@ function TaskContextMenu(props) {
                 task,
                 tenantId,
                 whoami.id,
+                whoami.id,
                 actualRole
             );
             dispatch(assigneeActions.addTaskAssignee(assignment));
+            dispatch(displayInfoNotification("Task duplicated to NEW"));
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification("Sorry, something went wrong"));

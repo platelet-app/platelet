@@ -140,22 +140,22 @@ async function generateCSV(data) {
         Object.keys(taskFields).forEach((key) => {
             row.push(rest[key]);
         });
-        if (pickUpLocation && pickUpLocation.listed === 1)
+        if (pickUpLocation)
             Object.keys(locationFields).forEach((key) => {
                 row.push(pickUpLocation[key] || locationFields[key]);
             });
         else
             Object.values(locationFields).forEach((value) => {
-                row.push(pickUpLocation ? "Unlisted" : value);
+                row.push(value);
             });
 
-        if (dropOffLocation && dropOffLocation.listed === 1)
+        if (dropOffLocation)
             Object.keys(locationFields).forEach((key) => {
                 row.push(dropOffLocation[key] || locationFields[key]);
             });
         else
             Object.values(locationFields).forEach((value) => {
-                row.push(dropOffLocation ? "Unlisted" : value);
+                row.push(value);
             });
         if (requesterContact)
             Object.keys(requesterContactFields).forEach((key) => {
@@ -219,9 +219,13 @@ async function generateCSV(data) {
 }
 
 export default async function generateReport(userId, role, days) {
-    const timeStamp = moment.utc().subtract(days, "days").toISOString();
+    const timeStamp = moment
+        .utc()
+        .subtract(days.toString(), "days")
+        .toISOString();
     let finalTasks = [];
     const assignments = await DataStore.query(models.TaskAssignee);
+    debugger;
     if (role !== "ALL") {
         const filteredAssignments = assignments.filter(
             (assignment) =>
@@ -233,15 +237,21 @@ export default async function generateReport(userId, role, days) {
         const taskIds = filteredAssignments.map(
             (assignment) => assignment.task.id
         );
-        finalTasks = await DataStore.query(models.Task, (task) =>
-            task
-                .or((task) =>
-                    task.createdAt("eq", undefined).createdAt("gt", timeStamp)
-                )
-                .or((task) =>
-                    taskIds.reduce((task, id) => task.id("eq", id), task)
-                )
-        );
+        if (taskIds.length === 0) {
+            finalTasks = [];
+        } else {
+            finalTasks = await DataStore.query(models.Task, (task) =>
+                task
+                    .or((task) =>
+                        task
+                            .createdAt("eq", undefined)
+                            .createdAt("gt", timeStamp)
+                    )
+                    .or((task) =>
+                        taskIds.reduce((task, id) => task.id("eq", id), task)
+                    )
+            );
+        }
     } else if (role === "ALL") {
         finalTasks = await DataStore.query(models.Task, (task) =>
             task.or((task) =>

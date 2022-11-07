@@ -5,6 +5,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import makeStyles from "@mui/styles/makeStyles";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Stack, SwipeableDrawer } from "@mui/material";
+import { useCordovaBackButton } from "../hooks/useCordovaBackButton";
 
 const useStyles = makeStyles({
     list: {
@@ -15,6 +16,10 @@ const useStyles = makeStyles({
 export default function MobileNavigationDrawer() {
     const [open, setOpen] = useState(false);
     const classes = useStyles();
+
+    useCordovaBackButton(() => {
+        setOpen(false);
+    }, open);
 
     const toggleDrawer = (event) => {
         if (

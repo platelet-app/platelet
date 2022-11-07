@@ -31,6 +31,7 @@ import { commentVisibility } from "../../apiConsts";
 import { showHide } from "../../styles/common";
 import _ from "lodash";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
+import { useCordovaBackButton } from "../../hooks/useCordovaBackButton";
 
 const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -194,6 +195,12 @@ export const GuidedSetup = () => {
         setEstablishmentSameAsPickup((prevState) => !prevState);
     };
 
+    const onCloseForm = React.useCallback(() => {
+        dispatch(setGuidedSetupOpen(false));
+        setEstablishmentSameAsPickup(initialEstablishmentSameAsPickUpState);
+        setTabIndex(0);
+    }, [dispatch]);
+
     const handleSave = async () => {
         setIsPosting(true);
         try {
@@ -222,7 +229,7 @@ export const GuidedSetup = () => {
         onCloseForm();
     };
 
-    const handleDiscard = () => {
+    const handleDiscard = React.useCallback(() => {
         if (
             !_.isEqual(formValues, defaultValues) ||
             !_.isEqual(requesterContact.current, defaultContact) ||
@@ -235,7 +242,16 @@ export const GuidedSetup = () => {
         } else {
             onCloseForm();
         }
-    };
+    }, [
+        formValues,
+        deliverables,
+        locations,
+        requesterContact,
+        comment,
+        onCloseForm,
+    ]);
+
+    useCordovaBackButton(handleDiscard, guidedSetupOpen);
 
     const handleCommentVisibilityChange = (value) => {
         comment.current = { ...comment.current, visibility: value };
@@ -274,12 +290,6 @@ export const GuidedSetup = () => {
             return;
         }
         deliverables.current = _.omit(deliverables.current, value);
-    };
-
-    const onCloseForm = () => {
-        dispatch(setGuidedSetupOpen(false));
-        setEstablishmentSameAsPickup(initialEstablishmentSameAsPickUpState);
-        setTabIndex(0);
     };
 
     useEffect(() => {

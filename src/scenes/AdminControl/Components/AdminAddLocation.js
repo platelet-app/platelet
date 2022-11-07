@@ -106,8 +106,15 @@ function AdminAddLocation() {
         try {
             setIsPosting(true);
             if (await verifyUniqueName(state.name)) {
+                const createdBy = await DataStore.query(models.User, whoami.id);
+                if (!createdBy) throw new Error("Author not found");
                 const newLocation = await DataStore.save(
-                    new models.Location({ ...state, tenantId, disabled: 0 })
+                    new models.Location({
+                        ...state,
+                        tenantId,
+                        disabled: 0,
+                        createdBy,
+                    })
                 );
                 setState(initialLocationState);
                 setLocationSearchReset((prevState) => !prevState);

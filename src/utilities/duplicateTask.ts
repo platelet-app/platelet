@@ -14,11 +14,13 @@ const ignoredFields = [
 export default async function duplicateTask(
     task: models.Task,
     tenantId: string,
+    createdById: string,
     assigneeId: string | null = null,
     assigneeRole: models.Role | null = null
 ) {
     if (!tenantId) throw new Error("tenantId must exist");
     if (!task) throw new Error("task must exist");
+    if (!createdById) throw new Error("createdById must exist");
     let {
         id,
         updatedAt,
@@ -32,8 +34,11 @@ export default async function duplicateTask(
         establishmentLocation,
         dropOffLocation,
         pickUpLocation,
+        createdBy,
         ...rest
     } = { ...task };
+    const author = await DataStore.query(models.User, createdById);
+    if (!author) throw new Error("author not found");
     if (pickUpLocation?.listed === 0) {
         pickUpLocation = await DataStore.save(
             new models.Location({
@@ -73,6 +78,8 @@ export default async function duplicateTask(
             establishmentLocation.id
         );
     }
+    const date = new Date();
+    const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     let newTaskData = new models.Task({
         ...rest,
         status: models.TaskStatus.NEW,
@@ -80,6 +87,8 @@ export default async function duplicateTask(
         dropOffLocation,
         establishmentLocation,
         tenantId,
+        createdBy: author,
+        dateCreated: today.toISOString().split("T")[0],
     });
     let assignment = null;
     if (assigneeId && assigneeRole) {
@@ -92,6 +101,8 @@ export default async function duplicateTask(
                 riderResponsibility,
                 establishmentLocation,
                 tenantId,
+                createdBy: author,
+                dateCreated: today.toISOString().split("T")[0],
             });
         }
         const assignee = await DataStore.query(models.User, assigneeId);

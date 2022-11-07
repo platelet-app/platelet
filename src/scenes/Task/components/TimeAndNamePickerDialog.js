@@ -2,7 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import { DateTimePicker } from "@mui/lab";
-import { Stack, TextField } from "@mui/material";
+import { Stack, TextField, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/styles";
 
 function TimeAndNamePickerDialog({
     open,
@@ -20,10 +21,14 @@ function TimeAndNamePickerDialog({
         name,
     });
     const [errorState, setErrorState] = React.useState(false);
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+
     return (
         <ConfirmationDialog
             onCancel={onCancel}
             disabled={errorState || disabled}
+            fullScreen={isSm}
             open={open}
             onConfirmation={() => onConfirmation(state)}
         >

@@ -31,6 +31,13 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "isPrimaryAdmin": {
+                    "name": "isPrimaryAdmin",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "contact": {
                     "name": "contact",
                     "isArray": false,
@@ -162,6 +169,34 @@ export const schema = {
                     "association": {
                         "connectionType": "HAS_MANY",
                         "associatedWith": "userCreatedTasksId"
+                    }
+                },
+                "createdLocations": {
+                    "name": "createdLocations",
+                    "isArray": true,
+                    "type": {
+                        "model": "Location"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "userCreatedLocationsId"
+                    }
+                },
+                "createdVehicles": {
+                    "name": "createdVehicles",
+                    "isArray": true,
+                    "type": {
+                        "model": "Vehicle"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "userCreatedVehiclesId"
                     }
                 },
                 "disabled": {
@@ -761,6 +796,13 @@ export const schema = {
                         "targetName": "userCreatedTasksId"
                     }
                 },
+                "dateCreated": {
+                    "name": "dateCreated",
+                    "isArray": false,
+                    "type": "AWSDate",
+                    "isRequired": true,
+                    "attributes": []
+                },
                 "timeOfCall": {
                     "name": "timeOfCall",
                     "isArray": false,
@@ -1048,6 +1090,19 @@ export const schema = {
                     "type": "ID",
                     "isRequired": true,
                     "attributes": []
+                },
+                "createdBy": {
+                    "name": "createdBy",
+                    "isArray": false,
+                    "type": {
+                        "model": "User"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "userCreatedLocationsId"
+                    }
                 },
                 "name": {
                     "name": "name",
@@ -1665,6 +1720,19 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "createdBy": {
+                    "name": "createdBy",
+                    "isArray": false,
+                    "type": {
+                        "model": "User"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "userCreatedVehiclesId"
+                    }
+                },
                 "name": {
                     "name": "name",
                     "isArray": false,
@@ -2163,5 +2231,5 @@ export const schema = {
             }
         }
     },
-    "version": "b12b49a018fee9013455dfda1d023f30"
+    "version": "099efccc1630b061d2ff744c69255ee9"
 };

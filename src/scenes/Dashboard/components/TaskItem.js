@@ -25,6 +25,7 @@ import {
 } from "../../../redux/Selectors";
 import { useInView } from "react-intersection-observer";
 import useLongPress from "../../../hooks/useLongPress";
+import useLongPressEventContextMenu from "../../../hooks/useLongPressEventContextMenu";
 
 const useStyles = (isSelected) =>
     makeStyles((theme) => ({
@@ -50,6 +51,7 @@ const useStyles = (isSelected) =>
         },
         overlay: {
             position: "absolute",
+            borderRadius: "0.8em",
             display: isSelected ? "inline" : "none",
             top: 0,
             left: 0,
@@ -108,8 +110,9 @@ const ItemWrapper = ({
             handleSelectItem();
         }
     };
+
     const history = useHistory();
-    const longPressEvent = useLongPress();
+    const boxRef = useLongPressEventContextMenu(handleSelectItem, true);
     function handleClick(e) {
         history.push({
             pathname: `/task/${encodeUUID(taskId)}`,
@@ -117,9 +120,11 @@ const ItemWrapper = ({
         });
     }
 
-    if (isSm)
+    // if it's a small screen or installed with cordova
+    // we want to use the long press event to select the item
+    if (isSm || window.cordova)
         return (
-            <Box {...longPressEvent(handleSelectItem)} onClick={handleClick}>
+            <Box ref={boxRef} onClick={handleClick}>
                 {children}
             </Box>
         );

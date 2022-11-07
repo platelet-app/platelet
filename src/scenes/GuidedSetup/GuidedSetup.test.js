@@ -27,11 +27,27 @@ const preloadedState = {
 };
 
 describe("GuidedSetup", () => {
+    const RealDate = Date;
+    const isoDate = "2021-11-29T23:24:58.987Z";
+    const dateString = "2021-11-29";
+    const timeStrings = { timeOfCall: isoDate, dateCreated: dateString };
+
+    function mockDate() {
+        global.Date = class extends RealDate {
+            constructor() {
+                super();
+                return new RealDate(isoDate);
+            }
+        };
+    }
+
     beforeEach(async () => {
         await DataStore.save(whoami);
+        mockDate();
     });
     afterEach(async () => {
         jest.restoreAllMocks();
+        global.Date = RealDate;
         const users = await DataStore.query(models.User);
         const tasks = await DataStore.query(models.Task);
         const comments = await DataStore.query(models.Comment);
@@ -122,6 +138,7 @@ describe("GuidedSetup", () => {
             dropOffLocation: null,
             pickUpLocation: null,
             priority: null,
+            createdBy: mockWhoami,
             status: tasksStatus.new,
             establishmentLocation: null,
             requesterContact: {
@@ -157,8 +174,8 @@ describe("GuidedSetup", () => {
                 1,
                 expect.objectContaining({
                     ...mockTask,
+                    ...timeStrings,
                     id: expect.any(String),
-                    timeOfCall: expect.any(String),
                 })
             )
         );
@@ -170,8 +187,8 @@ describe("GuidedSetup", () => {
                     id: expect.any(String),
                     task: {
                         ...mockTask,
+                        ...timeStrings,
                         id: expect.any(String),
-                        timeOfCall: expect.any(String),
                     },
                 })
             )
@@ -187,6 +204,7 @@ describe("GuidedSetup", () => {
             dropOffLocation: null,
             pickUpLocation: null,
             establishmentLocation: null,
+            createdBy: mockWhoami,
             priority: priorities.high,
             status: tasksStatus.new,
             requesterContact: {
@@ -232,7 +250,7 @@ describe("GuidedSetup", () => {
                 expect.objectContaining({
                     ...mockTask,
                     id: expect.any(String),
-                    timeOfCall: expect.any(String),
+                    ...timeStrings,
                 })
             )
         );
@@ -245,7 +263,7 @@ describe("GuidedSetup", () => {
                     task: {
                         ...mockTask,
                         id: expect.any(String),
-                        timeOfCall: expect.any(String),
+                        ...timeStrings,
                     },
                 })
             )
@@ -296,6 +314,7 @@ describe("GuidedSetup", () => {
             dropOffLocation: null,
             pickUpLocation: null,
             priority: null,
+            createdBy: whoami,
             establishmentLocation: mockLocation,
             status: tasksStatus.new,
             requesterContact: { name: "", telephoneNumber: "" },
@@ -320,7 +339,7 @@ describe("GuidedSetup", () => {
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockTask,
-            timeOfCall: expect.any(String),
+            ...timeStrings,
             id: expect.any(String),
         });
     });
@@ -332,6 +351,7 @@ describe("GuidedSetup", () => {
         const mockTask = new models.Task({
             dropOffLocation: null,
             pickUpLocation: null,
+            createdBy: whoami,
             priority: null,
             establishmentLocation: null,
             status: tasksStatus.new,
@@ -357,7 +377,7 @@ describe("GuidedSetup", () => {
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockTask,
-            timeOfCall: expect.any(String),
+            ...timeStrings,
             id: expect.any(String),
         });
     });
@@ -371,6 +391,7 @@ describe("GuidedSetup", () => {
         const mockTask = new models.Task({
             dropOffLocation: null,
             pickUpLocation: null,
+            createdBy: whoami,
             priority: null,
             establishmentLocation: mockLocation,
             status: tasksStatus.new,
@@ -402,7 +423,7 @@ describe("GuidedSetup", () => {
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockTask,
             establishmentLocation: { ...mockLocation, id: expect.any(String) },
-            timeOfCall: expect.any(String),
+            ...timeStrings,
             id: expect.any(String),
         });
     });
@@ -414,6 +435,7 @@ describe("GuidedSetup", () => {
         const mockTask = new models.Task({
             dropOffLocation: null,
             pickUpLocation: mockLocation,
+            createdBy: whoami,
             priority: null,
             establishmentLocation: mockLocation,
             status: tasksStatus.new,
@@ -449,7 +471,7 @@ describe("GuidedSetup", () => {
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockTask,
-            timeOfCall: expect.any(String),
+            ...timeStrings,
             id: expect.any(String),
         });
     });
@@ -465,6 +487,7 @@ describe("GuidedSetup", () => {
         const mockTask = new models.Task({
             dropOffLocation: null,
             pickUpLocation: null,
+            createdBy: whoami,
             priority: null,
             establishmentLocation: mockLocation,
             status: tasksStatus.new,
@@ -494,7 +517,7 @@ describe("GuidedSetup", () => {
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockTask,
-            timeOfCall: expect.any(String),
+            ...timeStrings,
             id: expect.any(String),
         });
     });
@@ -503,6 +526,7 @@ describe("GuidedSetup", () => {
         const mockTask = new models.Task({
             dropOffLocation: null,
             pickUpLocation: null,
+            createdBy: whoami,
             priority: null,
             establishmentLocation: null,
             status: tasksStatus.new,
@@ -556,12 +580,12 @@ describe("GuidedSetup", () => {
                 1,
                 expect.objectContaining({
                     ..._.omit(mockTask, "id"),
-                    timeOfCall: expect.any(String),
+                    ...timeStrings,
                 })
             )
         );
         await waitFor(() =>
-            expect(querySpy).toHaveBeenNthCalledWith(5, models.DeliverableType)
+            expect(querySpy).toHaveBeenNthCalledWith(6, models.DeliverableType)
         );
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledTimes(4);
@@ -573,7 +597,7 @@ describe("GuidedSetup", () => {
                 task: {
                     ...mockTask,
                     id: expect.any(String),
-                    timeOfCall: expect.any(String),
+                    ...timeStrings,
                 },
             })
         );
@@ -584,7 +608,7 @@ describe("GuidedSetup", () => {
                 task: {
                     ...mockTask,
                     id: expect.any(String),
-                    timeOfCall: expect.any(String),
+                    ...timeStrings,
                 },
             })
         );

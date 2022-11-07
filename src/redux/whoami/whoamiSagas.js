@@ -15,6 +15,7 @@ import * as queries from "../../graphql/queries";
 import { NotFound } from "http-errors";
 import { userRoles } from "../../apiConsts";
 import { eventChannel } from "redux-saga";
+import dataStoreConflictHandler from "./dataStoreConflictHandler";
 
 const fakeUser = {
     id: "offline",
@@ -146,6 +147,7 @@ function* getWhoami() {
                             m.id("eq", tenantId)
                         ),
                     ],
+                    conflictHandler: dataStoreConflictHandler,
                 });
                 result = yield call(
                     [DataStore, DataStore.query],

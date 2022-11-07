@@ -16,6 +16,7 @@ import GetError from "../../../ErrorComponents/GetError";
 import RequesterContact from "./RequesterContact";
 import { userRoles } from "../../../apiConsts";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
+import RiderResponsibilityDetail from "./RiderResponsibilityDetail";
 
 function TaskDetailsPanel(props) {
     const cardClasses = dialogCardStyles();
@@ -130,6 +131,21 @@ function TaskDetailsPanel(props) {
         }
     }
 
+    async function setRiderResponsibility(riderResponsibility) {
+        try {
+            const result = await DataStore.query(models.Task, props.taskId);
+            if (!result) throw new Error("Task doesn't exist");
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.riderResponsibility = riderResponsibility;
+                })
+            );
+        } catch (error) {
+            console.log(error);
+            dispatch(displayErrorNotification(errorMessage));
+        }
+    }
+
     async function updateRequesterContact(requesterValue) {
         try {
             const result = await DataStore.query(models.Task, props.taskId);
@@ -231,14 +247,20 @@ function TaskDetailsPanel(props) {
                         )}
                     </Stack>
                     {hasFullPermissions && <Divider />}
-                    {state.riderResponsibility && (
-                        <>
-                            <LabelItemPair label={"Responsibility"}>
+                    {(hasFullPermissions || state.riderResponsibility) && (
+                        <LabelItemPair label={"Rider role"}>
+                            {hasFullPermissions ? (
+                                <RiderResponsibilityDetail
+                                    key={state.riderResponsibility}
+                                    value={state.riderResponsibility}
+                                    onSelect={setRiderResponsibility}
+                                />
+                            ) : (
                                 <Typography>
                                     {state.riderResponsibility}
                                 </Typography>
-                            </LabelItemPair>
-                        </>
+                            )}
+                        </LabelItemPair>
                     )}
                 </Stack>
             </Paper>

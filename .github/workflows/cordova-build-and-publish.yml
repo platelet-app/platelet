@@ -1,0 +1,91 @@
+name: Cordova Android builds
+
+on:
+  push:
+    branches:
+      - 'production/**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+    strategy:
+      matrix:
+        node-version: [14.x]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install dependencies
+      run: npm ci
+    - name: Remove Amplify directory
+      uses: JesseTG/rm@v1.0.3
+      with:
+        path: amplify
+    - name: Wait for Amplify to finish remote build
+      uses: duckbytes/amplify-build-status@master
+      with:
+        app-id: ${{ secrets.AMPLIFY_APP_ID }}
+        branch-name: ${{ github.ref_name }}
+        commit-id: ${{ github.sha }}
+        wait: true
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+    - name: Install Amplify CLI and pull project
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
+      run: |
+        npm install -g @aws-amplify/cli --unsafe-perm=true
+        amplify pull --appId ${{ secrets.AMPLIFY_APP_ID }} --envName ${{ secrets.AMPLIFY_ENV_NAME }} -y
+    - name: Production Build
+      run: npm run build
+      env:
+        REACT_APP_DEMO_MODE: false
+        REACT_APP_OFFLINE_ONLY: false
+        REACT_APP_POPULATE_FAKE_DATA: false
+        CI: false
+        GENERATE_SOURCEMAP: false
+    - name: NPM test
+      run: npm test -- --silent
+    - name: Decode Keystore
+      id: decode_keystore
+      uses: timheuer/base64-to-file@v1.2
+      with:
+        fileName: 'android_keystore.jks'
+        fileDir: './'
+        encodedString: ${{ secrets.ANDROID_KEYSTORE_BASE64_ENCODED }}
+    - name: Generate Cordova build config
+      run: echo '{"android":{"debug":{"keystore":"../${{ steps.decode_keystore.outputs.filePath }}","storePassword":"${{ secrets.ANDROID_KEYSTORE_PASSPHRASE }}","alias":"platelet","password":"${{ secrets.ANDROID_KEYSTORE_PASSPHRASE }}","keystoreType":""},"release":{"keystore":"../${{ steps.decode_keystore.outputs.filePath }}","storePassword":"${{ secrets.ANDROID_KEYSTORE_PASSPHRASE }}","alias":"platelet","password":"${{ secrets.ANDROID_KEYSTORE_PASSPHRASE }}","keystoreType":""}}}' > cordova/build.json
+    - name: Use duckbytes/setup-cordova
+      uses: duckbytes/setup-cordova@0.0.5
+      with:
+        exec: |
+          cd cordova
+          ln -s ../build/ www
+          cordova platform add android
+          cordova build android --buildConfig --no-telemetry
+          cordova build android --buildConfig --no-telemetry --release
+          cd ..
+          mkdir installers
+          cp "$(find . -name '*.apk')" installers
+          cp "$(find . -name '*release.aab')" installers
+    - name: Upload apk files
+      uses: actions/upload-artifact@v3
+      with:
+        name: installers
+        path: installers
+    - name: Publish aab file to Play
+      uses: r0adkll/upload-google-play@v1
+      with:
+        serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+        packageName: app.platelet.platelet
+        releaseFiles: installers/app-release.aab
+        track: internal
+        status: inProgress
+        inAppUpdatePriority: 2
+        userFraction: 0.99

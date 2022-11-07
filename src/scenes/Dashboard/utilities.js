@@ -22,15 +22,18 @@ export async function addTask(whoamiId, tenantId) {
         throw new Error("Missing required parameters");
     }
     const date = new Date();
+    const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     const timeOfCall = date.toISOString();
-    const createdBy = whoamiId
-        ? await DataStore.query(models.User, whoamiId)
-        : null;
+    const createdBy = await DataStore.query(models.User, whoamiId);
+    if (!createdBy) {
+        throw new Error("Created by user not found");
+    }
     const newTask = await DataStore.save(
         new models.Task({
             status: tasksStatus.new,
             timeOfCall,
             createdBy,
+            dateCreated: today.toISOString().split("T")[0],
             tenantId,
         })
     );
