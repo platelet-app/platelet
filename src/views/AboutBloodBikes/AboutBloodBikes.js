@@ -57,7 +57,7 @@ function AboutBloodBikes() {
         </Grid>
         <Grid item>
           <Typography>
-            There are 43 charities, managed by the Nationwide Association of
+            There are 36 charities, managed by the Nationwide Association of
             Blood Bikes (NABB) who provide the service. Together they form a
             network of volunteers, working with each other to transport vital
             items across the country.
