@@ -35,6 +35,10 @@ function SyncStatusCircleLoader() {
         }
     }, [progress]);
 
+    const onComplete = React.useCallback(() => {
+        setIsCompleted(true);
+    }, []);
+
     if (!dataStoreNetworkStatus) {
         return <></>;
     } else if (!isCompleted) {
@@ -42,7 +46,7 @@ function SyncStatusCircleLoader() {
             <LoadingSpinner
                 progress={progress}
                 tooltip={tooltip}
-                onComplete={() => setIsCompleted(true)}
+                onComplete={onComplete}
             />
         );
     } else {

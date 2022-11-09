@@ -38,7 +38,7 @@ function LoadingSpinner({
             setCompleted(false);
             setLoadingColor("red");
         }
-    }, [progress, error]);
+    }, [progress, error, onComplete]);
 
     useEffect(() => {
         if (!error) {
