@@ -1,5 +1,5 @@
-import React from "react";
 import { render } from "../../test-utils";
+import * as hubActions from "../../redux/awsHubListener/awsHubListenerActions";
 import LightToggleProfileMenu from "./LightToggleProfileMenu";
 import { screen, waitFor } from "@testing-library/react";
 import * as amplify from "aws-amplify";
@@ -7,12 +7,19 @@ import * as models from "../../models";
 import * as queries from "../../graphql/queries";
 import userEvent from "@testing-library/user-event";
 import { encodeUUID } from "../../utilities";
+import { DataStore } from "aws-amplify";
 
 jest.mock("aws-amplify");
 
 const preloadedState = {
     whoami: { user: new models.User({ displayName: "Test User" }) },
 };
+
+const initialSyncState = Object.values(models).reduce((acc, model) => {
+    // maybe a better way than checking for copyOf function?
+    if (model.name && !!model.copyOf) return { ...acc, [model.name]: false };
+    else return acc;
+}, {});
 
 describe("LightToggleProfileMenu", () => {
     it("renders without crashing", () => {
@@ -107,5 +114,34 @@ describe("LightToggleProfileMenu", () => {
         expect(
             screen.getByRole("button", { name: "send feedback" })
         ).toBeInTheDocument();
+    });
+
+    test.only("refresh DataStore button", async () => {
+        const preloadedState = {
+            whoami: { user: new models.User({ displayName: "Test User" }) },
+            awsHubDataStoreModelsSyncedStatusReducer: initialSyncState,
+            awsHubDataStoreEventsReducer: { network: true, ready: false },
+        };
+        const { store } = render(<LightToggleProfileMenu />, {
+            preloadedState,
+        });
+        store.dispatch(hubActions.setModelSyncedAll());
+        store.dispatch(hubActions.setReadyStatus(true));
+        const button = await screen.findByRole(
+            "button",
+            {
+                name: "refresh resync data",
+            },
+            { timeout: 2500 }
+        );
+        userEvent.click(button);
+        const dataStoreStopSpy = jest.spyOn(DataStore, "stop");
+        const dataStoreStartSpy = jest.spyOn(DataStore, "start");
+        await waitFor(() => {
+            expect(dataStoreStopSpy).toHaveBeenCalledTimes(1);
+        });
+        await waitFor(() => {
+            expect(dataStoreStartSpy).toHaveBeenCalledTimes(1);
+        });
     });
 });

@@ -5,12 +5,20 @@ import {
     networkStatusSelector,
 } from "../../redux/Selectors";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import ResyncDataStoreButton from "./ResyncDataStoreButton";
 
 function SyncStatusCircleLoader() {
     const modelSyncStatus = useSelector(dataStoreModelSyncedStatusSelector);
     const [progress, setProgress] = React.useState(null);
     const [tooltip, setTooltip] = React.useState("Syncing data...");
     const dataStoreNetworkStatus = useSelector(networkStatusSelector);
+    const [isCompleted, setIsCompleted] = React.useState(false);
+
+    const onReset = () => {
+        setIsCompleted(false);
+        setProgress(0);
+        setTooltip("Syncing data...");
+    };
 
     useEffect(() => {
         const count = Object.keys(modelSyncStatus).length;
@@ -29,8 +37,16 @@ function SyncStatusCircleLoader() {
 
     if (!dataStoreNetworkStatus) {
         return <></>;
+    } else if (!isCompleted) {
+        return (
+            <LoadingSpinner
+                progress={progress}
+                tooltip={tooltip}
+                onComplete={() => setIsCompleted(true)}
+            />
+        );
     } else {
-        return <LoadingSpinner progress={progress} tooltip={tooltip} />;
+        return <ResyncDataStoreButton onClick={onReset} />;
     }
 }
 

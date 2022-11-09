@@ -5,6 +5,7 @@ export const setReadyStatusAction = "AWS_DATASTORE_SET_READY_STATUS";
 export const setModelSyncedStatusAction =
     "AWS_DATASTORE_SET_MODEL_SYNCED_STATUS";
 export const setModelSyncedAllAction = "AWS_DATASTORE_SET_ALL_MODEL_SYNCED";
+export const resetModelSyncedAction = "AWS_DATASTORE_RESET_MODEL_SYNCED";
 
 export function initialiseAwsDataStoreListener() {
     return { type: initialiseAwsDataStoreListenerAction };
@@ -24,4 +25,8 @@ export function setModelSyncedStatus(modelName) {
 
 export function setModelSyncedAll() {
     return { type: setModelSyncedAllAction };
+}
+
+export function resetModelSynced() {
+    return { type: resetModelSyncedAction };
 }

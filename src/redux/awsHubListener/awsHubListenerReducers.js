@@ -36,6 +36,8 @@ export function awsHubDataStoreModelsSyncedStatusReducer(
             return Object.keys(state).reduce((acc, key) => {
                 return { ...acc, [key]: true };
             }, {});
+        case action.resetModelSyncedAction:
+            return initialSyncState;
         default:
             return state;
     }
