@@ -145,28 +145,32 @@ const Topbar = ({
             </Link>
           </div>
         </Grid>
-        <Grid item>
-          <Link href={"#about-platelet"}>
-            <Typography
-              component={"a"}
-              className={clsx(classes.navLink, "submenu-item")}
-              color="textSecondary"
-            >
-              About platelet.app
-            </Typography>
-          </Link>
-        </Grid>
-        <Grid item>
-          <Link href={"#about-bloodbikes"}>
-            <Typography
-              component={"a"}
-              className={clsx(classes.navLink, "submenu-item")}
-              color="textSecondary"
-            >
-              About the blood bikes
-            </Typography>
-          </Link>
-        </Grid>
+        <Hidden smDown>
+          <Grid item>
+            <Link href={"#about-platelet"}>
+              <Typography
+                component={"a"}
+                className={clsx(classes.navLink, "submenu-item")}
+                color="textSecondary"
+              >
+                About platelet.app
+              </Typography>
+            </Link>
+          </Grid>
+        </Hidden>
+        <Hidden smDown>
+          <Grid item>
+            <Link href={"#about-bloodbikes"}>
+              <Typography
+                component={"a"}
+                className={clsx(classes.navLink, "submenu-item")}
+                color="textSecondary"
+              >
+                About the blood bikes
+              </Typography>
+            </Link>
+          </Grid>
+        </Hidden>
         <Grid item>
           <Link href={"mailto:info@platelet.app"}>
             <Typography
