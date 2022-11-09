@@ -31,7 +31,7 @@ function LightToggleProfileMenu() {
         >
             <Box sx={{ width: 40 }}>
                 <SyncStatusCircleLoader />
-                {!networkStatus && (
+                {process.env.REACT_APP_DEMO_MODE !== "true" && !networkStatus && (
                     <Tooltip title={"You are working offline"}>
                         <IconButton size="large">
                             <SignalWifiOff />

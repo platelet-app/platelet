@@ -49,8 +49,10 @@ function SyncStatusCircleLoader() {
                 onComplete={onComplete}
             />
         );
-    } else {
+    } else if (process.env.REACT_APP_OFFLINE_ONLY !== "true") {
         return <ResyncDataStoreButton onClick={onReset} />;
+    } else {
+        return <></>;
     }
 }
 
