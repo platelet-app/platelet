@@ -37,7 +37,7 @@
         "lodash": "^4.17.21",
         "match-sorter": "^6.3.0",
         "material-table": "^1.69.3",
-        "moment": "^2.29.1",
+        "moment": "^2.29.4",
         "moment-timezone": "^0.5.33",
         "notistack": "^2.0.2",
         "prop-types": "^15.7.2",
