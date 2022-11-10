@@ -179,6 +179,10 @@ type LocationMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
+type HandoverMetaData = {
+  readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
 type DeliverableMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
@@ -221,6 +225,7 @@ type EagerUser = {
   readonly createdLocations?: (Location | null)[] | null;
   readonly createdVehicles?: (Vehicle | null)[] | null;
   readonly disabled?: number | null;
+  readonly assignedHandovers?: (Handover | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -247,6 +252,7 @@ type LazyUser = {
   readonly createdLocations: AsyncCollection<Location>;
   readonly createdVehicles: AsyncCollection<Vehicle>;
   readonly disabled?: number | null;
+  readonly assignedHandovers: AsyncCollection<Handover>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -384,6 +390,7 @@ type EagerTask = {
   readonly deliverables?: (Deliverable | null)[] | null;
   readonly comments?: (Comment | null)[] | null;
   readonly status?: TaskStatus | keyof typeof TaskStatus | null;
+  readonly handovers?: (Handover | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -411,6 +418,7 @@ type LazyTask = {
   readonly deliverables: AsyncCollection<Deliverable>;
   readonly comments: AsyncCollection<Comment>;
   readonly status?: TaskStatus | keyof typeof TaskStatus | null;
+  readonly handovers: AsyncCollection<Handover>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -443,6 +451,7 @@ type EagerLocation = {
   readonly taskAsEstablishment?: (Task | null)[] | null;
   readonly comments?: (Comment | null)[] | null;
   readonly disabled?: number | null;
+  readonly handoversAsLocation?: (Handover | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -469,6 +478,7 @@ type LazyLocation = {
   readonly taskAsEstablishment: AsyncCollection<Task>;
   readonly comments: AsyncCollection<Comment>;
   readonly disabled?: number | null;
+  readonly handoversAsLocation: AsyncCollection<Handover>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -477,6 +487,34 @@ export declare type Location = LazyLoading extends LazyLoadingDisabled ? EagerLo
 
 export declare const Location: (new (init: ModelInit<Location, LocationMetaData>) => Location) & {
   copyOf(source: Location, mutator: (draft: MutableModel<Location, LocationMetaData>) => MutableModel<Location, LocationMetaData> | void): Location;
+}
+
+type EagerHandover = {
+  readonly id: string;
+  readonly tenantId: string;
+  readonly task: Task;
+  readonly timeOfHandover?: string | null;
+  readonly handoverLocation?: Location | null;
+  readonly assignedRider?: User | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyHandover = {
+  readonly id: string;
+  readonly tenantId: string;
+  readonly task: AsyncItem<Task>;
+  readonly timeOfHandover?: string | null;
+  readonly handoverLocation: AsyncItem<Location | undefined>;
+  readonly assignedRider: AsyncItem<User | undefined>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Handover = LazyLoading extends LazyLoadingDisabled ? EagerHandover : LazyHandover
+
+export declare const Handover: (new (init: ModelInit<Handover, HandoverMetaData>) => Handover) & {
+  copyOf(source: Handover, mutator: (draft: MutableModel<Handover, HandoverMetaData>) => MutableModel<Handover, HandoverMetaData> | void): Handover;
 }
 
 type EagerDeliverable = {

@@ -206,6 +206,20 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "assignedHandovers": {
+                    "name": "assignedHandovers",
+                    "isArray": true,
+                    "type": {
+                        "model": "Handover"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "userAssignedHandoversId"
+                    }
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -974,6 +988,20 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "handovers": {
+                    "name": "handovers",
+                    "isArray": true,
+                    "type": {
+                        "model": "Handover"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "taskHandoversId"
+                    }
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1260,6 +1288,20 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "handoversAsLocation": {
+                    "name": "handoversAsLocation",
+                    "isArray": true,
+                    "type": {
+                        "model": "Handover"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "locationHandoversAsLocationId"
+                    }
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1308,6 +1350,131 @@ export const schema = {
                                 "provider": "userPools",
                                 "allow": "groups",
                                 "groups": [
+                                    "ADMIN"
+                                ],
+                                "operations": [
+                                    "create",
+                                    "read",
+                                    "update"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "Handover": {
+            "name": "Handover",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "tenantId": {
+                    "name": "tenantId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "task": {
+                    "name": "task",
+                    "isArray": false,
+                    "type": {
+                        "model": "Task"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "taskHandoversId"
+                    }
+                },
+                "timeOfHandover": {
+                    "name": "timeOfHandover",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "handoverLocation": {
+                    "name": "handoverLocation",
+                    "isArray": false,
+                    "type": {
+                        "model": "Location"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "locationHandoversAsLocationId"
+                    }
+                },
+                "assignedRider": {
+                    "name": "assignedRider",
+                    "isArray": false,
+                    "type": {
+                        "model": "User"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "userAssignedHandoversId"
+                    }
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "Handovers",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantId",
+                        "fields": [
+                            "tenantId"
+                        ]
+                    }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "read"
+                                ]
+                            },
+                            {
+                                "groupClaim": "cognito:groups",
+                                "provider": "userPools",
+                                "allow": "groups",
+                                "groups": [
+                                    "COORDINATOR",
                                     "ADMIN"
                                 ],
                                 "operations": [
@@ -2232,5 +2399,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.3.1",
-    "version": "099efccc1630b061d2ff744c69255ee9"
+    "version": "cdeb860a417373b56d65bc32150fcad2"
 };
