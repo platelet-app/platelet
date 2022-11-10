@@ -116,7 +116,7 @@ function LoadingSpinner({
 }
 
 LoadingSpinner.propTypes = {
-    progress: PropTypes.number.isRequired,
+    progress: PropTypes.number,
     tooltip: PropTypes.string,
     size: PropTypes.number,
     delay: PropTypes.number,
@@ -130,6 +130,7 @@ LoadingSpinner.defaultProps = {
     delay: 0,
     sx: {},
     onComplete: () => {},
+    progress: null,
 };
 
 export default LoadingSpinner;

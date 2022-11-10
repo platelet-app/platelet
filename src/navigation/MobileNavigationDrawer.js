@@ -48,8 +48,8 @@ export default function MobileNavigationDrawer() {
                     alignItems="flex-end"
                     justifyContent="center"
                 >
-                    <IconButton>
-                        <ArrowBackIcon onClick={() => toggleDrawer(false)} />
+                    <IconButton onClick={() => toggleDrawer(false)}>
+                        <ArrowBackIcon />
                     </IconButton>
                     <NavDrawerItems
                         className={classes.list}

@@ -284,6 +284,11 @@ function MultipleSelectionActionsMenu() {
                     {!isSm && (
                         <ToggleButton
                             aria-label="Select All"
+                            value="check"
+                            selected={
+                                selectedItems &&
+                                Object.values(selectedItems).length > 0
+                            }
                             sx={{ margin: 0.5 }}
                             size="small"
                             onClick={handleOnClickCheck}

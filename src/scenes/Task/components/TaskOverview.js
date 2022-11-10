@@ -46,7 +46,7 @@ function TaskOverview({ taskId, isFetching }) {
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     return (
-        <Container className={classes.root} maxWidth={true}>
+        <Container className={classes.root}>
             <Grid
                 container
                 direction="row"

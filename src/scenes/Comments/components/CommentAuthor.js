@@ -20,13 +20,16 @@ const useStyles = makeStyles({
 
 const CommentAuthor = React.memo((props) => {
     const classes = useStyles();
+    if (!props.userId) {
+        return null;
+    }
     return (
         <Grid container alignItems={"center"} spacing={1} direction={"row"}>
             <Grid item>
                 {props.disableLink ? (
                     <UserAvatar
                         size={5}
-                        userUUID={props.uuid}
+                        userUUID={props.userId}
                         displayName={props.displayName}
                         thumbnailKey={props.thumbnailKey}
                     />
@@ -34,11 +37,11 @@ const CommentAuthor = React.memo((props) => {
                     <ThemedLink
                         className={classes.avatar}
                         component={RouterLink}
-                        to={"/user/" + encodeUUID(props.uuid)}
+                        to={"/user/" + encodeUUID(props.userId)}
                     >
                         <UserAvatar
                             size={5}
-                            userUUID={props.uuid}
+                            userUUID={props.userId}
                             displayName={props.displayName}
                             thumbnailKey={props.thumbnailKey}
                         />
@@ -52,7 +55,7 @@ const CommentAuthor = React.memo((props) => {
                     <ThemedLink
                         className={classes.link}
                         component={RouterLink}
-                        to={"/user/" + encodeUUID(props.uuid)}
+                        to={"/user/" + encodeUUID(props.userId)}
                     >
                         <Typography>{props.displayName}</Typography>
                     </ThemedLink>
@@ -63,7 +66,7 @@ const CommentAuthor = React.memo((props) => {
 });
 
 CommentAuthor.propTypes = {
-    userUUID: PropTypes.string.isRequired,
+    userId: PropTypes.string,
     displayName: PropTypes.string,
     thumbnailKey: PropTypes.string,
     disableLink: PropTypes.bool,
@@ -73,6 +76,7 @@ CommentAuthor.defaultProps = {
     displayName: "Unknown User",
     thumbnailKey: "",
     disableLink: false,
+    userId: null,
 };
 
 export default CommentAuthor;
