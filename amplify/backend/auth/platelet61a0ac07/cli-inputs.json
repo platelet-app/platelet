@@ -1,45 +1,77 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "authSelections": "identityPoolAndUserPool",
-    "requiredAttributes": [
-      "email"
-    ],
-    "resourceName": "platelet61a0ac07",
-    "serviceName": "Cognito",
-    "useDefault": "default",
-    "userpoolClientReadAttributes": [
-      "email"
-    ],
-    "userpoolClientWriteAttributes": [
-      "email"
-    ],
-    "aliasAttributes": [
-      "email"
-    ],
+    "identityPoolName": "platelet61a0ac07_identitypool_61a0ac07",
+    "allowUnauthenticatedIdentities": false,
     "resourceNameTruncated": "platel61a0ac07",
-    "sharedId": "61a0ac07",
-    "userPoolGroupList": [],
     "userPoolName": "platelet61a0ac07_userpool_61a0ac07",
-    "usernameCaseSensitive": false,
-    "userpoolClientRefreshTokenValidity": 30,
-    "userpoolClientSetAttributes": false,
-    "userpoolClientGenerateSecret": false,
-    "userpoolClientLambdaRole": "platel61a0ac07_userpoolclient_lambda_role",
-    "passwordPolicyCharacters": [],
-    "passwordPolicyMinLength": 8,
+    "autoVerifiedAttributes": [
+      "email"
+    ],
     "mfaConfiguration": "OFF",
     "mfaTypes": [
       "SMS Text Message"
     ],
     "smsAuthenticationMessage": "Your authentication code is {####}",
-    "emailVerificationMessage": "Your verification code is {####}",
-    "emailVerificationSubject": "Your verification code",
     "smsVerificationMessage": "Your verification code is {####}",
-    "autoVerifiedAttributes": [
+    "emailVerificationSubject": "Your verification code",
+    "emailVerificationMessage": "Your verification code is {####}",
+    "defaultPasswordPolicy": false,
+    "passwordPolicyMinLength": 8,
+    "passwordPolicyCharacters": [],
+    "requiredAttributes": [
       "email"
     ],
-    "identityPoolName": "platelet61a0ac07_identitypool_61a0ac07",
-    "allowUnauthenticatedIdentities": false
+    "aliasAttributes": [
+      "email"
+    ],
+    "userpoolClientGenerateSecret": false,
+    "userpoolClientRefreshTokenValidity": 30,
+    "userpoolClientWriteAttributes": [
+      "email"
+    ],
+    "userpoolClientReadAttributes": [
+      "email"
+    ],
+    "userpoolClientLambdaRole": "platel61a0ac07_userpoolclient_lambda_role",
+    "userpoolClientSetAttributes": false,
+    "authSelections": "identityPoolAndUserPool",
+    "resourceName": "platelet61a0ac07",
+    "serviceName": "Cognito",
+    "useDefault": "manual",
+    "sharedId": "61a0ac07",
+    "userPoolGroupList": [
+      "SUPER",
+      "ADMIN",
+      "COORDINATOR",
+      "RIDER",
+      "USER"
+    ],
+    "usernameCaseSensitive": false,
+    "authRoleArn": {
+      "Fn::GetAtt": [
+        "AuthRole",
+        "Arn"
+      ]
+    },
+    "unauthRoleArn": {
+      "Fn::GetAtt": [
+        "UnauthRole",
+        "Arn"
+      ]
+    },
+    "breakCircularDependency": true,
+    "useEnabledMfas": false,
+    "dependsOn": [],
+    "thirdPartyAuth": false,
+    "userPoolGroups": true,
+    "adminQueries": false,
+    "triggers": {},
+    "hostedUI": false,
+    "authProviders": [],
+    "parentStack": {
+      "Ref": "AWS::StackId"
+    },
+    "permissions": []
   }
 }
