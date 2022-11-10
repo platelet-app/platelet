@@ -77,14 +77,12 @@ function TaskDialogCompact(props) {
     const theme = useTheme();
     const isMd = useMediaQuery(theme.breakpoints.down("lg"));
     const taskObserver = useRef({ unsubscribe: () => {} });
-    const [isFetching, setIsFetching] = useState(false);
     const [errorState, setErrorState] = useState(null);
     const tasksSynced = useSelector(dataStoreModelSyncedStatusSelector).Task;
     let { task_uuid_b62 } = useParams();
     const taskId = decodeUUID(task_uuid_b62);
 
     const getTask = React.useCallback(async (taskId) => {
-        setIsFetching(true);
         try {
             const taskData = await DataStore.query(models.Task, taskId);
             taskObserver.current.unsubscribe();
@@ -101,9 +99,7 @@ function TaskDialogCompact(props) {
             } else {
                 setNotFound(true);
             }
-            setIsFetching(false);
         } catch (error) {
-            setIsFetching(false);
             setErrorState(error);
             console.error("Request failed", error);
         }
@@ -159,7 +155,7 @@ function TaskDialogCompact(props) {
             <DialogWrapper handleClose={onClose}>
                 <div className={classes.overview}>
                     {statusBar}
-                    <TaskOverview isFetching={isFetching} taskId={taskId} />
+                    <TaskOverview taskId={taskId} />
                     <Hidden mdDown>
                         <CommentsSideBar
                             taskId={taskId}
