@@ -107,6 +107,7 @@ describe("TenantList", () => {
                                     id: 1,
                                     name: "Tenant 1",
                                     config: fakeConfigData,
+                                    version: 1,
                                 },
                             },
                         }),
@@ -132,6 +133,26 @@ describe("TenantList", () => {
             "amplifyConfig",
             fakeConfigData
         );
+        expect(localStorageSpy).toHaveBeenCalledWith("tenantName", "Tenant 1");
+        expect(localStorageSpy).toHaveBeenCalledWith("tenantVersion", 1);
+        expect(localStorageSpy).toHaveBeenCalledWith("tenantId", 1);
+        expect(setupComplete).toHaveBeenCalled();
+    });
+
+    test("configuring with an existing config", async () => {
+        const amplifySpy = jest.spyOn(Amplify, "configure");
+        const setupComplete = jest.fn();
+        const localStorageSpy = jest
+            .spyOn(Storage.prototype, "getItem")
+            .mockReturnValue(fakeConfigData);
+        render(<TenantList onSetupComplete={setupComplete} />);
+        await waitFor(() => {
+            expect(localStorageSpy).toHaveBeenCalled();
+        });
+        const parsedConfig = JSON.parse(fakeConfigData);
+        await waitFor(() => {
+            expect(amplifySpy).toHaveBeenCalledWith(parsedConfig);
+        });
         expect(setupComplete).toHaveBeenCalled();
     });
 });

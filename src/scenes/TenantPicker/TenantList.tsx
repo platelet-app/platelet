@@ -12,6 +12,7 @@ export const getTenant = /* GraphQL */ `
             id
             name
             config
+            version
             createdAt
             updatedAt
         }
@@ -36,8 +37,6 @@ export const listTenants = /* GraphQL */ `
 interface TenantQueryVariables {
     id: string;
 }
-
-const configFromLocalStorage = localStorage.getItem("amplifyConfig");
 
 const fetchData = (
     query: string,
@@ -78,6 +77,7 @@ export const TenantList: React.FC<TenantListProps> = ({
     const [tenants, setTenants] = React.useState([]);
     const [errorState, setErrorState] = React.useState<null | Error>(null);
     const dispatch = useDispatch();
+    const configFromLocalStorage = localStorage.getItem("amplifyConfig");
 
     const getTenantList = React.useCallback(async () => {
         try {
@@ -99,10 +99,11 @@ export const TenantList: React.FC<TenantListProps> = ({
         try {
             const response = await fetchData(getTenant, { id: tenantId });
             const { data } = await response.json();
-            const { config, name, id } = data.getTenant;
+            const { config, name, id, version } = data.getTenant;
             localStorage.setItem("amplifyConfig", config);
             localStorage.setItem("tenantName", name);
             localStorage.setItem("tenantId", id);
+            localStorage.setItem("tenantVersion", version);
             configureAmplify(config);
             onSetupComplete();
         } catch (error) {
