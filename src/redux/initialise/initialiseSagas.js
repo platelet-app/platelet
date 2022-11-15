@@ -17,6 +17,7 @@ import {
     userRoles,
 } from "../../apiConsts";
 import { initTaskAssignees } from "../taskAssignees/taskAssigneesActions";
+import getAmplifyConfig from "../getAmplifyConfig/getAmplifyConfigActions";
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -72,6 +73,7 @@ function* initialiseApp() {
     }
     yield put(initialiseAwsDataStoreListener());
     yield put(getWhoamiRequest());
+    yield put(getAmplifyConfig());
 }
 
 export function* watchInitialiseApp() {
