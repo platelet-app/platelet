@@ -18,15 +18,6 @@ type TenantQueryVariables = {
     id: string;
 };
 
-interface ITenant {
-    id: string;
-    name: string;
-    config: string;
-    version: number;
-    createdAt: string;
-    updatedAt: string;
-}
-
 const fetchData = (
     query: string,
     variables: TenantQueryVariables | null = null
@@ -57,15 +48,13 @@ function* getAmplifyConfigSaga() {
         const response: Response = yield call(fetchData, getTenant, {
             id: tenantId,
         });
-        console.log(response);
-        console.log(typeof response);
         const { data } = yield call([response, "json"]);
         const { config, version } = data.getTenant;
         const currentVersion: string = yield call(
             [localStorage, "getItem"],
             "tenantVersion"
         );
-        if (version > parseInt(currentVersion)) {
+        if (!currentVersion || version > parseInt(currentVersion)) {
             console.log("Updating tenant config");
             const amplifyConfig = JSON.parse(config);
             yield call(
