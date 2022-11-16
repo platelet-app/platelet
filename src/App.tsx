@@ -5,7 +5,7 @@ import "./App.css";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useDispatch, useSelector } from "react-redux";
 import { setMobileView } from "./redux/Actions";
-import { withAuthenticator } from "@aws-amplify/ui-react";
+import "@aws-amplify/ui-react/styles.css";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import Moment from "react-moment";
@@ -25,6 +25,7 @@ import { DataStore } from "aws-amplify";
 import * as models from "./models";
 import useCurrentTheme from "./hooks/useCurrentTheme";
 import TenantList from "./scenes/TenantPicker/TenantList";
+import Login from "./scenes/Login/Login";
 
 declare module "@mui/material/styles" {
     interface Palette {
@@ -172,8 +173,6 @@ function AppDefault(props: any) {
     }
 }
 
-const AppAuthenticated = withAuthenticator(AppDefault);
-
 const App = () => {
     const [setupComplete, setSetupComplete] = React.useState(false);
     const offline =
@@ -182,7 +181,11 @@ const App = () => {
     if (offline) {
         return <AppDefault />;
     } else if (setupComplete) {
-        return <AppAuthenticated />;
+        return (
+            <Login>
+                <AppDefault />
+            </Login>
+        );
     } else {
         return <TenantList onSetupComplete={() => setSetupComplete(true)} />;
     }
