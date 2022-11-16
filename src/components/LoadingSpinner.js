@@ -3,7 +3,15 @@ import PropTypes from "prop-types";
 import { Box } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react";
 
-function LoadingSpinner({ progress, tooltip, size, delay, error, ...props }) {
+function LoadingSpinner({
+    progress,
+    tooltip,
+    size,
+    delay,
+    error,
+    sx,
+    onComplete,
+}) {
     const [loadingColor, setLoadingColor] = useState(null);
     const [completed, setCompleted] = useState(true);
     const [fade, setFade] = useState(false);
@@ -16,6 +24,7 @@ function LoadingSpinner({ progress, tooltip, size, delay, error, ...props }) {
             setTimeout(() => {
                 setCompleted(true);
                 setLoadingColor(null);
+                onComplete();
             }, 2000);
 
             return;
@@ -29,7 +38,7 @@ function LoadingSpinner({ progress, tooltip, size, delay, error, ...props }) {
             setCompleted(false);
             setLoadingColor("red");
         }
-    }, [progress, error]);
+    }, [progress, error, onComplete]);
 
     useEffect(() => {
         if (!error) {
@@ -68,7 +77,7 @@ function LoadingSpinner({ progress, tooltip, size, delay, error, ...props }) {
         return null;
     } else {
         return (
-            <Box sx={props.sx}>
+            <Box sx={sx}>
                 <Fade
                     data-testid="progressive-loading-spinner"
                     in={error || fade}
@@ -107,11 +116,12 @@ function LoadingSpinner({ progress, tooltip, size, delay, error, ...props }) {
 }
 
 LoadingSpinner.propTypes = {
-    progress: PropTypes.number.isRequired,
+    progress: PropTypes.number,
     tooltip: PropTypes.string,
     size: PropTypes.number,
     delay: PropTypes.number,
     sx: PropTypes.object,
+    onComplete: PropTypes.func,
 };
 
 LoadingSpinner.defaultProps = {
@@ -119,6 +129,8 @@ LoadingSpinner.defaultProps = {
     size: 40,
     delay: 0,
     sx: {},
+    onComplete: () => {},
+    progress: null,
 };
 
 export default LoadingSpinner;

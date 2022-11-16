@@ -133,7 +133,8 @@ TaskActionConfirmationDialogContents.propTypes = {
         "timeRejected",
         "timeCancelled",
         "timeRiderHome",
-    ]).isRequired,
+        null,
+    ]),
     nullify: PropTypes.bool,
     onChangeTime: PropTypes.func,
     onClose: PropTypes.func,
@@ -143,6 +144,7 @@ TaskActionConfirmationDialogContents.defaultProps = {
     nullify: false,
     onChangeTime: () => {},
     onClose: () => {},
+    timeKey: null,
 };
 
 export default TaskActionConfirmationDialogContents;
