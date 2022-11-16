@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "@aws-amplify/ui-react": "^1.2.11",
+        "@aws-amplify/ui-react": "^3.6.0",
         "@date-io/date-fns": "^2.11.0",
         "@date-io/moment": "^2.11.0",
         "@emotion/react": "^11.4.1",
