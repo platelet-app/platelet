@@ -36,3 +36,4 @@ export const availableSelectionItemsSelector = (state) =>
 export const selectionActionsPendingSelector = (state) =>
     state.selectionActionsPendingReducer;
 export const modalTrackerSelector = (state) => state.modalTrackerReducer;
+export const notificationsSelector = (state) => state.notification;
