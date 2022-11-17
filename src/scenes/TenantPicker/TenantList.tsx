@@ -139,13 +139,18 @@ export const TenantList: React.FC<TenantListProps> = ({
                     label="Search..."
                     onChange={onChangeFilterTerm}
                 />
-                {tenants.map((tenant: Tenant) => (
-                    <TenantCard
-                        onClick={() => onClickTenant(tenant.id)}
-                        key={tenant.id}
-                        name={tenant.name}
-                    />
-                ))}
+                {tenants
+                    .sort(
+                        // sort alphabetically by name
+                        (a, b) => a.name.localeCompare(b.name)
+                    )
+                    .map((tenant: Tenant) => (
+                        <TenantCard
+                            onClick={() => onClickTenant(tenant.id)}
+                            key={tenant.id}
+                            name={tenant.name}
+                        />
+                    ))}
             </Stack>
         );
     }
