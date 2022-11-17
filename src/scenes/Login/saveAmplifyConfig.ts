@@ -1,6 +1,3 @@
-import { call, takeLatest } from "redux-saga/effects";
-import * as actions from "./getAmplifyConfigActions";
-
 export const getTenant = /* GraphQL */ `
     query GetTenant($id: ID!) {
         getTenant(id: $id) {
@@ -41,32 +38,25 @@ const fetchData = (
     });
 };
 
-function* getAmplifyConfigSaga() {
+async function saveAmplifyConfig() {
     const tenantId = localStorage.getItem("tenantId");
     if (!tenantId) return;
     try {
-        const response: Response = yield call(fetchData, getTenant, {
+        const response: Response = await fetchData(getTenant, {
             id: tenantId,
         });
-        const { data } = yield call([response, "json"]);
+        const { data } = await response.json();
         const { config, version } = data.getTenant;
-        const currentVersion: string = yield call(
-            [localStorage, "getItem"],
-            "tenantVersion"
-        );
+        const currentVersion: string | null =
+            localStorage.getItem("tenantVersion");
         if (!currentVersion || version > parseInt(currentVersion)) {
             console.log("Updating tenant config");
             const amplifyConfig = JSON.parse(config);
-            yield call(
-                [localStorage, "setItem"],
+            localStorage.setItem(
                 "amplifyConfig",
                 JSON.stringify(amplifyConfig)
             );
-            yield call(
-                [localStorage, "setItem"],
-                "tenantVersion",
-                version.toString()
-            );
+            localStorage.setItem("tenantVersion", version.toString());
         } else {
             console.log("Tenant config is up to date");
         }
@@ -75,6 +65,4 @@ function* getAmplifyConfigSaga() {
     }
 }
 
-export function* watchGetAmplifyConfig() {
-    yield takeLatest(actions.GET_AMPLIFY_CONFIG, getAmplifyConfigSaga);
-}
+export default saveAmplifyConfig;

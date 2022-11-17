@@ -1,5 +1,4 @@
 import * as awsHubSagas from "./awsHubListener/awsHubListenerSagas";
-import * as getAmplifyConfigSagas from "./getAmplifyConfig/getAmplifyConfigSagas";
 
 import { all, call } from "redux-saga/effects";
 import {
@@ -36,6 +35,5 @@ export default function* rootSaga() {
         call(watchSelectAllItems),
         call(watchFilterFromAvailableItems),
         call(watchInitWhoamiObserver),
-        call(getAmplifyConfigSagas.watchGetAmplifyConfig),
     ]);
 }

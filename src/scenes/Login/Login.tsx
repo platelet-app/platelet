@@ -1,7 +1,9 @@
 import { Authenticator } from "@aws-amplify/ui-react";
 import { Box } from "@mui/material";
+import React from "react";
 import SignInHeader from "./components/SignInHeader";
 import "./login.css";
+import saveAmplifyConfig from "./saveAmplifyConfig";
 
 type LoginProps = {
     children: React.ReactElement;
@@ -25,6 +27,10 @@ const components = {
 };
 
 const Login: React.FC<LoginProps> = ({ children }) => {
+    React.useEffect(() => {
+        saveAmplifyConfig();
+    }, []);
+
     return (
         <Box
             sx={{

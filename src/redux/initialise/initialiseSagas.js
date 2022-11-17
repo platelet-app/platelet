@@ -84,7 +84,6 @@ function* initialiseApp() {
     }
     yield put(initialiseAwsDataStoreListener());
     yield put(getWhoamiRequest());
-    yield put(getAmplifyConfig());
 
     // add Google maps API to window
     // only used by OnlineLocationSearch component for now
