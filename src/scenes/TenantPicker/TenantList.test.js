@@ -9,6 +9,7 @@ const fakeConfigData = `{"test":"test"}`;
 describe("TenantList", () => {
     beforeEach(() => {
         jest.restoreAllMocks();
+        localStorage.clear();
     });
     it("lists the tenants", async () => {
         const fakeItems = [
@@ -38,7 +39,9 @@ describe("TenantList", () => {
             expect(querySpy).toHaveBeenCalled();
         });
         expect(
-            screen.getByText("There was an error while retrieving the list.")
+            screen.getByText(
+                "There was an error while retrieving the available teams."
+            )
         ).toBeInTheDocument();
     });
 
@@ -112,5 +115,48 @@ describe("TenantList", () => {
             expect(amplifySpy).toHaveBeenCalledWith(parsedConfig);
         });
         expect(setupComplete).toHaveBeenCalled();
+    });
+
+    test("filter the tenants", async () => {
+        const fakeItems = [
+            { id: "someId", name: "First Tenant" },
+            { id: "someId2", name: "Something Else" },
+        ];
+        const querySpy = jest
+            .spyOn(global, "fetch")
+            .mockResolvedValueOnce({
+                json: () =>
+                    Promise.resolve({
+                        data: { listTenants: { items: fakeItems } },
+                    }),
+            })
+            .mockResolvedValueOnce(
+                Promise.resolve({
+                    json: () =>
+                        Promise.resolve({
+                            data: {
+                                getTenant: {
+                                    id: "someId",
+                                    name: "Tenant 1",
+                                    config: fakeConfigData,
+                                    version: "1",
+                                },
+                            },
+                        }),
+                })
+            );
+        const setupComplete = jest.fn();
+        render(<TenantList onSetupComplete={setupComplete} />);
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalled();
+        });
+        userEvent.type(
+            screen.getByRole("textbox", { name: "Search teams" }),
+            "First"
+        );
+        await waitFor(() => {
+            expect(screen.getByText("First Tenant")).toBeInTheDocument();
+        });
+        expect(screen.queryByText("Something Else")).not.toBeInTheDocument();
     });
 });

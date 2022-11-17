@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
-import { Stack, Typography } from "@mui/material";
+import React, { ChangeEvent, useEffect } from "react";
+import { Stack, TextField, Typography } from "@mui/material";
 import { TenantCard } from "./components/TenantCard";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { useDispatch } from "react-redux";
 import configureAmplify from "./utilities/configureAmplify";
 import saveAmplifyConfig from "../../utilities/saveAmplifyConfig";
+import { matchSorter } from "match-sorter";
 
 export const listTenants = /* GraphQL */ `
     query ListTenants(
@@ -49,11 +50,11 @@ const fetchData = (
     });
 };
 
-interface TenantListInterface {
+type Tenant = {
     name: string;
     id: string;
     config: string;
-}
+};
 
 interface TenantListProps {
     onSetupComplete: () => void;
@@ -62,16 +63,30 @@ interface TenantListProps {
 export const TenantList: React.FC<TenantListProps> = ({
     onSetupComplete,
 }: TenantListProps) => {
-    const [tenants, setTenants] = React.useState([]);
+    const [tenants, setTenants] = React.useState<Tenant[]>([]);
     const [errorState, setErrorState] = React.useState<null | Error>(null);
     const dispatch = useDispatch();
     const configFromLocalStorage = localStorage.getItem("amplifyConfig");
+    const tenantsListRef = React.useRef<Tenant[]>([]);
+
+    function onChangeFilterTerm(e: ChangeEvent<HTMLInputElement>) {
+        const { value } = e.target;
+        if (!value) {
+            setTenants(tenantsListRef.current);
+        } else {
+            const result = matchSorter(tenantsListRef.current, value, {
+                keys: ["name"],
+            });
+            setTenants(result);
+        }
+    }
 
     const getTenantList = React.useCallback(async () => {
         try {
             const response = await fetchData(listTenants);
             const { data } = await response.json();
             setTenants(data.listTenants.items);
+            tenantsListRef.current = data.listTenants.items;
         } catch (error) {
             console.log("List tenant graphql error:", error);
             if (error instanceof Error) {
@@ -116,7 +131,15 @@ export const TenantList: React.FC<TenantListProps> = ({
                 }}
             >
                 <Typography variant="h6">Please choose your team</Typography>
-                {tenants.map((tenant: TenantListInterface) => (
+                <TextField
+                    inputProps={{
+                        "aria-label": "Search teams",
+                    }}
+                    sx={{ maxWidth: 600 }}
+                    label="Search..."
+                    onChange={onChangeFilterTerm}
+                />
+                {tenants.map((tenant: Tenant) => (
                     <TenantCard
                         onClick={() => onClickTenant(tenant.id)}
                         key={tenant.id}
