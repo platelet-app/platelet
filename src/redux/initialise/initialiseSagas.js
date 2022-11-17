@@ -17,7 +17,6 @@ import {
     userRoles,
 } from "../../apiConsts";
 import { initTaskAssignees } from "../taskAssignees/taskAssigneesActions";
-import getAmplifyConfig from "../getAmplifyConfig/getAmplifyConfigActions";
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
