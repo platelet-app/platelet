@@ -2,9 +2,13 @@ import { Button, Stack, Typography } from "@mui/material";
 import { DataStore } from "aws-amplify";
 
 const handleChangeTeam = async () => {
-    localStorage.clear();
-    await DataStore.clear();
-    window.location.reload();
+    try {
+        localStorage.clear();
+        await DataStore.clear();
+        window.location.reload();
+    } catch (error) {
+        console.log("Could not reset team:", error);
+    }
 };
 
 const SignInHeader: React.FC = () => {
@@ -21,7 +25,11 @@ const SignInHeader: React.FC = () => {
             <Typography sx={{ color: "black" }}>
                 {tenantName?.toUpperCase()}
             </Typography>
-            <Button onClick={handleChangeTeam} variant="contained">
+            <Button
+                aria-label="Change team"
+                onClick={handleChangeTeam}
+                variant="contained"
+            >
                 Change Team
             </Button>
         </Stack>
