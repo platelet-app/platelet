@@ -1,9 +1,8 @@
 import { Authenticator } from "@aws-amplify/ui-react";
-import { Box } from "@mui/material";
 import React from "react";
 import SignInHeader from "./components/SignInHeader";
 import "./login.css";
-import saveAmplifyConfig from "./saveAmplifyConfig";
+import saveAmplifyConfig from "../../utilities/saveAmplifyConfig";
 
 type LoginProps = {
     children: React.ReactElement;
@@ -28,20 +27,16 @@ const components = {
 
 const Login: React.FC<LoginProps> = ({ children }) => {
     React.useEffect(() => {
-        saveAmplifyConfig();
+        const tenantId = localStorage.getItem("tenantId");
+        if (tenantId) {
+            saveAmplifyConfig(tenantId);
+        }
     }, []);
 
     return (
-        <Box
-            sx={{
-                height: "100vh",
-                margin: "auto",
-            }}
-        >
-            <Authenticator formFields={formFields} components={components}>
-                {children}
-            </Authenticator>
-        </Box>
+        <Authenticator formFields={formFields} components={components}>
+            {children}
+        </Authenticator>
     );
 };
 

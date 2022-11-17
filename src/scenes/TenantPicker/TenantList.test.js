@@ -4,49 +4,7 @@ import { render } from "../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-const fakeConfigData = `{
-    "aws_project_region": "eu-west-1",
-    "aws_cognito_identity_pool_id": "eu-west-1:12345678-1234-1234-1234-123456789012",
-    "aws_cognito_region": "eu-west-1",
-    "aws_user_pools_id": "eu-west-1_12345678",
-    "aws_user_pools_web_client_id": "1234567890123456789012",
-    "oauth": {},
-    "aws_cognito_username_attributes": [],
-    "aws_cognito_social_providers": [],
-    "aws_cognito_signup_attributes": [
-        "EMAIL"
-    ],
-    "aws_cognito_mfa_configuration": "OFF",
-    "aws_cognito_mfa_types": [
-        "SMS"
-    ],
-    "aws_cognito_password_protection_settings": {
-        "passwordPolicyMinLength": 8,
-        "passwordPolicyCharacters": []
-    },
-    "aws_cognito_verification_mechanisms": [
-        "EMAIL"
-    ],
-    "aws_appsync_graphqlEndpoint": "https://someendpoint.appsync-api.eu-west-1.amazonaws.com/graphql",
-    "aws_appsync_region": "eu-west-1",
-    "aws_appsync_authenticationType": "AMAZON_COGNITO_USER_POOLS",
-    "aws_user_files_s3_bucket": "somebucket",
-    "aws_user_files_s3_bucket_region": "eu-west-1",
-    "geo": {
-        "amazon_location_service": {
-            "region": "eu-west-1",
-            "search_indices": {
-                "items": [
-                    "plateletPlace"
-                ],
-                "default": "plateletPlace"
-            }
-        }
-    },
-    "aws_cognito_login_mechanisms": [
-        "EMAIL"
-    ]
-}`;
+const fakeConfigData = `{"test":"test"}`;
 
 describe("TenantList", () => {
     beforeEach(() => {
@@ -86,8 +44,8 @@ describe("TenantList", () => {
 
     test("clicking and configuring a tenant", async () => {
         const fakeItems = [
-            { id: 1, name: "Tenant 1" },
-            { id: 2, name: "Tenant 2" },
+            { id: "someId", name: "Tenant 1" },
+            { id: "someId2", name: "Tenant 2" },
         ];
         const amplifySpy = jest.spyOn(Amplify, "configure");
         const querySpy = jest
@@ -104,10 +62,10 @@ describe("TenantList", () => {
                         Promise.resolve({
                             data: {
                                 getTenant: {
-                                    id: 1,
+                                    id: "someId",
                                     name: "Tenant 1",
                                     config: fakeConfigData,
-                                    version: 1,
+                                    version: "1",
                                 },
                             },
                         }),
@@ -134,8 +92,8 @@ describe("TenantList", () => {
             fakeConfigData
         );
         expect(localStorageSpy).toHaveBeenCalledWith("tenantName", "Tenant 1");
-        expect(localStorageSpy).toHaveBeenCalledWith("tenantVersion", 1);
-        expect(localStorageSpy).toHaveBeenCalledWith("tenantId", 1);
+        expect(localStorageSpy).toHaveBeenCalledWith("tenantVersion", "1");
+        expect(localStorageSpy).toHaveBeenCalledWith("tenantId", "someId");
         expect(setupComplete).toHaveBeenCalled();
     });
 

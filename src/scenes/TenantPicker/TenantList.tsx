@@ -5,19 +5,8 @@ import { PaddedPaper } from "../../styles/common";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { useDispatch } from "react-redux";
 import configureAmplify from "./utilities/configureAmplify";
+import saveAmplifyConfig from "../../utilities/saveAmplifyConfig";
 
-export const getTenant = /* GraphQL */ `
-    query GetTenant($id: ID!) {
-        getTenant(id: $id) {
-            id
-            name
-            config
-            version
-            createdAt
-            updatedAt
-        }
-    }
-`;
 export const listTenants = /* GraphQL */ `
     query ListTenants(
         $filter: ModelTenantFilterInput
@@ -97,13 +86,8 @@ export const TenantList: React.FC<TenantListProps> = ({
 
     const onClickTenant = async (tenantId: string) => {
         try {
-            const response = await fetchData(getTenant, { id: tenantId });
-            const { data } = await response.json();
-            const { config, name, id, version } = data.getTenant;
-            localStorage.setItem("amplifyConfig", config);
-            localStorage.setItem("tenantName", name);
-            localStorage.setItem("tenantId", id);
-            localStorage.setItem("tenantVersion", version);
+            localStorage.setItem("tenantId", tenantId);
+            const config = await saveAmplifyConfig(tenantId);
             configureAmplify(config);
             onSetupComplete();
         } catch (error) {
@@ -113,7 +97,7 @@ export const TenantList: React.FC<TenantListProps> = ({
     };
 
     if (configFromLocalStorage) {
-        configureAmplify(configFromLocalStorage);
+        configureAmplify(JSON.parse(configFromLocalStorage));
         onSetupComplete();
         return <></>;
     } else if (errorState) {
