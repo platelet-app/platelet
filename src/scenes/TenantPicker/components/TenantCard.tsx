@@ -11,7 +11,14 @@ export const TenantCard: React.FC<TenantCardProps> = ({
     onClick,
 }: TenantCardProps) => {
     return (
-        <Paper onClick={onClick} sx={{ padding: 1 }}>
+        <Paper
+            sx={{
+                cursor: "pointer",
+                padding: 2,
+                maxWidth: 600,
+            }}
+            onClick={onClick}
+        >
             <Typography variant="h6">{name}</Typography>
         </Paper>
     );

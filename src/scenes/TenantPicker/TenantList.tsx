@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Stack, Typography } from "@mui/material";
 import { TenantCard } from "./components/TenantCard";
-import { PaddedPaper } from "../../styles/common";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { useDispatch } from "react-redux";
 import configureAmplify from "./utilities/configureAmplify";
@@ -102,26 +101,29 @@ export const TenantList: React.FC<TenantListProps> = ({
         return <></>;
     } else if (errorState) {
         return (
-            <PaddedPaper>
-                <Typography variant="h6">
-                    There was an error while retrieving the list.
-                </Typography>
-            </PaddedPaper>
+            <Typography variant="h6">
+                There was an error while retrieving the available teams.
+            </Typography>
         );
     } else {
         return (
-            <PaddedPaper>
-                <Stack>
-                    <Typography>Choose a tenant</Typography>
-                    {tenants.map((tenant: TenantListInterface) => (
-                        <TenantCard
-                            onClick={() => onClickTenant(tenant.id)}
-                            key={tenant.id}
-                            name={tenant.name}
-                        />
-                    ))}
-                </Stack>
-            </PaddedPaper>
+            <Stack
+                spacing={1}
+                sx={{
+                    padding: 1,
+                    background: "rgb(235, 235, 235)",
+                    height: "100vh",
+                }}
+            >
+                <Typography variant="h6">Please choose your team</Typography>
+                {tenants.map((tenant: TenantListInterface) => (
+                    <TenantCard
+                        onClick={() => onClickTenant(tenant.id)}
+                        key={tenant.id}
+                        name={tenant.name}
+                    />
+                ))}
+            </Stack>
         );
     }
 };
