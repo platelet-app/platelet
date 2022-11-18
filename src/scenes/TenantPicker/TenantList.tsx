@@ -130,7 +130,9 @@ export const TenantList: React.FC<TenantListProps> = ({
                     height: "100vh",
                 }}
             >
-                <Typography variant="h6">Please choose your team</Typography>
+                <Typography sx={{ color: "black" }} variant="h6">
+                    Please choose your team
+                </Typography>
                 <TextField
                     inputProps={{
                         "aria-label": "Search teams",
