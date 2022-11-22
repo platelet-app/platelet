@@ -244,9 +244,7 @@ function TaskAssignmentsPanel(props) {
                         alignItems="center"
                         justifyContent="space-between"
                     >
-                        <Typography variant={"h6"}>
-                            People assigned to this task
-                        </Typography>
+                        <Typography variant={"h6"}>Assignees</Typography>
                         {hasFullPermissions && (
                             <Tooltip title={"Edit Assignees"}>
                                 <IconButton
