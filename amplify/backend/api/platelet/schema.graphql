@@ -136,6 +136,7 @@ type Location
   taskAsEstablishment: [Task] @hasMany(indexName: "byEstasblishmentLocation", fields: ["id"])
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
   disabled: Int @default(value: "0")
+  googleMapsPlaceId: String
 }
 
 type Task
