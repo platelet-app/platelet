@@ -443,6 +443,7 @@ type EagerLocation = {
   readonly taskAsEstablishment?: (Task | null)[] | null;
   readonly comments?: (Comment | null)[] | null;
   readonly disabled?: number | null;
+  readonly googleMapsPlaceId?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -469,6 +470,7 @@ type LazyLocation = {
   readonly taskAsEstablishment: AsyncCollection<Task>;
   readonly comments: AsyncCollection<Comment>;
   readonly disabled?: number | null;
+  readonly googleMapsPlaceId?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

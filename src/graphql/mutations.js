@@ -407,6 +407,7 @@ export const createUser = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -594,6 +595,7 @@ export const updateUser = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -781,6 +783,7 @@ export const deleteUser = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -2092,6 +2095,7 @@ export const createLocation = /* GraphQL */ `
         startedAt
       }
       disabled
+      googleMapsPlaceId
       createdAt
       updatedAt
       _version
@@ -2311,6 +2315,7 @@ export const updateLocation = /* GraphQL */ `
         startedAt
       }
       disabled
+      googleMapsPlaceId
       createdAt
       updatedAt
       _version
@@ -2530,6 +2535,7 @@ export const deleteLocation = /* GraphQL */ `
         startedAt
       }
       disabled
+      googleMapsPlaceId
       createdAt
       updatedAt
       _version
@@ -2710,6 +2716,7 @@ export const createTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -2784,6 +2791,7 @@ export const createTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -2858,6 +2866,7 @@ export const createTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -3100,6 +3109,7 @@ export const updateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -3174,6 +3184,7 @@ export const updateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -3248,6 +3259,7 @@ export const updateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -3490,6 +3502,7 @@ export const deleteTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -3564,6 +3577,7 @@ export const deleteTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -3638,6 +3652,7 @@ export const deleteTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -3786,6 +3801,7 @@ export const createTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -3809,6 +3825,7 @@ export const createTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -3832,6 +3849,7 @@ export const createTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -4014,6 +4032,7 @@ export const updateTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -4037,6 +4056,7 @@ export const updateTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -4060,6 +4080,7 @@ export const updateTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -4242,6 +4263,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -4265,6 +4287,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -4288,6 +4311,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -4869,6 +4893,7 @@ export const createDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -4892,6 +4917,7 @@ export const createDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -4915,6 +4941,7 @@ export const createDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -5067,6 +5094,7 @@ export const updateDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -5090,6 +5118,7 @@ export const updateDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -5113,6 +5142,7 @@ export const updateDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -5265,6 +5295,7 @@ export const deleteDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -5288,6 +5319,7 @@ export const deleteDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -5311,6 +5343,7 @@ export const deleteDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -5625,6 +5658,7 @@ export const registerUser = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -5900,6 +5934,7 @@ export const updateUserRoles = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
