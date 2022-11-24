@@ -149,6 +149,7 @@ export default function OnlineLocationSearch({ onSelect }) {
                         }
                         onSelect({
                             ...result,
+                            googleMapsPlaceId: newValue.place_id,
                         });
                     })
                     .catch((e) => {
@@ -180,7 +181,12 @@ export default function OnlineLocationSearch({ onSelect }) {
                 setInputValue(newInputValue);
             }}
             renderInput={(params) => (
-                <TextField {...params} label="Search for places..." fullWidth />
+                <TextField
+                    {...params}
+                    aria-label="search for places"
+                    label="Search for places..."
+                    fullWidth
+                />
             )}
             renderOption={(props, option) => {
                 const matches =
