@@ -35,7 +35,7 @@ type User
   profilePictureURL(width: Int, height: Int): AWSURL @function(name: "plateletProfilePictureResolver-${env}") @auth(rules: [{allow: private, operations: [read]}])
   profilePicture: S3Object
   comments: [Comment] @hasMany
-  assignments: [TaskAssignee] @hasMany(indexName: "byAssignee", fields: ["id"])
+  assignments: [TaskAssignee] @hasMany
   vehicleAssignments: [VehicleAssignment] @hasMany
   createdTasks: [Task] @hasMany
   createdLocations: [Location] @hasMany
@@ -205,7 +205,7 @@ timePickedUpSenderName: String
   {allow: private, operations: [read]},
   {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
 ])
-  assignees: [TaskAssignee] @hasMany(indexName: "byTask", fields: ["id"])
+  assignees: [TaskAssignee] @hasMany
   priority: Priority
 @auth(rules: [
   {allow: private, operations: [read]},
@@ -224,11 +224,9 @@ type TaskAssignee
 @model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
-  taskId: ID! @index(name: "byTask", sortKeyFields: ["assigneeId"])
-  assigneeId: ID! @index(name: "byAssignee", sortKeyFields: ["taskId"])
   role: Role!
-  task: Task! @belongsTo(fields: ["taskId"])
-  assignee: User! @belongsTo(fields: ["assigneeId"])
+  task: Task! @belongsTo
+  assignee: User! @belongsTo
 }
 
 type Comment
