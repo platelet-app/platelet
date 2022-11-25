@@ -334,14 +334,14 @@ export const createUser = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt
@@ -522,14 +522,14 @@ export const updateUser = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt
@@ -710,14 +710,14 @@ export const deleteUser = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt
@@ -2879,14 +2879,14 @@ export const createTask = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt
@@ -3272,14 +3272,14 @@ export const updateTask = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt
@@ -3665,14 +3665,14 @@ export const deleteTask = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt
@@ -3732,8 +3732,6 @@ export const createTaskAssignee = /* GraphQL */ `
     createTaskAssignee(input: $input, condition: $condition) {
       id
       tenantId
-      taskId
-      assigneeId
       role
       task {
         id
@@ -3952,6 +3950,8 @@ export const createTaskAssignee = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      userAssignmentsId
+      taskAssigneesId
     }
   }
 `;
@@ -3963,8 +3963,6 @@ export const updateTaskAssignee = /* GraphQL */ `
     updateTaskAssignee(input: $input, condition: $condition) {
       id
       tenantId
-      taskId
-      assigneeId
       role
       task {
         id
@@ -4183,6 +4181,8 @@ export const updateTaskAssignee = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      userAssignmentsId
+      taskAssigneesId
     }
   }
 `;
@@ -4194,8 +4194,6 @@ export const deleteTaskAssignee = /* GraphQL */ `
     deleteTaskAssignee(input: $input, condition: $condition) {
       id
       tenantId
-      taskId
-      assigneeId
       role
       task {
         id
@@ -4414,6 +4412,8 @@ export const deleteTaskAssignee = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      userAssignmentsId
+      taskAssigneesId
     }
   }
 `;
@@ -5585,14 +5585,14 @@ export const registerUser = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt
@@ -5861,14 +5861,14 @@ export const updateUserRoles = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt

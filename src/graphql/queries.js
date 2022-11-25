@@ -246,14 +246,14 @@ export const getUser = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt
@@ -2044,14 +2044,14 @@ export const getTask = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt
@@ -2590,8 +2590,6 @@ export const getTaskAssignee = /* GraphQL */ `
     getTaskAssignee(id: $id) {
       id
       tenantId
-      taskId
-      assigneeId
       role
       task {
         id
@@ -2810,6 +2808,8 @@ export const getTaskAssignee = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      userAssignmentsId
+      taskAssigneesId
     }
   }
 `;
@@ -2823,8 +2823,6 @@ export const listTaskAssignees = /* GraphQL */ `
       items {
         id
         tenantId
-        taskId
-        assigneeId
         role
         task {
           id
@@ -2875,6 +2873,8 @@ export const listTaskAssignees = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        userAssignmentsId
+        taskAssigneesId
       }
       nextToken
       startedAt
@@ -2897,8 +2897,6 @@ export const syncTaskAssignees = /* GraphQL */ `
       items {
         id
         tenantId
-        taskId
-        assigneeId
         role
         task {
           id
@@ -2949,6 +2947,8 @@ export const syncTaskAssignees = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        userAssignmentsId
+        taskAssigneesId
       }
       nextToken
       startedAt

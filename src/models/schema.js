@@ -140,7 +140,7 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "assignee"
+                        "associatedWith": "userAssignmentsId"
                     }
                 },
                 "vehicleAssignments": {
@@ -667,7 +667,7 @@ export const schema = {
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "taskId"
+                        "targetName": "taskAssigneesId"
                     }
                 },
                 "assignee": {
@@ -680,7 +680,7 @@ export const schema = {
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "assigneeId"
+                        "targetName": "userAssignmentsId"
                     }
                 },
                 "createdAt": {
@@ -713,26 +713,6 @@ export const schema = {
                         "name": "byTenantId",
                         "fields": [
                             "tenantId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byTask",
-                        "fields": [
-                            "taskId",
-                            "assigneeId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byAssignee",
-                        "fields": [
-                            "assigneeId",
-                            "taskId"
                         ]
                     }
                 },
@@ -925,7 +905,7 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "task"
+                        "associatedWith": "taskAssigneesId"
                     }
                 },
                 "priority": {
@@ -2239,5 +2219,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.3.1",
-    "version": "ad2f8f768087cbf7c62dfb65c938b00e"
+    "version": "bb2e35b6475bd0ff1a48255f28cdd761"
 };
