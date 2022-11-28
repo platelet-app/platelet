@@ -12,6 +12,7 @@ import LocationDetailsPanel from "./LocationDetailsPanel";
 import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
 import CommentsSection from "../../Comments/CommentsSection";
 import TaskOverViewTabs, { TaskOverViewTabValues } from "./TaskOverviewTabs";
+import * as models from "../../../models";
 
 const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -41,8 +42,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 type TaskOverviewProps = {
     taskId: string;
-    onChangeTimeOfCall?: (...args: any[]) => any;
-    assignmentRole?: string | null;
 };
 
 const TaskOverview: React.FC<TaskOverviewProps> = ({ taskId }) => {
@@ -97,11 +96,6 @@ const TaskOverview: React.FC<TaskOverviewProps> = ({ taskId }) => {
             </Grid>
         </Container>
     );
-};
-
-TaskOverview.defaultProps = {
-    onChangeTimeOfCall: () => {},
-    assignmentRole: null,
 };
 
 export default TaskOverview;
