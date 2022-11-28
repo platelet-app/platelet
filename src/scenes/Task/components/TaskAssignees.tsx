@@ -32,7 +32,7 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
 
     const confirmationSelfDeleteDialog = (
         <ConfirmationDialog
-            dialogTitle="Are you sure?"
+            dialogTitle="Are you sure you want to unassign yourself?"
             onCancel={() => setConfirmRemoveId(null)}
             open={!!confirmRemoveId}
             onConfirmation={() => {
@@ -42,9 +42,6 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
             }}
         >
             <Stack spacing={1} direction="column">
-                <Typography>
-                    Are you sure you want to unassign yourself?
-                </Typography>
                 <Typography>
                     This will remove the task from your dashboard, but can be
                     accessed again using the ALL view.
