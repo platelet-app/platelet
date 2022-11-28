@@ -140,7 +140,7 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "assignee"
+                        "associatedWith": "userAssignmentsId"
                     }
                 },
                 "vehicleAssignments": {
@@ -681,7 +681,7 @@ export const schema = {
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "taskId"
+                        "targetName": "taskAssigneesId"
                     }
                 },
                 "assignee": {
@@ -694,7 +694,7 @@ export const schema = {
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "assigneeId"
+                        "targetName": "userAssignmentsId"
                     }
                 },
                 "createdAt": {
@@ -727,26 +727,6 @@ export const schema = {
                         "name": "byTenantId",
                         "fields": [
                             "tenantId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byTask",
-                        "fields": [
-                            "taskId",
-                            "assigneeId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byAssignee",
-                        "fields": [
-                            "assigneeId",
-                            "taskId"
                         ]
                     }
                 },
@@ -939,7 +919,7 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "task"
+                        "associatedWith": "taskAssigneesId"
                     }
                 },
                 "priority": {
@@ -1301,6 +1281,13 @@ export const schema = {
                         "connectionType": "HAS_MANY",
                         "associatedWith": "locationHandoversAsLocationId"
                     }
+                },
+                "googleMapsPlaceId": {
+                    "name": "googleMapsPlaceId",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -2399,5 +2386,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.3.1",
-    "version": "cdeb860a417373b56d65bc32150fcad2"
+    "version": "bd8d7c187d178dcdf98622d197b5c6fc"
 };

@@ -1,6 +1,5 @@
 import { DataStore } from "aws-amplify";
 import _ from "lodash";
-import { tasksStatus, userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
 
 const ignoredFields = [
@@ -91,7 +90,7 @@ export default async function generateMultipleDuplicatedTaskModels(
 
             let newTaskData = new models.Task({
                 ...rest,
-                status: tasksStatus.new,
+                status: models.TaskStatus.NEW,
                 pickUpLocation,
                 dropOffLocation,
                 createdBy: whoami,
@@ -140,9 +139,9 @@ export default async function generateMultipleDuplicatedTaskModels(
             }
             // if there is a rider then make it active
             // and set the rider role back to the last rider
-            if (assigneeModels.find((a) => a.role === userRoles.rider)) {
+            if (assigneeModels.find((a) => a.role === models.Role.RIDER)) {
                 const riders = assigneeModels
-                    .filter((a) => a.role === userRoles.rider)
+                    .filter((a) => a.role === models.Role.RIDER)
                     .map((a) => a.assignee);
                 if (riders.length > 0) {
                     const rider = riders[riders.length - 1];
@@ -155,7 +154,7 @@ export default async function generateMultipleDuplicatedTaskModels(
                 newTaskData = new models.Task({
                     ...newTaskData,
                     riderResponsibility,
-                    status: tasksStatus.active,
+                    status: models.TaskStatus.ACTIVE,
                     dateCreated: today.toISOString().split("T")[0],
                     tenantId,
                 });

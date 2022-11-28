@@ -88,7 +88,7 @@ function* initialiseApp() {
     // only used by OnlineLocationSearch component for now
     // disabled when in demo mode
 
-    if (process.env.REACT_APP_DEMO_MODE === "true") {
+    if (process.env.REACT_APP_DEMO_MODE !== "true") {
         const GOOGLE_MAPS_API_KEY =
             process.env.REACT_APP_GOOGLE_MAPS_API_KEY || "";
 

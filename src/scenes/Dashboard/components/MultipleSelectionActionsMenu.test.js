@@ -1,7 +1,6 @@
 import { createMatchMedia, render } from "../../../test-utils";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import TasksGridColumn from "./TasksGridColumn";
-import { commentVisibility, tasksStatus, userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
 import { mockAllIsIntersecting } from "react-intersection-observer/test-utils";
 import _ from "lodash";
@@ -42,11 +41,13 @@ describe("MultipleSelectionActionsMenu", () => {
     });
     test("select all items", async () => {
         for (const i in _.range(0, 10)) {
-            await DataStore.save(new models.Task({ status: tasksStatus.new }));
+            await DataStore.save(
+                new models.Task({ status: models.TaskStatus.NEW })
+            );
         }
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
                 displayName: "Someone Person",
             })
         );
@@ -65,7 +66,7 @@ describe("MultipleSelectionActionsMenu", () => {
         render(
             <>
                 <MultipleSelectionActionsMenu />
-                <TasksGridColumn taskKey={[tasksStatus.new]} />
+                <TasksGridColumn taskKey={[models.TaskStatus.NEW]} />
             </>,
             {
                 preloadedState,
@@ -86,23 +87,23 @@ describe("MultipleSelectionActionsMenu", () => {
     });
     test.each`
         taskStatus
-        ${tasksStatus.completed} | ${tasksStatus.abandoned} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
-        ${tasksStatus.active}    | ${tasksStatus.pickedUp}  | ${tasksStatus.new}      | ${tasksStatus.droppedOff}
+        ${models.TaskStatus.COMPLETED} | ${models.TaskStatus.ABANDONED} | ${models.TaskStatus.REJECTED} | ${models.TaskStatus.CANCELLED}
+        ${models.TaskStatus.ACTIVE}    | ${models.TaskStatus.PICKED_UP} | ${models.TaskStatus.NEW}      | ${models.TaskStatus.DROPPED_OFF}
     `(
         "enables and disables the menu based on status",
         async ({ taskStatus }) => {
             await DataStore.save(new models.Task({ status: taskStatus }));
             const mockWhoami = await DataStore.save(
                 new models.User({
-                    roles: [userRoles.coordinator],
+                    roles: [models.Role.COORDINATOR],
                     displayName: "Someone Person",
                 })
             );
             const dashboardTabIndex = [
-                tasksStatus.completed,
-                tasksStatus.abandoned,
-                tasksStatus.rejected,
-                tasksStatus.cancelled,
+                models.TaskStatus.COMPLETED,
+                models.TaskStatus.ABANDONED,
+                models.TaskStatus.REJECTED,
+                models.TaskStatus.CANCELLED,
             ].includes(taskStatus)
                 ? 0
                 : 1;
@@ -146,13 +147,13 @@ describe("MultipleSelectionActionsMenu", () => {
             );
             let stringMatch = "none";
             switch (taskStatus) {
-                case tasksStatus.active:
+                case models.TaskStatus.ACTIVE:
                     stringMatch = "Picked Up";
                     break;
-                case tasksStatus.pickedUp:
+                case models.TaskStatus.PICKED_UP:
                     stringMatch = "Delivered";
                     break;
-                case tasksStatus.droppedOff:
+                case models.TaskStatus.DROPPED_OFF:
                     stringMatch = "Rider Home";
                     break;
                 default:
@@ -175,10 +176,10 @@ describe("MultipleSelectionActionsMenu", () => {
             });
             if (
                 [
-                    tasksStatus.new,
-                    tasksStatus.active,
-                    tasksStatus.pickedUp,
-                    tasksStatus.droppedOff,
+                    models.TaskStatus.NEW,
+                    models.TaskStatus.ACTIVE,
+                    models.TaskStatus.PICKED_UP,
+                    models.TaskStatus.DROPPED_OFF,
                 ].includes(taskStatus)
             ) {
                 expect(duplicateButton).toBeEnabled();
@@ -192,13 +193,13 @@ describe("MultipleSelectionActionsMenu", () => {
             // assign users should always be enabled
             expect(assignButton).toBeEnabled();
             switch (taskStatus) {
-                case tasksStatus.new:
+                case models.TaskStatus.NEW:
                     // new tasks can only be assigned
                     for (const button of actionButtonsFiltered) {
                         expect(button).toBeDisabled();
                     }
                     break;
-                case tasksStatus.active:
+                case models.TaskStatus.ACTIVE:
                     // active tasks can only be picked up
                     expect(
                         screen.getByRole("button", {
@@ -213,7 +214,7 @@ describe("MultipleSelectionActionsMenu", () => {
                         expect(button).toBeEnabled();
                     }
                     break;
-                case tasksStatus.pickedUp:
+                case models.TaskStatus.PICKED_UP:
                     // picked up tasks can only be delivered
                     expect(
                         screen.getByRole("button", {
@@ -228,7 +229,7 @@ describe("MultipleSelectionActionsMenu", () => {
                         expect(button).toBeEnabled();
                     }
                     break;
-                case tasksStatus.droppedOff:
+                case models.TaskStatus.DROPPED_OFF:
                     // delivered tasks can only be rider home
                     expect(
                         screen.getByRole("button", {
@@ -244,8 +245,8 @@ describe("MultipleSelectionActionsMenu", () => {
                     }
                     break;
                 case [
-                    tasksStatus.completed,
-                    tasksStatus.cancelled,
+                    models.TaskStatus.COMPLETED,
+                    models.TaskStatus.CANCELLED,
                     taskStatus.rejected,
                     taskStatus.abandoned,
                 ].includes(taskStatus):
@@ -265,23 +266,23 @@ describe("MultipleSelectionActionsMenu", () => {
 
     test.each`
         taskStatus
-        ${tasksStatus.completed} | ${tasksStatus.abandoned} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
-        ${tasksStatus.active}    | ${tasksStatus.pickedUp}  | ${tasksStatus.new}      | ${tasksStatus.droppedOff}
+        ${models.TaskStatus.COMPLETED} | ${models.TaskStatus.ABANDONED} | ${models.TaskStatus.REJECTED} | ${models.TaskStatus.CANCELLED}
+        ${models.TaskStatus.ACTIVE}    | ${models.TaskStatus.PICKED_UP} | ${models.TaskStatus.NEW}      | ${models.TaskStatus.DROPPED_OFF}
     `(
         "cancelled and rejected are disabled based on status",
         async ({ taskStatus }) => {
             await DataStore.save(new models.Task({ status: taskStatus }));
             const mockWhoami = await DataStore.save(
                 new models.User({
-                    roles: [userRoles.coordinator],
+                    roles: [models.Role.COORDINATOR],
                     displayName: "Someone Person",
                 })
             );
             const dashboardTabIndex = [
-                tasksStatus.completed,
-                tasksStatus.abandoned,
-                tasksStatus.rejected,
-                tasksStatus.cancelled,
+                models.TaskStatus.COMPLETED,
+                models.TaskStatus.ABANDONED,
+                models.TaskStatus.REJECTED,
+                models.TaskStatus.CANCELLED,
             ].includes(taskStatus)
                 ? 0
                 : 1;
@@ -328,9 +329,9 @@ describe("MultipleSelectionActionsMenu", () => {
             });
             if (
                 [
-                    tasksStatus.new,
-                    tasksStatus.active,
-                    tasksStatus.pickedUp,
+                    models.TaskStatus.NEW,
+                    models.TaskStatus.ACTIVE,
+                    models.TaskStatus.PICKED_UP,
                 ].includes(taskStatus)
             ) {
                 expect(cancelled).toBeEnabled();
@@ -344,17 +345,17 @@ describe("MultipleSelectionActionsMenu", () => {
 
     test.each`
         role
-        ${userRoles.coordinator} | ${userRoles.rider}
+        ${models.Role.COORDINATOR} | ${models.Role.RIDER}
     `("assign someone to two tasks", async ({ role }) => {
         const mockTask = await DataStore.save(
-            new models.Task({ status: tasksStatus.new })
+            new models.Task({ status: models.TaskStatus.NEW })
         );
         const mockTask2 = await DataStore.save(
-            new models.Task({ status: tasksStatus.new })
+            new models.Task({ status: models.TaskStatus.NEW })
         );
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
                 displayName: "Someone Person",
             })
         );
@@ -392,8 +393,8 @@ describe("MultipleSelectionActionsMenu", () => {
             <>
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
-                    title={tasksStatus.new}
-                    taskKey={[tasksStatus.new]}
+                    title={models.TaskStatus.NEW}
+                    taskKey={[models.TaskStatus.NEW]}
                 />
             </>,
             {
@@ -412,7 +413,7 @@ describe("MultipleSelectionActionsMenu", () => {
         userEvent.click(
             screen.getByRole("button", { name: "Selection Assign User" })
         );
-        if (role === userRoles.coordinator) {
+        if (role === models.Role.COORDINATOR) {
             userEvent.click(screen.getByText("COORDINATOR"));
             await waitFor(() => {
                 expect(querySpy).toHaveBeenCalledTimes(5);
@@ -430,14 +431,14 @@ describe("MultipleSelectionActionsMenu", () => {
         expect(okButton).toBeEnabled();
         userEvent.click(okButton);
         expect(okButton).toBeDisabled();
-        if (role === userRoles.rider) {
+        if (role === models.Role.RIDER) {
             await waitFor(() => {
                 expect(modelSpy).toHaveBeenCalledTimes(2);
             });
         }
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledTimes(
-                role === userRoles.rider ? 4 : 2
+                role === models.Role.RIDER ? 4 : 2
             );
         });
         expect(saveSpy).toHaveBeenCalledWith(
@@ -447,10 +448,10 @@ describe("MultipleSelectionActionsMenu", () => {
             expect.objectContaining(_.omit(mockAssignments[1], "id"))
         );
         const expectedStatus =
-            role === userRoles.coordinator
-                ? tasksStatus.new
-                : tasksStatus.active;
-        if (role === userRoles.rider) {
+            role === models.Role.COORDINATOR
+                ? models.TaskStatus.NEW
+                : models.TaskStatus.ACTIVE;
+        if (role === models.Role.RIDER) {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...mockTask,
                 status: expectedStatus,
@@ -473,43 +474,46 @@ describe("MultipleSelectionActionsMenu", () => {
         let buttonLabel = null;
         let newStatus = null;
         if (timeToSet === "timePickedUp") {
-            taskData = { status: tasksStatus.active };
+            taskData = { status: models.TaskStatus.ACTIVE };
             buttonLabel = "Picked Up";
-            newStatus = tasksStatus.pickedUp;
+            newStatus = models.TaskStatus.PICKED_UP;
         } else if (timeToSet === "timeDroppedOff") {
             taskData = {
-                status: tasksStatus.pickedUp,
+                status: models.TaskStatus.PICKED_UP,
                 timePickedUp: new Date().toISOString(),
             };
             buttonLabel = "Delivered";
-            newStatus = tasksStatus.droppedOff;
+            newStatus = models.TaskStatus.DROPPED_OFF;
         } else if (timeToSet === "timeRejected") {
-            taskData = { status: tasksStatus.new };
+            taskData = { status: models.TaskStatus.NEW };
             buttonLabel = "Rejected";
-            newStatus = tasksStatus.rejected;
+            newStatus = models.TaskStatus.REJECTED;
         } else if (timeToSet === "timeCancelled") {
-            taskData = { status: tasksStatus.new };
+            taskData = { status: models.TaskStatus.NEW };
             buttonLabel = "Cancelled";
-            newStatus = tasksStatus.cancelled;
+            newStatus = models.TaskStatus.CANCELLED;
         } else if (timeToSet === "timeRiderHome") {
             taskData = {
-                status: tasksStatus.droppedOff,
+                status: models.TaskStatus.DROPPED_OFF,
                 timePickedUp: new Date().toISOString(),
                 timeDroppedOff: new Date().toISOString(),
             };
             buttonLabel = "Rider Home";
-            newStatus = tasksStatus.completed;
+            newStatus = models.TaskStatus.COMPLETED;
         }
         const mockTask = await DataStore.save(new models.Task(taskData));
         const mockTask2 = await DataStore.save(new models.Task(taskData));
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
                 displayName: "Someone Person",
             })
         );
         const mockRider = await DataStore.save(
-            new models.User({ roles: [userRoles.rider], displayName: "Rider" })
+            new models.User({
+                roles: [models.Role.RIDER],
+                displayName: "Rider",
+            })
         );
         const assignments = await Promise.all(
             [mockTask, mockTask2].map((t) =>
@@ -517,7 +521,7 @@ describe("MultipleSelectionActionsMenu", () => {
                     new models.TaskAssignee({
                         task: t,
                         assignee: mockRider,
-                        role: userRoles.rider,
+                        role: models.Role.RIDER,
                     })
                 )
             )
@@ -634,27 +638,30 @@ describe("MultipleSelectionActionsMenu", () => {
         let buttonLabel = null;
         let newStatus = null;
         if (timeToSet === "timePickedUp") {
-            taskData = { status: tasksStatus.active };
+            taskData = { status: models.TaskStatus.ACTIVE };
             buttonLabel = "Picked Up";
-            newStatus = tasksStatus.pickedUp;
+            newStatus = models.TaskStatus.PICKED_UP;
         } else if (timeToSet === "timeDroppedOff") {
             taskData = {
-                status: tasksStatus.pickedUp,
+                status: models.TaskStatus.PICKED_UP,
                 timePickedUp: new Date().toISOString(),
             };
             buttonLabel = "Delivered";
-            newStatus = tasksStatus.droppedOff;
+            newStatus = models.TaskStatus.DROPPED_OFF;
         }
         const mockTask = await DataStore.save(new models.Task(taskData));
         const mockTask2 = await DataStore.save(new models.Task(taskData));
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
                 displayName: "Someone Person",
             })
         );
         const mockRider = await DataStore.save(
-            new models.User({ roles: [userRoles.rider], displayName: "Rider" })
+            new models.User({
+                roles: [models.Role.RIDER],
+                displayName: "Rider",
+            })
         );
         const assignments = await Promise.all(
             [mockTask, mockTask2].map((t) =>
@@ -662,7 +669,7 @@ describe("MultipleSelectionActionsMenu", () => {
                     new models.TaskAssignee({
                         task: t,
                         assignee: mockRider,
-                        role: userRoles.rider,
+                        role: models.Role.RIDER,
                     })
                 )
             )
@@ -766,12 +773,14 @@ describe("MultipleSelectionActionsMenu", () => {
     `("shows the selection count", async ({ action }) => {
         await Promise.all(
             _.range(0, 10).map((i) =>
-                DataStore.save(new models.Task({ status: tasksStatus.new }))
+                DataStore.save(
+                    new models.Task({ status: models.TaskStatus.NEW })
+                )
             )
         );
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
                 displayName: "Someone Person",
             })
         );
@@ -791,8 +800,8 @@ describe("MultipleSelectionActionsMenu", () => {
             <>
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
-                    title={tasksStatus.new}
-                    taskKey={[tasksStatus.new]}
+                    title={models.TaskStatus.NEW}
+                    taskKey={[models.TaskStatus.NEW]}
                 />
             </>,
             {
@@ -822,10 +831,10 @@ describe("MultipleSelectionActionsMenu", () => {
     });
 
     test("throwing an error on save", async () => {
-        DataStore.save(new models.Task({ status: tasksStatus.new }));
+        DataStore.save(new models.Task({ status: models.TaskStatus.NEW }));
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
                 displayName: "Someone Person",
             })
         );
@@ -849,8 +858,8 @@ describe("MultipleSelectionActionsMenu", () => {
             <>
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
-                    title={tasksStatus.new}
-                    taskKey={[tasksStatus.new]}
+                    title={models.TaskStatus.NEW}
+                    taskKey={[models.TaskStatus.NEW]}
                 />
             </>,
             {
@@ -894,16 +903,16 @@ describe("MultipleSelectionActionsMenu", () => {
     });
     test.each`
         role
-        ${userRoles.coordinator} | ${userRoles.rider}
+        ${models.Role.COORDINATOR} | ${models.Role.RIDER}
     `(
         "the confirmation button is disabled when there are no assignees selected",
         async ({ role }) => {
             const mockTask = await DataStore.save(
-                new models.Task({ status: tasksStatus.new })
+                new models.Task({ status: models.TaskStatus.NEW })
             );
             const mockWhoami = await DataStore.save(
                 new models.User({
-                    roles: [userRoles.coordinator],
+                    roles: [models.Role.COORDINATOR],
                     displayName: "Someone Person",
                 })
             );
@@ -938,8 +947,8 @@ describe("MultipleSelectionActionsMenu", () => {
                 <>
                     <MultipleSelectionActionsMenu />
                     <TasksGridColumn
-                        title={tasksStatus.new}
-                        taskKey={[tasksStatus.new]}
+                        title={models.TaskStatus.NEW}
+                        taskKey={[models.TaskStatus.NEW]}
                     />
                 </>,
                 {
@@ -960,7 +969,7 @@ describe("MultipleSelectionActionsMenu", () => {
             userEvent.click(
                 screen.getByRole("button", { name: "Selection Assign User" })
             );
-            if (role === userRoles.coordinator) {
+            if (role === models.Role.COORDINATOR) {
                 userEvent.click(screen.getByText("COORDINATOR"));
                 await waitFor(() => {
                     expect(querySpy).toHaveBeenCalledTimes(4);
@@ -986,20 +995,20 @@ describe("MultipleSelectionActionsMenu", () => {
 
     test.each`
         status
-        ${tasksStatus.rejected} | ${tasksStatus.cancelled}
+        ${models.TaskStatus.REJECTED} | ${models.TaskStatus.CANCELLED}
     `(
         "adds a comment reason if the rejected or cancelled",
         async ({ status }) => {
             const reason = "This is a reason";
             const mockTask = await DataStore.save(
-                new models.Task({ status: tasksStatus.new })
+                new models.Task({ status: models.TaskStatus.NEW })
             );
             const mockTask2 = await DataStore.save(
-                new models.Task({ status: tasksStatus.new })
+                new models.Task({ status: models.TaskStatus.NEW })
             );
             const mockWhoami = await DataStore.save(
                 new models.User({
-                    roles: [userRoles.coordinator],
+                    roles: [models.Role.COORDINATOR],
                     displayName: "Someone Person",
                 })
             );
@@ -1017,14 +1026,14 @@ describe("MultipleSelectionActionsMenu", () => {
 
             const mockComment = new models.Comment({
                 parentId: mockTask.id,
-                visibility: commentVisibility.everyone,
+                visibility: models.CommentVisibility.EVERYONE,
                 tenantId: preloadedState.tenantId,
                 body: reason,
                 author: mockWhoami,
             });
             const mockComment2 = new models.Comment({
                 parentId: mockTask.id,
-                visibility: commentVisibility.everyone,
+                visibility: models.CommentVisibility.EVERYONE,
                 tenantId: preloadedState.tenantId,
                 body: reason,
                 author: mockWhoami,
@@ -1035,8 +1044,8 @@ describe("MultipleSelectionActionsMenu", () => {
                 <>
                     <MultipleSelectionActionsMenu />
                     <TasksGridColumn
-                        title={tasksStatus.new}
-                        taskKey={[tasksStatus.new]}
+                        title={models.TaskStatus.NEW}
+                        taskKey={[models.TaskStatus.NEW]}
                     />
                 </>,
                 {
@@ -1051,7 +1060,9 @@ describe("MultipleSelectionActionsMenu", () => {
                 expect(querySpy).toHaveBeenCalledTimes(3);
             });
             const label =
-                status === tasksStatus.rejected ? "Rejected" : "Cancelled";
+                status === models.TaskStatus.REJECTED
+                    ? "Rejected"
+                    : "Cancelled";
             userEvent.click(screen.getByRole("button", { name: "Select All" }));
             userEvent.click(
                 screen.getByRole("button", { name: `Selection ${label}` })
@@ -1062,7 +1073,7 @@ describe("MultipleSelectionActionsMenu", () => {
             userEvent.type(textBox, reason);
             userEvent.click(screen.getByRole("button", { name: "OK" }));
             const key =
-                status === tasksStatus.rejected
+                status === models.TaskStatus.REJECTED
                     ? "timeRejected"
                     : "timeCancelled";
             await waitFor(() => {
@@ -1099,8 +1110,8 @@ describe("MultipleSelectionActionsMenu", () => {
                     new models.Task({
                         status:
                             i === 0
-                                ? tasksStatus.pickedUp
-                                : tasksStatus.droppedOff,
+                                ? models.TaskStatus.PICKED_UP
+                                : models.TaskStatus.DROPPED_OFF,
                         tenantId,
                     })
                 )
@@ -1108,7 +1119,7 @@ describe("MultipleSelectionActionsMenu", () => {
         );
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator, userRoles.rider],
+                roles: [models.Role.COORDINATOR, models.Role.RIDER],
                 displayName: "Someone Person",
                 riderRole: "some role",
             })
@@ -1129,8 +1140,11 @@ describe("MultipleSelectionActionsMenu", () => {
             <>
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
-                    title={tasksStatus.pickedUp}
-                    taskKey={[tasksStatus.pickedUp, tasksStatus.droppedOff]}
+                    title={models.TaskStatus.PICKED_UP}
+                    taskKey={[
+                        models.TaskStatus.PICKED_UP,
+                        models.TaskStatus.DROPPED_OFF,
+                    ]}
                 />
             </>,
             {
@@ -1159,7 +1173,7 @@ describe("MultipleSelectionActionsMenu", () => {
             _.range(2).map(() =>
                 DataStore.save(
                     new models.Task({
-                        status: tasksStatus.active,
+                        status: models.TaskStatus.ACTIVE,
                         tenantId,
                     })
                 )
@@ -1167,7 +1181,7 @@ describe("MultipleSelectionActionsMenu", () => {
         );
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator, userRoles.rider],
+                roles: [models.Role.COORDINATOR, models.Role.RIDER],
                 displayName: "Someone Person",
                 riderRole: "some role",
                 tenantId,
@@ -1179,14 +1193,14 @@ describe("MultipleSelectionActionsMenu", () => {
                     new models.TaskAssignee({
                         task,
                         assignee: mockWhoami,
-                        role: userRoles.rider,
+                        role: models.Role.RIDER,
                         tenantId,
                     })
                 )
             )
         );
         const preloadedState = {
-            roleView: userRoles.rider,
+            roleView: models.Role.RIDER,
             dashboardTabIndex: 0,
             tenantId,
             whoami: { user: mockWhoami },
@@ -1201,8 +1215,8 @@ describe("MultipleSelectionActionsMenu", () => {
             <>
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
-                    title={tasksStatus.active}
-                    taskKey={[tasksStatus.active]}
+                    title={models.TaskStatus.ACTIVE}
+                    taskKey={[models.TaskStatus.ACTIVE]}
                 />
             </>,
             {
@@ -1242,7 +1256,7 @@ describe("MultipleSelectionActionsMenu", () => {
             const listed = listedType === "unlisted" ? 0 : 1;
             const mockWhoami = await DataStore.save(
                 new models.User({
-                    roles: [userRoles.coordinator, userRoles.rider],
+                    roles: [models.Role.COORDINATOR, models.Role.RIDER],
                     displayName: "Someone Person",
                     riderRole: "some role",
                     tenantId,
@@ -1283,7 +1297,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 _.range(2).map((i) =>
                     DataStore.save(
                         new models.Task({
-                            status: tasksStatus.new,
+                            status: models.TaskStatus.NEW,
                             createdBy: mockWhoami,
                             pickUpLocation:
                                 i === 0 ? mockLocation1 : mockLocation3,
@@ -1317,8 +1331,8 @@ describe("MultipleSelectionActionsMenu", () => {
                     <MultipleSelectionActionsMenu />
 
                     <TasksGridColumn
-                        title={tasksStatus.new}
-                        taskKey={[tasksStatus.new]}
+                        title={models.TaskStatus.NEW}
+                        taskKey={[models.TaskStatus.NEW]}
                     />
                 </>,
                 {
@@ -1422,16 +1436,16 @@ describe("MultipleSelectionActionsMenu", () => {
     // removed rider role for now
     test.each`
         role
-        ${userRoles.coordinator} | ${"ALL"}
+        ${models.Role.COORDINATOR} | ${"ALL"}
     `("duplicate some tasks and assign self", async ({ role }) => {
         mockDate();
-        let actualRole = [userRoles.coordinator, "ALL"].includes(role)
-            ? userRoles.coordinator
-            : userRoles.rider;
+        let actualRole = [models.Role.COORDINATOR, "ALL"].includes(role)
+            ? models.Role.COORDINATOR
+            : models.Role.RIDER;
 
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator, userRoles.rider],
+                roles: [models.Role.COORDINATOR, models.Role.RIDER],
                 displayName: "Someone Person",
                 riderRole: "some role",
                 tenantId,
@@ -1442,7 +1456,7 @@ describe("MultipleSelectionActionsMenu", () => {
             _.range(2).map(() =>
                 DataStore.save(
                     new models.Task({
-                        status: tasksStatus.active,
+                        status: models.TaskStatus.ACTIVE,
                         tenantId,
                     })
                 )
@@ -1494,7 +1508,7 @@ describe("MultipleSelectionActionsMenu", () => {
                     new models.TaskAssignee({
                         task,
                         assignee: someoneElse,
-                        role: userRoles.rider,
+                        role: models.Role.RIDER,
                         tenantId,
                     })
                 )
@@ -1544,8 +1558,8 @@ describe("MultipleSelectionActionsMenu", () => {
             <>
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
-                    title={tasksStatus.active}
-                    taskKey={[tasksStatus.active]}
+                    title={models.TaskStatus.ACTIVE}
+                    taskKey={[models.TaskStatus.ACTIVE]}
                 />
             </>,
             {
@@ -1661,17 +1675,17 @@ describe("MultipleSelectionActionsMenu", () => {
 
     test("the checkboxes are disabled when filters are applied", async () => {
         const mockTask = await DataStore.save(
-            new models.Task({ status: tasksStatus.active })
+            new models.Task({ status: models.TaskStatus.ACTIVE })
         );
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
                 displayName: "Someone Person",
             })
         );
         const mockRider = await DataStore.save(
             new models.User({
-                roles: [userRoles.rider],
+                roles: [models.Role.RIDER],
                 displayName: "Test Rider",
             })
         );
@@ -1680,7 +1694,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 new models.TaskAssignee({
                     task: mockTask,
                     assignee: mockRider,
-                    role: userRoles.rider,
+                    role: models.Role.RIDER,
                 })
             ),
         ];
@@ -1761,11 +1775,11 @@ describe("MultipleSelectionActionsMenu", () => {
     it.skip("disables the confirmation button if the time is invalid", async () => {
         // skipped because for some reason the date picker is read only when used in jest
         const mockTask = await DataStore.save(
-            new models.Task({ status: tasksStatus.new })
+            new models.Task({ status: models.TaskStatus.NEW })
         );
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
                 displayName: "Someone Person",
             })
         );
@@ -1820,18 +1834,20 @@ describe("MultipleSelectionActionsMenu", () => {
     test("double confirm if affecting a lot of items", async () => {
         const mockTasks = await Promise.all(
             _.range(10).map(() =>
-                DataStore.save(new models.Task({ status: tasksStatus.new }))
+                DataStore.save(
+                    new models.Task({ status: models.TaskStatus.NEW })
+                )
             )
         );
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
                 displayName: "Someone Person",
             })
         );
         const assignee = await DataStore.save(
             new models.User({
-                roles: [userRoles.rider],
+                roles: [models.Role.RIDER],
                 displayName: "Other Person",
                 riderResponsibility: "test",
             })
@@ -1853,8 +1869,8 @@ describe("MultipleSelectionActionsMenu", () => {
             <>
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
-                    title={tasksStatus.new}
-                    taskKey={[tasksStatus.new]}
+                    title={models.TaskStatus.NEW}
+                    taskKey={[models.TaskStatus.NEW]}
                 />
             </>,
             {

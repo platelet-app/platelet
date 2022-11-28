@@ -4,7 +4,6 @@ import AdminAddLocation from "./AdminAddLocation";
 import userEvent from "@testing-library/user-event";
 import { userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
-import _ from "lodash";
 import { encodeUUID } from "../../../utilities";
 import { DataStore } from "aws-amplify";
 
@@ -26,11 +25,31 @@ const contactFields = {
     emailAddress: "Contact email",
 };
 
+const mockGetPlacePredictions = [
+    {
+        description: "something",
+        place_id: "place_id",
+    },
+];
+
 const tenantId = "tenant-id";
 
 describe("AdminAddLocation", () => {
-    it("renders", () => {
-        render(<AdminAddLocation />);
+    beforeAll(() => {
+        window.google = {
+            maps: {
+                places: {
+                    AutocompleteService: class {
+                        getPlacePredictions() {
+                            return mockGetPlacePredictions;
+                        }
+                    },
+                    PlacesService: class {
+                        getDetails() {}
+                    },
+                },
+            },
+        };
     });
 
     beforeEach(async () => {
@@ -51,6 +70,7 @@ describe("AdminAddLocation", () => {
             createdBy: whoami,
             tenantId: "tenant-id",
             disabled: 0,
+            googleMapsPlaceId: null,
         });
         const preloadedState = {
             loadingReducer: {
@@ -113,7 +133,7 @@ describe("AdminAddLocation", () => {
         ).toBeNull();
     });
 
-    test("Add location button should be disabled if the name is not set", async () => {
+    test("add location button should be disabled if the name is not set", async () => {
         const preloadedState = {
             whoami: {
                 error: null,
@@ -132,5 +152,45 @@ describe("AdminAddLocation", () => {
         expect(
             screen.getByRole("button", { name: "Add location" })
         ).toBeDisabled();
+    });
+
+    test.skip("add a location from the online search", async () => {
+        const getPlaces = () => {
+            return mockGetPlacePredictions;
+        };
+        const preloadedState = {
+            whoami: {
+                error: null,
+                user: {
+                    id: "user-id",
+                    roles: [userRoles.user, userRoles.admin],
+                },
+            },
+            tenantId: "tenant-id",
+            loadingReducer: {
+                GET_WHOAMI: false,
+            },
+        };
+        const getPlacePredictionsSpy = jest
+            .spyOn(
+                window.google.maps.places.AutocompleteService.prototype,
+                "getPlacePredictions"
+            )
+            .mockImplementation(() => getPlaces());
+        render(<AdminAddLocation />, { preloadedState });
+        userEvent.type(
+            screen.getByRole("textbox", { name: "Search for places..." }),
+            "something"
+        );
+        await waitFor(() =>
+            expect(getPlacePredictionsSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    input: "something",
+                }),
+                expect.any(Function)
+            )
+        );
+        const result = await screen.findByText("something");
+        userEvent.click(result);
     });
 });

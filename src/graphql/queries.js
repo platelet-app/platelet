@@ -246,14 +246,14 @@ export const getUser = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt
@@ -319,6 +319,7 @@ export const getUser = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -1522,6 +1523,7 @@ export const getLocation = /* GraphQL */ `
         startedAt
       }
       disabled
+      googleMapsPlaceId
       createdAt
       updatedAt
       _version
@@ -1605,6 +1607,7 @@ export const listLocations = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -1697,6 +1700,7 @@ export const syncLocations = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -1877,6 +1881,7 @@ export const getTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -1951,6 +1956,7 @@ export const getTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -2025,6 +2031,7 @@ export const getTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -2037,14 +2044,14 @@ export const getTask = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt
@@ -2169,6 +2176,7 @@ export const listTasks = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -2192,6 +2200,7 @@ export const listTasks = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -2215,6 +2224,7 @@ export const listTasks = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -2328,6 +2338,7 @@ export const syncTasks = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -2351,6 +2362,7 @@ export const syncTasks = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -2374,6 +2386,7 @@ export const syncTasks = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -2489,6 +2502,7 @@ export const tasksByStatus = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -2512,6 +2526,7 @@ export const tasksByStatus = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -2535,6 +2550,7 @@ export const tasksByStatus = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -2574,8 +2590,6 @@ export const getTaskAssignee = /* GraphQL */ `
     getTaskAssignee(id: $id) {
       id
       tenantId
-      taskId
-      assigneeId
       role
       task {
         id
@@ -2643,6 +2657,7 @@ export const getTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -2666,6 +2681,7 @@ export const getTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -2689,6 +2705,7 @@ export const getTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -2791,6 +2808,8 @@ export const getTaskAssignee = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      userAssignmentsId
+      taskAssigneesId
     }
   }
 `;
@@ -2804,8 +2823,6 @@ export const listTaskAssignees = /* GraphQL */ `
       items {
         id
         tenantId
-        taskId
-        assigneeId
         role
         task {
           id
@@ -2856,6 +2873,8 @@ export const listTaskAssignees = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        userAssignmentsId
+        taskAssigneesId
       }
       nextToken
       startedAt
@@ -2878,8 +2897,6 @@ export const syncTaskAssignees = /* GraphQL */ `
       items {
         id
         tenantId
-        taskId
-        assigneeId
         role
         task {
           id
@@ -2930,6 +2947,8 @@ export const syncTaskAssignees = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        userAssignmentsId
+        taskAssigneesId
       }
       nextToken
       startedAt
@@ -3313,6 +3332,7 @@ export const getDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -3336,6 +3356,7 @@ export const getDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -3359,6 +3380,7 @@ export const getDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version

@@ -62,7 +62,7 @@ jobs:
     - name: Generate Cordova build config
       run: echo '{"android":{"debug":{"keystore":"../${{ steps.decode_keystore.outputs.filePath }}","storePassword":"${{ secrets.ANDROID_KEYSTORE_PASSPHRASE }}","alias":"platelet","password":"${{ secrets.ANDROID_KEYSTORE_PASSPHRASE }}","keystoreType":""},"release":{"keystore":"../${{ steps.decode_keystore.outputs.filePath }}","storePassword":"${{ secrets.ANDROID_KEYSTORE_PASSPHRASE }}","alias":"platelet","password":"${{ secrets.ANDROID_KEYSTORE_PASSPHRASE }}","keystoreType":""}}}' > cordova/build.json
     - name: Use duckbytes/setup-cordova
-      uses: duckbytes/setup-cordova@0.0.5
+      uses: duckbytes/setup-cordova@master
       with:
         exec: |
           cd cordova

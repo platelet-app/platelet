@@ -452,6 +452,7 @@ type EagerLocation = {
   readonly comments?: (Comment | null)[] | null;
   readonly disabled?: number | null;
   readonly handoversAsLocation?: (Handover | null)[] | null;
+  readonly googleMapsPlaceId?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -479,6 +480,7 @@ type LazyLocation = {
   readonly comments: AsyncCollection<Comment>;
   readonly disabled?: number | null;
   readonly handoversAsLocation: AsyncCollection<Handover>;
+  readonly googleMapsPlaceId?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

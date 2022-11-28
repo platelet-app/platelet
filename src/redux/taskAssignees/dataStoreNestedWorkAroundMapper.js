@@ -4,15 +4,15 @@ import * as models from "../../models";
 export default async function dataStoreNestedWorkAroundMapper(data = []) {
     return Promise.all(
         data.map(async (item) => {
-            if (!item.taskId && !item.assigneeId) {
+            if (!item.taskAssigneesId && !item.userAssignmentsId) {
                 return item;
             }
-            const { taskId, assigneeId, ...rest } = item;
-            const task = taskId
-                ? await DataStore.query(models.Task, taskId)
+            const { taskAssigneesId, userAssignmentsId, ...rest } = item;
+            const task = taskAssigneesId
+                ? await DataStore.query(models.Task, taskAssigneesId)
                 : null;
-            const assignee = assigneeId
-                ? await DataStore.query(models.User, assigneeId)
+            const assignee = userAssignmentsId
+                ? await DataStore.query(models.User, userAssignmentsId)
                 : null;
             return { ...rest, task, assignee };
         })
