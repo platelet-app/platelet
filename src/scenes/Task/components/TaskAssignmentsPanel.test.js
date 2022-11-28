@@ -685,6 +685,9 @@ describe("TaskAssignmentsPanel", () => {
                 expect.objectContaining(_.omit(mockAssignment, "id"))
             )
         );
+        await waitFor(() => {
+            expect(okButton).not.toBeInTheDocument();
+        });
     });
 
     test("cancel deleting yourself as coordinator", async () => {

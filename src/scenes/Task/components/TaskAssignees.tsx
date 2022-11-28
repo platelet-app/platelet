@@ -37,6 +37,7 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
             onConfirmation={() => {
                 if (props.onRemove && confirmRemoveId)
                     props.onRemove(confirmRemoveId);
+                setConfirmRemoveId(null);
             }}
         >
             <Typography>Are you sure you want to unassign yourself?</Typography>
