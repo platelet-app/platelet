@@ -1,6 +1,6 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import { Divider, Grid } from "@mui/material";
+import { Divider, Grid, Stack } from "@mui/material";
 import { userRoles } from "../../../apiConsts";
 import UserChip from "../../../components/UserChip";
 import { sortByCreatedTime } from "../../../utilities";
@@ -32,6 +32,7 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
 
     const confirmationSelfDeleteDialog = (
         <ConfirmationDialog
+            dialogTitle="Are you sure?"
             onCancel={() => setConfirmRemoveId(null)}
             open={!!confirmRemoveId}
             onConfirmation={() => {
@@ -40,11 +41,15 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
                 setConfirmRemoveId(null);
             }}
         >
-            <Typography>Are you sure you want to unassign yourself?</Typography>
-            <Typography>
-                This will remove the task from your dashboard, but can be
-                accessed again using the ALL view.
-            </Typography>
+            <Stack spacing={1} direction="row">
+                <Typography>
+                    Are you sure you want to unassign yourself?
+                </Typography>
+                <Typography>
+                    This will remove the task from your dashboard, but can be
+                    accessed again using the ALL view.
+                </Typography>
+            </Stack>
         </ConfirmationDialog>
     );
 
