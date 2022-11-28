@@ -41,7 +41,7 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
                 setConfirmRemoveId(null);
             }}
         >
-            <Stack spacing={1} direction="row">
+            <Stack spacing={1} direction="column">
                 <Typography>
                     Are you sure you want to unassign yourself?
                 </Typography>
