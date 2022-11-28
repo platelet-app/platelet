@@ -634,4 +634,105 @@ describe("TaskAssignmentsPanel", () => {
         });
         expect(await screen.findByText("some rider")).toBeInTheDocument();
     });
+
+    test("confirm before deleting yourself as coordinator", async () => {
+        const mockTask = new models.Task({
+            status: tasksStatus.new,
+            tenantId,
+        });
+        await DataStore.save(mockTask);
+        const mockWhoami = new models.User({
+            tenantId,
+            displayName: "myself",
+            roles: [userRoles.coordinator, userRoles.user],
+        });
+        await DataStore.save(mockWhoami);
+        const preloadedState = {
+            tenantId,
+            whoami: {
+                user: mockWhoami,
+            },
+        };
+
+        const mockAssignment = new models.TaskAssignee({
+            assignee: mockWhoami,
+            task: mockTask,
+            role: userRoles.coordinator,
+            tenantId,
+        });
+
+        await DataStore.save(mockAssignment);
+        const querySpy = jest.spyOn(DataStore, "query");
+        const deleteSpy = jest.spyOn(DataStore, "delete");
+        render(
+            <>
+                <FakeDispatchComponent />
+                <TaskAssignmentsPanel taskId={mockTask.id} />
+            </>,
+            { preloadedState }
+        );
+        // 43???
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(43));
+        userEvent.click(screen.getByTestId("CancelIcon"));
+        await waitFor(() => expect(deleteSpy).not.toHaveBeenCalled());
+        expect(
+            screen.getByText("Are you sure you want to unassign yourself?")
+        ).toBeInTheDocument();
+        const okButton = screen.getByRole("button", { name: "OK" });
+        userEvent.click(okButton);
+        await waitFor(() =>
+            expect(deleteSpy).toHaveBeenCalledWith(
+                expect.objectContaining(_.omit(mockAssignment, "id"))
+            )
+        );
+    });
+
+    test("cancel deleting yourself as coordinator", async () => {
+        const mockTask = new models.Task({
+            status: tasksStatus.new,
+            tenantId,
+        });
+        await DataStore.save(mockTask);
+        const mockWhoami = new models.User({
+            tenantId,
+            displayName: "myself",
+            roles: [userRoles.coordinator, userRoles.user],
+        });
+        await DataStore.save(mockWhoami);
+        const preloadedState = {
+            tenantId,
+            whoami: {
+                user: mockWhoami,
+            },
+        };
+
+        const mockAssignment = new models.TaskAssignee({
+            assignee: mockWhoami,
+            task: mockTask,
+            role: userRoles.coordinator,
+            tenantId,
+        });
+
+        await DataStore.save(mockAssignment);
+        const querySpy = jest.spyOn(DataStore, "query");
+        const deleteSpy = jest.spyOn(DataStore, "delete");
+        render(
+            <>
+                <FakeDispatchComponent />
+                <TaskAssignmentsPanel taskId={mockTask.id} />
+            </>,
+            { preloadedState }
+        );
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(19));
+        userEvent.click(screen.getByTestId("CancelIcon"));
+        await waitFor(() => expect(deleteSpy).not.toHaveBeenCalled());
+        expect(
+            screen.getByText("Are you sure you want to unassign yourself?")
+        ).toBeInTheDocument();
+        const cancelButton = screen.getByRole("button", { name: "Cancel" });
+        userEvent.click(cancelButton);
+        await waitFor(() => {
+            expect(cancelButton).not.toBeInTheDocument();
+        });
+    });
 });

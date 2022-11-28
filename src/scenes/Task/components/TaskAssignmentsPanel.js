@@ -293,7 +293,7 @@ function TaskAssignmentsPanel(props) {
                                 onRemove={(v) => {
                                     deleteAssignment(v);
                                 }}
-                                assignees={state}
+                                assignees={Object.values(state)}
                             />
                             <Typography>Assign a user</Typography>
                             <UserRoleSelect
