@@ -69,6 +69,10 @@ export const onCreateTenant = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -152,6 +156,10 @@ export const onUpdateTenant = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -235,6 +243,10 @@ export const onDeleteTenant = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -427,6 +439,24 @@ export const onCreateUser = /* GraphQL */ `
         startedAt
       }
       disabled
+      assignedHandovers {
+        items {
+          id
+          tenantId
+          timeOfHandover
+          orderInGrid
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userAssignedHandoversId
+          locationHandoversAsLocationId
+          taskHandoversId
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       updatedAt
       _version
@@ -612,6 +642,24 @@ export const onUpdateUser = /* GraphQL */ `
         startedAt
       }
       disabled
+      assignedHandovers {
+        items {
+          id
+          tenantId
+          timeOfHandover
+          orderInGrid
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userAssignedHandoversId
+          locationHandoversAsLocationId
+          taskHandoversId
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       updatedAt
       _version
@@ -797,6 +845,24 @@ export const onDeleteUser = /* GraphQL */ `
         startedAt
       }
       disabled
+      assignedHandovers {
+        items {
+          id
+          tenantId
+          timeOfHandover
+          orderInGrid
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userAssignedHandoversId
+          locationHandoversAsLocationId
+          taskHandoversId
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       updatedAt
       _version
@@ -874,6 +940,10 @@ export const onCreatePossibleRiderResponsibilities = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -974,6 +1044,10 @@ export const onUpdatePossibleRiderResponsibilities = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -1074,6 +1148,10 @@ export const onDeletePossibleRiderResponsibilities = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -1172,6 +1250,10 @@ export const onCreateVehicle = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -1293,6 +1375,10 @@ export const onUpdateVehicle = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -1414,6 +1500,10 @@ export const onDeleteVehicle = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -1580,6 +1670,10 @@ export const onCreateVehicleAssignment = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -1708,6 +1802,10 @@ export const onUpdateVehicleAssignment = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -1836,6 +1934,10 @@ export const onDeleteVehicleAssignment = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -1919,6 +2021,10 @@ export const onCreateLocation = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -2059,6 +2165,24 @@ export const onCreateLocation = /* GraphQL */ `
         startedAt
       }
       disabled
+      handoversAsLocation {
+        items {
+          id
+          tenantId
+          timeOfHandover
+          orderInGrid
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userAssignedHandoversId
+          locationHandoversAsLocationId
+          taskHandoversId
+        }
+        nextToken
+        startedAt
+      }
       googleMapsPlaceId
       createdAt
       updatedAt
@@ -2136,6 +2260,10 @@ export const onUpdateLocation = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -2276,6 +2404,24 @@ export const onUpdateLocation = /* GraphQL */ `
         startedAt
       }
       disabled
+      handoversAsLocation {
+        items {
+          id
+          tenantId
+          timeOfHandover
+          orderInGrid
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userAssignedHandoversId
+          locationHandoversAsLocationId
+          taskHandoversId
+        }
+        nextToken
+        startedAt
+      }
       googleMapsPlaceId
       createdAt
       updatedAt
@@ -2353,6 +2499,10 @@ export const onDeleteLocation = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -2493,6 +2643,24 @@ export const onDeleteLocation = /* GraphQL */ `
         startedAt
       }
       disabled
+      handoversAsLocation {
+        items {
+          id
+          tenantId
+          timeOfHandover
+          orderInGrid
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userAssignedHandoversId
+          locationHandoversAsLocationId
+          taskHandoversId
+        }
+        nextToken
+        startedAt
+      }
       googleMapsPlaceId
       createdAt
       updatedAt
@@ -2570,6 +2738,10 @@ export const onCreateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -2671,6 +2843,10 @@ export const onCreateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        handoversAsLocation {
+          nextToken
+          startedAt
+        }
         googleMapsPlaceId
         createdAt
         updatedAt
@@ -2746,6 +2922,10 @@ export const onCreateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        handoversAsLocation {
+          nextToken
+          startedAt
+        }
         googleMapsPlaceId
         createdAt
         updatedAt
@@ -2821,6 +3001,10 @@ export const onCreateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        handoversAsLocation {
+          nextToken
+          startedAt
+        }
         googleMapsPlaceId
         createdAt
         updatedAt
@@ -2884,6 +3068,24 @@ export const onCreateTask = /* GraphQL */ `
         startedAt
       }
       status
+      handovers {
+        items {
+          id
+          tenantId
+          timeOfHandover
+          orderInGrid
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userAssignedHandoversId
+          locationHandoversAsLocationId
+          taskHandoversId
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       updatedAt
       _version
@@ -2960,6 +3162,10 @@ export const onUpdateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -3061,6 +3267,10 @@ export const onUpdateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        handoversAsLocation {
+          nextToken
+          startedAt
+        }
         googleMapsPlaceId
         createdAt
         updatedAt
@@ -3136,6 +3346,10 @@ export const onUpdateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        handoversAsLocation {
+          nextToken
+          startedAt
+        }
         googleMapsPlaceId
         createdAt
         updatedAt
@@ -3211,6 +3425,10 @@ export const onUpdateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        handoversAsLocation {
+          nextToken
+          startedAt
+        }
         googleMapsPlaceId
         createdAt
         updatedAt
@@ -3274,6 +3492,24 @@ export const onUpdateTask = /* GraphQL */ `
         startedAt
       }
       status
+      handovers {
+        items {
+          id
+          tenantId
+          timeOfHandover
+          orderInGrid
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userAssignedHandoversId
+          locationHandoversAsLocationId
+          taskHandoversId
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       updatedAt
       _version
@@ -3350,6 +3586,10 @@ export const onDeleteTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -3451,6 +3691,10 @@ export const onDeleteTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        handoversAsLocation {
+          nextToken
+          startedAt
+        }
         googleMapsPlaceId
         createdAt
         updatedAt
@@ -3526,6 +3770,10 @@ export const onDeleteTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        handoversAsLocation {
+          nextToken
+          startedAt
+        }
         googleMapsPlaceId
         createdAt
         updatedAt
@@ -3601,6 +3849,10 @@ export const onDeleteTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        handoversAsLocation {
+          nextToken
+          startedAt
+        }
         googleMapsPlaceId
         createdAt
         updatedAt
@@ -3664,6 +3916,24 @@ export const onDeleteTask = /* GraphQL */ `
         startedAt
       }
       status
+      handovers {
+        items {
+          id
+          tenantId
+          timeOfHandover
+          orderInGrid
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userAssignedHandoversId
+          locationHandoversAsLocationId
+          taskHandoversId
+        }
+        nextToken
+        startedAt
+      }
       createdAt
       updatedAt
       _version
@@ -3818,6 +4088,10 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           startedAt
         }
         status
+        handovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -3887,6 +4161,10 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -4048,6 +4326,10 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           startedAt
         }
         status
+        handovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -4117,6 +4399,10 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -4278,6 +4564,10 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           startedAt
         }
         status
+        handovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -4347,6 +4637,10 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -4360,6 +4654,957 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
       _lastChangedAt
       userAssignmentsId
       taskAssigneesId
+    }
+  }
+`;
+export const onCreateHandover = /* GraphQL */ `
+  subscription OnCreateHandover($filter: ModelSubscriptionHandoverFilterInput) {
+    onCreateHandover(filter: $filter) {
+      id
+      tenantId
+      task {
+        id
+        tenantId
+        createdBy {
+          id
+          username
+          cognitoId
+          tenantId
+          isPrimaryAdmin
+          displayName
+          name
+          roles
+          dateOfBirth
+          riderResponsibility
+          profilePictureURL
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        dateCreated
+        timeOfCall
+        timePickedUp
+        timePickedUpSenderName
+        timeDroppedOff
+        timeDroppedOffRecipientName
+        timeCancelled
+        timeRejected
+        timeRiderHome
+        requesterContact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        pickUpLocationId
+        dropOffLocationId
+        establishmentLocationId
+        pickUpLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          googleMapsPlaceId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedLocationsId
+        }
+        dropOffLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          googleMapsPlaceId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedLocationsId
+        }
+        establishmentLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          googleMapsPlaceId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedLocationsId
+        }
+        riderResponsibility
+        assignees {
+          nextToken
+          startedAt
+        }
+        priority
+        deliverables {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        status
+        handovers {
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedTasksId
+      }
+      timeOfHandover
+      handoverLocation {
+        id
+        tenantId
+        createdBy {
+          id
+          username
+          cognitoId
+          tenantId
+          isPrimaryAdmin
+          displayName
+          name
+          roles
+          dateOfBirth
+          riderResponsibility
+          profilePictureURL
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        name
+        listed
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
+        taskAsEstablishment {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        disabled
+        handoversAsLocation {
+          nextToken
+          startedAt
+        }
+        googleMapsPlaceId
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      assignedRider {
+        id
+        username
+        cognitoId
+        tenantId
+        isPrimaryAdmin
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
+        profilePictureURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        assignments {
+          nextToken
+          startedAt
+        }
+        vehicleAssignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
+          nextToken
+          startedAt
+        }
+        createdLocations {
+          nextToken
+          startedAt
+        }
+        createdVehicles {
+          nextToken
+          startedAt
+        }
+        disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      orderInGrid
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userAssignedHandoversId
+      locationHandoversAsLocationId
+      taskHandoversId
+    }
+  }
+`;
+export const onUpdateHandover = /* GraphQL */ `
+  subscription OnUpdateHandover($filter: ModelSubscriptionHandoverFilterInput) {
+    onUpdateHandover(filter: $filter) {
+      id
+      tenantId
+      task {
+        id
+        tenantId
+        createdBy {
+          id
+          username
+          cognitoId
+          tenantId
+          isPrimaryAdmin
+          displayName
+          name
+          roles
+          dateOfBirth
+          riderResponsibility
+          profilePictureURL
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        dateCreated
+        timeOfCall
+        timePickedUp
+        timePickedUpSenderName
+        timeDroppedOff
+        timeDroppedOffRecipientName
+        timeCancelled
+        timeRejected
+        timeRiderHome
+        requesterContact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        pickUpLocationId
+        dropOffLocationId
+        establishmentLocationId
+        pickUpLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          googleMapsPlaceId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedLocationsId
+        }
+        dropOffLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          googleMapsPlaceId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedLocationsId
+        }
+        establishmentLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          googleMapsPlaceId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedLocationsId
+        }
+        riderResponsibility
+        assignees {
+          nextToken
+          startedAt
+        }
+        priority
+        deliverables {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        status
+        handovers {
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedTasksId
+      }
+      timeOfHandover
+      handoverLocation {
+        id
+        tenantId
+        createdBy {
+          id
+          username
+          cognitoId
+          tenantId
+          isPrimaryAdmin
+          displayName
+          name
+          roles
+          dateOfBirth
+          riderResponsibility
+          profilePictureURL
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        name
+        listed
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
+        taskAsEstablishment {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        disabled
+        handoversAsLocation {
+          nextToken
+          startedAt
+        }
+        googleMapsPlaceId
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      assignedRider {
+        id
+        username
+        cognitoId
+        tenantId
+        isPrimaryAdmin
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
+        profilePictureURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        assignments {
+          nextToken
+          startedAt
+        }
+        vehicleAssignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
+          nextToken
+          startedAt
+        }
+        createdLocations {
+          nextToken
+          startedAt
+        }
+        createdVehicles {
+          nextToken
+          startedAt
+        }
+        disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      orderInGrid
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userAssignedHandoversId
+      locationHandoversAsLocationId
+      taskHandoversId
+    }
+  }
+`;
+export const onDeleteHandover = /* GraphQL */ `
+  subscription OnDeleteHandover($filter: ModelSubscriptionHandoverFilterInput) {
+    onDeleteHandover(filter: $filter) {
+      id
+      tenantId
+      task {
+        id
+        tenantId
+        createdBy {
+          id
+          username
+          cognitoId
+          tenantId
+          isPrimaryAdmin
+          displayName
+          name
+          roles
+          dateOfBirth
+          riderResponsibility
+          profilePictureURL
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        dateCreated
+        timeOfCall
+        timePickedUp
+        timePickedUpSenderName
+        timeDroppedOff
+        timeDroppedOffRecipientName
+        timeCancelled
+        timeRejected
+        timeRiderHome
+        requesterContact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        pickUpLocationId
+        dropOffLocationId
+        establishmentLocationId
+        pickUpLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          googleMapsPlaceId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedLocationsId
+        }
+        dropOffLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          googleMapsPlaceId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedLocationsId
+        }
+        establishmentLocation {
+          id
+          tenantId
+          name
+          listed
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+          disabled
+          googleMapsPlaceId
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+          userCreatedLocationsId
+        }
+        riderResponsibility
+        assignees {
+          nextToken
+          startedAt
+        }
+        priority
+        deliverables {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        status
+        handovers {
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedTasksId
+      }
+      timeOfHandover
+      handoverLocation {
+        id
+        tenantId
+        createdBy {
+          id
+          username
+          cognitoId
+          tenantId
+          isPrimaryAdmin
+          displayName
+          name
+          roles
+          dateOfBirth
+          riderResponsibility
+          profilePictureURL
+          disabled
+          createdAt
+          updatedAt
+          _version
+          _deleted
+          _lastChangedAt
+        }
+        name
+        listed
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        tasksAsPickUp {
+          nextToken
+          startedAt
+        }
+        tasksAsDropOff {
+          nextToken
+          startedAt
+        }
+        taskAsEstablishment {
+          nextToken
+          startedAt
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        disabled
+        handoversAsLocation {
+          nextToken
+          startedAt
+        }
+        googleMapsPlaceId
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      assignedRider {
+        id
+        username
+        cognitoId
+        tenantId
+        isPrimaryAdmin
+        contact {
+          name
+          telephoneNumber
+          mobileNumber
+          emailAddress
+          ward
+          line1
+          line2
+          line3
+          town
+          county
+          state
+          country
+          postcode
+          what3words
+        }
+        displayName
+        name
+        roles
+        dateOfBirth
+        riderResponsibility
+        possibleRiderResponsibilities {
+          nextToken
+          startedAt
+        }
+        profilePictureURL
+        profilePicture {
+          bucket
+          key
+          region
+        }
+        comments {
+          nextToken
+          startedAt
+        }
+        assignments {
+          nextToken
+          startedAt
+        }
+        vehicleAssignments {
+          nextToken
+          startedAt
+        }
+        createdTasks {
+          nextToken
+          startedAt
+        }
+        createdLocations {
+          nextToken
+          startedAt
+        }
+        createdVehicles {
+          nextToken
+          startedAt
+        }
+        disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      orderInGrid
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userAssignedHandoversId
+      locationHandoversAsLocationId
+      taskHandoversId
     }
   }
 `;
@@ -4435,6 +5680,10 @@ export const onCreateComment = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -4524,6 +5773,10 @@ export const onUpdateComment = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -4613,6 +5866,10 @@ export const onDeleteComment = /* GraphQL */ `
           startedAt
         }
         disabled
+        assignedHandovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -4906,6 +6163,10 @@ export const onCreateDeliverable = /* GraphQL */ `
           startedAt
         }
         status
+        handovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -5106,6 +6367,10 @@ export const onUpdateDeliverable = /* GraphQL */ `
           startedAt
         }
         status
+        handovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version
@@ -5306,6 +6571,10 @@ export const onDeleteDeliverable = /* GraphQL */ `
           startedAt
         }
         status
+        handovers {
+          nextToken
+          startedAt
+        }
         createdAt
         updatedAt
         _version

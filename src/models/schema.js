@@ -1413,6 +1413,13 @@ export const schema = {
                         "targetName": "userAssignedHandoversId"
                     }
                 },
+                "orderInGrid": {
+                    "name": "orderInGrid",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -2386,5 +2393,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.3.1",
-    "version": "bd8d7c187d178dcdf98622d197b5c6fc"
+    "version": "5682f8a5a46295eae28bbe81f5097053"
 };
