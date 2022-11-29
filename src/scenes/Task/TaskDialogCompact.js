@@ -11,12 +11,16 @@ import GetError from "../../ErrorComponents/GetError";
 import Typography from "@mui/material/Typography";
 import TaskOverview from "./components/TaskOverview";
 import CommentsSideBar from "./components/CommentsSideBar";
-import { Button, Hidden } from "@mui/material";
+import { Box, Button, Hidden, Stack } from "@mui/material";
 import * as models from "../../models/index";
 import { DataStore } from "aws-amplify";
 import { dataStoreModelSyncedStatusSelector } from "../../redux/Selectors";
 import { useHistory, useLocation, useParams } from "react-router";
 import { setSelectionActionsPending } from "../../redux/selectionMode/selectionModeActions";
+import TaskOverViewTabs, {
+    TaskOverViewTabValues,
+} from "./components/TaskOverviewTabs";
+import TaskHandoversList from "./components/TaskHandoversList";
 
 const drawerWidth = 420;
 const drawerWidthMd = 420;
@@ -81,6 +85,10 @@ function TaskDialogCompact(props) {
     const tasksSynced = useSelector(dataStoreModelSyncedStatusSelector).Task;
     let { task_uuid_b62 } = useParams();
     const taskId = decodeUUID(task_uuid_b62);
+
+    const [activeTab, setActiveTab] = React.useState(
+        TaskOverViewTabValues.OVERVIEW
+    );
 
     const getTask = React.useCallback(async (taskId) => {
         try {
@@ -155,7 +163,18 @@ function TaskDialogCompact(props) {
             <DialogWrapper handleClose={onClose}>
                 <div className={classes.overview}>
                     {statusBar}
-                    <TaskOverview taskId={taskId} />
+                    <Box sx={{ marginTop: 2, marginLeft: 2 }}>
+                        <TaskOverViewTabs
+                            onChange={(tab) => setActiveTab(tab)}
+                            selectedTab={activeTab}
+                        />
+                    </Box>
+                    {activeTab === TaskOverViewTabValues.OVERVIEW && (
+                        <TaskOverview taskId={taskId} />
+                    )}
+                    {activeTab === TaskOverViewTabValues.HANDOVERS && (
+                        <TaskHandoversList taskId={taskId} />
+                    )}
                     <Hidden mdDown>
                         <CommentsSideBar
                             taskId={taskId}
