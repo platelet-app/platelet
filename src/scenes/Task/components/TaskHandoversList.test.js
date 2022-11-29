@@ -67,7 +67,7 @@ describe("TaskHandoversList", () => {
         expect(screen.getByText(mockLocation2.line1)).toBeInTheDocument();
     });
 
-    it("add a new handover", async () => {
+    test("add a new handover", async () => {
         const mockTask = await DataStore.save(
             new models.Task({
                 status: models.TaskStatus.NEW,
@@ -91,6 +91,34 @@ describe("TaskHandoversList", () => {
         expect(
             await screen.findByRole("combobox", { name: "Search locations..." })
         ).toBeInTheDocument();
+    });
+
+    test("delete a handover", async () => {
+        const mockTask = await DataStore.save(
+            new models.Task({
+                status: models.TaskStatus.NEW,
+                tenantId,
+            })
+        );
+        const mockHandover = await DataStore.save(
+            new models.Handover({
+                task: mockTask,
+                tenantId,
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        const deleteSpy = jest.spyOn(DataStore, "delete");
+        render(<TaskHandoversList taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalled();
+        });
+        userEvent.click(screen.getByRole("button", { name: "Clear handover" }));
+        await waitFor(() => {
+            expect(deleteSpy).toHaveBeenCalledWith(mockHandover);
+        });
+        expect(
+            screen.queryAllByRole("button", { name: "Clear handover" }).length
+        ).toBe(0);
     });
 
     test("the observer reacts to new handovers", async () => {

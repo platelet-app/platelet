@@ -1,19 +1,33 @@
-import { Stack, Typography } from "@mui/material";
+import { IconButton, Stack, Typography } from "@mui/material";
 import React from "react";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
 import * as models from "../../../models";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
 type TaskHandoversProps = {
     handover: models.Handover;
+    onClear?: () => void;
 };
 
-const TaskHandoverCard: React.FC<TaskHandoversProps> = ({ handover }) => {
+const TaskHandoverCard: React.FC<TaskHandoversProps> = ({
+    handover,
+    onClear,
+}) => {
     return (
-        <Stack>
+        <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+        >
             {handover.handoverLocation ? (
                 <Typography>{handover.handoverLocation.line1}</Typography>
             ) : (
                 <FavouriteLocationsSelect />
+            )}
+            {onClear && (
+                <IconButton aria-label="Clear handover" onClick={onClear}>
+                    <HighlightOffIcon />
+                </IconButton>
             )}
         </Stack>
     );
