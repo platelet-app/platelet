@@ -11,7 +11,7 @@ import GetError from "../../ErrorComponents/GetError";
 import Typography from "@mui/material/Typography";
 import TaskOverview from "./components/TaskOverview";
 import CommentsSideBar from "./components/CommentsSideBar";
-import { Box, Button, Hidden, Stack } from "@mui/material";
+import { Box, Button, Hidden } from "@mui/material";
 import * as models from "../../models/index";
 import { DataStore } from "aws-amplify";
 import { dataStoreModelSyncedStatusSelector } from "../../redux/Selectors";

@@ -1,4 +1,4 @@
-import { Divider, IconButton, Paper, Stack, Typography } from "@mui/material";
+import { IconButton, Paper, Stack, Typography } from "@mui/material";
 import * as models from "../../../models";
 import { DataStore } from "aws-amplify";
 import React from "react";
@@ -10,7 +10,7 @@ import { convertListDataToObject } from "../../../utilities";
 import _ from "lodash";
 import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
 import { Timeline } from "@mui/lab";
-import TimelineItem from "@mui/lab/TimelineItem";
+import TimelineItem, { timelineItemClasses } from "@mui/lab/TimelineItem";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineContent from "@mui/lab/TimelineContent";
@@ -27,7 +27,6 @@ type TaskHandoverState = {
 const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
     const [handovers, setHandovers] = React.useState<TaskHandoverState>({});
     const [errorState, setErrorState] = React.useState<any | null>(null);
-    const cardClasses = dialogCardStyles();
     const tenantId = useSelector(tenantIdSelector);
     const handoverSubscription = React.useRef({ unsubscribe: () => {} });
 
@@ -107,15 +106,30 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
     }
 
     return (
-        <Paper className={cardClasses.root}>
+        <Paper
+            sx={{
+                borderRadius: "1em",
+                padding: 1,
+                margin: 2,
+                maxWidth: "90%",
+            }}
+        >
             <Stack
                 alignItems="flex-end"
-                divider={<Divider />}
+                justifyContent="space-between"
                 direction="column"
             >
-                <Timeline sx={{ width: "100%" }}>
+                <Timeline
+                    sx={{
+                        width: "100%",
+                        [`& .${timelineItemClasses.root}:before`]: {
+                            flex: 0,
+                            padding: 1,
+                        },
+                    }}
+                >
                     {Object.values(handovers).map((h) => (
-                        <TimelineItem draggable>
+                        <TimelineItem>
                             <TimelineSeparator>
                                 <TimelineDot />
                                 <TimelineConnector />
@@ -131,12 +145,18 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
                     ))}
                 </Timeline>
                 <Stack alignItems="center" direction="row">
-                    <Typography>Add Handover</Typography>
+                    <Typography
+                        onClick={saveHandover}
+                        sx={{ cursor: "pointer" }}
+                        variant="h5"
+                    >
+                        Add Handover
+                    </Typography>
                     <IconButton
                         aria-label="Add handover"
                         onClick={saveHandover}
                     >
-                        <AddCircleOutline />
+                        <AddCircleOutline fontSize="large" />
                     </IconButton>
                 </Stack>
             </Stack>

@@ -41,8 +41,8 @@ const TaskHandoverCard: React.FC<TaskHandoversProps> = ({
         <Stack
             direction="row"
             justifyContent="space-between"
-            alignItems="center"
-            sx={{ width: "100%", marginLeft: 1 }}
+            alignItems="flex-start"
+            sx={{ marginLeft: 1 }}
         >
             {handover.handoverLocation ? (
                 <Typography>{handover.handoverLocation.line1}</Typography>
