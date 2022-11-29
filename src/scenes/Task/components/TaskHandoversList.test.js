@@ -88,5 +88,123 @@ describe("TaskHandoversList", () => {
                 tenantId,
             });
         });
+        expect(
+            await screen.findByRole("combobox", { name: "Search locations..." })
+        ).toBeInTheDocument();
+    });
+
+    test("the observer reacts to new handovers", async () => {
+        const mockTask = await DataStore.save(
+            new models.Task({
+                status: models.TaskStatus.NEW,
+                tenantId,
+            })
+        );
+        const mockLocation = await DataStore.save(
+            new models.Location({
+                name: "Test Location",
+                line1: "Test Line 1",
+                tenantId,
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<TaskHandoversList taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalled();
+        });
+        await DataStore.save(
+            new models.Handover({
+                task: mockTask,
+                handoverLocation: mockLocation,
+            })
+        );
+        expect(await screen.findByText(mockLocation.line1)).toBeInTheDocument();
+    });
+
+    test("the observer reacts to updated handovers", async () => {
+        const mockTask = await DataStore.save(
+            new models.Task({
+                status: models.TaskStatus.NEW,
+                tenantId,
+            })
+        );
+        const mockLocation = await DataStore.save(
+            new models.Location({
+                name: "Test Location",
+                line1: "Test Line 1",
+                tenantId,
+            })
+        );
+        const mockHandover = await DataStore.save(
+            new models.Handover({
+                task: mockTask,
+                tenantId,
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<TaskHandoversList taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalled();
+        });
+        expect(
+            await screen.findByRole("combobox", { name: "Search locations..." })
+        ).toBeInTheDocument();
+        await DataStore.save(
+            models.Handover.copyOf(mockHandover, (updated) => {
+                updated.handoverLocation = mockLocation;
+            })
+        );
+        expect(await screen.findByText(mockLocation.line1)).toBeInTheDocument();
+    });
+
+    test("the observer reacts to deleted handovers", async () => {
+        const mockTask = await DataStore.save(
+            new models.Task({
+                status: models.TaskStatus.NEW,
+                tenantId,
+            })
+        );
+        const mockLocation = await DataStore.save(
+            new models.Location({
+                name: "Test Location",
+                line1: "Test Line 1",
+                tenantId,
+            })
+        );
+        const mockHandover = await DataStore.save(
+            new models.Handover({
+                task: mockTask,
+                handoverLocation: mockLocation,
+                tenantId,
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<TaskHandoversList taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalled();
+        });
+        expect(await screen.findByText(mockLocation.line1)).toBeInTheDocument();
+        await DataStore.delete(mockHandover);
+        await waitFor(() => {
+            expect(screen.queryByText(mockLocation.line1)).toBeNull();
+        });
+    });
+
+    test("failure to get handovers", async () => {
+        const mockTask = await DataStore.save(
+            new models.Task({
+                status: models.TaskStatus.NEW,
+                tenantId,
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        querySpy.mockRejectedValueOnce("Test error");
+        render(<TaskHandoversList taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalled();
+        });
+        expect(
+            await screen.findByText("Something went wrong.")
+        ).toBeInTheDocument();
     });
 });
