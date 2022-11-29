@@ -3,6 +3,7 @@ import { render } from "../../../test-utils";
 import * as models from "../../../models";
 import TaskHandoversList from "./TaskHandoversList";
 import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 const tenantId = "tenantId";
 
@@ -25,10 +26,24 @@ describe("TaskHandoversList", () => {
                 tenantId,
             })
         );
-        const mockHandover = await DataStore.save(
+        const mockLocation2 = await DataStore.save(
+            new models.Location({
+                name: "Test Location",
+                line1: "Test Line 2",
+                tenantId,
+            })
+        );
+        await DataStore.save(
             new models.Handover({
                 task: mockTask,
                 handoverLocation: mockLocation,
+                tenantId,
+            })
+        );
+        await DataStore.save(
+            new models.Handover({
+                task: mockTask,
+                handoverLocation: mockLocation2,
                 tenantId,
             })
         );
@@ -38,5 +53,29 @@ describe("TaskHandoversList", () => {
             expect(querySpy).toHaveBeenCalledWith(models.Handover);
         });
         expect(screen.getByText(mockLocation.line1)).toBeInTheDocument();
+        expect(screen.getByText(mockLocation2.line1)).toBeInTheDocument();
+    });
+
+    it("add a new handover", async () => {
+        const mockTask = await DataStore.save(
+            new models.Task({
+                status: models.TaskStatus.NEW,
+                tenantId,
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<TaskHandoversList taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalled();
+        });
+        userEvent.click(screen.getByRole("button", { name: "Add handover" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                id: expect.any(String),
+                task: mockTask,
+                tenantId,
+            });
+        });
     });
 });
