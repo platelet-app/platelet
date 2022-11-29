@@ -244,6 +244,7 @@ type Handover
   timeOfHandover: AWSDateTime
   handoverLocation: Location @belongsTo
   assignedRider: User @belongsTo
+  orderInGrid: Int
 }
 
 type Comment
