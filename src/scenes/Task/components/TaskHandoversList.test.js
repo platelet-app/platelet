@@ -12,6 +12,17 @@ const preloadedState = {
 };
 
 describe("TaskHandoversList", () => {
+    beforeEach(async () => {
+        jest.restoreAllMocks();
+        const existingHandovers = await DataStore.query(models.Handover);
+        const existingTasks = await DataStore.query(models.Task);
+        const existingUsers = await DataStore.query(models.User);
+        await Promise.all(
+            [...existingUsers, ...existingTasks, ...existingHandovers].map(
+                (i) => DataStore.delete(i)
+            )
+        );
+    });
     it("should display the handovers", async () => {
         const mockTask = await DataStore.save(
             new models.Task({
