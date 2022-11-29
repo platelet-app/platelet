@@ -115,21 +115,18 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
             >
                 <Timeline sx={{ width: "100%" }}>
                     {Object.values(handovers).map((h) => (
-                        <TimelineItem
-                            draggable
-                            sx={{
-                                alignItems: "center",
-                            }}
-                        >
+                        <TimelineItem draggable>
                             <TimelineSeparator>
                                 <TimelineDot />
                                 <TimelineConnector />
                             </TimelineSeparator>
-                            <TaskHandoverCard
-                                onClear={() => handleDelete(h)}
-                                key={h.id}
-                                handover={h}
-                            />
+                            <TimelineContent>
+                                <TaskHandoverCard
+                                    onClear={() => handleDelete(h)}
+                                    key={h.id}
+                                    handover={h}
+                                />
+                            </TimelineContent>
                         </TimelineItem>
                     ))}
                 </Timeline>

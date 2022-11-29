@@ -17,10 +17,14 @@ describe("TaskHandoversList", () => {
         const existingHandovers = await DataStore.query(models.Handover);
         const existingTasks = await DataStore.query(models.Task);
         const existingUsers = await DataStore.query(models.User);
+        const existingLocations = await DataStore.query(models.Location);
         await Promise.all(
-            [...existingUsers, ...existingTasks, ...existingHandovers].map(
-                (i) => DataStore.delete(i)
-            )
+            [
+                ...existingUsers,
+                ...existingTasks,
+                ...existingHandovers,
+                ...existingLocations,
+            ].map((i) => DataStore.delete(i))
         );
     });
     it("should display the handovers", async () => {
@@ -90,6 +94,97 @@ describe("TaskHandoversList", () => {
         });
         expect(
             await screen.findByRole("combobox", { name: "Search locations..." })
+        ).toBeInTheDocument();
+    });
+
+    test("add a handover and set the location", async () => {
+        const mockTask = await DataStore.save(
+            new models.Task({
+                status: models.TaskStatus.NEW,
+                tenantId,
+            })
+        );
+        const mockLocation = await DataStore.save(
+            new models.Location({
+                name: "Test Location",
+                line1: "Test Line 1",
+                listed: 1,
+                tenantId,
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<TaskHandoversList taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalled();
+        });
+        userEvent.click(screen.getByRole("button", { name: "Add handover" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                id: expect.any(String),
+                task: mockTask,
+                tenantId,
+            });
+        });
+        const locationBox = await screen.findByRole("combobox", {
+            name: "Search locations...",
+        });
+        userEvent.type(locationBox, "Test Location");
+        userEvent.click(await screen.findByText(mockLocation.name));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                id: expect.any(String),
+                task: mockTask,
+                handoverLocation: mockLocation,
+                tenantId,
+            });
+        });
+    });
+
+    test("set the location failure", async () => {
+        const mockTask = await DataStore.save(
+            new models.Task({
+                status: models.TaskStatus.NEW,
+                tenantId,
+            })
+        );
+        const mockLocation = await DataStore.save(
+            new models.Location({
+                name: "Test Location",
+                line1: "Test Line 1",
+                listed: 1,
+                tenantId,
+            })
+        );
+        await DataStore.save(
+            new models.Handover({
+                task: mockTask,
+                tenantId,
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest
+            .spyOn(DataStore, "save")
+            .mockRejectedValue(new Error("Test Error"));
+        render(<TaskHandoversList taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalled();
+        });
+        const locationBox = await screen.findByRole("combobox", {
+            name: "Search locations...",
+        });
+        userEvent.type(locationBox, "Test Location");
+        userEvent.click(await screen.findByText(mockLocation.name));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                id: expect.any(String),
+                task: mockTask,
+                handoverLocation: mockLocation,
+                tenantId,
+            });
+        });
+        expect(
+            screen.getByText("Sorry, something went wrong")
         ).toBeInTheDocument();
     });
 
