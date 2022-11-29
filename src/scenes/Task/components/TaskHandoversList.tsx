@@ -9,6 +9,12 @@ import { tenantIdSelector } from "../../../redux/Selectors";
 import { convertListDataToObject } from "../../../utilities";
 import _ from "lodash";
 import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
+import { Timeline } from "@mui/lab";
+import TimelineItem from "@mui/lab/TimelineItem";
+import TimelineSeparator from "@mui/lab/TimelineSeparator";
+import TimelineConnector from "@mui/lab/TimelineConnector";
+import TimelineContent from "@mui/lab/TimelineContent";
+import TimelineDot from "@mui/lab/TimelineDot";
 
 type TaskHandoversListProps = {
     taskId: string;
@@ -102,18 +108,41 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
 
     return (
         <Paper className={cardClasses.root}>
-            <Stack divider={<Divider />} direction="column">
-                {Object.values(handovers).map((h) => (
-                    <TaskHandoverCard
-                        onClear={() => handleDelete(h)}
-                        key={h.id}
-                        handover={h}
-                    />
-                ))}
+            <Stack
+                alignItems="flex-end"
+                divider={<Divider />}
+                direction="column"
+            >
+                <Timeline sx={{ width: "100%" }}>
+                    {Object.values(handovers).map((h) => (
+                        <TimelineItem
+                            draggable
+                            sx={{
+                                alignItems: "center",
+                            }}
+                        >
+                            <TimelineSeparator>
+                                <TimelineDot />
+                                <TimelineConnector />
+                            </TimelineSeparator>
+                            <TaskHandoverCard
+                                onClear={() => handleDelete(h)}
+                                key={h.id}
+                                handover={h}
+                            />
+                        </TimelineItem>
+                    ))}
+                </Timeline>
+                <Stack alignItems="center" direction="row">
+                    <Typography>Add Handover</Typography>
+                    <IconButton
+                        aria-label="Add handover"
+                        onClick={saveHandover}
+                    >
+                        <AddCircleOutline />
+                    </IconButton>
+                </Stack>
             </Stack>
-            <IconButton aria-label="Add handover" onClick={saveHandover}>
-                <AddCircleOutline />
-            </IconButton>
         </Paper>
     );
 };
