@@ -498,7 +498,7 @@ type EagerHandover = {
   readonly timeOfHandover?: string | null;
   readonly handoverLocation?: Location | null;
   readonly assignedRider?: User | null;
-  readonly orderInGrid?: number | null;
+  readonly orderInGrid: number;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -510,7 +510,7 @@ type LazyHandover = {
   readonly timeOfHandover?: string | null;
   readonly handoverLocation: AsyncItem<Location | undefined>;
   readonly assignedRider: AsyncItem<User | undefined>;
-  readonly orderInGrid?: number | null;
+  readonly orderInGrid: number;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

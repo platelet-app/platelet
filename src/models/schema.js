@@ -1417,7 +1417,7 @@ export const schema = {
                     "name": "orderInGrid",
                     "isArray": false,
                     "type": "Int",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "createdAt": {
@@ -2393,5 +2393,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.3.1",
-    "version": "5682f8a5a46295eae28bbe81f5097053"
+    "version": "35ea781b936d43a5281047e026ffdbba"
 };
