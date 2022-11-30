@@ -11,6 +11,32 @@ const preloadedState = {
     tenantId,
 };
 
+const generateMockLocations = async () => {
+    const mockLocation = await DataStore.save(
+        new models.Location({
+            name: "Test Location",
+            line1: "Test Line 1",
+            listed: 1,
+            tenantId,
+        })
+    );
+    const mockLocation2 = await DataStore.save(
+        new models.Location({
+            name: "Test Location",
+            line1: "Test Line 2",
+            tenantId,
+        })
+    );
+    const mockLocation3 = await DataStore.save(
+        new models.Location({
+            name: "Test Location",
+            line1: "Test Line 3",
+            tenantId,
+        })
+    );
+    return { mockLocation, mockLocation2, mockLocation3 };
+};
+
 describe("TaskHandoversList", () => {
     beforeEach(async () => {
         jest.restoreAllMocks();
@@ -34,27 +60,8 @@ describe("TaskHandoversList", () => {
                 tenantId,
             })
         );
-        const mockLocation = await DataStore.save(
-            new models.Location({
-                name: "Test Location",
-                line1: "Test Line 1",
-                tenantId,
-            })
-        );
-        const mockLocation2 = await DataStore.save(
-            new models.Location({
-                name: "Test Location",
-                line1: "Test Line 2",
-                tenantId,
-            })
-        );
-        const mockLocation3 = await DataStore.save(
-            new models.Location({
-                name: "Test Location",
-                line1: "Test Line 3",
-                tenantId,
-            })
-        );
+        const { mockLocation, mockLocation2, mockLocation3 } =
+            await generateMockLocations();
         await DataStore.save(
             new models.Handover({
                 task: mockTask,
@@ -125,14 +132,7 @@ describe("TaskHandoversList", () => {
                 tenantId,
             })
         );
-        const mockLocation = await DataStore.save(
-            new models.Location({
-                name: "Test Location",
-                line1: "Test Line 1",
-                listed: 1,
-                tenantId,
-            })
-        );
+        const { mockLocation } = await generateMockLocations();
         const mockHandover = new models.Handover({
             task: mockTask,
             orderInGrid: 1,
@@ -172,14 +172,7 @@ describe("TaskHandoversList", () => {
                 tenantId,
             })
         );
-        const mockLocation = await DataStore.save(
-            new models.Location({
-                name: "Test Location",
-                line1: "Test Line 1",
-                listed: 1,
-                tenantId,
-            })
-        );
+        const { mockLocation } = await generateMockLocations();
         await DataStore.save(
             new models.Handover({
                 task: mockTask,
@@ -212,32 +205,67 @@ describe("TaskHandoversList", () => {
         ).toBeInTheDocument();
     });
 
-    test.skip("delete a handover", async () => {
+    test("delete a handover and reset the orders", async () => {
         const mockTask = await DataStore.save(
             new models.Task({
                 status: models.TaskStatus.NEW,
                 tenantId,
             })
         );
+        const { mockLocation, mockLocation2, mockLocation3 } =
+            await generateMockLocations();
         const mockHandover = await DataStore.save(
             new models.Handover({
                 task: mockTask,
+                handoverLocation: mockLocation,
+                orderInGrid: 1,
+                tenantId,
+            })
+        );
+        const mockHandover2 = await DataStore.save(
+            new models.Handover({
+                task: mockTask,
+                handoverLocation: mockLocation2,
+                orderInGrid: 2,
+                tenantId,
+            })
+        );
+        const mockHandover3 = await DataStore.save(
+            new models.Handover({
+                task: mockTask,
+                handoverLocation: mockLocation3,
+                orderInGrid: 3,
                 tenantId,
             })
         );
         const querySpy = jest.spyOn(DataStore, "query");
         const deleteSpy = jest.spyOn(DataStore, "delete");
+        const saveSpy = jest.spyOn(DataStore, "save");
         render(<TaskHandoversList taskId={mockTask.id} />, { preloadedState });
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalled();
         });
-        userEvent.click(screen.getByRole("button", { name: "Clear handover" }));
+        userEvent.click(
+            screen.getAllByRole("button", { name: "Clear handover" })[0]
+        );
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockHandover2,
+                orderInGrid: 1,
+            });
+        });
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockHandover3,
+                orderInGrid: 2,
+            });
+        });
         await waitFor(() => {
             expect(deleteSpy).toHaveBeenCalledWith(mockHandover);
         });
-        expect(
-            screen.queryAllByRole("button", { name: "Clear handover" }).length
-        ).toBe(0);
+        await waitFor(() => {
+            expect(screen.queryByText(mockLocation.line1)).toBeNull();
+        });
     });
 
     test("increment and decrement a handover in the list", async () => {
@@ -247,27 +275,8 @@ describe("TaskHandoversList", () => {
                 tenantId,
             })
         );
-        const mockLocation = await DataStore.save(
-            new models.Location({
-                name: "Test Location",
-                line1: "Test Line 1",
-                tenantId,
-            })
-        );
-        const mockLocation2 = await DataStore.save(
-            new models.Location({
-                name: "Test Location 2",
-                line1: "Test Line 2",
-                tenantId,
-            })
-        );
-        const mockLocation3 = await DataStore.save(
-            new models.Location({
-                name: "Test Location 3",
-                line1: "Test Line 3",
-                tenantId,
-            })
-        );
+        const { mockLocation, mockLocation2, mockLocation3 } =
+            await generateMockLocations();
         const mockHandover = await DataStore.save(
             new models.Handover({
                 task: mockTask,
@@ -345,20 +354,7 @@ describe("TaskHandoversList", () => {
                 tenantId,
             })
         );
-        const mockLocation = await DataStore.save(
-            new models.Location({
-                name: "Test Location",
-                line1: "Test Line 1",
-                tenantId,
-            })
-        );
-        const mockLocation2 = await DataStore.save(
-            new models.Location({
-                name: "Test Location 2",
-                line1: "Test Line 2",
-                tenantId,
-            })
-        );
+        const { mockLocation, mockLocation2 } = await generateMockLocations();
         await DataStore.save(
             new models.Handover({
                 task: mockTask,
@@ -395,13 +391,7 @@ describe("TaskHandoversList", () => {
                 tenantId,
             })
         );
-        const mockLocation = await DataStore.save(
-            new models.Location({
-                name: "Test Location",
-                line1: "Test Line 1",
-                tenantId,
-            })
-        );
+        const { mockLocation } = await generateMockLocations();
         const querySpy = jest.spyOn(DataStore, "query");
         render(<TaskHandoversList taskId={mockTask.id} />, { preloadedState });
         await waitFor(() => {
@@ -423,13 +413,7 @@ describe("TaskHandoversList", () => {
                 tenantId,
             })
         );
-        const mockLocation = await DataStore.save(
-            new models.Location({
-                name: "Test Location",
-                line1: "Test Line 1",
-                tenantId,
-            })
-        );
+        const { mockLocation } = await generateMockLocations();
         const mockHandover = await DataStore.save(
             new models.Handover({
                 task: mockTask,
@@ -459,13 +443,7 @@ describe("TaskHandoversList", () => {
                 tenantId,
             })
         );
-        const mockLocation = await DataStore.save(
-            new models.Location({
-                name: "Test Location",
-                line1: "Test Line 1",
-                tenantId,
-            })
-        );
+        const { mockLocation } = await generateMockLocations();
         const mockHandover = await DataStore.save(
             new models.Handover({
                 task: mockTask,

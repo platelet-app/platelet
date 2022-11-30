@@ -153,6 +153,22 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
     }, [taskId, tenantId, handovers]);
 
     const handleDelete = async (handover: models.Handover) => {
+        const allCurrentHandovers = (
+            await DataStore.query(models.Handover)
+        ).filter((h) => h.task?.id === taskId);
+        const filtered = allCurrentHandovers.filter(
+            (h) => h.id !== handover.id
+        );
+        const sorted = filtered.sort((a, b) => a.orderInGrid - b.orderInGrid);
+        await Promise.all(
+            sorted.map((h, index) => {
+                return DataStore.save(
+                    models.Handover.copyOf(h, (updated) => {
+                        updated.orderInGrid = index + 1;
+                    })
+                );
+            })
+        );
         await DataStore.delete(handover);
     };
 
