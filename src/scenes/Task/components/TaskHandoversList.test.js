@@ -27,7 +27,7 @@ describe("TaskHandoversList", () => {
             ].map((i) => DataStore.delete(i))
         );
     });
-    it("should display the handovers", async () => {
+    it("should display the handovers in order", async () => {
         const mockTask = await DataStore.save(
             new models.Task({
                 status: models.TaskStatus.NEW,
@@ -48,9 +48,17 @@ describe("TaskHandoversList", () => {
                 tenantId,
             })
         );
+        const mockLocation3 = await DataStore.save(
+            new models.Location({
+                name: "Test Location",
+                line1: "Test Line 3",
+                tenantId,
+            })
+        );
         await DataStore.save(
             new models.Handover({
                 task: mockTask,
+                orderInGrid: 2,
                 handoverLocation: mockLocation,
                 tenantId,
             })
@@ -58,7 +66,16 @@ describe("TaskHandoversList", () => {
         await DataStore.save(
             new models.Handover({
                 task: mockTask,
+                orderInGrid: 1,
                 handoverLocation: mockLocation2,
+                tenantId,
+            })
+        );
+        await DataStore.save(
+            new models.Handover({
+                task: mockTask,
+                orderInGrid: 3,
+                handoverLocation: mockLocation3,
                 tenantId,
             })
         );
@@ -69,6 +86,13 @@ describe("TaskHandoversList", () => {
         });
         expect(screen.getByText(mockLocation.line1)).toBeInTheDocument();
         expect(screen.getByText(mockLocation2.line1)).toBeInTheDocument();
+        expect(screen.getByText(mockLocation3.line1)).toBeInTheDocument();
+        expect(screen.getByText(mockLocation2.line1).nextSibling).toBe(
+            screen.getByText(mockLocation.line1)
+        );
+        //expect(screen.getByText(mockLocation.line1).nextSibling).toBe(
+        //    screen.getByText(mockLocation3.line1)
+        //);
     });
 
     test("add a new handover", async () => {
