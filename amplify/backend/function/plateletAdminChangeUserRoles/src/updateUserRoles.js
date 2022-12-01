@@ -74,8 +74,6 @@ exports.updateUser = /* GraphQL */ gql`
                 items {
                     id
                     tenantId
-                    taskId
-                    assigneeId
                     role
                     createdAt
                     updatedAt

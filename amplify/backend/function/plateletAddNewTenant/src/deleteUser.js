@@ -65,8 +65,6 @@ exports.deleteUser = gql`
                 items {
                     id
                     tenantId
-                    taskId
-                    assigneeId
                     role
                     createdAt
                     updatedAt
