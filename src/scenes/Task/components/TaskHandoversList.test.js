@@ -480,4 +480,23 @@ describe("TaskHandoversList", () => {
             await screen.findByText("Something went wrong.")
         ).toBeInTheDocument();
     });
+
+    test.only("show the pick up and drop off locations", async () => {
+        const { mockLocation, mockLocation2 } = await generateMockLocations();
+        const mockTask = await DataStore.save(
+            new models.Task({
+                status: models.TaskStatus.NEW,
+                pickUpLocation: mockLocation,
+                dropOffLocation: mockLocation2,
+                tenantId,
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<TaskHandoversList taskId={mockTask.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalled();
+        });
+        expect(screen.getByText(mockLocation.name)).toBeInTheDocument();
+        expect(screen.getByText(mockLocation2.name)).toBeInTheDocument();
+    });
 });

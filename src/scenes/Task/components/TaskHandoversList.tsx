@@ -15,6 +15,7 @@ import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineContent from "@mui/lab/TimelineContent";
 import TimelineDot from "@mui/lab/TimelineDot";
+import TaskHandoverHeaderFooter from "./TaskHandoverHeaderFooter";
 
 type TaskHandoversListProps = {
     taskId: string;
@@ -31,12 +32,60 @@ function convertListDataToObject(list: models.Handover[]) {
     }
     return result;
 }
+
+type LocationStateType = {
+    pickUpLocation: models.Location | null;
+    dropOffLocation: models.Location | null;
+};
+
 const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
     const [handovers, setHandovers] = React.useState<TaskHandoverState>({});
+    const [locationsState, setLocationsState] =
+        React.useState<LocationStateType>({
+            pickUpLocation: null,
+            dropOffLocation: null,
+        });
+
     const [errorState, setErrorState] = React.useState<any | null>(null);
     const tenantId = useSelector(tenantIdSelector);
     const handoverSubscription = React.useRef({ unsubscribe: () => {} });
+    const taskSubscription = React.useRef({ unsubscribe: () => {} });
     const transitionEnabled = React.useRef(false);
+
+    const getTask = React.useCallback(async () => {
+        try {
+            const task = await DataStore.query(models.Task, taskId);
+            if (task) {
+                setLocationsState({
+                    pickUpLocation: task.pickUpLocation || null,
+                    dropOffLocation: task.dropOffLocation || null,
+                });
+                taskSubscription.current = DataStore.observe(
+                    models.Task,
+                    taskId
+                ).subscribe(({ element }) => {
+                    if (element)
+                        DataStore.query(models.Task, taskId).then((t) => {
+                            if (t) {
+                                setLocationsState({
+                                    pickUpLocation: t.pickUpLocation || null,
+                                    dropOffLocation: t.dropOffLocation || null,
+                                });
+                            }
+                        });
+                });
+            }
+        } catch (error) {
+            setErrorState(error);
+        }
+    }, [taskId]);
+
+    React.useEffect(() => {
+        getTask();
+        return () => {
+            taskSubscription.current.unsubscribe();
+        };
+    });
 
     const getHandovers = React.useCallback(async () => {
         try {
@@ -94,6 +143,9 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
 
     React.useEffect(() => {
         getHandovers();
+        return () => {
+            handoverSubscription.current.unsubscribe();
+        };
     }, [getHandovers]);
 
     const moveHandoverUp = async (handover: models.Handover) => {
@@ -185,6 +237,15 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
                 maxWidth: "90%",
             }}
         >
+            <TaskHandoverHeaderFooter
+                header
+                location={locationsState.pickUpLocation}
+            />
+            {Object.values(handovers).length === 0 && (
+                <Typography sx={{ padding: 1 }} variant="h5">
+                    No handovers
+                </Typography>
+            )}
             <Stack
                 alignItems="flex-end"
                 justifyContent="space-between"
@@ -214,7 +275,9 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
                                         <TimelineItem>
                                             <TimelineSeparator>
                                                 <TimelineDot />
-                                                <TimelineConnector />
+                                                {!isLast && (
+                                                    <TimelineConnector />
+                                                )}
                                             </TimelineSeparator>
                                             <TimelineContent>
                                                 <TaskHandoverCard
@@ -255,6 +318,10 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
                     </IconButton>
                 </Stack>
             </Stack>
+            <TaskHandoverHeaderFooter
+                footer
+                location={locationsState.dropOffLocation}
+            />
         </Paper>
     );
 };
