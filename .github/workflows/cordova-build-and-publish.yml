@@ -42,6 +42,7 @@ jobs:
       run: |
         npm install -g @aws-amplify/cli --unsafe-perm=true
         amplify pull --appId ${{ secrets.AMPLIFY_APP_ID }} --envName ${{ secrets.AMPLIFY_ENV_NAME }} -y
+        amplify codegen models
     - name: Production Build
       run: npm run build
       env:
