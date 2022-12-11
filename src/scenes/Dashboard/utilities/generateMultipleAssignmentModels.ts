@@ -1,6 +1,5 @@
 import { DataStore } from "aws-amplify";
 import _ from "lodash";
-import { userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
 import determineTaskStatus from "../../../utilities/determineTaskStatus";
 
@@ -24,7 +23,7 @@ async function generateMultipleAssignmentModels(
             return new models.TaskAssignee({
                 assignee,
                 task,
-                role: userRoles.rider,
+                role: models.Role.RIDER,
                 tenantId,
             });
         });
@@ -35,7 +34,7 @@ async function generateMultipleAssignmentModels(
                 new models.TaskAssignee({
                     assignee,
                     task,
-                    role: userRoles.coordinator,
+                    role: models.Role.COORDINATOR,
                     tenantId,
                 })
         );

@@ -10,8 +10,6 @@ import throttle from "lodash/throttle";
 import { useDispatch } from "react-redux";
 import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
 
-const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY || "";
-
 const extractAddressComponents = (addressComponents) => {
     const address = {};
     addressComponents.forEach((component) => {
@@ -76,18 +74,6 @@ const getPlacesAddressById = async (placeId) =>
         }
     });
 
-function loadScript(src, position, id) {
-    if (!position) {
-        return;
-    }
-
-    const script = document.createElement("script");
-    script.setAttribute("async", "");
-    script.setAttribute("id", id);
-    script.src = src;
-    position.appendChild(script);
-}
-
 const autocompleteService = { current: null };
 
 const placesOptions = {
@@ -98,20 +84,7 @@ export default function OnlineLocationSearch({ onSelect }) {
     const [value, setValue] = React.useState(null);
     const [inputValue, setInputValue] = React.useState("");
     const [options, setOptions] = React.useState([]);
-    const loaded = React.useRef(false);
     const dispatch = useDispatch();
-
-    if (typeof window !== "undefined" && !loaded.current) {
-        if (!document.querySelector("#google-maps")) {
-            loadScript(
-                `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`,
-                document.querySelector("head"),
-                "google-maps"
-            );
-        }
-
-        loaded.current = true;
-    }
 
     const fetch = React.useMemo(
         () =>
@@ -161,6 +134,36 @@ export default function OnlineLocationSearch({ onSelect }) {
         };
     }, [value, inputValue, fetch]);
 
+    const onChange = React.useCallback(
+        (event, newValue) => {
+            setOptions(newValue ? [newValue, ...options] : options);
+            setValue(newValue);
+            if (newValue) {
+                getPlacesAddressById(newValue.place_id)
+                    .then((result) => {
+                        if (
+                            newValue.types &&
+                            newValue.types.includes("establishment")
+                        ) {
+                            result.line1 = result.name;
+                        }
+                        onSelect({
+                            ...result,
+                            googleMapsPlaceId: newValue.place_id,
+                        });
+                    })
+                    .catch((e) => {
+                        console.log(e);
+                        dispatch(
+                            displayErrorNotification("Could not find address")
+                        );
+                    });
+                console.log(newValue);
+            }
+        },
+        [options, onSelect, dispatch]
+    );
+
     return (
         <Autocomplete
             sx={{ width: 300 }}
@@ -173,38 +176,17 @@ export default function OnlineLocationSearch({ onSelect }) {
             includeInputInList
             filterSelectedOptions
             value={value}
-            onChange={(event, newValue) => {
-                setOptions(newValue ? [newValue, ...options] : options);
-                setValue(newValue);
-                if (newValue) {
-                    getPlacesAddressById(newValue.place_id)
-                        .then((result) => {
-                            if (
-                                newValue.types &&
-                                newValue.types.includes("establishment")
-                            ) {
-                                result.line1 = result.name;
-                            }
-                            onSelect({
-                                ...result,
-                            });
-                        })
-                        .catch((e) => {
-                            console.log(e);
-                            dispatch(
-                                displayErrorNotification(
-                                    "Could not find address"
-                                )
-                            );
-                        });
-                    console.log(newValue);
-                }
-            }}
+            onChange={onChange}
             onInputChange={(event, newInputValue) => {
                 setInputValue(newInputValue);
             }}
             renderInput={(params) => (
-                <TextField {...params} label="Search for places..." fullWidth />
+                <TextField
+                    {...params}
+                    aria-label="search for places"
+                    label="Search for places..."
+                    fullWidth
+                />
             )}
             renderOption={(props, option) => {
                 const matches =

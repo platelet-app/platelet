@@ -24,7 +24,6 @@ import {
     taskAssigneesSelector,
 } from "../../../redux/Selectors";
 import { useInView } from "react-intersection-observer";
-import useLongPress from "../../../hooks/useLongPress";
 import useLongPressEventContextMenu from "../../../hooks/useLongPressEventContextMenu";
 
 const useStyles = (isSelected) =>

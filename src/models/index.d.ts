@@ -1,4 +1,6 @@
-import { ModelInit, MutableModel, PersistentModelConstructor } from "@aws-amplify/datastore";
+import { ModelInit, MutableModel } from "@aws-amplify/datastore";
+// @ts-ignore
+import { LazyLoading, LazyLoadingDisabled, AsyncCollection, AsyncItem } from "@aws-amplify/datastore";
 
 export enum Role {
   USER = "USER",
@@ -55,7 +57,7 @@ export enum Patch {
   AIR_AMBULANCE = "AIR_AMBULANCE"
 }
 
-export declare class Statistics {
+type EagerStatistics = {
   readonly numCancelled?: number | null;
   readonly numCompleted?: number | null;
   readonly numDroppedOff?: number | null;
@@ -65,15 +67,37 @@ export declare class Statistics {
   readonly numPickedUp?: number | null;
   readonly numNew?: number | null;
   readonly numTest?: number | null;
-  constructor(init: ModelInit<Statistics>);
 }
 
-export declare class SendFeedback {
+type LazyStatistics = {
+  readonly numCancelled?: number | null;
+  readonly numCompleted?: number | null;
+  readonly numDroppedOff?: number | null;
+  readonly numRejected?: number | null;
+  readonly numAbandoned?: number | null;
+  readonly numActive?: number | null;
+  readonly numPickedUp?: number | null;
+  readonly numNew?: number | null;
+  readonly numTest?: number | null;
+}
+
+export declare type Statistics = LazyLoading extends LazyLoadingDisabled ? EagerStatistics : LazyStatistics
+
+export declare const Statistics: (new (init: ModelInit<Statistics>) => Statistics)
+
+type EagerSendFeedback = {
   readonly successState?: boolean | null;
-  constructor(init: ModelInit<SendFeedback>);
 }
 
-export declare class AddressAndContactDetails {
+type LazySendFeedback = {
+  readonly successState?: boolean | null;
+}
+
+export declare type SendFeedback = LazyLoading extends LazyLoadingDisabled ? EagerSendFeedback : LazySendFeedback
+
+export declare const SendFeedback: (new (init: ModelInit<SendFeedback>) => SendFeedback)
+
+type EagerAddressAndContactDetails = {
   readonly name?: string | null;
   readonly telephoneNumber?: string | null;
   readonly mobileNumber?: string | null;
@@ -88,15 +112,44 @@ export declare class AddressAndContactDetails {
   readonly country?: string | null;
   readonly postcode?: string | null;
   readonly what3words?: string | null;
-  constructor(init: ModelInit<AddressAndContactDetails>);
 }
 
-export declare class S3Object {
+type LazyAddressAndContactDetails = {
+  readonly name?: string | null;
+  readonly telephoneNumber?: string | null;
+  readonly mobileNumber?: string | null;
+  readonly emailAddress?: string | null;
+  readonly ward?: string | null;
+  readonly line1?: string | null;
+  readonly line2?: string | null;
+  readonly line3?: string | null;
+  readonly town?: string | null;
+  readonly county?: string | null;
+  readonly state?: string | null;
+  readonly country?: string | null;
+  readonly postcode?: string | null;
+  readonly what3words?: string | null;
+}
+
+export declare type AddressAndContactDetails = LazyLoading extends LazyLoadingDisabled ? EagerAddressAndContactDetails : LazyAddressAndContactDetails
+
+export declare const AddressAndContactDetails: (new (init: ModelInit<AddressAndContactDetails>) => AddressAndContactDetails)
+
+type EagerS3Object = {
   readonly bucket: string;
   readonly key: string;
   readonly region: string;
-  constructor(init: ModelInit<S3Object>);
 }
+
+type LazyS3Object = {
+  readonly bucket: string;
+  readonly key: string;
+  readonly region: string;
+}
+
+export declare type S3Object = LazyLoading extends LazyLoadingDisabled ? EagerS3Object : LazyS3Object
+
+export declare const S3Object: (new (init: ModelInit<S3Object>) => S3Object)
 
 type UserMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
@@ -146,7 +199,7 @@ type TenantMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-export declare class User {
+type EagerUser = {
   readonly id: string;
   readonly username: string;
   readonly cognitoId: string;
@@ -170,22 +223,65 @@ export declare class User {
   readonly disabled?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  constructor(init: ModelInit<User, UserMetaData>);
-  static copyOf(source: User, mutator: (draft: MutableModel<User, UserMetaData>) => MutableModel<User, UserMetaData> | void): User;
 }
 
-export declare class PossibleRiderResponsibilities {
+type LazyUser = {
+  readonly id: string;
+  readonly username: string;
+  readonly cognitoId: string;
+  readonly tenantId: string;
+  readonly isPrimaryAdmin?: number | null;
+  readonly contact?: AddressAndContactDetails | null;
+  readonly displayName: string;
+  readonly name?: string | null;
+  readonly roles: Role[] | keyof typeof Role;
+  readonly dateOfBirth?: string | null;
+  readonly riderResponsibility?: string | null;
+  readonly possibleRiderResponsibilities: AsyncCollection<PossibleRiderResponsibilities>;
+  readonly profilePictureURL?: string | null;
+  readonly profilePicture?: S3Object | null;
+  readonly comments: AsyncCollection<Comment>;
+  readonly assignments: AsyncCollection<TaskAssignee>;
+  readonly vehicleAssignments: AsyncCollection<VehicleAssignment>;
+  readonly createdTasks: AsyncCollection<Task>;
+  readonly createdLocations: AsyncCollection<Location>;
+  readonly createdVehicles: AsyncCollection<Vehicle>;
+  readonly disabled?: number | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type User = LazyLoading extends LazyLoadingDisabled ? EagerUser : LazyUser
+
+export declare const User: (new (init: ModelInit<User, UserMetaData>) => User) & {
+  copyOf(source: User, mutator: (draft: MutableModel<User, UserMetaData>) => MutableModel<User, UserMetaData> | void): User;
+}
+
+type EagerPossibleRiderResponsibilities = {
   readonly id: string;
   readonly tenantId: string;
   readonly user: User;
   readonly riderResponsibility: RiderResponsibility;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  constructor(init: ModelInit<PossibleRiderResponsibilities, PossibleRiderResponsibilitiesMetaData>);
-  static copyOf(source: PossibleRiderResponsibilities, mutator: (draft: MutableModel<PossibleRiderResponsibilities, PossibleRiderResponsibilitiesMetaData>) => MutableModel<PossibleRiderResponsibilities, PossibleRiderResponsibilitiesMetaData> | void): PossibleRiderResponsibilities;
 }
 
-export declare class RiderResponsibility {
+type LazyPossibleRiderResponsibilities = {
+  readonly id: string;
+  readonly tenantId: string;
+  readonly user: AsyncItem<User>;
+  readonly riderResponsibility: AsyncItem<RiderResponsibility>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type PossibleRiderResponsibilities = LazyLoading extends LazyLoadingDisabled ? EagerPossibleRiderResponsibilities : LazyPossibleRiderResponsibilities
+
+export declare const PossibleRiderResponsibilities: (new (init: ModelInit<PossibleRiderResponsibilities, PossibleRiderResponsibilitiesMetaData>) => PossibleRiderResponsibilities) & {
+  copyOf(source: PossibleRiderResponsibilities, mutator: (draft: MutableModel<PossibleRiderResponsibilities, PossibleRiderResponsibilitiesMetaData>) => MutableModel<PossibleRiderResponsibilities, PossibleRiderResponsibilitiesMetaData> | void): PossibleRiderResponsibilities;
+}
+
+type EagerRiderResponsibility = {
   readonly id: string;
   readonly tenantId: string;
   readonly label: string;
@@ -193,11 +289,25 @@ export declare class RiderResponsibility {
   readonly possibleUsers?: (PossibleRiderResponsibilities | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  constructor(init: ModelInit<RiderResponsibility, RiderResponsibilityMetaData>);
-  static copyOf(source: RiderResponsibility, mutator: (draft: MutableModel<RiderResponsibility, RiderResponsibilityMetaData>) => MutableModel<RiderResponsibility, RiderResponsibilityMetaData> | void): RiderResponsibility;
 }
 
-export declare class Comment {
+type LazyRiderResponsibility = {
+  readonly id: string;
+  readonly tenantId: string;
+  readonly label: string;
+  readonly disabled?: number | null;
+  readonly possibleUsers: AsyncCollection<PossibleRiderResponsibilities>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type RiderResponsibility = LazyLoading extends LazyLoadingDisabled ? EagerRiderResponsibility : LazyRiderResponsibility
+
+export declare const RiderResponsibility: (new (init: ModelInit<RiderResponsibility, RiderResponsibilityMetaData>) => RiderResponsibility) & {
+  copyOf(source: RiderResponsibility, mutator: (draft: MutableModel<RiderResponsibility, RiderResponsibilityMetaData>) => MutableModel<RiderResponsibility, RiderResponsibilityMetaData> | void): RiderResponsibility;
+}
+
+type EagerComment = {
   readonly id: string;
   readonly parentId?: string | null;
   readonly tenantId: string;
@@ -206,11 +316,26 @@ export declare class Comment {
   readonly visibility?: CommentVisibility | keyof typeof CommentVisibility | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  constructor(init: ModelInit<Comment, CommentMetaData>);
-  static copyOf(source: Comment, mutator: (draft: MutableModel<Comment, CommentMetaData>) => MutableModel<Comment, CommentMetaData> | void): Comment;
 }
 
-export declare class TaskAssignee {
+type LazyComment = {
+  readonly id: string;
+  readonly parentId?: string | null;
+  readonly tenantId: string;
+  readonly body?: string | null;
+  readonly author: AsyncItem<User | undefined>;
+  readonly visibility?: CommentVisibility | keyof typeof CommentVisibility | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Comment = LazyLoading extends LazyLoadingDisabled ? EagerComment : LazyComment
+
+export declare const Comment: (new (init: ModelInit<Comment, CommentMetaData>) => Comment) & {
+  copyOf(source: Comment, mutator: (draft: MutableModel<Comment, CommentMetaData>) => MutableModel<Comment, CommentMetaData> | void): Comment;
+}
+
+type EagerTaskAssignee = {
   readonly id: string;
   readonly tenantId: string;
   readonly role: Role | keyof typeof Role;
@@ -218,11 +343,25 @@ export declare class TaskAssignee {
   readonly assignee: User;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  constructor(init: ModelInit<TaskAssignee, TaskAssigneeMetaData>);
-  static copyOf(source: TaskAssignee, mutator: (draft: MutableModel<TaskAssignee, TaskAssigneeMetaData>) => MutableModel<TaskAssignee, TaskAssigneeMetaData> | void): TaskAssignee;
 }
 
-export declare class Task {
+type LazyTaskAssignee = {
+  readonly id: string;
+  readonly tenantId: string;
+  readonly role: Role | keyof typeof Role;
+  readonly task: AsyncItem<Task>;
+  readonly assignee: AsyncItem<User>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type TaskAssignee = LazyLoading extends LazyLoadingDisabled ? EagerTaskAssignee : LazyTaskAssignee
+
+export declare const TaskAssignee: (new (init: ModelInit<TaskAssignee, TaskAssigneeMetaData>) => TaskAssignee) & {
+  copyOf(source: TaskAssignee, mutator: (draft: MutableModel<TaskAssignee, TaskAssigneeMetaData>) => MutableModel<TaskAssignee, TaskAssigneeMetaData> | void): TaskAssignee;
+}
+
+type EagerTask = {
   readonly id: string;
   readonly tenantId: string;
   readonly createdBy?: User | null;
@@ -247,11 +386,42 @@ export declare class Task {
   readonly status?: TaskStatus | keyof typeof TaskStatus | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  constructor(init: ModelInit<Task, TaskMetaData>);
-  static copyOf(source: Task, mutator: (draft: MutableModel<Task, TaskMetaData>) => MutableModel<Task, TaskMetaData> | void): Task;
 }
 
-export declare class Location {
+type LazyTask = {
+  readonly id: string;
+  readonly tenantId: string;
+  readonly createdBy: AsyncItem<User | undefined>;
+  readonly dateCreated: string;
+  readonly timeOfCall?: string | null;
+  readonly timePickedUp?: string | null;
+  readonly timePickedUpSenderName?: string | null;
+  readonly timeDroppedOff?: string | null;
+  readonly timeDroppedOffRecipientName?: string | null;
+  readonly timeCancelled?: string | null;
+  readonly timeRejected?: string | null;
+  readonly timeRiderHome?: string | null;
+  readonly requesterContact?: AddressAndContactDetails | null;
+  readonly pickUpLocation: AsyncItem<Location | undefined>;
+  readonly dropOffLocation: AsyncItem<Location | undefined>;
+  readonly establishmentLocation: AsyncItem<Location | undefined>;
+  readonly riderResponsibility?: string | null;
+  readonly assignees: AsyncCollection<TaskAssignee>;
+  readonly priority?: Priority | keyof typeof Priority | null;
+  readonly deliverables: AsyncCollection<Deliverable>;
+  readonly comments: AsyncCollection<Comment>;
+  readonly status?: TaskStatus | keyof typeof TaskStatus | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Task = LazyLoading extends LazyLoadingDisabled ? EagerTask : LazyTask
+
+export declare const Task: (new (init: ModelInit<Task, TaskMetaData>) => Task) & {
+  copyOf(source: Task, mutator: (draft: MutableModel<Task, TaskMetaData>) => MutableModel<Task, TaskMetaData> | void): Task;
+}
+
+type EagerLocation = {
   readonly id: string;
   readonly tenantId: string;
   readonly createdBy?: User | null;
@@ -273,13 +443,45 @@ export declare class Location {
   readonly taskAsEstablishment?: (Task | null)[] | null;
   readonly comments?: (Comment | null)[] | null;
   readonly disabled?: number | null;
+  readonly googleMapsPlaceId?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  constructor(init: ModelInit<Location, LocationMetaData>);
-  static copyOf(source: Location, mutator: (draft: MutableModel<Location, LocationMetaData>) => MutableModel<Location, LocationMetaData> | void): Location;
 }
 
-export declare class Deliverable {
+type LazyLocation = {
+  readonly id: string;
+  readonly tenantId: string;
+  readonly createdBy: AsyncItem<User | undefined>;
+  readonly name?: string | null;
+  readonly listed?: number | null;
+  readonly contact?: AddressAndContactDetails | null;
+  readonly ward?: string | null;
+  readonly line1?: string | null;
+  readonly line2?: string | null;
+  readonly line3?: string | null;
+  readonly town?: string | null;
+  readonly county?: string | null;
+  readonly state?: string | null;
+  readonly country?: string | null;
+  readonly postcode?: string | null;
+  readonly what3words?: string | null;
+  readonly tasksAsPickUp: AsyncCollection<Task>;
+  readonly tasksAsDropOff: AsyncCollection<Task>;
+  readonly taskAsEstablishment: AsyncCollection<Task>;
+  readonly comments: AsyncCollection<Comment>;
+  readonly disabled?: number | null;
+  readonly googleMapsPlaceId?: string | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Location = LazyLoading extends LazyLoadingDisabled ? EagerLocation : LazyLocation
+
+export declare const Location: (new (init: ModelInit<Location, LocationMetaData>) => Location) & {
+  copyOf(source: Location, mutator: (draft: MutableModel<Location, LocationMetaData>) => MutableModel<Location, LocationMetaData> | void): Location;
+}
+
+type EagerDeliverable = {
   readonly id: string;
   readonly tenantId: string;
   readonly deliverableType?: DeliverableType | null;
@@ -290,11 +492,28 @@ export declare class Deliverable {
   readonly comments?: (Comment | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  constructor(init: ModelInit<Deliverable, DeliverableMetaData>);
-  static copyOf(source: Deliverable, mutator: (draft: MutableModel<Deliverable, DeliverableMetaData>) => MutableModel<Deliverable, DeliverableMetaData> | void): Deliverable;
 }
 
-export declare class DeliverableType {
+type LazyDeliverable = {
+  readonly id: string;
+  readonly tenantId: string;
+  readonly deliverableType: AsyncItem<DeliverableType | undefined>;
+  readonly task: AsyncItem<Task | undefined>;
+  readonly count?: number | null;
+  readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit | null;
+  readonly orderInGrid?: number | null;
+  readonly comments: AsyncCollection<Comment>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Deliverable = LazyLoading extends LazyLoadingDisabled ? EagerDeliverable : LazyDeliverable
+
+export declare const Deliverable: (new (init: ModelInit<Deliverable, DeliverableMetaData>) => Deliverable) & {
+  copyOf(source: Deliverable, mutator: (draft: MutableModel<Deliverable, DeliverableMetaData>) => MutableModel<Deliverable, DeliverableMetaData> | void): Deliverable;
+}
+
+type EagerDeliverableType = {
   readonly id: string;
   readonly label: string;
   readonly tenantId: string;
@@ -305,22 +524,52 @@ export declare class DeliverableType {
   readonly disabled?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  constructor(init: ModelInit<DeliverableType, DeliverableTypeMetaData>);
-  static copyOf(source: DeliverableType, mutator: (draft: MutableModel<DeliverableType, DeliverableTypeMetaData>) => MutableModel<DeliverableType, DeliverableTypeMetaData> | void): DeliverableType;
 }
 
-export declare class VehicleAssignment {
+type LazyDeliverableType = {
+  readonly id: string;
+  readonly label: string;
+  readonly tenantId: string;
+  readonly icon?: DeliverableTypeIcon | keyof typeof DeliverableTypeIcon | null;
+  readonly defaultUnit?: DeliverableUnit | keyof typeof DeliverableUnit | null;
+  readonly deliverables: AsyncCollection<Deliverable>;
+  readonly tags?: (string | null)[] | null;
+  readonly disabled?: number | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type DeliverableType = LazyLoading extends LazyLoadingDisabled ? EagerDeliverableType : LazyDeliverableType
+
+export declare const DeliverableType: (new (init: ModelInit<DeliverableType, DeliverableTypeMetaData>) => DeliverableType) & {
+  copyOf(source: DeliverableType, mutator: (draft: MutableModel<DeliverableType, DeliverableTypeMetaData>) => MutableModel<DeliverableType, DeliverableTypeMetaData> | void): DeliverableType;
+}
+
+type EagerVehicleAssignment = {
   readonly id: string;
   readonly tenantId: string;
   readonly vehicle: Vehicle;
   readonly assignee: User;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  constructor(init: ModelInit<VehicleAssignment, VehicleAssignmentMetaData>);
-  static copyOf(source: VehicleAssignment, mutator: (draft: MutableModel<VehicleAssignment, VehicleAssignmentMetaData>) => MutableModel<VehicleAssignment, VehicleAssignmentMetaData> | void): VehicleAssignment;
 }
 
-export declare class Vehicle {
+type LazyVehicleAssignment = {
+  readonly id: string;
+  readonly tenantId: string;
+  readonly vehicle: AsyncItem<Vehicle>;
+  readonly assignee: AsyncItem<User>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type VehicleAssignment = LazyLoading extends LazyLoadingDisabled ? EagerVehicleAssignment : LazyVehicleAssignment
+
+export declare const VehicleAssignment: (new (init: ModelInit<VehicleAssignment, VehicleAssignmentMetaData>) => VehicleAssignment) & {
+  copyOf(source: VehicleAssignment, mutator: (draft: MutableModel<VehicleAssignment, VehicleAssignmentMetaData>) => MutableModel<VehicleAssignment, VehicleAssignmentMetaData> | void): VehicleAssignment;
+}
+
+type EagerVehicle = {
   readonly id: string;
   readonly tenantId: string;
   readonly createdBy?: User | null;
@@ -334,11 +583,31 @@ export declare class Vehicle {
   readonly disabled?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  constructor(init: ModelInit<Vehicle, VehicleMetaData>);
-  static copyOf(source: Vehicle, mutator: (draft: MutableModel<Vehicle, VehicleMetaData>) => MutableModel<Vehicle, VehicleMetaData> | void): Vehicle;
 }
 
-export declare class Tenant {
+type LazyVehicle = {
+  readonly id: string;
+  readonly tenantId: string;
+  readonly createdBy: AsyncItem<User | undefined>;
+  readonly name?: string | null;
+  readonly manufacturer?: string | null;
+  readonly model?: string | null;
+  readonly dateOfManufacture?: string | null;
+  readonly dateOfRegistration?: string | null;
+  readonly assignments: AsyncCollection<VehicleAssignment>;
+  readonly comments: AsyncCollection<Comment>;
+  readonly disabled?: number | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Vehicle = LazyLoading extends LazyLoadingDisabled ? EagerVehicle : LazyVehicle
+
+export declare const Vehicle: (new (init: ModelInit<Vehicle, VehicleMetaData>) => Vehicle) & {
+  copyOf(source: Vehicle, mutator: (draft: MutableModel<Vehicle, VehicleMetaData>) => MutableModel<Vehicle, VehicleMetaData> | void): Vehicle;
+}
+
+type EagerTenant = {
   readonly id: string;
   readonly name: string;
   readonly referenceIdentifier: string;
@@ -346,6 +615,20 @@ export declare class Tenant {
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   readonly tenantAdminId: string;
-  constructor(init: ModelInit<Tenant, TenantMetaData>);
-  static copyOf(source: Tenant, mutator: (draft: MutableModel<Tenant, TenantMetaData>) => MutableModel<Tenant, TenantMetaData> | void): Tenant;
+}
+
+type LazyTenant = {
+  readonly id: string;
+  readonly name: string;
+  readonly referenceIdentifier: string;
+  readonly admin: AsyncItem<User>;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+  readonly tenantAdminId: string;
+}
+
+export declare type Tenant = LazyLoading extends LazyLoadingDisabled ? EagerTenant : LazyTenant
+
+export declare const Tenant: (new (init: ModelInit<Tenant, TenantMetaData>) => Tenant) & {
+  copyOf(source: Tenant, mutator: (draft: MutableModel<Tenant, TenantMetaData>) => MutableModel<Tenant, TenantMetaData> | void): Tenant;
 }

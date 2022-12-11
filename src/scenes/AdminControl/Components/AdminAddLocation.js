@@ -41,6 +41,7 @@ const initialLocationState = {
     postcode: "",
     what3words: "",
     listed: 1,
+    googleMapsPlaceId: null,
 };
 
 const useStyles = makeStyles({
@@ -89,7 +90,10 @@ function AdminAddLocation() {
     useEffect(verifyInput, [state]);
 
     const onSelectFromSearch = (location) => {
-        setState({ ...initialLocationState, ...location });
+        setState({
+            ...initialLocationState,
+            ...location,
+        });
     };
 
     const verifyUniqueName = async (name) => {

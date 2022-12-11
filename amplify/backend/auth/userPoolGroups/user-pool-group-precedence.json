@@ -1,0 +1,22 @@
+[
+  {
+    "groupName": "SUPER",
+    "precedence": 1
+  },
+  {
+    "groupName": "ADMIN",
+    "precedence": 2
+  },
+  {
+    "groupName": "COORDINATOR",
+    "precedence": 3
+  },
+  {
+    "groupName": "RIDER",
+    "precedence": 4
+  },
+  {
+    "groupName": "USER",
+    "precedence": 5
+  }
+]

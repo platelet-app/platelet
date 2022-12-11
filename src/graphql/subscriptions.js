@@ -2,8 +2,8 @@
 // this is an auto generated file. This will be overwritten
 
 export const onCreateTenant = /* GraphQL */ `
-  subscription OnCreateTenant {
-    onCreateTenant {
+  subscription OnCreateTenant($filter: ModelSubscriptionTenantFilterInput) {
+    onCreateTenant(filter: $filter) {
       id
       name
       referenceIdentifier
@@ -85,8 +85,8 @@ export const onCreateTenant = /* GraphQL */ `
   }
 `;
 export const onUpdateTenant = /* GraphQL */ `
-  subscription OnUpdateTenant {
-    onUpdateTenant {
+  subscription OnUpdateTenant($filter: ModelSubscriptionTenantFilterInput) {
+    onUpdateTenant(filter: $filter) {
       id
       name
       referenceIdentifier
@@ -168,8 +168,8 @@ export const onUpdateTenant = /* GraphQL */ `
   }
 `;
 export const onDeleteTenant = /* GraphQL */ `
-  subscription OnDeleteTenant {
-    onDeleteTenant {
+  subscription OnDeleteTenant($filter: ModelSubscriptionTenantFilterInput) {
+    onDeleteTenant(filter: $filter) {
       id
       name
       referenceIdentifier
@@ -251,8 +251,8 @@ export const onDeleteTenant = /* GraphQL */ `
   }
 `;
 export const onCreateUser = /* GraphQL */ `
-  subscription OnCreateUser {
-    onCreateUser {
+  subscription OnCreateUser($filter: ModelSubscriptionUserFilterInput) {
+    onCreateUser(filter: $filter) {
       id
       username
       cognitoId
@@ -322,14 +322,14 @@ export const onCreateUser = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt
@@ -395,6 +395,7 @@ export const onCreateUser = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -435,8 +436,8 @@ export const onCreateUser = /* GraphQL */ `
   }
 `;
 export const onUpdateUser = /* GraphQL */ `
-  subscription OnUpdateUser {
-    onUpdateUser {
+  subscription OnUpdateUser($filter: ModelSubscriptionUserFilterInput) {
+    onUpdateUser(filter: $filter) {
       id
       username
       cognitoId
@@ -506,14 +507,14 @@ export const onUpdateUser = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt
@@ -579,6 +580,7 @@ export const onUpdateUser = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -619,8 +621,8 @@ export const onUpdateUser = /* GraphQL */ `
   }
 `;
 export const onDeleteUser = /* GraphQL */ `
-  subscription OnDeleteUser {
-    onDeleteUser {
+  subscription OnDeleteUser($filter: ModelSubscriptionUserFilterInput) {
+    onDeleteUser(filter: $filter) {
       id
       username
       cognitoId
@@ -690,14 +692,14 @@ export const onDeleteUser = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt
@@ -763,6 +765,7 @@ export const onDeleteUser = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -803,8 +806,10 @@ export const onDeleteUser = /* GraphQL */ `
   }
 `;
 export const onCreatePossibleRiderResponsibilities = /* GraphQL */ `
-  subscription OnCreatePossibleRiderResponsibilities {
-    onCreatePossibleRiderResponsibilities {
+  subscription OnCreatePossibleRiderResponsibilities(
+    $filter: ModelSubscriptionPossibleRiderResponsibilitiesFilterInput
+  ) {
+    onCreatePossibleRiderResponsibilities(filter: $filter) {
       id
       tenantId
       user {
@@ -901,8 +906,10 @@ export const onCreatePossibleRiderResponsibilities = /* GraphQL */ `
   }
 `;
 export const onUpdatePossibleRiderResponsibilities = /* GraphQL */ `
-  subscription OnUpdatePossibleRiderResponsibilities {
-    onUpdatePossibleRiderResponsibilities {
+  subscription OnUpdatePossibleRiderResponsibilities(
+    $filter: ModelSubscriptionPossibleRiderResponsibilitiesFilterInput
+  ) {
+    onUpdatePossibleRiderResponsibilities(filter: $filter) {
       id
       tenantId
       user {
@@ -999,8 +1006,10 @@ export const onUpdatePossibleRiderResponsibilities = /* GraphQL */ `
   }
 `;
 export const onDeletePossibleRiderResponsibilities = /* GraphQL */ `
-  subscription OnDeletePossibleRiderResponsibilities {
-    onDeletePossibleRiderResponsibilities {
+  subscription OnDeletePossibleRiderResponsibilities(
+    $filter: ModelSubscriptionPossibleRiderResponsibilitiesFilterInput
+  ) {
+    onDeletePossibleRiderResponsibilities(filter: $filter) {
       id
       tenantId
       user {
@@ -1097,8 +1106,8 @@ export const onDeletePossibleRiderResponsibilities = /* GraphQL */ `
   }
 `;
 export const onCreateVehicle = /* GraphQL */ `
-  subscription OnCreateVehicle {
-    onCreateVehicle {
+  subscription OnCreateVehicle($filter: ModelSubscriptionVehicleFilterInput) {
+    onCreateVehicle(filter: $filter) {
       id
       tenantId
       createdBy {
@@ -1218,8 +1227,8 @@ export const onCreateVehicle = /* GraphQL */ `
   }
 `;
 export const onUpdateVehicle = /* GraphQL */ `
-  subscription OnUpdateVehicle {
-    onUpdateVehicle {
+  subscription OnUpdateVehicle($filter: ModelSubscriptionVehicleFilterInput) {
+    onUpdateVehicle(filter: $filter) {
       id
       tenantId
       createdBy {
@@ -1339,8 +1348,8 @@ export const onUpdateVehicle = /* GraphQL */ `
   }
 `;
 export const onDeleteVehicle = /* GraphQL */ `
-  subscription OnDeleteVehicle {
-    onDeleteVehicle {
+  subscription OnDeleteVehicle($filter: ModelSubscriptionVehicleFilterInput) {
+    onDeleteVehicle(filter: $filter) {
       id
       tenantId
       createdBy {
@@ -1460,8 +1469,10 @@ export const onDeleteVehicle = /* GraphQL */ `
   }
 `;
 export const onCreateVehicleAssignment = /* GraphQL */ `
-  subscription OnCreateVehicleAssignment {
-    onCreateVehicleAssignment {
+  subscription OnCreateVehicleAssignment(
+    $filter: ModelSubscriptionVehicleAssignmentFilterInput
+  ) {
+    onCreateVehicleAssignment(filter: $filter) {
       id
       tenantId
       vehicle {
@@ -1586,8 +1597,10 @@ export const onCreateVehicleAssignment = /* GraphQL */ `
   }
 `;
 export const onUpdateVehicleAssignment = /* GraphQL */ `
-  subscription OnUpdateVehicleAssignment {
-    onUpdateVehicleAssignment {
+  subscription OnUpdateVehicleAssignment(
+    $filter: ModelSubscriptionVehicleAssignmentFilterInput
+  ) {
+    onUpdateVehicleAssignment(filter: $filter) {
       id
       tenantId
       vehicle {
@@ -1712,8 +1725,10 @@ export const onUpdateVehicleAssignment = /* GraphQL */ `
   }
 `;
 export const onDeleteVehicleAssignment = /* GraphQL */ `
-  subscription OnDeleteVehicleAssignment {
-    onDeleteVehicleAssignment {
+  subscription OnDeleteVehicleAssignment(
+    $filter: ModelSubscriptionVehicleAssignmentFilterInput
+  ) {
+    onDeleteVehicleAssignment(filter: $filter) {
       id
       tenantId
       vehicle {
@@ -1838,8 +1853,8 @@ export const onDeleteVehicleAssignment = /* GraphQL */ `
   }
 `;
 export const onCreateLocation = /* GraphQL */ `
-  subscription OnCreateLocation {
-    onCreateLocation {
+  subscription OnCreateLocation($filter: ModelSubscriptionLocationFilterInput) {
+    onCreateLocation(filter: $filter) {
       id
       tenantId
       createdBy {
@@ -2044,6 +2059,7 @@ export const onCreateLocation = /* GraphQL */ `
         startedAt
       }
       disabled
+      googleMapsPlaceId
       createdAt
       updatedAt
       _version
@@ -2054,8 +2070,8 @@ export const onCreateLocation = /* GraphQL */ `
   }
 `;
 export const onUpdateLocation = /* GraphQL */ `
-  subscription OnUpdateLocation {
-    onUpdateLocation {
+  subscription OnUpdateLocation($filter: ModelSubscriptionLocationFilterInput) {
+    onUpdateLocation(filter: $filter) {
       id
       tenantId
       createdBy {
@@ -2260,6 +2276,7 @@ export const onUpdateLocation = /* GraphQL */ `
         startedAt
       }
       disabled
+      googleMapsPlaceId
       createdAt
       updatedAt
       _version
@@ -2270,8 +2287,8 @@ export const onUpdateLocation = /* GraphQL */ `
   }
 `;
 export const onDeleteLocation = /* GraphQL */ `
-  subscription OnDeleteLocation {
-    onDeleteLocation {
+  subscription OnDeleteLocation($filter: ModelSubscriptionLocationFilterInput) {
+    onDeleteLocation(filter: $filter) {
       id
       tenantId
       createdBy {
@@ -2476,6 +2493,7 @@ export const onDeleteLocation = /* GraphQL */ `
         startedAt
       }
       disabled
+      googleMapsPlaceId
       createdAt
       updatedAt
       _version
@@ -2486,8 +2504,8 @@ export const onDeleteLocation = /* GraphQL */ `
   }
 `;
 export const onCreateTask = /* GraphQL */ `
-  subscription OnCreateTask {
-    onCreateTask {
+  subscription OnCreateTask($filter: ModelSubscriptionTaskFilterInput) {
+    onCreateTask(filter: $filter) {
       id
       tenantId
       createdBy {
@@ -2653,6 +2671,7 @@ export const onCreateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -2727,6 +2746,7 @@ export const onCreateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -2801,6 +2821,7 @@ export const onCreateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -2813,14 +2834,14 @@ export const onCreateTask = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt
@@ -2873,8 +2894,8 @@ export const onCreateTask = /* GraphQL */ `
   }
 `;
 export const onUpdateTask = /* GraphQL */ `
-  subscription OnUpdateTask {
-    onUpdateTask {
+  subscription OnUpdateTask($filter: ModelSubscriptionTaskFilterInput) {
+    onUpdateTask(filter: $filter) {
       id
       tenantId
       createdBy {
@@ -3040,6 +3061,7 @@ export const onUpdateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -3114,6 +3136,7 @@ export const onUpdateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -3188,6 +3211,7 @@ export const onUpdateTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -3200,14 +3224,14 @@ export const onUpdateTask = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt
@@ -3260,8 +3284,8 @@ export const onUpdateTask = /* GraphQL */ `
   }
 `;
 export const onDeleteTask = /* GraphQL */ `
-  subscription OnDeleteTask {
-    onDeleteTask {
+  subscription OnDeleteTask($filter: ModelSubscriptionTaskFilterInput) {
+    onDeleteTask(filter: $filter) {
       id
       tenantId
       createdBy {
@@ -3427,6 +3451,7 @@ export const onDeleteTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -3501,6 +3526,7 @@ export const onDeleteTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -3575,6 +3601,7 @@ export const onDeleteTask = /* GraphQL */ `
           startedAt
         }
         disabled
+        googleMapsPlaceId
         createdAt
         updatedAt
         _version
@@ -3587,14 +3614,14 @@ export const onDeleteTask = /* GraphQL */ `
         items {
           id
           tenantId
-          taskId
-          assigneeId
           role
           createdAt
           updatedAt
           _version
           _deleted
           _lastChangedAt
+          userAssignmentsId
+          taskAssigneesId
         }
         nextToken
         startedAt
@@ -3647,12 +3674,12 @@ export const onDeleteTask = /* GraphQL */ `
   }
 `;
 export const onCreateTaskAssignee = /* GraphQL */ `
-  subscription OnCreateTaskAssignee {
-    onCreateTaskAssignee {
+  subscription OnCreateTaskAssignee(
+    $filter: ModelSubscriptionTaskAssigneeFilterInput
+  ) {
+    onCreateTaskAssignee(filter: $filter) {
       id
       tenantId
-      taskId
-      assigneeId
       role
       task {
         id
@@ -3720,6 +3747,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -3743,6 +3771,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -3766,6 +3795,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -3868,16 +3898,18 @@ export const onCreateTaskAssignee = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      userAssignmentsId
+      taskAssigneesId
     }
   }
 `;
 export const onUpdateTaskAssignee = /* GraphQL */ `
-  subscription OnUpdateTaskAssignee {
-    onUpdateTaskAssignee {
+  subscription OnUpdateTaskAssignee(
+    $filter: ModelSubscriptionTaskAssigneeFilterInput
+  ) {
+    onUpdateTaskAssignee(filter: $filter) {
       id
       tenantId
-      taskId
-      assigneeId
       role
       task {
         id
@@ -3945,6 +3977,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -3968,6 +4001,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -3991,6 +4025,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -4093,16 +4128,18 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      userAssignmentsId
+      taskAssigneesId
     }
   }
 `;
 export const onDeleteTaskAssignee = /* GraphQL */ `
-  subscription OnDeleteTaskAssignee {
-    onDeleteTaskAssignee {
+  subscription OnDeleteTaskAssignee(
+    $filter: ModelSubscriptionTaskAssigneeFilterInput
+  ) {
+    onDeleteTaskAssignee(filter: $filter) {
       id
       tenantId
-      taskId
-      assigneeId
       role
       task {
         id
@@ -4170,6 +4207,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -4193,6 +4231,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -4216,6 +4255,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -4318,12 +4358,17 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      userAssignmentsId
+      taskAssigneesId
     }
   }
 `;
 export const onCreateComment = /* GraphQL */ `
-  subscription OnCreateComment($owner: String) {
-    onCreateComment(owner: $owner) {
+  subscription OnCreateComment(
+    $filter: ModelSubscriptionCommentFilterInput
+    $owner: String
+  ) {
+    onCreateComment(filter: $filter, owner: $owner) {
       id
       parentId
       tenantId
@@ -4408,8 +4453,11 @@ export const onCreateComment = /* GraphQL */ `
   }
 `;
 export const onUpdateComment = /* GraphQL */ `
-  subscription OnUpdateComment($owner: String) {
-    onUpdateComment(owner: $owner) {
+  subscription OnUpdateComment(
+    $filter: ModelSubscriptionCommentFilterInput
+    $owner: String
+  ) {
+    onUpdateComment(filter: $filter, owner: $owner) {
       id
       parentId
       tenantId
@@ -4494,8 +4542,11 @@ export const onUpdateComment = /* GraphQL */ `
   }
 `;
 export const onDeleteComment = /* GraphQL */ `
-  subscription OnDeleteComment($owner: String) {
-    onDeleteComment(owner: $owner) {
+  subscription OnDeleteComment(
+    $filter: ModelSubscriptionCommentFilterInput
+    $owner: String
+  ) {
+    onDeleteComment(filter: $filter, owner: $owner) {
       id
       parentId
       tenantId
@@ -4580,8 +4631,10 @@ export const onDeleteComment = /* GraphQL */ `
   }
 `;
 export const onCreateDeliverableType = /* GraphQL */ `
-  subscription OnCreateDeliverableType {
-    onCreateDeliverableType {
+  subscription OnCreateDeliverableType(
+    $filter: ModelSubscriptionDeliverableTypeFilterInput
+  ) {
+    onCreateDeliverableType(filter: $filter) {
       id
       label
       tenantId
@@ -4616,8 +4669,10 @@ export const onCreateDeliverableType = /* GraphQL */ `
   }
 `;
 export const onUpdateDeliverableType = /* GraphQL */ `
-  subscription OnUpdateDeliverableType {
-    onUpdateDeliverableType {
+  subscription OnUpdateDeliverableType(
+    $filter: ModelSubscriptionDeliverableTypeFilterInput
+  ) {
+    onUpdateDeliverableType(filter: $filter) {
       id
       label
       tenantId
@@ -4652,8 +4707,10 @@ export const onUpdateDeliverableType = /* GraphQL */ `
   }
 `;
 export const onDeleteDeliverableType = /* GraphQL */ `
-  subscription OnDeleteDeliverableType {
-    onDeleteDeliverableType {
+  subscription OnDeleteDeliverableType(
+    $filter: ModelSubscriptionDeliverableTypeFilterInput
+  ) {
+    onDeleteDeliverableType(filter: $filter) {
       id
       label
       tenantId
@@ -4688,8 +4745,10 @@ export const onDeleteDeliverableType = /* GraphQL */ `
   }
 `;
 export const onCreateDeliverable = /* GraphQL */ `
-  subscription OnCreateDeliverable {
-    onCreateDeliverable {
+  subscription OnCreateDeliverable(
+    $filter: ModelSubscriptionDeliverableFilterInput
+  ) {
+    onCreateDeliverable(filter: $filter) {
       id
       tenantId
       deliverableType {
@@ -4776,6 +4835,7 @@ export const onCreateDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -4799,6 +4859,7 @@ export const onCreateDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -4822,6 +4883,7 @@ export const onCreateDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -4883,8 +4945,10 @@ export const onCreateDeliverable = /* GraphQL */ `
   }
 `;
 export const onUpdateDeliverable = /* GraphQL */ `
-  subscription OnUpdateDeliverable {
-    onUpdateDeliverable {
+  subscription OnUpdateDeliverable(
+    $filter: ModelSubscriptionDeliverableFilterInput
+  ) {
+    onUpdateDeliverable(filter: $filter) {
       id
       tenantId
       deliverableType {
@@ -4971,6 +5035,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -4994,6 +5059,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -5017,6 +5083,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -5078,8 +5145,10 @@ export const onUpdateDeliverable = /* GraphQL */ `
   }
 `;
 export const onDeleteDeliverable = /* GraphQL */ `
-  subscription OnDeleteDeliverable {
-    onDeleteDeliverable {
+  subscription OnDeleteDeliverable(
+    $filter: ModelSubscriptionDeliverableFilterInput
+  ) {
+    onDeleteDeliverable(filter: $filter) {
       id
       tenantId
       deliverableType {
@@ -5166,6 +5235,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -5189,6 +5259,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -5212,6 +5283,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
           postcode
           what3words
           disabled
+          googleMapsPlaceId
           createdAt
           updatedAt
           _version
@@ -5273,8 +5345,10 @@ export const onDeleteDeliverable = /* GraphQL */ `
   }
 `;
 export const onCreateRiderResponsibility = /* GraphQL */ `
-  subscription OnCreateRiderResponsibility {
-    onCreateRiderResponsibility {
+  subscription OnCreateRiderResponsibility(
+    $filter: ModelSubscriptionRiderResponsibilityFilterInput
+  ) {
+    onCreateRiderResponsibility(filter: $filter) {
       id
       tenantId
       label
@@ -5303,8 +5377,10 @@ export const onCreateRiderResponsibility = /* GraphQL */ `
   }
 `;
 export const onUpdateRiderResponsibility = /* GraphQL */ `
-  subscription OnUpdateRiderResponsibility {
-    onUpdateRiderResponsibility {
+  subscription OnUpdateRiderResponsibility(
+    $filter: ModelSubscriptionRiderResponsibilityFilterInput
+  ) {
+    onUpdateRiderResponsibility(filter: $filter) {
       id
       tenantId
       label
@@ -5333,8 +5409,10 @@ export const onUpdateRiderResponsibility = /* GraphQL */ `
   }
 `;
 export const onDeleteRiderResponsibility = /* GraphQL */ `
-  subscription OnDeleteRiderResponsibility {
-    onDeleteRiderResponsibility {
+  subscription OnDeleteRiderResponsibility(
+    $filter: ModelSubscriptionRiderResponsibilityFilterInput
+  ) {
+    onDeleteRiderResponsibility(filter: $filter) {
       id
       tenantId
       label

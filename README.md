@@ -2,15 +2,19 @@
 
 Platelet is an offline first, cloud backed, dispatch software project for couriers and coordinators. It is being developed for Blood Bikers in the UK, but can be used for any delivery tracking.
 
-![dashboard](dashboard.png "Dashboard")
-
-![overview](overview.png "Overview")
-
 [Demo](https://demo.platelet.app)
 
 [Homepage](https://platelet.app)
 
 [Discord](https://discord.gg/tWhCM98ckB)
+
+## Screenshots
+
+![dashboard-dark](https://user-images.githubusercontent.com/32309223/200189562-b859fe2f-5345-4d49-8ebc-de48c04ff43d.png)
+
+![dialog-dark-new](https://user-images.githubusercontent.com/32309223/200189567-5ad321ea-a422-4517-8e77-9477a8c3a68e.png)
+
+![mobile-dark](https://user-images.githubusercontent.com/32309223/200189570-9002e4c0-2133-4d9d-8ae7-d92c260b328d.png)
 
 Some of Platelet's goals are:
 
@@ -48,11 +52,17 @@ Under Sign-up experience, add a custom attribute: `tenantId`
 
 ### Function parameters
 
-Set `PLATELET_WELCOME_EMAIL` and `PLATELET_DOMAIN_NAME` environment variables  using the Amplify CLI.
+Edit the file `amplify/backend/function/plateletSendUserFeedback/parameters.json` and replace the example email address with an email address to receive feedback to.
 
-`PLATELET_WELCOME_EMAIL` is the email address that any registration emails will be sent from.
+Edit the files:
 
-`PLATELET_DOMAIN_NAME` should be the URL (without "https://") where the app is hosted. This will be used to point users to the URL in registration emails.
+`amplify/backend/function/plateletAddNewTenant/parameters.json`
+
+`amplify/backend/function/plateletAdminAddNewUser/parameters.json`
+
+With an email address to send registration emails from.
+
+`plateletDomainName` should be the URL (without "https://") where the app is hosted. This will be used to point users to the URL in registration emails.
 
 ### AWS SES
 

@@ -34,7 +34,7 @@ function EditCommentDialog(props) {
                 >
                     <CommentAuthor
                         disableLink
-                        uuid={props.author && props.author.id}
+                        userId={props.author && props.author.id}
                         displayName={props.author && props.author.displayName}
                         thumbnailKey={
                             props.author && props.author.profilePicture

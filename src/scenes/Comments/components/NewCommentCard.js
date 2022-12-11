@@ -80,7 +80,7 @@ function NewCommentCard(props) {
                     >
                         <Grid item>
                             <CommentAuthor
-                                uuid={props.author.id}
+                                userId={props.author.id}
                                 displayName={props.author.displayName}
                                 thumbnailKey={
                                     props.author && props.author.profilePicture
