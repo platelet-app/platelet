@@ -49,7 +49,9 @@ function SyncStatusCircleLoader() {
                 onComplete={onComplete}
             />
         );
-    } else if (process.env.REACT_APP_OFFLINE_ONLY !== "true") {
+    } else if (false && process.env.REACT_APP_OFFLINE_ONLY !== "true") {
+        // this seemed to mess with the active rider chips
+        // could be placebo anyway
         return <ResyncDataStoreButton onClick={onReset} />;
     } else {
         return <></>;

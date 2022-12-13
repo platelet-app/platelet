@@ -116,7 +116,7 @@ describe("LightToggleProfileMenu", () => {
         ).toBeInTheDocument();
     });
 
-    test.only("refresh DataStore button", async () => {
+    test.skip("refresh DataStore button", async () => {
         const preloadedState = {
             whoami: { user: new models.User({ displayName: "Test User" }) },
             awsHubDataStoreModelsSyncedStatusReducer: initialSyncState,
