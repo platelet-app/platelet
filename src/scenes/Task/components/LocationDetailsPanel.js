@@ -42,8 +42,6 @@ function LocationDetailsPanel(props) {
 
     const taskObserver = useRef({ unsubscribe: () => {} });
     const locationObserver = useRef({ unsubscribe: () => {} });
-    const editModeRef = useRef(false);
-    editModeRef.current = editMode;
 
     const initialSetEdit = useRef(false);
 
@@ -69,7 +67,7 @@ function LocationDetailsPanel(props) {
                             models.Location,
                             locId
                         ).subscribe(({ opType, element }) => {
-                            if (opType === "UPDATE" && !editModeRef.current) {
+                            if (opType === "UPDATE") {
                                 setState(element);
                             }
                         });
@@ -86,7 +84,7 @@ function LocationDetailsPanel(props) {
                     models.Location,
                     location.id
                 ).subscribe(({ opType, element }) => {
-                    if (opType === "UPDATE" && !editModeRef.current) {
+                    if (opType === "UPDATE") {
                         setState(element);
                     }
                 });
@@ -114,9 +112,13 @@ function LocationDetailsPanel(props) {
     );
 
     useEffect(() => {
-        if (!isFetching && !initialSetEdit.current) {
+        if (isFetching) return;
+        if (!initialSetEdit.current) {
             initialSetEdit.current = true;
             setEditMode(!!!state);
+        }
+        if (state === null) {
+            setEditMode(true);
         }
     }, [state, isFetching]);
 
