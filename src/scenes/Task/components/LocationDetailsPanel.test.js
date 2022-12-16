@@ -335,26 +335,25 @@ describe("LocationDetailsPanel", () => {
         ).toBeInTheDocument();
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         userEvent.click(screen.getByText(mockListedLocation.line1));
-        userEvent.type(screen.getByRole("textbox"), "test");
-        userEvent.type(screen.getByRole("textbox"), "{enter}");
+        const textBox = screen.getByRole("textbox", { name: "Line one" });
+        userEvent.type(textBox, "test");
+        userEvent.type(textBox, "{enter}");
         await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(2));
-        expect(saveSpy).toHaveBeenNthCalledWith(
-            1,
-            expect.objectContaining({
-                ..._.omit(fakeLocation, "id"),
+        expect(saveSpy).toHaveBeenNthCalledWith(1, {
+            ...fakeLocation,
+            id: expect.any(String),
+            line1: `${fakeLocation.line1}test`,
+        });
+        expect(saveSpy).toHaveBeenNthCalledWith(2, {
+            ...task,
+            id: expect.any(String),
+            [locationKey]: {
+                ...fakeLocation,
+                id: expect.any(String),
                 line1: `${fakeLocation.line1}test`,
-            })
-        );
-        expect(saveSpy).toHaveBeenNthCalledWith(
-            2,
-            expect.objectContaining({
-                ..._.omit(task, "id"),
-                [locationKey]: expect.objectContaining({
-                    ..._.omit(fakeLocation, "id"),
-                    line1: `${fakeLocation.line1}test`,
-                }),
-            })
-        );
+            },
+        });
+        userEvent.click(screen.getByRole("button", { name: "Finish" }));
         expect(
             screen.getByText(`${mockListedLocation.name} (edited)`)
         ).toBeInTheDocument();
@@ -383,17 +382,15 @@ describe("LocationDetailsPanel", () => {
             />,
             { preloadedState }
         );
-        await waitFor(() =>
-            expect(amplify.DataStore.query).toHaveBeenCalledTimes(1)
-        );
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         userEvent.click(screen.getByText(mockLocations[1].ward));
-        const textBox = screen.getByRole("textbox");
+        const textBox = screen.getByRole("textbox", { name: "Ward" });
         expect(textBox).toBeInTheDocument();
         expect(textBox).toHaveValue(mockLocations[1].ward);
         userEvent.type(textBox, " new data");
         userEvent.type(textBox, "{enter}");
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(2));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(3));
         await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(1));
         expect(saveSpy).toHaveBeenCalledWith({
             ...fakeModel,
@@ -424,25 +421,26 @@ describe("LocationDetailsPanel", () => {
             );
             await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
             screen.getByText("Line one").click();
-            const textBox = screen.getByRole("textbox", { name: "" });
+            const textBox = screen.getByRole("textbox", { name: "Line one" });
             expect(textBox).toBeInTheDocument();
             expect(textBox).toHaveValue("");
             userEvent.type(textBox, "new data");
             userEvent.type(textBox, "{enter}");
             await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(2));
-            expect(saveSpy).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    ..._.omit(fakeLocationModel, "id"),
-                })
-            );
-            expect(saveSpy).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    ..._.omit(fakeTaskModel, "id"),
-                    [locationKey]: expect.objectContaining({
-                        ..._.omit(fakeLocationModel, "id"),
-                    }),
-                })
-            );
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...fakeLocationModel,
+                tenantId,
+                id: expect.any(String),
+            });
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...fakeTaskModel,
+                id: expect.any(String),
+                [locationKey]: {
+                    ...fakeLocationModel,
+                    tenantId,
+                    id: expect.any(String),
+                },
+            });
         }
     );
 
@@ -472,7 +470,7 @@ describe("LocationDetailsPanel", () => {
         userEvent.click(screen.getByText("Expand to see more"));
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         userEvent.click(screen.getByText(fakeModel.contact.name));
-        const textBox = screen.getByRole("textbox");
+        const textBox = screen.getByRole("textbox", { name: "Name" });
         expect(textBox).toBeInTheDocument();
         expect(textBox).toHaveValue(fakeModel.contact.name);
         userEvent.type(textBox, " new data");
@@ -518,40 +516,22 @@ describe("LocationDetailsPanel", () => {
             userEvent.type(textBox, "new data");
             userEvent.type(textBox, "{enter}");
             await waitFor(() =>
-                expect(saveSpy).toHaveBeenNthCalledWith(
-                    1,
-                    expect.objectContaining(
-                        _.omit(
-                            {
-                                ...fakeModel,
-                                contact: { name: fakeInputData },
-                            },
-                            "id"
-                        )
-                    )
-                )
+                expect(saveSpy).toHaveBeenNthCalledWith(1, {
+                    ...fakeModel,
+                    contact: { name: fakeInputData },
+                    id: expect.any(String),
+                })
             );
             await waitFor(() =>
-                expect(saveSpy).toHaveBeenNthCalledWith(
-                    2,
-                    expect.objectContaining(
-                        _.omit(
-                            {
-                                ...fakeTask,
-                                [locationKey]: expect.objectContaining(
-                                    _.omit(
-                                        {
-                                            ...fakeModel,
-                                            contact: { name: fakeInputData },
-                                        },
-                                        "id"
-                                    )
-                                ),
-                            },
-                            "id"
-                        )
-                    )
-                )
+                expect(saveSpy).toHaveBeenNthCalledWith(2, {
+                    ...fakeTask,
+                    id: expect.any(String),
+                    [locationKey]: {
+                        ...fakeModel,
+                        contact: { name: fakeInputData },
+                        id: expect.any(String),
+                    },
+                })
             );
         }
     );
@@ -587,61 +567,36 @@ describe("LocationDetailsPanel", () => {
             userEvent.type(textBox, "ward data");
             userEvent.type(textBox, "{enter}");
             await waitFor(() =>
-                expect(saveSpy).toHaveBeenNthCalledWith(
-                    1,
-                    expect.objectContaining(
-                        _.omit(
-                            {
-                                ...fakeModel,
-                                ward: "ward data",
-                            },
-                            "id"
-                        )
-                    )
-                )
+                expect(saveSpy).toHaveBeenNthCalledWith(1, {
+                    ...fakeModel,
+                    ward: "ward data",
+                    id: expect.any(String),
+                })
             );
             await waitFor(() =>
-                expect(saveSpy).toHaveBeenNthCalledWith(
-                    2,
-                    expect.objectContaining(
-                        _.omit(
-                            {
-                                ...fakeTask,
-                                [locationKey]: expect.objectContaining(
-                                    _.omit(
-                                        {
-                                            ...fakeModel,
-                                            ward: "ward data",
-                                        },
-                                        "id"
-                                    )
-                                ),
-                            },
-                            "id"
-                        )
-                    )
-                )
+                expect(saveSpy).toHaveBeenNthCalledWith(2, {
+                    ...fakeTask,
+                    [locationKey]: {
+                        ...fakeModel,
+                        ward: "ward data",
+                        id: expect.any(String),
+                    },
+                })
             );
             userEvent.click(screen.getByText("Name"));
-            const textBox2 = screen.getByRole("textbox");
+            const textBox2 = screen.getByRole("textbox", { name: "Name" });
             userEvent.type(textBox2, fakeInputData);
             userEvent.type(textBox2, "{enter}");
             await waitFor(() =>
-                expect(saveSpy).toHaveBeenNthCalledWith(
-                    3,
-                    expect.objectContaining(
-                        _.omit(
-                            {
-                                ...fakeModel,
-                                contact: {
-                                    ...fakeModel.contact,
-                                    name: `${fakeInputData}`,
-                                },
-                            },
-                            "id"
-                        )
-                    )
-                )
+                expect(saveSpy).toHaveBeenNthCalledWith(3, {
+                    ...fakeModel,
+                    ward: "ward data",
+                    contact: {
+                        ...fakeModel.contact,
+                        name: `${fakeInputData}`,
+                    },
+                    id: expect.any(String),
+                })
             );
         }
     );
@@ -652,6 +607,7 @@ describe("LocationDetailsPanel", () => {
     `("respond to a preset being set remotely", async ({ locationKey }) => {
         const mockLocation = new models.Location({
             name: "test location",
+            line1: "test line 1",
             listed: 1,
         });
         const task = await DataStore.save(new models.Task({}));
@@ -665,7 +621,7 @@ describe("LocationDetailsPanel", () => {
             models.Task.copyOf(task, (upd) => (upd[locationKey] = mockLocation))
         );
         await waitFor(() =>
-            expect(screen.getByText(mockLocation.name)).toBeInTheDocument()
+            expect(screen.getByText(mockLocation.line1)).toBeInTheDocument()
         );
     });
 
@@ -740,7 +696,7 @@ describe("LocationDetailsPanel", () => {
                 listed: 0,
                 tenantId,
             });
-            const fakeModel2 = new models.Location({
+            new models.Location({
                 listed: 0,
                 contact: { name: fakeInputData },
                 tenantId,
@@ -763,60 +719,40 @@ describe("LocationDetailsPanel", () => {
             userEvent.type(textBox2, fakeInputData);
             userEvent.type(textBox2, "{enter}");
             await waitFor(() =>
-                expect(saveSpy).toHaveBeenNthCalledWith(
-                    1,
-                    expect.objectContaining(
-                        _.omit(
-                            {
-                                ...fakeModel,
-                                contact: {
-                                    ...fakeModel.contact,
-                                    name: `${fakeInputData}`,
-                                },
-                            },
-                            "id"
-                        )
-                    )
-                )
+                expect(saveSpy).toHaveBeenNthCalledWith(1, {
+                    ...fakeModel,
+                    contact: {
+                        ...fakeModel.contact,
+                        name: `${fakeInputData}`,
+                    },
+                    id: expect.any(String),
+                })
             );
             await waitFor(() =>
-                expect(saveSpy).toHaveBeenNthCalledWith(
-                    2,
-                    expect.objectContaining({
-                        ...fakeTask,
-                        [locationKey]: expect.objectContaining(
-                            _.omit(
-                                {
-                                    ...fakeModel,
-                                    contact: {
-                                        ...fakeModel.contact,
-                                        name: `${fakeInputData}`,
-                                    },
-                                },
-                                "id"
-                            )
-                        ),
-                    })
-                )
+                expect(saveSpy).toHaveBeenNthCalledWith(2, {
+                    ...fakeTask,
+                    id: expect.any(String),
+                    [locationKey]: {
+                        ...fakeModel,
+                        contact: {
+                            ...fakeModel.contact,
+                            name: `${fakeInputData}`,
+                        },
+                        id: expect.any(String),
+                    },
+                })
             );
             userEvent.click(screen.getByText("Ward"));
-            const textBox = screen.getByRole("textbox");
+            const textBox = screen.getByRole("textbox", { name: "Ward" });
             userEvent.type(textBox, "ward data");
             userEvent.type(textBox, "{enter}");
             await waitFor(() =>
-                expect(saveSpy).toHaveBeenNthCalledWith(
-                    3,
-                    expect.objectContaining(
-                        _.omit(
-                            {
-                                ...fakeModel,
-                                contact: { name: fakeInputData },
-                                ward: "ward data",
-                            },
-                            "id"
-                        )
-                    )
-                )
+                expect(saveSpy).toHaveBeenNthCalledWith(3, {
+                    ...fakeModel,
+                    contact: { name: fakeInputData },
+                    ward: "ward data",
+                    id: expect.any(String),
+                })
             );
         }
     );
