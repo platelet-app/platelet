@@ -51,13 +51,16 @@ const mockLocations = _.range(0, 10).map((i) => {
 });
 
 describe("LocationDetailsPanel", () => {
-    beforeAll(async () => {
+    beforeEach(async () => {
+        jest.restoreAllMocks();
+        const locations = await DataStore.query(models.Location);
+        const tasks = await DataStore.query(models.Task);
+        await Promise.all(
+            [...locations, ...tasks].map((m) => DataStore.delete(m))
+        );
         for (const loc of mockLocations) {
             await DataStore.save(loc);
         }
-    });
-    beforeEach(async () => {
-        jest.restoreAllMocks();
     });
 
     it("renders without crashing", async () => {
@@ -858,4 +861,76 @@ describe("LocationDetailsPanel", () => {
             expect(screen.queryByText("Edit")).toBeNull();
         });
     });
+
+    test.each`
+        locationKey
+        ${"pickUpLocation"} | ${"dropOffLocation"}
+    `(
+        "confirm when replacing a location with a preset",
+        async ({ locationKey }) => {
+            const mockLocation = new models.Location({
+                name: "test location",
+                listed: 0,
+            });
+            const task = await DataStore.save(
+                new models.Task({
+                    [locationKey]: mockLocation,
+                })
+            );
+            const mockPreset = await DataStore.save(
+                new models.Location({
+                    name: "test preset",
+                    listed: 1,
+                })
+            );
+            const mockPreset2 = await DataStore.save(
+                new models.Location({
+                    name: "new preset",
+                    listed: 1,
+                })
+            );
+            const newPreloadedState = {
+                ...preloadedState,
+                locationsReducer: {
+                    ready: true,
+                    isSynced: true,
+                    items: [mockPreset],
+                },
+            };
+
+            const querySpy = jest.spyOn(DataStore, "query");
+            const saveSpy = jest.spyOn(DataStore, "save");
+
+            render(
+                <LocationDetailsPanel
+                    locationKey={locationKey}
+                    taskId={task.id}
+                />,
+                { preloadedState: newPreloadedState }
+            );
+            await waitFor(() => {
+                expect(querySpy).toHaveBeenCalledTimes(1);
+            });
+            userEvent.click(screen.getByRole("button", { name: "Edit" }));
+            await waitFor(() => {
+                expect(querySpy).toHaveBeenCalledTimes(2);
+            });
+            userEvent.type(screen.getByRole("combobox"), "new preset");
+            userEvent.click(screen.getByText("new preset"));
+            const label =
+                locationKey === "pickUpLocation" ? "pick-up" : "delivery";
+            expect(
+                await screen.findByText(
+                    `This will replace the ${label} location with the selected preset. Are you sure you want to continue?`
+                )
+            ).toBeInTheDocument();
+            userEvent.click(screen.getByRole("button", { name: "OK" }));
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...task,
+                    [locationKey]: mockPreset2,
+                });
+            });
+        }
+    );
 });

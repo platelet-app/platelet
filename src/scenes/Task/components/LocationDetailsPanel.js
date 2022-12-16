@@ -15,6 +15,7 @@ import EditModeToggleButton from "../../../components/EditModeToggleButton";
 import * as mutations from "../../../graphql/mutations";
 import * as queries from "../../../graphql/queries";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
+import ConfirmationDialog from "../../../components/ConfirmationDialog";
 
 function LocationDetailsPanel(props) {
     const classes = dialogCardStyles();
@@ -25,6 +26,9 @@ function LocationDetailsPanel(props) {
     const [editMode, setEditMode] = useState(false);
     const [errorState, setErrorState] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
+    const [confirmReplaceSelection, setConfirmReplaceSelection] =
+        useState(false);
+    const currentlySelectedPreset = useRef(null);
     const loadedOnce = useRef(false);
     const locationModelSynced = useSelector(
         dataStoreModelSyncedStatusSelector
@@ -58,7 +62,7 @@ function LocationDetailsPanel(props) {
                     const locId = element[`${props.locationKey}Id`];
                     if ((!state && locId) || (state && locId !== state.id)) {
                         DataStore.query(models.Location, locId).then((result) =>
-                            setState(result)
+                            setState(result || null)
                         );
                         locationObserver.current.unsubscribe();
                         locationObserver.current = DataStore.observe(
@@ -159,19 +163,28 @@ function LocationDetailsPanel(props) {
             if (!props.taskId) throw new Error("No task id");
             const result = await DataStore.query(models.Task, props.taskId);
             if (!result) throw new Error("Task doesn't exist");
-            if (!location) throw new Error("Location was not provided");
-            if (result && location) {
-                await DataStore.save(
-                    models.Task.copyOf(result, (updated) => {
-                        updated[props.locationKey] = location;
-                    })
-                );
+            if (!location) return;
+            if (state && !confirmReplaceSelection) {
+                setConfirmReplaceSelection(true);
+                currentlySelectedPreset.current = location;
+            } else {
+                if (result && location) {
+                    await DataStore.save(
+                        models.Task.copyOf(result, (updated) => {
+                            updated[props.locationKey] = location;
+                        })
+                    );
+                }
+                setState(location);
+                setEditMode(false);
+                setConfirmReplaceSelection(false);
+                currentlySelectedPreset.current = null;
             }
-            setState(location);
-            setEditMode(false);
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
+            setConfirmReplaceSelection(false);
+            currentlySelectedPreset.current = null;
         }
     }
 
@@ -383,57 +396,76 @@ function LocationDetailsPanel(props) {
         return <GetError />;
     } else {
         return (
-            <Paper className={classes.root}>
-                <Stack
-                    direction={"column"}
-                    justifyContent={"space-between"}
-                    spacing={1}
-                >
+            <>
+                <Paper className={classes.root}>
                     <Stack
-                        direction="row"
-                        alignItems="center"
-                        justifyContent="space-between"
+                        direction={"column"}
+                        justifyContent={"space-between"}
                         spacing={1}
                     >
-                        <Typography variant={"h6"}>
-                            {props.locationKey === "pickUpLocation"
-                                ? "Collect from"
-                                : "Deliver to"}
-                        </Typography>
-                        {hasFullPermissions && state && (
-                            <EditModeToggleButton
-                                value={editMode}
-                                onChange={() =>
-                                    setEditMode((prevState) => !prevState)
+                        <Stack
+                            direction="row"
+                            alignItems="center"
+                            justifyContent="space-between"
+                            spacing={1}
+                        >
+                            <Typography variant={"h6"}>
+                                {props.locationKey === "pickUpLocation"
+                                    ? "Collect from"
+                                    : "Deliver to"}
+                            </Typography>
+                            {hasFullPermissions && state && (
+                                <EditModeToggleButton
+                                    value={editMode}
+                                    onChange={() =>
+                                        setEditMode((prevState) => !prevState)
+                                    }
+                                />
+                            )}
+                        </Stack>
+                        <Divider />
+                        {isFetching ? (
+                            <Skeleton
+                                variant={"rectangular"}
+                                width={"100%"}
+                                height={130}
+                            />
+                        ) : (
+                            <LocationDetailAndSelector
+                                onSelectPreset={selectPreset}
+                                label={
+                                    props.locationKey === "pickUpLocation"
+                                        ? "pick up"
+                                        : "delivery"
                                 }
+                                onChange={changeLocationDetails}
+                                onChangeContact={changeContactDetails}
+                                onClear={clearLocation}
+                                location={state}
+                                displayPresets
+                                editMode={editMode}
                             />
                         )}
                     </Stack>
-                    <Divider />
-                    {isFetching ? (
-                        <Skeleton
-                            variant={"rectangular"}
-                            width={"100%"}
-                            height={130}
-                        />
-                    ) : (
-                        <LocationDetailAndSelector
-                            onSelectPreset={selectPreset}
-                            label={
-                                props.locationKey === "pickUpLocation"
-                                    ? "pick up"
-                                    : "delivery"
-                            }
-                            onChange={changeLocationDetails}
-                            onChangeContact={changeContactDetails}
-                            onClear={clearLocation}
-                            location={state}
-                            displayPresets
-                            editMode={editMode}
-                        />
-                    )}
-                </Stack>
-            </Paper>
+                </Paper>
+                <ConfirmationDialog
+                    open={confirmReplaceSelection}
+                    dialogTitle={"Replace existing location?"}
+                    onConfirmation={() =>
+                        selectPreset(currentlySelectedPreset.current)
+                    }
+                    onCancel={() => setConfirmReplaceSelection(false)}
+                >
+                    <Typography>
+                        This will replace the{" "}
+                        {props.locationKey === "pickUpLocation"
+                            ? "pick-up"
+                            : "delivery"}{" "}
+                        location with the selected preset. Are you sure you want
+                        to continue?
+                    </Typography>
+                </ConfirmationDialog>
+            </>
         );
     }
 }
