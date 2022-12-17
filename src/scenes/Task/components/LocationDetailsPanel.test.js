@@ -66,8 +66,9 @@ describe("LocationDetailsPanel", () => {
     it("renders without crashing", async () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<LocationDetailsPanel />, { preloadedState });
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(2));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
     });
+
     it.each`
         locationKey
         ${"pickUpLocation"} | ${"dropOffLocation"}
@@ -860,6 +861,42 @@ describe("LocationDetailsPanel", () => {
         await waitFor(() => {
             expect(screen.queryByText("Edit")).toBeNull();
         });
+    });
+
+    test("don't allow riders to set the location", async () => {
+        const task = await DataStore.save(new models.Task({}));
+        const mockAssignee = new models.User({
+            displayName: "test user",
+            roles: [userRoles.rider],
+        });
+        const mockAssignment = new models.TaskAssignee({
+            task,
+            assignee: mockAssignee,
+            role: userRoles.rider,
+        });
+
+        const preloadedState = {
+            whoami: { user: mockAssignee },
+            roleView: userRoles.rider,
+            taskAssigneesReducer: {
+                ready: true,
+                isSynced: true,
+                items: [mockAssignment],
+            },
+        };
+
+        render(
+            <LocationDetailsPanel
+                locationKey={"pickUpLocation"}
+                taskId={task.id}
+            />,
+            { preloadedState }
+        );
+        await waitFor(() => {
+            expect(screen.queryByText("Edit")).toBeNull();
+        });
+        expect(screen.queryByRole("textbox")).toBeNull();
+        expect(screen.getByText("No location set.")).toBeInTheDocument();
     });
 
     test.each`

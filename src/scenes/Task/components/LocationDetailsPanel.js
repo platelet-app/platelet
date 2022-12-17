@@ -112,15 +112,15 @@ function LocationDetailsPanel(props) {
     );
 
     useEffect(() => {
-        if (isFetching) return;
+        if (isFetching || !hasFullPermissions) return;
         if (!initialSetEdit.current) {
             initialSetEdit.current = true;
             setEditMode(!!!state);
         }
-        if (state === null) {
+        if (state === null && hasFullPermissions) {
             setEditMode(true);
         }
-    }, [state, isFetching]);
+    }, [state, isFetching, hasFullPermissions]);
 
     async function editPreset(additionalValues) {
         try {
@@ -394,6 +394,33 @@ function LocationDetailsPanel(props) {
         }
     }
 
+    let contents = null;
+
+    if (isFetching) {
+        contents = (
+            <Skeleton variant={"rectangular"} width={"100%"} height={130} />
+        );
+    } else if (hasFullPermissions || state) {
+        contents = (
+            <LocationDetailAndSelector
+                onSelectPreset={selectPreset}
+                label={
+                    props.locationKey === "pickUpLocation"
+                        ? "pick up"
+                        : "delivery"
+                }
+                onChange={changeLocationDetails}
+                onChangeContact={changeContactDetails}
+                onClear={clearLocation}
+                location={state}
+                displayPresets
+                editMode={editMode}
+            />
+        );
+    } else {
+        contents = <Typography>No location set.</Typography>;
+    }
+
     if (errorState) {
         return <GetError />;
     } else {
@@ -426,28 +453,7 @@ function LocationDetailsPanel(props) {
                             )}
                         </Stack>
                         <Divider />
-                        {isFetching ? (
-                            <Skeleton
-                                variant={"rectangular"}
-                                width={"100%"}
-                                height={130}
-                            />
-                        ) : (
-                            <LocationDetailAndSelector
-                                onSelectPreset={selectPreset}
-                                label={
-                                    props.locationKey === "pickUpLocation"
-                                        ? "pick up"
-                                        : "delivery"
-                                }
-                                onChange={changeLocationDetails}
-                                onChangeContact={changeContactDetails}
-                                onClear={clearLocation}
-                                location={state}
-                                displayPresets
-                                editMode={editMode}
-                            />
-                        )}
+                        {contents}
                     </Stack>
                 </Paper>
                 <ConfirmationDialog
