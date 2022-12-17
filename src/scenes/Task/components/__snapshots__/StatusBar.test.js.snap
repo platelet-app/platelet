@@ -15,3 +15,21 @@ exports[`StatusBar click the copy to clipboard button 1`] = `
   ],
 }
 `;
+
+exports[`StatusBar click the copy to clipboard button on mobile 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      "TOC: 07:55 FROM: test ward - line one, postcode TO: some ward - something, some postcode PRIORITY: high ITEMS: test deliverable x 1, test deliverable x 2, test deliverable x 3",
+      [Function],
+      [Function],
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;
