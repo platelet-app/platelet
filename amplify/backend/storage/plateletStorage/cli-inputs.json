@@ -4,8 +4,24 @@
   "bucketName": "platelet26fb7449fb884a3eb4c5fd7539c78dd3",
   "storageAccess": "auth",
   "guestAccess": [],
-  "authAccess": [
-    "READ"
-  ],
-  "groupAccess": {}
+  "authAccess": [],
+  "groupAccess": {
+    "SUPER": [
+      "CREATE_AND_UPDATE",
+      "READ",
+      "DELETE"
+    ],
+    "USER": [
+      "READ"
+    ],
+    "ADMIN": [
+      "READ"
+    ],
+    "COORDINATOR": [
+      "READ"
+    ],
+    "RIDER": [
+      "READ"
+    ]
+  }
 }
