@@ -229,12 +229,14 @@ TaskCard.propTypes = {
     priority: PropTypes.string,
     assignees: PropTypes.arrayOf(PropTypes.object),
     status: PropTypes.string,
+    commentCount: PropTypes.number,
 };
 
 TaskCard.defaultProps = {
     riderResponsibility: "",
     priority: "",
     assignees: [],
+    commentCount: 0,
 };
 
-export default TaskCard;
+export default React.memo(TaskCard);

@@ -12,7 +12,6 @@ import {
     dashboardTabIndexSelector,
     selectedItemsSelector,
 } from "../../../redux/Selectors";
-import _ from "lodash";
 
 const MultipleSelectionCheckbox: React.FC = () => {
     const tabIndex = useSelector(dashboardTabIndexSelector);
