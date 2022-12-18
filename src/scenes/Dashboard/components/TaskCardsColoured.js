@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const TaskCard = React.memo((props) => {
+const TaskCard = (props) => {
     const assigneesDisplayString = props.assignees
         .map((assignee) => assignee.displayName)
         .join(", ");
@@ -219,7 +219,7 @@ const TaskCard = React.memo((props) => {
     );
 
     return <StyledCard className={className}>{cardInnerContent}</StyledCard>;
-});
+};
 
 TaskCard.propTypes = {
     pickUpLocation: PropTypes.object,
@@ -228,6 +228,7 @@ TaskCard.propTypes = {
     timeOfCall: PropTypes.string,
     priority: PropTypes.string,
     assignees: PropTypes.arrayOf(PropTypes.object),
+    status: PropTypes.string,
 };
 
 TaskCard.defaultProps = {

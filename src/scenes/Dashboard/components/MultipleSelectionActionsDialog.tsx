@@ -62,7 +62,7 @@ export const duplicateFields = {
     assignMe: "Assign me",
 };
 
-type DuplicateState = typeof duplicateInitialState;
+export type DuplicateStateType = typeof duplicateInitialState;
 
 type MultipleSelectionActionsDialogProps = {
     items: models.Task[];
@@ -77,9 +77,8 @@ const MultipleSelectionActionsDialog: React.FC<MultipleSelectionActionsDialogPro
         const [isDisabled, setIsDisabled] = useState(true);
         const [reasonBody, setReasonBody] = useState("");
         const [nameInput, setNameInput] = React.useState("");
-        const [duplicateState, setDuplicateState] = useState<DuplicateState>(
-            duplicateInitialState
-        );
+        const [duplicateState, setDuplicateState] =
+            useState<DuplicateStateType>(duplicateInitialState);
         const [largeCountConfirm, setLargeCountConfirm] = useState(false);
         const roleView = useSelector(getRoleView);
         const dispatch = useDispatch();
@@ -219,7 +218,7 @@ const MultipleSelectionActionsDialog: React.FC<MultipleSelectionActionsDialogPro
             }
         };
 
-        const onChangeDuplicateState = (key: keyof DuplicateState) => {
+        const onChangeDuplicateState = (key: keyof DuplicateStateType) => {
             setDuplicateState((prevState) => ({
                 ...prevState,
                 [key]: !prevState[key],
