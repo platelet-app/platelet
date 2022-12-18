@@ -4,25 +4,20 @@ import { useTheme } from "@mui/material/styles";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
 import {
     Box,
     Button,
     Divider,
     IconButton,
     Stack,
-    ToggleButton,
     useMediaQuery,
     Typography,
 } from "@mui/material";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import { useDispatch, useSelector } from "react-redux";
 import * as selectionActions from "../../../redux/selectionMode/selectionModeActions";
 import {
     availableSelectionItemsSelector,
     dashboardFilteredUserSelector,
-    dashboardFilterTermSelector,
     dashboardTabIndexSelector,
     getRoleView,
     selectedItemsSelector,
@@ -32,6 +27,7 @@ import { DataStore } from "aws-amplify";
 import MultipleSelectionActionsDialog from "./MultipleSelectionActionsDialog";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import _ from "lodash";
+import MultipleSelectionCheckbox from "./MultipleSelectionCheckbox";
 
 export const actions = {
     assignUser: "Assign User",
@@ -55,7 +51,6 @@ function MultipleSelectionActionsMenu() {
     const availableSelection = useSelector(availableSelectionItemsSelector);
     const availableSelectionItems = Object.values(availableSelection);
     const tabIndex = useSelector(dashboardTabIndexSelector);
-    const dashboardFilter = useSelector(dashboardFilterTermSelector);
     const [state, setState] = useState(initialState);
     const selectedItems = selectedItemsAll[tabIndex] || {};
     const [currentAction, setCurrentAction] = useState(null);
@@ -151,32 +146,6 @@ function MultipleSelectionActionsMenu() {
             );
         }
     }
-    function getCheckBox() {
-        if (!selectedItems) return <CheckBoxOutlineBlankIcon />;
-        const values = Object.values(selectedItems);
-        if (availableSelectionItems.length === 0) {
-            return <CheckBoxOutlineBlankIcon />;
-        } else if (values && values.length === availableSelectionItems.length) {
-            return <CheckBoxIcon />;
-        } else if (
-            values &&
-            dashboardFilteredUser &&
-            values.length === availableItemsWithoutFilterRef.current.length
-        ) {
-            return <CheckBoxIcon />;
-        } else if (values && values.length > 0) {
-            return <IndeterminateCheckBoxIcon />;
-        } else {
-            return <CheckBoxOutlineBlankIcon />;
-        }
-    }
-    function handleOnClickCheck() {
-        if (selectedItems && Object.values(selectedItems).length > 0) {
-            dispatch(selectionActions.clearItems(tabIndex));
-        } else {
-            dispatch(selectionActions.selectAllItems());
-        }
-    }
 
     const dotsMenu = (
         <>
@@ -268,12 +237,23 @@ function MultipleSelectionActionsMenu() {
                 }}
             >
                 {isSm && Object.keys(selectedItems).length > 0 && (
-                    <Typography sx={{ margin: 0.5 }} fontWeight="bold">
-                        You have {Object.keys(selectedItems).length} selected{" "}
-                        {Object.keys(selectedItems).length > 1
-                            ? "items"
-                            : "item"}
-                    </Typography>
+                    <Stack direction="row" justifyContent="space-between">
+                        <Typography sx={{ margin: 0.5 }} fontWeight="bold">
+                            You have {Object.keys(selectedItems).length}{" "}
+                            selected{" "}
+                            {Object.keys(selectedItems).length > 1
+                                ? "items"
+                                : "item"}
+                        </Typography>
+                        <Button
+                            size="small"
+                            onClick={() =>
+                                dispatch(selectionActions.clearItems(tabIndex))
+                            }
+                        >
+                            Deselect All
+                        </Button>
+                    </Stack>
                 )}
                 <Stack
                     sx={{ minHeight: 50 }}
@@ -281,27 +261,7 @@ function MultipleSelectionActionsMenu() {
                     spacing={2}
                     direction="row"
                 >
-                    {!isSm && (
-                        <ToggleButton
-                            aria-label="Select All"
-                            value="check"
-                            selected={
-                                selectedItems &&
-                                Object.values(selectedItems).length > 0
-                            }
-                            sx={{ margin: 0.5 }}
-                            size="small"
-                            onClick={handleOnClickCheck}
-                            disabled={
-                                !!dashboardFilter ||
-                                !!dashboardFilteredUser ||
-                                Object.values(availableSelectionItems)
-                                    .length === 0
-                            }
-                        >
-                            {getCheckBox()}
-                        </ToggleButton>
-                    )}
+                    {!isSm && <MultipleSelectionCheckbox tabIndex={tabIndex} />}
                     {selectedItems && Object.values(selectedItems).length > 0 && (
                         <Stack
                             sx={{ width: { xs: "100%", sm: "auto" } }}
