@@ -22,7 +22,7 @@ import {
     getRoleView,
     selectedItemsSelector,
 } from "../../../redux/Selectors";
-import { tasksStatus, userRoles } from "../../../apiConsts";
+import { userRoles } from "../../../apiConsts";
 import { DataStore } from "aws-amplify";
 import { PersistentModel } from "@aws-amplify/datastore";
 import MultipleSelectionActionsDialog from "./MultipleSelectionActionsDialog";
