@@ -26,6 +26,7 @@ import * as models from "./models";
 import useCurrentTheme from "./hooks/useCurrentTheme";
 import TenantList from "./scenes/TenantPicker/TenantList";
 import Login from "./scenes/Login/Login";
+import configureAmplify from "./scenes/TenantPicker/utilities/configureAmplify";
 
 declare module "@mui/material/styles" {
     interface Palette {
@@ -61,6 +62,8 @@ if (
     (!process.env.REACT_APP_DEMO_MODE ||
         process.env.REACT_APP_DEMO_MODE === "false")
 ) {
+    const config = require("../src/aws-exports");
+    configureAmplify(config.default);
 }
 
 Logger.LOG_LEVEL = "ERROR";
@@ -180,7 +183,7 @@ const App = () => {
         process.env.REACT_APP_OFFLINE_ONLY === "true";
     if (offline) {
         return <AppDefault />;
-    } else if (setupComplete) {
+    } else if (true || setupComplete) {
         return (
             <Login>
                 <AppDefault />

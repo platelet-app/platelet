@@ -25,13 +25,15 @@ const SignInHeader: React.FC = () => {
             <Typography sx={{ color: "black" }}>
                 {tenantName?.toUpperCase()}
             </Typography>
-            <Button
-                aria-label="Change team"
-                onClick={handleChangeTeam}
-                variant="contained"
-            >
-                Change Team
-            </Button>
+            {false && (
+                <Button
+                    aria-label="Change team"
+                    onClick={handleChangeTeam}
+                    variant="contained"
+                >
+                    Change Team
+                </Button>
+            )}
         </Stack>
     );
 };

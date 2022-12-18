@@ -13,7 +13,7 @@ describe("SignInHeader", () => {
         });
     });
 
-    it("shows the team name", async () => {
+    it.skip("shows the team name", async () => {
         const windowReload = jest.fn();
         Object.defineProperty(window, "location", {
             configurable: true,
