@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
 import { ToggleButton } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
@@ -14,74 +14,65 @@ import {
 } from "../../../redux/Selectors";
 import _ from "lodash";
 
-type MultipleSelectionCheckboxProps = {
-    disabled: boolean;
+const MultipleSelectionCheckbox: React.FC = () => {
+    const tabIndex = useSelector(dashboardTabIndexSelector);
+    const selectedItemsAll = useSelector(selectedItemsSelector);
+    const selectedItems = selectedItemsAll[tabIndex] || {};
+    const dashboardFilter = useSelector(dashboardFilterTermSelector);
+    const availableSelection = useSelector(availableSelectionItemsSelector);
+    const availableSelectionItems = Object.values(availableSelection);
+    const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
+    const dispatch = useDispatch();
+    const currentCheckbox = React.useRef<React.ReactElement | null>(null);
+
+    const inSearchMode = dashboardFilteredUser || dashboardFilter;
+
+    function getCheckBox() {
+        if (!selectedItems) return <CheckBoxOutlineBlankIcon />;
+        if (inSearchMode) return currentCheckbox.current;
+        const values = Object.values(selectedItems);
+        let result = null;
+        if (availableSelectionItems.length === 0) {
+            result = <CheckBoxOutlineBlankIcon />;
+        } else if (values && values.length === availableSelectionItems.length) {
+            result = <CheckBoxIcon />;
+        } else if (values && values.length > 0) {
+            result = <IndeterminateCheckBoxIcon />;
+        } else {
+            result = <CheckBoxOutlineBlankIcon />;
+        }
+        currentCheckbox.current = result;
+        return result;
+    }
+
+    function handleOnClickCheck() {
+        if (selectedItems && Object.values(selectedItems).length > 0) {
+            dispatch(selectionActions.clearItems(tabIndex));
+        } else {
+            dispatch(selectionActions.selectAllItems());
+        }
+    }
+
+    return (
+        <ToggleButton
+            aria-label="Select All"
+            value="check"
+            selected={
+                !inSearchMode &&
+                selectedItems &&
+                Object.values(selectedItems).length > 0
+            }
+            sx={{ margin: 0.5 }}
+            size="small"
+            onClick={handleOnClickCheck}
+            disabled={
+                inSearchMode ||
+                Object.values(availableSelectionItems).length === 0
+            }
+        >
+            {getCheckBox()}
+        </ToggleButton>
+    );
 };
-
-const MultipleSelectionCheckbox: React.FC<MultipleSelectionCheckboxProps> =
-    () => {
-        const tabIndex = useSelector(dashboardTabIndexSelector);
-        const selectedItemsAll = useSelector(selectedItemsSelector);
-        const selectedItems = selectedItemsAll[tabIndex] || {};
-        const dashboardFilter = useSelector(dashboardFilterTermSelector);
-        const availableSelection = useSelector(availableSelectionItemsSelector);
-        const availableSelectionItems = Object.values(availableSelection);
-        const dashboardFilteredUser = useSelector(
-            dashboardFilteredUserSelector
-        );
-        const availableItemsWithoutFilterRef = useRef(availableSelectionItems);
-        const dispatch = useDispatch();
-
-        function getCheckBox() {
-            if (!selectedItems) return <CheckBoxOutlineBlankIcon />;
-            const values = Object.values(selectedItems);
-            if (availableSelectionItems.length === 0) {
-                return <CheckBoxOutlineBlankIcon />;
-            } else if (
-                values &&
-                values.length === availableSelectionItems.length
-            ) {
-                return <CheckBoxIcon />;
-            } else if (
-                values &&
-                dashboardFilteredUser &&
-                values.length === availableItemsWithoutFilterRef.current.length
-            ) {
-                return <CheckBoxIcon />;
-            } else if (values && values.length > 0) {
-                return <IndeterminateCheckBoxIcon />;
-            } else {
-                return <CheckBoxOutlineBlankIcon />;
-            }
-        }
-
-        function handleOnClickCheck() {
-            if (selectedItems && Object.values(selectedItems).length > 0) {
-                dispatch(selectionActions.clearItems(tabIndex));
-            } else {
-                dispatch(selectionActions.selectAllItems());
-            }
-        }
-
-        return (
-            <ToggleButton
-                aria-label="Select All"
-                value="check"
-                selected={
-                    selectedItems && Object.values(selectedItems).length > 0
-                }
-                sx={{ margin: 0.5 }}
-                size="small"
-                onClick={handleOnClickCheck}
-                disabled={
-                    !!dashboardFilter ||
-                    !!dashboardFilteredUser ||
-                    Object.values(availableSelectionItems).length === 0
-                }
-            >
-                {getCheckBox()}
-            </ToggleButton>
-        );
-    };
 
 export default MultipleSelectionCheckbox;
