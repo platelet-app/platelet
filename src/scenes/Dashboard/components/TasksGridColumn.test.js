@@ -12,7 +12,7 @@ import * as amplify from "aws-amplify";
 import * as models from "../../../models";
 import { mockAllIsIntersecting } from "react-intersection-observer/test-utils";
 import _ from "lodash";
-import { DashboardDetailTabs } from "./DashboardDetailTabs";
+import DashboardDetailTabs from "./DashboardDetailTabs";
 import { createMatchMedia } from "../../../test-utils";
 import userEvent from "@testing-library/user-event";
 import * as dashboardUtils from "../utilities/functions";
