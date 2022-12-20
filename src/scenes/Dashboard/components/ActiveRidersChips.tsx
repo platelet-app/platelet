@@ -24,19 +24,9 @@ import { setDashboardFilteredUser } from "../../../redux/Actions";
 import moment from "moment";
 import * as models from "../../../models";
 import { makeStyles } from "@mui/styles";
-import { PersistentModel } from "@aws-amplify/datastore";
-
-type PersistentModelType<T> = {
-    [key: string]: T;
-};
-
-function convertListDataToObject<T extends PersistentModel>(list: T[]) {
-    const result: PersistentModelType<T> = {};
-    for (const item of list) {
-        result[item.id] = item;
-    }
-    return result;
-}
+import convertModelsToObject, {
+    PersistentModelObjectType,
+} from "../../../utilities/convertModelsToObject";
 
 const useStyles = makeStyles((theme: any) => ({
     gradientContainer: {
@@ -178,7 +168,7 @@ const inProgressTabFilter = (assignment: models.TaskAssignee) => {
 
 const ActiveRidersChips: React.FC = () => {
     const [activeRiders, setActiveRiders] = useState<
-        PersistentModelType<models.User>
+        PersistentModelObjectType<models.User>
     >({});
     const [errorState, setErrorState] = useState<any>(null);
     const whoami = useSelector(getWhoami);
@@ -195,7 +185,7 @@ const ActiveRidersChips: React.FC = () => {
     const dispatch = useDispatch();
 
     const calculateRidersStatus =
-        React.useCallback((): PersistentModelType<models.User> => {
+        React.useCallback((): PersistentModelObjectType<models.User> => {
             let activeRidersResult: models.User[] = [];
             if (roleView === "ALL") {
                 const assignments: models.TaskAssignee[] = allAssignees.filter(
@@ -250,7 +240,7 @@ const ActiveRidersChips: React.FC = () => {
                 a.displayName.localeCompare(b.displayName)
             );
 
-            return convertListDataToObject(sorted);
+            return convertModelsToObject(sorted);
         }, [allAssignees, dispatch, roleView, dashboardTabIndex, whoami]);
 
     const getActiveRiders = React.useCallback(async () => {
