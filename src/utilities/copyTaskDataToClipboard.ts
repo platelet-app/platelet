@@ -48,5 +48,15 @@ export default function copyTaskDataToClipboard(task: models.Task) {
         first = false;
     }
 
-    return navigator.clipboard.writeText(result);
+    if ((window as any).cordova) {
+        return new Promise((resolve, reject) => {
+            (window as any).cordova.plugins.clipboard.copy(
+                result,
+                resolve,
+                reject
+            );
+        });
+    } else {
+        return navigator.clipboard.writeText(result);
+    }
 }

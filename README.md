@@ -40,15 +40,21 @@ The easiest way to install Platelet is to connect a branch on GitHub to Amplify 
 
 ### Cognito
 
-Add these groups to Cognito with highest precedence for SUPER and ADMIN second:
+Under the Sign-up experience tab:
 
-`SUPER`
-`ADMIN`
-`COORDINATOR`
-`RIDER`
-`USER`
+- Add a custom attribute: `tenantId`
 
-Under Sign-up experience, add a custom attribute: `tenantId`
+- Disable Self-service sign-up
+
+You might also want to adjust token expiry times. By default token refresh expires after 30 minutes. This means that when users are somewhere with a poor connection, they might be logged out when opening the app.
+
+Under the App integration tab:
+
+Choose a client under App clients and analytics.
+
+Click Edit for App client information.
+
+Adjust Access token expiration and ID token expiration.
 
 ### Function parameters
 

@@ -53,6 +53,8 @@ export type TaskTimeKey =
     | "timeCancelled"
     | "timeRejected"
     | "timeRiderHome"
+    | "timePickedUpSenderName"
+    | "timeDroppedOffRecipientName"
     | null;
 
 export enum priorities {

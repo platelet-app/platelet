@@ -8,7 +8,7 @@ import {
 } from "../../redux/Actions";
 import TasksGrid from "./components/TasksGrid";
 import { useDispatch, useSelector } from "react-redux";
-import { DashboardDetailTabs } from "./components/DashboardDetailTabs";
+import DashboardDetailTabs from "./components/DashboardDetailTabs";
 import { getDashboardRoleMode, saveDashboardRoleMode } from "../../utilities";
 import {
     dashboardFilteredUserSelector,

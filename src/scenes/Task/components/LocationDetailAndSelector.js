@@ -125,7 +125,7 @@ function LocationDetailAndSelector(props) {
             alignItems={"center"}
             direction={"row"}
         >
-            {!props.location ? (
+            {!props.location || props.editMode ? (
                 <FavouriteLocationsSelect onSelect={props.onSelectPreset} />
             ) : (
                 locationTitle
