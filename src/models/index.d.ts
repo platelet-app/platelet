@@ -48,15 +48,6 @@ export enum TaskStatus {
   COMPLETED = "COMPLETED"
 }
 
-export enum Patch {
-  NORTH = "NORTH",
-  WEST = "WEST",
-  EAST = "EAST",
-  SOUTH = "SOUTH",
-  RELIEF = "RELIEF",
-  AIR_AMBULANCE = "AIR_AMBULANCE"
-}
-
 type EagerStatistics = {
   readonly numCancelled?: number | null;
   readonly numCompleted?: number | null;

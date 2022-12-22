@@ -1994,17 +1994,6 @@ export const schema = {
                 "ABANDONED",
                 "COMPLETED"
             ]
-        },
-        "Patch": {
-            "name": "Patch",
-            "values": [
-                "NORTH",
-                "WEST",
-                "EAST",
-                "SOUTH",
-                "RELIEF",
-                "AIR_AMBULANCE"
-            ]
         }
     },
     "nonModels": {

@@ -314,15 +314,6 @@ enum Priority {
   LOW
 }
 
-enum Patch {
-  NORTH
-  WEST
-  EAST
-  SOUTH
-  RELIEF
-  AIR_AMBULANCE
-}
-
 enum DeliverableUnit {
   NONE
   LITER

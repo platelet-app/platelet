@@ -48,15 +48,6 @@ const TaskStatus = {
   "COMPLETED": "COMPLETED"
 };
 
-const Patch = {
-  "NORTH": "NORTH",
-  "WEST": "WEST",
-  "EAST": "EAST",
-  "SOUTH": "SOUTH",
-  "RELIEF": "RELIEF",
-  "AIR_AMBULANCE": "AIR_AMBULANCE"
-};
-
 const { User, PossibleRiderResponsibilities, RiderResponsibility, Comment, TaskAssignee, Task, Location, Deliverable, DeliverableType, VehicleAssignment, Vehicle, Tenant, Statistics, SendFeedback, AddressAndContactDetails, S3Object } = initSchema(schema);
 
 export {
@@ -78,7 +69,6 @@ export {
   DeliverableTypeIcon,
   DeliverableUnit,
   TaskStatus,
-  Patch,
   Statistics,
   SendFeedback,
   AddressAndContactDetails,
