@@ -1994,17 +1994,6 @@ export const schema = {
                 "ABANDONED",
                 "COMPLETED"
             ]
-        },
-        "Patch": {
-            "name": "Patch",
-            "values": [
-                "NORTH",
-                "WEST",
-                "EAST",
-                "SOUTH",
-                "RELIEF",
-                "AIR_AMBULANCE"
-            ]
         }
     },
     "nonModels": {
@@ -2218,6 +2207,6 @@ export const schema = {
             }
         }
     },
-    "codegenVersion": "3.3.1",
+    "codegenVersion": "3.3.2",
     "version": "bb2e35b6475bd0ff1a48255f28cdd761"
 };

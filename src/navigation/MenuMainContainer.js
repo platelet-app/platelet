@@ -13,7 +13,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { clearDashboardFilter } from "../redux/dashboardFilter/DashboardFilterActions";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { DashboardDetailTabs } from "../scenes/Dashboard/components/DashboardDetailTabs";
+import DashboardDetailTabs from "../scenes/Dashboard/components/DashboardDetailTabs";
 import MobileNavigationDrawer from "./MobileNavigationDrawer";
 import {
     dashboardFilterTermSelector,

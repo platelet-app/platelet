@@ -9,10 +9,10 @@ async function generateMultipleTaskTimeModels(
     timeKey: TaskTimeKey,
     time: Date,
     riderAssignees: models.TaskAssignee[],
-    nameKey: TaskTimeName = null,
+    nameKey: TaskTimeName | null = null,
     name: string | null = null
 ) {
-    if (!selectedItems || _.isEmpty(selectedItems) || !timeKey) return;
+    if (!selectedItems || _.isEmpty(selectedItems) || !timeKey) return [];
     const filteredTasks = await DataStore.query(models.Task, (task) =>
         task.or((task) =>
             Object.values(selectedItems)

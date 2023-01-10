@@ -7,7 +7,8 @@ async function generateMultipleTaskComments(
     author: models.User,
     tenantId: string
 ) {
-    if (!selectedItems || _.isEmpty(selectedItems) || !body || !author) return;
+    if (!selectedItems || _.isEmpty(selectedItems) || !body || !author)
+        return [];
     if (!tenantId) throw new Error("TenantId is required");
     return await Promise.all(
         Object.values(selectedItems).map(async (item) => {

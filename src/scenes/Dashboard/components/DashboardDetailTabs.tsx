@@ -1,7 +1,6 @@
 import React from "react";
 import * as selectionModeActions from "../../../redux/selectionMode/selectionModeActions";
 import AddIcon from "@mui/icons-material/Add";
-import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
 import { useDispatch, useSelector } from "react-redux";
 import IconButton from "@mui/material/IconButton";
@@ -24,55 +23,37 @@ import {
     dashboardFilteredUserSelector,
     dashboardFilterTermSelector,
     dashboardTabIndexSelector,
+    getRoleView,
     getWhoami,
     guidedSetupOpenSelector,
 } from "../../../redux/Selectors";
-import { userRoles } from "../../../apiConsts";
 import { clearDashboardFilter } from "../../../redux/dashboardFilter/DashboardFilterActions";
+import * as models from "../../../models";
 
-export function TabPanel(props) {
-    const { children, index, ...other } = props;
-    const value = parseInt(props.value);
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            data-cy={`dashboard-tab-${index}`}
-            aria-labelledby={`dashboard-tab-${index}`}
-            {...other}
-        >
-            {value === index && <Box p={1}>{children}</Box>}
-        </div>
-    );
-}
-
-TabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.any.isRequired,
-    value: PropTypes.any.isRequired,
+type DashboardDetailTabsProps = {
+    disableAddButton?: boolean;
 };
 
-export function DashboardDetailTabs(props) {
+const DashboardDetailTabs: React.FC<DashboardDetailTabsProps> = ({
+    disableAddButton,
+}) => {
     const dispatch = useDispatch();
-    const [anchorElRoleMenu, setAnchorElRoleMenu] = React.useState(null);
+    const [anchorElRoleMenu, setAnchorElRoleMenu] = React.useState<
+        (EventTarget & HTMLSpanElement) | null
+    >(null);
     const whoami = useSelector(getWhoami);
     const dashboardFilter = useSelector(dashboardFilterTermSelector);
-    const roleView = useSelector((state) => state.roleView);
+    const roleView = useSelector(getRoleView);
     const { show, hide } = showHide();
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
-
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
     const isMd = useMediaQuery(theme.breakpoints.down("md"));
     const dashboardTabIndex = useSelector(dashboardTabIndexSelector);
-
     const isCoordinator =
-        whoami && whoami.roles.includes(userRoles.coordinator);
-
+        whoami && whoami.roles.includes(models.Role.COORDINATOR);
     let roleViewText = "";
-
     if (roleView) {
         if (isMd) {
             roleViewText = `${roleView.substring(0, 5).toUpperCase()}`;
@@ -81,10 +62,10 @@ export function DashboardDetailTabs(props) {
         }
     }
 
-    const handleChange = (newValue) => {
-        //props.onChange(event, newValue);
+    const handleChange = (newValue: number) => {
         dispatch(setDashboardTabIndex(newValue));
     };
+
     const tabs = (
         <Stack sx={{ padding: 0.5 }} spacing={isSm ? 1 : 2} direction="row">
             <Chip
@@ -105,22 +86,20 @@ export function DashboardDetailTabs(props) {
             />
         </Stack>
     );
-
     const clearAllSelectedItems = () => {
         dispatch(selectionModeActions.clearItems(0));
         dispatch(selectionModeActions.clearItems(1));
     };
-
     const addClearButton =
         !dashboardFilter && !dashboardFilteredUser ? (
             <Fab
-                key="dashboard-fab"
                 color="primary"
+                aria-label="Create New"
                 variant="extended"
                 data-cy="create-task-button"
                 disabled={
                     guidedSetupOpen ||
-                    (roleView && roleView === userRoles.rider)
+                    (roleView && roleView === models.Role.RIDER)
                 }
                 onClick={() => dispatch(setGuidedSetupOpen(true))}
             >
@@ -129,11 +108,11 @@ export function DashboardDetailTabs(props) {
             </Fab>
         ) : (
             <Fab
-                key="dashboard-fab-clear"
                 variant="extended"
+                aria-label="Clear Search"
                 color="secondary"
                 data-cy="clear-search-button"
-                disabled={props.disableAddButton}
+                disabled={disableAddButton}
                 onClick={() => {
                     dispatch(clearDashboardFilter());
                     dispatch(setDashboardFilteredUser(null));
@@ -142,6 +121,7 @@ export function DashboardDetailTabs(props) {
                 Clear Search
             </Fab>
         );
+
     return (
         <Stack
             sx={{
@@ -152,15 +132,11 @@ export function DashboardDetailTabs(props) {
             justifyContent={"space-between"}
             alignItems={"center"}
         >
-            <Box key="tabs">{tabs}</Box>
-            <Hidden key="taskfilter" mdDown>
-                <TaskFilterTextField
-                    key="taskfiltertextfield"
-                    sx={{ width: "40%" }}
-                />
+            <Box>{tabs}</Box>
+            <Hidden mdDown>
+                <TaskFilterTextField sx={{ width: "40%" }} />
             </Hidden>
             <Stack
-                key="morestuff"
                 spacing={1}
                 direction={"row"}
                 justifyContent={"flex-start"}
@@ -169,7 +145,6 @@ export function DashboardDetailTabs(props) {
                 {isCoordinator && (
                     <>
                         <Typography
-                            key="roleView"
                             onClick={(event) => {
                                 setAnchorElRoleMenu(event.currentTarget);
                             }}
@@ -179,8 +154,8 @@ export function DashboardDetailTabs(props) {
                             {roleViewText}
                         </Typography>
                         <IconButton
-                            key="role-menu-button"
                             data-cy="role-menu-button"
+                            aria-label="Role Selection Menu"
                             aria-controls="simple-menu"
                             aria-haspopup="true"
                             onClick={(event) => {
@@ -193,12 +168,11 @@ export function DashboardDetailTabs(props) {
                     </>
                 )}
 
-                <Hidden key="addclearbutton" smDown>
-                    {["ALL", userRoles.coordinator].includes(roleView) &&
+                <Hidden smDown>
+                    {["ALL", models.Role.COORDINATOR].includes(roleView) &&
                         addClearButton}
                 </Hidden>
                 <Menu
-                    key="role-menu"
                     data-cy="role-menu"
                     anchorEl={anchorElRoleMenu}
                     keepMounted
@@ -208,9 +182,8 @@ export function DashboardDetailTabs(props) {
                     }}
                 >
                     <MenuItem
-                        key="menu-item-all"
                         className={
-                            whoami.roles.includes(userRoles.coordinator)
+                            whoami.roles.includes(models.Role.COORDINATOR)
                                 ? show
                                 : hide
                         }
@@ -226,17 +199,16 @@ export function DashboardDetailTabs(props) {
                         All Tasks
                     </MenuItem>
                     <MenuItem
-                        key="menu-item-coordinator"
                         className={
-                            whoami.roles.includes(userRoles.coordinator)
+                            whoami.roles.includes(models.Role.COORDINATOR)
                                 ? show
                                 : hide
                         }
                         onClick={() => {
                             setAnchorElRoleMenu(null);
-                            if (roleView !== userRoles.coordinator) {
-                                dispatch(setRoleView(userRoles.coordinator));
-                                saveDashboardRoleMode(userRoles.coordinator);
+                            if (roleView !== models.Role.COORDINATOR) {
+                                dispatch(setRoleView(models.Role.COORDINATOR));
+                                saveDashboardRoleMode(models.Role.COORDINATOR);
                                 clearAllSelectedItems();
                             }
                         }}
@@ -244,16 +216,17 @@ export function DashboardDetailTabs(props) {
                         Coordinator
                     </MenuItem>
                     <MenuItem
-                        key="menu-item-rider"
                         className={
-                            whoami.roles.includes(userRoles.rider) ? show : hide
+                            whoami.roles.includes(models.Role.RIDER)
+                                ? show
+                                : hide
                         }
                         onClick={() => {
                             setAnchorElRoleMenu(null);
-                            if (roleView !== userRoles.rider) {
-                                dispatch(setRoleView(userRoles.rider));
+                            if (roleView !== models.Role.RIDER) {
+                                dispatch(setRoleView(models.Role.RIDER));
                                 dispatch(setDashboardFilteredUser(null));
-                                saveDashboardRoleMode(userRoles.rider);
+                                saveDashboardRoleMode(models.Role.RIDER);
                                 clearAllSelectedItems();
                             }
                         }}
@@ -264,4 +237,6 @@ export function DashboardDetailTabs(props) {
             </Stack>
         </Stack>
     );
-}
+};
+
+export default DashboardDetailTabs;

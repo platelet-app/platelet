@@ -119,10 +119,10 @@ function StatusBar(props) {
             );
             const result = { ...taskResult, deliverables };
             copyTaskDataToClipboard(result).then(
-                function () {
+                () => {
                     setCopied(true);
                 },
-                function () {
+                () => {
                     setCopied(false);
                 }
             );

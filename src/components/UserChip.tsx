@@ -5,7 +5,7 @@ import * as models from "../models";
 
 type UserChipProps = {
     user: models.User;
-    onClick?: () => models.User;
+    onClick?: () => void;
     onDelete?: () => void;
     variant?: "filled" | "outlined" | undefined;
     color?:

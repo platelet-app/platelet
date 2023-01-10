@@ -5,13 +5,12 @@ import "./App.css";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useDispatch, useSelector } from "react-redux";
 import { setMobileView } from "./redux/Actions";
-import { withAuthenticator } from "@aws-amplify/ui-react";
+import "@aws-amplify/ui-react/styles.css";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import Moment from "react-moment";
-import Amplify, { Logger } from "aws-amplify";
+import { Logger } from "aws-amplify";
 import { SnackbarProvider, withSnackbar } from "notistack";
-import { Helmet } from "react-helmet";
 import moment from "moment-timezone";
 import "moment/locale/en-gb";
 import {
@@ -21,10 +20,41 @@ import {
 } from "@mui/material/styles";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
-import { getWhoami } from "./redux/Selectors";
+import { getWhoami, notificationsSelector } from "./redux/Selectors";
 import { DataStore } from "aws-amplify";
 import * as models from "./models";
 import useCurrentTheme from "./hooks/useCurrentTheme";
+import TenantList from "./scenes/TenantPicker/TenantList";
+import Login from "./scenes/Login/Login";
+import configureAmplify from "./scenes/TenantPicker/utilities/configureAmplify";
+
+declare module "@mui/material/styles" {
+    interface Palette {
+        taskStatus: {
+            NEW: React.CSSProperties["color"];
+            ACTIVE: React.CSSProperties["color"];
+            PICKED_UP: React.CSSProperties["color"];
+            DROPPED_OFF: React.CSSProperties["color"];
+            COMPLETED: React.CSSProperties["color"];
+            CANCELLED: React.CSSProperties["color"];
+            ABANDONED: React.CSSProperties["color"];
+            REJECTED: React.CSSProperties["color"];
+        };
+    }
+
+    interface PaletteOptions {
+        taskStatus: {
+            NEW: React.CSSProperties["color"];
+            ACTIVE: React.CSSProperties["color"];
+            PICKED_UP: React.CSSProperties["color"];
+            DROPPED_OFF: React.CSSProperties["color"];
+            COMPLETED: React.CSSProperties["color"];
+            CANCELLED: React.CSSProperties["color"];
+            ABANDONED: React.CSSProperties["color"];
+            REJECTED: React.CSSProperties["color"];
+        };
+    }
+}
 
 if (
     (!process.env.REACT_APP_OFFLINE_ONLY ||
@@ -33,20 +63,22 @@ if (
         process.env.REACT_APP_DEMO_MODE === "false")
 ) {
     const config = require("../src/aws-exports");
-    Amplify.configure({
-        ...config.default,
-    });
+    configureAmplify(config.default);
 }
-Logger.LOG_LEVEL = "ERROR";
-window.amplifyLogger = Logger;
 
-window.DataStore = DataStore;
-window.models = models;
+Logger.LOG_LEVEL = "ERROR";
+
+(window as any).amplifyLogger = Logger;
+(window as any).DataStore = DataStore;
+(window as any).models = models;
 
 let didInit = false;
 
-function AppContents({ closeSnackbar, enqueueSnackbar }) {
-    const incomingNotification = useSelector((state) => state.notification);
+const AppContents: React.FC<SnackbarProvider> = ({
+    closeSnackbar,
+    enqueueSnackbar,
+}) => {
+    const incomingNotification = useSelector(notificationsSelector);
     const dispatch = useDispatch();
 
     function initialise() {
@@ -62,7 +94,7 @@ function AppContents({ closeSnackbar, enqueueSnackbar }) {
             if (notification) {
                 const { message, options, restoreCallback, viewLink } =
                     notification;
-                options.action = (key) => (
+                options.action = (key: number) => (
                     <SnackNotificationButtons
                         restoreCallback={restoreCallback}
                         viewLink={viewLink}
@@ -75,31 +107,19 @@ function AppContents({ closeSnackbar, enqueueSnackbar }) {
         },
         [enqueueSnackbar, closeSnackbar]
     );
-
     useEffect(
         () => showNotification(incomingNotification),
         [showNotification, incomingNotification]
     );
-
     function checkServerSettings() {
         Moment.globalMoment = moment;
         Moment.globalLocale = "en-GB";
     }
-
     useEffect(checkServerSettings, []);
-
     const theme = useTheme();
     dispatch(setMobileView(!useMediaQuery(theme.breakpoints.up("sm"))));
-
-    return (
-        <React.Fragment>
-            <Helmet>
-                <title>platelet</title>
-            </Helmet>
-            <MenuMainContainer />
-        </React.Fragment>
-    );
-}
+    return <MenuMainContainer />;
+};
 
 const AppMain = withSnackbar(AppContents);
 
@@ -114,13 +134,10 @@ const taskStatus = {
     REJECTED: "grey",
 };
 
-function AppDefault(props) {
-    //const themePreference = useSelector((state) => state.darkMode);
+function AppDefault(props: any) {
     const whoami = useSelector(getWhoami);
     let theme;
-
     const themePreference = useCurrentTheme();
-
     if (themePreference === "dark") {
         theme = createTheme({
             palette: {
@@ -143,7 +160,6 @@ function AppDefault(props) {
             },
         });
     }
-
     if (!whoami) {
         return <></>;
     } else {
@@ -160,8 +176,22 @@ function AppDefault(props) {
     }
 }
 
-const App =
-    process.env.REACT_APP_OFFLINE_ONLY === "true"
-        ? AppDefault
-        : withAuthenticator(AppDefault);
+const App = () => {
+    const [setupComplete, setSetupComplete] = React.useState(false);
+    const offline =
+        process.env.REACT_APP_OFFLINE_ONLY &&
+        process.env.REACT_APP_OFFLINE_ONLY === "true";
+    if (offline) {
+        return <AppDefault />;
+    } else if (true || setupComplete) {
+        return (
+            <Login>
+                <AppDefault />
+            </Login>
+        );
+    } else {
+        return <TenantList onSetupComplete={() => setSetupComplete(true)} />;
+    }
+};
+
 export default App;

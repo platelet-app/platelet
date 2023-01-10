@@ -117,7 +117,9 @@ function ClickableTextField(props) {
             <TextFieldUncontrolled
                 margin="dense"
                 variant="standard"
-                aria-label={label}
+                inputProps={{
+                    "aria-label": label,
+                }}
                 className={clsx(classes.label, classes.text)}
                 tel={props.tel}
                 onPressEnter={(ev) => {
