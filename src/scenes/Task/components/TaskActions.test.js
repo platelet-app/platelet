@@ -5,12 +5,11 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import * as models from "../../../models";
 import { DataStore } from "aws-amplify";
-import { tasksStatus, userRoles } from "../../../apiConsts";
 import moment from "moment";
 
 const whoami = new models.User({
     displayName: "Test User",
-    roles: [userRoles.coordinator],
+    roles: [models.Role.COORDINATOR],
 });
 
 Object.assign(navigator, {
@@ -90,7 +89,7 @@ describe("TaskActions", () => {
         const saveSpy = jest.spyOn(DataStore, "save");
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
         const preloadedState = {
             roleView: "ALL",
@@ -124,7 +123,7 @@ describe("TaskActions", () => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timePickedUp: isoDate,
-                status: tasksStatus.pickedUp,
+                status: models.TaskStatus.PICKED_UP,
                 timePickedUpSenderName: "",
             });
         });
@@ -137,7 +136,7 @@ describe("TaskActions", () => {
         const saveSpy = jest.spyOn(DataStore, "save");
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
         const preloadedState = {
             roleView: "ALL",
@@ -165,7 +164,7 @@ describe("TaskActions", () => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...mockTask,
                 timePickedUp: isoDate,
-                status: tasksStatus.pickedUp,
+                status: models.TaskStatus.PICKED_UP,
                 timePickedUpSenderName: "someone person",
             });
         });
@@ -193,7 +192,7 @@ describe("TaskActions", () => {
         const mockTask = new models.Task({ timePickedUp: isoDate });
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
         const preloadedState = {
             roleView: "ALL",
@@ -228,7 +227,7 @@ describe("TaskActions", () => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeDroppedOff: isoDate,
-                status: tasksStatus.droppedOff,
+                status: models.TaskStatus.DROPPED_OFF,
                 timeDroppedOffRecipientName: "",
             });
         });
@@ -238,7 +237,7 @@ describe("TaskActions", () => {
         const mockTask = new models.Task({ timePickedUp: isoDate });
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
         const preloadedState = {
             roleView: "ALL",
@@ -272,7 +271,7 @@ describe("TaskActions", () => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...mockTask,
                 timeDroppedOff: isoDate,
-                status: tasksStatus.droppedOff,
+                status: models.TaskStatus.DROPPED_OFF,
                 timeDroppedOffRecipientName: "someone person",
             });
         });
@@ -289,11 +288,11 @@ describe("TaskActions", () => {
             timePickedUpSenderName: "another one",
             timeDroppedOff: isoDate,
             timeDroppedOffRecipientName: "someone person",
-            status: tasksStatus.droppedOff,
+            status: models.TaskStatus.DROPPED_OFF,
         });
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
         const preloadedState = {
             roleView: "ALL",
@@ -329,7 +328,7 @@ describe("TaskActions", () => {
         });
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
         await DataStore.save(mockTask);
         await DataStore.save(mockAssignment);
@@ -364,7 +363,7 @@ describe("TaskActions", () => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeRiderHome: isoDate,
-                status: tasksStatus.completed,
+                status: models.TaskStatus.COMPLETED,
             });
         });
     });
@@ -408,7 +407,7 @@ describe("TaskActions", () => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeCancelled: isoDate,
-                status: tasksStatus.cancelled,
+                status: models.TaskStatus.CANCELLED,
             });
         });
         await waitFor(() => {
@@ -449,7 +448,7 @@ describe("TaskActions", () => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeRejected: isoDate,
-                status: tasksStatus.rejected,
+                status: models.TaskStatus.REJECTED,
             });
         });
         // expect button to be toggled
@@ -496,7 +495,7 @@ describe("TaskActions", () => {
         await DataStore.save(mockTask);
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
         await DataStore.save(mockAssignment);
         const preloadedState = {
@@ -521,7 +520,7 @@ describe("TaskActions", () => {
         await DataStore.save(mockTask);
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
         await DataStore.save(mockAssignment);
         const preloadedState = {
@@ -552,7 +551,7 @@ describe("TaskActions", () => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timePickedUp: null,
-                status: tasksStatus.active,
+                status: models.TaskStatus.ACTIVE,
             });
         });
     });
@@ -564,7 +563,7 @@ describe("TaskActions", () => {
         });
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
         await DataStore.save(mockTask);
         await DataStore.save(mockAssignment);
@@ -597,7 +596,7 @@ describe("TaskActions", () => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeDroppedOff: null,
-                status: tasksStatus.pickedUp,
+                status: models.TaskStatus.PICKED_UP,
             });
         });
     });
@@ -637,7 +636,7 @@ describe("TaskActions", () => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeCancelled: null,
-                status: tasksStatus.new,
+                status: models.TaskStatus.NEW,
             });
         });
     });
@@ -674,7 +673,7 @@ describe("TaskActions", () => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeRejected: null,
-                status: tasksStatus.new,
+                status: models.TaskStatus.NEW,
             });
         });
     });
@@ -756,15 +755,15 @@ describe("TaskActions", () => {
     });
 
     test("multiple actions", async () => {
-        const mockTask = new models.Task({ status: tasksStatus.active });
+        const mockTask = new models.Task({ status: models.TaskStatus.ACTIVE });
         const fakeAssignee = new models.User({
-            roles: [userRoles.rider, userRoles.user],
+            roles: [models.Role.RIDER, models.Role.USER],
             displayName: "test",
         });
         const fakeAssignment = new models.TaskAssignee({
             task: mockTask,
             assignee: fakeAssignee,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
         const preloadedState = {
             roleView: "ALL",
@@ -806,7 +805,7 @@ describe("TaskActions", () => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timePickedUp: isoDate,
-                status: tasksStatus.pickedUp,
+                status: models.TaskStatus.PICKED_UP,
                 timePickedUpSenderName: "",
             });
         });
@@ -820,7 +819,7 @@ describe("TaskActions", () => {
                 timePickedUpSenderName: "",
                 timeDroppedOffRecipientName: "",
                 timeDroppedOff: isoDate,
-                status: tasksStatus.droppedOff,
+                status: models.TaskStatus.DROPPED_OFF,
             });
         });
         const buttonRiderHome = await screen.findByRole("button", {
@@ -840,26 +839,26 @@ describe("TaskActions", () => {
                 timeRiderHome: isoDate,
                 timePickedUpSenderName: "",
                 timeDroppedOffRecipientName: "",
-                status: tasksStatus.completed,
+                status: models.TaskStatus.COMPLETED,
             });
         });
         const result = await DataStore.query(models.Task, mockTask.id);
-        expect(result.status).toBe(tasksStatus.completed);
+        expect(result.status).toBe(models.TaskStatus.COMPLETED);
     });
 
     test("allow setting the times when assigned as a rider", async () => {
-        const mockTask = new models.Task({ status: tasksStatus.active });
+        const mockTask = new models.Task({ status: models.TaskStatus.ACTIVE });
         const fakeAssignee = new models.User({
-            roles: [userRoles.rider, userRoles.user],
+            roles: [models.Role.RIDER, models.Role.USER],
             displayName: "test",
         });
         const fakeAssignment = new models.TaskAssignee({
             task: mockTask,
             assignee: fakeAssignee,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
         const preloadedState = {
-            roleView: userRoles.rider,
+            roleView: models.Role.RIDER,
             whoami: { user: fakeAssignee },
             taskAssigneesReducer: {
                 items: [fakeAssignment],
@@ -880,13 +879,13 @@ describe("TaskActions", () => {
     });
 
     test("don't allow setting the times when not assigned as a rider", async () => {
-        const mockTask = new models.Task({ status: tasksStatus.active });
+        const mockTask = new models.Task({ status: models.TaskStatus.ACTIVE });
         const fakeAssignee = new models.User({
-            roles: [userRoles.rider, userRoles.user],
+            roles: [models.Role.RIDER, models.Role.USER],
             displayName: "test",
         });
         const preloadedState = {
-            roleView: userRoles.rider,
+            roleView: models.Role.RIDER,
             whoami: { user: fakeAssignee },
             taskAssigneesReducer: {
                 items: [],
@@ -908,16 +907,16 @@ describe("TaskActions", () => {
 
     test.each`
         status
-        ${tasksStatus.cancelled} | ${tasksStatus.rejected} | ${tasksStatus.completed}
+        ${models.TaskStatus.CANCELLED} | ${models.TaskStatus.REJECTED} | ${models.TaskStatus.COMPLETED}
     `("change the times without a name", async ({ status }) => {
         const date = new Date();
         let mockTask;
-        if (status === tasksStatus.cancelled) {
+        if (status === models.TaskStatus.CANCELLED) {
             mockTask = new models.Task({
                 status,
                 timeCancelled: date.toISOString(),
             });
-        } else if (status === tasksStatus.rejected) {
+        } else if (status === models.TaskStatus.REJECTED) {
             mockTask = new models.Task({
                 status,
                 timeRejected: date.toISOString(),
@@ -933,22 +932,22 @@ describe("TaskActions", () => {
 
         const fakeAssignee = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator, userRoles.user],
+                roles: [models.Role.COORDINATOR, models.Role.USER],
                 displayName: "test",
             })
         );
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
             assignee: fakeAssignee,
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
         });
         const mockAssignment2 = new models.TaskAssignee({
             task: mockTask,
             assignee: fakeAssignee,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
         const preloadedState = {
-            roleView: userRoles.rider,
+            roleView: models.Role.RIDER,
             whoami: { user: fakeAssignee },
             taskAssigneesReducer: {
                 items: [mockAssignment, mockAssignment2],
@@ -963,7 +962,7 @@ describe("TaskActions", () => {
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
-        if (status === tasksStatus.timeRejected) {
+        if (status === models.TaskStatus.timeRejected) {
             userEvent.click(
                 screen.getByRole("button", { name: "edit Time rejected" })
             );
@@ -980,7 +979,7 @@ describe("TaskActions", () => {
                     ...mockTask,
                 });
             });
-        } else if (status === tasksStatus.cancelled) {
+        } else if (status === models.TaskStatus.CANCELLED) {
             userEvent.click(
                 screen.getByRole("button", { name: "edit Time cancelled" })
             );
@@ -997,7 +996,7 @@ describe("TaskActions", () => {
                     ...mockTask,
                 });
             });
-        } else if (status === tasksStatus.completed) {
+        } else if (status === models.TaskStatus.COMPLETED) {
             userEvent.click(
                 screen.getByRole("button", { name: "edit Time rider home" })
             );
@@ -1020,7 +1019,7 @@ describe("TaskActions", () => {
     test("change the times failure", async () => {
         const date = new Date();
         let mockTask;
-        const status = tasksStatus.cancelled;
+        const status = models.TaskStatus.CANCELLED;
         mockTask = new models.Task({
             status,
             timeCancelled: date.toISOString(),
@@ -1028,22 +1027,22 @@ describe("TaskActions", () => {
 
         const fakeAssignee = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator, userRoles.user],
+                roles: [models.Role.COORDINATOR, models.Role.USER],
                 displayName: "test",
             })
         );
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
             assignee: fakeAssignee,
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
         });
         const mockAssignment2 = new models.TaskAssignee({
             task: mockTask,
             assignee: fakeAssignee,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
         const preloadedState = {
-            roleView: userRoles.rider,
+            roleView: models.Role.RIDER,
             whoami: { user: fakeAssignee },
             taskAssigneesReducer: {
                 items: [mockAssignment, mockAssignment2],
@@ -1080,12 +1079,12 @@ describe("TaskActions", () => {
 
     test.each`
         status
-        ${tasksStatus.pickedUp} | ${tasksStatus.droppedOff}
+        ${models.TaskStatus.PICKED_UP} | ${models.TaskStatus.DROPPED_OFF}
     `("change the sender or recipient name and times", async ({ status }) => {
         const date = new Date();
         const date2 = moment(date).subtract(1, "day").toDate(); // date object
         const mockTask = new models.Task({
-            status: tasksStatus.droppedOff,
+            status: models.TaskStatus.DROPPED_OFF,
             timePickedUp: date.toISOString(),
             timeDroppedOff: date2.toISOString(),
             timePickedUpSenderName: "someone person",
@@ -1093,22 +1092,22 @@ describe("TaskActions", () => {
         });
         const fakeAssignee = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator, userRoles.user],
+                roles: [models.Role.COORDINATOR, models.Role.USER],
                 displayName: "test",
             })
         );
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
             assignee: fakeAssignee,
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
         });
         const mockAssignment2 = new models.TaskAssignee({
             task: mockTask,
             assignee: fakeAssignee,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
         const preloadedState = {
-            roleView: userRoles.rider,
+            roleView: models.Role.RIDER,
             whoami: { user: fakeAssignee },
             taskAssigneesReducer: {
                 items: [mockAssignment, mockAssignment2],
@@ -1124,7 +1123,7 @@ describe("TaskActions", () => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
         const more = "more text";
-        if (status === tasksStatus.pickedUp) {
+        if (status === models.TaskStatus.PICKED_UP) {
             userEvent.click(
                 screen.getByRole("button", { name: "edit Time picked up" })
             );
@@ -1202,28 +1201,28 @@ describe("TaskActions", () => {
     test("change the sender details failure", async () => {
         const date = new Date();
         const mockTask = new models.Task({
-            status: tasksStatus.droppedOff,
+            status: models.TaskStatus.DROPPED_OFF,
             timePickedUp: date.toISOString(),
             timePickedUpSenderName: "someone person",
         });
         const fakeAssignee = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator, userRoles.user],
+                roles: [models.Role.COORDINATOR, models.Role.USER],
                 displayName: "test",
             })
         );
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
             assignee: fakeAssignee,
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
         });
         const mockAssignment2 = new models.TaskAssignee({
             task: mockTask,
             assignee: fakeAssignee,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
         const preloadedState = {
-            roleView: userRoles.rider,
+            roleView: models.Role.RIDER,
             whoami: { user: fakeAssignee },
             taskAssigneesReducer: {
                 items: [mockAssignment, mockAssignment2],

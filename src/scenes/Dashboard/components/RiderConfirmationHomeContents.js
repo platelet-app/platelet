@@ -11,7 +11,6 @@ import {
 import { DateTimePicker } from "@mui/lab";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
-import { tasksStatus, userRoles } from "../../../apiConsts";
 import GetError from "../../../ErrorComponents/GetError";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 
@@ -46,22 +45,22 @@ function RiderConfirmationHomeContents({
             setRider(rider);
             const riderTasks = (
                 await DataStore.query(models.TaskAssignee, (a) =>
-                    a.role("eq", userRoles.rider)
+                    a.role("eq", models.Role.RIDER)
                 )
             )
                 .filter((a) => a.assignee && a.assignee.id === userId)
                 .map((a) => a.task);
             const droppedOff = riderTasks.filter(
-                (t) => t && t.status === tasksStatus.droppedOff
+                (t) => t && t.status === models.TaskStatus.DROPPED_OFF
             ).length;
             const notDroppedOff = riderTasks.filter(
                 (t) =>
                     t &&
                     ![
-                        tasksStatus.droppedOff,
-                        tasksStatus.completed,
-                        tasksStatus.rejected,
-                        tasksStatus.cancelled,
+                        models.TaskStatus.DROPPED_OFF,
+                        models.TaskStatus.COMPLETED,
+                        models.TaskStatus.REJECTED,
+                        models.TaskStatus.CANCELLED,
                     ].includes(t.status)
             ).length;
             if (droppedOff > 0) setTime(new Date());

@@ -2,7 +2,6 @@ import { screen, waitFor } from "@testing-library/dom";
 import { render } from "../../../test-utils";
 import AdminAddLocation from "./AdminAddLocation";
 import userEvent from "@testing-library/user-event";
-import { userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
 import { encodeUUID } from "../../../utilities";
 import { DataStore } from "aws-amplify";
@@ -59,7 +58,7 @@ describe("AdminAddLocation", () => {
         const whoami = await DataStore.save(
             new models.User({
                 displayName: "someone person",
-                roles: [userRoles.admin, userRoles.user],
+                roles: [models.Role.ADMIN, models.Role.USER],
             })
         );
         const savedData = new models.Location({
@@ -116,7 +115,7 @@ describe("AdminAddLocation", () => {
                     error: null,
                     user: {
                         id: "user-id",
-                        roles: [userRoles.user],
+                        roles: [models.Role.USER],
                     },
                 },
                 tenantId,
@@ -139,7 +138,7 @@ describe("AdminAddLocation", () => {
                 error: null,
                 user: {
                     id: "user-id",
-                    roles: [userRoles.user, userRoles.admin],
+                    roles: [models.Role.USER, models.Role.ADMIN],
                 },
             },
             tenantId: "tenant-id",
@@ -163,7 +162,7 @@ describe("AdminAddLocation", () => {
                 error: null,
                 user: {
                     id: "user-id",
-                    roles: [userRoles.user, userRoles.admin],
+                    roles: [models.Role.USER, models.Role.ADMIN],
                 },
             },
             tenantId: "tenant-id",

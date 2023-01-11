@@ -1,5 +1,4 @@
 import { DataStore } from "aws-amplify";
-import { priorities, tasksStatus, userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
 
 export default async function getStats(role, range, whoamiId) {
@@ -22,7 +21,7 @@ export default async function getStats(role, range, whoamiId) {
     const taskIds = tasksWithinRange.map((t) => t.id);
     const coordAssignmentsAll = await DataStore.query(
         models.TaskAssignee,
-        (a) => a.role("eq", userRoles.coordinator)
+        (a) => a.role("eq", models.Role.COORDINATOR)
     );
     // get all of my tasks as a coordinator that fit in the range
     const myCoordAssignments = coordAssignmentsAll.filter(
@@ -36,13 +35,13 @@ export default async function getStats(role, range, whoamiId) {
     console.log(tasksWithinRange);
     stats.common.TOTAL = myTasks.length;
     // get the status stats
-    for (const status of Object.values(tasksStatus)) {
+    for (const status of Object.values(models.TaskStatus)) {
         stats.common[status] = myTasks.filter(
             (task) => task.status === status
         ).length;
     }
     // get the priority stats
-    for (const priority of Object.values(priorities)) {
+    for (const priority of Object.values(models.Priority)) {
         stats.priorities[priority] = myTasks.filter(
             (task) => task.priority === priority
         ).length;
@@ -54,7 +53,7 @@ export default async function getStats(role, range, whoamiId) {
     // get all the rider assignments that intersect with mine
     const riderAssignmentsAll = await DataStore.query(
         models.TaskAssignee,
-        (a) => a.role("eq", userRoles.rider)
+        (a) => a.role("eq", models.Role.RIDER)
     );
     const taskAssignments = riderAssignmentsAll.filter((ta) =>
         myTaskIds.includes(ta.task.id)
@@ -67,7 +66,7 @@ export default async function getStats(role, range, whoamiId) {
     const riders = {};
     for (const rider of Object.values(activeRiders)) {
         riders[rider.displayName] = {};
-        for (const priority of Object.values(priorities)) {
+        for (const priority of Object.values(models.Priority)) {
             const count = taskAssignments.filter(
                 (assignment) =>
                     assignment.assignee &&
@@ -93,9 +92,9 @@ export default async function getStats(role, range, whoamiId) {
     }
     const responsibilities = { None: { Total: 0 } };
     const prioritiesTemplate = {
-        [priorities.low]: 0,
-        [priorities.medium]: 0,
-        [priorities.high]: 0,
+        [models.Priority.LOW]: 0,
+        [models.Priority.MEDIUM]: 0,
+        [models.Priority.HIGH]: 0,
     };
     for (const task of myTasks) {
         const t = {
@@ -115,7 +114,7 @@ export default async function getStats(role, range, whoamiId) {
         }
     }
     for (const resp of Object.keys(responsibilities)) {
-        for (const priority of Object.values(priorities)) {
+        for (const priority of Object.values(models.Priority)) {
             if (resp === "None") {
                 responsibilities[resp][priority] = myTasks.filter(
                     (t) => !t.riderResponsibility && t.priority === priority

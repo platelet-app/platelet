@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import * as models from "../../../models";
 import { Skeleton } from "@mui/material";
 import { Button, TextField, Typography, Stack } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
@@ -13,7 +14,6 @@ import {
 import Forbidden from "../../../ErrorComponents/Forbidden";
 import { getWhoami, tenantIdSelector } from "../../../redux/Selectors";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
-import { userRoles } from "../../../apiConsts";
 import * as mutations from "../../../graphql/mutations";
 import { API, graphqlOperation } from "aws-amplify";
 import UserRoleSelect from "../../../components/UserRoleSelect";
@@ -83,7 +83,7 @@ function AdminAddUser() {
                 graphqlOperation(mutations.registerUser, {
                     name: state.name,
                     email: state.email,
-                    roles: [...rolesState, userRoles.user],
+                    roles: [...rolesState, models.Role.USER],
                     tenantId,
                 })
             );
@@ -182,7 +182,7 @@ function AdminAddUser() {
                     )}
 
                     <UserRoleSelect
-                        exclude={[userRoles.user]}
+                        exclude={[models.Role.USER]}
                         onSelect={onClickToggle}
                         value={rolesState}
                     />

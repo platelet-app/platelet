@@ -6,7 +6,6 @@ import { screen, waitFor } from "@testing-library/react";
 import { render } from "../../../test-utils";
 import LocationDetail from "./LocationDetail";
 import userEvent from "@testing-library/user-event";
-import { userRoles } from "../../../apiConsts";
 
 const mockAddress = Object.keys(locationFields).reduce((acc, key) => {
     return { ...acc, [key]: uuidv4() };
@@ -24,7 +23,7 @@ const mockLocation = {
 
 const whoami = new models.User({
     displayName: "whoami",
-    roles: [userRoles.admin, userRoles.user],
+    roles: [models.Role.ADMIN, models.Role.USER],
 });
 
 const preloadedState = {

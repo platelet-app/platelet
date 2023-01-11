@@ -1,7 +1,6 @@
 import StatusBar from "./StatusBar";
 import { render } from "../../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
-import { tasksStatus } from "../../../apiConsts";
 import * as models from "../../../models/index";
 import userEvent from "@testing-library/user-event";
 import { createMatchMedia } from "../../../test-utils";
@@ -21,14 +20,14 @@ describe("StatusBar", () => {
 
     it.each`
         status
-        ${tasksStatus.completed}
-        ${tasksStatus.cancelled}
-        ${tasksStatus.pickedUp}
-        ${tasksStatus.droppedOff}
-        ${tasksStatus.abandoned}
-        ${tasksStatus.active}
-        ${tasksStatus.new}
-        ${tasksStatus.rejected}
+        ${models.TaskStatus.COMPLETED}
+        ${models.TaskStatus.CANCELLED}
+        ${models.TaskStatus.PICKED_UP}
+        ${models.TaskStatus.DROPPED_OFF}
+        ${models.TaskStatus.ABANDONED}
+        ${models.TaskStatus.ACTIVE}
+        ${models.TaskStatus.NEW}
+        ${models.TaskStatus.REJECTED}
     `("renders the correct status", async ({ status }) => {
         const mockTask = await DataStore.save(new models.Task({ status }));
         const querySpy = jest.spyOn(DataStore, "query");
@@ -36,8 +35,8 @@ describe("StatusBar", () => {
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledWith(models.Task, mockTask.id);
         });
-        if (status === tasksStatus.droppedOff) status = "DELIVERED";
-        else if (status === tasksStatus.pickedUp) status = "PICKED UP";
+        if (status === models.TaskStatus.DROPPED_OFF) status = "DELIVERED";
+        else if (status === models.TaskStatus.PICKED_UP) status = "PICKED UP";
         expect(screen.getByText(status)).toBeInTheDocument();
     });
 
@@ -66,7 +65,7 @@ describe("StatusBar", () => {
         });
         const mockTask = new models.Task({
             timeOfCall,
-            status: tasksStatus.new,
+            status: models.TaskStatus.NEW,
             pickUpLocation,
             dropOffLocation,
             priority: models.Priority.HIGH,
@@ -152,7 +151,7 @@ describe("StatusBar", () => {
         });
         const mockTask = new models.Task({
             timeOfCall,
-            status: tasksStatus.new,
+            status: models.TaskStatus.NEW,
             pickUpLocation,
             dropOffLocation,
             priority: models.Priority.HIGH,

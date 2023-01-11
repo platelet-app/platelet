@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getWhoami, tenantIdSelector } from "../../../redux/Selectors";
 import Forbidden from "../../../ErrorComponents/Forbidden";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
-import { deliverableIcons, deliverableUnits } from "../../../apiConsts";
+import { deliverableIcons } from "../../../apiConsts";
 import DeliverableIconPicker from "./DeliverableIconPicker";
 import UnitSelector from "../../../components/UnitSelector";
 import DeliverableTypeTagger from "./DeliverableTypeTagger";
@@ -17,7 +17,7 @@ import DeliverableTypeTagger from "./DeliverableTypeTagger";
 const initialDeliverableTypeState = {
     label: "",
     icon: deliverableIcons.other,
-    defaultUnit: deliverableUnits.none,
+    defaultUnit: models.DeliverableUnit.NONE,
     tags: [],
 };
 

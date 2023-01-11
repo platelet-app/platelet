@@ -1,7 +1,6 @@
 import { DataStore } from "aws-amplify";
 import _ from "lodash";
 import moment from "moment";
-import { commentVisibility } from "../../../apiConsts";
 import * as models from "../../../models";
 import { writeToString } from "@fast-csv/format";
 
@@ -261,7 +260,7 @@ export default async function generateReport(userId, role, days) {
     }
     const deliverables = await DataStore.query(models.Deliverable);
     const commentsAll = await DataStore.query(models.Comment, (c) =>
-        c.visibility("eq", commentVisibility.everyone)
+        c.visibility("eq", models.CommentVisibility.EVERYONE)
     );
     finalTasks = await Promise.all(
         finalTasks.map(async (t) => {

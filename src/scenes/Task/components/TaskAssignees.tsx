@@ -1,7 +1,6 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
 import { Divider, Grid, Stack } from "@mui/material";
-import { userRoles } from "../../../apiConsts";
 import UserChip from "../../../components/UserChip";
 import { sortByCreatedTime } from "../../../utilities";
 import { getWhoami } from "../../../redux/Selectors";
@@ -50,57 +49,53 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
         </ConfirmationDialog>
     );
 
-    const mappedAssigneeContents = [userRoles.coordinator, userRoles.rider].map(
-        (role) => {
-            const assignmentsUnsorted = props.assignees.filter(
-                (a) => a.role === role
-            );
-            const assignments = sortByCreatedTime(
-                assignmentsUnsorted,
-                "oldest"
-            );
-            const message = assignments.length === 0 ? "No one assigned" : "";
-            const label =
-                role === userRoles.coordinator ? "Coordinators:" : "Riders:";
-            return (
-                <>
-                    <Grid
-                        container
-                        key={role}
-                        data-cy={`task-${role}-assignees`}
-                        direction="row"
-                        alignItems="center"
-                        spacing={1}
-                    >
-                        <Grid item>
-                            <Typography>{label}</Typography>
-                        </Grid>
-                        <Grid item>
-                            <Typography>{message}</Typography>
-                        </Grid>
-                        {assignments.map((assignment: models.TaskAssignee) => {
-                            const user = assignment.assignee || null;
-                            return (
-                                <Grid key={assignment.id} item>
-                                    <UserChip
-                                        showResponsibility={
-                                            role === userRoles.rider
-                                        }
-                                        disabled={props.disabled}
-                                        user={user}
-                                        onDelete={() =>
-                                            handleRemove(assignment)
-                                        }
-                                    />
-                                </Grid>
-                            );
-                        })}
+    const mappedAssigneeContents = [
+        models.Role.COORDINATOR,
+        models.Role.RIDER,
+    ].map((role) => {
+        const assignmentsUnsorted = props.assignees.filter(
+            (a) => a.role === role
+        );
+        const assignments = sortByCreatedTime(assignmentsUnsorted, "oldest");
+        const message = assignments.length === 0 ? "No one assigned" : "";
+        const label =
+            role === models.Role.COORDINATOR ? "Coordinators:" : "Riders:";
+        return (
+            <>
+                <Grid
+                    container
+                    key={role}
+                    data-cy={`task-${role}-assignees`}
+                    direction="row"
+                    alignItems="center"
+                    spacing={1}
+                >
+                    <Grid item>
+                        <Typography>{label}</Typography>
                     </Grid>
-                    <Divider />
-                </>
-            );
-        }
-    );
+                    <Grid item>
+                        <Typography>{message}</Typography>
+                    </Grid>
+                    {assignments.map((assignment: models.TaskAssignee) => {
+                        const user = assignment.assignee || null;
+                        return (
+                            <Grid key={assignment.id} item>
+                                <UserChip
+                                    showResponsibility={
+                                        role === models.Role.RIDER
+                                    }
+                                    disabled={props.disabled}
+                                    user={user}
+                                    onDelete={() => handleRemove(assignment)}
+                                />
+                            </Grid>
+                        );
+                    })}
+                </Grid>
+                <Divider />
+            </>
+        );
+    });
     return (
         <>
             {confirmationSelfDeleteDialog}

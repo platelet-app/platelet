@@ -3,7 +3,6 @@ import { mockAllIsIntersecting } from "react-intersection-observer/test-utils";
 import TaskContextMenu from "./TaskContextMenu";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models";
-import { tasksStatus, userRoles } from "../../apiConsts";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import TasksGridColumn from "../../scenes/Dashboard/components/TasksGridColumn";
@@ -36,7 +35,7 @@ describe("TaskContextMenu", () => {
     test("cancel a task", async () => {
         const task = await DataStore.save(
             new models.Task({
-                status: tasksStatus.new,
+                status: models.TaskStatus.NEW,
             })
         );
         const saveSpy = jest.spyOn(DataStore, "save");
@@ -50,7 +49,7 @@ describe("TaskContextMenu", () => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...task,
                 timeCancelled: isoDate,
-                status: tasksStatus.cancelled,
+                status: models.TaskStatus.CANCELLED,
             });
         });
         await waitFor(() => {
@@ -71,7 +70,7 @@ describe("TaskContextMenu", () => {
     test("cancel a task failure", async () => {
         const task = await DataStore.save(
             new models.Task({
-                status: tasksStatus.new,
+                status: models.TaskStatus.NEW,
             })
         );
         const saveSpy = jest
@@ -96,7 +95,7 @@ describe("TaskContextMenu", () => {
     test("reject a task", async () => {
         const task = await DataStore.save(
             new models.Task({
-                status: tasksStatus.new,
+                status: models.TaskStatus.NEW,
             })
         );
         const saveSpy = jest.spyOn(DataStore, "save");
@@ -110,7 +109,7 @@ describe("TaskContextMenu", () => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...task,
                 timeRejected: isoDate,
-                status: tasksStatus.rejected,
+                status: models.TaskStatus.REJECTED,
             });
         });
         await waitFor(() => {
@@ -131,20 +130,20 @@ describe("TaskContextMenu", () => {
     test("mark a task picked up", async () => {
         const task = await DataStore.save(
             new models.Task({
-                status: tasksStatus.active,
+                status: models.TaskStatus.ACTIVE,
             })
         );
         const fakeRider = await DataStore.save(
             new models.User({
                 displayName: "Someone person",
-                roles: [userRoles.user, userRoles.rider],
+                roles: [models.Role.USER, models.Role.RIDER],
             })
         );
         const fakeAssignment = await DataStore.save(
             new models.TaskAssignee({
                 task,
                 assignee: fakeRider,
-                role: userRoles.rider,
+                role: models.Role.RIDER,
             })
         );
         const preloadedState = {
@@ -168,7 +167,7 @@ describe("TaskContextMenu", () => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...task,
                 timePickedUp: isoDate,
-                status: tasksStatus.pickedUp,
+                status: models.TaskStatus.PICKED_UP,
             });
         });
         await waitFor(() => {
@@ -189,21 +188,21 @@ describe("TaskContextMenu", () => {
     test("mark a task delivered", async () => {
         const task = await DataStore.save(
             new models.Task({
-                status: tasksStatus.pickedUp,
+                status: models.TaskStatus.PICKED_UP,
                 timePickedUp: new Date().toISOString(),
             })
         );
         const fakeRider = await DataStore.save(
             new models.User({
                 displayName: "Someone person",
-                roles: [userRoles.user, userRoles.rider],
+                roles: [models.Role.USER, models.Role.RIDER],
             })
         );
         const fakeAssignment = await DataStore.save(
             new models.TaskAssignee({
                 task,
                 assignee: fakeRider,
-                role: userRoles.rider,
+                role: models.Role.RIDER,
             })
         );
         const preloadedState = {
@@ -227,7 +226,7 @@ describe("TaskContextMenu", () => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...task,
                 timeDroppedOff: isoDate,
-                status: tasksStatus.droppedOff,
+                status: models.TaskStatus.DROPPED_OFF,
             });
         });
         await waitFor(() => {
@@ -247,7 +246,7 @@ describe("TaskContextMenu", () => {
     test("mark a rider home", async () => {
         const task = await DataStore.save(
             new models.Task({
-                status: tasksStatus.droppedOff,
+                status: models.TaskStatus.DROPPED_OFF,
                 timePickedUp: new Date().toISOString(),
                 timeDroppedOff: new Date().toISOString(),
             })
@@ -255,14 +254,14 @@ describe("TaskContextMenu", () => {
         const fakeRider = await DataStore.save(
             new models.User({
                 displayName: "Someone person",
-                roles: [userRoles.user, userRoles.rider],
+                roles: [models.Role.USER, models.Role.RIDER],
             })
         );
         const fakeAssignment = await DataStore.save(
             new models.TaskAssignee({
                 task,
                 assignee: fakeRider,
-                role: userRoles.rider,
+                role: models.Role.RIDER,
             })
         );
         const preloadedState = {
@@ -286,7 +285,7 @@ describe("TaskContextMenu", () => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...task,
                 timeRiderHome: isoDate,
-                status: tasksStatus.completed,
+                status: models.TaskStatus.COMPLETED,
             });
         });
         await waitFor(() => {
@@ -325,7 +324,7 @@ describe("TaskContextMenu", () => {
         });
         const mockTask = new models.Task({
             timeOfCall,
-            status: tasksStatus.new,
+            status: models.TaskStatus.NEW,
             pickUpLocation,
             dropOffLocation,
             priority: models.Priority.HIGH,
@@ -389,7 +388,7 @@ describe("TaskContextMenu", () => {
         const whoami = await DataStore.save(
             new models.User({
                 displayName: "someone person",
-                roles: [userRoles.user, userRoles.coordinator],
+                roles: [models.Role.USER, models.Role.COORDINATOR],
                 tenantId,
             })
         );
@@ -416,7 +415,7 @@ describe("TaskContextMenu", () => {
         );
         const task = await DataStore.save(
             new models.Task({
-                status: tasksStatus.new,
+                status: models.TaskStatus.NEW,
                 pickUpLocation: mockLocation,
                 dropOffLocation: mockLocation2,
                 establishmentLocation: mockEstablishment,
@@ -426,7 +425,7 @@ describe("TaskContextMenu", () => {
         const mockTaskAssignee = new models.TaskAssignee({
             task,
             assignee: whoami,
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
             tenantId,
         });
         const deliverableTypes = await Promise.all(
@@ -450,7 +449,7 @@ describe("TaskContextMenu", () => {
         const saveSpy = jest.spyOn(DataStore, "save");
         const preloadedState = {
             whoami: { user: whoami },
-            roleView: userRoles.coordinator,
+            roleView: models.Role.COORDINATOR,
             taskAssigneesReducer: {
                 items: [mockTaskAssignee],
                 ready: true,
@@ -465,7 +464,7 @@ describe("TaskContextMenu", () => {
         render(
             <>
                 <TaskContextMenu task={task} assignedRiders={[]} />
-                <TasksGridColumn taskKey={[tasksStatus.new]} />
+                <TasksGridColumn taskKey={[models.TaskStatus.NEW]} />
             </>,
             {
                 preloadedState,
@@ -527,18 +526,18 @@ describe("TaskContextMenu", () => {
         const whoami = await DataStore.save(
             new models.User({
                 displayName: "someone person",
-                roles: [userRoles.user, userRoles.rider],
+                roles: [models.Role.USER, models.Role.RIDER],
             })
         );
         const task = await DataStore.save(
             new models.Task({
-                status: tasksStatus.active,
+                status: models.TaskStatus.ACTIVE,
                 riderResponsibility: "something",
             })
         );
         const preloadedState = {
             whoami: { user: whoami },
-            roleView: userRoles.rider,
+            roleView: models.Role.RIDER,
         };
         render(<TaskContextMenu task={task} assignedRiders={[]} />, {
             preloadedState,
@@ -555,26 +554,26 @@ describe("TaskContextMenu", () => {
         const whoami = await DataStore.save(
             new models.User({
                 displayName: "someone person",
-                roles: [userRoles.user, userRoles.rider],
+                roles: [models.Role.USER, models.Role.RIDER],
                 tenantId,
             })
         );
         const task = await DataStore.save(
             new models.Task({
-                status: tasksStatus.active,
+                status: models.TaskStatus.ACTIVE,
                 riderResponsibility: "something",
             })
         );
         const mockTaskAssignee = new models.TaskAssignee({
             task,
             assignee: whoami,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
             tenantId: whoami.tenantId,
         });
         const saveSpy = jest.spyOn(DataStore, "save");
         const preloadedState = {
             whoami: { user: whoami },
-            roleView: userRoles.rider,
+            roleView: models.Role.RIDER,
         };
         render(<TaskContextMenu task={task} assignedRiders={[]} />, {
             preloadedState,
@@ -603,7 +602,7 @@ describe("TaskContextMenu", () => {
         const whoami = await DataStore.save(
             new models.User({
                 displayName: "someone person",
-                roles: [userRoles.user, userRoles.coordinator],
+                roles: [models.Role.USER, models.Role.COORDINATOR],
                 tenantId,
             })
         );
@@ -618,7 +617,7 @@ describe("TaskContextMenu", () => {
         );
         const task = await DataStore.save(
             new models.Task({
-                status: tasksStatus.new,
+                status: models.TaskStatus.NEW,
                 pickUpLocation: mockLocation,
                 dropOffLocation: mockLocation2,
                 establishmentLocation: mockEstablishment,
@@ -659,13 +658,13 @@ describe("TaskContextMenu", () => {
     test("duplicate a task failure", async () => {
         const task = await DataStore.save(
             new models.Task({
-                status: tasksStatus.new,
+                status: models.TaskStatus.NEW,
             })
         );
         const whoami = await DataStore.save(
             new models.User({
                 displayName: "someone person",
-                roles: [userRoles.user, userRoles.coordinator],
+                roles: [models.Role.USER, models.Role.COORDINATOR],
                 tenantId,
             })
         );
@@ -694,7 +693,7 @@ describe("TaskContextMenu", () => {
 
     test.each`
         taskStatus
-        ${tasksStatus.completed} | ${tasksStatus.abandoned} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
+        ${models.TaskStatus.COMPLETED} | ${models.TaskStatus.ABANDONED} | ${models.TaskStatus.REJECTED} | ${models.TaskStatus.CANCELLED}
     `("disable duplicate if completed", async ({ taskStatus }) => {
         const task = await DataStore.save(
             new models.Task({

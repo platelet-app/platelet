@@ -1,7 +1,7 @@
 import { FormControl, MenuItem, Select } from "@mui/material";
 import PropTypes from "prop-types";
 import React from "react";
-import { deliverableUnits } from "../apiConsts";
+import * as models from "../../../models";
 
 function UnitSelector(props) {
     return (
@@ -12,7 +12,7 @@ function UnitSelector(props) {
                 label={props.label}
                 onChange={props.onChange}
             >
-                {Object.values(deliverableUnits).map((unit) => (
+                {Object.values(models.DeliverableUnit).map((unit) => (
                     <MenuItem value={unit}>{unit}</MenuItem>
                 ))}
             </Select>

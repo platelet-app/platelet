@@ -9,11 +9,10 @@ import * as models from "../../../models/index";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import faker from "faker";
-import { tasksStatus, userRoles } from "../../../apiConsts";
 import moment from "moment";
 
-const fakeAssignments = Object.values(tasksStatus)
-    .filter((s) => s !== tasksStatus.new)
+const fakeAssignments = Object.values(models.TaskStatus)
+    .filter((s) => s !== models.TaskStatus.NEW)
     .map(
         (status) =>
             new models.TaskAssignee({
@@ -23,7 +22,7 @@ const fakeAssignments = Object.values(tasksStatus)
                 assignee: new models.User({
                     displayName: uuidv4(),
                 }),
-                role: userRoles.rider,
+                role: models.Role.RIDER,
             })
     );
 
@@ -35,10 +34,13 @@ const fakeAssignmentsOneRider = _.range(0, 10).map(
     (i) =>
         new models.TaskAssignee({
             task: new models.Task({
-                status: i > 3 ? tasksStatus.droppedOff : tasksStatus.active,
+                status:
+                    i > 3
+                        ? models.TaskStatus.DROPPED_OFF
+                        : models.TaskStatus.ACTIVE,
             }),
             assignee: fakeSingleUser,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         })
 );
 
@@ -49,20 +51,20 @@ const fakeAssignmentsFirstCoord = _.range(0, 5).map(
     (i) =>
         new models.TaskAssignee({
             task: new models.Task({
-                status: tasksStatus.active,
+                status: models.TaskStatus.ACTIVE,
             }),
             assignee: fakeCoord1,
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
         })
 );
 const fakeAssignmentsSecondCoord = _.range(0, 5).map(
     (i) =>
         new models.TaskAssignee({
             task: new models.Task({
-                status: tasksStatus.active,
+                status: models.TaskStatus.ACTIVE,
             }),
             assignee: fakeCoord2,
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
         })
 );
 const fakeAssignmentsRiders = [
@@ -73,7 +75,7 @@ const fakeAssignmentsRiders = [
     assignee: new models.User({
         displayName: faker.name.findName(),
     }),
-    role: userRoles.rider,
+    role: models.Role.RIDER,
 }));
 
 const preloadedState = {
@@ -115,7 +117,7 @@ describe("ActiveRiderChips", () => {
 
     test.each`
         taskStatus
-        ${tasksStatus.completed} | ${tasksStatus.abandoned} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
+        ${models.TaskStatus.COMPLETED} | ${models.TaskStatus.ABANDONED} | ${models.TaskStatus.REJECTED} | ${models.TaskStatus.CANCELLED}
     `(
         "don't display riders from completed jobs older than a week",
         async ({ taskStatus }) => {
@@ -131,7 +133,7 @@ describe("ActiveRiderChips", () => {
                     status: taskStatus,
                 }),
                 assignee: fakeUser1,
-                role: userRoles.rider,
+                role: models.Role.RIDER,
             });
             const oldAssignment = {
                 ...oldAssignmentModel,
@@ -145,7 +147,7 @@ describe("ActiveRiderChips", () => {
                     status: taskStatus,
                 }),
                 assignee: fakeUser2,
-                role: userRoles.rider,
+                role: models.Role.RIDER,
             });
             const newAssignment = {
                 ...newAssignmentModel,
@@ -178,8 +180,8 @@ describe("ActiveRiderChips", () => {
 
     test.each`
         taskStatus
-        ${tasksStatus.completed} | ${tasksStatus.abandoned} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
-        ${tasksStatus.new}       | ${tasksStatus.pickedUp}  | ${tasksStatus.active}   | ${tasksStatus.droppedOff}
+        ${models.TaskStatus.COMPLETED} | ${models.TaskStatus.ABANDONED} | ${models.TaskStatus.REJECTED} | ${models.TaskStatus.CANCELLED}
+        ${models.TaskStatus.NEW}       | ${models.TaskStatus.PICKED_UP} | ${models.TaskStatus.ACTIVE}   | ${models.TaskStatus.DROPPED_OFF}
     `(
         "only display riders that match the dashboard index",
         async ({ taskStatus }) => {
@@ -194,33 +196,33 @@ describe("ActiveRiderChips", () => {
                     status: taskStatus,
                 }),
                 assignee: fakeUser1,
-                role: userRoles.rider,
+                role: models.Role.RIDER,
             });
             const shown = { ...shownModel, createdAt: moment().toISOString() };
             const status = [
-                tasksStatus.rejected,
-                tasksStatus.cancelled,
-                tasksStatus.completed,
-                tasksStatus.abandoned,
+                models.TaskStatus.REJECTED,
+                models.TaskStatus.CANCELLED,
+                models.TaskStatus.COMPLETED,
+                models.TaskStatus.ABANDONED,
             ].includes(taskStatus)
-                ? tasksStatus.new
-                : tasksStatus.completed;
+                ? models.TaskStatus.NEW
+                : models.TaskStatus.COMPLETED;
             const hiddenModel = new models.TaskAssignee({
                 task: new models.Task({
                     status,
                 }),
                 assignee: fakeUser2,
-                role: userRoles.rider,
+                role: models.Role.RIDER,
             });
             const hidden = {
                 ...hiddenModel,
                 createdAt: moment().toISOString(),
             };
             const dashboardTabIndex = [
-                tasksStatus.rejected,
-                tasksStatus.cancelled,
-                tasksStatus.completed,
-                tasksStatus.abandoned,
+                models.TaskStatus.REJECTED,
+                models.TaskStatus.CANCELLED,
+                models.TaskStatus.COMPLETED,
+                models.TaskStatus.ABANDONED,
             ].includes(taskStatus)
                 ? 1
                 : 0;
@@ -247,7 +249,7 @@ describe("ActiveRiderChips", () => {
     it("displays no riders when in rider mode", async () => {
         const newPreloadedState = {
             ...preloadedState,
-            roleView: userRoles.rider,
+            roleView: models.Role.RIDER,
             whoami: { user: fakeSingleUser },
         };
         render(<ActiveRidersChips />, { preloadedState: newPreloadedState });
@@ -270,7 +272,7 @@ describe("ActiveRiderChips", () => {
                     ...fakeAssignmentsSecondCoord,
                 ],
             },
-            roleView: userRoles.coordinator,
+            roleView: models.Role.COORDINATOR,
             whoami: { user: fakeCoord1 },
         };
         render(<ActiveRidersChips />, { preloadedState: newPreloadedState });
@@ -309,7 +311,7 @@ describe("ActiveRiderChips", () => {
             .mockResolvedValue(fakeAssignmentsOneRider);
         amplify.DataStore.save.mockResolvedValue(
             new models.Task({
-                status: tasksStatus.completed,
+                status: models.TaskStatus.COMPLETED,
                 timeRiderHome: new Date().toISOString(),
             })
         );
@@ -328,11 +330,11 @@ describe("ActiveRiderChips", () => {
             expect(amplify.DataStore.save).toHaveBeenCalledTimes(6);
         });
         for (const assign of fakeAssignmentsOneRider.filter(
-            (a) => a.task.status === tasksStatus.droppedOff
+            (a) => a.task.status === models.TaskStatus.DROPPED_OFF
         )) {
             expect(amplify.DataStore.save).toHaveBeenCalledWith({
                 ...assign.task,
-                status: tasksStatus.completed,
+                status: models.TaskStatus.COMPLETED,
                 timeRiderHome: expect.any(String),
             });
         }

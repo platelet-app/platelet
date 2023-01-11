@@ -3,17 +3,13 @@ import AdminAddDeliverableType from "./AdminAddDeliverableType";
 import { render } from "../../../test-utils";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
-import {
-    deliverableIcons,
-    deliverableUnits,
-    userRoles,
-} from "../../../apiConsts";
+import { deliverableIcons } from "../../../apiConsts";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 const preloadedState = {
     whoami: {
-        user: new models.User({ roles: [userRoles.user, userRoles.admin] }),
+        user: new models.User({ roles: [models.Role.USER, models.Role.ADMIN] }),
     },
     loadingReducer: {
         GET_WHOAMI: false,
@@ -32,7 +28,7 @@ describe("AdminAddDeliverableType", () => {
         const mockNewDeliverable = new models.DeliverableType({
             label: "test",
             icon: deliverableIcons.other,
-            defaultUnit: deliverableUnits.none,
+            defaultUnit: models.DeliverableUnit.NONE,
             tags: [],
             disabled: 0,
             tenantId: "tenant-id",
@@ -100,7 +96,7 @@ describe("AdminAddDeliverableType", () => {
         const mockNewDeliverable = new models.DeliverableType({
             label: "test",
             icon: deliverableIcons.bug,
-            defaultUnit: deliverableUnits.item,
+            defaultUnit: models.DeliverableUnit.ITEM,
             tags: ["tag1", "tag2"],
             disabled: 0,
             tenantId: "tenant-id",
@@ -119,7 +115,7 @@ describe("AdminAddDeliverableType", () => {
         userEvent.click(screen.getByRole("button", { name: "Bug icon" }));
         expect(screen.getByRole("button", { name: "Bug icon" })).toBeDisabled();
         userEvent.click(screen.getByText("NONE"));
-        for (const entry of Object.values(deliverableUnits)) {
+        for (const entry of Object.values(models.DeliverableUnit)) {
             expect(screen.queryAllByText(entry)).not.toBeNull();
         }
         userEvent.click(screen.getByText("ITEM"));
@@ -152,7 +148,9 @@ describe("AdminAddDeliverableType", () => {
         render(<AdminAddDeliverableType />, {
             preloadedState: {
                 ...preloadedState,
-                whoami: { user: new models.User({ roles: [userRoles.user] }) },
+                whoami: {
+                    user: new models.User({ roles: [models.Role.USER] }),
+                },
             },
         });
         expect(screen.queryByText("Add deliverable type")).toBeNull();

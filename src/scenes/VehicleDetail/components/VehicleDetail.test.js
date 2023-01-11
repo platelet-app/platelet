@@ -5,7 +5,6 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import * as models from "../../../models";
 import { render } from "../../../test-utils";
-import { userRoles } from "../../../apiConsts";
 import { vehicleDetailFields } from "./VehicleProfile";
 
 const testVehicle = {
@@ -18,7 +17,7 @@ const testVehicle = {
 
 const whoami = new models.User({
     displayName: "whoami",
-    roles: [userRoles.admin, userRoles.user],
+    roles: [models.Role.ADMIN, models.Role.USER],
 });
 
 const tenantId = uuidv4();
@@ -132,7 +131,7 @@ describe("VehicleDetail", () => {
         const assignUser = await DataStore.save(
             new models.User({
                 displayName: "assignUser",
-                roles: [userRoles.user, userRoles.rider],
+                roles: [models.Role.USER, models.Role.RIDER],
             })
         );
         const mockAssignment = new models.VehicleAssignment({

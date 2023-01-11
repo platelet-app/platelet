@@ -12,7 +12,7 @@ import {
 import * as models from "../../../models/index";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { DataStore } from "aws-amplify";
-import { protectedFields, userRoles } from "../../../apiConsts";
+import { protectedFields } from "../../../apiConsts";
 import { Divider, Stack, Skeleton } from "@mui/material";
 import AssignUserToVehicle from "./AssignUserToVehicle";
 
@@ -167,7 +167,7 @@ export default function VehicleDetail({ vehicleId }) {
 
     const canAssign =
         whoami.roles &&
-        [userRoles.admin, userRoles.coordinator, userRoles.rider].some(
+        [models.Role.ADMIN, models.Role.COORDINATOR, models.Role.RIDER].some(
             (role) => whoami.roles && whoami.roles.includes(role)
         );
 

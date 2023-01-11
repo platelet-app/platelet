@@ -2,12 +2,6 @@ import React from "react";
 import { render } from "../../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import TasksGridColumn from "./TasksGridColumn";
-import {
-    commentVisibility,
-    priorities,
-    tasksStatus,
-    userRoles,
-} from "../../../apiConsts";
 import * as amplify from "aws-amplify";
 import * as models from "../../../models";
 import { mockAllIsIntersecting } from "react-intersection-observer/test-utils";
@@ -27,7 +21,7 @@ Logger.LOG_LEVEL = "ERROR";
 const testUserModel = new models.User({
     name: "whoami",
     displayName: "Mock User",
-    roles: Object.values(userRoles),
+    roles: Object.values(models.Role),
     dateOfBirth: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,
@@ -58,7 +52,7 @@ describe("TasksGridColumn", () => {
     });
     it("renders without crashing", async () => {
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+        render(<TasksGridColumn taskKey={[models.TaskStatus.NEW]} />, {
             preloadedState,
         });
         mockAllIsIntersecting(true);
@@ -70,15 +64,17 @@ describe("TasksGridColumn", () => {
 
     it.each`
         roleView
-        ${userRoles.rider} | ${userRoles.coordinator}
+        ${models.Role.RIDER} | ${models.Role.COORDINATOR}
     `("renders the tasks in different role views", async ({ roleView }) => {
         let mockTasks = await Promise.all(
             _.range(0, 10).map((i) =>
                 DataStore.save(
                     new models.Task({
-                        status: tasksStatus.new,
+                        status: models.TaskStatus.NEW,
                         priority:
-                            i % 2 === 0 ? priorities.medium : priorities.high,
+                            i % 2 === 0
+                                ? models.Priority.MEDIUM
+                                : models.Priority.HIGH,
                     })
                 )
             )
@@ -116,7 +112,7 @@ describe("TasksGridColumn", () => {
                 isSynced: true,
             },
         };
-        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+        render(<TasksGridColumn taskKey={[models.TaskStatus.NEW]} />, {
             preloadedState,
         });
         mockAllIsIntersecting(true);
@@ -129,14 +125,16 @@ describe("TasksGridColumn", () => {
             );
         });
         mockAllIsIntersecting(true);
-        expect(await screen.findAllByText(priorities.medium)).toHaveLength(5);
-        expect(screen.queryAllByText(priorities.high)).toHaveLength(0);
+        expect(await screen.findAllByText(models.Priority.MEDIUM)).toHaveLength(
+            5
+        );
+        expect(screen.queryAllByText(models.Priority.HIGH)).toHaveLength(0);
     });
 
     it.each`
         taskStatus
-        ${tasksStatus.completed} | ${tasksStatus.droppedOff} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
-        ${tasksStatus.active}    | ${tasksStatus.pickedUp}
+        ${models.TaskStatus.COMPLETED} | ${models.TaskStatus.DROPPED_OFF} | ${models.TaskStatus.REJECTED} | ${models.TaskStatus.CANCELLED}
+        ${models.TaskStatus.ACTIVE}    | ${models.TaskStatus.PICKED_UP}
     `(
         "renders the tasks in ALL view for each status",
         async ({ taskStatus }) => {
@@ -145,7 +143,7 @@ describe("TasksGridColumn", () => {
                     DataStore.save(
                         new models.Task({
                             status: taskStatus,
-                            priority: priorities.medium,
+                            priority: models.Priority.MEDIUM,
                         })
                     )
                 )
@@ -193,8 +191,11 @@ describe("TasksGridColumn", () => {
             _.range(0, 10).map((i) =>
                 DataStore.save(
                     new models.Task({
-                        status: tasksStatus.new,
-                        priority: i < 5 ? priorities.medium : priorities.high,
+                        status: models.TaskStatus.NEW,
+                        priority:
+                            i < 5
+                                ? models.Priority.MEDIUM
+                                : models.Priority.HIGH,
                     })
                 )
             )
@@ -204,8 +205,8 @@ describe("TasksGridColumn", () => {
             <>
                 <DashboardDetailTabs />
                 <TasksGridColumn
-                    title={tasksStatus.new}
-                    taskKey={[tasksStatus.new]}
+                    title={models.TaskStatus.NEW}
+                    taskKey={[models.TaskStatus.NEW]}
                 />
             </>,
             {
@@ -257,8 +258,11 @@ describe("TasksGridColumn", () => {
             _.range(0, 10).map((i) =>
                 DataStore.save(
                     new models.Task({
-                        status: tasksStatus.new,
-                        priority: i < 5 ? priorities.medium : priorities.high,
+                        status: models.TaskStatus.NEW,
+                        priority:
+                            i < 5
+                                ? models.Priority.MEDIUM
+                                : models.Priority.HIGH,
                     })
                 )
             )
@@ -282,7 +286,7 @@ describe("TasksGridColumn", () => {
                     new models.TaskAssignee({
                         task: mockTasks[i],
                         assignee: i % 2 === 0 ? fakeUser1 : fakeUser2,
-                        role: userRoles.rider,
+                        role: models.Role.RIDER,
                     })
                 )
             )
@@ -293,14 +297,14 @@ describe("TasksGridColumn", () => {
                     new models.TaskAssignee({
                         task: mockTasks[i],
                         assignee: mockWhoami,
-                        role: userRoles.coordinator,
+                        role: models.Role.COORDINATOR,
                     })
                 )
             )
         );
         const allAssignments = [...mockAssignments, ...mockAssignmentsMe];
         const preloadedState = {
-            roleView: userRoles.coordinator,
+            roleView: models.Role.COORDINATOR,
             whoami: { user: mockWhoami },
             taskAssigneesReducer: {
                 items: allAssignments,
@@ -313,8 +317,8 @@ describe("TasksGridColumn", () => {
             <>
                 <ActiveRidersChips />
                 <TasksGridColumn
-                    title={tasksStatus.new}
-                    taskKey={[tasksStatus.new]}
+                    title={models.TaskStatus.NEW}
+                    taskKey={[models.TaskStatus.NEW]}
                 />
             </>,
             {
@@ -352,8 +356,11 @@ describe("TasksGridColumn", () => {
             _.range(0, 10).map((i) =>
                 DataStore.save(
                     new models.Task({
-                        status: tasksStatus.active,
-                        priority: i < 5 ? priorities.medium : priorities.high,
+                        status: models.TaskStatus.ACTIVE,
+                        priority:
+                            i < 5
+                                ? models.Priority.MEDIUM
+                                : models.Priority.HIGH,
                     })
                 )
             )
@@ -377,7 +384,7 @@ describe("TasksGridColumn", () => {
                     new models.TaskAssignee({
                         task: mockTasks[i],
                         assignee: i % 2 === 0 ? fakeUser1 : fakeUser2,
-                        role: userRoles.rider,
+                        role: models.Role.RIDER,
                     })
                 )
             )
@@ -401,8 +408,8 @@ describe("TasksGridColumn", () => {
             <>
                 <ActiveRidersChips />
                 <TasksGridColumn
-                    title={tasksStatus.active}
-                    taskKey={[tasksStatus.active]}
+                    title={models.TaskStatus.ACTIVE}
+                    taskKey={[models.TaskStatus.ACTIVE]}
                 />
             </>,
             {
@@ -448,7 +455,7 @@ describe("TasksGridColumn", () => {
     test("the observer shows new jobs when using the ALL role view", async () => {
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
             })
         );
         const preloadedState = {
@@ -462,11 +469,11 @@ describe("TasksGridColumn", () => {
         };
         const timeOfCall = new Date().toISOString();
         const mockTask = new models.Task({
-            status: tasksStatus.new,
+            status: models.TaskStatus.NEW,
             timeOfCall,
         });
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+        render(<TasksGridColumn taskKey={[models.TaskStatus.NEW]} />, {
             preloadedState,
         });
         await waitFor(() => {
@@ -496,7 +503,7 @@ describe("TasksGridColumn", () => {
     test("the observer doesn't show jobs that don't match the keys", async () => {
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
             })
         );
         const preloadedState = {
@@ -510,11 +517,11 @@ describe("TasksGridColumn", () => {
         };
         const timeOfCall = new Date().toISOString();
         const mockTask = new models.Task({
-            status: tasksStatus.active,
+            status: models.TaskStatus.ACTIVE,
             timeOfCall,
         });
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+        render(<TasksGridColumn taskKey={[models.TaskStatus.NEW]} />, {
             preloadedState,
         });
         await waitFor(() => {
@@ -536,7 +543,7 @@ describe("TasksGridColumn", () => {
 
     test.each`
         roleView
-        ${userRoles.coordinator} | ${userRoles.rider}
+        ${models.Role.COORDINATOR} | ${models.Role.RIDER}
     `(
         "the observer shows new jobs when using the RIDER or COORDINATOR role view",
         async ({ roleView }) => {
@@ -548,7 +555,7 @@ describe("TasksGridColumn", () => {
             const timeOfCall = new Date().toISOString();
             const mockTask = await DataStore.save(
                 new models.Task({
-                    status: tasksStatus.new,
+                    status: models.TaskStatus.NEW,
                     timeOfCall,
                 })
             );
@@ -570,7 +577,7 @@ describe("TasksGridColumn", () => {
             const observeSpy = jest.spyOn(DataStore, "observe");
             const querySpy = jest.spyOn(DataStore, "query");
             const { store } = render(
-                <TasksGridColumn taskKey={[tasksStatus.new]} />,
+                <TasksGridColumn taskKey={[models.TaskStatus.NEW]} />,
                 {
                     preloadedState,
                 }
@@ -603,7 +610,7 @@ describe("TasksGridColumn", () => {
 
     test.each`
         roleView
-        ${userRoles.coordinator} | ${userRoles.rider}
+        ${models.Role.COORDINATOR} | ${models.Role.RIDER}
     `("the observer reacts to changes in status", async ({ roleView }) => {
         const mockWhoami = await DataStore.save(
             new models.User({
@@ -613,7 +620,7 @@ describe("TasksGridColumn", () => {
         const timeOfCall = new Date().toISOString();
         const mockTask = await DataStore.save(
             new models.Task({
-                status: tasksStatus.pickedUp,
+                status: models.TaskStatus.PICKED_UP,
                 timeOfCall,
             })
         );
@@ -634,7 +641,7 @@ describe("TasksGridColumn", () => {
         };
         const observeSpy = jest.spyOn(DataStore, "observe");
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<TasksGridColumn taskKey={[tasksStatus.droppedOff]} />, {
+        render(<TasksGridColumn taskKey={[models.TaskStatus.DROPPED_OFF]} />, {
             preloadedState,
         });
         await waitFor(() => {
@@ -650,7 +657,7 @@ describe("TasksGridColumn", () => {
         await DataStore.save(
             models.Task.copyOf(
                 mockTask,
-                (upd) => (upd.status = tasksStatus.droppedOff)
+                (upd) => (upd.status = models.TaskStatus.DROPPED_OFF)
             )
         );
         await waitFor(() => {
@@ -665,7 +672,7 @@ describe("TasksGridColumn", () => {
 
     test.each`
         roleView
-        ${userRoles.coordinator} | ${userRoles.rider}
+        ${models.Role.COORDINATOR} | ${models.Role.RIDER}
     `(
         "observer don't show tasks not assigned to us when using the RIDER or COORDINATOR role view",
         async ({ roleView }) => {
@@ -682,7 +689,7 @@ describe("TasksGridColumn", () => {
             const timeOfCall = new Date().toISOString();
             const mockTask = await DataStore.save(
                 new models.Task({
-                    status: tasksStatus.new,
+                    status: models.TaskStatus.NEW,
                     timeOfCall,
                 })
             );
@@ -704,7 +711,7 @@ describe("TasksGridColumn", () => {
             const observeSpy = jest.spyOn(DataStore, "observe");
             const querySpy = jest.spyOn(DataStore, "query");
             const { store } = render(
-                <TasksGridColumn taskKey={[tasksStatus.new]} />,
+                <TasksGridColumn taskKey={[models.TaskStatus.NEW]} />,
                 {
                     preloadedState,
                 }
@@ -737,7 +744,7 @@ describe("TasksGridColumn", () => {
 
     test.each`
         roleView
-        ${userRoles.coordinator} | ${userRoles.rider}
+        ${models.Role.COORDINATOR} | ${models.Role.RIDER}
     `(
         "observer don't show tasks assigned to us but not matching the role view",
         async ({ roleView }) => {
@@ -747,7 +754,7 @@ describe("TasksGridColumn", () => {
             const timeOfCall = new Date().toISOString();
             const mockTask = await DataStore.save(
                 new models.Task({
-                    status: tasksStatus.new,
+                    status: models.TaskStatus.NEW,
                     timeOfCall,
                 })
             );
@@ -769,7 +776,7 @@ describe("TasksGridColumn", () => {
             const observeSpy = jest.spyOn(DataStore, "observe");
             const querySpy = jest.spyOn(DataStore, "query");
             const { store } = render(
-                <TasksGridColumn taskKey={[tasksStatus.active]} />,
+                <TasksGridColumn taskKey={[models.TaskStatus.ACTIVE]} />,
                 {
                     preloadedState,
                 }
@@ -819,7 +826,7 @@ describe("TasksGridColumn", () => {
         };
         const querySpy = jest.spyOn(amplify.DataStore, "query");
         const { component } = render(
-            <TasksGridColumn taskKey={[tasksStatus.new]} />,
+            <TasksGridColumn taskKey={[models.TaskStatus.NEW]} />,
             { preloadedState }
         );
         mockAllIsIntersecting(true);
@@ -855,8 +862,8 @@ describe("TasksGridColumn", () => {
                 _.range(0, 10).map((i) =>
                     DataStore.save(
                         new models.Task({
-                            status: tasksStatus.new,
-                            priority: priorities.medium,
+                            status: models.TaskStatus.NEW,
+                            priority: models.Priority.MEDIUM,
                             pickUpLocation: mockLocation,
                             dropOffLocation: mockLocation2,
                         })
@@ -884,7 +891,7 @@ describe("TasksGridColumn", () => {
                 },
             };
             const querySpy = jest.spyOn(amplify.DataStore, "query");
-            render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+            render(<TasksGridColumn taskKey={[models.TaskStatus.NEW]} />, {
                 preloadedState,
             });
             mockAllIsIntersecting(true);
@@ -901,7 +908,7 @@ describe("TasksGridColumn", () => {
 
     it.each`
         roleView
-        ${userRoles.rider} | ${userRoles.coordinator}
+        ${models.Role.RIDER} | ${models.Role.COORDINATOR}
     `(
         "shows the location details on each task for the role views",
         async ({ roleView }) => {
@@ -921,8 +928,8 @@ describe("TasksGridColumn", () => {
                 _.range(0, 10).map((i) =>
                     DataStore.save(
                         new models.Task({
-                            status: tasksStatus.new,
-                            priority: priorities.medium,
+                            status: models.TaskStatus.NEW,
+                            priority: models.Priority.MEDIUM,
                             pickUpLocation: mockLocation,
                             dropOffLocation: mockLocation2,
                         })
@@ -950,7 +957,7 @@ describe("TasksGridColumn", () => {
                 },
             };
             const querySpy = jest.spyOn(amplify.DataStore, "query");
-            render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+            render(<TasksGridColumn taskKey={[models.TaskStatus.NEW]} />, {
                 preloadedState,
             });
             mockAllIsIntersecting(true);
@@ -970,8 +977,11 @@ describe("TasksGridColumn", () => {
             _.range(0, 10).map((i) =>
                 DataStore.save(
                     new models.Task({
-                        status: tasksStatus.active,
-                        priority: i < 5 ? priorities.medium : priorities.high,
+                        status: models.TaskStatus.ACTIVE,
+                        priority:
+                            i < 5
+                                ? models.Priority.MEDIUM
+                                : models.Priority.HIGH,
                     })
                 )
             )
@@ -995,14 +1005,14 @@ describe("TasksGridColumn", () => {
                     new models.TaskAssignee({
                         task: mockTasks[i],
                         assignee: i % 2 === 0 ? fakeUser1 : fakeUser2,
-                        role: userRoles.rider,
+                        role: models.Role.RIDER,
                     })
                 )
             )
         );
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
                 displayName: "Someone Person",
             })
         );
@@ -1021,8 +1031,8 @@ describe("TasksGridColumn", () => {
                 <DashboardDetailTabs />
                 <ActiveRidersChips />
                 <TasksGridColumn
-                    title={tasksStatus.active}
-                    taskKey={[tasksStatus.active]}
+                    title={models.TaskStatus.ACTIVE}
+                    taskKey={[models.TaskStatus.ACTIVE]}
                 />
             </>,
             {
@@ -1082,11 +1092,15 @@ describe("TasksGridColumn", () => {
     });
 
     test("select and unselect items by clicking the checkbox", async () => {
-        await DataStore.save(new models.Task({ status: tasksStatus.new }));
-        await DataStore.save(new models.Task({ status: tasksStatus.new }));
+        await DataStore.save(
+            new models.Task({ status: models.TaskStatus.NEW })
+        );
+        await DataStore.save(
+            new models.Task({ status: models.TaskStatus.NEW })
+        );
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
                 displayName: "Someone Person",
             })
         );
@@ -1101,7 +1115,7 @@ describe("TasksGridColumn", () => {
             },
         };
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+        render(<TasksGridColumn taskKey={[models.TaskStatus.NEW]} />, {
             preloadedState,
         });
         mockAllIsIntersecting(true);
@@ -1136,10 +1150,12 @@ describe("TasksGridColumn", () => {
         // not working yet
         global.innerWidth = 100;
         global.dispatchEvent(new Event("resize"));
-        await DataStore.save(new models.Task({ status: tasksStatus.new }));
+        await DataStore.save(
+            new models.Task({ status: models.TaskStatus.NEW })
+        );
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
                 displayName: "Someone Person",
             })
         );
@@ -1154,7 +1170,7 @@ describe("TasksGridColumn", () => {
             },
         };
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+        render(<TasksGridColumn taskKey={[models.TaskStatus.NEW]} />, {
             preloadedState,
         });
         mockAllIsIntersecting(true);
@@ -1179,11 +1195,13 @@ describe("TasksGridColumn", () => {
 
     test("select all the items in a column", async () => {
         for (const i in _.range(0, 10)) {
-            await DataStore.save(new models.Task({ status: tasksStatus.new }));
+            await DataStore.save(
+                new models.Task({ status: models.TaskStatus.NEW })
+            );
         }
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
                 displayName: "Someone Person",
             })
         );
@@ -1200,8 +1218,8 @@ describe("TasksGridColumn", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(
             <TasksGridColumn
-                taskKey={[tasksStatus.new]}
-                title={tasksStatus.new}
+                taskKey={[models.TaskStatus.NEW]}
+                title={models.TaskStatus.NEW}
             />,
             {
                 preloadedState,
@@ -1218,7 +1236,9 @@ describe("TasksGridColumn", () => {
         expect(
             await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
         ).toHaveLength(11);
-        userEvent.click(screen.getByTestId(`${tasksStatus.new}-select-all`));
+        userEvent.click(
+            screen.getByTestId(`${models.TaskStatus.NEW}-select-all`)
+        );
 
         expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(11);
     });
@@ -1226,19 +1246,19 @@ describe("TasksGridColumn", () => {
     test("show the comment count", async () => {
         const task = await DataStore.save(
             new models.Task({
-                status: tasksStatus.new,
+                status: models.TaskStatus.NEW,
             })
         );
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
                 displayName: "Someone Person",
             })
         );
         await DataStore.save(
             new models.Comment({
                 parentId: task.id,
-                visibility: commentVisibility.everyone,
+                visibility: models.CommentVisibility.EVERYONE,
                 author: mockWhoami,
                 body: "test",
             })
@@ -1254,7 +1274,7 @@ describe("TasksGridColumn", () => {
             },
         };
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+        render(<TasksGridColumn taskKey={[models.TaskStatus.NEW]} />, {
             preloadedState,
         });
         await waitFor(() => {
@@ -1270,7 +1290,7 @@ describe("TasksGridColumn", () => {
         await DataStore.save(
             new models.Comment({
                 parentId: task.id,
-                visibility: commentVisibility.everyone,
+                visibility: models.CommentVisibility.EVERYONE,
                 author: mockWhoami,
                 body: "test",
             })
@@ -1281,24 +1301,24 @@ describe("TasksGridColumn", () => {
     test("show the assignees", async () => {
         const task = await DataStore.save(
             new models.Task({
-                status: tasksStatus.new,
+                status: models.TaskStatus.NEW,
             })
         );
         const mockWhoami = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
                 displayName: "Someone Person",
             })
         );
         const mockAssignee1 = await DataStore.save(
             new models.User({
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
                 displayName: "A Coordinator",
             })
         );
         const mockAssignee2 = await DataStore.save(
             new models.User({
-                roles: [userRoles.rider],
+                roles: [models.Role.RIDER],
                 displayName: "A Rider",
             })
         );
@@ -1306,21 +1326,21 @@ describe("TasksGridColumn", () => {
             new models.TaskAssignee({
                 task: task,
                 assignee: mockAssignee1,
-                role: userRoles.coordinator,
+                role: models.Role.COORDINATOR,
             })
         );
         const mockAssignment2 = await DataStore.save(
             new models.TaskAssignee({
                 task: task,
                 assignee: mockAssignee2,
-                role: userRoles.rider,
+                role: models.Role.RIDER,
             })
         );
         const mockAssignmentMe = await DataStore.save(
             new models.TaskAssignee({
                 task: task,
                 assignee: mockWhoami,
-                role: userRoles.coordinator,
+                role: models.Role.COORDINATOR,
             })
         );
         const preloadedState = {
@@ -1334,7 +1354,7 @@ describe("TasksGridColumn", () => {
             },
         };
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+        render(<TasksGridColumn taskKey={[models.TaskStatus.NEW]} />, {
             preloadedState,
         });
         await waitFor(() => {

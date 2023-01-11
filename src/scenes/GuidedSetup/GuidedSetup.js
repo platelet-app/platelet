@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import * as models from "../../models";
 import PropTypes from "prop-types";
 import makeStyles from "@mui/styles/makeStyles";
 import AppBar from "@mui/material/AppBar";
@@ -27,7 +28,6 @@ import {
     guidedSetupOpenSelector,
     tenantIdSelector,
 } from "../../redux/Selectors";
-import { commentVisibility } from "../../apiConsts";
 import { showHide } from "../../styles/common";
 import _ from "lodash";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
@@ -128,7 +128,7 @@ const defaultContact = {
 
 const defaultComment = {
     body: "",
-    visibility: commentVisibility.everyone,
+    visibility: models.CommentVisibility.EVERYONE,
 };
 
 const initialEstablishmentSameAsPickUpState = false;

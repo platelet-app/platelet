@@ -8,7 +8,6 @@ import PropTypes from "prop-types";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
 import { tenantIdSelector } from "../../../redux/Selectors";
-import { commentVisibility } from "../../../apiConsts";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import CommentVisibilitySelector from "../../../components/CommentVisibilitySelector";
 import { TextField, Typography } from "@mui/material";
@@ -16,7 +15,7 @@ import ConfirmationDialog from "../../../components/ConfirmationDialog";
 
 const initialCommentState = {
     body: "",
-    visibility: commentVisibility.everyone,
+    visibility: models.CommentVisibility.EVERYONE,
 };
 
 function NewCommentCard(props) {
@@ -106,7 +105,7 @@ function NewCommentCard(props) {
                     <TextField
                         className={classes.newCommentTextField}
                         placeholder={
-                            state.visibility === commentVisibility.me
+                            state.visibility === models.CommentVisibility.ME
                                 ? "Write a private note..."
                                 : "Write a comment..."
                         }

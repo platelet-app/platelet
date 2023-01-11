@@ -7,7 +7,7 @@ import * as amplify from "aws-amplify";
 import userEvent from "@testing-library/user-event";
 import * as models from "../../../models/index";
 import _ from "lodash";
-import { protectedFields, userRoles } from "../../../apiConsts";
+import { protectedFields } from "../../../apiConsts";
 import { v4 as uuidv4 } from "uuid";
 import * as mutations from "../../../graphql/mutations";
 import * as queries from "../../../graphql/queries";
@@ -21,7 +21,7 @@ const preloadedState = {
     roleView: "ALL",
     whoami: {
         user: new models.User({
-            roles: [userRoles.coordinator],
+            roles: [models.Role.COORDINATOR],
             tenantId: "tenant-id",
             displayName: "test",
         }),
@@ -833,17 +833,17 @@ describe("LocationDetailsPanel", () => {
         );
         const mockAssignee = new models.User({
             displayName: "test user",
-            roles: [userRoles.rider],
+            roles: [models.Role.RIDER],
         });
         const mockAssignment = new models.TaskAssignee({
             task,
             assignee: mockAssignee,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
 
         const preloadedState = {
             whoami: { user: mockAssignee },
-            roleView: userRoles.rider,
+            roleView: models.Role.RIDER,
             taskAssigneesReducer: {
                 ready: true,
                 isSynced: true,
@@ -867,17 +867,17 @@ describe("LocationDetailsPanel", () => {
         const task = await DataStore.save(new models.Task({}));
         const mockAssignee = new models.User({
             displayName: "test user",
-            roles: [userRoles.rider],
+            roles: [models.Role.RIDER],
         });
         const mockAssignment = new models.TaskAssignee({
             task,
             assignee: mockAssignee,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
 
         const preloadedState = {
             whoami: { user: mockAssignee },
-            roleView: userRoles.rider,
+            roleView: models.Role.RIDER,
             taskAssigneesReducer: {
                 ready: true,
                 isSynced: true,

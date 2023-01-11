@@ -5,7 +5,6 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import _ from "lodash";
 import RecentlyAssignedUsers from "./RecentlyAssignedUsers";
-import { tasksStatus, userRoles } from "../apiConsts";
 import { v4 as uuidv4 } from "uuid";
 
 jest.mock("aws-amplify");
@@ -18,14 +17,14 @@ const preloadedState = {
     },
     whoami: {
         user: new models.User({
-            roles: [userRoles.user, userRoles.coordinator],
+            roles: [models.Role.USER, models.Role.COORDINATOR],
         }),
     },
     tenantId: "tenant-id",
 };
 
-const fakeAssignments = Object.values(tasksStatus)
-    .filter((s) => s !== tasksStatus.new)
+const fakeAssignments = Object.values(models.TaskStatus)
+    .filter((s) => s !== models.TaskStatus.NEW)
     .map(
         (status) =>
             new models.TaskAssignee({
@@ -36,11 +35,11 @@ const fakeAssignments = Object.values(tasksStatus)
                     displayName: uuidv4(),
                     roles: ["USER", "RIDER"],
                 }),
-                role: userRoles.rider,
+                role: models.Role.RIDER,
             })
     );
 
-const fakeAssignmentsCoordinator = Object.values(tasksStatus).map(
+const fakeAssignmentsCoordinator = Object.values(models.TaskStatus).map(
     (status) =>
         new models.TaskAssignee({
             task: new models.Task({
@@ -50,7 +49,7 @@ const fakeAssignmentsCoordinator = Object.values(tasksStatus).map(
                 displayName: uuidv4(),
                 roles: ["USER", "COORDINATOR"],
             }),
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
         })
 );
 
@@ -63,10 +62,13 @@ const fakeAssignmentsOneRider = _.range(0, 10).map(
     (i) =>
         new models.TaskAssignee({
             task: new models.Task({
-                status: i > 3 ? tasksStatus.droppedOff : tasksStatus.active,
+                status:
+                    i > 3
+                        ? models.TaskStatus.DROPPED_OFF
+                        : models.TaskStatus.ACTIVE,
             }),
             assignee: fakeSingleUser,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         })
 );
 
@@ -83,20 +85,20 @@ const fakeAssignmentsFirstCoord = _.range(0, 5).map(
     (i) =>
         new models.TaskAssignee({
             task: new models.Task({
-                status: tasksStatus.active,
+                status: models.TaskStatus.ACTIVE,
             }),
             assignee: fakeCoord1,
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
         })
 );
 const fakeAssignmentsSecondCoord = _.range(0, 5).map(
     (i) =>
         new models.TaskAssignee({
             task: new models.Task({
-                status: tasksStatus.active,
+                status: models.TaskStatus.ACTIVE,
             }),
             assignee: fakeCoord2,
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
         })
 );
 const fakeAssignmentsRiders = [
@@ -108,7 +110,7 @@ const fakeAssignmentsRiders = [
         displayName: uuidv4(),
         roles: ["USER", "RIDER"],
     }),
-    role: userRoles.rider,
+    role: models.Role.RIDER,
 }));
 
 describe("RecentlyAssignedUsers", () => {
@@ -125,9 +127,12 @@ describe("RecentlyAssignedUsers", () => {
                 isSynced: true,
             },
         };
-        render(<RecentlyAssignedUsers value={null} role={userRoles.rider} />, {
-            preloadedState: newPreloadedState,
-        });
+        render(
+            <RecentlyAssignedUsers value={null} role={models.Role.RIDER} />,
+            {
+                preloadedState: newPreloadedState,
+            }
+        );
         await waitFor(() => {
             expect(
                 screen.getByText(fakeAssignments[0].assignee.displayName)
@@ -153,7 +158,7 @@ describe("RecentlyAssignedUsers", () => {
             <RecentlyAssignedUsers
                 limit={3}
                 value={null}
-                role={userRoles.rider}
+                role={models.Role.RIDER}
             />,
             {
                 preloadedState: newPreloadedState,
@@ -187,7 +192,10 @@ describe("RecentlyAssignedUsers", () => {
             },
         };
         render(
-            <RecentlyAssignedUsers value={null} role={userRoles.coordinator} />,
+            <RecentlyAssignedUsers
+                value={null}
+                role={models.Role.COORDINATOR}
+            />,
             {
                 preloadedState: newPreloadedState,
             }
@@ -220,7 +228,7 @@ describe("RecentlyAssignedUsers", () => {
             <RecentlyAssignedUsers
                 onChange={onChange}
                 value={null}
-                role={userRoles.coordinator}
+                role={models.Role.COORDINATOR}
             />,
             {
                 preloadedState: newPreloadedState,
@@ -255,7 +263,7 @@ describe("RecentlyAssignedUsers", () => {
             <RecentlyAssignedUsers
                 onChange={onChange}
                 value={fakeAssignments[0].assignee}
-                role={userRoles.rider}
+                role={models.Role.RIDER}
             />,
             {
                 preloadedState: newPreloadedState,
@@ -286,7 +294,7 @@ describe("RecentlyAssignedUsers", () => {
             <RecentlyAssignedUsers
                 onChange={onChange}
                 value={fakeAssignments[0].assignee}
-                role={userRoles.rider}
+                role={models.Role.RIDER}
             />,
             {
                 preloadedState: newPreloadedState,
@@ -316,7 +324,7 @@ describe("RecentlyAssignedUsers", () => {
             <RecentlyAssignedUsers
                 exclude={[fakeAssignments[0].assignee.id]}
                 value={null}
-                role={userRoles.rider}
+                role={models.Role.RIDER}
             />,
             {
                 preloadedState: newPreloadedState,
@@ -341,7 +349,7 @@ describe("RecentlyAssignedUsers", () => {
 
     it.each`
         role
-        ${userRoles.rider} | ${userRoles.coordinator}
+        ${models.Role.RIDER} | ${models.Role.COORDINATOR}
     `("don't show users that no longer have the role", async ({ role }) => {
         const fakeUserNoRoles = new models.User({
             displayName: uuidv4(),
@@ -380,7 +388,7 @@ describe("RecentlyAssignedUsers", () => {
 
     test("coordinator roleview shows only intersecting assignments", async () => {
         const newPreloadedState = {
-            roleView: userRoles.coordinator,
+            roleView: models.Role.COORDINATOR,
             whoami: { user: fakeCoord1 },
             taskAssigneesReducer: {
                 items: [
@@ -420,7 +428,7 @@ describe("RecentlyAssignedUsers", () => {
 
     test("exclude users while in coordinator roleview", async () => {
         const newPreloadedState = {
-            roleView: userRoles.coordinator,
+            roleView: models.Role.COORDINATOR,
             whoami: { user: fakeCoord1 },
             taskAssigneesReducer: {
                 items: [

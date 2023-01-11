@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import * as models from "../../models";
 import "../../App.css";
 import Paper from "@mui/material/Paper";
 import {
@@ -19,7 +20,6 @@ import {
     guidedSetupOpenSelector,
     selectedItemsSelector,
 } from "../../redux/Selectors";
-import { tasksStatus, userRoles } from "../../apiConsts";
 import { clearDashboardFilter } from "../../redux/dashboardFilter/DashboardFilterActions";
 import { Divider, Fab, Hidden, Stack } from "@mui/material";
 import ActiveRidersChips from "./components/ActiveRidersChips";
@@ -81,16 +81,16 @@ function Dashboard() {
             if (
                 whoami.roles.includes(savedRoleMode) ||
                 (savedRoleMode === "ALL" &&
-                    whoami.roles.includes(userRoles.coordinator))
+                    whoami.roles.includes(models.Role.COORDINATOR))
             ) {
                 dispatch(setRoleView(savedRoleMode));
-            } else if (whoami.roles.includes(userRoles.coordinator)) {
-                dispatch(setRoleView(userRoles.coordinator));
-                saveDashboardRoleMode(userRoles.coordinator);
-            } else if (whoami.roles.includes(userRoles.rider)) {
-                dispatch(setRoleView(userRoles.rider));
+            } else if (whoami.roles.includes(models.Role.COORDINATOR)) {
+                dispatch(setRoleView(models.Role.COORDINATOR));
+                saveDashboardRoleMode(models.Role.COORDINATOR);
+            } else if (whoami.roles.includes(models.Role.RIDER)) {
+                dispatch(setRoleView(models.Role.RIDER));
                 dispatch(setDashboardFilteredUser(null));
-                saveDashboardRoleMode(userRoles.rider);
+                saveDashboardRoleMode(models.Role.RIDER);
             }
         }
     }, [dispatch, whoami.id, whoami.roles]);
@@ -108,7 +108,7 @@ function Dashboard() {
             <Hidden mdDown>
                 <Divider />
             </Hidden>
-            {[userRoles.coordinator, "ALL"].includes(roleView) && (
+            {[models.Role.COORDINATOR, "ALL"].includes(roleView) && (
                 <>
                     <ActiveRidersChips />
                     <Divider />
@@ -117,29 +117,29 @@ function Dashboard() {
             <Paper sx={{ marginBottom: 10 }}>
                 <TasksGrid
                     modalView={"edit"}
-                    hideRelayIcons={roleView === userRoles.rider}
+                    hideRelayIcons={roleView === models.Role.RIDER}
                     excludeColumnList={
                         dashboardTabIndex === 1
                             ? [
-                                  tasksStatus.new,
-                                  tasksStatus.active,
-                                  tasksStatus.pickedUp,
-                                  tasksStatus.droppedOff,
+                                  models.TaskStatus.NEW,
+                                  models.TaskStatus.ACTIVE,
+                                  models.TaskStatus.PICKED_UP,
+                                  models.TaskStatus.DROPPED_OFF,
                               ]
                             : [
-                                  roleView === userRoles.rider
-                                      ? tasksStatus.new
+                                  roleView === models.Role.RIDER
+                                      ? models.TaskStatus.NEW
                                       : "",
-                                  tasksStatus.completed,
-                                  tasksStatus.cancelled,
-                                  tasksStatus.abandoned,
-                                  tasksStatus.rejected,
+                                  models.TaskStatus.COMPLETED,
+                                  models.TaskStatus.CANCELLED,
+                                  models.TaskStatus.ABANDONED,
+                                  models.TaskStatus.REJECTED,
                               ]
                     }
                 />
             </Paper>
             <Hidden smUp>
-                {roleView && roleView === userRoles.rider ? (
+                {roleView && roleView === models.Role.RIDER ? (
                     <></>
                 ) : (
                     <AddClearFab />

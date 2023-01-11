@@ -8,7 +8,7 @@ import { displayErrorNotification } from "../../../redux/notifications/Notificat
 import * as models from "../../../models/index";
 import { API, DataStore, graphqlOperation } from "aws-amplify";
 import _ from "lodash";
-import { protectedFields, userRoles } from "../../../apiConsts";
+import { protectedFields } from "../../../apiConsts";
 import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
 import EditModeToggleButton from "../../../components/EditModeToggleButton";
@@ -38,7 +38,7 @@ function LocationDetailsPanel(props) {
     ).Task;
 
     const currentUserRole = useAssignmentRole(props.taskId);
-    const hasFullPermissions = currentUserRole === userRoles.coordinator;
+    const hasFullPermissions = currentUserRole === models.Role.COORDINATOR;
 
     const taskObserver = useRef({ unsubscribe: () => {} });
     const locationObserver = useRef({ unsubscribe: () => {} });

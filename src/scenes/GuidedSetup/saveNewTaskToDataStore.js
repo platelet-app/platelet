@@ -1,4 +1,3 @@
-import { tasksStatus, userRoles } from "../../apiConsts";
 import store from "../../redux/Store";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models";
@@ -44,7 +43,7 @@ export async function saveNewTaskToDataStore(
             pickUpLocation,
             createdBy: author,
             dropOffLocation,
-            status: tasksStatus.new,
+            status: models.TaskStatus.NEW,
             tenantId,
             dateCreated: today.toISOString().split("T")[0],
         })
@@ -73,7 +72,7 @@ export async function saveNewTaskToDataStore(
         new models.TaskAssignee({
             task: newTask,
             assignee: author,
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
             tenantId,
         })
     ).then((assignment) => {

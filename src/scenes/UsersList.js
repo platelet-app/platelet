@@ -9,7 +9,6 @@ import { Link } from "react-router-dom";
 import { DataStore } from "aws-amplify";
 import * as models from "../models/index";
 import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
-import { userRoles } from "../apiConsts";
 import { TextFieldControlled } from "../components/TextFields";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment } from "@mui/material";
@@ -64,7 +63,7 @@ export default function UsersList() {
 
     useEffect(() => getUsers(), [getUsers]);
 
-    const addButton = whoami.roles.includes(userRoles.admin) ? (
+    const addButton = whoami.roles.includes(models.Role.ADMIN) ? (
         <Button component={Link} to={`/admin/add-user`}>
             Add user
         </Button>

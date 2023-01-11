@@ -9,7 +9,6 @@ import {
     getWhoami,
     taskAssigneesSelector,
 } from "../../../redux/Selectors";
-import { userRoles } from "../../../apiConsts";
 import { Box, Chip, IconButton, Stack, Typography } from "@mui/material";
 // disable horizontal scrollbar
 import "./hideActiveRiderChipsScrollBar.css";
@@ -189,7 +188,7 @@ const ActiveRidersChips: React.FC = () => {
             let activeRidersResult: models.User[] = [];
             if (roleView === "ALL") {
                 const assignments: models.TaskAssignee[] = allAssignees.filter(
-                    (a) => a.role === userRoles.rider
+                    (a) => a.role === models.Role.RIDER
                 );
                 activeRidersResult = assignments
                     .filter(
@@ -198,10 +197,10 @@ const ActiveRidersChips: React.FC = () => {
                             : completedTabFilter
                     )
                     .map((a) => a.assignee);
-            } else if (roleView === userRoles.coordinator && whoami) {
+            } else if (roleView === models.Role.COORDINATOR && whoami) {
                 const myAssignments = allAssignees.filter(
                     (a) =>
-                        a.role === userRoles.coordinator &&
+                        a.role === models.Role.COORDINATOR &&
                         a.assignee &&
                         a.assignee.id === whoami.id
                 );
@@ -211,7 +210,7 @@ const ActiveRidersChips: React.FC = () => {
                 // find which tasks assigned to me are assigned to the rider
                 const assignedToMeRiders = allAssignees.filter(
                     (a) =>
-                        a.role === userRoles.rider &&
+                        a.role === models.Role.RIDER &&
                         a.assignee &&
                         a.task &&
                         myAssignedTasksIds.includes(a.task.id)

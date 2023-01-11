@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { priorities } from "../../../apiConsts";
 import { Chip, Stack } from "@mui/material";
+import * as models from "../../../models";
 
 function PrioritySelect(props) {
     const [state, setState] = useState(null);
@@ -16,7 +16,7 @@ function PrioritySelect(props) {
 
     return (
         <Stack direction="row-reverse" spacing={1}>
-            {Object.values(priorities).map((priority) => (
+            {Object.values(models.Priority).map((priority) => (
                 <Chip
                     key={priority}
                     disabled={props.disabled}

@@ -7,10 +7,9 @@ import Grid from "@mui/material/Grid";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import { Tooltip } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import clsx from "clsx";
 import { AddCircleOutline } from "@mui/icons-material";
-import { userRoles } from "../../../apiConsts";
 
 const useStyles = makeStyles((theme) => ({
     button: (props) => ({
@@ -27,7 +26,7 @@ function AssignRiderCoordinatorPopover(props) {
     const onSelect = (user) => {
         props.onSelect(
             user,
-            props.rider ? userRoles.rider : userRoles.coordinator
+            props.rider ? models.Role.RIDER : models.Role.COORDINATOR
         );
         handleClose();
     };
@@ -48,7 +47,8 @@ function AssignRiderCoordinatorPopover(props) {
                 aria-controls="long-menu"
                 aria-haspopup="true"
                 onClick={handleOpen}
-                size="large">
+                size="large"
+            >
                 <AddCircleOutline className={classes.button} />
             </IconButton>
         </Tooltip>

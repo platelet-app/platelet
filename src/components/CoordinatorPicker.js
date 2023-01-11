@@ -4,7 +4,6 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import CompactUserCard from "./CompactUserCard";
 import { DataStore } from "aws-amplify";
-import { userRoles } from "../apiConsts";
 import * as models from "../models/index";
 import { Box } from "@mui/material";
 import { matchSorter } from "match-sorter";
@@ -27,7 +26,7 @@ function CoordinatorPicker(props) {
     async function getCoordinators() {
         try {
             const coords = await DataStore.query(models.User, (u) =>
-                u.roles("contains", userRoles.coordinator)
+                u.roles("contains", models.Role.COORDINATOR)
             );
             setAvailableUsers(coords);
         } catch (e) {

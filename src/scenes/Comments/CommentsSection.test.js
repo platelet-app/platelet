@@ -3,7 +3,6 @@ import CommentsSection from "./CommentsSection";
 import { render, testUser } from "../../test-utils";
 import * as amplify from "aws-amplify";
 import { screen, waitFor } from "@testing-library/react";
-import { commentVisibility, userRoles } from "../../apiConsts";
 import userEvent from "@testing-library/user-event";
 import _ from "lodash";
 import * as models from "../../models";
@@ -22,7 +21,7 @@ const mockPublicComments = _.range(0, 3).map((i) => {
     return new models.Comment({
         body: uuidv4(),
         parentId,
-        visibility: commentVisibility.everyone,
+        visibility: models.CommentVisibility.EVERYONE,
         author: new models.User({
             displayName: `User ${i}`,
         }),
@@ -31,7 +30,7 @@ const mockPublicComments = _.range(0, 3).map((i) => {
 
 const mockUser = new models.User({
     displayName: "Mock User",
-    roles: [userRoles.user, userRoles.coordinator],
+    roles: [models.Role.USER, models.Role.COORDINATOR],
 });
 
 const preloadedState = { tenantId: "tenant-id", whoami: { user: mockUser } };
@@ -40,7 +39,7 @@ const mockPrivateComments = _.range(0, 3).map((i) => {
     return new models.Comment({
         body: uuidv4(),
         parentId,
-        visibility: commentVisibility.me,
+        visibility: models.CommentVisibility.ME,
         author: new models.User({
             displayName: `User ${i}`,
         }),
@@ -140,7 +139,7 @@ describe("CommentsSection", () => {
         const author = mockUser;
         const mockComment = new models.Comment({
             body: "This is a comment",
-            visibility: commentVisibility.everyone,
+            visibility: models.CommentVisibility.EVERYONE,
             author,
         });
         const saveSpy = jest.spyOn(DataStore, "save");
@@ -173,7 +172,7 @@ describe("CommentsSection", () => {
         const author = mockUser;
         const mockComment = new models.Comment({
             body: "This is a comment",
-            visibility: commentVisibility.me,
+            visibility: models.CommentVisibility.ME,
             author,
         });
         const saveSpy = jest.spyOn(DataStore, "save");
@@ -312,7 +311,7 @@ describe("CommentsSection", () => {
         const mockComment = new models.Comment({
             body: "This is a comment",
             author: mockAuthor,
-            visibility: commentVisibility.everyone,
+            visibility: models.CommentVisibility.EVERYONE,
         });
         const mockObservedResult = {
             element: mockComment,
@@ -361,7 +360,7 @@ describe("CommentsSection", () => {
         const mockComment = new models.Comment({
             body: "This is a comment",
             author: mockAuthor,
-            visibility: commentVisibility.everyone,
+            visibility: models.CommentVisibility.EVERYONE,
         });
         const mockObservedResult = {
             element: { ...mockComment, body: "something else" },
@@ -412,7 +411,7 @@ describe("CommentsSection", () => {
         const mockComment = new models.Comment({
             body: "This is a comment",
             author: mockAuthor,
-            visibility: commentVisibility.everyone,
+            visibility: models.CommentVisibility.EVERYONE,
         });
         const mockObservedResult = {
             element: { id: mockComment.id },
@@ -484,7 +483,7 @@ describe("CommentsSection", () => {
             new models.Comment({
                 body: "This is a comment",
                 author: mockUser,
-                visibility: commentVisibility.everyone,
+                visibility: models.CommentVisibility.EVERYONE,
                 parentId: mockTask.id,
             })
         );

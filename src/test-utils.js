@@ -22,12 +22,11 @@ import { DismissButton } from "./styles/common";
 import SnackNotificationButtons from "./components/SnackNotificationButtons";
 import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./redux/Reducers";
-import { userRoles } from "./apiConsts";
 
 const testUserModel = new models.User({
     name: "whoami",
     displayName: "Mock User",
-    roles: Object.values(userRoles),
+    roles: Object.values(models.Role),
     dateOfBirth: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,

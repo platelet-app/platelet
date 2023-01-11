@@ -12,7 +12,6 @@ import {
 } from "@mui/material";
 import PropTypes from "prop-types";
 import makeStyles from "@mui/styles/makeStyles";
-import { tasksStatus, userRoles } from "../../../apiConsts";
 import RiderPicker from "../../../components/RiderPicker";
 import CoordinatorPicker from "../../../components/CoordinatorPicker";
 import UserRoleSelect from "../../../components/UserRoleSelect";
@@ -45,13 +44,13 @@ export const useStyles = makeStyles(() => ({
 
 const sortByUserRole = (a, b) => {
     // coordinators first and riders second
-    if (a.role === userRoles.coordinator) {
+    if (a.role === models.Role.COORDINATOR) {
         return -1;
-    } else if (b.role === userRoles.coordinator) {
+    } else if (b.role === models.Role.COORDINATOR) {
         return 1;
-    } else if (a.role === userRoles.rider) {
+    } else if (a.role === models.Role.RIDER) {
         return -1;
-    } else if (b.role === userRoles.rider) {
+    } else if (b.role === models.Role.RIDER) {
         return 1;
     } else {
         return 0;
@@ -60,7 +59,7 @@ const sortByUserRole = (a, b) => {
 
 function TaskAssignmentsPanel(props) {
     const [collapsed, setCollapsed] = useState(null);
-    const [role, setRole] = useState(userRoles.rider);
+    const [role, setRole] = useState(models.Role.RIDER);
     const [isPosting, setIsPosting] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const taskAssignees = useSelector(taskAssigneesSelector).items;
@@ -71,7 +70,7 @@ function TaskAssignmentsPanel(props) {
     const [state, setState] = useState({});
 
     const currentUserRole = useAssignmentRole(props.taskId);
-    const hasFullPermissions = currentUserRole === userRoles.coordinator;
+    const hasFullPermissions = currentUserRole === models.Role.COORDINATOR;
 
     const dispatch = useDispatch();
     const errorMessage = "Sorry, something went wrong";
@@ -119,7 +118,7 @@ function TaskAssignmentsPanel(props) {
                     tenantId,
                 })
             );
-            if (role === userRoles.rider) {
+            if (role === models.Role.RIDER) {
                 const status = await determineTaskStatus(
                     {
                         ...task,
@@ -135,8 +134,8 @@ function TaskAssignmentsPanel(props) {
                     })
                 );
                 if (
-                    task.status === tasksStatus.new &&
-                    status === tasksStatus.active
+                    task.status === models.TaskStatus.NEW &&
+                    status === models.TaskStatus.ACTIVE
                 ) {
                     dispatch(displayInfoNotification("Task moved to ACTIVE"));
                 }
@@ -167,18 +166,19 @@ function TaskAssignmentsPanel(props) {
             const status = await determineTaskStatus(
                 existingTask,
                 Object.values(_.omit(state, assignmentId)).filter(
-                    (a) => a.role === userRoles.rider
+                    (a) => a.role === models.Role.RIDER
                 )
             );
             let riderResponsibility = existingTask.riderResponsibility;
             if (
                 existingAssignment &&
-                existingAssignment.role === userRoles.rider
+                existingAssignment.role === models.Role.RIDER
             ) {
                 const riders = Object.values(state)
                     .filter(
                         (a) =>
-                            a.role === userRoles.rider && a.id !== assignmentId
+                            a.role === models.Role.RIDER &&
+                            a.id !== assignmentId
                     )
                     .map((a) => a.assignee);
                 if (riders.length > 0) {
@@ -212,10 +212,11 @@ function TaskAssignmentsPanel(props) {
         }
         if (!taskAssigneesReady || collapsed !== null) return;
         if (
-            Object.values(state).filter((a) => a.role === userRoles.rider)
+            Object.values(state).filter((a) => a.role === models.Role.RIDER)
                 .length === 0 ||
-            Object.values(state).filter((a) => a.role === userRoles.coordinator)
-                .length === 0
+            Object.values(state).filter(
+                (a) => a.role === models.Role.COORDINATOR
+            ).length === 0
         ) {
             setCollapsed(false);
         } else {
@@ -299,11 +300,11 @@ function TaskAssignmentsPanel(props) {
                             <UserRoleSelect
                                 value={[role]}
                                 onSelect={(value) => setRole(value)}
-                                exclude={Object.values(userRoles).filter(
+                                exclude={Object.values(models.Role).filter(
                                     (value) =>
                                         ![
-                                            userRoles.rider,
-                                            userRoles.coordinator,
+                                            models.Role.RIDER,
+                                            models.Role.COORDINATOR,
                                         ].includes(value)
                                 )}
                             />
@@ -319,7 +320,7 @@ function TaskAssignmentsPanel(props) {
                                     )
                                     .map((a) => a.assignee.id)}
                             />
-                            {role === userRoles.rider ? (
+                            {role === models.Role.RIDER ? (
                                 <RiderPicker
                                     onSelect={onSelect}
                                     exclude={Object.values(state)
@@ -327,7 +328,7 @@ function TaskAssignmentsPanel(props) {
                                             (a) =>
                                                 a &&
                                                 a.assignee &&
-                                                a.role === userRoles.rider
+                                                a.role === models.Role.RIDER
                                         )
                                         .map((a) => a.assignee.id)}
                                 />
@@ -339,7 +340,8 @@ function TaskAssignmentsPanel(props) {
                                             (a) =>
                                                 a &&
                                                 a.assignee &&
-                                                a.role === userRoles.coordinator
+                                                a.role ===
+                                                    models.Role.COORDINATOR
                                         )
                                         .map((a) => a.assignee.id)}
                                 />

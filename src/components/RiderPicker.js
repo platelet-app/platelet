@@ -4,7 +4,6 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import CompactUserCard from "./CompactUserCard";
 import { DataStore } from "aws-amplify";
-import { userRoles } from "../apiConsts";
 import * as models from "../models/index";
 import { Box } from "@mui/material";
 import { matchSorter } from "match-sorter";
@@ -28,7 +27,7 @@ function RiderPicker(props) {
     async function getRiders() {
         try {
             const users = await DataStore.query(models.User, (u) =>
-                u.roles("contains", userRoles.rider)
+                u.roles("contains", models.Role.RIDER)
             );
             setAvailableUsers(users);
         } catch (e) {

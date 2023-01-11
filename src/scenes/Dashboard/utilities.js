@@ -1,7 +1,5 @@
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
-import { tasksStatus } from "../../apiConsts";
-import { userRoles } from "../../apiConsts";
 export const concatTasks = (tasks) =>
     Object.entries(tasks).reduce((accumulator, [key, value]) => {
         return [...accumulator, value.map((t) => t)];
@@ -30,7 +28,7 @@ export async function addTask(whoamiId, tenantId) {
     }
     const newTask = await DataStore.save(
         new models.Task({
-            status: tasksStatus.new,
+            status: models.TaskStatus.NEW,
             timeOfCall,
             createdBy,
             dateCreated: today.toISOString().split("T")[0],
@@ -41,7 +39,7 @@ export async function addTask(whoamiId, tenantId) {
         new models.TaskAssignee({
             task: newTask,
             assignee: createdBy,
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
             tenantId,
         })
     );

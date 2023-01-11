@@ -6,7 +6,6 @@ import { render } from "../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import * as gr from "./utilities/generateReport";
-import { userRoles } from "../../apiConsts";
 import { setReadyStatus } from "../../redux/awsHubListener/awsHubListenerActions";
 import { Days, dayOptions } from "../../components/DaysSelection";
 
@@ -35,7 +34,7 @@ describe("Reports", () => {
         const whoami = new models.User({
             displayName: "Test User",
             name: "testuser",
-            roles: [userRoles.coordinator],
+            roles: [models.Role.COORDINATOR],
         });
 
         const preloadedState = { ...preloadedHub, whoami: { user: whoami } };
@@ -52,7 +51,7 @@ describe("Reports", () => {
         await waitFor(() => {
             expect(generateReportSpy).toHaveBeenCalledWith(
                 whoami.id,
-                userRoles.coordinator,
+                models.Role.COORDINATOR,
                 3
             );
         });
@@ -65,7 +64,7 @@ describe("Reports", () => {
         const whoami = new models.User({
             displayName: "Test User",
             name: "testuser",
-            roles: [userRoles.coordinator],
+            roles: [models.Role.COORDINATOR],
         });
 
         const preloadedState = { ...preloadedHub, whoami: { user: whoami } };
@@ -151,13 +150,13 @@ describe("Reports", () => {
         const whoami = await DataStore.save(
             new models.User({
                 displayName: "Test User",
-                roles: [userRoles.admin, userRoles.coordinator],
+                roles: [models.Role.ADMIN, models.Role.COORDINATOR],
             })
         );
         const anotherCoord = await DataStore.save(
             new models.User({
                 displayName: "Some Coordinator",
-                roles: [userRoles.coordinator],
+                roles: [models.Role.COORDINATOR],
             })
         );
         const preloadedStateWhoami = {
@@ -186,7 +185,7 @@ describe("Reports", () => {
         expect(button).toBeDisabled();
         expect(generateReportSpy).toHaveBeenCalledWith(
             anotherCoord.id,
-            userRoles.coordinator,
+            models.Role.COORDINATOR,
             3
         );
         await waitFor(() => {
@@ -203,7 +202,7 @@ describe("Reports", () => {
         const whoami = new models.User({
             displayName: "Test User",
             name: "testuser",
-            roles: [userRoles.coordinator],
+            roles: [models.Role.COORDINATOR],
         });
 
         const preloadedState = { ...preloadedHub, whoami: { user: whoami } };
@@ -219,7 +218,7 @@ describe("Reports", () => {
         await waitFor(() => {
             expect(generateReportSpy).toHaveBeenCalledWith(
                 whoami.id,
-                userRoles.coordinator,
+                models.Role.COORDINATOR,
                 days
             );
         });
@@ -230,7 +229,7 @@ describe("Reports", () => {
 
     test.each`
         role
-        ${userRoles.admin} | ${userRoles.rider} | ${userRoles.coordinator}
+        ${models.Role.ADMIN} | ${models.Role.RIDER} | ${models.Role.COORDINATOR}
     `("show the correct roles available to the user", async ({ role }) => {
         const whoami = await DataStore.save(
             new models.User({
@@ -244,15 +243,15 @@ describe("Reports", () => {
             },
         };
         render(<Reports />, { preloadedState });
-        if (role === userRoles.admin) {
+        if (role === models.Role.ADMIN) {
             expect(screen.getByText("ALL")).toBeInTheDocument();
             expect(screen.queryByText("RIDER")).toBeNull();
             expect(screen.queryByText("COORDINATOR")).toBeNull();
-        } else if (role === userRoles.rider) {
+        } else if (role === models.Role.RIDER) {
             expect(screen.getByText("RIDER")).toBeInTheDocument();
             expect(screen.queryByText("ALL")).toBeNull();
             expect(screen.queryByText("COORDINATOR")).toBeNull();
-        } else if (role === userRoles.coordinator) {
+        } else if (role === models.Role.COORDINATOR) {
             expect(screen.getByText("COORDINATOR")).toBeInTheDocument();
             expect(screen.queryByText("ALL")).toBeNull();
             expect(screen.queryByText("RIDER")).toBeNull();

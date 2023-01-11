@@ -20,7 +20,6 @@ import {
 import { DataStore } from "aws-amplify";
 import { filterTasks } from "../utilities/functions";
 import GetError from "../../../ErrorComponents/GetError";
-import { userRoles } from "../../../apiConsts";
 import Box from "@mui/material/Box";
 import getTasksAll from "../utilities/getTasksAll";
 import getAllTasksByUser from "../utilities/getAllTasksByUser";
@@ -150,7 +149,7 @@ function TasksGridColumn(props) {
                             await getAllTasksByUser(
                                 taskKey,
                                 dashboardFilteredUser,
-                                userRoles.rider,
+                                models.Role.RIDER,
                                 taskAssigneesItems
                             )
                         );

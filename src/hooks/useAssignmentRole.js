@@ -5,12 +5,12 @@ import {
     getWhoami,
     taskAssigneesSelector,
 } from "../redux/Selectors";
-import { userRoles } from "../apiConsts";
+import * as models from "../models";
 
 export function useAssignmentRole(taskId) {
     const taskAssignees = useSelector(taskAssigneesSelector);
     const whoami = useSelector(getWhoami);
-    const [currentUserRole, setCurrentUserRole] = useState(userRoles.user);
+    const [currentUserRole, setCurrentUserRole] = useState(models.Role.USER);
     const roleView = useSelector(getRoleView);
 
     // return the user role in order of precedence
@@ -19,38 +19,39 @@ export function useAssignmentRole(taskId) {
     // 3. user
 
     useEffect(() => {
+        debugger;
         if (!taskId || !whoami || !roleView) return;
         if (
-            (whoami.roles.includes(userRoles.admin) ||
-                whoami.roles.includes(userRoles.coordinator)) &&
-            ["ALL", userRoles.coordinator].includes(roleView)
+            (whoami.roles.includes(models.Role.ADMIN) ||
+                whoami.roles.includes(models.Role.COORDINATOR)) &&
+            ["ALL", models.Role.COORDINATOR].includes(roleView)
         ) {
-            setCurrentUserRole(userRoles.coordinator);
+            setCurrentUserRole(models.Role.COORDINATOR);
         } else {
             const isRider = taskAssignees.items.some(
                 (a) =>
-                    a.role === userRoles.rider &&
+                    a.role === models.Role.RIDER &&
                     a.assignee &&
                     a.assignee.id === whoami.id &&
                     a.task &&
                     a.task.id === taskId
             );
             if (isRider) {
-                setCurrentUserRole(userRoles.rider);
+                setCurrentUserRole(models.Role.RIDER);
             } else {
                 // are we assigned as coord on rider view?
                 const isCoord = taskAssignees.items.some(
                     (a) =>
-                        a.role === userRoles.coordinator &&
+                        a.role === models.Role.COORDINATOR &&
                         a.assignee &&
                         a.assignee.id === whoami.id &&
                         a.task &&
                         a.task.id === taskId
                 );
                 if (isCoord) {
-                    setCurrentUserRole(userRoles.coordinator);
+                    setCurrentUserRole(models.Role.COORDINATOR);
                 } else {
-                    setCurrentUserRole(userRoles.user);
+                    setCurrentUserRole(models.Role.USER);
                 }
             }
         }
@@ -64,7 +65,7 @@ export function useAssignmentRole(taskId) {
 /*export function useAssignmentRole(taskId) {
     const taskAssignees = useSelector(taskAssigneesSelector);
     const whoami = useSelector(getWhoami);
-    const [currentUserRole, setCurrentUserRole] = useState(userRoles.user);
+    const [currentUserRole, setCurrentUserRole] = useState(models.Role.USER);
 
     // return the user role in order of precedence
     // 1. admin
@@ -74,8 +75,8 @@ export function useAssignmentRole(taskId) {
 
     useEffect(() => {
         if (!taskId || !whoami) return;
-        if (whoami.roles.includes(userRoles.admin)) {
-            setCurrentUserRole(userRoles.admin);
+        if (whoami.roles.includes(models.Role.ADMIN)) {
+            setCurrentUserRole(models.Role.ADMIN);
             return;
         }
         const assignments = taskAssignees.items.filter(
@@ -90,13 +91,13 @@ export function useAssignmentRole(taskId) {
             setCurrentUserRole(assignments[0].role);
         } else if (assignments.length > 1) {
             const role = assignments.some(
-                (a) => a.role === userRoles.coordinator
+                (a) => a.role === models.Role.COORDINATOR
             )
-                ? userRoles.coordinator
-                : userRoles.rider;
+                ? models.Role.COORDINATOR
+                : models.Role.RIDER;
             setCurrentUserRole(role);
         } else {
-            setCurrentUserRole(userRoles.user);
+            setCurrentUserRole(models.Role.USER);
         }
     }, [taskAssignees, whoami, taskId]);
 

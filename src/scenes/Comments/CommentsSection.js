@@ -10,7 +10,6 @@ import {
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
 import { convertListDataToObject } from "../../utilities";
-import { commentVisibility } from "../../apiConsts";
 import GetError from "../../ErrorComponents/GetError";
 
 function CommentsSection(props) {
@@ -38,8 +37,8 @@ function CommentsSection(props) {
             );
             const commentsResult = commentsGet.filter(
                 (c) =>
-                    c.visibility === commentVisibility.everyone ||
-                    (c.visibility === commentVisibility.me &&
+                    c.visibility === models.CommentVisibility.EVERYONE ||
+                    (c.visibility === models.CommentVisibility.ME &&
                         c.author &&
                         c.author.id === whoami.id)
             );

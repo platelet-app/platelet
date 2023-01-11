@@ -1,5 +1,4 @@
 import * as models from "../models";
-import { tasksStatus, userRoles } from "../apiConsts";
 import { DataStore } from "aws-amplify";
 
 interface TaskInterface {
@@ -23,14 +22,14 @@ export default async function determineTaskStatus(
     // sort out cancelled and rejected first
     if (!!task.timeCancelled) {
         return !!task.timePickedUp
-            ? tasksStatus.abandoned
-            : tasksStatus.cancelled;
+            ? models.TaskStatus.ABANDONED
+            : models.TaskStatus.CANCELLED;
     } else if (!!task.timeRejected) {
-        return tasksStatus.rejected;
+        return models.TaskStatus.REJECTED;
     }
     if (riderAssignees === null) {
         riderAssignees = (await DataStore.query(models.TaskAssignee, (a) =>
-            a.role("eq", userRoles.rider)
+            a.role("eq", models.Role.RIDER)
         )) as Assignee[];
     }
     let isRiderAssigned = false;
@@ -40,28 +39,28 @@ export default async function determineTaskStatus(
         );
     }
     if (!isRiderAssigned) {
-        return tasksStatus.new;
+        return models.TaskStatus.NEW;
     } else if (isRiderAssigned && !!!task.timePickedUp) {
-        return tasksStatus.active;
+        return models.TaskStatus.ACTIVE;
     } else if (
         isRiderAssigned &&
         !!task.timePickedUp &&
         !!!task.timeDroppedOff
     ) {
-        return tasksStatus.pickedUp;
+        return models.TaskStatus.PICKED_UP;
     } else if (
         isRiderAssigned &&
         !!task.timePickedUp &&
         !!task.timeDroppedOff &&
         !!!task.timeRiderHome
     ) {
-        return tasksStatus.droppedOff;
+        return models.TaskStatus.DROPPED_OFF;
     } else if (
         isRiderAssigned &&
         !!task.timePickedUp &&
         !!task.timeDroppedOff &&
         !!task.timeRiderHome
     ) {
-        return tasksStatus.completed;
+        return models.TaskStatus.COMPLETED;
     }
 }

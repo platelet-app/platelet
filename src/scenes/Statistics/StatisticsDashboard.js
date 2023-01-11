@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import * as models from "../../models";
 import { PaddedPaper } from "../../styles/common";
 import TasksStatistics from "./components/TasksStatistics";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -8,7 +9,6 @@ import FormControl from "@mui/material/FormControl";
 import { Fade, InputLabel, MenuItem, Select, Stack } from "@mui/material";
 import { getWhoami } from "../../redux/Selectors";
 import getStats from "./utilities/getStats";
-import { userRoles } from "../../apiConsts";
 import moment from "moment";
 import UserRoleSelect from "../../components/UserRoleSelect";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
@@ -47,7 +47,7 @@ function StatisticsDashboard() {
     const classes = useStyles();
     const [isFetching, setIsFetching] = useState(false);
     const whoami = useSelector(getWhoami);
-    const [role, setRole] = useState(userRoles.coordinator);
+    const [role, setRole] = useState(models.Role.COORDINATOR);
     const [days, setDays] = useState(3);
     const dispatch = useDispatch();
 
@@ -118,7 +118,7 @@ function StatisticsDashboard() {
                     <UserRoleSelect
                         value={[role]}
                         onSelect={(value) => setRole(value)}
-                        exclude={[userRoles.user, userRoles.admin]}
+                        exclude={[models.Role.USER, models.Role.ADMIN]}
                     />
                 </Stack>
                 <Fade

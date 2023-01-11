@@ -14,7 +14,6 @@ import { displayErrorNotification } from "../../../redux/notifications/Notificat
 import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
 import RequesterContact from "./RequesterContact";
-import { userRoles } from "../../../apiConsts";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 import RiderResponsibilityDetail from "./RiderResponsibilityDetail";
 
@@ -40,7 +39,7 @@ function TaskDetailsPanel(props) {
     const taskObserver = useRef({ unsubscribe: () => {} });
     const dispatch = useDispatch();
     const currentUserRole = useAssignmentRole(state.id);
-    const hasFullPermissions = currentUserRole === userRoles.coordinator;
+    const hasFullPermissions = currentUserRole === models.Role.COORDINATOR;
 
     const taskModelsSynced = useSelector(
         dataStoreModelSyncedStatusSelector

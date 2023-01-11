@@ -8,7 +8,6 @@ import CommentCard from "./CommentCard";
 import CommentContextMenu from "../../../components/ContextMenus/CommentContextMenu";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
-import { commentVisibility } from "../../../apiConsts";
 import { useDispatch } from "react-redux";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import EditCommentDialog from "./EditCommentDialog";
@@ -41,7 +40,7 @@ const contextCreateStyles = makeStyles((theme) => {
                 zIndex: 1000,
                 "&::before":
                     props.comment &&
-                    props.comment.visibility === commentVisibility.me
+                    props.comment.visibility === models.CommentVisibility.ME
                         ? {
                               pointerEvents: "none",
                               borderRadius: "1em",
@@ -65,7 +64,7 @@ const initialCommentState = {
         id: "",
     },
     body: "",
-    visibility: commentVisibility.me,
+    visibility: models.CommentVisibility.ME,
 };
 
 function Comment(props) {

@@ -1,5 +1,5 @@
 import { DataStore } from "aws-amplify";
-import { deliverableIcons, deliverableUnits } from "../../../apiConsts";
+import { deliverableIcons } from "../../../apiConsts";
 import { render } from "../../../test-utils";
 import * as models from "../../../models";
 import { DeliverableTypeChips } from "./DeliverableTypeChips";
@@ -83,7 +83,7 @@ describe("DeliverableTypeChips", () => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...deliverable,
                 tags: ["tag-1", "tag-2", someTag],
-                defaultUnit: deliverableUnits.item,
+                defaultUnit: models.DeliverableUnit.ITEM,
                 label: `${deliverable.label}${moreText}`,
                 icon: deliverableIcons.bug,
             });

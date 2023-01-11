@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Typography from "@mui/material/Typography";
 import { Styles } from "../styles";
 import { Stack, TextField } from "@mui/material";
-import { commentVisibility } from "../../../apiConsts";
+import * as models from "../../../models";
 import CommentVisibilitySelector from "../../../components/CommentVisibilitySelector";
 import PrioritySelect from "../../Task/components/PrioritySelect";
 
@@ -13,7 +13,9 @@ export const NotesAndPriority = ({
     onChangePriority,
 }) => {
     const classes = Styles();
-    const [visibility, setVisibility] = useState(commentVisibility.everyone);
+    const [visibility, setVisibility] = useState(
+        models.CommentVisibility.EVERYONE
+    );
 
     return (
         <Stack direction="column" spacing={2} className={classes.block}>
@@ -31,7 +33,7 @@ export const NotesAndPriority = ({
                 <TextField
                     id="notes"
                     placeholder={
-                        visibility === commentVisibility.everyone
+                        visibility === models.CommentVisibility.EVERYONE
                             ? "Write a comment that will be visible to anyone..."
                             : "Write a comment only you can see..."
                     }

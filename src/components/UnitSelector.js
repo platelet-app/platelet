@@ -1,13 +1,12 @@
 import { Grid, Chip } from "@mui/material";
 import PropTypes from "prop-types";
+import * as models from "../models";
 import React from "react";
-
-import { deliverableUnits } from "../apiConsts";
 
 function UnitSelector(props) {
     return (
         <Grid container direction="row" spacing={1}>
-            {Object.values(deliverableUnits).map((unit) => (
+            {Object.values(models.DeliverableUnit).map((unit) => (
                 <Grid item key={unit}>
                     <Chip
                         onClick={() => props.onChange(unit)}

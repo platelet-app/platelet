@@ -14,7 +14,6 @@ import {
     displayInfoNotification,
 } from "../../redux/notifications/NotificationsActions";
 import { DataStore } from "aws-amplify";
-import { tasksStatus, userRoles } from "../../apiConsts";
 import {
     getRoleView,
     getWhoami,
@@ -47,9 +46,9 @@ function TaskContextMenu(props) {
     });
     const classes = useStyles();
 
-    const actualRole = ["ALL", userRoles.coordinator].includes(roleView)
-        ? userRoles.coordinator
-        : userRoles.rider;
+    const actualRole = ["ALL", models.Role.COORDINATOR].includes(roleView)
+        ? models.Role.COORDINATOR
+        : models.Role.RIDER;
 
     async function copyToClipboard(e) {
         handleClose(e);
@@ -104,7 +103,7 @@ function TaskContextMenu(props) {
                     ...result,
                     [key]: value,
                 },
-                taskAssignees.filter((ta) => ta.role === userRoles.rider)
+                taskAssignees.filter((ta) => ta.role === models.Role.RIDER)
             );
             await DataStore.save(
                 models.Task.copyOf(result, (updated) => {
@@ -225,7 +224,8 @@ function TaskContextMenu(props) {
             >
                 <MenuItem
                     disabled={
-                        task === null || task.status !== tasksStatus.active
+                        task === null ||
+                        task.status !== models.TaskStatus.ACTIVE
                     }
                     onClick={onSelectPickedUp}
                 >
@@ -233,7 +233,8 @@ function TaskContextMenu(props) {
                 </MenuItem>
                 <MenuItem
                     disabled={
-                        task === null || task.status !== tasksStatus.pickedUp
+                        task === null ||
+                        task.status !== models.TaskStatus.PICKED_UP
                     }
                     onClick={onSelectDroppedOff}
                 >
@@ -241,7 +242,8 @@ function TaskContextMenu(props) {
                 </MenuItem>
                 <MenuItem
                     disabled={
-                        task === null || task.status !== tasksStatus.droppedOff
+                        task === null ||
+                        task.status !== models.TaskStatus.DROPPED_OFF
                     }
                     onClick={onSelectRiderHome}
                 >
@@ -251,11 +253,11 @@ function TaskContextMenu(props) {
                     disabled={
                         task === null ||
                         [
-                            tasksStatus.cancelled,
-                            tasksStatus.abandoned,
-                            tasksStatus.rejected,
-                            tasksStatus.droppedOff,
-                            tasksStatus.completed,
+                            models.TaskStatus.CANCELLED,
+                            models.TaskStatus.ABANDONED,
+                            models.TaskStatus.REJECTED,
+                            models.TaskStatus.DROPPED_OFF,
+                            models.TaskStatus.COMPLETED,
                         ].includes(task.status)
                     }
                     onClick={onSelectRejected}
@@ -266,26 +268,26 @@ function TaskContextMenu(props) {
                     disabled={
                         task === null ||
                         [
-                            tasksStatus.cancelled,
-                            tasksStatus.abandoned,
-                            tasksStatus.rejected,
-                            tasksStatus.droppedOff,
-                            tasksStatus.completed,
+                            models.TaskStatus.CANCELLED,
+                            models.TaskStatus.ABANDONED,
+                            models.TaskStatus.REJECTED,
+                            models.TaskStatus.DROPPED_OFF,
+                            models.TaskStatus.COMPLETED,
                         ].includes(task.status)
                     }
                     onClick={onSelectCancelled}
                 >
                     Mark cancelled
                 </MenuItem>
-                {actualRole === userRoles.coordinator && (
+                {actualRole === models.Role.COORDINATOR && (
                     <MenuItem
                         disabled={
                             task === null ||
                             [
-                                tasksStatus.cancelled,
-                                tasksStatus.abandoned,
-                                tasksStatus.rejected,
-                                tasksStatus.completed,
+                                models.TaskStatus.CANCELLED,
+                                models.TaskStatus.ABANDONED,
+                                models.TaskStatus.REJECTED,
+                                models.TaskStatus.COMPLETED,
                             ].includes(task.status)
                         }
                         onClick={onDuplicate}

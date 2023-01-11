@@ -4,7 +4,6 @@ import Divider from "@mui/material/Divider";
 import EditModeToggleButton from "../../../components/EditModeToggleButton";
 import { getWhoami } from "../../../redux/Selectors";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
-import { userRoles } from "../../../apiConsts";
 import { Box, Stack, Typography, useMediaQuery } from "@mui/material";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
@@ -79,7 +78,7 @@ function UserProfile(props) {
 
     if (whoami.roles) {
         if (
-            whoami.roles.includes(userRoles.admin) ||
+            whoami.roles.includes(models.Role.ADMIN) ||
             whoami.id === props.user.id
         ) {
             editNameToggle = (
@@ -279,7 +278,7 @@ function UserProfile(props) {
     }
 
     const isRider =
-        props.user.roles && props.user.roles.includes(userRoles.rider);
+        props.user.roles && props.user.roles.includes(models.Role.RIDER);
 
     async function onUpdate() {
         if (updateValues.current) {

@@ -1,4 +1,5 @@
 import React from "react";
+import * as models from "../../../models";
 import Grid from "@mui/material/Grid";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -6,27 +7,26 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { priorities, tasksStatus } from "../../../apiConsts";
 
 function getTitle(key) {
     switch (key) {
         case "TOTAL":
             return "Total";
-        case tasksStatus.completed:
+        case models.TaskStatus.COMPLETED:
             return "Completed";
-        case tasksStatus.pickedUp:
+        case models.TaskStatus.PICKED_UP:
             return "Picked up";
-        case tasksStatus.droppedOff:
+        case models.TaskStatus.DROPPED_OFF:
             return "Delivered";
-        case tasksStatus.active:
+        case models.TaskStatus.ACTIVE:
             return "Active";
-        case tasksStatus.new:
+        case models.TaskStatus.NEW:
             return "Unassigned";
-        case tasksStatus.rejected:
+        case models.TaskStatus.REJECTED:
             return "Rejected";
-        case tasksStatus.cancelled:
+        case models.TaskStatus.CANCELLED:
             return "Cancelled";
-        case tasksStatus.abandoned:
+        case models.TaskStatus.ABANDONED:
             return "Abandoned";
         default:
             return key;
@@ -45,7 +45,7 @@ function hhmmss(secs) {
 }
 
 function CommonStats(props) {
-    const columns = [...Object.values(tasksStatus), "TOTAL"];
+    const columns = [...Object.values(models.TaskStatus), "TOTAL"];
     return (
         <TableContainer>
             <Table
@@ -94,7 +94,7 @@ function CommonStats(props) {
 function PatchStats(props) {
     let columns = [
         "Responsibility",
-        ...Object.values(priorities),
+        ...Object.values(models.Priority),
         "None",
         "Total",
     ];
@@ -164,7 +164,12 @@ function PatchStats(props) {
 }
 
 function RiderStats(props) {
-    let columns = ["Assignee", ...Object.values(priorities), "None", "Total"];
+    let columns = [
+        "Assignee",
+        ...Object.values(models.Priority),
+        "None",
+        "Total",
+    ];
     const riderStats = props.stats.riders;
 
     return (

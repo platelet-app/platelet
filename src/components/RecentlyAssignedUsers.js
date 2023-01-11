@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import * as models from "../models";
 import { useSelector } from "react-redux";
 import {
     getRoleView,
@@ -6,7 +7,6 @@ import {
     taskAssigneesReadyStatusSelector,
     taskAssigneesSelector,
 } from "../redux/Selectors";
-import { userRoles } from "../apiConsts";
 import { convertListDataToObject } from "../utilities";
 import { Grid, Typography } from "@mui/material";
 import _ from "lodash";
@@ -100,7 +100,7 @@ function RecentlyAssignedUsers(props) {
                             >
                                 <UserChip
                                     showResponsibility={
-                                        props.role === userRoles.rider
+                                        props.role === models.Role.RIDER
                                     }
                                     disabled={isFetching || props.disabled}
                                     onClick={() => {
@@ -141,7 +141,7 @@ RecentlyAssignedUsers.propTypes = {
 };
 
 RecentlyAssignedUsers.defaultProps = {
-    role: userRoles.rider,
+    role: models.Role.RIDER,
     value: null,
     onChange: () => {},
     limit: 10,

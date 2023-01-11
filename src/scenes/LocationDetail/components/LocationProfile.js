@@ -1,11 +1,11 @@
 import { Box, Divider, Stack, Typography, useMediaQuery } from "@mui/material";
+import * as models from "../../../models";
 import React, { useRef, useState } from "react";
 import LocationEditNameDialog from "./LocationEditNameDialog";
 import { useSelector } from "react-redux";
 import EditModeToggleButton from "../../../components/EditModeToggleButton";
 import { getWhoami } from "../../../redux/Selectors";
 import PropTypes from "prop-types";
-import { userRoles } from "../../../apiConsts";
 import LabelItemPair from "../../../components/LabelItemPair";
 import { useTheme } from "@mui/styles";
 
@@ -64,7 +64,7 @@ function LocationProfile(props) {
 
     let editNameToggle = <></>;
     if (whoami.roles) {
-        if (whoami.roles.includes(userRoles.admin)) {
+        if (whoami.roles.includes(models.Role.ADMIN)) {
             editNameToggle = (
                 <EditModeToggleButton
                     aria-label="Edit Location Name"
@@ -80,7 +80,7 @@ function LocationProfile(props) {
 
     let editAddressToggle = <></>;
     if (whoami.roles) {
-        if (whoami.roles.includes(userRoles.admin)) {
+        if (whoami.roles.includes(models.Role.ADMIN)) {
             editAddressToggle = (
                 <EditModeToggleButton
                     aria-label="Edit Location Details"
@@ -96,7 +96,7 @@ function LocationProfile(props) {
 
     let editContactToggle = <></>;
     if (whoami.roles) {
-        if (whoami.roles.includes(userRoles.admin)) {
+        if (whoami.roles.includes(models.Role.ADMIN)) {
             editContactToggle = (
                 <EditModeToggleButton
                     aria-label="Edit Location Contact"

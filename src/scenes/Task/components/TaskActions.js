@@ -24,7 +24,6 @@ import TimePicker from "./TimePicker";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import { saveTaskTimeWithKey } from "../utilities";
-import { tasksStatus, userRoles } from "../../../apiConsts";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 import determineTaskStatus from "../../../utilities/determineTaskStatus";
 import TimeAndNamePicker from "./TimeAndNamePicker";
@@ -63,9 +62,9 @@ function TaskActions(props) {
 
     const currentUserRole = useAssignmentRole(props.taskId);
     const hasFullPermissions = [
-        userRoles.rider,
-        userRoles.admin,
-        userRoles.coordinator,
+        models.Role.RIDER,
+        models.Role.ADMIN,
+        models.Role.COORDINATOR,
     ].includes(currentUserRole);
 
     const errorMessage = "Sorry, something went wrong";
@@ -108,7 +107,7 @@ function TaskActions(props) {
                 props.taskId
             );
             const riderAssignees = taskAssignees.filter(
-                (assignee) => assignee.role === userRoles.rider
+                (assignee) => assignee.role === models.Role.RIDER
             );
             const status = await determineTaskStatus(
                 { ...existingTask, ...values },
@@ -188,7 +187,7 @@ function TaskActions(props) {
         else if (key === "timePickedUp") {
             const assigneeCheck = taskAssignees.filter(
                 (ta) =>
-                    ta.role === userRoles.rider &&
+                    ta.role === models.Role.RIDER &&
                     ta.task &&
                     ta.task.id === props.taskId
             );
@@ -199,7 +198,7 @@ function TaskActions(props) {
                 stopped
             );
         } else if (key === "timeRiderHome") {
-            if (task && task.status === tasksStatus.new) return true;
+            if (task && task.status === models.TaskStatus.NEW) return true;
             return !state.includes("timeDroppedOff");
         } else if (key === "timeRejected") {
             if (state.includes("timeRejected")) return false;

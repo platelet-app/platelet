@@ -11,7 +11,6 @@ import PropTypes from "prop-types";
 import { Box, Grow, Skeleton, ToggleButton } from "@mui/material";
 import { makeStyles, useTheme } from "@mui/styles";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
-import { commentVisibility, userRoles } from "../../../apiConsts";
 import * as models from "../../../models/index";
 import { DataStore } from "aws-amplify";
 import { useDispatch, useSelector } from "react-redux";
@@ -230,7 +229,9 @@ const TaskItem = React.memo((props) => {
             const assignmentsNotMe = allAssignees
                 ? Object.values(taskAssignees).filter((assignment) => {
                       const actualRole =
-                          roleView === "ALL" ? userRoles.coordinator : roleView;
+                          roleView === "ALL"
+                              ? models.Role.COORDINATOR
+                              : roleView;
                       if (
                           assignment.role?.toLowerCase() !==
                               actualRole.toLowerCase() ||
@@ -246,7 +247,7 @@ const TaskItem = React.memo((props) => {
             const riders =
                 task && task.assignees
                     ? Object.values(task.assignees)
-                          .filter((a) => a.role === userRoles.rider)
+                          .filter((a) => a.role === models.Role.RIDER)
                           .map((a) => a.assignee)
                     : [];
             setAssignedRiders(riders);
@@ -267,8 +268,8 @@ const TaskItem = React.memo((props) => {
             )
         ).filter(
             (c) =>
-                c.visibility === commentVisibility.everyone ||
-                (c.visibility === commentVisibility.me &&
+                c.visibility === models.CommentVisibility.EVERYONE ||
+                (c.visibility === models.CommentVisibility.ME &&
                     c.author &&
                     c.author.id === whoami.id)
         );

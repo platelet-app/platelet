@@ -13,7 +13,6 @@ import { Auth, DataStore, syncExpression } from "aws-amplify";
 import * as models from "../../models";
 import * as queries from "../../graphql/queries";
 import { NotFound } from "http-errors";
-import { userRoles } from "../../apiConsts";
 import { eventChannel } from "redux-saga";
 import dataStoreConflictHandler from "./dataStoreConflictHandler";
 
@@ -22,7 +21,7 @@ const fakeUser = {
     name: "offline",
     username: "offline",
     displayName: "Offline User",
-    roles: Object.values(userRoles),
+    roles: Object.values(models.Role),
     dateOfBirth: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,
@@ -31,7 +30,7 @@ const fakeUser = {
 const testUserModel = new models.User({
     name: "whoami",
     displayName: "Mock User",
-    roles: Object.values(userRoles),
+    roles: Object.values(models.Role),
     dateOfBirth: null,
     profilePictureURL: null,
     profilePictureThumbnailURL: null,

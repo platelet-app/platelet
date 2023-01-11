@@ -1,11 +1,4 @@
 import { DataStore } from "aws-amplify";
-import {
-    commentVisibility,
-    deliverableUnits,
-    priorities,
-    tasksStatus,
-    userRoles,
-} from "../../../apiConsts";
 import * as models from "../../../models";
 import { v4 as uuidv4 } from "uuid";
 import generateReport from "./generateReport";
@@ -35,17 +28,17 @@ describe("generateReports", () => {
         const rider1 = new models.User({
             displayName: uuidv4(),
             name: uuidv4(),
-            roles: [userRoles.rider],
+            roles: [models.Role.RIDER],
         });
         const rider2 = new models.User({
             displayName: uuidv4(),
             name: uuidv4(),
-            roles: [userRoles.rider],
+            roles: [models.Role.RIDER],
         });
         const whoami = new models.User({
             displayName: uuidv4(),
             name: uuidv4(),
-            roles: [userRoles.coordinator],
+            roles: [models.Role.COORDINATOR],
         });
         const pickUpLocationData = getLocFields();
         const pickUpLocationData2 = getLocFields();
@@ -73,13 +66,13 @@ describe("generateReports", () => {
         );
         const task1 = await DataStore.save(
             new models.Task({
-                status: tasksStatus.new,
+                status: models.TaskStatus.NEW,
                 timeOfCall: new Date().toISOString(),
                 requesterContact: {
                     name: uuidv4(),
                     telephoneNumber: uuidv4(),
                 },
-                priority: priorities.medium,
+                priority: models.Priority.MEDIUM,
                 pickUpLocation: pickUpLocation1,
                 dropOffLocation: dropOffLocation1,
                 riderResponsibility: uuidv4(),
@@ -90,13 +83,13 @@ describe("generateReports", () => {
         );
         const task2 = await DataStore.save(
             new models.Task({
-                status: tasksStatus.active,
+                status: models.TaskStatus.ACTIVE,
                 timeOfCall: new Date().toISOString(),
                 requesterContact: {
                     name: uuidv4(),
                     telephoneNumber: uuidv4(),
                 },
-                priority: priorities.medium,
+                priority: models.Priority.MEDIUM,
                 pickUpLocation: pickUpLocation2,
                 dropOffLocation: dropOffLocation2,
                 riderResponsibility: uuidv4(),
@@ -111,7 +104,7 @@ describe("generateReports", () => {
                     new models.TaskAssignee({
                         task: t,
                         assignee: whoami,
-                        role: userRoles.coordinator,
+                        role: models.Role.COORDINATOR,
                     })
                 )
             )
@@ -120,14 +113,14 @@ describe("generateReports", () => {
             new models.TaskAssignee({
                 task: task1,
                 assignee: rider1,
-                role: userRoles.rider,
+                role: models.Role.RIDER,
             })
         );
         const riderAssignee2 = await DataStore.save(
             new models.TaskAssignee({
                 task: task2,
                 assignee: rider2,
-                role: userRoles.rider,
+                role: models.Role.RIDER,
             })
         );
         const deli1 = await DataStore.save(
@@ -140,7 +133,7 @@ describe("generateReports", () => {
             new models.Deliverable({
                 task: task1,
                 deliverableType: deli1,
-                unit: deliverableUnits.box,
+                unit: models.DeliverableUnit.BOX,
                 count: 5,
             })
         );
@@ -148,7 +141,7 @@ describe("generateReports", () => {
             new models.Deliverable({
                 task: task2,
                 deliverableType: deli2,
-                unit: deliverableUnits.item,
+                unit: models.DeliverableUnit.ITEM,
                 count: 6,
             })
         );
@@ -159,7 +152,7 @@ describe("generateReports", () => {
                         body,
                         parentId: task1.id,
                         author: rider1,
-                        visibility: commentVisibility.everyone,
+                        visibility: models.CommentVisibility.EVERYONE,
                     })
                 )
             )
@@ -231,7 +224,7 @@ ${task2.id},${task2.createdAt || ""},${task2.timeOfCall},${task2.priority},${
 
         const result = await generateReport(
             whoami.id,
-            userRoles.coordinator,
+            models.Role.COORDINATOR,
             3
         );
         expect(result).toBe(expected);

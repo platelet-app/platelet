@@ -1,6 +1,5 @@
 import _ from "lodash";
 import { DataStore } from "aws-amplify";
-import { tasksStatus, userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
 import moment from "moment";
 import { convertListDataToObject } from "../../../utilities";
@@ -8,10 +7,10 @@ import { convertListDataToObject } from "../../../utilities";
 export const isCompletedTab = (keys) =>
     _.intersection(
         [
-            tasksStatus.completed,
-            tasksStatus.cancelled,
-            tasksStatus.rejected,
-            tasksStatus.abandoned,
+            models.TaskStatus.COMPLETED,
+            models.TaskStatus.CANCELLED,
+            models.TaskStatus.REJECTED,
+            models.TaskStatus.ABANDONED,
         ],
         keys
     ).length > 0;
@@ -36,7 +35,7 @@ export async function filterTasksByFilteredUser(tasks, userId, taskStatuses) {
     if (userId) {
         const usersTaskIds = (
             await DataStore.query(models.TaskAssignee, (a) =>
-                a.role("eq", userRoles.rider)
+                a.role("eq", models.Role.RIDER)
             )
         )
             .filter(

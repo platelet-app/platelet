@@ -15,7 +15,6 @@ import {
     tenantIdSelector,
 } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
-import { deliverableUnits, userRoles } from "../../../apiConsts";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 
 function DeliverableDetails(props) {
@@ -39,7 +38,7 @@ function DeliverableDetails(props) {
     ).DeliverableType;
 
     const currentUserRole = useAssignmentRole(props.taskId);
-    const hasFullPermissions = currentUserRole === userRoles.coordinator;
+    const hasFullPermissions = currentUserRole === models.Role.COORDINATOR;
 
     const getDeliverables = React.useCallback(async (taskId) => {
         if (!loadedOnce.current) setIsFetching(true);
@@ -198,7 +197,7 @@ function DeliverableDetails(props) {
                 )
                 .map((deliverable) => {
                     let countString = "";
-                    if (deliverable.unit === deliverableUnits.none) {
+                    if (deliverable.unit === models.DeliverableUnit.NONE) {
                         countString = `x ${deliverable.count}`;
                     } else {
                         countString = `${deliverable.count} x ${deliverable.unit}`;

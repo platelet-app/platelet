@@ -1,15 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
 import DeliverableCard from "./DeliverableCard";
+import * as models from "../../../models";
 import { SmallCirclePlusButton } from "../../../components/Buttons";
-import { deliverableUnits } from "../../../apiConsts";
 
 function AddableDeliverable(props) {
     const deliverableType = props.deliverableType;
     function makeNewDeliverable() {
         const { defaultUnit, ...rest } = deliverableType;
         let newDeliverable = {
-            unit: defaultUnit || deliverableUnits.none,
+            unit: defaultUnit || models.DeliverableUnit.NONE,
             count: 1,
             ...rest,
         };

@@ -1,5 +1,4 @@
 import React from "react";
-import { userRoles } from "../apiConsts";
 import PropTypes from "prop-types";
 import { Chip, Stack } from "@mui/material";
 import * as models from "../models";
@@ -11,7 +10,7 @@ function UserRoleSelect(props) {
 
     return (
         <Stack spacing={1} direction="row">
-            {Object.values(userRoles)
+            {Object.values(models.Role)
                 .filter((value) => !props.exclude.includes(value))
                 .reverse()
                 .map((value) => (

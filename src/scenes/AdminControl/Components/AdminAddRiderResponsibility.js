@@ -10,7 +10,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { getWhoami, tenantIdSelector } from "../../../redux/Selectors";
 import Forbidden from "../../../ErrorComponents/Forbidden";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
-import { userRoles } from "../../../apiConsts";
 
 const initialRiderResponsibilityState = {
     label: "",
@@ -88,7 +87,7 @@ function AdminAddRiderResponsibility() {
                 />
             </PaddedPaper>
         );
-    } else if (!whoami.roles.includes(userRoles.admin)) {
+    } else if (!whoami.roles.includes(models.Role.ADMIN)) {
         return <Forbidden />;
     } else {
         return (

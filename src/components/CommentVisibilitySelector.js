@@ -1,35 +1,39 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { commentVisibility } from "../apiConsts";
 import { Stack, Chip } from "@mui/material";
+import * as models from "../models";
 
 function CommentVisibilitySelector(props) {
     return (
         <Stack direction="row" spacing={1}>
             <Chip
                 variant={
-                    props.value === commentVisibility.everyone
+                    props.value === models.CommentVisibility.EVERYONE
                         ? "default"
                         : "outlined"
                 }
                 color={
-                    props.value === commentVisibility.everyone
+                    props.value === models.CommentVisibility.EVERYONE
                         ? "primary"
                         : "default"
                 }
-                onClick={() => props.onChange(commentVisibility.everyone)}
+                onClick={() =>
+                    props.onChange(models.CommentVisibility.EVERYONE)
+                }
                 label={"EVERYONE"}
             />
             <Chip
                 variant={
-                    props.value === commentVisibility.me
+                    props.value === models.CommentVisibility.ME
                         ? "default"
                         : "outlined"
                 }
                 color={
-                    props.value === commentVisibility.me ? "primary" : "default"
+                    props.value === models.CommentVisibility.ME
+                        ? "primary"
+                        : "default"
                 }
-                onClick={() => props.onChange(commentVisibility.me)}
+                onClick={() => props.onChange(models.CommentVisibility.ME)}
                 label={"ONLY ME"}
             />
         </Stack>

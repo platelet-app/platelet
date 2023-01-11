@@ -6,7 +6,6 @@ import * as models from "../../../models";
 import { render } from "../../../test-utils";
 import UserDetail from "./UserDetail";
 import userEvent from "@testing-library/user-event";
-import { userRoles } from "../../../apiConsts";
 import { userAddressFields } from "./UserProfile";
 import { userContactFields } from "./UserProfile";
 
@@ -26,13 +25,13 @@ const testUser = new models.User({
     },
     name: uuidv4(),
     displayName: uuidv4(),
-    roles: [userRoles.user, userRoles.rider],
+    roles: [models.Role.USER, models.Role.RIDER],
     tenantId,
 });
 
 const whoami = new models.User({
     displayName: "whoami",
-    roles: [userRoles.admin, userRoles.user],
+    roles: [models.Role.ADMIN, models.Role.USER],
 });
 
 const preloadedState = {
@@ -490,7 +489,7 @@ describe("UserDetail", () => {
                 whoami: {
                     user: {
                         displayName: "test",
-                        roles: [userRoles.user],
+                        roles: [models.Role.USER],
                     },
                 },
             },
@@ -530,7 +529,11 @@ describe("UserDetail", () => {
             expect(apiSpy).toHaveBeenCalledWith(
                 graphqlOperation(mutations.updateUserRoles, {
                     userId: user.id,
-                    roles: [userRoles.user, userRoles.rider, userRoles.admin],
+                    roles: [
+                        models.Role.USER,
+                        models.Role.RIDER,
+                        models.Role.ADMIN,
+                    ],
                 })
             );
         });
@@ -545,7 +548,7 @@ describe("UserDetail", () => {
             new models.User({
                 ...testUser,
                 isPrimaryAdmin: 1,
-                roles: [userRoles.admin, userRoles.user],
+                roles: [models.Role.ADMIN, models.Role.USER],
             })
         );
         const querySpy = jest.spyOn(DataStore, "query");
@@ -611,7 +614,7 @@ describe("UserDetail", () => {
         await DataStore.save(
             models.User.copyOf(
                 user,
-                (upd) => (upd.roles = [...user.roles, userRoles.admin])
+                (upd) => (upd.roles = [...user.roles, models.Role.ADMIN])
             )
         );
         await waitFor(() => {

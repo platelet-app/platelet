@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from "uuid";
 import * as amplify from "aws-amplify";
 import * as models from "../../../models/index";
 import _ from "lodash";
-import { tasksStatus, userRoles } from "../../../apiConsts";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DataStore } from "aws-amplify";
@@ -38,17 +37,17 @@ const fakeUsers = _.range(0, 3).map(() => {
         displayName: uuidv4(),
         riderResponsibility: riderResponsibility.label,
         tenantId,
-        roles: [userRoles.coordinator, userRoles.rider, userRoles.user],
+        roles: [models.Role.COORDINATOR, models.Role.RIDER, models.Role.USER],
     });
 });
 
 const fakeTask1 = new models.Task({
     tenantId,
-    status: tasksStatus.new,
+    status: models.TaskStatus.NEW,
 });
 const fakeTask2 = new models.Task({
     tenantId,
-    status: tasksStatus.new,
+    status: models.TaskStatus.NEW,
 });
 
 let count = 0;
@@ -57,7 +56,7 @@ const fakeAssignments = fakeUsers.map((user) => {
     return new models.TaskAssignee({
         assignee: user,
         task: count <= 2 ? fakeTask1 : fakeTask2,
-        role: count % 2 === 0 ? userRoles.coordinator : userRoles.rider,
+        role: count % 2 === 0 ? models.Role.COORDINATOR : models.Role.RIDER,
     });
 });
 
@@ -66,7 +65,11 @@ const preloadedState = {
     whoami: {
         user: new models.User({
             displayName: "some name",
-            roles: [userRoles.coordinator, userRoles.rider, userRoles.user],
+            roles: [
+                models.Role.COORDINATOR,
+                models.Role.RIDER,
+                models.Role.USER,
+            ],
             tenantId,
         }),
     },
@@ -81,7 +84,7 @@ async function saveAssignments() {
 async function saveCoordAssignments() {
     await Promise.all(
         fakeAssignments
-            .filter((assignment) => assignment.role === userRoles.coordinator)
+            .filter((assignment) => assignment.role === models.Role.COORDINATOR)
             .map((assignment) => DataStore.save(assignment))
     );
 }
@@ -172,12 +175,12 @@ describe("TaskAssignmentsPanel", () => {
                         new models.TaskAssignee({
                             assignee: fakeUsers[0],
                             task: fakeTask1,
-                            role: userRoles.coordinator,
+                            role: models.Role.COORDINATOR,
                         }),
                         new models.TaskAssignee({
                             assignee: fakeUsers[1],
                             task: fakeTask1,
-                            role: userRoles.rider,
+                            role: models.Role.RIDER,
                         }),
                     ],
                 },
@@ -207,7 +210,7 @@ describe("TaskAssignmentsPanel", () => {
 
     it.each`
         role
-        ${userRoles.rider} | ${userRoles.coordinator}
+        ${models.Role.RIDER} | ${models.Role.COORDINATOR}
     `(
         "is expanded by default when there are no coordinators or riders",
         async ({ role }) => {
@@ -238,7 +241,7 @@ describe("TaskAssignmentsPanel", () => {
         const mockUser = await DataStore.save(
             new models.User({
                 displayName: uuidv4(),
-                roles: [userRoles.rider],
+                roles: [models.Role.RIDER],
                 riderResponsibility: uuidv4(),
             })
         );
@@ -246,7 +249,7 @@ describe("TaskAssignmentsPanel", () => {
         const mockAssignment = new models.TaskAssignee({
             assignee: mockUser,
             task: mockTask,
-            role: userRoles.rider,
+            role: models.Role.RIDER,
         });
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
@@ -300,7 +303,7 @@ describe("TaskAssignmentsPanel", () => {
             2,
             expect.objectContaining({
                 ..._.omit(mockTask, "id"),
-                status: tasksStatus.active,
+                status: models.TaskStatus.ACTIVE,
             })
         );
         expect(
@@ -314,7 +317,7 @@ describe("TaskAssignmentsPanel", () => {
         const mockAssignment = new models.TaskAssignee({
             assignee: mockUser,
             task: mockTask,
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
         });
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
@@ -441,14 +444,14 @@ describe("TaskAssignmentsPanel", () => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 riderResponsibility: null,
-                status: tasksStatus.new,
+                status: models.TaskStatus.NEW,
             });
         });
     });
 
     it("deletes a rider assignment with multiple riders", async () => {
         const mockTask = new models.Task({
-            status: tasksStatus.active,
+            status: models.TaskStatus.ACTIVE,
             riderResponsibility: "nope",
         });
         await DataStore.save(mockTask);
@@ -462,14 +465,14 @@ describe("TaskAssignmentsPanel", () => {
             new models.TaskAssignee({
                 task: mockTask,
                 assignee: firstUser,
-                role: userRoles.rider,
+                role: models.Role.RIDER,
             })
         );
         await DataStore.save(
             new models.TaskAssignee({
                 task: mockTask,
                 assignee: anotherUser,
-                role: userRoles.rider,
+                role: models.Role.RIDER,
             })
         );
         const querySpy = jest.spyOn(DataStore, "query");
@@ -525,10 +528,10 @@ describe("TaskAssignmentsPanel", () => {
 
     test.each`
         role
-        ${userRoles.rider} | ${userRoles.coordinator}
+        ${models.Role.RIDER} | ${models.Role.COORDINATOR}
     `("the views for different role views assigned", async ({ role }) => {
         const mockTask = new models.Task({
-            status: tasksStatus.active,
+            status: models.TaskStatus.ACTIVE,
         });
         await DataStore.save(mockTask);
 
@@ -547,12 +550,12 @@ describe("TaskAssignmentsPanel", () => {
         const mockOppositeRoleAssign = new models.TaskAssignee({
             task: mockTask,
             role:
-                role === userRoles.rider
-                    ? userRoles.coordinator
-                    : userRoles.rider,
+                role === models.Role.RIDER
+                    ? models.Role.COORDINATOR
+                    : models.Role.RIDER,
             assignee: new models.User({
                 displayName: "someone",
-                roles: [userRoles.coordinator, userRoles.rider],
+                roles: [models.Role.COORDINATOR, models.Role.RIDER],
             }),
         });
         const preloadedState = {
@@ -573,7 +576,7 @@ describe("TaskAssignmentsPanel", () => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
 
-        if (role === userRoles.rider) {
+        if (role === models.Role.RIDER) {
             expect(
                 screen.queryByRole("button", { name: "Edit Assignees" })
             ).toBeNull();
@@ -586,25 +589,25 @@ describe("TaskAssignmentsPanel", () => {
 
     test.skip("the observer reacts to new records", async () => {
         const mockTask = new models.Task({
-            status: tasksStatus.active,
+            status: models.TaskStatus.ACTIVE,
             tenantId,
         });
         await DataStore.save(mockTask);
         const mockUser = new models.User({
             displayName: "some rider",
-            roles: [userRoles.coordinator, userRoles.rider],
+            roles: [models.Role.COORDINATOR, models.Role.RIDER],
             tenantId,
         });
         const mockUser2 = new models.User({
             displayName: "someone",
-            roles: [userRoles.coordinator],
+            roles: [models.Role.COORDINATOR],
             tenantId,
         });
         await DataStore.save(mockUser);
         await DataStore.save(mockUser2);
         const mockAssignee = new models.TaskAssignee({
             task: mockTask,
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
             assignee: mockUser2,
             tenantId,
         });
@@ -625,7 +628,7 @@ describe("TaskAssignmentsPanel", () => {
             new models.TaskAssignee({
                 task: mockTask,
                 assignee: mockUser,
-                role: userRoles.rider,
+                role: models.Role.RIDER,
                 tenantId,
             })
         );
@@ -637,14 +640,14 @@ describe("TaskAssignmentsPanel", () => {
 
     test("confirm before deleting yourself as coordinator", async () => {
         const mockTask = new models.Task({
-            status: tasksStatus.new,
+            status: models.TaskStatus.NEW,
             tenantId,
         });
         await DataStore.save(mockTask);
         const mockWhoami = new models.User({
             tenantId,
             displayName: "myself",
-            roles: [userRoles.coordinator, userRoles.user],
+            roles: [models.Role.COORDINATOR, models.Role.USER],
         });
         await DataStore.save(mockWhoami);
         const preloadedState = {
@@ -657,7 +660,7 @@ describe("TaskAssignmentsPanel", () => {
         const mockAssignment = new models.TaskAssignee({
             assignee: mockWhoami,
             task: mockTask,
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
             tenantId,
         });
 
@@ -692,14 +695,14 @@ describe("TaskAssignmentsPanel", () => {
 
     test("cancel deleting yourself as coordinator", async () => {
         const mockTask = new models.Task({
-            status: tasksStatus.new,
+            status: models.TaskStatus.NEW,
             tenantId,
         });
         await DataStore.save(mockTask);
         const mockWhoami = new models.User({
             tenantId,
             displayName: "myself",
-            roles: [userRoles.coordinator, userRoles.user],
+            roles: [models.Role.COORDINATOR, models.Role.USER],
         });
         await DataStore.save(mockWhoami);
         const preloadedState = {
@@ -712,7 +715,7 @@ describe("TaskAssignmentsPanel", () => {
         const mockAssignment = new models.TaskAssignee({
             assignee: mockWhoami,
             task: mockTask,
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
             tenantId,
         });
 

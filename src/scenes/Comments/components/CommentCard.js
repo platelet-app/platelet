@@ -1,4 +1,5 @@
 import React from "react";
+import * as models from "../../../models";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import {
@@ -16,7 +17,6 @@ import { useSelector } from "react-redux";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 import { getWhoami } from "../../../redux/Selectors";
-import { commentVisibility } from "../../../apiConsts";
 
 const CommentCard = React.memo((props) => {
     const { show, hide } = showHide();
@@ -24,7 +24,7 @@ const CommentCard = React.memo((props) => {
     const timeCreatedString = moment(props.timeCreated).calendar();
     const whoami = useSelector(getWhoami);
     const Card =
-        props.visibility === commentVisibility.everyone
+        props.visibility === models.CommentVisibility.EVERYONE
             ? (props) => <CommentCardStyled>{props.children}</CommentCardStyled>
             : (props) => (
                   <PrivateCommentCardStyled>
@@ -93,7 +93,7 @@ const CommentCard = React.memo((props) => {
                                     <Tooltip
                                         className={
                                             props.visibility ===
-                                            commentVisibility.everyone
+                                            models.CommentVisibility.EVERYONE
                                                 ? hide
                                                 : show
                                         }
@@ -132,7 +132,7 @@ const CommentCard = React.memo((props) => {
 
 CommentCard.propTypes = {
     author: PropTypes.object,
-    visibility: PropTypes.oneOf(Object.values(commentVisibility)),
+    visibility: PropTypes.oneOf(Object.values(models.CommentVisibility)),
     showAuthor: PropTypes.bool,
     numEdits: PropTypes.number,
     timeCreated: PropTypes.string,
@@ -146,7 +146,7 @@ CommentCard.defaultProps = {
     },
     numEdits: 0,
     showAuthor: true,
-    visibility: commentVisibility.me,
+    visibility: models.CommentVisibility.ME,
     timeCreated: undefined,
 };
 

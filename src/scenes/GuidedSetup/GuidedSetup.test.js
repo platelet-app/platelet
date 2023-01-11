@@ -6,12 +6,6 @@ import * as models from "../../models";
 import { DataStore } from "aws-amplify";
 import userEvent from "@testing-library/user-event";
 import _ from "lodash";
-import {
-    commentVisibility,
-    priorities,
-    tasksStatus,
-    userRoles,
-} from "../../apiConsts";
 
 const tenantId = "tenantId";
 
@@ -139,7 +133,7 @@ describe("GuidedSetup", () => {
             pickUpLocation: null,
             priority: null,
             createdBy: mockWhoami,
-            status: tasksStatus.new,
+            status: models.TaskStatus.NEW,
             establishmentLocation: null,
             requesterContact: {
                 name: "",
@@ -151,7 +145,7 @@ describe("GuidedSetup", () => {
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
             assignee: mockWhoami,
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
         });
         await DataStore.save(mockWhoami);
         const querySpy = jest.spyOn(DataStore, "query");
@@ -205,8 +199,8 @@ describe("GuidedSetup", () => {
             pickUpLocation: null,
             establishmentLocation: null,
             createdBy: mockWhoami,
-            priority: priorities.high,
-            status: tasksStatus.new,
+            priority: models.Priority.HIGH,
+            status: models.TaskStatus.NEW,
             requesterContact: {
                 name: "Someone Person",
                 telephoneNumber: "01234567890",
@@ -217,7 +211,7 @@ describe("GuidedSetup", () => {
         const mockAssignment = new models.TaskAssignee({
             task: mockTask,
             assignee: mockWhoami,
-            role: userRoles.coordinator,
+            role: models.Role.COORDINATOR,
             tenantId,
         });
         await DataStore.save(mockWhoami);
@@ -240,7 +234,7 @@ describe("GuidedSetup", () => {
             mockTask.requesterContact.name
         );
         userEvent.click(screen.getByText(/PRIORITY/));
-        userEvent.click(screen.getByText(priorities.high));
+        userEvent.click(screen.getByText(models.Priority.HIGH));
         userEvent.click(
             screen.getByRole("button", { name: "Save to dashboard" })
         );
@@ -276,7 +270,7 @@ describe("GuidedSetup", () => {
             body: "This is a comment",
             author: whoami,
             tenantId,
-            visibility: commentVisibility.everyone,
+            visibility: models.CommentVisibility.EVERYONE,
         });
 
         const querySpy = jest.spyOn(DataStore, "query");
@@ -316,7 +310,7 @@ describe("GuidedSetup", () => {
             priority: null,
             createdBy: whoami,
             establishmentLocation: mockLocation,
-            status: tasksStatus.new,
+            status: models.TaskStatus.NEW,
             requesterContact: { name: "", telephoneNumber: "" },
             tenantId,
         });
@@ -354,7 +348,7 @@ describe("GuidedSetup", () => {
             createdBy: whoami,
             priority: null,
             establishmentLocation: null,
-            status: tasksStatus.new,
+            status: models.TaskStatus.NEW,
             requesterContact: { name: "", telephoneNumber: "" },
             tenantId,
         });
@@ -394,7 +388,7 @@ describe("GuidedSetup", () => {
             createdBy: whoami,
             priority: null,
             establishmentLocation: mockLocation,
-            status: tasksStatus.new,
+            status: models.TaskStatus.NEW,
             requesterContact: { name: "", telephoneNumber: "" },
             tenantId,
         });
@@ -438,7 +432,7 @@ describe("GuidedSetup", () => {
             createdBy: whoami,
             priority: null,
             establishmentLocation: mockLocation,
-            status: tasksStatus.new,
+            status: models.TaskStatus.NEW,
             requesterContact: { name: "", telephoneNumber: "" },
             tenantId,
         });
@@ -490,7 +484,7 @@ describe("GuidedSetup", () => {
             createdBy: whoami,
             priority: null,
             establishmentLocation: mockLocation,
-            status: tasksStatus.new,
+            status: models.TaskStatus.NEW,
             requesterContact: {
                 name: "",
                 telephoneNumber: mockLocation.contact.telephoneNumber,
@@ -529,7 +523,7 @@ describe("GuidedSetup", () => {
             createdBy: whoami,
             priority: null,
             establishmentLocation: null,
-            status: tasksStatus.new,
+            status: models.TaskStatus.NEW,
             requesterContact: { name: "", telephoneNumber: "" },
             tenantId,
         });

@@ -4,7 +4,6 @@ import { render } from "../../../test-utils";
 import TaskDetailsPanel from "./TaskDetailsPanel";
 import * as amplify from "aws-amplify";
 import * as models from "../../../models";
-import { priorities, tasksStatus, userRoles } from "../../../apiConsts";
 import moment from "moment";
 import userEvent from "@testing-library/user-event";
 import mediaQuery from "css-mediaquery";
@@ -13,7 +12,7 @@ import { DataStore } from "aws-amplify";
 const preloadedState = {
     roleView: "ALL",
     whoami: {
-        user: { displayName: "Test User", roles: [userRoles.coordinator] },
+        user: { displayName: "Test User", roles: [models.Role.COORDINATOR] },
     },
 };
 
@@ -61,7 +60,7 @@ describe("TaskDetailsPanel", () => {
         const mockTask = new models.Task({
             riderResponsibility: "North",
             timeOfCall,
-            priority: priorities.high,
+            priority: models.Priority.HIGH,
             establishmentLocation: new models.Location({
                 name: "Test Establishment",
             }),
@@ -84,7 +83,7 @@ describe("TaskDetailsPanel", () => {
         expect(screen.getByText("01234567890")).toBeInTheDocument();
         await waitFor(() => {
             expect(
-                screen.getByRole("button", { name: priorities.high })
+                screen.getByRole("button", { name: models.Priority.HIGH })
             ).toHaveClass("MuiChip-default");
         });
         expect(screen.getByText(/Today at/)).toBeInTheDocument();
@@ -97,7 +96,7 @@ describe("TaskDetailsPanel", () => {
         const timeOfCall = new Date().toISOString();
         const mockTask = new models.Task({
             timeOfCall,
-            priority: priorities.high,
+            priority: models.Priority.HIGH,
             reference: "test-reference",
             requesterContact: {
                 telephoneNumber: "01234567890",
@@ -132,7 +131,7 @@ describe("TaskDetailsPanel", () => {
         const timeOfCall = new Date().toISOString();
         const mockTask = new models.Task({
             timeOfCall,
-            priority: priorities.high,
+            priority: models.Priority.HIGH,
             reference: "test-reference",
             requesterContact: {
                 telephoneNumber: "01234567890",
@@ -192,7 +191,7 @@ describe("TaskDetailsPanel", () => {
         console.log(possibleRiderResponsibilities);
         const mockTask = new models.Task({
             timeOfCall,
-            priority: priorities.high,
+            priority: models.Priority.HIGH,
             riderResponsibility: "North",
             reference: "test-reference",
             requesterContact: {
@@ -255,7 +254,7 @@ describe("TaskDetailsPanel", () => {
         console.log(possibleRiderResponsibilities);
         const mockTask = new models.Task({
             timeOfCall,
-            priority: priorities.high,
+            priority: models.Priority.HIGH,
             riderResponsibility: "North",
             reference: "test-reference",
             requesterContact: {
@@ -317,7 +316,7 @@ describe("TaskDetailsPanel", () => {
         console.log(possibleRiderResponsibilities);
         const mockTask = new models.Task({
             timeOfCall,
-            priority: priorities.high,
+            priority: models.Priority.HIGH,
             riderResponsibility: "North",
             establishmentLocation: new models.Location({
                 name: "Test Location",
@@ -361,7 +360,7 @@ describe("TaskDetailsPanel", () => {
         const timeOfCall = new Date().toISOString();
         const mockTask = new models.Task({
             timeOfCall,
-            priority: priorities.high,
+            priority: models.Priority.HIGH,
             reference: "test-reference",
             requesterContact: {
                 telephoneNumber: "01234567890",
@@ -405,7 +404,7 @@ describe("TaskDetailsPanel", () => {
         );
         const mockTask = new models.Task({
             timeOfCall,
-            priority: priorities.high,
+            priority: models.Priority.HIGH,
             reference: "test-reference",
             establishmentLocation: null,
             requesterContact: {
@@ -459,7 +458,7 @@ describe("TaskDetailsPanel", () => {
         );
         const mockTask = new models.Task({
             timeOfCall,
-            priority: priorities.high,
+            priority: models.Priority.HIGH,
             reference: "test-reference",
             establishmentLocation: null,
             requesterContact: {
@@ -506,7 +505,7 @@ describe("TaskDetailsPanel", () => {
         );
         const mockTask = new models.Task({
             timeOfCall,
-            priority: priorities.high,
+            priority: models.Priority.HIGH,
             reference: "test-reference",
             establishmentLocation: null,
             requesterContact: {
@@ -552,7 +551,7 @@ describe("TaskDetailsPanel", () => {
         });
         const mockTask = new models.Task({
             timeOfCall,
-            priority: priorities.high,
+            priority: models.Priority.HIGH,
             reference: "test-reference",
             establishmentLocation: null,
             requesterContact: {
@@ -596,7 +595,7 @@ describe("TaskDetailsPanel", () => {
         const timeOfCall = new Date().toISOString();
         const mockTask = new models.Task({
             timeOfCall,
-            priority: priorities.high,
+            priority: models.Priority.HIGH,
             reference: "test-reference",
             requesterContact: {
                 telephoneNumber: "01234567890",
@@ -611,12 +610,12 @@ describe("TaskDetailsPanel", () => {
         });
         await DataStore.save(
             models.Task.copyOf(mockTask, (upd) => {
-                upd.priority = priorities.low;
+                upd.priority = models.Priority.LOW;
             })
         );
         await waitFor(() => {
             expect(
-                screen.getByRole("button", { name: priorities.low })
+                screen.getByRole("button", { name: models.Priority.LOW })
             ).toHaveClass("MuiChip-default");
         });
         await DataStore.save(
@@ -650,7 +649,7 @@ describe("TaskDetailsPanel", () => {
 
     it("unsubscribes to task observer on unmount", async () => {
         const mockTask = new models.Task({
-            status: tasksStatus.new,
+            status: models.TaskStatus.NEW,
         });
         await DataStore.save(mockTask);
         const unsubscribe = jest.fn();
@@ -683,7 +682,7 @@ describe("TaskDetailsPanel", () => {
         const mockTask = new models.Task({
             riderResponsibility: "North",
             timeOfCall,
-            priority: priorities.high,
+            priority: models.Priority.HIGH,
             establishmentLocation: mockEstablishment,
             reference: "test-reference",
             requesterContact: {
@@ -695,17 +694,17 @@ describe("TaskDetailsPanel", () => {
         const querySpy = jest.spyOn(amplify.DataStore, "query");
         const mockWhoami = new models.User({
             displayName: "test rider",
-            roles: [userRoles.rider],
+            roles: [models.Role.RIDER],
         });
         const mockAssignment = await DataStore.save(
             new models.TaskAssignee({
                 task: mockTask,
                 assignee: mockWhoami,
-                role: userRoles.rider,
+                role: models.Role.RIDER,
             })
         );
         const preloadedState = {
-            roleView: userRoles.rider,
+            roleView: models.Role.RIDER,
             whoami: {
                 user: mockWhoami,
             },
@@ -724,7 +723,7 @@ describe("TaskDetailsPanel", () => {
         expect(screen.queryByText("Someone Person")).toBeNull();
         expect(screen.queryByText("01234567890")).toBeNull();
         expect(screen.queryByText("Test Establishment")).toBeNull();
-        expect(screen.getByText(priorities.high)).toBeInTheDocument();
+        expect(screen.getByText(models.Priority.HIGH)).toBeInTheDocument();
         expect(screen.getByText(/Today at/)).toBeInTheDocument();
         expect(
             screen.getByText(moment(timeOfCall).format("HH:mm"))
@@ -748,7 +747,7 @@ describe("TaskDetailsPanel", () => {
         const mockTask = new models.Task({
             riderResponsibility: "North",
             timeOfCall,
-            priority: priorities.high,
+            priority: models.Priority.HIGH,
             establishmentLocation: mockEstablishment,
             reference: "test-reference",
             requesterContact: {
@@ -760,17 +759,17 @@ describe("TaskDetailsPanel", () => {
         const querySpy = jest.spyOn(amplify.DataStore, "query");
         const mockWhoami = new models.User({
             displayName: "test coord",
-            roles: [userRoles.coordinator],
+            roles: [models.Role.COORDINATOR],
         });
         const mockAssignment = await DataStore.save(
             new models.TaskAssignee({
                 task: mockTask,
                 assignee: mockWhoami,
-                role: userRoles.coordinator,
+                role: models.Role.COORDINATOR,
             })
         );
         const preloadedState = {
-            roleView: userRoles.rider,
+            roleView: models.Role.RIDER,
             whoami: {
                 user: mockWhoami,
             },
@@ -791,7 +790,7 @@ describe("TaskDetailsPanel", () => {
         expect(screen.getByText("01234567890")).toBeInTheDocument();
         await waitFor(() => {
             expect(
-                screen.getByRole("button", { name: priorities.high })
+                screen.getByRole("button", { name: models.Priority.HIGH })
             ).toHaveClass("MuiChip-default");
         });
         expect(screen.getByText(/Today at/)).toBeInTheDocument();
@@ -868,7 +867,7 @@ describe("TaskDetailsPanel", () => {
 
     test.each`
         role
-        ${userRoles.rider} | ${userRoles.coordinator}
+        ${models.Role.RIDER} | ${models.Role.COORDINATOR}
     `("the views for different role views not assigned", async ({ role }) => {
         const timeOfCall = new Date().toISOString();
         const mockEstablishment = new models.Location({
@@ -878,7 +877,7 @@ describe("TaskDetailsPanel", () => {
             riderResponsibility: "North",
             timeOfCall,
             establishmentLocation: mockEstablishment,
-            priority: priorities.high,
+            priority: models.Priority.HIGH,
             reference: "test-reference",
             requesterContact: {
                 telephoneNumber: "01234567890",
@@ -909,13 +908,13 @@ describe("TaskDetailsPanel", () => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
 
-        if (role === userRoles.rider) {
+        if (role === models.Role.RIDER) {
             expect(screen.getByText("North")).toBeInTheDocument();
             expect(screen.getByText("test-reference")).toBeInTheDocument();
             expect(screen.queryByText("Someone Person")).toBeNull();
             expect(screen.queryByText("Test Establishment")).toBeNull();
             expect(screen.queryByText("01234567890")).toBeNull();
-            expect(screen.getByText(priorities.high)).toBeInTheDocument();
+            expect(screen.getByText(models.Priority.HIGH)).toBeInTheDocument();
             expect(screen.getByText(/Today at/)).toBeInTheDocument();
             expect(
                 screen.getByText(moment(timeOfCall).format("HH:mm"))
@@ -928,7 +927,7 @@ describe("TaskDetailsPanel", () => {
             expect(screen.getByText("01234567890")).toBeInTheDocument();
             await waitFor(() => {
                 expect(
-                    screen.getByRole("button", { name: priorities.high })
+                    screen.getByRole("button", { name: models.Priority.HIGH })
                 ).toHaveClass("MuiChip-default");
             });
             expect(screen.getByText(/Today at/)).toBeInTheDocument();

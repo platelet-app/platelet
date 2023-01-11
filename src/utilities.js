@@ -1,6 +1,7 @@
 import uuidBase62 from "uuid-base62";
+import * as models from "./models";
 import { v4 as uuidv4 } from "uuid";
-import { deliverableIcons, tasksStatus, userRoles } from "./apiConsts";
+import { deliverableIcons } from "./apiConsts";
 import BugIcon from "./components/deliverableIcons/BugIcon";
 import ChildIcon from "./components/deliverableIcons/ChildIcon";
 import EquipmentIcon from "./components/deliverableIcons/EquipmentIcon";
@@ -34,7 +35,7 @@ export function taskStatusHumanReadable(status) {
     if (!status) {
         return "";
     }
-    if (status === tasksStatus.droppedOff) return "DELIVERED";
+    if (status === models.TaskStatus.DROPPED_OFF) return "DELIVERED";
     return status.replace(/_/g, " ");
 }
 
@@ -89,7 +90,7 @@ export function saveDashboardRoleMode(mode) {
 }
 
 export function getDashboardRoleMode() {
-    return localStorage.getItem("dashboardRoleMode") || userRoles.coordinator;
+    return localStorage.getItem("dashboardRoleMode") || models.Role.COORDINATOR;
 }
 
 export function saveLogin(apiBearer) {

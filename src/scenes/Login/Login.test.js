@@ -17,7 +17,8 @@ describe("Login", () => {
     afterAll(() => {
         process.env = OLD_ENV; // Restore old environment
     });
-    it("should save the amplify config", async () => {
+    // TODO: unskip this when multiple tenants is enabled
+    it.skip("should save the amplify config", async () => {
         const testUrl = "https://test.com/graphql";
         const testApiKey = "test";
         process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = testUrl;

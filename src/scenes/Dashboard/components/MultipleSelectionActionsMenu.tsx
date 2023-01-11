@@ -22,7 +22,6 @@ import {
     getRoleView,
     selectedItemsSelector,
 } from "../../../redux/Selectors";
-import { userRoles } from "../../../apiConsts";
 import { DataStore } from "aws-amplify";
 import { PersistentModel } from "@aws-amplify/datastore";
 import MultipleSelectionActionsDialog from "./MultipleSelectionActionsDialog";
@@ -73,11 +72,11 @@ function MultipleSelectionActionsMenu() {
     const availableItemsWithoutFilterRef = useRef(availableSelectionItems);
     const roleView = useSelector(getRoleView);
 
-    const actualRole = ["ALL", userRoles.coordinator].includes(roleView)
-        ? userRoles.coordinator
-        : userRoles.rider;
+    const actualRole = ["ALL", models.Role.COORDINATOR].includes(roleView)
+        ? models.Role.COORDINATOR
+        : models.Role.RIDER;
     const actualDotActions =
-        actualRole === userRoles.rider
+        actualRole === models.Role.RIDER
             ? _.omit(dotActions, "duplicate")
             : dotActions;
     let buttonActions = isMd ? actions : { ...actions, ...actualDotActions };
