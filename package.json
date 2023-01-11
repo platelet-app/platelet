@@ -23,7 +23,7 @@
         "@types/react": "^17.0.49",
         "@types/react-dom": "^18.0.6",
         "autosuggest-highlight": "^3.1.1",
-        "aws-amplify": "^4.3.22",
+        "aws-amplify": "^5.0.9",
         "axios": "^0.21.1",
         "date-fns": "^2.23.0",
         "downshift": "^6.1.7",
