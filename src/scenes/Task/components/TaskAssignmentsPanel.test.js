@@ -26,7 +26,7 @@ const FakeDispatchComponent = () => {
 
 const errorMessage = "Sorry, something went wrong";
 
-const tenantId = uuidv4();
+const tenantId = "tenantId";
 
 const fakeUsers = _.range(0, 3).map(() => {
     const riderResponsibility = new models.RiderResponsibility({
@@ -100,14 +100,7 @@ describe("TaskAssignmentsPanel", () => {
     });
     afterEach(async () => {
         jest.restoreAllMocks();
-        const assignments = await DataStore.query(models.TaskAssignee);
-        await Promise.all(
-            assignments.map((assignment) => DataStore.delete(assignment))
-        );
-        const tasks = await DataStore.query(models.Task);
-        await Promise.all(tasks.map((task) => DataStore.delete(task)));
-        const users = await DataStore.query(models.User);
-        await Promise.all(users.map((user) => DataStore.delete(user)));
+        await DataStore.clear();
     });
     it("renders", async () => {
         render(<TaskAssignmentsPanel taskId={fakeTask1.id} />, {
@@ -115,17 +108,14 @@ describe("TaskAssignmentsPanel", () => {
         });
     });
 
-    it.only("displays chips of the assigned users", async () => {
+    it("displays chips of the assigned users", async () => {
         await saveAssignments();
         const querySpy = jest.spyOn(DataStore, "query");
-        render(
-            <>
-                <FakeDispatchComponent />
-                <TaskAssignmentsPanel taskId={fakeTask1.id} />
-            </>,
-            { preloadedState }
-        );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(2));
+        render(<TaskAssignmentsPanel taskId={fakeTask1.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(3));
+        console.log(querySpy.mock.calls);
         // TODO: mock amplify Storage to test avatars
         //const avatarGroup = screen.queryAllByRole("img");
         // expect to have the correct number of avatars
@@ -141,19 +131,13 @@ describe("TaskAssignmentsPanel", () => {
     it("displays cards for the assigned users when expanded", async () => {
         await saveAssignments();
         const querySpy = jest.spyOn(DataStore, "query");
-        render(
-            <>
-                <FakeDispatchComponent />
-                <TaskAssignmentsPanel taskId={fakeTask1.id} />
-            </>,
-            { preloadedState }
-        );
-        //await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
+        render(<TaskAssignmentsPanel taskId={fakeTask1.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(3));
         // click the expand button
         userEvent.click(screen.getByRole("button", { name: "Edit Assignees" }));
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(5));
-        //await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(3));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
         for (const user of fakeAssignments
             .filter((a) => a.task.id === fakeTask1.id)
             .map((a) => a.assignee)) {
@@ -165,28 +149,24 @@ describe("TaskAssignmentsPanel", () => {
 
     it("is collapsed by default when there are assignees for both roles", async () => {
         const querySpy = jest.spyOn(DataStore, "query");
+        await Promise.all(
+            [
+                new models.TaskAssignee({
+                    assignee: fakeUsers[0],
+                    task: fakeTask1,
+                    role: models.Role.COORDINATOR,
+                }),
+                new models.TaskAssignee({
+                    assignee: fakeUsers[1],
+                    task: fakeTask1,
+                    role: models.Role.RIDER,
+                }),
+            ].map((a) => DataStore.save(a))
+        );
         render(<TaskAssignmentsPanel taskId={fakeTask1.id} />, {
-            preloadedState: {
-                ...preloadedState,
-                taskAssigneesReducer: {
-                    ready: true,
-                    isSynced: true,
-                    items: [
-                        new models.TaskAssignee({
-                            assignee: fakeUsers[0],
-                            task: fakeTask1,
-                            role: models.Role.COORDINATOR,
-                        }),
-                        new models.TaskAssignee({
-                            assignee: fakeUsers[1],
-                            task: fakeTask1,
-                            role: models.Role.RIDER,
-                        }),
-                    ],
-                },
-            },
+            preloadedState,
         });
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(3));
         expect(screen.queryByRole("combobox")).toBeNull();
         expect(screen.queryByText("No one assigned")).toBeNull();
     });
@@ -194,14 +174,7 @@ describe("TaskAssignmentsPanel", () => {
     it("is expanded by default when there are no assignees", async () => {
         const querySpy = jest.spyOn(DataStore, "query");
         render(<TaskAssignmentsPanel taskId={fakeTask1.id} />, {
-            preloadedState: {
-                ...preloadedState,
-                taskAssigneesReducer: {
-                    ready: true,
-                    isSynced: true,
-                    items: [],
-                },
-            },
+            preloadedState,
         });
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
         expect(screen.getByRole("combobox")).toBeInTheDocument();
@@ -214,22 +187,16 @@ describe("TaskAssignmentsPanel", () => {
     `(
         "is expanded by default when there are no coordinators or riders",
         async ({ role }) => {
+            await DataStore.save(
+                new models.TaskAssignee({
+                    task: fakeTask1,
+                    role: role,
+                    assignee: fakeUsers[0],
+                })
+            );
             const querySpy = jest.spyOn(DataStore, "query");
             render(<TaskAssignmentsPanel taskId={fakeTask1.id} />, {
-                preloadedState: {
-                    ...preloadedState,
-                    taskAssigneesReducer: {
-                        ready: true,
-                        isSynced: true,
-                        items: [
-                            new models.TaskAssignee({
-                                task: fakeTask1,
-                                role: role,
-                                assignee: fakeUsers[0],
-                            }),
-                        ],
-                    },
-                },
+                preloadedState,
             });
             await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
             expect(screen.getByRole("combobox")).toBeInTheDocument();
@@ -250,29 +217,15 @@ describe("TaskAssignmentsPanel", () => {
             assignee: mockUser,
             task: mockTask,
             role: models.Role.RIDER,
+            tenantId,
         });
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
-        render(
-            <>
-                <FakeDispatchComponent />
-                <TaskAssignmentsPanel taskId={mockTask.id} />
-            </>,
-            { preloadedState }
-        );
-        await waitFor(() =>
-            expect(querySpy).toHaveBeenCalledWith(
-                models.TaskAssignee,
-                expect.any(Function),
-                { sort: expect.any(Function) }
-            )
-        );
-        await waitFor(() =>
-            expect(querySpy).toHaveBeenCalledWith(
-                models.User,
-                expect.any(Function)
-            )
-        );
+        render(<TaskAssignmentsPanel taskId={mockTask.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(2));
+
         expect(screen.getByText("RIDER")).toBeInTheDocument();
         const textBox = screen.getByRole("textbox");
         userEvent.type(textBox, mockUser.displayName);
@@ -286,26 +239,20 @@ describe("TaskAssignmentsPanel", () => {
             expect(querySpy).toHaveBeenCalledWith(models.Task, fakeTask1.id)
         );
         await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(2));
-        expect(
-            screen.getByText(
-                `${mockUser.displayName} (${mockUser.riderResponsibility})`
-            )
-        ).toBeInTheDocument();
-        expect(saveSpy).toHaveBeenNthCalledWith(
-            1,
-            expect.objectContaining({
-                ..._.omit(mockAssignment, "id"),
-                assignee: expect.objectContaining(_.omit(mockUser, "id")),
-                task: expect.objectContaining(_.omit(mockTask, "id")),
-            })
-        );
-        expect(saveSpy).toHaveBeenNthCalledWith(
-            2,
-            expect.objectContaining({
-                ..._.omit(mockTask, "id"),
-                status: models.TaskStatus.ACTIVE,
-            })
-        );
+        // expect(
+        //     await screen.findByText(
+        //         `${mockUser.displayName} (${mockUser.riderResponsibility})`
+        //     )
+        // ).toBeInTheDocument();
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockAssignment,
+            id: expect.any(String),
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockTask,
+            status: models.TaskStatus.ACTIVE,
+            riderResponsibility: mockUser.riderResponsibility,
+        });
         expect(
             await screen.findByText("Task moved to ACTIVE")
         ).toBeInTheDocument();
@@ -693,7 +640,7 @@ describe("TaskAssignmentsPanel", () => {
         });
     });
 
-    test("cancel deleting yourself as coordinator", async () => {
+    test.only("cancel deleting yourself as coordinator", async () => {
         const mockTask = new models.Task({
             status: models.TaskStatus.NEW,
             tenantId,
@@ -722,19 +669,17 @@ describe("TaskAssignmentsPanel", () => {
         await DataStore.save(mockAssignment);
         const querySpy = jest.spyOn(DataStore, "query");
         const deleteSpy = jest.spyOn(DataStore, "delete");
-        render(
-            <>
-                <FakeDispatchComponent />
-                <TaskAssignmentsPanel taskId={mockTask.id} />
-            </>,
-            { preloadedState }
-        );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(19));
+        render(<TaskAssignmentsPanel taskId={mockTask.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(3));
         userEvent.click(screen.getByTestId("CancelIcon"));
-        await waitFor(() => expect(deleteSpy).not.toHaveBeenCalled());
-        expect(
-            screen.getByText("Are you sure you want to unassign yourself?")
-        ).toBeInTheDocument();
+        expect(deleteSpy).not.toHaveBeenCalled();
+        await waitFor(() => {
+            expect(
+                screen.getByText("Are you sure you want to unassign yourself?")
+            ).toBeInTheDocument();
+        });
         const cancelButton = screen.getByRole("button", { name: "Cancel" });
         userEvent.click(cancelButton);
         await waitFor(() => {

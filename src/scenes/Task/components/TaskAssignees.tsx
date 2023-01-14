@@ -19,9 +19,10 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
     const [confirmRemoveId, setConfirmRemoveId] = React.useState<string | null>(
         null
     );
-    const handleRemove = (assignment: models.TaskAssignee) => {
-        if (props.onRemove) {
-            if (assignment.assignee?.id === whoami.id) {
+    const handleRemove = async (assignment: models.TaskAssignee) => {
+        const assignee = await assignment.assignee;
+        if (assignee && props.onRemove) {
+            if (assignee.id === whoami.id) {
                 setConfirmRemoveId(assignment.id);
             } else {
                 props.onRemove(assignment.id);

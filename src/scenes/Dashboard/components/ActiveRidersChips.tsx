@@ -138,30 +138,32 @@ function RightArrow() {
     }
 }
 
-const completedTabFilter = (assignment: models.TaskAssignee) => {
+const completedTabFilter = async (assignment: models.TaskAssignee) => {
     // if the job is in completed tab then only find out riders from the last week
     // to mimic the dashboard
+    const task = await assignment.task;
     return (
-        assignment.task &&
+        task &&
         [
             models.TaskStatus.REJECTED,
             models.TaskStatus.ABANDONED,
             models.TaskStatus.CANCELLED,
             models.TaskStatus.COMPLETED,
-        ].some((ts) => assignment.task.status === ts) &&
-        moment(assignment.task.createdAt).isAfter(moment().subtract(1, "week"))
+        ].some((ts) => task.status === ts) &&
+        moment(task.createdAt).isAfter(moment().subtract(1, "week"))
     );
 };
 
-const inProgressTabFilter = (assignment: models.TaskAssignee) => {
+const inProgressTabFilter = async (assignment: models.TaskAssignee) => {
+    const task = await assignment.task;
     return (
-        assignment.task &&
+        task &&
         [
             models.TaskStatus.NEW,
             models.TaskStatus.ACTIVE,
             models.TaskStatus.PICKED_UP,
             models.TaskStatus.DROPPED_OFF,
-        ].some((ts) => assignment.task.status === ts)
+        ].some((ts) => task.status === ts)
     );
 };
 

@@ -27,7 +27,7 @@ function RiderPicker(props) {
     async function getRiders() {
         try {
             const users = await DataStore.query(models.User, (u) =>
-                u.roles("contains", models.Role.RIDER)
+                u.roles.contains(models.Role.RIDER)
             );
             setAvailableUsers(users);
         } catch (e) {

@@ -19,7 +19,6 @@ export function useAssignmentRole(taskId) {
     // 3. user
 
     useEffect(() => {
-        debugger;
         if (!taskId || !whoami || !roleView) return;
         if (
             (whoami.roles.includes(models.Role.ADMIN) ||

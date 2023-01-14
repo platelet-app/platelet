@@ -18,7 +18,7 @@ import UserRoleSelect from "../../../components/UserRoleSelect";
 import TaskAssignees from "./TaskAssignees";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
-import { convertListDataToObject, sortByCreatedTime } from "../../../utilities";
+import { sortByCreatedTime } from "../../../utilities";
 import determineTaskStatus from "../../../utilities/determineTaskStatus";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -26,15 +26,12 @@ import {
     displayInfoNotification,
 } from "../../../redux/notifications/NotificationsActions";
 import _ from "lodash";
-import {
-    taskAssigneesReadyStatusSelector,
-    taskAssigneesSelector,
-    tenantIdSelector,
-} from "../../../redux/Selectors";
+import { tenantIdSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
 import UserChip from "../../../components/UserChip";
 import RecentlyAssignedUsers from "../../../components/RecentlyAssignedUsers";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
+import useTaskAssignees from "../../../hooks/useTaskAssignees";
 
 export const useStyles = makeStyles(() => ({
     italic: {
@@ -62,12 +59,7 @@ function TaskAssignmentsPanel(props) {
     const [role, setRole] = useState(models.Role.RIDER);
     const [isPosting, setIsPosting] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-    const taskAssignees = useSelector(taskAssigneesSelector).items;
-    const taskAssigneesReady = useSelector(taskAssigneesReadyStatusSelector);
     const tenantId = useSelector(tenantIdSelector);
-    const [isFetching, setIsFetching] = useState(true);
-    const [errorState, setErrorState] = useState(false);
-    const [state, setState] = useState({});
 
     const currentUserRole = useAssignmentRole(props.taskId);
     const hasFullPermissions = currentUserRole === models.Role.COORDINATOR;
@@ -75,31 +67,11 @@ function TaskAssignmentsPanel(props) {
     const dispatch = useDispatch();
     const errorMessage = "Sorry, something went wrong";
 
+    const { state, isFetching, error } = useTaskAssignees(props.taskId);
+
     function onSelect(value) {
         if (value) addAssignee(value, role);
     }
-
-    const getAssignees = React.useCallback(
-        (taskId, taskAssignees) => {
-            setIsFetching(true);
-            if (!taskAssigneesReady) return;
-            try {
-                const result = taskAssignees.filter(
-                    (assignee) => assignee.task && assignee.task.id === taskId
-                );
-                setState(convertListDataToObject(result));
-                setIsFetching(false);
-            } catch (e) {
-                console.error(e);
-                setErrorState(true);
-                setIsFetching(false);
-            }
-        },
-        [taskAssigneesReady]
-    );
-    useEffect(() => {
-        getAssignees(props.taskId, taskAssignees);
-    }, [props.taskId, taskAssigneesReady, taskAssignees, getAssignees]);
 
     async function addAssignee(user, role) {
         setIsPosting(true);
@@ -140,7 +112,7 @@ function TaskAssignmentsPanel(props) {
                     dispatch(displayInfoNotification("Task moved to ACTIVE"));
                 }
             }
-            setState({ ...state, [result.id]: result });
+            //setState({ ...state, [result.id]: result });
             setIsPosting(false);
         } catch (error) {
             console.log(error);
@@ -196,7 +168,7 @@ function TaskAssignmentsPanel(props) {
                     updated.riderResponsibility = riderResponsibility;
                 })
             );
-            setState((prevState) => _.omit(prevState, assignmentId));
+            //setState((prevState) => _.omit(prevState, assignmentId));
             setIsDeleting(false);
         } catch (error) {
             console.log(error);
@@ -210,7 +182,7 @@ function TaskAssignmentsPanel(props) {
             if (!isFetching) setCollapsed(false);
             return;
         }
-        if (!taskAssigneesReady || collapsed !== null) return;
+        if (collapsed !== null) return;
         if (
             Object.values(state).filter((a) => a.role === models.Role.RIDER)
                 .length === 0 ||
@@ -224,15 +196,9 @@ function TaskAssignmentsPanel(props) {
         }
     }
 
-    useEffect(setCollapsedOnFirstMount, [
-        state,
-        taskAssigneesReady,
-        taskAssignees,
-        collapsed,
-        isFetching,
-    ]);
+    useEffect(setCollapsedOnFirstMount, [state, collapsed, isFetching]);
 
-    if (errorState) {
+    if (error) {
         return <GetError />;
     } else if (isFetching) {
         return <Skeleton variant={"rectangular"} width={"100%"} height={40} />;
