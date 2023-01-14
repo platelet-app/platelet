@@ -1,24 +1,7 @@
 import * as models from "../models";
 import { DataStore } from "aws-amplify";
 
-interface TaskInterface {
-    id: string;
-    timeCancelled?: string | null;
-    timeDroppedOff?: string | null;
-    timePickedUp?: string | null;
-    timeRiderHome?: string | null;
-    timeRejected?: string | null;
-}
-
-interface Assignee {
-    task: TaskInterface;
-    assignee: object;
-}
-
-export default async function determineTaskStatus(
-    task: TaskInterface,
-    riderAssignees: Assignee[] | null = null
-) {
+export default async function determineTaskStatus(task: models.Task) {
     // sort out cancelled and rejected first
     if (!!task.timeCancelled) {
         return !!task.timePickedUp
@@ -27,17 +10,10 @@ export default async function determineTaskStatus(
     } else if (!!task.timeRejected) {
         return models.TaskStatus.REJECTED;
     }
-    if (riderAssignees === null) {
-        riderAssignees = (await DataStore.query(models.TaskAssignee, (a) =>
-            a.role("eq", models.Role.RIDER)
-        )) as Assignee[];
-    }
-    let isRiderAssigned = false;
-    if (task && task.id) {
-        isRiderAssigned = riderAssignees.some(
-            (a) => a.task && a.task.id === task.id
-        );
-    }
+    const riderAssignees = await DataStore.query(models.TaskAssignee, (a) =>
+        a.and((a) => [a.task.id.eq(task.id), a.role.eq(models.Role.RIDER)])
+    );
+    const isRiderAssigned = riderAssignees.length > 0;
     if (!isRiderAssigned) {
         return models.TaskStatus.NEW;
     } else if (isRiderAssigned && !!!task.timePickedUp) {
