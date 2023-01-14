@@ -1,7 +1,10 @@
 import * as models from "../models";
 import { DataStore } from "aws-amplify";
 
-export default async function determineTaskStatus(task: models.Task) {
+export default async function determineTaskStatus(
+    task: models.Task,
+    riderAssignees: models.TaskAssignee[] | null = null
+) {
     // sort out cancelled and rejected first
     if (!!task.timeCancelled) {
         return !!task.timePickedUp
@@ -10,9 +13,11 @@ export default async function determineTaskStatus(task: models.Task) {
     } else if (!!task.timeRejected) {
         return models.TaskStatus.REJECTED;
     }
-    const riderAssignees = await DataStore.query(models.TaskAssignee, (a) =>
-        a.and((a) => [a.task.id.eq(task.id), a.role.eq(models.Role.RIDER)])
-    );
+    if (!riderAssignees) {
+        riderAssignees = await DataStore.query(models.TaskAssignee, (a) =>
+            a.and((a) => [a.task.id.eq(task.id), a.role.eq(models.Role.RIDER)])
+        );
+    }
     const isRiderAssigned = riderAssignees.length > 0;
     if (!isRiderAssigned) {
         return models.TaskStatus.NEW;
