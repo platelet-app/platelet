@@ -396,7 +396,7 @@ describe("TaskAssignmentsPanel", () => {
         });
     });
 
-    it("deletes a rider assignment with multiple riders", async () => {
+    it.only("deletes a rider assignment with multiple riders", async () => {
         const mockTask = new models.Task({
             status: models.TaskStatus.ACTIVE,
             riderResponsibility: "nope",
@@ -425,14 +425,10 @@ describe("TaskAssignmentsPanel", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         const deleteSpy = jest.spyOn(DataStore, "delete");
-        render(
-            <>
-                <FakeDispatchComponent />
-                <TaskAssignmentsPanel taskId={mockTask.id} />
-            </>,
-            { preloadedState }
-        );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(14));
+        render(<TaskAssignmentsPanel taskId={mockTask.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
         const deleteButtons = await screen.findAllByTestId("CancelIcon");
         expect(deleteButtons).toHaveLength(2);
         userEvent.click(deleteButtons[0]);
@@ -457,15 +453,12 @@ describe("TaskAssignmentsPanel", () => {
                     reject(new Error("test"));
                 });
             });
-        render(
-            <>
-                <FakeDispatchComponent />
-                <TaskAssignmentsPanel taskId={fakeTask1.id} />
-            </>,
-            { preloadedState }
-        );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(15));
+        render(<TaskAssignmentsPanel taskId={fakeTask1.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
         userEvent.click(screen.getByRole("button", { name: "Edit Assignees" }));
+        screen.debug();
         const deleteButtons = await screen.findAllByTestId("CancelIcon");
         expect(deleteButtons).toHaveLength(2);
         userEvent.click(deleteButtons[0]);
@@ -614,33 +607,31 @@ describe("TaskAssignmentsPanel", () => {
         await DataStore.save(mockAssignment);
         const querySpy = jest.spyOn(DataStore, "query");
         const deleteSpy = jest.spyOn(DataStore, "delete");
-        render(
-            <>
-                <FakeDispatchComponent />
-                <TaskAssignmentsPanel taskId={mockTask.id} />
-            </>,
-            { preloadedState }
-        );
-        // 43???
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(43));
+        render(<TaskAssignmentsPanel taskId={mockTask.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(3));
         userEvent.click(screen.getByTestId("CancelIcon"));
-        await waitFor(() => expect(deleteSpy).not.toHaveBeenCalled());
-        expect(
-            screen.getByText("Are you sure you want to unassign yourself?")
-        ).toBeInTheDocument();
+        expect(deleteSpy).not.toHaveBeenCalled();
+        await waitFor(() => {
+            expect(
+                screen.getByText("Are you sure you want to unassign yourself?")
+            ).toBeInTheDocument();
+        });
         const okButton = screen.getByRole("button", { name: "OK" });
         userEvent.click(okButton);
         await waitFor(() =>
-            expect(deleteSpy).toHaveBeenCalledWith(
-                expect.objectContaining(_.omit(mockAssignment, "id"))
-            )
+            expect(deleteSpy).toHaveBeenCalledWith({
+                ...mockAssignment,
+                id: expect.any(String),
+            })
         );
         await waitFor(() => {
             expect(okButton).not.toBeInTheDocument();
         });
     });
 
-    test.only("cancel deleting yourself as coordinator", async () => {
+    test("cancel deleting yourself as coordinator", async () => {
         const mockTask = new models.Task({
             status: models.TaskStatus.NEW,
             tenantId,
