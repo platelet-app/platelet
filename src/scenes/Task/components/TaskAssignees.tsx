@@ -14,18 +14,22 @@ type TaskAssigneesProps = {
     disabled?: boolean;
 };
 
-const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
+const TaskAssignees: React.FC<TaskAssigneesProps> = ({
+    assignees,
+    onRemove = () => {},
+    disabled = false,
+}) => {
     const whoami = useSelector(getWhoami);
     const [confirmRemoveId, setConfirmRemoveId] = React.useState<string | null>(
         null
     );
     const handleRemove = async (assignment: models.TaskAssignee) => {
         const assignee = await assignment.assignee;
-        if (assignee && props.onRemove) {
+        if (assignee && onRemove) {
             if (assignee.id === whoami.id) {
                 setConfirmRemoveId(assignment.id);
             } else {
-                props.onRemove(assignment.id);
+                onRemove(assignment.id);
             }
         }
     };
@@ -36,8 +40,7 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
             onCancel={() => setConfirmRemoveId(null)}
             open={!!confirmRemoveId}
             onConfirmation={() => {
-                if (props.onRemove && confirmRemoveId)
-                    props.onRemove(confirmRemoveId);
+                if (onRemove && confirmRemoveId) onRemove(confirmRemoveId);
                 setConfirmRemoveId(null);
             }}
         >
@@ -54,9 +57,7 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
         models.Role.COORDINATOR,
         models.Role.RIDER,
     ].map((role) => {
-        const assignmentsUnsorted = props.assignees.filter(
-            (a) => a.role === role
-        );
+        const assignmentsUnsorted = assignees.filter((a) => a.role === role);
         const assignments = sortByCreatedTime(assignmentsUnsorted, "oldest");
         const message = assignments.length === 0 ? "No one assigned" : "";
         const label =
@@ -85,7 +86,7 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
                                     showResponsibility={
                                         role === models.Role.RIDER
                                     }
-                                    disabled={props.disabled}
+                                    disabled={disabled}
                                     user={user}
                                     onDelete={() => handleRemove(assignment)}
                                 />
