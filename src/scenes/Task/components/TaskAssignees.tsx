@@ -63,10 +63,9 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = ({
         const label =
             role === models.Role.COORDINATOR ? "Coordinators:" : "Riders:";
         return (
-            <>
+            <div key={role}>
                 <Grid
                     container
-                    key={role}
                     data-cy={`task-${role}-assignees`}
                     direction="row"
                     alignItems="center"
@@ -95,7 +94,7 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = ({
                     })}
                 </Grid>
                 <Divider />
-            </>
+            </div>
         );
     });
     return (

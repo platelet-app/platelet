@@ -23,9 +23,10 @@ const useTaskAssignees = (taskId: string) => {
                 models.TaskAssignee,
                 (c) => c.task.id.eq(taskId)
             ).subscribe(({ items }) => {
+                console.log(items);
                 const result = convertModelsToObject(items);
-                setIsFetching(false);
                 setState(result);
+                setIsFetching(false);
             });
         } catch (error) {
             setError(error);
