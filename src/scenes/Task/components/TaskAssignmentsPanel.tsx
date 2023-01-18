@@ -10,7 +10,6 @@ import {
     Tooltip,
     Typography,
 } from "@mui/material";
-import PropTypes from "prop-types";
 import makeStyles from "@mui/styles/makeStyles";
 import RiderPicker from "../../../components/RiderPicker";
 import CoordinatorPicker from "../../../components/CoordinatorPicker";
@@ -39,7 +38,7 @@ export const useStyles = makeStyles(() => ({
     },
 }));
 
-const sortByUserRole = (a, b) => {
+const sortByUserRole = (a: models.TaskAssignee, b: models.TaskAssignee) => {
     // coordinators first and riders second
     if (a.role === models.Role.COORDINATOR) {
         return -1;
@@ -54,33 +53,39 @@ const sortByUserRole = (a, b) => {
     }
 };
 
-function TaskAssignmentsPanel(props) {
-    const [collapsed, setCollapsed] = useState(null);
+type TaskAssignmentsPanelProps = {
+    taskId: string;
+    disabled: boolean;
+};
+
+const TaskAssignmentsPanel: React.FC<TaskAssignmentsPanelProps> = ({
+    taskId,
+    disabled = false,
+}) => {
+    const [collapsed, setCollapsed] = useState<boolean | null>(null);
     const [role, setRole] = useState(models.Role.RIDER);
     const [isPosting, setIsPosting] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const tenantId = useSelector(tenantIdSelector);
-
-    const currentUserRole = useAssignmentRole(props.taskId);
+    const currentUserRole = useAssignmentRole(taskId);
     const hasFullPermissions = currentUserRole === models.Role.COORDINATOR;
-
     const dispatch = useDispatch();
     const errorMessage = "Sorry, something went wrong";
 
-    const { state, isFetching, error } = useTaskAssignees(props.taskId);
+    const { state, isFetching, error } = useTaskAssignees(taskId);
 
-    function onSelect(value) {
+    function onSelect(value: models.User) {
         if (value) addAssignee(value, role);
     }
 
-    async function addAssignee(user, role) {
+    async function addAssignee(user: models.User, role: models.Role) {
         setIsPosting(true);
         try {
             const assignee = await DataStore.query(models.User, user.id);
-            const task = await DataStore.query(models.Task, props.taskId);
+            const task = await DataStore.query(models.Task, taskId);
             if (!assignee || !task)
                 throw new Error(
-                    `Can't find assignee or task: ${props.taskId}, userId: ${user.id}`
+                    `Can't find assignee or task: ${taskId}, userId: ${user.id}`
                 );
             const result = await DataStore.save(
                 new models.TaskAssignee({
@@ -121,20 +126,16 @@ function TaskAssignmentsPanel(props) {
         }
     }
 
-    async function deleteAssignment(assignmentId) {
+    async function deleteAssignment(assignmentId: string) {
         setIsDeleting(true);
         try {
             if (!assignmentId) throw new Error("Assignment ID not provided");
-            const existingTask = await DataStore.query(
-                models.Task,
-                props.taskId
-            );
+            const existingTask = await DataStore.query(models.Task, taskId);
             if (!existingTask) throw new Error("Task doesn't exist");
             const existingAssignment = await DataStore.query(
                 models.TaskAssignee,
                 assignmentId
             );
-            if (existingAssignment) await DataStore.delete(existingAssignment);
             const status = await determineTaskStatus(
                 existingTask,
                 Object.values(_.omit(state, assignmentId)).filter(
@@ -146,22 +147,27 @@ function TaskAssignmentsPanel(props) {
                 existingAssignment &&
                 existingAssignment.role === models.Role.RIDER
             ) {
-                const riders = Object.values(state)
-                    .filter(
-                        (a) =>
-                            a.role === models.Role.RIDER &&
-                            a.id !== assignmentId
-                    )
-                    .map((a) => a.assignee);
+                const riders = await Promise.all(
+                    Object.values(state)
+                        .filter(
+                            (a) =>
+                                a.role === models.Role.RIDER &&
+                                a.id !== assignmentId
+                        )
+                        .map((a) => a.assignee)
+                );
                 if (riders.length > 0) {
                     const rider = riders[riders.length - 1];
                     if (rider && rider.riderResponsibility) {
                         riderResponsibility = rider.riderResponsibility;
+                    } else {
+                        riderResponsibility = null;
                     }
                 } else {
                     riderResponsibility = null;
                 }
             }
+            if (existingAssignment) await DataStore.delete(existingAssignment);
             await DataStore.save(
                 models.Task.copyOf(existingTask, (updated) => {
                     updated.status = status;
@@ -195,7 +201,6 @@ function TaskAssignmentsPanel(props) {
             setCollapsed(true);
         }
     }
-
     useEffect(setCollapsedOnFirstMount, [state, collapsed, isFetching]);
 
     if (error) {
@@ -218,7 +223,7 @@ function TaskAssignmentsPanel(props) {
                                     aria-label={"Edit Assignees"}
                                     data-cy="edit-task-assignees"
                                     size={"small"}
-                                    disabled={props.disabled}
+                                    disabled={disabled}
                                     onClick={() =>
                                         setCollapsed((prevState) => !prevState)
                                     }
@@ -236,7 +241,7 @@ function TaskAssignmentsPanel(props) {
                         <Grid container spacing={1} direction={"row"}>
                             {sortByCreatedTime(Object.values(state), "oldest")
                                 .sort(sortByUserRole)
-                                .map((assignment) => {
+                                .map((assignment: models.TaskAssignee) => {
                                     return (
                                         assignment &&
                                         assignment.assignee && (
@@ -280,10 +285,7 @@ function TaskAssignmentsPanel(props) {
                                 role={role}
                                 limit={5}
                                 exclude={Object.values(state)
-                                    .filter(
-                                        (a) =>
-                                            a && a.assignee && a.role === role
-                                    )
+                                    .filter((a) => a && a.role === role)
                                     .map((a) => a.assignee.id)}
                             />
                             {role === models.Role.RIDER ? (
@@ -293,7 +295,6 @@ function TaskAssignmentsPanel(props) {
                                         .filter(
                                             (a) =>
                                                 a &&
-                                                a.assignee &&
                                                 a.role === models.Role.RIDER
                                         )
                                         .map((a) => a.assignee.id)}
@@ -305,7 +306,6 @@ function TaskAssignmentsPanel(props) {
                                         .filter(
                                             (a) =>
                                                 a &&
-                                                a.assignee &&
                                                 a.role ===
                                                     models.Role.COORDINATOR
                                         )
@@ -318,10 +318,5 @@ function TaskAssignmentsPanel(props) {
             </Paper>
         );
     }
-}
-
-TaskAssignmentsPanel.propTypes = {
-    taskId: PropTypes.string.isRequired,
 };
-
 export default TaskAssignmentsPanel;
