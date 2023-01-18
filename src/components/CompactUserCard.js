@@ -57,6 +57,7 @@ CompactUserCard.propTypes = {
     userUUID: PropTypes.string,
     displayName: PropTypes.string,
     profilePicture: PropTypes.object,
+    profilePictureThumbnail: PropTypes.object,
     responsibility: PropTypes.string,
     vehicleName: PropTypes.string,
 };
