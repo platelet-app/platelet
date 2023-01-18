@@ -9,14 +9,6 @@ type LoginProps = {
     teamName?: string;
 };
 
-const formFields = {
-    signIn: {
-        username: {
-            placeholder: "Enter your email",
-        },
-    },
-};
-
 const components = {
     SignIn: {
         Header() {
@@ -35,7 +27,7 @@ const Login: React.FC<LoginProps> = ({ children }) => {
     }, []);*/
 
     return (
-        <Authenticator formFields={formFields} components={components}>
+        <Authenticator loginMechanisms={["email"]} components={components}>
             {children}
         </Authenticator>
     );
