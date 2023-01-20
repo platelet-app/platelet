@@ -1,14 +1,10 @@
 import { DataStore } from "aws-amplify";
 import * as models from "../models";
 import React from "react";
-import convertModelsToObject from "../utilities/convertModelsToObject";
-
-type TaskAssigneesType = {
-    [key: string]: models.TaskAssignee;
-};
+import { ResolvedTaskAssignee } from "../resolved-models";
 
 const useTaskAssignees = (taskId: string) => {
-    const [state, setState] = React.useState<TaskAssigneesType>({});
+    const [state, setState] = React.useState<ResolvedTaskAssignee[]>([]);
     const [isFetching, setIsFetching] = React.useState(true);
     const [error, setError] = React.useState<any>(null);
 
@@ -22,10 +18,17 @@ const useTaskAssignees = (taskId: string) => {
             observer.current = DataStore.observeQuery(
                 models.TaskAssignee,
                 (c) => c.task.id.eq(taskId)
-            ).subscribe(({ items }) => {
-                console.log(items);
-                const result = convertModelsToObject(items);
-                setState(result);
+            ).subscribe(async ({ items }) => {
+                const resolved = await Promise.all(
+                    items.map(async (item) => {
+                        const assignee = await item.assignee;
+                        return {
+                            ...item,
+                            assignee,
+                        };
+                    })
+                );
+                setState(resolved);
                 setIsFetching(false);
             });
         } catch (error) {
