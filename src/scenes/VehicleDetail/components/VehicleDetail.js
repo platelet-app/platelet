@@ -55,27 +55,12 @@ export default function VehicleDetail({ vehicleId }) {
                 });
                 assignmentObserver.current.unsubscribe();
                 assignmentObserver.current = DataStore.observeQuery(
-                    models.VehicleAssignment
-                ).subscribe(({ items }) => {
-                    // TODO: simplify this workaround when DataStore is updated
-                    const assignedUser = items.find(
-                        (item) =>
-                            (item.vehicle &&
-                                item.vehicle.id === newVehicle.id) ||
-                            item.vehicleAssignmentsId === newVehicle.id
-                    );
-                    if (assignedUser) {
-                        DataStore.query(
-                            models.VehicleAssignment,
-                            assignedUser.id
-                        ).then((ass) => {
-                            if (ass) {
-                                setAssignment(ass);
-                            } else {
-                                console.log("The assignment was not found");
-                                setAssignment(null);
-                            }
-                        });
+                    models.VehicleAssignment,
+                    (c) => c.vehicle.id.eq(vehicleId)
+                ).subscribe(async ({ items }) => {
+                    if (items.length > 0) {
+                        const assignee = await items[0].assignee;
+                        setAssignment({ ...items[0], assignee });
                     } else {
                         setAssignment(null);
                     }

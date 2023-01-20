@@ -62,7 +62,7 @@ const RiderPicker: React.FC<RiderPickerProps> = ({
         // );
         //const reorderedUsers = vehicleUsers.concat(noVehicleUsers);
         setFilteredRiderSuggestions(filteredSuggestions);
-    }, [availableUsers, exclude]);
+    }, [availableUsers, JSON.stringify(exclude)]);
 
     return (
         <>

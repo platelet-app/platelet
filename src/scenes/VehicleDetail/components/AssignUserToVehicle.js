@@ -28,6 +28,7 @@ function AssignUserToVehicle({
                     <Typography>No assignee</Typography>
                 ) : (
                     <RiderPicker
+                        exclude={[]}
                         size="medium"
                         label="Assign someone?"
                         onSelect={onAssignUser}

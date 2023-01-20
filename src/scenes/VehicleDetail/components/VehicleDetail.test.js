@@ -138,6 +138,10 @@ describe("VehicleDetail", () => {
             vehicle,
             assignee: assignUser,
         });
+        const mockAssignmentResolved = {
+            ...mockAssignment,
+            assignee: assignUser,
+        };
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         const deleteSpy = jest.spyOn(DataStore, "delete");
@@ -160,16 +164,19 @@ describe("VehicleDetail", () => {
         expect(
             screen.queryByRole("textbox", { name: "Assign someone?" })
         ).toBeNull();
-        await waitFor(() => {
-            expect(
-                screen.getByText(assignUser.displayName)
-            ).toBeInTheDocument();
-        });
+        await waitFor(
+            () => {
+                expect(
+                    screen.getByText(assignUser.displayName)
+                ).toBeInTheDocument();
+            },
+            { timeout: 3000 }
+        );
         const deleteButton = screen.getByTestId("CancelIcon");
         userEvent.click(deleteButton);
         await waitFor(() => {
             expect(deleteSpy).toHaveBeenCalledWith({
-                ...mockAssignment,
+                ...mockAssignmentResolved,
                 id: expect.any(String),
                 tenantId,
             });

@@ -57,7 +57,7 @@ const CoordinatorPicker: React.FC<CoordinatorPickerProps> = ({
             (u) => !exclude.includes(u.id)
         );
         setFilteredCoordinatorSuggestions(filteredSuggestions);
-    }, [availableUsers, exclude]);
+    }, [state, JSON.stringify(exclude)]);
 
     return (
         <div>
