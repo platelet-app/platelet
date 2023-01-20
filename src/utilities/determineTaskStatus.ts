@@ -1,9 +1,10 @@
 import * as models from "../models";
 import { DataStore } from "aws-amplify";
+import { ResolvedTaskAssignee } from "../resolved-models";
 
 export default async function determineTaskStatus(
     task: models.Task,
-    riderAssignees: models.TaskAssignee[] | null = null
+    riderAssignees: models.TaskAssignee[] | ResolvedTaskAssignee[] | null = null
 ) {
     // sort out cancelled and rejected first
     if (!!task.timeCancelled) {

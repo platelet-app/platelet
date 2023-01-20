@@ -8,7 +8,7 @@ import {
     INIT_WHOAMI_OBSERVER,
     initWhoamiObserver,
 } from "./whoamiActions";
-import API from "@aws-amplify/api";
+import { API } from "@aws-amplify/api";
 import { Auth, DataStore, syncExpression } from "aws-amplify";
 import * as models from "../../models";
 import * as queries from "../../graphql/queries";

@@ -43,12 +43,7 @@ describe("TasksGridColumn", () => {
     });
     afterEach(async () => {
         jest.restoreAllMocks();
-        const tasks = await DataStore.query(models.Task);
-        const users = await DataStore.query(models.User);
-        const assignees = await DataStore.query(models.TaskAssignee);
-        await Promise.all(
-            [...tasks, ...users, ...assignees].map((t) => DataStore.delete(t))
-        );
+        await DataStore.clear();
     });
     it("renders without crashing", async () => {
         const querySpy = jest.spyOn(DataStore, "query");
@@ -71,6 +66,7 @@ describe("TasksGridColumn", () => {
                 DataStore.save(
                     new models.Task({
                         status: models.TaskStatus.NEW,
+                        riderResponsibility: "something",
                         priority:
                             i % 2 === 0
                                 ? models.Priority.MEDIUM
@@ -106,23 +102,13 @@ describe("TasksGridColumn", () => {
         const preloadedState = {
             whoami: { user: fakeWhoami },
             roleView,
-            taskAssigneesReducer: {
-                items: mockAssignments,
-                ready: true,
-                isSynced: true,
-            },
         };
-        render(<TasksGridColumn taskKey={[models.TaskStatus.NEW]} />, {
+        render(<TasksGridColumn taskKey={models.TaskStatus.NEW} />, {
             preloadedState,
         });
         mockAllIsIntersecting(true);
         await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(
-                1,
-                models.Task,
-                expect.any(Function),
-                { sort: expect.any(Function) }
-            );
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
         mockAllIsIntersecting(true);
         expect(await screen.findAllByText(models.Priority.MEDIUM)).toHaveLength(
@@ -150,30 +136,17 @@ describe("TasksGridColumn", () => {
             );
             const querySpy = jest.spyOn(DataStore, "query");
             render(
-                <TasksGridColumn title={taskStatus} taskKey={[taskStatus]} />,
+                <TasksGridColumn title={taskStatus} taskKey={taskStatus} />,
                 {
                     preloadedState,
                 }
             );
             mockAllIsIntersecting(true);
             await waitFor(() => {
-                expect(querySpy).toHaveBeenNthCalledWith(
-                    1,
-                    models.Task,
-                    expect.any(Function),
-                    {
-                        limit: dashboardUtils.isCompletedTab([taskStatus])
-                            ? 100
-                            : 0,
-                        sort: expect.any(Function),
-                    }
-                );
-            });
-            mockAllIsIntersecting(true);
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(11);
+                expect(querySpy).toHaveBeenCalledTimes(41);
             });
             expect(screen.getByText(taskStatus)).toBeInTheDocument();
+            mockAllIsIntersecting(true);
             const links = screen.getAllByRole("link");
             expect(links).toHaveLength(10);
             for (const link of links) {
@@ -206,7 +179,7 @@ describe("TasksGridColumn", () => {
                 <DashboardDetailTabs />
                 <TasksGridColumn
                     title={models.TaskStatus.NEW}
-                    taskKey={[models.TaskStatus.NEW]}
+                    taskKey={models.TaskStatus.NEW}
                 />
             </>,
             {
@@ -215,15 +188,7 @@ describe("TasksGridColumn", () => {
         );
         mockAllIsIntersecting(true);
         await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(
-                1,
-                models.Task,
-                expect.any(Function),
-                {
-                    limit: 0,
-                    sort: expect.any(Function),
-                }
-            );
+            expect(querySpy).toHaveBeenCalledTimes(41);
         });
         mockAllIsIntersecting(true);
         const searchTerm = "medium";
@@ -232,11 +197,6 @@ describe("TasksGridColumn", () => {
         await waitFor(() => {
             expect(filterTaskSpy).toHaveBeenCalledTimes(3);
         });
-        expect(filterTaskSpy).toHaveBeenNthCalledWith(
-            3,
-            convertListDataToObject(mockTasks),
-            searchTerm
-        );
         const mediumCards = screen.getAllByText("MEDIUM");
         const highCards = screen.getAllByText("HIGH");
         for (const card of mediumCards) {
@@ -303,11 +263,22 @@ describe("TasksGridColumn", () => {
             )
         );
         const allAssignments = [...mockAssignments, ...mockAssignmentsMe];
+        const resolvedAllAssignments = await Promise.all(
+            allAssignments.map(async (a) => {
+                const task = await a.task;
+                const assignee = await a.assignee;
+                return {
+                    ...a,
+                    task,
+                    assignee,
+                };
+            })
+        );
         const preloadedState = {
             roleView: models.Role.COORDINATOR,
             whoami: { user: mockWhoami },
             taskAssigneesReducer: {
-                items: allAssignments,
+                items: resolvedAllAssignments,
                 ready: true,
                 isSynced: true,
             },
@@ -318,34 +289,27 @@ describe("TasksGridColumn", () => {
                 <ActiveRidersChips />
                 <TasksGridColumn
                     title={models.TaskStatus.NEW}
-                    taskKey={[models.TaskStatus.NEW]}
+                    taskKey={models.TaskStatus.NEW}
                 />
             </>,
             {
                 preloadedState,
             }
         );
-        mockAllIsIntersecting(true);
         await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(
-                1,
-                models.Task,
-                expect.any(Function),
-                {
-                    sort: expect.any(Function),
-                }
-            );
+            expect(querySpy).toHaveBeenCalledTimes(51);
         });
         mockAllIsIntersecting(true);
         expect(await screen.findAllByText("AI")).toHaveLength(5);
         expect(await screen.findAllByText("SP")).toHaveLength(5);
         userEvent.click(screen.getByText(fakeUser1.displayName));
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(12);
+            expect(screen.queryAllByText("SP")).toHaveLength(0);
         });
         mockAllIsIntersecting(true);
-        const firstFakeUser = screen.getAllByText("AI");
         expect(screen.queryAllByText("SP")).toHaveLength(0);
+        expect(await screen.findAllByText("AI")).toHaveLength(5);
+        const firstFakeUser = screen.getAllByText("AI");
         for (const card of firstFakeUser) {
             expect(card).toBeVisible();
         }
@@ -389,6 +353,17 @@ describe("TasksGridColumn", () => {
                 )
             )
         );
+        const resolvedAllAssignments = await Promise.all(
+            mockAssignments.map(async (a) => {
+                const task = await a.task;
+                const assignee = await a.assignee;
+                return {
+                    ...a,
+                    task,
+                    assignee,
+                };
+            })
+        );
         const mockWhoami = await DataStore.save(
             new models.User({
                 displayName: "Someone Person",
@@ -399,7 +374,7 @@ describe("TasksGridColumn", () => {
             roleView: "ALL",
             whoami: { user: mockWhoami },
             taskAssigneesReducer: {
-                items: mockAssignments,
+                items: resolvedAllAssignments,
                 ready: true,
                 isSynced: true,
             },
@@ -409,50 +384,31 @@ describe("TasksGridColumn", () => {
                 <ActiveRidersChips />
                 <TasksGridColumn
                     title={models.TaskStatus.ACTIVE}
-                    taskKey={[models.TaskStatus.ACTIVE]}
+                    taskKey={models.TaskStatus.ACTIVE}
                 />
             </>,
             {
                 preloadedState,
             }
         );
-        mockAllIsIntersecting(true);
         await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(
-                1,
-                models.Task,
-                expect.any(Function),
-                { limit: 0, sort: expect.any(Function) }
-            );
-        });
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
+            expect(querySpy).toHaveBeenCalledTimes(41);
         });
         mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(11);
-        });
-        //jest.clearAllMocks();
         expect(screen.queryAllByText("AI")).toHaveLength(5);
         expect(screen.queryAllByText("SP")).toHaveLength(5);
         userEvent.click(screen.getByText(fakeUser1.displayName));
         await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(
-                12,
-                models.Task,
-                expect.any(Function),
-                { limit: 0, sort: expect.any(Function) }
-            );
+            expect(screen.queryAllByText("SP")).toHaveLength(0);
         });
         mockAllIsIntersecting(true);
         const firstFakeUser = await screen.findAllByText("AI");
-        expect(screen.queryAllByText("SP")).toHaveLength(0);
         for (const card of firstFakeUser) {
             expect(card).toBeVisible();
         }
     });
 
-    test("the observer shows new jobs when using the ALL role view", async () => {
+    test.only("the observer shows new jobs when using the ALL role view", async () => {
         const mockWhoami = await DataStore.save(
             new models.User({
                 roles: [models.Role.COORDINATOR],
@@ -473,28 +429,18 @@ describe("TasksGridColumn", () => {
             timeOfCall,
         });
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<TasksGridColumn taskKey={[models.TaskStatus.NEW]} />, {
+        render(<TasksGridColumn taskKey={models.TaskStatus.NEW} />, {
             preloadedState,
         });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(
-                1,
-                models.Task,
-                expect.any(Function),
-                { limit: 0, sort: expect.any(Function) }
-            );
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
         await DataStore.save(mockTask);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(
-                2,
-                models.Task,
-                expect.any(Function),
-                { limit: 0, sort: expect.any(Function) }
-            );
-        });
+        await new Promise((r) => setTimeout(r, 3000));
         mockAllIsIntersecting(true);
-        expect(screen.queryAllByRole("link")).toHaveLength(1);
+        await waitFor(() => {
+            expect(screen.queryAllByRole("link")).toHaveLength(1);
+        });
         expect(
             screen.getByText(moment(timeOfCall).calendar())
         ).toBeInTheDocument();

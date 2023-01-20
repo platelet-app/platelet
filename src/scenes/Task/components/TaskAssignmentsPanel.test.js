@@ -1,4 +1,3 @@
-import React from "react";
 import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
 import { render } from "../../../test-utils";
 import { v4 as uuidv4 } from "uuid";
@@ -8,8 +7,6 @@ import _ from "lodash";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DataStore } from "aws-amplify";
-import { useDispatch } from "react-redux";
-import * as initActions from "../../../redux/taskAssignees/taskAssigneesActions";
 
 // For some reason in this file, the query spies are reporting inflated numbers
 // of calls. I think it's because records are not properly being deleted between tests
@@ -105,7 +102,6 @@ describe("TaskAssignmentsPanel", () => {
             preloadedState,
         });
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(3));
-        console.log(querySpy.mock.calls);
         // TODO: mock amplify Storage to test avatars
         //const avatarGroup = screen.queryAllByRole("img");
         // expect to have the correct number of avatars

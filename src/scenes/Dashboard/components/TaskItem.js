@@ -24,6 +24,7 @@ import {
 } from "../../../redux/Selectors";
 import { useInView } from "react-intersection-observer";
 import useLongPressEventContextMenu from "../../../hooks/useLongPressEventContextMenu";
+import useComments from "../../../hooks/useComments";
 
 const useStyles = (isSelected) =>
     makeStyles((theme) => ({
@@ -152,14 +153,9 @@ const TaskItem = React.memo((props) => {
     const [assignees, setAssignees] = useState([]);
     const [assignedRiders, setAssignedRiders] = useState([]);
     const [visibility, setVisibility] = useState(false);
-    const [commentCount, setCommentCount] = useState(0);
     const [isSelected, setIsSelected] = useState(false);
-    const commentObserver = useRef({ unsubscribe: () => {} });
     const roleView = useSelector(getRoleView);
     const allAssignees = useSelector(taskAssigneesSelector);
-    const commentModelSynced = useSelector(
-        dataStoreModelSyncedStatusSelector
-    ).Comment;
     const tabIndex = useSelector(dashboardTabIndexSelector);
     const selectedItems = useSelector(selectedItemsSelector);
     const dispatch = useDispatch();
@@ -180,6 +176,9 @@ const TaskItem = React.memo((props) => {
             }
         });
     }, [inView]);
+
+    const commentState = useComments(task.id);
+    const commentCount = Object.values(commentState.state).length;
 
     function calculateIsSelected() {
         const itemsTab = selectedItems[tabIndex];
@@ -259,42 +258,6 @@ const TaskItem = React.memo((props) => {
         () => getAssignees(visibility, roleView, task, allAssignees),
         [visibility, task, allAssignees, getAssignees, roleView]
     );
-
-    const getCommentCount = React.useCallback(async () => {
-        if (!task || !task.id) return 0;
-        const commentsResult = (
-            await DataStore.query(models.Comment, (c) =>
-                c.parentId("eq", task.id)
-            )
-        ).filter(
-            (c) =>
-                c.visibility === models.CommentVisibility.EVERYONE ||
-                (c.visibility === models.CommentVisibility.ME &&
-                    c.author &&
-                    c.author.id === whoami.id)
-        );
-        return commentsResult.length;
-    }, [task, whoami.id]);
-
-    const calculateCommentCount = React.useCallback(async () => {
-        if (!visibility || !task) return;
-        const commentCount = await getCommentCount();
-        setCommentCount(commentCount);
-        // TODO: change this to observeQuery when the bug is fixed
-        commentObserver.current.unsubscribe();
-        commentObserver.current = DataStore.observe(models.Comment, (c) =>
-            c.parentId("eq", task.id)
-        ).subscribe(async () => {
-            getCommentCount().then((count) => {
-                setCommentCount(count);
-            });
-        });
-    }, [task, getCommentCount, visibility]);
-    useEffect(() => {
-        calculateCommentCount();
-    }, [visibility, task, commentModelSynced, calculateCommentCount]);
-
-    useEffect(() => () => commentObserver.current.unsubscribe(), []);
 
     const contents = visibility ? (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>

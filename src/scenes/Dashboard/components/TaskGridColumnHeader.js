@@ -110,10 +110,12 @@ function TaskGridColumnHeader(props) {
 
 TaskGridColumnHeader.propTypes = {
     tasks: PropTypes.object,
+    title: PropTypes.string,
 };
 
 TaskGridColumnHeader.defaultProps = {
     tasks: {},
+    title: "",
 };
 
 export default TaskGridColumnHeader;

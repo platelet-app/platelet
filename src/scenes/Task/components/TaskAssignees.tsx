@@ -7,9 +7,10 @@ import { getWhoami } from "../../../redux/Selectors";
 import { useSelector } from "react-redux";
 import * as models from "../../../models";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
+import { ResolvedTaskAssignee } from "../../../resolved-models";
 
 type TaskAssigneesProps = {
-    assignees: models.TaskAssignee[];
+    assignees: ResolvedTaskAssignee[];
     onRemove?: (arg0: string) => void;
     disabled?: boolean;
 };
@@ -23,8 +24,8 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = ({
     const [confirmRemoveId, setConfirmRemoveId] = React.useState<string | null>(
         null
     );
-    const handleRemove = async (assignment: models.TaskAssignee) => {
-        const assignee = await assignment.assignee;
+    const handleRemove = async (assignment: ResolvedTaskAssignee) => {
+        const assignee = assignment.assignee;
         if (assignee && onRemove) {
             if (assignee.id === whoami.id) {
                 setConfirmRemoveId(assignment.id);
@@ -77,7 +78,7 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = ({
                     <Grid item>
                         <Typography>{message}</Typography>
                     </Grid>
-                    {assignments.map((assignment: models.TaskAssignee) => {
+                    {assignments.map((assignment: ResolvedTaskAssignee) => {
                         const user = assignment.assignee || null;
                         return (
                             <Grid key={assignment.id} item>
@@ -103,12 +104,6 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = ({
             {mappedAssigneeContents}
         </>
     );
-};
-
-TaskAssignees.defaultProps = {
-    assignees: [],
-    onRemove: () => {},
-    disabled: false,
 };
 
 export default TaskAssignees;

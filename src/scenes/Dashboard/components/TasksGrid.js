@@ -9,13 +9,8 @@ import { dashboardFilteredUserSelector } from "../../../redux/Selectors";
 import { useSelector } from "react-redux";
 
 const getColumnTitle = (key) => {
-    if (key.includes(models.TaskStatus.DROPPED_OFF))
-        key = [
-            ...key.filter((status) => status !== models.TaskStatus.DROPPED_OFF),
-            "DELIVERED",
-        ];
-
-    return key.join(" / ").replace(/_/g, " ");
+    if (key === models.TaskStatus.DROPPED_OFF) key = "DELIVERED";
+    return key;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -64,19 +59,20 @@ function TasksGrid(props) {
             alignItems={"stretch"}
         >
             {[
-                [models.TaskStatus.NEW],
-                [models.TaskStatus.ACTIVE],
-                [models.TaskStatus.PICKED_UP],
-                [models.TaskStatus.DROPPED_OFF],
-                [models.TaskStatus.COMPLETED],
-                [models.TaskStatus.CANCELLED],
-                [models.TaskStatus.ABANDONED],
-                [models.TaskStatus.REJECTED],
+                models.TaskStatus.NEW,
+                models.TaskStatus.ACTIVE,
+                models.TaskStatus.PICKED_UP,
+                models.TaskStatus.DROPPED_OFF,
+                models.TaskStatus.COMPLETED,
+                models.TaskStatus.CANCELLED,
+                models.TaskStatus.ABANDONED,
+                models.TaskStatus.REJECTED,
             ]
                 .filter(
                     (column) => _.intersection(excludeList, column).length === 0
                 )
                 .map((taskKey) => {
+                    console.log(taskKey);
                     const title = getColumnTitle(taskKey);
                     return (
                         <Grid item key={title} className={classes.column}>

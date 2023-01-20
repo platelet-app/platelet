@@ -30,7 +30,9 @@ import GetError from "../../../ErrorComponents/GetError";
 import UserChip from "../../../components/UserChip";
 import RecentlyAssignedUsers from "../../../components/RecentlyAssignedUsers";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
-import useTaskAssignees from "../../../hooks/useTaskAssignees";
+import useTaskAssignees, {
+    ITaskAssignee,
+} from "../../../hooks/useTaskAssignees";
 
 export const useStyles = makeStyles(() => ({
     italic: {
@@ -38,7 +40,7 @@ export const useStyles = makeStyles(() => ({
     },
 }));
 
-const sortByUserRole = (a: models.TaskAssignee, b: models.TaskAssignee) => {
+const sortByUserRole = (a: ITaskAssignee, b: ITaskAssignee) => {
     // coordinators first and riders second
     if (a.role === models.Role.COORDINATOR) {
         return -1;
@@ -136,26 +138,19 @@ const TaskAssignmentsPanel: React.FC<TaskAssignmentsPanelProps> = ({
                 models.TaskAssignee,
                 assignmentId
             );
+            const ridersAssignments = state.filter(
+                (a) => a.role === models.Role.RIDER && a.id !== assignmentId
+            );
+            const riders = ridersAssignments.map((a) => a.assignee);
             const status = await determineTaskStatus(
                 existingTask,
-                Object.values(_.omit(state, assignmentId)).filter(
-                    (a) => a.role === models.Role.RIDER
-                )
+                ridersAssignments
             );
             let riderResponsibility = existingTask.riderResponsibility;
             if (
                 existingAssignment &&
                 existingAssignment.role === models.Role.RIDER
             ) {
-                const riders = await Promise.all(
-                    Object.values(state)
-                        .filter(
-                            (a) =>
-                                a.role === models.Role.RIDER &&
-                                a.id !== assignmentId
-                        )
-                        .map((a) => a.assignee)
-                );
                 if (riders.length > 0) {
                     const rider = riders[riders.length - 1];
                     if (rider && rider.riderResponsibility) {
@@ -241,7 +236,7 @@ const TaskAssignmentsPanel: React.FC<TaskAssignmentsPanelProps> = ({
                         <Grid container spacing={1} direction={"row"}>
                             {sortByCreatedTime(Object.values(state), "oldest")
                                 .sort(sortByUserRole)
-                                .map((assignment: models.TaskAssignee) => {
+                                .map((assignment: ITaskAssignee) => {
                                     return (
                                         assignment &&
                                         assignment.assignee && (

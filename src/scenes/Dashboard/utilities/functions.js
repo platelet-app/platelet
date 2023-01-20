@@ -67,7 +67,7 @@ export function filterTasks(tasks, search) {
         const results = [];
         for (const searchTerm of searchTerms) {
             let filteredResult = [];
-            const filtered = Object.values(tasks)
+            const filtered = tasks
                 .filter((task) => {
                     if (
                         task.assigneesString
