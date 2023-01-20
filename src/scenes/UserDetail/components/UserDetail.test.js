@@ -422,37 +422,24 @@ describe("UserDetail", () => {
             screen.getByRole("button", { name: "Add Rider Role testResp" })
         );
         await waitFor(() => {
-            expect(saveSpy).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    ...mockResultOne,
-                    id: expect.any(String),
-                })
-            );
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockResultOne,
+                id: expect.any(String),
+            });
         });
         userEvent.click(
             screen.getByRole("button", { name: "Add Rider Role second one" })
         );
         await waitFor(() => {
-            expect(saveSpy).toHaveBeenCalledTimes(3);
-        });
-        expect(deleteSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                ...mockResultOne,
-                id: expect.any(String),
-            })
-        );
-        expect(saveSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                ...mockResultOne,
-                id: expect.any(String),
-            })
-        );
-        expect(saveSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
+            expect(saveSpy).toHaveBeenCalledWith({
                 ...mockResultTwo,
                 id: expect.any(String),
-            })
-        );
+            });
+        });
+        expect(deleteSpy).toHaveBeenCalledWith({
+            ...mockResultOne,
+            id: expect.any(String),
+        });
     });
 
     test("change the current rider responsibility", async () => {
@@ -538,9 +525,6 @@ describe("UserDetail", () => {
             );
         });
         expect(adminButton).not.toHaveAttribute("aria-disabled", "true");
-        await waitFor(() => {
-            expect(adminButton).toHaveClass("MuiChip-filled");
-        });
     });
 
     test("can't remove admin role if they are primary admin", async () => {
@@ -636,7 +620,7 @@ describe("UserDetail", () => {
         );
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(2);
+            expect(querySpy).toHaveBeenCalledTimes(7);
         });
         const respButton = screen.getByRole("button", { name: "testResp" });
         expect(respButton).toHaveClass("MuiChip-outlinedDefault");

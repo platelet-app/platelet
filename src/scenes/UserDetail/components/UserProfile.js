@@ -245,16 +245,15 @@ function UserProfile(props) {
                     models.User,
                     props.user.id
                 );
-                DataStore.query(models.PossibleRiderResponsibilities).then(
-                    (result) => {
-                        const existing = result.filter(
-                            (r) => r.user && r.user.id === existingUser.id
-                        );
-                        for (const i of existing) {
-                            DataStore.delete(i);
-                        }
+
+                DataStore.query(models.PossibleRiderResponsibilities, (c) =>
+                    c.user.id.eq(existingUser.id)
+                ).then((result) => {
+                    console.log(result);
+                    for (const i of result) {
+                        DataStore.delete(i);
                     }
-                );
+                });
                 await Promise.all(
                     possibleRiderResponsibilities.map((riderResponsibility) => {
                         return DataStore.save(
