@@ -13,6 +13,7 @@ const useComments = (parentId: string) => {
     const observer = React.useRef({ unsubscribe: () => {} });
 
     const getUserAssignments = React.useCallback(async () => {
+        debugger;
         if (!parentId) return;
         setIsFetching(true);
         observer.current.unsubscribe();
@@ -20,10 +21,12 @@ const useComments = (parentId: string) => {
             observer.current = DataStore.observeQuery(models.Comment, (c) =>
                 c.and((c) => [
                     c.parentId.eq(parentId),
-                    c.visibility.eq(models.CommentVisibility.EVERYONE),
-                    c.and((c) => [
-                        c.visibility.eq(models.CommentVisibility.ME),
-                        c.author.id.eq(whoami.id),
+                    c.or((c) => [
+                        c.visibility.eq(models.CommentVisibility.EVERYONE),
+                        c.and((c) => [
+                            c.visibility.eq(models.CommentVisibility.ME),
+                            c.author.id.eq(whoami.id),
+                        ]),
                     ]),
                 ])
             ).subscribe(({ items }) => {

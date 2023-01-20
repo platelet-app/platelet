@@ -61,6 +61,7 @@ const useTasks = (
     const [riderTasksIds, setRiderTasksIds] = React.useState<string[]>([]);
     const [isFetching, setIsFetching] = React.useState(true);
     const [error, setError] = React.useState<any>(null);
+    const [refresh, setRefresh] = React.useState(false);
     const oneWeekAgo = React.useRef(
         moment.utc().subtract(7, "days").toISOString()
     );
@@ -68,6 +69,7 @@ const useTasks = (
     const observer = React.useRef({ unsubscribe: () => {} });
     // for rider filter
     const secondaryObserver = React.useRef({ unsubscribe: () => {} });
+    const taskObserver = React.useRef({ unsubscribe: () => {} });
 
     const getTasks = React.useCallback(async () => {
         setIsFetching(true);
@@ -172,6 +174,27 @@ const useTasks = (
             setIsFetching(false);
         }
     }, [filterByRiderId, status]);
+
+    const setupTaskObserver = React.useCallback(() => {
+        taskObserver.current = DataStore.observe(models.Task).subscribe(
+            (newTask) => {
+                try {
+                    if (newTask.opType === "UPDATE") {
+                        getTasks();
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        );
+    }, [getTasks]);
+
+    React.useEffect(() => {
+        setupTaskObserver();
+        return () => {
+            taskObserver.current.unsubscribe();
+        };
+    }, [setupTaskObserver]);
 
     React.useEffect(() => {
         getTasks();
