@@ -8,27 +8,15 @@ import {
     dashboardFilteredUserSelector,
     getRoleView,
     getWhoami,
-    taskAssigneesReadyStatusSelector,
-    taskAssigneesSelector,
-    dataStoreModelSyncedStatusSelector,
     dashboardFilterTermSelector,
-    selectedItemsSelector,
-    dashboardTabIndexSelector,
-    selectionActionsPendingSelector,
 } from "../../../redux/Selectors";
-import { DataStore } from "aws-amplify";
 import { filterTasks } from "../utilities/functions";
 import GetError from "../../../ErrorComponents/GetError";
 import Box from "@mui/material/Box";
-import getTasksAll from "../utilities/getTasksAll";
-import getAllTasksByUser from "../utilities/getAllTasksByUser";
-import getAllMyTasks from "../utilities/getAllMyTasks";
-import getAllMyTasksWithUser from "../utilities/getAllMyTasksWithUser";
 import useWindowSize from "../../../hooks/useWindowSize";
 import { useTheme } from "@mui/material/styles";
 import TaskGridColumnHeader from "./TaskGridColumnHeader";
 import TaskGridTasksList from "./TaskGridTasksList";
-import useUserAssignments from "../../../hooks/useUserAssignments";
 import useTasks from "../../../hooks/useTasks";
 
 const useStyles = makeStyles((theme: any) => ({
@@ -72,9 +60,6 @@ const TasksGridColumn: React.FC<TasksGridColumnProps> = ({
     showTasks = [],
 }) => {
     const stateRef = useRef({});
-    const taskAssignees = useSelector(taskAssigneesSelector);
-    const prevTaskAssigneesRef = useRef(null);
-    const taskAssigneesReady = useSelector(taskAssigneesReadyStatusSelector);
     const [filteredTasksIds, setFilteredTasksIds] = useState<string[] | null>(
         null
     );
@@ -83,21 +68,6 @@ const TasksGridColumn: React.FC<TasksGridColumnProps> = ({
     const dashboardFilter = useSelector(dashboardFilterTermSelector);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const roleView = useSelector(getRoleView);
-    const dataStoreModelSynced = useSelector(
-        dataStoreModelSyncedStatusSelector
-    );
-    const selectionActionsPending = useSelector(
-        selectionActionsPendingSelector
-    );
-    const getTasksRef = useRef(() => {});
-
-    const tasksSubscription = useRef({
-        unsubscribe: () => {},
-    });
-
-    const locationsSubscription = useRef({
-        unsubscribe: () => {},
-    });
 
     const { state, isFetching, error } = useTasks(
         whoami.id,
@@ -136,12 +106,12 @@ const TasksGridColumn: React.FC<TasksGridColumnProps> = ({
 
     useEffect(doSearch, [dashboardFilter, state]);
 
-    const animate = useRef(false);
     if (error) {
         return <GetError />;
     } else if (isFetching) {
         return (
             <Box
+                data-testid="fetching-tasks-grid-column"
                 className={classes.column}
                 sx={{
                     width: isSm ? "100%" : width / 4.2,

@@ -153,9 +153,12 @@ const MultipleSelectionActionsDialog: React.FC<MultipleSelectionActionsDialogPro
                         const generatedModels =
                             await generateMultipleAssignmentModels(
                                 items,
-                                saveData.current[models.Role.COORDINATOR] || [],
-                                saveData.current[models.Role.RIDER] || [],
-                                assignees.items,
+                                Object.values(
+                                    saveData.current[models.Role.COORDINATOR]
+                                ) || [],
+                                Object.values(
+                                    saveData.current[models.Role.RIDER]
+                                ) || [],
                                 tenantId
                             );
                         onConfirmation(generatedModels);
@@ -209,6 +212,7 @@ const MultipleSelectionActionsDialog: React.FC<MultipleSelectionActionsDialogPro
                     setReasonBody("");
                     setIsDisabled(false);
                 } catch (error) {
+                    throw error;
                     console.log(error);
                     setIsDisabled(false);
                     dispatch(

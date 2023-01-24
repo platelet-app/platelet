@@ -180,7 +180,7 @@ export default async function generateMultipleDuplicatedTaskModels(
             let newComments: models.Comment[] = [];
             if (copyCommentsUserId) {
                 const oldComments = await DataStore.query(models.Comment, (c) =>
-                    c.parentId("eq", task.id)
+                    c.parentId.eq(task.id)
                 );
                 const filteredComments = oldComments.filter(
                     (c) => c.author?.id === copyCommentsUserId

@@ -13,15 +13,15 @@ async function generateMultipleTaskTimeModels(
     name: string | null = null
 ) {
     if (!selectedItems || _.isEmpty(selectedItems) || !timeKey) return [];
-    const filteredTasks = await DataStore.query(models.Task, (task) =>
-        task.or((task) =>
-            Object.values(selectedItems)
-                .map((t) => t.id)
-                .reduce((task, id) => task.id("eq", id), task)
-        )
-    );
+    const tasksResolved = [];
+    for (const task of selectedItems) {
+        const taskResolved = await DataStore.query(models.Task, task.id);
+        if (taskResolved) {
+            tasksResolved.push(taskResolved);
+        }
+    }
     return await Promise.all(
-        filteredTasks.map(async (item) => {
+        tasksResolved.map(async (item) => {
             const status = await determineTaskStatus(
                 {
                     ...item,

@@ -62,23 +62,21 @@ describe("MultipleSelectionActionsMenu", () => {
                 isSynced: true,
             },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         render(
             <>
                 <MultipleSelectionActionsMenu />
-                <TasksGridColumn taskKey={[models.TaskStatus.NEW]} />
+                <TasksGridColumn taskKey={models.TaskStatus.NEW} />
             </>,
             {
                 preloadedState,
             }
         );
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
+            expect(
+                screen.queryByTestId("fetching-tasks-grid-column")
+            ).toBeNull();
         });
         mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(11);
-        });
         expect(
             await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
         ).toHaveLength(12);
@@ -118,26 +116,21 @@ describe("MultipleSelectionActionsMenu", () => {
                     isSynced: true,
                 },
             };
-            const querySpy = jest.spyOn(DataStore, "query");
             render(
                 <>
                     <MultipleSelectionActionsMenu />
-                    <TasksGridColumn
-                        title={taskStatus}
-                        taskKey={[taskStatus]}
-                    />
+                    <TasksGridColumn title={taskStatus} taskKey={taskStatus} />
                 </>,
                 {
                     preloadedState,
                 }
             );
             await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(1);
+                expect(
+                    screen.queryByTestId("fetching-tasks-grid-column")
+                ).toBeNull();
             });
             mockAllIsIntersecting(true);
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(2);
-            });
             userEvent.click(screen.getByRole("button", { name: "Select All" }));
             expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(
                 3
@@ -297,26 +290,21 @@ describe("MultipleSelectionActionsMenu", () => {
                     isSynced: true,
                 },
             };
-            const querySpy = jest.spyOn(DataStore, "query");
             render(
                 <>
                     <MultipleSelectionActionsMenu />
-                    <TasksGridColumn
-                        title={taskStatus}
-                        taskKey={[taskStatus]}
-                    />
+                    <TasksGridColumn title={taskStatus} taskKey={taskStatus} />
                 </>,
                 {
                     preloadedState,
                 }
             );
             await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(1);
+                expect(
+                    screen.queryByTestId("fetching-tasks-grid-column")
+                ).toBeNull();
             });
             mockAllIsIntersecting(true);
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(2);
-            });
             userEvent.click(screen.getByRole("button", { name: "Select All" }));
             expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(
                 3
@@ -386,7 +374,6 @@ describe("MultipleSelectionActionsMenu", () => {
                     tenantId,
                 })
         );
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         const modelSpy = jest.spyOn(models.Task, "copyOf");
         render(
@@ -394,7 +381,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={models.TaskStatus.NEW}
-                    taskKey={[models.TaskStatus.NEW]}
+                    taskKey={models.TaskStatus.NEW}
                 />
             </>,
             {
@@ -402,12 +389,11 @@ describe("MultipleSelectionActionsMenu", () => {
             }
         );
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
+            expect(
+                screen.queryByTestId("fetching-tasks-grid-column")
+            ).toBeNull();
         });
         mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(3);
-        });
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(4);
         userEvent.click(
@@ -415,18 +401,10 @@ describe("MultipleSelectionActionsMenu", () => {
         );
         if (role === models.Role.COORDINATOR) {
             userEvent.click(screen.getByText("COORDINATOR"));
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(5);
-            });
-        } else {
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(4);
-            });
         }
-
         const textBox = screen.getByRole("textbox");
         userEvent.type(textBox, assignee.displayName);
-        userEvent.click(screen.getByText(assignee.displayName));
+        userEvent.click(await screen.findByText(assignee.displayName));
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeEnabled();
         userEvent.click(okButton);
@@ -441,12 +419,14 @@ describe("MultipleSelectionActionsMenu", () => {
                 role === models.Role.RIDER ? 4 : 2
             );
         });
-        expect(saveSpy).toHaveBeenCalledWith(
-            expect.objectContaining(_.omit(mockAssignments[0], "id"))
-        );
-        expect(saveSpy).toHaveBeenCalledWith(
-            expect.objectContaining(_.omit(mockAssignments[1], "id"))
-        );
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockAssignments[0],
+            id: expect.any(String),
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockAssignments[1],
+            id: expect.any(String),
+        });
         const expectedStatus =
             role === models.Role.COORDINATOR
                 ? models.TaskStatus.NEW
@@ -537,14 +517,13 @@ describe("MultipleSelectionActionsMenu", () => {
                 isSynced: true,
             },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
             <>
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={mockTask.status}
-                    taskKey={[mockTask.status]}
+                    taskKey={mockTask.status}
                 />
             </>,
             {
@@ -552,12 +531,11 @@ describe("MultipleSelectionActionsMenu", () => {
             }
         );
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
+            expect(
+                screen.queryByTestId("fetching-tasks-grid-column")
+            ).toBeNull();
         });
         mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(3);
-        });
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(4);
         const buttonToClick = screen.getByRole("button", {
@@ -623,11 +601,10 @@ describe("MultipleSelectionActionsMenu", () => {
         }
         expect(screen.queryByTestId("CheckBoxIcon")).toBeNull();
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(5);
+            expect(
+                screen.getAllByTestId("CheckBoxOutlineBlankIcon")
+            ).toHaveLength(1);
         });
-        expect(
-            await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
-        ).toHaveLength(1);
     });
 
     it.each`
@@ -685,14 +662,13 @@ describe("MultipleSelectionActionsMenu", () => {
                 isSynced: true,
             },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
             <>
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={mockTask.status}
-                    taskKey={[mockTask.status]}
+                    taskKey={mockTask.status}
                 />
             </>,
             {
@@ -700,12 +676,11 @@ describe("MultipleSelectionActionsMenu", () => {
             }
         );
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
+            expect(
+                screen.queryByTestId("fetching-tasks-grid-column")
+            ).toBeNull();
         });
         mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(3);
-        });
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(4);
         const buttonToClick = screen.getByRole("button", {
@@ -760,11 +735,10 @@ describe("MultipleSelectionActionsMenu", () => {
         }
         expect(screen.queryByTestId("CheckBoxIcon")).toBeNull();
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(5);
+            expect(
+                screen.getAllByTestId("CheckBoxOutlineBlankIcon")
+            ).toHaveLength(1);
         });
-        expect(
-            await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
-        ).toHaveLength(1);
     });
 
     it.each`
@@ -795,13 +769,12 @@ describe("MultipleSelectionActionsMenu", () => {
                 isSynced: true,
             },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         render(
             <>
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={models.TaskStatus.NEW}
-                    taskKey={[models.TaskStatus.NEW]}
+                    taskKey={models.TaskStatus.NEW}
                 />
             </>,
             {
@@ -809,12 +782,11 @@ describe("MultipleSelectionActionsMenu", () => {
             }
         );
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
+            expect(
+                screen.queryByTestId("fetching-tasks-grid-column")
+            ).toBeNull();
         });
         mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(11);
-        });
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         if (action === "assignUser") {
             userEvent.click(
@@ -849,7 +821,6 @@ describe("MultipleSelectionActionsMenu", () => {
                 isSynced: true,
             },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest
             .spyOn(DataStore, "save")
             .mockRejectedValue(new Error("Something went wrong"));
@@ -859,7 +830,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={models.TaskStatus.NEW}
-                    taskKey={[models.TaskStatus.NEW]}
+                    taskKey={models.TaskStatus.NEW}
                 />
             </>,
             {
@@ -867,12 +838,11 @@ describe("MultipleSelectionActionsMenu", () => {
             }
         );
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
+            expect(
+                screen.queryByTestId("fetching-tasks-grid-column")
+            ).toBeNull();
         });
         mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(2);
-        });
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         userEvent.click(
             screen.getByRole("button", { name: "Selection Rejected" })
@@ -942,13 +912,12 @@ describe("MultipleSelectionActionsMenu", () => {
                     isSynced: true,
                 },
             };
-            const querySpy = jest.spyOn(DataStore, "query");
             render(
                 <>
                     <MultipleSelectionActionsMenu />
                     <TasksGridColumn
                         title={models.TaskStatus.NEW}
-                        taskKey={[models.TaskStatus.NEW]}
+                        taskKey={models.TaskStatus.NEW}
                     />
                 </>,
                 {
@@ -956,12 +925,11 @@ describe("MultipleSelectionActionsMenu", () => {
                 }
             );
             await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(1);
+                expect(
+                    screen.queryByTestId("fetching-tasks-grid-column")
+                ).toBeNull();
             });
             mockAllIsIntersecting(true);
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(2);
-            });
             userEvent.click(screen.getByRole("button", { name: "Select All" }));
             expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(
                 3
@@ -971,20 +939,14 @@ describe("MultipleSelectionActionsMenu", () => {
             );
             if (role === models.Role.COORDINATOR) {
                 userEvent.click(screen.getByText("COORDINATOR"));
-                await waitFor(() => {
-                    expect(querySpy).toHaveBeenCalledTimes(4);
-                });
-            } else {
-                await waitFor(() => {
-                    expect(querySpy).toHaveBeenCalledTimes(3);
-                });
             }
 
             const okButton = screen.getByRole("button", { name: "OK" });
             expect(okButton).toBeDisabled();
             const textBox = screen.getByRole("textbox");
             userEvent.type(textBox, assignee.displayName);
-            userEvent.click(screen.getByText(assignee.displayName));
+            const option = await screen.findByText(assignee.displayName);
+            userEvent.click(option);
             expect(okButton).toBeEnabled();
             userEvent.click(screen.getByTestId("CancelIcon"));
             await waitFor(() => {
@@ -1038,14 +1000,13 @@ describe("MultipleSelectionActionsMenu", () => {
                 body: reason,
                 author: mockWhoami,
             });
-            const querySpy = jest.spyOn(DataStore, "query");
             const saveSpy = jest.spyOn(DataStore, "save");
             render(
                 <>
                     <MultipleSelectionActionsMenu />
                     <TasksGridColumn
                         title={models.TaskStatus.NEW}
-                        taskKey={[models.TaskStatus.NEW]}
+                        taskKey={models.TaskStatus.NEW}
                     />
                 </>,
                 {
@@ -1053,12 +1014,11 @@ describe("MultipleSelectionActionsMenu", () => {
                 }
             );
             await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(1);
+                expect(
+                    screen.queryByTestId("fetching-tasks-grid-column")
+                ).toBeNull();
             });
             mockAllIsIntersecting(true);
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(3);
-            });
             const label =
                 status === models.TaskStatus.REJECTED
                     ? "Rejected"
@@ -1091,14 +1051,16 @@ describe("MultipleSelectionActionsMenu", () => {
                 });
             });
             await waitFor(() => {
-                expect(saveSpy).toHaveBeenCalledWith(
-                    expect.objectContaining(_.omit(mockComment, "id"))
-                );
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockComment,
+                    id: expect.any(String),
+                });
             });
             await waitFor(() => {
-                expect(saveSpy).toHaveBeenCalledWith(
-                    expect.objectContaining(_.omit(mockComment2, "id"))
-                );
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockComment2,
+                    id: expect.any(String),
+                });
             });
         }
     );
@@ -1135,16 +1097,16 @@ describe("MultipleSelectionActionsMenu", () => {
                 isSynced: true,
             },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         render(
             <>
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={models.TaskStatus.PICKED_UP}
-                    taskKey={[
-                        models.TaskStatus.PICKED_UP,
-                        models.TaskStatus.DROPPED_OFF,
-                    ]}
+                    taskKey={models.TaskStatus.DROPPED_OFF}
+                />
+                <TasksGridColumn
+                    title={models.TaskStatus.PICKED_UP}
+                    taskKey={models.TaskStatus.DROPPED_OFF}
                 />
             </>,
             {
@@ -1152,7 +1114,9 @@ describe("MultipleSelectionActionsMenu", () => {
             }
         );
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
+            expect(
+                screen.queryByTestId("fetching-tasks-grid-column")
+            ).toBeNull();
         });
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         userEvent.click(
@@ -1210,13 +1174,12 @@ describe("MultipleSelectionActionsMenu", () => {
                 isSynced: true,
             },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         render(
             <>
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={models.TaskStatus.ACTIVE}
-                    taskKey={[models.TaskStatus.ACTIVE]}
+                    taskKey={models.TaskStatus.ACTIVE}
                 />
             </>,
             {
@@ -1226,7 +1189,9 @@ describe("MultipleSelectionActionsMenu", () => {
         if (view === "mobile") window.matchMedia = createMatchMedia(128);
         else window.matchMedia = createMatchMedia(1280);
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
+            expect(
+                screen.queryByTestId("fetching-tasks-grid-column")
+            ).toBeNull();
         });
         if (view === "desktop") {
             userEvent.click(screen.getByRole("button", { name: "Select All" }));
@@ -1262,36 +1227,48 @@ describe("MultipleSelectionActionsMenu", () => {
                     tenantId,
                 })
             );
-            const mockLocation1 = new models.Location({
-                listed,
-                line1: "some line",
-                tenantId,
-            });
-            const mockLocation2 = new models.Location({
-                listed,
-                line1: "some line 2",
-                tenantId,
-            });
-            const mockLocation3 = new models.Location({
-                listed,
-                line1: "woop 1",
-                tenantId,
-            });
-            const mockLocation4 = new models.Location({
-                listed,
-                line1: "woop 2",
-                tenantId,
-            });
-            const mockEstablishment1 = new models.Location({
-                listed,
-                line1: "est 1",
-                tenantId,
-            });
-            const mockEstablishment2 = new models.Location({
-                listed,
-                line1: "est 2",
-                tenantId,
-            });
+            const mockLocation1 = await DataStore.save(
+                new models.Location({
+                    listed,
+                    line1: "some line",
+                    tenantId,
+                })
+            );
+            const mockLocation2 = await DataStore.save(
+                new models.Location({
+                    listed,
+                    line1: "some line 2",
+                    tenantId,
+                })
+            );
+            const mockLocation3 = await DataStore.save(
+                new models.Location({
+                    listed,
+                    line1: "woop 1",
+                    tenantId,
+                })
+            );
+            const mockLocation4 = await DataStore.save(
+                new models.Location({
+                    listed,
+                    line1: "woop 2",
+                    tenantId,
+                })
+            );
+            const mockEstablishment1 = await DataStore.save(
+                new models.Location({
+                    listed,
+                    line1: "est 1",
+                    tenantId,
+                })
+            );
+            const mockEstablishment2 = await DataStore.save(
+                new models.Location({
+                    listed,
+                    line1: "est 2",
+                    tenantId,
+                })
+            );
 
             const mockTasks = await Promise.all(
                 _.range(2).map((i) =>
@@ -1324,7 +1301,6 @@ describe("MultipleSelectionActionsMenu", () => {
                     isSynced: true,
                 },
             };
-            const querySpy = jest.spyOn(DataStore, "query");
             const saveSpy = jest.spyOn(DataStore, "save");
             render(
                 <>
@@ -1332,7 +1308,7 @@ describe("MultipleSelectionActionsMenu", () => {
 
                     <TasksGridColumn
                         title={models.TaskStatus.NEW}
-                        taskKey={[models.TaskStatus.NEW]}
+                        taskKey={models.TaskStatus.NEW}
                     />
                 </>,
                 {
@@ -1340,7 +1316,9 @@ describe("MultipleSelectionActionsMenu", () => {
                 }
             );
             await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(1);
+                expect(
+                    screen.queryByTestId("fetching-tasks-grid-column")
+                ).toBeNull();
             });
             userEvent.click(screen.getByRole("button", { name: "Select All" }));
             userEvent.click(
@@ -1567,7 +1545,9 @@ describe("MultipleSelectionActionsMenu", () => {
             }
         );
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
+            expect(
+                screen.queryByTestId("fetching-tasks-grid-column")
+            ).toBeNull();
         });
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         userEvent.click(
@@ -1726,7 +1706,9 @@ describe("MultipleSelectionActionsMenu", () => {
             }
         );
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
+            expect(
+                screen.queryByTestId("fetching-tasks-grid-column")
+            ).toBeNull();
         });
         mockAllIsIntersecting(true);
         await waitFor(() => {
@@ -1808,7 +1790,9 @@ describe("MultipleSelectionActionsMenu", () => {
             }
         );
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
+            expect(
+                screen.queryByTestId("fetching-tasks-grid-column")
+            ).toBeNull();
         });
         mockAllIsIntersecting(true);
         await waitFor(() => {
@@ -1878,7 +1862,9 @@ describe("MultipleSelectionActionsMenu", () => {
             }
         );
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
+            expect(
+                screen.queryByTestId("fetching-tasks-grid-column")
+            ).toBeNull();
         });
         mockAllIsIntersecting(true);
         await waitFor(() => {

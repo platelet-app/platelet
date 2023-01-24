@@ -327,7 +327,7 @@ function MultipleSelectionActionsMenu() {
                 onCancel={() => setCurrentAction(null)}
                 key={currentAction}
                 open={currentAction !== null}
-                items={selectedItems}
+                items={Object.values(selectedItems)}
                 action={currentAction}
                 onConfirmation={handleConfirmation}
             />
