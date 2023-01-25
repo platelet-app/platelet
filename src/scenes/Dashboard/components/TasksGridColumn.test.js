@@ -283,7 +283,6 @@ describe("TasksGridColumn", () => {
                 isSynced: true,
             },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         render(
             <>
                 <ActiveRidersChips />
@@ -297,12 +296,14 @@ describe("TasksGridColumn", () => {
             }
         );
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(51);
+            expect(
+                screen.queryByTestId("fetching-tasks-grid-column")
+            ).toBeNull();
         });
         mockAllIsIntersecting(true);
         expect(await screen.findAllByText("AI")).toHaveLength(5);
         expect(await screen.findAllByText("SP")).toHaveLength(5);
-        userEvent.click(screen.getByText(fakeUser1.displayName));
+        userEvent.click(await screen.findByText(fakeUser1.displayName));
         await waitFor(() => {
             expect(screen.queryAllByText("SP")).toHaveLength(0);
         });
@@ -369,7 +370,6 @@ describe("TasksGridColumn", () => {
                 displayName: "Someone Person",
             })
         );
-        const querySpy = jest.spyOn(DataStore, "query");
         const preloadedState = {
             roleView: "ALL",
             whoami: { user: mockWhoami },
@@ -392,7 +392,9 @@ describe("TasksGridColumn", () => {
             }
         );
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(41);
+            expect(
+                screen.queryByTestId("fetching-tasks-grid-column")
+            ).toBeNull();
         });
         mockAllIsIntersecting(true);
         expect(screen.queryAllByText("AI")).toHaveLength(5);
@@ -916,7 +918,6 @@ describe("TasksGridColumn", () => {
                 roles: [models.Role.COORDINATOR],
             })
         );
-        const querySpy = jest.spyOn(DataStore, "query");
         const preloadedState = {
             roleView: "ALL",
             whoami: { user: mockWhoami },
@@ -940,12 +941,11 @@ describe("TasksGridColumn", () => {
             }
         );
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
+            expect(
+                screen.queryByTestId("fetching-tasks-grid-column")
+            ).toBeNull();
         });
         mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(41);
-        });
         expect(screen.queryAllByText("AI")).toHaveLength(5);
         expect(screen.queryAllByText("SP")).toHaveLength(5);
         userEvent.click(screen.getByText(fakeUser1.displayName));

@@ -26,18 +26,13 @@ describe("MultipleSelectionActionsMenu", () => {
         };
     }
 
-    beforeEach(() => {
+    beforeEach(async () => {
         jest.restoreAllMocks();
+        await DataStore.clear();
     });
     afterEach(async () => {
         jest.restoreAllMocks();
         global.Date = RealDate;
-        const tasks = await DataStore.query(models.Task);
-        const users = await DataStore.query(models.User);
-        const assignees = await DataStore.query(models.TaskAssignee);
-        await Promise.all(
-            [...tasks, ...users, ...assignees].map((t) => DataStore.delete(t))
-        );
     });
     test("select all items", async () => {
         for (const i in _.range(0, 10)) {
@@ -1690,7 +1685,6 @@ describe("MultipleSelectionActionsMenu", () => {
                 isSynced: true,
             },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         render(
             <>
                 <TaskFilterTextField />
@@ -1698,7 +1692,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={mockTask.status}
-                    taskKey={[mockTask.status]}
+                    taskKey={mockTask.status}
                 />
             </>,
             {
@@ -1711,9 +1705,6 @@ describe("MultipleSelectionActionsMenu", () => {
             ).toBeNull();
         });
         mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(2);
-        });
         const searchBox = screen.getByRole("textbox", { name: "Filter tasks" });
         const headerCheckbox = screen.getByTestId(
             `${mockTask.status}-select-all`
@@ -1816,7 +1807,7 @@ describe("MultipleSelectionActionsMenu", () => {
     });
 
     test("double confirm if affecting a lot of items", async () => {
-        const mockTasks = await Promise.all(
+        await Promise.all(
             _.range(10).map(() =>
                 DataStore.save(
                     new models.Task({ status: models.TaskStatus.NEW })
@@ -1847,14 +1838,13 @@ describe("MultipleSelectionActionsMenu", () => {
                 isSynced: true,
             },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
             <>
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={models.TaskStatus.NEW}
-                    taskKey={[models.TaskStatus.NEW]}
+                    taskKey={models.TaskStatus.NEW}
                 />
             </>,
             {
@@ -1867,19 +1857,13 @@ describe("MultipleSelectionActionsMenu", () => {
             ).toBeNull();
         });
         mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(11);
-        });
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         userEvent.click(
             screen.getByRole("button", { name: "Selection Assign User" })
         );
         const textBox = screen.getByRole("textbox");
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(12);
-        });
         userEvent.type(textBox, assignee.displayName);
-        userEvent.click(screen.getByText(assignee.displayName));
+        userEvent.click(await screen.findByText(assignee.displayName));
         const okButton = screen.getByRole("button", { name: "OK" });
         userEvent.click(okButton);
         expect(

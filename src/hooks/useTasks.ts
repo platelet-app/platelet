@@ -61,7 +61,6 @@ const useTasks = (
     const [riderTasksIds, setRiderTasksIds] = React.useState<string[]>([]);
     const [isFetching, setIsFetching] = React.useState(true);
     const [error, setError] = React.useState<any>(null);
-    const [refresh, setRefresh] = React.useState(false);
     const oneWeekAgo = React.useRef(
         moment.utc().subtract(7, "days").toISOString()
     );

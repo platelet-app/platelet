@@ -26,6 +26,8 @@ import { makeStyles } from "@mui/styles";
 import convertModelsToObject, {
     PersistentModelObjectType,
 } from "../../../utilities/convertModelsToObject";
+import useRoleAssignments from "../../../hooks/useRoleAssignments";
+import { ResolvedTaskAssignee } from "../../../resolved-models";
 
 const useStyles = makeStyles((theme: any) => ({
     gradientContainer: {
@@ -167,124 +169,92 @@ const inProgressTabFilter = async (assignment: models.TaskAssignee) => {
     );
 };
 
+const getTaskStatuses = (tabIndex: number) => {
+    switch (tabIndex) {
+        case 0:
+            return [
+                models.TaskStatus.ACTIVE,
+                models.TaskStatus.NEW,
+                models.TaskStatus.PICKED_UP,
+                models.TaskStatus.DROPPED_OFF,
+            ];
+        case 1:
+            return [
+                models.TaskStatus.REJECTED,
+                models.TaskStatus.ABANDONED,
+                models.TaskStatus.CANCELLED,
+                models.TaskStatus.COMPLETED,
+            ];
+        default:
+            return [];
+    }
+};
+
+const alphabeticalSort = (a: models.User, b: models.User) => {
+    return a.displayName.localeCompare(b.displayName);
+};
+
 const ActiveRidersChips: React.FC = () => {
     const [activeRiders, setActiveRiders] = useState<
         PersistentModelObjectType<models.User>
     >({});
-    const [errorState, setErrorState] = useState<any>(null);
     const whoami = useSelector(getWhoami);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const dashboardTabIndex = useSelector(dashboardTabIndexSelector);
-    const allAssignees: models.TaskAssignee[] = useSelector(
-        taskAssigneesSelector
-    ).items;
-    const animate = useRef(false);
     const roleView = useSelector(getRoleView);
     const dashboardFilteredUserRef = useRef(null);
     dashboardFilteredUserRef.current = dashboardFilteredUser;
     const theme = useTheme();
     const dispatch = useDispatch();
 
-    const calculateRidersStatus =
-        React.useCallback((): PersistentModelObjectType<models.User> => {
-            let activeRidersResult: models.User[] = [];
-            if (roleView === "ALL") {
-                const assignments: models.TaskAssignee[] = allAssignees.filter(
-                    (a) => a.role === models.Role.RIDER
-                );
-                activeRidersResult = assignments
-                    .filter(
-                        dashboardTabIndex === 0
-                            ? inProgressTabFilter
-                            : completedTabFilter
-                    )
-                    .map((a) => a.assignee);
-            } else if (roleView === models.Role.COORDINATOR && whoami) {
-                const myAssignments = allAssignees.filter(
-                    (a) =>
-                        a.role === models.Role.COORDINATOR &&
-                        a.assignee &&
-                        a.assignee.id === whoami.id
-                );
-                const myAssignedTasksIds = myAssignments.map(
-                    (a) => a.task && a.task.id
-                );
-                // find which tasks assigned to me are assigned to the rider
-                const assignedToMeRiders = allAssignees.filter(
-                    (a) =>
-                        a.role === models.Role.RIDER &&
-                        a.assignee &&
-                        a.task &&
-                        myAssignedTasksIds.includes(a.task.id)
-                );
-                activeRidersResult = assignedToMeRiders
-                    .filter(
-                        dashboardTabIndex === 0
-                            ? inProgressTabFilter
-                            : completedTabFilter
-                    )
-                    .map((a) => a.assignee);
-            }
+    const taskStatues = getTaskStatuses(dashboardTabIndex);
 
-            if (
-                dashboardFilteredUserRef.current &&
-                !activeRidersResult
-                    .map((u: models.User) => u.id)
-                    .includes(dashboardFilteredUserRef.current)
-            ) {
-                dispatch(setDashboardFilteredUser(null));
-            }
+    const coordinatorId =
+        roleView === models.Role.COORDINATOR && whoami ? whoami.id : null;
 
-            // resort alphabetically for now
-            // I have no idea why the completed tab sort function reverses the order
-            const sorted = activeRidersResult.sort((a, b) =>
-                a.displayName.localeCompare(b.displayName)
-            );
+    const oneWeekAgo = React.useRef(moment().subtract(1, "week").toDate());
 
-            return convertModelsToObject(sorted);
-        }, [allAssignees, dispatch, roleView, dashboardTabIndex, whoami]);
+    const { state, error } = useRoleAssignments(
+        models.Role.RIDER,
+        taskStatues,
+        coordinatorId,
+        dashboardTabIndex === 1 ? oneWeekAgo.current : null
+    );
 
-    const getActiveRiders = React.useCallback(async () => {
-        try {
-            setActiveRiders(calculateRidersStatus());
-            animate.current = true;
-        } catch (error) {
-            console.log(error);
-            setErrorState(error);
-        }
-    }, [calculateRidersStatus]);
+    React.useEffect(() => {
+        const users = state.map((assignment) => assignment.assignee);
+        setActiveRiders(convertModelsToObject(users));
+    }, [state]);
 
-    useEffect(() => {
-        getActiveRiders();
-    }, [roleView, allAssignees, dashboardTabIndex, getActiveRiders]);
-
-    const riderChipElements = Object.values(activeRiders).map((rider) => {
-        return (
-            <Box sx={{ margin: 0.5 }} key={rider.id}>
-                <UserChip
-                    showResponsibility
-                    onClick={() => {
-                        if (dashboardFilteredUser === rider.id) {
-                            dispatch(setDashboardFilteredUser(null));
-                        } else {
-                            dispatch(setDashboardFilteredUser(rider.id));
+    const riderChipElements = Object.values(activeRiders)
+        .sort(alphabeticalSort)
+        .map((rider) => {
+            return (
+                <Box sx={{ margin: 0.5 }} key={rider.id}>
+                    <UserChip
+                        showResponsibility
+                        onClick={() => {
+                            if (dashboardFilteredUser === rider.id) {
+                                dispatch(setDashboardFilteredUser(null));
+                            } else {
+                                dispatch(setDashboardFilteredUser(rider.id));
+                            }
+                        }}
+                        color={
+                            dashboardFilteredUser === rider.id
+                                ? "primary"
+                                : undefined
                         }
-                    }}
-                    color={
-                        dashboardFilteredUser === rider.id
-                            ? "primary"
-                            : undefined
-                    }
-                    variant={
-                        dashboardFilteredUser === rider.id
-                            ? undefined
-                            : "outlined"
-                    }
-                    user={rider}
-                />
-            </Box>
-        );
-    });
+                        variant={
+                            dashboardFilteredUser === rider.id
+                                ? undefined
+                                : "outlined"
+                        }
+                        user={rider}
+                    />
+                </Box>
+            );
+        });
 
     const allChipElements = [
         <Box key="active-rider-chips-all" sx={{ margin: 0.5 }}>
@@ -297,7 +267,7 @@ const ActiveRidersChips: React.FC = () => {
         ...riderChipElements,
     ];
 
-    if (errorState) {
+    if (error) {
         return <Typography>Sorry, something went wrong.</Typography>;
     }
     return (
