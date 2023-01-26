@@ -1,6 +1,7 @@
 import { DataStore } from "aws-amplify";
 import _ from "lodash";
 import * as models from "../../../models";
+import { ResolvedTaskAssignee } from "../../../resolved-models";
 
 const ignoredFields = [
     "id",
@@ -25,7 +26,7 @@ export default async function generateMultipleDuplicatedTaskModels(
     const whoami = await DataStore.query(models.User, whoamiId);
     if (!whoami) throw new Error("author not found");
     const allAssignees = await DataStore.query(models.TaskAssignee);
-    const deliverables = await DataStore.query(models.Deliverable);
+    const allDeliverables = await DataStore.query(models.Deliverable);
     const date = new Date();
     const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     const result = await Promise.all(
@@ -41,16 +42,21 @@ export default async function generateMultipleDuplicatedTaskModels(
                 timeRiderHome,
                 timeRejected,
                 timeCancelled,
-                riderResponsibility,
-                dropOffLocation,
-                pickUpLocation,
+                //riderResponsibility,
                 createdBy,
-                establishmentLocation,
+                comments,
+                assignees,
+                deliverables,
                 ...rest
             } = { ...task };
 
+            let dropOffLocation = await task.dropOffLocation;
+            let pickUpLocation = await task.pickUpLocation;
+            let establishmentLocation = await task.establishmentLocation;
+
             const locationModels = [];
 
+            // split off locations into new models if they are unlisted ones
             if (pickUpLocation?.listed === 0) {
                 pickUpLocation = new models.Location({
                     ..._.omit(pickUpLocation, ...ignoredFields),
@@ -99,77 +105,88 @@ export default async function generateMultipleDuplicatedTaskModels(
                 tenantId,
             });
 
-            const filteredDeliverables = deliverables.filter(
-                (d) => d.task?.id === task.id
+            const existingDeliverables = await DataStore.query(
+                models.Deliverable,
+                (d) => d.task.id.eq(task.id)
             );
             let assigneeModels: models.TaskAssignee[] = [];
             if (copyAssignees) {
-                const assignees = allAssignees.filter(
-                    (a) => a.task?.id === task.id
+                const existingAssignments = await DataStore.query(
+                    models.TaskAssignee,
+                    (a) => a.task.id.eq(task.id)
                 );
-                assigneeModels = assignees.map(
-                    (a) =>
-                        new models.TaskAssignee({
-                            task: newTaskData,
-                            assignee: a.assignee,
-                            tenantId,
-                            role: a.role,
-                        })
+                const existingAssignmentsResolved = await Promise.all(
+                    existingAssignments.map(async (a) => {
+                        const assignee = await a.assignee;
+                        return { ...a, assignee };
+                    })
                 );
-            }
-            if (assigneeId && assigneeRole) {
-                if (
-                    !assigneeModels.find(
-                        (a) =>
-                            a.assignee?.id === assigneeId &&
-                            a.role === assigneeRole
-                    )
-                ) {
-                    const user = await DataStore.query(models.User, assigneeId);
-                    if (user) {
-                        const newAssignee = new models.TaskAssignee({
-                            task: newTaskData,
-                            assignee: user,
-                            role: assigneeRole,
-                            tenantId,
-                        });
-                        assigneeModels = [...assigneeModels, newAssignee];
-                    }
-                }
-            }
-            // if there is a rider then make it active
-            // and set the rider role back to the last rider
-            if (assigneeModels.find((a) => a.role === models.Role.RIDER)) {
-                const riders = assigneeModels
-                    .filter((a) => a.role === models.Role.RIDER)
-                    .map((a) => a.assignee);
-                if (riders.length > 0) {
-                    const rider = riders[riders.length - 1];
-                    if (rider && rider.riderResponsibility) {
-                        riderResponsibility = rider.riderResponsibility;
-                    }
-                } else {
-                    riderResponsibility = null;
-                }
-                newTaskData = new models.Task({
-                    ...newTaskData,
-                    riderResponsibility,
-                    status: models.TaskStatus.ACTIVE,
-                    dateCreated: today.toISOString().split("T")[0],
-                    tenantId,
+                assigneeModels = existingAssignmentsResolved.map((a) => {
+                    return new models.TaskAssignee({
+                        task: newTaskData,
+                        assignee: a.assignee,
+                        tenantId,
+                        role: a.role,
+                    });
                 });
-                // go back and update the now out of date task references
-                assigneeModels = assigneeModels.map(
-                    (a) =>
-                        new models.TaskAssignee({
-                            task: newTaskData,
-                            assignee: a.assignee,
-                            role: a.role,
-                            tenantId,
-                        })
-                );
+                if (assigneeId && assigneeRole) {
+                    if (
+                        !existingAssignmentsResolved.find(
+                            (a) =>
+                                a.assignee?.id === assigneeId &&
+                                a.role === assigneeRole
+                        )
+                    ) {
+                        const user = await DataStore.query(
+                            models.User,
+                            assigneeId
+                        );
+                        if (user) {
+                            const newAssignee = new models.TaskAssignee({
+                                task: newTaskData,
+                                assignee: user,
+                                role: assigneeRole,
+                                tenantId,
+                            });
+                            assigneeModels = [...assigneeModels, newAssignee];
+                        }
+                    }
+                }
+                // if there is a rider then make it active
+                // and set the rider role back to the last rider
+                if (assigneeModels.find((a) => a.role === models.Role.RIDER)) {
+                    let riderResponsibility = null;
+                    const riders = assigneeModels
+                        .filter((a) => a.role === models.Role.RIDER)
+                        .map((a) => a.assignee);
+                    if (riders.length > 0) {
+                        const rider = await riders[riders.length - 1];
+                        if (rider && rider.riderResponsibility) {
+                            riderResponsibility = rider.riderResponsibility;
+                        }
+                    }
+                    const { comments, assignees, deliverables, ...rest } =
+                        newTaskData;
+                    newTaskData = new models.Task({
+                        ...rest,
+                        riderResponsibility,
+                        status: models.TaskStatus.ACTIVE,
+                        createdBy: whoami,
+                        pickUpLocation,
+                        dropOffLocation,
+                        establishmentLocation,
+                        dateCreated: today.toISOString().split("T")[0],
+                        tenantId,
+                    });
+                    // go back and update the now out of date task references
+                    assigneeModels = assigneeModels.map((a) => {
+                        return models.TaskAssignee.copyOf(a, (updated) => {
+                            updated.task = newTaskData;
+                        });
+                    });
+                }
             }
-            const deliverablesResult = filteredDeliverables.map(
+            const deliverablesResult = existingDeliverables.map(
                 (del) =>
                     new models.Deliverable({
                         ..._.omit(del, ...ignoredFields),
@@ -182,9 +199,13 @@ export default async function generateMultipleDuplicatedTaskModels(
                 const oldComments = await DataStore.query(models.Comment, (c) =>
                     c.parentId.eq(task.id)
                 );
-                const filteredComments = oldComments.filter(
-                    (c) => c.author?.id === copyCommentsUserId
-                );
+                const filteredComments: models.Comment[] = [];
+                for (const c of oldComments) {
+                    const author = await c.author;
+                    if (author?.id === copyCommentsUserId) {
+                        filteredComments.push(c);
+                    }
+                }
                 newComments = filteredComments.map(
                     (c) =>
                         new models.Comment({
@@ -195,13 +216,23 @@ export default async function generateMultipleDuplicatedTaskModels(
                 );
             }
             // locations models go first, then tasks
-            return [
-                ...locationModels,
-                newTaskData,
-                ...deliverablesResult,
-                ...assigneeModels,
-                ...newComments,
-            ];
+            //console.log("locationmodels", locationModels);
+            //console.log("newTaskData", newTaskData);
+            //console.log("assigneeModels", assigneeModels);
+            //console.log("deliverablesResult", deliverablesResult);
+            //console.log("newComments", newComments);
+            await Promise.all(
+                locationModels.flat().map((l) => DataStore.save(l))
+            );
+            await DataStore.save(newTaskData);
+            await Promise.all(
+                deliverablesResult.flat().map((d) => DataStore.save(d))
+            );
+            await Promise.all(
+                assigneeModels.flat().map((a) => DataStore.save(a))
+            );
+            await Promise.all(newComments.flat().map((c) => DataStore.save(c)));
+            return [];
         })
     );
     return result.flat();

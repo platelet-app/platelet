@@ -1348,48 +1348,6 @@ describe("MultipleSelectionActionsMenu", () => {
                     });
                 });
             } else {
-                expect(saveSpy).toHaveBeenCalledWith({
-                    ...mockTasks[0],
-                    dateCreated: dateString,
-                    tenantId,
-                    id: expect.not.stringMatching(mockTasks[0].id),
-                    pickUpLocation: {
-                        ...mockLocation1,
-                        id: expect.not.stringMatching(mockLocation1.id),
-                        tenantId,
-                    },
-                    dropOffLocation: {
-                        ...mockLocation2,
-                        id: expect.not.stringMatching(mockLocation2.id),
-                        tenantId,
-                    },
-                    establishmentLocation: {
-                        ...mockEstablishment1,
-                        id: expect.not.stringMatching(mockEstablishment1.id),
-                        tenantId,
-                    },
-                });
-                expect(saveSpy).toHaveBeenCalledWith({
-                    ...mockTasks[1],
-                    dateCreated: dateString,
-                    tenantId,
-                    id: expect.not.stringMatching(mockTasks[1].id),
-                    pickUpLocation: {
-                        ...mockLocation3,
-                        id: expect.not.stringMatching(mockLocation3.id),
-                        tenantId,
-                    },
-                    dropOffLocation: {
-                        ...mockLocation4,
-                        id: expect.not.stringMatching(mockLocation4.id),
-                        tenantId,
-                    },
-                    establishmentLocation: {
-                        ...mockEstablishment2,
-                        id: expect.not.stringMatching(mockEstablishment2.id),
-                        tenantId,
-                    },
-                });
                 [
                     mockLocation1,
                     mockLocation2,
@@ -1401,6 +1359,25 @@ describe("MultipleSelectionActionsMenu", () => {
                     expect(saveSpy).toHaveBeenCalledWith({
                         ...loc,
                         id: expect.not.stringMatching(loc.id),
+                    });
+                });
+                console.log(saveSpy.mock.calls);
+                mockTasks.forEach((t) => {
+                    expect(saveSpy).toHaveBeenCalledWith({
+                        ...t,
+                        dateCreated: dateString,
+                        tenantId,
+                        id: expect.not.stringMatching(mockTasks[0].id),
+                        dropOffLocationId: expect.not.stringMatching(
+                            mockLocation2.id
+                        ),
+                        pickUpLocationId: expect.not.stringMatching(
+                            mockLocation1.id
+                        ),
+                        establishmentLocationId: expect.not.stringMatching(
+                            mockEstablishment1.id
+                        ),
+                        userCreatedTasksId: mockWhoami.id,
                     });
                 });
             }
@@ -1525,14 +1502,13 @@ describe("MultipleSelectionActionsMenu", () => {
                 isSynced: true,
             },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
             <>
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={models.TaskStatus.ACTIVE}
-                    taskKey={[models.TaskStatus.ACTIVE]}
+                    taskKey={models.TaskStatus.ACTIVE}
                 />
             </>,
             {
@@ -1562,7 +1538,8 @@ describe("MultipleSelectionActionsMenu", () => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...t,
                 tenantId,
-                createdBy: mockWhoami,
+                userCreatedTasksId: mockWhoami.id,
+                riderResponsibility: null,
                 id: expect.not.stringMatching(t.id),
                 dateCreated: dateString,
             });
@@ -1570,55 +1547,42 @@ describe("MultipleSelectionActionsMenu", () => {
         const mockAssigns = mockTasks.map(
             (task) =>
                 new models.TaskAssignee({
-                    task: {
-                        ...task,
-                        createdBy: mockWhoami,
-                        dateCreated: dateString,
-                    },
+                    task: models.Task.copyOf(task, (upd) => {
+                        upd.createdBy = mockWhoami;
+                        upd.dateCreated = dateString;
+                    }),
                     assignee: mockWhoami,
                     role: actualRole,
                     tenantId,
                 })
         );
 
-        mockAssignmentsSomeoneElse.forEach((a) => {
+        for (const a of mockAssignmentsSomeoneElse) {
+            const task = await a.task;
             expect(saveSpy).toHaveBeenCalledWith({
                 ...a,
                 tenantId,
                 id: expect.any(String),
-                task: {
-                    ...a.task,
-                    createdBy: mockWhoami,
-                    dateCreated: dateString,
-                    id: expect.not.stringMatching(a.task.id),
-                },
+                taskAssigneesId: expect.not.stringMatching(task.id),
             });
-        });
+        }
 
         mockAssigns.forEach((a) => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...a,
                 id: expect.any(String),
                 tenantId,
-                task: {
-                    ...a.task,
-                    createdBy: mockWhoami,
-                    dateCreated: dateString,
-                    id: expect.not.stringMatching(a.task.id),
-                },
+                taskAssigneesId: expect.not.stringMatching(a.taskAssigneesId),
             });
         });
         [(deliverable1, deliverable2)].forEach((d) => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...d,
                 tenantId,
-                task: {
-                    ...d.task,
-                    createdBy: mockWhoami,
-                    dateCreated: dateString,
-                    id: expect.not.stringMatching(d.task.id),
-                },
                 id: expect.not.stringMatching(d.id),
+                taskDeliverablesId: expect.not.stringMatching(
+                    d.taskDeliverablesId
+                ),
             });
         });
         expect(saveSpy).toHaveBeenCalledWith({

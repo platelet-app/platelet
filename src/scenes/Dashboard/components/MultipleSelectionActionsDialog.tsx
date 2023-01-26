@@ -127,6 +127,7 @@ const MultipleSelectionActionsDialog: React.FC<MultipleSelectionActionsDialogPro
                 setIsDisabled(false);
             } catch (error) {
                 console.log(error);
+                throw error;
                 setIsDisabled(false);
                 dispatch(
                     displayErrorNotification("Sorry, something went wrong")
