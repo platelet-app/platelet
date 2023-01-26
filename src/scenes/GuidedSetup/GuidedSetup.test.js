@@ -1,5 +1,4 @@
 import { screen, waitFor } from "@testing-library/react";
-import React from "react";
 import { render } from "../../test-utils";
 import { GuidedSetup } from "./GuidedSetup";
 import * as models from "../../models";
@@ -36,22 +35,13 @@ describe("GuidedSetup", () => {
     }
 
     beforeEach(async () => {
+        await DataStore.clear();
         await DataStore.save(whoami);
         mockDate();
     });
     afterEach(async () => {
         jest.restoreAllMocks();
         global.Date = RealDate;
-        const users = await DataStore.query(models.User);
-        const tasks = await DataStore.query(models.Task);
-        const comments = await DataStore.query(models.Comment);
-        const assignments = await DataStore.query(models.TaskAssignee);
-        const locations = await DataStore.query(models.Location);
-        await Promise.all(
-            [...users, ...tasks, ...comments, ...assignments, ...locations].map(
-                (item) => DataStore.delete(item)
-            )
-        );
     });
 
     it("renders correctly", async () => {
@@ -146,6 +136,7 @@ describe("GuidedSetup", () => {
             task: mockTask,
             assignee: mockWhoami,
             role: models.Role.COORDINATOR,
+            tenantId,
         });
         await DataStore.save(mockWhoami);
         const querySpy = jest.spyOn(DataStore, "query");
@@ -164,28 +155,18 @@ describe("GuidedSetup", () => {
         });
         expect(querySpy).toHaveBeenCalledWith(models.User, mockWhoami.id);
         await waitFor(() =>
-            expect(saveSpy).toHaveBeenNthCalledWith(
-                1,
-                expect.objectContaining({
-                    ...mockTask,
-                    ...timeStrings,
-                    id: expect.any(String),
-                })
-            )
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
+                ...mockTask,
+                ...timeStrings,
+                id: expect.any(String),
+            })
         );
         await waitFor(() =>
-            expect(saveSpy).toHaveBeenNthCalledWith(
-                2,
-                expect.objectContaining({
-                    ...mockAssignment,
-                    id: expect.any(String),
-                    task: {
-                        ...mockTask,
-                        ...timeStrings,
-                        id: expect.any(String),
-                    },
-                })
-            )
+            expect(saveSpy).toHaveBeenNthCalledWith(2, {
+                ...mockAssignment,
+                id: expect.any(String),
+                taskAssigneesId: expect.any(String),
+            })
         );
     });
 
@@ -239,28 +220,18 @@ describe("GuidedSetup", () => {
             screen.getByRole("button", { name: "Save to dashboard" })
         );
         await waitFor(() =>
-            expect(saveSpy).toHaveBeenNthCalledWith(
-                1,
-                expect.objectContaining({
-                    ...mockTask,
-                    id: expect.any(String),
-                    ...timeStrings,
-                })
-            )
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
+                ...mockTask,
+                id: expect.any(String),
+                ...timeStrings,
+            })
         );
         await waitFor(() =>
-            expect(saveSpy).toHaveBeenNthCalledWith(
-                2,
-                expect.objectContaining({
-                    ...mockAssignment,
-                    id: expect.any(String),
-                    task: {
-                        ...mockTask,
-                        id: expect.any(String),
-                        ...timeStrings,
-                    },
-                })
-            )
+            expect(saveSpy).toHaveBeenNthCalledWith(2, {
+                ...mockAssignment,
+                id: expect.any(String),
+                taskAssigneesId: expect.any(String),
+            })
         );
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(9));
     });
@@ -288,14 +259,11 @@ describe("GuidedSetup", () => {
         });
 
         await waitFor(() =>
-            expect(saveSpy).toHaveBeenNthCalledWith(
-                3,
-                expect.objectContaining({
-                    ...mockComment,
-                    id: expect.any(String),
-                    parentId: expect.any(String),
-                })
-            )
+            expect(saveSpy).toHaveBeenNthCalledWith(3, {
+                ...mockComment,
+                id: expect.any(String),
+                parentId: expect.any(String),
+            })
         );
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(9));
     });
@@ -412,11 +380,15 @@ describe("GuidedSetup", () => {
             screen.getByRole("button", { name: "Save to dashboard" })
         );
         await waitFor(() => {
-            expect(saveSpy).toHaveBeenCalledTimes(2);
+            expect(saveSpy).toHaveBeenCalledTimes(3);
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockLocation,
+            id: expect.any(String),
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockTask,
-            establishmentLocation: { ...mockLocation, id: expect.any(String) },
+            establishmentLocationId: expect.any(String),
             ...timeStrings,
             id: expect.any(String),
         });
@@ -528,16 +500,22 @@ describe("GuidedSetup", () => {
             tenantId,
         });
 
-        const mockDeliverableType = new models.DeliverableType({
-            label: "some item",
-            tenantId,
-            disabled: 0,
-        });
-        const mockDeliverableType2 = new models.DeliverableType({
-            label: "another thing",
-            tenantId,
-            disabled: 0,
-        });
+        const mockDeliverableType = await DataStore.save(
+            new models.DeliverableType({
+                label: "some item",
+                tenantId,
+                disabled: 0,
+                defaultUnit: models.DeliverableUnit.ITEM,
+            })
+        );
+        const mockDeliverableType2 = await DataStore.save(
+            new models.DeliverableType({
+                label: "another thing",
+                tenantId,
+                disabled: 0,
+                defaultUnit: models.DeliverableUnit.NONE,
+            })
+        );
         const mockDeliverable = new models.Deliverable({
             deliverableType: mockDeliverableType,
             task: mockTask,
@@ -551,8 +529,6 @@ describe("GuidedSetup", () => {
             tenantId,
         });
 
-        await DataStore.save(mockDeliverableType);
-        await DataStore.save(mockDeliverableType2);
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(<GuidedSetup />, { preloadedState });
@@ -570,13 +546,11 @@ describe("GuidedSetup", () => {
             screen.getByRole("button", { name: "Save to dashboard" })
         );
         await waitFor(() =>
-            expect(saveSpy).toHaveBeenNthCalledWith(
-                1,
-                expect.objectContaining({
-                    ..._.omit(mockTask, "id"),
-                    ...timeStrings,
-                })
-            )
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
+                ...mockTask,
+                id: expect.any(String),
+                ...timeStrings,
+            })
         );
         await waitFor(() =>
             expect(querySpy).toHaveBeenNthCalledWith(6, models.DeliverableType)
@@ -584,28 +558,20 @@ describe("GuidedSetup", () => {
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledTimes(4);
         });
-        expect(saveSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                ...mockDeliverable,
-                id: expect.any(String),
-                task: {
-                    ...mockTask,
-                    id: expect.any(String),
-                    ...timeStrings,
-                },
-            })
-        );
-        expect(saveSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                ...mockDeliverable2,
-                id: expect.any(String),
-                task: {
-                    ...mockTask,
-                    id: expect.any(String),
-                    ...timeStrings,
-                },
-            })
-        );
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockDeliverable,
+            id: expect.any(String),
+            taskDeliverablesId: expect.any(String),
+            deliverableTypeDeliverablesId: mockDeliverableType.id,
+            unit: mockDeliverableType.defaultUnit,
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockDeliverable2,
+            id: expect.any(String),
+            taskDeliverablesId: expect.any(String),
+            deliverableTypeDeliverablesId: mockDeliverableType2.id,
+            unit: mockDeliverableType2.defaultUnit,
+        });
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(10));
     });
 

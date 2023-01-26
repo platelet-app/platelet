@@ -32,6 +32,7 @@ import { showHide } from "../../styles/common";
 import _ from "lodash";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { useCordovaBackButton } from "../../hooks/useCordovaBackButton";
+import { DataStore } from "aws-amplify";
 
 const TabPanel = (props) => {
     const { children, value, index, ...other } = props;
@@ -204,9 +205,16 @@ export const GuidedSetup = () => {
     const handleSave = async () => {
         setIsPosting(true);
         try {
+            let establishmentLocation = formValues.establishmentLocation;
+            if (establishmentLocation?.listed === 0) {
+                establishmentLocation = await DataStore.save(
+                    establishmentLocation
+                );
+            }
             await saveNewTaskToDataStore(
                 {
                     ...formValues,
+                    establishmentLocation,
                     deliverables: deliverables.current,
                     locations: locations.current,
                     requesterContact: requesterContact.current,
@@ -218,7 +226,7 @@ export const GuidedSetup = () => {
             );
             setEstablishmentSameAsPickup(initialEstablishmentSameAsPickUpState);
         } catch (e) {
-            console.error(e);
+            console.log(e);
             dispatch(displayErrorNotification("Sorry, something went wrong"));
             setIsPosting(false);
             setEstablishmentSameAsPickup(initialEstablishmentSameAsPickUpState);
