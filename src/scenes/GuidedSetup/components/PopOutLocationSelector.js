@@ -129,7 +129,10 @@ function PopOutLocationSelector(props) {
                         size="large"
                         onSelect={onSelectPreset}
                     />
-                    <Button onClick={() => setEditMode(true)}>
+                    <Button
+                        aria-label={`${props.label} not listed?`}
+                        onClick={() => setEditMode(true)}
+                    >
                         Not listed?
                     </Button>
                 </Stack>

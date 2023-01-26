@@ -344,6 +344,132 @@ describe("GuidedSetup", () => {
         });
     });
 
+    test("custom pick up and delivery locations", async () => {
+        const mockTask = new models.Task({
+            createdBy: whoami,
+            priority: null,
+            status: models.TaskStatus.NEW,
+            requesterContact: { name: "", telephoneNumber: "" },
+            tenantId,
+        });
+        const mockLocation = new models.Location({
+            listed: 0,
+            line1: "Test Line 1",
+            contact: {
+                emailAddress: "",
+                name: "Test Name",
+                telephoneNumber: "01234567890",
+            },
+            county: "Test County",
+            line2: "Test Line 2",
+            postcode: "TE1 1ST",
+            town: "Test Town",
+            ward: "Test Ward",
+            name: "",
+            tenantId,
+        });
+        const mockLocation2 = new models.Location({
+            listed: 0,
+            line1: "Another Test Line 1",
+            contact: {
+                emailAddress: "",
+                name: "Another Test Name",
+                telephoneNumber: "09876543210",
+            },
+            county: "Another Test County",
+            line2: "Another Test Line 2",
+            postcode: "TE2 2ST",
+            town: "Another Test Town",
+            ward: "Another Test Ward",
+            name: "",
+            tenantId,
+        });
+        const addressFields = {
+            ward: "Ward",
+            line1: "Line one",
+            line2: "Line two",
+            town: "Town",
+            county: "County",
+            country: "Country",
+            postcode: "Postcode",
+        };
+        const contactFields = {
+            name: "Name",
+            telephoneNumber: "Telephone",
+        };
+
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<GuidedSetup />, { preloadedState });
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
+        userEvent.click(screen.getByText(/PICK-UP/));
+        userEvent.click(
+            screen.getByRole("button", {
+                name: "pick-up not listed?",
+            })
+        );
+
+        Object.entries(addressFields).forEach(([key, label]) => {
+            userEvent.type(
+                screen.getByRole("textbox", { name: label }),
+                mockLocation[key]
+            );
+        });
+        Object.entries(contactFields).forEach(([key, label]) => {
+            userEvent.type(
+                screen.getByRole("textbox", { name: label }),
+                mockLocation.contact[key]
+            );
+        });
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(screen.queryByRole("button", { name: "OK" })).toBeNull();
+        });
+        userEvent.click(
+            screen.getByRole("button", {
+                name: "delivery not listed?",
+            })
+        );
+
+        Object.entries(addressFields).forEach(([key, label]) => {
+            userEvent.type(
+                screen.getByRole("textbox", { name: label }),
+                mockLocation2[key]
+            );
+        });
+        Object.entries(contactFields).forEach(([key, label]) => {
+            userEvent.type(
+                screen.getByRole("textbox", { name: label }),
+                mockLocation2.contact[key]
+            );
+        });
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(screen.queryByRole("button", { name: "OK" })).toBeNull();
+        });
+        userEvent.click(
+            screen.getByRole("button", { name: "Save to dashboard" })
+        );
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(4);
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockLocation,
+            id: expect.any(String),
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockLocation2,
+            id: expect.any(String),
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockTask,
+            ...timeStrings,
+            id: expect.any(String),
+            pickUpLocationId: expect.any(String),
+            dropOffLocationId: expect.any(String),
+        });
+    });
+
     test("a custom establishment", async () => {
         const mockLocation = new models.Location({
             name: "Test Location",
@@ -426,7 +552,7 @@ describe("GuidedSetup", () => {
         expect(screen.queryByText("CLEAR")).toBeNull();
         expect(
             await screen.findAllByRole("button", {
-                name: "Not listed?",
+                name: /not listed?/,
             })
         ).toHaveLength(1);
         userEvent.click(
@@ -622,7 +748,7 @@ describe("GuidedSetup", () => {
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
         userEvent.click(screen.getByText(/PICK-UP/));
         const enterManuallyButtons = screen.getAllByRole("button", {
-            name: "Not listed?",
+            name: /not listed?/,
         });
         userEvent.click(enterManuallyButtons[0]);
         const textBox = screen.getAllByRole("textbox");

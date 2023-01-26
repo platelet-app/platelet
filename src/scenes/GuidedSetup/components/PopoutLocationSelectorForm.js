@@ -76,15 +76,18 @@ function PopOutLocationSelectorForm(props) {
                     <TextField
                         key={key}
                         fullWidth
-                        aria-label={label}
+                        inputProps={{
+                            "aria-label": label,
+                        }}
                         label={label}
                         value={state[key]}
-                        onChange={(e) =>
+                        onChange={(e) => {
+                            const { value } = e.target;
                             setState((prevState) => ({
                                 ...prevState,
-                                [key]: e.target.value,
-                            }))
-                        }
+                                [key]: value,
+                            }));
+                        }}
                     />
                 ))}
                 {Object.entries(contactFields).map(([key, label]) => (
@@ -92,18 +95,21 @@ function PopOutLocationSelectorForm(props) {
                         key={key}
                         fullWidth
                         tel={key === "telephoneNumber"}
-                        aria-label={label}
+                        inputProps={{
+                            "aria-label": label,
+                        }}
                         label={label}
                         value={state.contact ? state.contact[key] : ""}
-                        onChange={(e) =>
+                        onChange={(e) => {
+                            const { value } = e.target;
                             setState((prevState) => ({
                                 ...prevState,
                                 contact: {
                                     ...prevState.contact,
-                                    [key]: e.target.value,
+                                    [key]: value,
                                 },
-                            }))
-                        }
+                            }));
+                        }}
                     />
                 ))}
             </Stack>

@@ -205,16 +205,9 @@ export const GuidedSetup = () => {
     const handleSave = async () => {
         setIsPosting(true);
         try {
-            let establishmentLocation = formValues.establishmentLocation;
-            if (establishmentLocation?.listed === 0) {
-                establishmentLocation = await DataStore.save(
-                    establishmentLocation
-                );
-            }
             await saveNewTaskToDataStore(
                 {
                     ...formValues,
-                    establishmentLocation,
                     deliverables: deliverables.current,
                     locations: locations.current,
                     requesterContact: requesterContact.current,
