@@ -385,6 +385,7 @@ describe("GuidedSetup", () => {
     test("custom pick up and delivery locations", async () => {
         const mockTask = new models.Task({
             createdBy: whoami,
+            establishmentLocation: null,
             priority: null,
             status: models.TaskStatus.NEW,
             requesterContact: { name: "", telephoneNumber: "" },
@@ -503,8 +504,14 @@ describe("GuidedSetup", () => {
             ...mockTask,
             ...timeStrings,
             id: expect.any(String),
-            pickUpLocationId: expect.any(String),
-            dropOffLocationId: expect.any(String),
+            pickUpLocation: {
+                ...mockLocation,
+                id: expect.any(String),
+            },
+            dropOffLocation: {
+                ...mockLocation2,
+                id: expect.any(String),
+            },
         });
     });
 
@@ -544,7 +551,11 @@ describe("GuidedSetup", () => {
             screen.getByRole("button", { name: "Save to dashboard" })
         );
         await waitFor(() => {
-            expect(saveSpy).toHaveBeenCalledTimes(2);
+            expect(saveSpy).toHaveBeenCalledTimes(3);
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockLocation,
+            id: expect.any(String),
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockTask,
