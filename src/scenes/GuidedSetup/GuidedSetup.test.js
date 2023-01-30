@@ -382,6 +382,70 @@ describe("GuidedSetup", () => {
         });
     });
 
+    test("expand the custom pick up and drop off addresses", async () => {
+        const addressFields = [
+            "Ward",
+            "Line one",
+            "Line two",
+            "Town",
+            "County",
+            "Country",
+            "Postcode",
+        ];
+
+        const contactFields = ["Name", "Telephone"];
+
+        const collapsedShowFields = ["Line one", "Town", "Postcode"];
+        const collapsedShowContactFields = ["Name", "Telephone"];
+
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<GuidedSetup />, { preloadedState });
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
+        userEvent.click(screen.getByText(/PICK-UP/));
+        userEvent.click(
+            screen.getByRole("button", {
+                name: "pick-up not listed?",
+            })
+        );
+        addressFields
+            .filter((l) => !collapsedShowFields.includes(l))
+            .forEach((field) => {
+                expect(
+                    screen.queryByRole("textbox", { name: field })
+                ).toBeNull();
+            });
+        contactFields
+            .filter((l) => !collapsedShowContactFields.includes(l))
+            .forEach((field) => {
+                expect(
+                    screen.queryByRole("textbox", { name: field })
+                ).toBeNull();
+            });
+        collapsedShowFields.forEach((field) => {
+            expect(
+                screen.getByRole("textbox", { name: field })
+            ).toBeInTheDocument();
+        });
+        collapsedShowContactFields.forEach((field) => {
+            expect(
+                screen.getByRole("textbox", { name: field })
+            ).toBeInTheDocument();
+        });
+
+        userEvent.click(screen.getByText(/Expand/));
+
+        addressFields.forEach((field) => {
+            expect(
+                screen.getByRole("textbox", { name: field })
+            ).toBeInTheDocument();
+        });
+        contactFields.forEach((field) => {
+            expect(
+                screen.getByRole("textbox", { name: field })
+            ).toBeInTheDocument();
+        });
+    });
+
     test("custom pick up and delivery locations", async () => {
         const mockTask = new models.Task({
             createdBy: whoami,
@@ -447,6 +511,7 @@ describe("GuidedSetup", () => {
                 name: "pick-up not listed?",
             })
         );
+        userEvent.click(screen.getByText("Expand to see more"));
 
         Object.entries(addressFields).forEach(([key, label]) => {
             userEvent.type(
@@ -469,6 +534,7 @@ describe("GuidedSetup", () => {
                 name: "delivery not listed?",
             })
         );
+        userEvent.click(screen.getAllByText(/Expand/)[1]);
 
         Object.entries(addressFields).forEach(([key, label]) => {
             userEvent.type(
