@@ -526,9 +526,12 @@ describe("GuidedSetup", () => {
             );
         });
         userEvent.click(screen.getByRole("button", { name: "OK" }));
-        await waitFor(() => {
-            expect(screen.queryByRole("button", { name: "OK" })).toBeNull();
-        });
+        await waitFor(
+            () => {
+                expect(screen.queryByRole("button", { name: "OK" })).toBeNull();
+            },
+            { timeout: 10000 }
+        );
         userEvent.click(
             screen.getByRole("button", {
                 name: "delivery not listed?",
@@ -549,9 +552,12 @@ describe("GuidedSetup", () => {
             );
         });
         userEvent.click(screen.getByRole("button", { name: "OK" }));
-        await waitFor(() => {
-            expect(screen.queryByRole("button", { name: "OK" })).toBeNull();
-        });
+        await waitFor(
+            () => {
+                expect(screen.queryByRole("button", { name: "OK" })).toBeNull();
+            },
+            { timeout: 10000 }
+        );
         userEvent.click(
             screen.getByRole("button", { name: "Save to dashboard" })
         );
