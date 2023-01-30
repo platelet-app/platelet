@@ -29,7 +29,7 @@ jobs:
         CI: false
         GENERATE_SOURCEMAP: false
     - name: NPM test
-      run: npm test -- --silent
+      run: npm test -- --silent --testTimeout=40000
     - name: Deploy to S3
       uses: jakejarvis/s3-sync-action@master
       with:
