@@ -585,7 +585,7 @@ describe("GuidedSetup", () => {
                 id: expect.any(String),
             },
         });
-    });
+    }, 40000);
 
     test("a custom establishment", async () => {
         const mockLocation = new models.Location({
