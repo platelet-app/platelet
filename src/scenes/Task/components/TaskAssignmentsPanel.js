@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import {
     Divider,
+    Box,
+    Chip,
     Grid,
     IconButton,
     Paper,
@@ -62,6 +64,7 @@ function TaskAssignmentsPanel(props) {
     const [collapsed, setCollapsed] = useState(null);
     const [role, setRole] = useState(userRoles.rider);
     const [isPosting, setIsPosting] = useState(false);
+    const [isPostingVehicle, setIsPostingVehicle] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const taskAssignees = useSelector(taskAssigneesSelector).items;
     const taskAssigneesReady = useSelector(taskAssigneesReadyStatusSelector);
@@ -69,6 +72,8 @@ function TaskAssignmentsPanel(props) {
     const [isFetching, setIsFetching] = useState(true);
     const [errorState, setErrorState] = useState(false);
     const [state, setState] = useState({});
+    const [usingOwnVehicle, setUsingOwnVehicle] = useState(false);
+    const taskObserver = React.useRef({ unsubscribe: () => {} });
 
     const currentUserRole = useAssignmentRole(props.taskId);
     const hasFullPermissions = currentUserRole === userRoles.coordinator;
@@ -79,6 +84,24 @@ function TaskAssignmentsPanel(props) {
     function onSelect(value) {
         if (value) addAssignee(value, role);
     }
+
+    const getTask = React.useCallback(async () => {
+        taskObserver.current.unsubscribe();
+        const result = await DataStore.query(models.Task, props.taskId);
+        if (result) setUsingOwnVehicle(!!result.isRiderUsingOwnVehicle);
+        taskObserver.current = DataStore.observe(
+            models.Task,
+            props.taskId
+        ).subscribe(({ element }) => {
+            setUsingOwnVehicle(!!element.isRiderUsingOwnVehicle);
+        });
+    }, [props.taskId]);
+    useEffect(() => {
+        getTask();
+        return () => {
+            taskObserver.current.unsubscribe();
+        };
+    }, [getTask]);
 
     const getAssignees = React.useCallback(
         (taskId, taskAssignees) => {
@@ -101,6 +124,26 @@ function TaskAssignmentsPanel(props) {
     useEffect(() => {
         getAssignees(props.taskId, taskAssignees);
     }, [props.taskId, taskAssigneesReady, taskAssignees, getAssignees]);
+
+    async function handleChangeRiderUsingOwnVehicle() {
+        const current = usingOwnVehicle;
+        try {
+            setIsPostingVehicle(true);
+            setUsingOwnVehicle(!usingOwnVehicle);
+            const existing = await DataStore.query(models.Task, props.taskId);
+            await DataStore.save(
+                models.Task.copyOf(existing, (updated) => {
+                    updated.isRiderUsingOwnVehicle = usingOwnVehicle ? 0 : 1;
+                })
+            );
+            setIsPostingVehicle(false);
+        } catch (e) {
+            console.error(e);
+            dispatch(displayErrorNotification(errorMessage));
+            setIsPostingVehicle(false);
+            setUsingOwnVehicle(current);
+        }
+    }
 
     async function addAssignee(user, role) {
         setIsPosting(true);
@@ -171,6 +214,7 @@ function TaskAssignmentsPanel(props) {
                 )
             );
             let riderResponsibility = existingTask.riderResponsibility;
+            let isRiderUsingOwnVehicle = existingTask.isRiderUsingOwnVehicle;
             if (
                 existingAssignment &&
                 existingAssignment.role === userRoles.rider
@@ -188,12 +232,14 @@ function TaskAssignmentsPanel(props) {
                     }
                 } else {
                     riderResponsibility = null;
+                    isRiderUsingOwnVehicle = 0;
                 }
             }
             await DataStore.save(
                 models.Task.copyOf(existingTask, (updated) => {
                     updated.status = status;
                     updated.riderResponsibility = riderResponsibility;
+                    updated.isRiderUsingOwnVehicle = isRiderUsingOwnVehicle;
                 })
             );
             setState((prevState) => _.omit(prevState, assignmentId));
@@ -266,25 +312,48 @@ function TaskAssignmentsPanel(props) {
                         )}
                     </Stack>
                     {collapsed && (
-                        <Grid container spacing={1} direction={"row"}>
-                            {sortByCreatedTime(Object.values(state), "oldest")
-                                .sort(sortByUserRole)
-                                .map((assignment) => {
-                                    return (
-                                        assignment &&
-                                        assignment.assignee && (
-                                            <Grid
-                                                key={assignment.assignee.id}
-                                                item
-                                            >
-                                                <UserChip
-                                                    user={assignment.assignee}
-                                                />
-                                            </Grid>
-                                        )
-                                    );
-                                })}
-                        </Grid>
+                        <>
+                            <Grid container spacing={1} direction={"row"}>
+                                {sortByCreatedTime(
+                                    Object.values(state),
+                                    "oldest"
+                                )
+                                    .sort(sortByUserRole)
+                                    .map((assignment) => {
+                                        return (
+                                            assignment &&
+                                            assignment.assignee && (
+                                                <Grid
+                                                    key={assignment.assignee.id}
+                                                    item
+                                                >
+                                                    <UserChip
+                                                        user={
+                                                            assignment.assignee
+                                                        }
+                                                    />
+                                                </Grid>
+                                            )
+                                        );
+                                    })}
+                            </Grid>
+                            {Object.values(state).some(
+                                (a) => a.role === userRoles.rider
+                            ) && (
+                                <>
+                                    <Divider />
+                                    <Box sx={{ paddingLeft: 1 }}>
+                                        <Chip
+                                            label={
+                                                usingOwnVehicle
+                                                    ? "Using own vehicle"
+                                                    : "Using charity vehicle"
+                                            }
+                                        />
+                                    </Box>
+                                </>
+                            )}
+                        </>
                     )}
                     {!collapsed && !isFetching && (
                         <>
@@ -294,6 +363,11 @@ function TaskAssignmentsPanel(props) {
                                     deleteAssignment(v);
                                 }}
                                 assignees={Object.values(state)}
+                                onChangeRiderUsingOwnVehicle={
+                                    handleChangeRiderUsingOwnVehicle
+                                }
+                                usingOwnVehicle={usingOwnVehicle}
+                                disableUsingOwnVehicleSwitch={isPostingVehicle}
                             />
                             <Typography>Assign a user</Typography>
                             <UserRoleSelect
