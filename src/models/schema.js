@@ -954,6 +954,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "isRiderUsingOwnVehicle": {
+                    "name": "isRiderUsingOwnVehicle",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -2207,6 +2214,6 @@ export const schema = {
             }
         }
     },
-    "codegenVersion": "3.3.2",
-    "version": "bb2e35b6475bd0ff1a48255f28cdd761"
+    "codegenVersion": "3.3.5",
+    "version": "3c3c2097a8699496ece95b504d3fb046"
 };

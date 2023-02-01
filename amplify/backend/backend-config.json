@@ -1,280 +1,498 @@
 {
-  "auth": {
-    "platelet61a0ac07": {
-      "service": "Cognito",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [],
-      "customAuth": false,
-      "frontendAuthConfig": {
-        "socialProviders": [],
-        "usernameAttributes": [],
-        "signupAttributes": [
-          "EMAIL"
-        ],
-        "passwordProtectionSettings": {
-          "passwordPolicyMinLength": 8,
-          "passwordPolicyCharacters": []
-        },
-        "mfaConfiguration": "OFF",
-        "mfaTypes": [
-          "SMS"
-        ],
-        "verificationMechanisms": [
-          "EMAIL"
-        ]
-      }
-    },
-    "userPoolGroups": {
-      "service": "Cognito-UserPool-Groups",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [
-        {
-          "category": "auth",
-          "resourceName": "platelet61a0ac07",
-          "attributes": [
-            "UserPoolId",
-            "AppClientIDWeb",
-            "AppClientID",
-            "IdentityPoolId"
-          ]
-        }
-      ]
-    }
-  },
   "api": {
     "platelet": {
-      "service": "AppSync",
-      "providerPlugin": "awscloudformation",
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "platelet61a0ac07"
+        }
+      ],
       "output": {
         "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            }
+          ],
           "defaultAuthentication": {
             "authenticationType": "AMAZON_COGNITO_USER_POOLS",
             "userPoolConfig": {
               "userPoolId": "authplatelet61a0ac07"
             }
-          },
-          "additionalAuthenticationProviders": [
-            {
-              "authenticationType": "AWS_IAM"
-            }
-          ]
+          }
         }
       },
-      "dependsOn": [
-        {
-          "category": "auth",
-          "resourceName": "platelet61a0ac07",
-          "attributes": [
-            "UserPoolId"
-          ]
-        }
-      ]
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
     }
   },
+  "auth": {
+    "platelet61a0ac07": {
+      "customAuth": false,
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyCharacters": [],
+          "passwordPolicyMinLength": 8
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito"
+    },
+    "userPoolGroups": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId",
+            "AppClientIDWeb",
+            "AppClientID",
+            "IdentityPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "platelet61a0ac07"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito-UserPool-Groups"
+    }
+  },
+  "custom": {},
   "function": {
     "PlateletTaskResolvers": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
-    "plateletImageResize": {
+    "plateletAddNewTenant": {
       "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda",
       "dependsOn": [
         {
-          "category": "storage",
-          "resourceName": "plateletStorage",
           "attributes": [
-            "BucketName"
-          ]
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "platelet61a0ac07"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
         }
-      ]
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     },
     "plateletAdminAddNewUser": {
       "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda",
       "dependsOn": [
         {
-          "category": "auth",
-          "resourceName": "platelet61a0ac07",
           "attributes": [
             "UserPoolId"
-          ]
+          ],
+          "category": "auth",
+          "resourceName": "platelet61a0ac07"
         },
         {
-          "category": "api",
-          "resourceName": "platelet",
           "attributes": [
             "GraphQLAPIIdOutput",
             "GraphQLAPIEndpointOutput"
-          ]
-        }
-      ]
-    },
-    "plateletAddNewTenant": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda",
-      "dependsOn": [
-        {
-          "category": "auth",
-          "resourceName": "platelet61a0ac07",
-          "attributes": [
-            "UserPoolId"
-          ]
-        },
-        {
+          ],
           "category": "api",
-          "resourceName": "platelet",
-          "attributes": [
-            "GraphQLAPIIdOutput",
-            "GraphQLAPIEndpointOutput"
-          ]
+          "resourceName": "platelet"
         }
-      ]
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     },
     "plateletAdminChangeUserRoles": {
       "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda",
       "dependsOn": [
         {
-          "category": "auth",
-          "resourceName": "platelet61a0ac07",
           "attributes": [
             "UserPoolId"
-          ]
+          ],
+          "category": "auth",
+          "resourceName": "platelet61a0ac07"
         },
         {
-          "category": "api",
-          "resourceName": "platelet",
           "attributes": [
             "GraphQLAPIIdOutput",
             "GraphQLAPIEndpointOutput"
-          ]
+          ],
+          "category": "api",
+          "resourceName": "platelet"
         }
-      ]
-    },
-    "plateletProfilePictureUploadURLResolver": {
-      "build": true,
+      ],
       "providerPlugin": "awscloudformation",
-      "service": "Lambda",
+      "service": "Lambda"
+    },
+    "plateletImageResize": {
+      "build": true,
       "dependsOn": [
         {
-          "category": "api",
-          "resourceName": "platelet",
-          "attributes": [
-            "GraphQLAPIIdOutput",
-            "GraphQLAPIEndpointOutput"
-          ]
-        },
-        {
-          "category": "storage",
-          "resourceName": "plateletStorage",
           "attributes": [
             "BucketName"
-          ]
+          ],
+          "category": "storage",
+          "resourceName": "plateletStorage"
         }
-      ]
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     },
     "plateletProfilePictureResolver": {
       "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda",
       "dependsOn": [
         {
-          "category": "storage",
-          "resourceName": "plateletStorage",
           "attributes": [
             "BucketName"
-          ]
+          ],
+          "category": "storage",
+          "resourceName": "plateletStorage"
         }
-      ]
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "plateletProfilePictureUploadURLResolver": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        },
+        {
+          "attributes": [
+            "BucketName"
+          ],
+          "category": "storage",
+          "resourceName": "plateletStorage"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     },
     "plateletSendUserFeedback": {
       "build": true,
+      "dependsOn": [],
       "providerPlugin": "awscloudformation",
-      "service": "Lambda",
-      "dependsOn": []
+      "service": "Lambda"
     }
   },
   "geo": {
     "plateletPlace": {
-      "isDefault": true,
-      "providerPlugin": "awscloudformation",
-      "service": "PlaceIndex",
+      "accessType": "AuthorizedUsers",
       "dataProvider": "HERE",
       "dataSourceIntendedUse": "SingleUse",
-      "accessType": "AuthorizedUsers",
       "dependsOn": [
         {
-          "category": "auth",
-          "resourceName": "platelet61a0ac07",
           "attributes": [
             "UserPoolId"
-          ]
+          ],
+          "category": "auth",
+          "resourceName": "platelet61a0ac07"
+        }
+      ],
+      "isDefault": true,
+      "providerPlugin": "awscloudformation",
+      "service": "PlaceIndex"
+    }
+  },
+  "hosting": {
+    "amplifyhosting": {
+      "providerPlugin": "awscloudformation",
+      "service": "amplifyhosting",
+      "type": "manual"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_PlateletTaskResolvers_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "PlateletTaskResolvers"
+        }
+      ]
+    },
+    "AMPLIFY_function_PlateletTaskResolvers_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "PlateletTaskResolvers"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAddNewTenant_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAddNewTenant"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAddNewTenant_plateletDomainName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAddNewTenant"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAddNewTenant_plateletWelcomeEmail": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAddNewTenant"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAddNewTenant_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAddNewTenant"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminAddNewUser_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminAddNewUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminAddNewUser_plateletDomainName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminAddNewUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminAddNewUser_plateletWelcomeEmail": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminAddNewUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminAddNewUser_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminAddNewUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminChangeUserRoles_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminChangeUserRoles"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminChangeUserRoles_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminChangeUserRoles"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletImageResize_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletImageResize"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletImageResize_resizeHeight": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletImageResize"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletImageResize_resizeWidth": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletImageResize"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletImageResize_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletImageResize"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletImageResize_thumbnailHeight": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletImageResize"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletImageResize_thumbnailWidth": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletImageResize"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletProfilePictureResolver_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletProfilePictureResolver"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletProfilePictureResolver_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletProfilePictureResolver"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletProfilePictureUploadURLResolver_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletProfilePictureUploadURLResolver"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletProfilePictureUploadURLResolver_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletProfilePictureUploadURLResolver"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletSendUserFeedback_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletSendUserFeedback"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletSendUserFeedback_plateletSendToEmailAddress": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletSendUserFeedback"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletSendUserFeedback_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletSendUserFeedback"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_appId": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_type": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
         }
       ]
     }
   },
   "storage": {
     "plateletStorage": {
-      "service": "S3",
-      "providerPlugin": "awscloudformation",
       "dependsOn": [
         {
-          "category": "auth",
-          "resourceName": "platelet61a0ac07",
           "attributes": [
             "UserPoolId"
-          ]
+          ],
+          "category": "auth",
+          "resourceName": "platelet61a0ac07"
         },
         {
-          "category": "auth",
-          "resourceName": "userPoolGroups",
           "attributes": [
             "SUPERGroupRole"
-          ]
+          ],
+          "category": "auth",
+          "resourceName": "userPoolGroups"
         },
         {
-          "category": "auth",
-          "resourceName": "userPoolGroups",
           "attributes": [
             "USERGroupRole"
-          ]
+          ],
+          "category": "auth",
+          "resourceName": "userPoolGroups"
         },
         {
-          "category": "auth",
-          "resourceName": "userPoolGroups",
           "attributes": [
             "ADMINGroupRole"
-          ]
+          ],
+          "category": "auth",
+          "resourceName": "userPoolGroups"
         },
         {
-          "category": "auth",
-          "resourceName": "userPoolGroups",
           "attributes": [
             "COORDINATORGroupRole"
-          ]
+          ],
+          "category": "auth",
+          "resourceName": "userPoolGroups"
         },
         {
-          "category": "auth",
-          "resourceName": "userPoolGroups",
           "attributes": [
             "RIDERGroupRole"
-          ]
+          ],
+          "category": "auth",
+          "resourceName": "userPoolGroups"
         }
-      ]
-    }
-  },
-  "hosting": {
-    "amplifyhosting": {
-      "service": "amplifyhosting",
+      ],
       "providerPlugin": "awscloudformation",
-      "type": "manual"
+      "service": "S3"
     }
-  },
-  "custom": {}
+  }
 }
