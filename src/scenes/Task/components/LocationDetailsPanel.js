@@ -9,107 +9,42 @@ import * as models from "../../../models/index";
 import { API, DataStore, graphqlOperation } from "aws-amplify";
 import _ from "lodash";
 import { protectedFields } from "../../../apiConsts";
-import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
 import EditModeToggleButton from "../../../components/EditModeToggleButton";
 import * as mutations from "../../../graphql/mutations";
 import * as queries from "../../../graphql/queries";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
+import useLocation from "../../../hooks/useLocation";
+import useTask from "../../../hooks/useTask";
 
 function LocationDetailsPanel(props) {
     const classes = dialogCardStyles();
     const dispatch = useDispatch();
     // I have no idea why the imported selector is undefined here
     const tenantId = useSelector((state) => state.tenantId);
-    const [state, setState] = useState(null);
     const [editMode, setEditMode] = useState(false);
-    const [errorState, setErrorState] = useState(false);
-    const [isFetching, setIsFetching] = useState(true);
     const [confirmReplaceSelection, setConfirmReplaceSelection] =
         useState(false);
     const currentlySelectedPreset = useRef(null);
-    const loadedOnce = useRef(false);
-    const locationModelSynced = useSelector(
-        dataStoreModelSyncedStatusSelector
-    ).Location;
-    const taskModelsSynced = useSelector(
-        dataStoreModelSyncedStatusSelector
-    ).Task;
 
     const currentUserRole = useAssignmentRole(props.taskId);
     const hasFullPermissions = currentUserRole === models.Role.COORDINATOR;
-
-    const taskObserver = useRef({ unsubscribe: () => {} });
-    const locationObserver = useRef({ unsubscribe: () => {} });
 
     const initialSetEdit = useRef(false);
 
     const errorMessage = "Sorry, an error occurred";
 
-    async function getLocation() {
-        if (!loadedOnce.current) setIsFetching(true);
-        try {
-            const task = await DataStore.query(models.Task, props.taskId);
-            taskObserver.current.unsubscribe();
-            taskObserver.current = DataStore.observe(
-                models.Task,
-                task.id
-            ).subscribe(({ opType, element }) => {
-                if (opType === "UPDATE") {
-                    const locId = element[`${props.locationKey}Id`];
-                    if ((!state && locId) || (state && locId !== state.id)) {
-                        DataStore.query(models.Location, locId).then((result) =>
-                            setState(result || null)
-                        );
-                        locationObserver.current.unsubscribe();
-                        locationObserver.current = DataStore.observe(
-                            models.Location,
-                            locId
-                        ).subscribe(({ opType, element }) => {
-                            if (opType === "UPDATE") {
-                                setState(element);
-                            }
-                        });
-                    } else if (!locId) {
-                        setState(null);
-                    }
-                }
-            });
-
-            const location = task[props.locationKey];
-            locationObserver.current.unsubscribe();
-            if (location) {
-                locationObserver.current = DataStore.observe(
-                    models.Location,
-                    location.id
-                ).subscribe(({ opType, element }) => {
-                    if (opType === "UPDATE") {
-                        setState(element);
-                    }
-                });
-            }
-            setState(location);
-            loadedOnce.current = true;
-            setIsFetching(false);
-        } catch (err) {
-            console.log(err);
-            setErrorState(true);
-        }
-    }
-
-    useEffect(
-        () => getLocation(),
-        [props.taskId, locationModelSynced, taskModelsSynced]
+    const taskState = useTask(props.taskId);
+    const task = taskState.state;
+    const { state, isFetching, error, setState } = useLocation(
+        task ? task[props.locationKey]?.id : null
     );
 
-    useEffect(
-        () => () => {
-            taskObserver.current.unsubscribe();
-            locationObserver.current.unsubscribe();
-        },
-        []
-    );
+    console.log("state", state);
+    console.log("isFetching", isFetching);
+    console.log("error", error);
+    console.log("task", task);
 
     useEffect(() => {
         if (isFetching || !hasFullPermissions) return;
@@ -398,7 +333,12 @@ function LocationDetailsPanel(props) {
 
     if (isFetching) {
         contents = (
-            <Skeleton variant={"rectangular"} width={"100%"} height={130} />
+            <Skeleton
+                data-testid="fetching-location-details-panel"
+                variant={"rectangular"}
+                width={"100%"}
+                height={130}
+            />
         );
     } else if (hasFullPermissions || state) {
         contents = (
@@ -421,7 +361,7 @@ function LocationDetailsPanel(props) {
         contents = <Typography>No location set.</Typography>;
     }
 
-    if (errorState) {
+    if (error) {
         return <GetError />;
     } else {
         return (
@@ -479,13 +419,11 @@ function LocationDetailsPanel(props) {
 }
 
 LocationDetailsPanel.propTypes = {
-    locationId: PropTypes.string,
     locationKey: PropTypes.oneOf(["pickUpLocation", "dropOffLocation"]),
     taskId: PropTypes.string,
 };
 
 LocationDetailsPanel.defaultProps = {
-    locationId: null,
     locationKey: "pickUpLocation",
     taskId: null,
 };
