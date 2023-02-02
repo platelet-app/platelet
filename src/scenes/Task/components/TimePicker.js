@@ -142,16 +142,22 @@ function TimePicker(props) {
 
 TimePicker.propTypes = {
     time: PropTypes.string,
+    editMode: PropTypes.bool,
     onChange: PropTypes.func,
     label: PropTypes.string,
     disabled: PropTypes.bool,
     disableClear: PropTypes.bool,
     disableUnsetMessage: PropTypes.bool,
     hideEditIcon: PropTypes.bool,
+    onCancelEdit: PropTypes.func,
+    onClickEdit: PropTypes.func,
 };
 TimePicker.defaultProps = {
     time: "",
+    editMode: false,
     onChange: () => {},
+    onCancelEdit: () => {},
+    onClickEdit: () => {},
     label: "",
     disabled: false,
     disableClear: false,

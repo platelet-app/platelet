@@ -34,8 +34,13 @@ const useLocation = (locationId: string, wait: boolean = false) => {
                 observer.current = DataStore.observe(
                     models.Location,
                     locationId
-                ).subscribe(({ element }) => {
-                    setState(element);
+                ).subscribe(({ element, opType }) => {
+                    if (opType === "DELETE") {
+                        setNotFound(true);
+                        setState(null);
+                    } else {
+                        setState(element);
+                    }
                 });
             } else {
                 setNotFound(true);

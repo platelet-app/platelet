@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 import React, { useEffect, useRef } from "react";
 import { useState } from "react";
-import PropTypes from "prop-types";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models/index";
@@ -27,6 +26,8 @@ import { saveTaskTimeWithKey } from "../utilities";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 import determineTaskStatus from "../../../utilities/determineTaskStatus";
 import TimeAndNamePicker from "./TimeAndNamePicker";
+import useTask from "../../../hooks/useTask";
+import useTaskAssignees from "../../../hooks/useTaskAssignees";
 
 const fields = {
     timePickedUp: "Picked up",
@@ -36,60 +37,74 @@ const fields = {
     timeRiderHome: "Rider home",
 };
 
-function lowerCaseFirstLetter(string) {
+type FieldsKeys = keyof typeof fields;
+
+type NameKeys = "timePickedUpSenderName" | "timeDroppedOffRecipientName";
+
+type SaveValues = {
+    [key in FieldsKeys & NameKeys]: string;
+};
+
+function lowerCaseFirstLetter(string: string) {
     return string.charAt(0).toLowerCase() + string.slice(1);
 }
-const getHumanReadableTimeLabel = (key) => {
+
+const getHumanReadableTimeLabel = (key: FieldsKeys) => {
     return `Time ${lowerCaseFirstLetter(fields[key])}`;
 };
 
-function TaskActions(props) {
-    const [state, setState] = useState([]);
-    const [task, setTask] = useState(null);
-    const [isFetching, setIsFetching] = useState(true);
-    const [isPosting, setIsPosting] = useState(false);
-    const [errorState, setErrorState] = useState(null);
-    const taskAssignees = useSelector(taskAssigneesSelector).items;
-    const [confirmationKey, setConfirmationKey] = useState(null);
-    const [editKey, setEditKey] = useState(null);
+type TaskActionsProps = {
+    taskId: string;
+};
 
-    const taskObserver = useRef({ unsubscribe: () => {} });
+const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
+    const [state, setState] = useState<FieldsKeys[]>([]);
+    const [isPosting, setIsPosting] = useState(false);
+    const [confirmationKey, setConfirmationKey] = useState<null | FieldsKeys>(
+        null
+    );
+    const [editKey, setEditKey] = useState<FieldsKeys | null>(null);
     const dispatch = useDispatch();
     const cardClasses = dialogCardStyles();
-    const taskModelsSynced = useSelector(
-        dataStoreModelSyncedStatusSelector
-    ).Task;
-
-    const currentUserRole = useAssignmentRole(props.taskId);
+    const currentUserRole = useAssignmentRole(taskId);
     const hasFullPermissions = [
         models.Role.RIDER,
         models.Role.ADMIN,
         models.Role.COORDINATOR,
     ].includes(currentUserRole);
-
     const errorMessage = "Sorry, something went wrong";
 
-    function onClickToggle(key) {
+    const taskState = useTask(taskId);
+
+    const taskAssigneesState = useTaskAssignees(taskId);
+    const taskAssignees = taskAssigneesState.state;
+
+    const { isFetching, error, notFound } = taskState;
+    const task = taskState.state;
+    //const setTask = taskState.setState;
+
+    function onClickToggle(key: FieldsKeys) {
         setConfirmationKey(key);
     }
 
-    function onClickEdit(key) {
+    function onClickEdit(key: FieldsKeys) {
         setEditKey(key);
     }
+
     function onCancelEdit() {
         setEditKey(null);
     }
 
-    async function setTimeWithKey(key, value) {
+    async function setTimeWithKey(key: FieldsKeys, value: Date) {
         setIsPosting(true);
         try {
             const updatedTask = await saveTaskTimeWithKey(
                 key,
                 value,
-                props.taskId,
+                taskId,
                 taskAssignees
             );
-            setTask(updatedTask);
+            //setTask(updatedTask);
             setIsPosting(false);
             setEditKey(null);
         } catch (error) {
@@ -99,13 +114,13 @@ function TaskActions(props) {
         }
     }
 
-    async function saveValues(values) {
+    async function saveValues(values: SaveValues) {
         setIsPosting(true);
         try {
-            const existingTask = await DataStore.query(
-                models.Task,
-                props.taskId
-            );
+            const existingTask = await DataStore.query(models.Task, taskId);
+            if (!existingTask) {
+                throw new Error("Task not found");
+            }
             const riderAssignees = taskAssignees.filter(
                 (assignee) => assignee.role === models.Role.RIDER
             );
@@ -117,13 +132,13 @@ function TaskActions(props) {
                 models.Task.copyOf(existingTask, (upd) => {
                     upd.status = status;
                     for (const key in values) {
-                        upd[key] = values[key];
+                        (upd as any)[key] = (values as any)[key];
                     }
                 })
             );
             setConfirmationKey(null);
             setEditKey(null);
-            setTask(updatedTask);
+            //setTask(updatedTask);
             setIsPosting(false);
         } catch (e) {
             console.log(e);
@@ -135,47 +150,15 @@ function TaskActions(props) {
     function calculateState() {
         if (!task) return;
         const result = Object.keys(fields).filter((key) => {
-            return !!task[key];
+            return !!(task as any)[key];
         });
-        setState(result);
+        setState(result as FieldsKeys[]);
     }
 
     useEffect(calculateState, [task]);
 
-    const getTaskAndUpdateState = React.useCallback(async (taskId) => {
-        try {
-            const task = await DataStore.query(models.Task, taskId);
-            if (!task) throw new Error("Task not found");
-            setTask(task);
-            setIsFetching(false);
-            taskObserver.current.unsubscribe();
-            taskObserver.current = DataStore.observe(
-                models.Task,
-                taskId
-            ).subscribe(async ({ opType, element }) => {
-                if (["INSERT", "UPDATE"].includes(opType)) {
-                    setTask(element);
-                } else if (opType === "DELETE") {
-                    // just disable the buttons if the task is deleted
-                    setIsFetching(true);
-                }
-            });
-        } catch (e) {
-            setIsFetching(false);
-            console.log(e);
-            setErrorState(e);
-        }
-    }, []);
-
-    useEffect(
-        () => getTaskAndUpdateState(props.taskId),
-        [props.taskId, taskModelsSynced, getTaskAndUpdateState]
-    );
-
-    useEffect(() => () => taskObserver.current.unsubscribe(), []);
-
-    function checkDisabled(key) {
-        if (!hasFullPermissions) return true;
+    function checkDisabled(key: FieldsKeys) {
+        if (!hasFullPermissions || notFound) return true;
         const stopped =
             state.includes("timeCancelled") || state.includes("timeRejected");
         if (key === "timeDroppedOff")
@@ -186,12 +169,8 @@ function TaskActions(props) {
             );
         else if (key === "timePickedUp") {
             const assigneeCheck = taskAssignees.filter(
-                (ta) =>
-                    ta.role === models.Role.RIDER &&
-                    ta.task &&
-                    ta.task.id === props.taskId
+                (ta) => ta.role === models.Role.RIDER
             );
-
             return (
                 assigneeCheck.length === 0 ||
                 state.includes("timeDroppedOff") ||
@@ -216,8 +195,7 @@ function TaskActions(props) {
             );
         } else return false;
     }
-
-    if (errorState) {
+    if (error) {
         return <GetError />;
     } else {
         return (
@@ -258,9 +236,13 @@ function TaskActions(props) {
                                             }
                                             aria-label={value}
                                             value={key}
-                                            onClick={() => onClickToggle(key)}
+                                            onClick={() =>
+                                                onClickToggle(key as FieldsKeys)
+                                            }
                                         >
-                                            {state.includes(key) ? (
+                                            {state.includes(
+                                                key as FieldsKeys
+                                            ) ? (
                                                 <CheckBoxIcon />
                                             ) : (
                                                 <CheckBoxOutlineBlankIcon />
@@ -279,28 +261,30 @@ function TaskActions(props) {
                                         isPosting ||
                                         isFetching ||
                                         checkDisabled(key);
-
                                     const tooltipKey =
                                         key === "timePickedUp"
                                             ? "timePickedUpSenderName"
                                             : "timeDroppedOffRecipientName";
-
                                     const label =
                                         getHumanReadableTimeLabel(key);
-
                                     let picker = (
                                         <TimePicker
                                             key={editKey}
                                             onChange={(newValue) =>
-                                                setTimeWithKey(key, newValue)
+                                                setTimeWithKey(
+                                                    key as FieldsKeys,
+                                                    newValue
+                                                )
                                             }
                                             onCancelEdit={onCancelEdit}
                                             label={label}
                                             editMode={editKey === key}
-                                            onClickEdit={() => onClickEdit(key)}
+                                            onClickEdit={() =>
+                                                onClickEdit(key as FieldsKeys)
+                                            }
                                             disableClear
                                             disableUnsetMessage
-                                            time={task && task[key]}
+                                            time={task && (task as any)[key]}
                                             hideEditIcon={!hasFullPermissions}
                                         />
                                     );
@@ -331,14 +315,18 @@ function TaskActions(props) {
                                                 name={task && task[tooltipKey]}
                                                 editMode={editKey === key}
                                                 onClickEdit={() =>
-                                                    onClickEdit(key)
+                                                    onClickEdit(
+                                                        key as FieldsKeys
+                                                    )
                                                 }
                                                 label={label}
                                                 nameLabel={textfieldNameLabel}
                                                 disableClear
                                                 disabled={isPosting}
                                                 disableUnsetMessage
-                                                time={task && task[key]}
+                                                time={
+                                                    task && (task as any)[key]
+                                                }
                                                 hideEditIcon={
                                                     !hasFullPermissions
                                                 }
@@ -355,7 +343,9 @@ function TaskActions(props) {
                                             <Typography
                                                 onClick={() => {
                                                     if (disabled) return;
-                                                    onClickToggle(key);
+                                                    onClickToggle(
+                                                        key as FieldsKeys
+                                                    );
                                                 }}
                                                 sx={{
                                                     paddingTop: 1.5,
@@ -381,18 +371,16 @@ function TaskActions(props) {
                 <TaskActionConfirmationDialogContents
                     onConfirmation={saveValues}
                     key={confirmationKey}
-                    nullify={state.includes(confirmationKey)}
+                    nullify={
+                        confirmationKey === null
+                            ? false
+                            : state.includes(confirmationKey)
+                    }
                     timeKey={confirmationKey}
-                    taskId={props.taskId}
                     onClose={() => setConfirmationKey(null)}
                 />
             </>
         );
     }
-}
-
-TaskActions.propTypes = {
-    taskId: PropTypes.string.isRequired,
 };
-
 export default TaskActions;

@@ -36,17 +36,22 @@ const useTask = (taskId: string) => {
                 observer.current = DataStore.observe(
                     models.Task,
                     taskId
-                ).subscribe(async ({ element }) => {
-                    const pickUpLocation = await element.pickUpLocation;
-                    const dropOffLocation = await element.dropOffLocation;
-                    const establishmentLocation =
-                        await element.establishmentLocation;
-                    setState({
-                        ...element,
-                        pickUpLocation,
-                        dropOffLocation,
-                        establishmentLocation,
-                    });
+                ).subscribe(async ({ element, opType }) => {
+                    if (opType === "DELETE") {
+                        setNotFound(true);
+                        setState(null);
+                    } else {
+                        const pickUpLocation = await element.pickUpLocation;
+                        const dropOffLocation = await element.dropOffLocation;
+                        const establishmentLocation =
+                            await element.establishmentLocation;
+                        setState({
+                            ...element,
+                            pickUpLocation,
+                            dropOffLocation,
+                            establishmentLocation,
+                        });
+                    }
                 });
             } else {
                 setNotFound(true);

@@ -138,6 +138,7 @@ TaskActionConfirmationDialogContents.propTypes = {
     nullify: PropTypes.bool,
     onChangeTime: PropTypes.func,
     onClose: PropTypes.func,
+    onConfirmation: PropTypes.func,
 };
 
 TaskActionConfirmationDialogContents.defaultProps = {
@@ -145,6 +146,7 @@ TaskActionConfirmationDialogContents.defaultProps = {
     onChangeTime: () => {},
     onClose: () => {},
     timeKey: null,
+    onConfirmation: () => {},
 };
 
 export default TaskActionConfirmationDialogContents;
