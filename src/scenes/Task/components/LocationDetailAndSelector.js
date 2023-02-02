@@ -68,10 +68,6 @@ function LocationDetailAndSelector(props) {
     const [state, setState] = useState(initialState);
     const [collapsed, setCollapsed] = useState(true);
 
-    useEffect(() => {
-        console.log("LocationDetailAndSelector useEffect", state);
-    }, [state]);
-
     function updateStateFromProps() {
         if (props.location) {
             let result = { ...initialState };

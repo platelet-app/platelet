@@ -4,7 +4,7 @@ import { DataStore } from "aws-amplify";
 import { useSelector } from "react-redux";
 import { dataStoreModelSyncedStatusSelector } from "../redux/Selectors";
 
-const useLocation = (locationId: string) => {
+const useLocation = (locationId: string, wait: boolean = false) => {
     const [state, setState] = React.useState<models.Location | null>(null);
     const [isFetching, setIsFetching] = React.useState(true);
     const [error, setError] = React.useState<any>(null);
@@ -17,6 +17,7 @@ const useLocation = (locationId: string) => {
     ).Location;
 
     const getLocation = React.useCallback(async () => {
+        if (wait) return;
         if (!loadedOnce.current) setIsFetching(true);
         if (!locationId) {
             setState(null);
@@ -45,7 +46,7 @@ const useLocation = (locationId: string) => {
             loadedOnce.current = true;
             setIsFetching(false);
         }
-    }, [locationId]);
+    }, [locationId, wait]);
 
     React.useEffect(() => {
         getLocation();

@@ -37,14 +37,12 @@ function LocationDetailsPanel(props) {
 
     const taskState = useTask(props.taskId);
     const task = taskState.state;
+    const taskIsFetching = taskState.isFetching;
+    const taskError = taskState.error;
     const { state, isFetching, error, setState } = useLocation(
-        task ? task[props.locationKey]?.id : null
+        task ? task[props.locationKey]?.id : null,
+        taskIsFetching
     );
-
-    console.log("state", state);
-    console.log("isFetching", isFetching);
-    console.log("error", error);
-    console.log("task", task);
 
     useEffect(() => {
         if (isFetching || !hasFullPermissions) return;
@@ -361,7 +359,7 @@ function LocationDetailsPanel(props) {
         contents = <Typography>No location set.</Typography>;
     }
 
-    if (error) {
+    if (error || taskError) {
         return <GetError />;
     } else {
         return (
