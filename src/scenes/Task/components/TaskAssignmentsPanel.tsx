@@ -201,7 +201,14 @@ const TaskAssignmentsPanel: React.FC<TaskAssignmentsPanelProps> = ({
     if (error) {
         return <GetError />;
     } else if (isFetching) {
-        return <Skeleton variant={"rectangular"} width={"100%"} height={40} />;
+        return (
+            <Skeleton
+                data-testid="fetching-task-assignments-panel"
+                variant={"rectangular"}
+                width={"100%"}
+                height={40}
+            />
+        );
     } else {
         return (
             <Paper sx={{ borderRadius: "1em", padding: 2 }}>
