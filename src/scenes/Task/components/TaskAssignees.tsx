@@ -128,6 +128,10 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = ({
                             </Grid>
                             <Grid item>
                                 <Switch
+                                    inputProps={{
+                                        "aria-label":
+                                            "rider using own vehicle?",
+                                    }}
                                     disabled={disableUsingOwnVehicleSwitch}
                                     onChange={onChangeRiderUsingOwnVehicle}
                                     checked={usingOwnVehicle}
