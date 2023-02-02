@@ -21,19 +21,24 @@ export function useAssignmentRole(taskId: string) {
 
     const getTaskAssignees = React.useCallback(async () => {
         if (!taskId) return;
-        taskAssigneesObserver.current.unsubscribe();
-        taskAssigneesObserver.current = DataStore.observeQuery(
-            models.TaskAssignee,
-            (a) => a.task.id.eq(taskId)
-        ).subscribe(async ({ items }) => {
-            const result = await Promise.all(
-                items.map(async (item) => {
-                    const assignee = await item.assignee;
-                    return { ...item, assignee };
-                })
-            );
-            setTaskAssignees(result);
-        });
+        try {
+            taskAssigneesObserver.current.unsubscribe();
+            taskAssigneesObserver.current = DataStore.observeQuery(
+                models.TaskAssignee,
+                (a) => a.task.id.eq(taskId)
+            ).subscribe(async ({ items }) => {
+                const result = await Promise.all(
+                    items.map(async (item) => {
+                        const assignee = await item.assignee;
+                        return { ...item, assignee };
+                    })
+                );
+                setTaskAssignees(result);
+            });
+        } catch (e) {
+            console.log("error getting task assignees", e);
+            setCurrentUserRole(models.Role.USER);
+        }
     }, [taskId]);
 
     useEffect(() => {
