@@ -6,7 +6,12 @@ import GetError from "../../ErrorComponents/GetError";
 import useComments from "../../hooks/useComments";
 
 function CommentsSection(props) {
-    const { state, isFetching, error } = useComments(props.parentId);
+    const { state, isFetching, error, setState } = useComments(props.parentId);
+
+    const onNewComment = async (comment) => {
+        const author = await comment.author;
+        setState((prevState) => [...prevState, { ...comment, author }]);
+    };
 
     if (isFetching) {
         return <CommentsSkeleton />;
@@ -15,8 +20,9 @@ function CommentsSection(props) {
     } else {
         return (
             <CommentsMain
-                parentUUID={props.parentId}
+                parentId={props.parentId}
                 comments={state.filter((c) => !c._deleted)}
+                onNewComment={onNewComment}
             />
         );
     }

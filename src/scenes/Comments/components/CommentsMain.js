@@ -73,7 +73,7 @@ function CommentsMain(props) {
             </Grid>
             <Grid item className={classes.item}>
                 <NewCommentCard
-                    parentUUID={props.parentUUID}
+                    parentUUID={props.parentId}
                     onNewComment={props.onNewComment}
                     author={whoami}
                 />
@@ -83,7 +83,7 @@ function CommentsMain(props) {
 }
 
 CommentsMain.propTypes = {
-    parentUUID: PropTypes.string,
+    parentId: PropTypes.string,
     comments: PropTypes.arrayOf(PropTypes.object),
     onDelete: PropTypes.func,
     onRestore: PropTypes.func,
@@ -91,7 +91,7 @@ CommentsMain.propTypes = {
 };
 
 CommentsMain.defaultProps = {
-    parentUUID: "",
+    parentId: "",
     comments: [],
     onDelete: () => {},
     onRestore: () => {},

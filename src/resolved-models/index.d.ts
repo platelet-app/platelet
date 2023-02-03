@@ -25,3 +25,10 @@ export type ResolvedDeliverable = Modify<
         deliverableType?: models.DeliverableType;
     }
 >;
+
+export type ResolvedComment = Modify<
+    models.Comment,
+    {
+        author?: models.User;
+    }
+>;

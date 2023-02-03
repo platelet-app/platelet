@@ -18,6 +18,7 @@ const useTask = (taskId: string) => {
     ).Task;
 
     const getTask = React.useCallback(async () => {
+        if (!taskId) return;
         if (!loadedOnce.current) setIsFetching(true);
         observer.current.unsubscribe();
         try {
@@ -33,6 +34,7 @@ const useTask = (taskId: string) => {
                     establishmentLocation,
                 });
                 setIsFetching(false);
+                loadedOnce.current = true;
                 observer.current = DataStore.observe(
                     models.Task,
                     taskId
