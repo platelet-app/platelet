@@ -7,7 +7,7 @@ import { SmallCirclePlusButton } from "../../../components/Buttons";
 function AddableDeliverable(props) {
     const deliverableType = props.deliverableType;
     function makeNewDeliverable() {
-        const { defaultUnit, ...rest } = deliverableType;
+        const { defaultUnit, tags, disabled, label, ...rest } = deliverableType;
         let newDeliverable = {
             unit: defaultUnit || models.DeliverableUnit.NONE,
             count: 1,

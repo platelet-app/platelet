@@ -18,3 +18,10 @@ export type ResolvedTask = Modify<
         establishmentLocation?: models.Location;
     }
 >;
+
+export type ResolvedDeliverable = Modify<
+    models.Deliverable,
+    {
+        deliverableType?: models.DeliverableType;
+    }
+>;

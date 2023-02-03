@@ -1,103 +1,40 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import DeliverableGridSelect from "../../Deliverables/DeliverableGridSelect";
-import PropTypes from "prop-types";
 import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
 import EditModeToggleButton from "../../../components/EditModeToggleButton";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
-import { convertListDataToObject } from "../../../utilities";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { useDispatch, useSelector } from "react-redux";
 import _ from "lodash";
-import {
-    dataStoreModelSyncedStatusSelector,
-    tenantIdSelector,
-} from "../../../redux/Selectors";
+import { tenantIdSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
+import useTaskDeliverables from "../../../hooks/useTaskDeliverables";
+import { convertListDataToObject } from "../../../utilities";
 
-function DeliverableDetails(props) {
+type DeliverableDetailsProps = {
+    taskId: string;
+};
+
+type DeliverableUpdateValues = {
+    [key in keyof models.Deliverable]: models.Deliverable[key];
+};
+
+const DeliverableDetails: React.FC<DeliverableDetailsProps> = ({ taskId }) => {
     const cardClasses = dialogCardStyles();
     const [collapsed, setCollapsed] = useState(true);
-    const [state, setState] = useState({});
     const tenantId = useSelector(tenantIdSelector);
     const [isPosting, setIsPosting] = useState(false);
-    const deliverablesObserver = useRef({ unsubscribe: () => {} });
-    const [isFetching, setIsFetching] = useState(true);
-    const [errorState, setErrorState] = useState(false);
-    const loadedOnce = useRef(false);
     const dispatch = useDispatch();
-    const updateDeliverableRef = useRef(null);
+    const updateDeliverableRef = useRef<null | ((...args: any[]) => any)>(null);
     const errorMessage = "Sorry, an error occurred";
-    const deliverablesSynced = useSelector(
-        dataStoreModelSyncedStatusSelector
-    ).Deliverable;
-    const deliverableTypesSynced = useSelector(
-        dataStoreModelSyncedStatusSelector
-    ).DeliverableType;
-
-    const currentUserRole = useAssignmentRole(props.taskId);
+    const currentUserRole = useAssignmentRole(taskId);
     const hasFullPermissions = currentUserRole === models.Role.COORDINATOR;
+    const { state, isFetching, error, setState } = useTaskDeliverables(taskId);
 
-    const getDeliverables = React.useCallback(async (taskId) => {
-        if (!loadedOnce.current) setIsFetching(true);
-        try {
-            const result = await DataStore.query(models.Deliverable);
-            const filtered = result.filter(
-                (d) => d.task && d.task.id === taskId
-            );
-            setState(convertListDataToObject(filtered));
-            setIsFetching(false);
-            loadedOnce.current = true;
-
-            deliverablesObserver.current.unsubscribe();
-            deliverablesObserver.current = DataStore.observe(
-                models.Deliverable
-            ).subscribe(async ({ opType, element }) => {
-                DataStore.query(models.Deliverable, element.id).then(
-                    (result) => {
-                        if (opType === "DELETE") {
-                            setState((prevState) =>
-                                _.omit(prevState, element.id)
-                            );
-                            return;
-                        }
-                        if (element.taskDeliverablesId !== taskId) return;
-                        if (opType === "INSERT") {
-                            setState((prevState) => ({
-                                ...prevState,
-                                [element.id]: result,
-                            }));
-                        } else if (opType === "UPDATE") {
-                            setState((prevState) => ({
-                                ...prevState,
-                                [element.id]: result,
-                            }));
-                        }
-                    }
-                );
-            });
-        } catch (error) {
-            console.log(error);
-            setErrorState(true);
-            setIsFetching(false);
-        }
-    }, []);
-
-    useEffect(() => {
-        getDeliverables(props.taskId);
-    }, [
-        props.taskId,
-        deliverablesSynced,
-        deliverableTypesSynced,
-        getDeliverables,
-    ]);
-
-    // stop observer when component unmounts
-    useEffect(() => () => deliverablesObserver.current.unsubscribe(), []);
-
-    async function updateDeliverable(value) {
+    async function updateDeliverable(value: DeliverableUpdateValues) {
         // receive DeliverableType from selector component
         // check if one of this DeliverableType has already been saved
         try {
@@ -115,29 +52,40 @@ function DeliverableDetails(props) {
                             existingDeliverable,
                             (updated) => {
                                 for (const [key, v] of Object.entries(value)) {
-                                    updated[key] = v;
+                                    (updated as any)[key] = v;
                                 }
                             }
                         )
                     );
-                    setState((prevState) => ({
-                        ...prevState,
-                        [existing.id]: updateDeliverable,
-                    }));
+                    const deliverableType =
+                        await updateDeliverable.deliverableType;
+                    setState((prevState) => {
+                        const converted = {
+                            ...convertListDataToObject(prevState),
+                            [updateDeliverable.id]: {
+                                ...updateDeliverable,
+                                deliverableType,
+                            },
+                        };
+                        return Object.values(converted);
+                    });
                 }
             } else {
                 setIsPosting(true);
-                const { id, ...rest } = value;
+                const { id, ...rest } = _.omit(
+                    value,
+                    "deliverableType",
+                    "task",
+                    "comments",
+                    "tenantId"
+                );
                 const deliverableType = await DataStore.query(
                     models.DeliverableType,
                     id
                 );
                 if (!deliverableType)
                     throw new Error("Deliverable type does not exist");
-                const existingTask = await DataStore.query(
-                    models.Task,
-                    props.taskId
-                );
+                const existingTask = await DataStore.query(models.Task, taskId);
                 if (!existingTask) throw new Error("Task does not exist");
                 const newDeliverable = await DataStore.save(
                     new models.Deliverable({
@@ -147,10 +95,16 @@ function DeliverableDetails(props) {
                         ...rest,
                     })
                 );
-                setState((prevState) => ({
-                    ...prevState,
-                    [newDeliverable.id]: newDeliverable,
-                }));
+                setState((prevState) => {
+                    const converted = {
+                        ...convertListDataToObject(prevState),
+                        [newDeliverable.id]: {
+                            ...newDeliverable,
+                            deliverableType,
+                        },
+                    };
+                    return Object.values(converted);
+                });
             }
             setIsPosting(false);
         } catch (error) {
@@ -161,13 +115,12 @@ function DeliverableDetails(props) {
     }
     // if this isn't a ref then state is old while using debounce
     updateDeliverableRef.current = updateDeliverable;
-
-    async function deleteDeliverable(deliverableTypeId) {
+    async function deleteDeliverable(deliverableTypeId: string) {
         // receive DeliverableTypeId only from selector component
         // check if one of this DeliverableType has already been saved so we can delete it
         setIsPosting(true);
         const existing = Object.values(state).find(
-            (d) => d.deliverableType.id === deliverableTypeId
+            (d) => d.deliverableType?.id === deliverableTypeId
         );
         try {
             if (existing) {
@@ -178,7 +131,9 @@ function DeliverableDetails(props) {
                 if (existingDeliverable)
                     await DataStore.delete(existingDeliverable);
                 // remove it from the tracking reference
-                setState((prevState) => _.omit(prevState, existing.id));
+                setState((prevState) =>
+                    prevState.filter((d) => d.id !== existing.id)
+                );
             }
             setIsPosting(false);
         } catch (error) {
@@ -186,15 +141,12 @@ function DeliverableDetails(props) {
             dispatch(displayErrorNotification(errorMessage));
         }
     }
-
     const contents = collapsed ? (
         state && Object.values(state).length === 0 ? (
             <Typography>No items.</Typography>
         ) : (
             Object.values(state)
-                .sort(
-                    (a, b) => parseInt(a.orderInGrid) - parseInt(b.orderInGrid)
-                )
+                .sort((a, b) => (a.orderInGrid || 0) - (b.orderInGrid || 0))
                 .map((deliverable) => {
                     let countString = "";
                     if (deliverable.unit === models.DeliverableUnit.NONE) {
@@ -222,18 +174,18 @@ function DeliverableDetails(props) {
         )
     ) : (
         <DeliverableGridSelect
-            deliverables={Object.values(state)}
+            deliverables={state}
             disabled={isPosting}
-            taskUUID={props.taskId}
             onChange={(value) => {
                 //this has to be inline or else state is old}
-                updateDeliverableRef.current(value);
+                if (updateDeliverableRef.current) {
+                    updateDeliverableRef.current(value);
+                }
             }}
             onDelete={deleteDeliverable}
         />
     );
-
-    if (errorState) {
+    if (error) {
         return <GetError />;
     } else {
         return (
@@ -260,7 +212,10 @@ function DeliverableDetails(props) {
                     </Stack>
                     <Divider />
                     {isFetching ? (
-                        <Stack spacing={1}>
+                        <Stack
+                            data-testid="fetching-deliverable-details"
+                            spacing={1}
+                        >
                             <Skeleton
                                 variant={"rectangular"}
                                 height={30}
@@ -279,18 +234,6 @@ function DeliverableDetails(props) {
             </Paper>
         );
     }
-}
-
-DeliverableDetails.propTypes = {
-    taskId: PropTypes.string,
-    onChange: PropTypes.func,
-    onDelete: PropTypes.func,
-};
-
-DeliverableDetails.defaultProps = {
-    taskId: "",
-    onChange: () => {},
-    onDelete: () => {},
 };
 
 export default DeliverableDetails;

@@ -72,15 +72,14 @@ function DeliverableGridSelect(props) {
     function convertExistingDeliverablesToState() {
         const result = {};
         for (const d of props.deliverables) {
-            const deliverableType = availableDeliverables[d.deliverableType.id];
             result[d.deliverableType.id] = {
                 count: d.count,
                 id: d.deliverableType.id,
-                label: deliverableType ? deliverableType.label : "",
+                label: d.deliverableType.label || "",
                 createdAt: d.createdAt,
                 unit: d.unit,
                 orderInGrid: d.orderInGrid,
-                icon: deliverableType ? deliverableType.icon : "",
+                icon: d.deliverableType.icon || "",
             };
         }
         setState(result);
@@ -91,21 +90,20 @@ function DeliverableGridSelect(props) {
     ]);
 
     function sortDeliverables() {
-        const result = {
-            deliverables: [],
-            defaults: [],
-        };
+        const deliverables = [];
+        const defaults = [];
         for (const i of Object.values(availableDeliverables)) {
             const value = state[i.id];
             if (value) {
-                result.deliverables.push(value);
+                deliverables.push(value);
             } else {
-                result.defaults.push(i);
+                defaults.push(i);
             }
         }
-        result.deliverables = result.deliverables.sort(
+        const sortedDeliverables = deliverables.sort(
             (a, b) => parseInt(a.orderInGrid) - parseInt(b.orderInGrid)
         );
+        const result = { deliverables: sortedDeliverables, defaults };
         setDeliverablesSorted(result);
     }
     useEffect(sortDeliverables, [availableDeliverables, state]);
@@ -314,11 +312,13 @@ DeliverableGridSelect.propTypes = {
     deliverables: PropTypes.arrayOf(PropTypes.object),
     onChange: PropTypes.func,
     onDelete: PropTypes.func,
+    disabled: PropTypes.bool,
 };
 DeliverableGridSelect.defaultProps = {
     deliverables: [],
     onChange: () => {},
     onDelete: () => {},
+    disabled: false,
 };
 
 export default DeliverableGridSelect;
