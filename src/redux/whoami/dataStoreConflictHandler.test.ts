@@ -68,19 +68,22 @@ describe("dataStoreConflictHandler", () => {
                         : null,
             };
 
-            const createdBy = new models.User({
-                tenantId,
-                username: "test",
-                cognitoId: "test",
-                displayName: "test",
-                roles: [models.Role.COORDINATOR],
-            });
+            const createdBy = await DataStore.save(
+                new models.User({
+                    tenantId,
+                    username: "test",
+                    cognitoId: "test",
+                    displayName: "test",
+                    roles: [models.Role.COORDINATOR],
+                })
+            );
             const mockRemoteTask = await DataStore.save(
                 new models.Task({
                     priority: models.Priority.HIGH,
                     status: models.TaskStatus.ACTIVE,
                     tenantId,
                     createdBy,
+                    dateCreated: new Date().toISOString().split("T")[0],
                 })
             );
 
@@ -111,7 +114,7 @@ describe("dataStoreConflictHandler", () => {
 
             const result = await dataStoreConflictHandler({
                 modelConstructor:
-                    models.Task as PersistentModelConstructor<any>,
+                    models.Task as PersistentModelConstructor<models.Task>,
                 localModel: mockLocalTask,
                 remoteModel: mockRemoteTask,
                 operation: OpType.UPDATE,
@@ -133,19 +136,22 @@ describe("dataStoreConflictHandler", () => {
         const timePickedUpSenderName = "timePickedUpSenderName";
         const timeDroppedOffRecipientName = "timeDroppedOffRecipientName";
 
-        const createdBy = new models.User({
-            tenantId,
-            username: "test",
-            cognitoId: "test",
-            displayName: "test",
-            roles: [models.Role.COORDINATOR],
-        });
+        const createdBy = await DataStore.save(
+            new models.User({
+                tenantId,
+                username: "test",
+                cognitoId: "test",
+                displayName: "test",
+                roles: [models.Role.COORDINATOR],
+            })
+        );
         const mockRemoteTask = await DataStore.save(
             new models.Task({
                 priority: models.Priority.HIGH,
                 status: models.TaskStatus.ACTIVE,
                 tenantId,
                 createdBy,
+                dateCreated: new Date().toISOString().split("T")[0],
             })
         );
 
@@ -180,7 +186,8 @@ describe("dataStoreConflictHandler", () => {
         };
 
         const result = await dataStoreConflictHandler({
-            modelConstructor: models.Task as PersistentModelConstructor<any>,
+            modelConstructor:
+                models.Task as PersistentModelConstructor<models.Task>,
             localModel: mockLocalTask,
             remoteModel: mockRemoteTask,
             operation: OpType.UPDATE,

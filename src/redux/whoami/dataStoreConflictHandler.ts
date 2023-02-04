@@ -6,7 +6,7 @@ import determineTaskStatus from "../../utilities/determineTaskStatus";
 const dataStoreConflictHandler = async (
     conflict: SyncConflict
 ): Promise<symbol | PersistentModel> => {
-    /*const { modelConstructor, localModel, remoteModel } = conflict;
+    const { modelConstructor, localModel, remoteModel } = conflict;
     console.log(
         "DataStore has found a conflict",
         modelConstructor,
@@ -40,7 +40,7 @@ const dataStoreConflictHandler = async (
         });
         const { createdAt, updatedAt, ...rest } = newModel;
         return rest;
-    }*/
+    }
     return DISCARD;
 };
 
