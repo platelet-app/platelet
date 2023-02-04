@@ -5,7 +5,7 @@ import { ResolvedTaskAssignee } from "../resolved-models";
 
 const useRoleAssignments = (
     role: models.Role,
-    taskStatuses: models.TaskStatus[],
+    taskStatuses: models.TaskStatus[] = [],
     coordinatorId: string | null = null,
     tasksNewerThan: Date | null = null
 ) => {
@@ -27,30 +27,52 @@ const useRoleAssignments = (
         if (!role) return;
         setIsFetching(true);
         try {
-            observer.current = DataStore.observeQuery(
-                models.TaskAssignee,
-                (c) =>
-                    c.and((c) => [
-                        c.role.eq(role),
-                        c.or((c) =>
-                            taskStatuses.map((status) =>
-                                c.task.status.eq(status)
-                            )
-                        ),
-                        c.or((c) => [
-                            c.createdAt.gt(
-                                tasksNewerThan
-                                    ? tasksNewerThan.toISOString()
-                                    : "2000-01-01T00:00:00.000Z"
+            if (taskStatuses.length > 0) {
+                observer.current = DataStore.observeQuery(
+                    models.TaskAssignee,
+                    (c) =>
+                        c.and((c) => [
+                            c.role.eq(role),
+                            c.or((c) =>
+                                taskStatuses.map((status) =>
+                                    c.task.status.eq(status)
+                                )
                             ),
-                            c.task.createdAt.eq(undefined),
-                        ]),
-                    ])
-            ).subscribe(async ({ items }) => {
-                setAssignments(items);
-                setIsFetching(false);
-            });
+                            c.or((c) => [
+                                c.createdAt.gt(
+                                    tasksNewerThan
+                                        ? tasksNewerThan.toISOString()
+                                        : "2000-01-01T00:00:00.000Z"
+                                ),
+                                c.task.createdAt.eq(undefined),
+                            ]),
+                        ])
+                ).subscribe(async ({ items }) => {
+                    setAssignments(items);
+                    setIsFetching(false);
+                });
+            } else {
+                observer.current = DataStore.observeQuery(
+                    models.TaskAssignee,
+                    (c) =>
+                        c.and((c) => [
+                            c.role.eq(role),
+                            c.or((c) => [
+                                c.createdAt.gt(
+                                    tasksNewerThan
+                                        ? tasksNewerThan.toISOString()
+                                        : "2000-01-01T00:00:00.000Z"
+                                ),
+                                c.task.createdAt.eq(undefined),
+                            ]),
+                        ])
+                ).subscribe(async ({ items }) => {
+                    setAssignments(items);
+                    setIsFetching(false);
+                });
+            }
         } catch (error) {
+            console.log(error);
             setError(error);
             setIsFetching(false);
         }
