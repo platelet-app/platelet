@@ -1148,7 +1148,7 @@ describe("TasksGridColumn", () => {
         });
         mockAllIsIntersecting(true);
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(5);
+            expect(querySpy).toHaveBeenCalledTimes(6);
         });
         const tooltip = await screen.findByTestId("comment-count-tooltip");
         userEvent.hover(tooltip);

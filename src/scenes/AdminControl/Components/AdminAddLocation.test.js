@@ -108,6 +108,34 @@ describe("AdminAddLocation", () => {
         );
     });
 
+    test("it should not allow you to add with a name that's already taken", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                displayName: "someone person",
+                roles: [models.Role.ADMIN, models.Role.USER],
+            })
+        );
+        const preloadedState = {
+            loadingReducer: {
+                GET_WHOAMI: false,
+            },
+            tenantId,
+            whoami: { user: whoami },
+        };
+        await DataStore.save(
+            new models.Location({ listed: 1, name: "Name", tenantId })
+        );
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<AdminAddLocation />, { preloadedState });
+        userEvent.type(
+            screen.getByRole("textbox", { name: fields.name }),
+            "Name"
+        );
+        userEvent.click(screen.getByRole("button", { name: "Add location" }));
+        await screen.findByText("Location name must be unique");
+        expect(saveSpy).not.toHaveBeenCalled();
+    });
+
     it("should not let you see the page if you are not an admin", async () => {
         render(<AdminAddLocation />, {
             preloadedState: {
