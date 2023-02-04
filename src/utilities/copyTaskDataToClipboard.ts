@@ -1,15 +1,11 @@
 import * as models from "../models";
 import moment from "moment";
 
-export default function copyTaskDataToClipboard(task: models.Task) {
-    debugger;
-    const {
-        pickUpLocation,
-        priority,
-        dropOffLocation,
-        timeOfCall,
-        deliverables,
-    } = task;
+export default async function copyTaskDataToClipboard(task: models.Task) {
+    const { priority, timeOfCall } = task;
+    const pickUpLocation = await task.pickUpLocation;
+    const dropOffLocation = await task.dropOffLocation;
+    const deliverables = await task.deliverables.toArray();
     const data = {
         TOC: timeOfCall ? moment(timeOfCall).format("HH:mm") : undefined,
         FROM: pickUpLocation
@@ -27,10 +23,11 @@ export default function copyTaskDataToClipboard(task: models.Task) {
     };
 
     if (deliverables) {
-        data["ITEMS"] = deliverables
-            .map((deliverable) => {
+        const items = await Promise.all(
+            deliverables.map(async (deliverable) => {
                 if (deliverable) {
-                    const { deliverableType, count } = deliverable;
+                    const { count } = deliverable;
+                    const deliverableType = await deliverable.deliverableType;
                     return `${
                         deliverableType ? deliverableType.label : ""
                     } x ${count}`;
@@ -38,7 +35,8 @@ export default function copyTaskDataToClipboard(task: models.Task) {
                     return "";
                 }
             })
-            .join(", ");
+        );
+        data["ITEMS"] = items.join(", ");
     }
 
     let result = "";

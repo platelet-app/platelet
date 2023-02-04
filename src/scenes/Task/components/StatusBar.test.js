@@ -53,16 +53,20 @@ describe("StatusBar", () => {
             },
         });
         const timeOfCall = "2022-09-14T07:55:07.473Z";
-        const pickUpLocation = new models.Location({
-            line1: "line one",
-            ward: "test ward",
-            postcode: "postcode",
-        });
-        const dropOffLocation = new models.Location({
-            line1: "something",
-            ward: "some ward",
-            postcode: "some postcode",
-        });
+        const pickUpLocation = await DataStore.save(
+            new models.Location({
+                line1: "line one",
+                ward: "test ward",
+                postcode: "postcode",
+            })
+        );
+        const dropOffLocation = await DataStore.save(
+            new models.Location({
+                line1: "something",
+                ward: "some ward",
+                postcode: "some postcode",
+            })
+        );
         const mockTask = new models.Task({
             timeOfCall,
             status: models.TaskStatus.NEW,
@@ -95,7 +99,7 @@ describe("StatusBar", () => {
                 deliverableType: mockDeliverableType,
             },
         ];
-        const savedDeliverables = await Promise.all(
+        await Promise.all(
             mockDeliverables.map((deliverable) =>
                 DataStore.save(
                     new models.Deliverable({ task: mockTask, ...deliverable })
@@ -113,12 +117,8 @@ describe("StatusBar", () => {
         expect(copyButton).toBeInTheDocument();
         userEvent.click(copyButton);
         const copySpy = jest.spyOn(copyTaskDataToClipboard, "default");
-        await waitFor(() =>
-            expect(copySpy).toHaveBeenCalledWith({
-                ...mockTask,
-                deliverables: savedDeliverables,
-            })
-        );
+        const currentTask = await DataStore.query(models.Task, mockTask.id);
+        await waitFor(() => expect(copySpy).toHaveBeenCalledWith(currentTask));
         await waitFor(() => {
             expect(cordovaSpy).toHaveBeenCalled();
         });
@@ -139,16 +139,20 @@ describe("StatusBar", () => {
             },
         });
         const timeOfCall = "2022-09-14T07:55:07.473Z";
-        const pickUpLocation = new models.Location({
-            line1: "line one",
-            ward: "test ward",
-            postcode: "postcode",
-        });
-        const dropOffLocation = new models.Location({
-            line1: "something",
-            ward: "some ward",
-            postcode: "some postcode",
-        });
+        const pickUpLocation = await DataStore.save(
+            new models.Location({
+                line1: "line one",
+                ward: "test ward",
+                postcode: "postcode",
+            })
+        );
+        const dropOffLocation = await DataStore.save(
+            new models.Location({
+                line1: "something",
+                ward: "some ward",
+                postcode: "some postcode",
+            })
+        );
         const mockTask = new models.Task({
             timeOfCall,
             status: models.TaskStatus.NEW,
@@ -181,7 +185,7 @@ describe("StatusBar", () => {
                 deliverableType: mockDeliverableType,
             },
         ];
-        const savedDeliverables = await Promise.all(
+        await Promise.all(
             mockDeliverables.map((deliverable) =>
                 DataStore.save(
                     new models.Deliverable({ task: mockTask, ...deliverable })
@@ -198,12 +202,7 @@ describe("StatusBar", () => {
         expect(copyButton).toBeInTheDocument();
         userEvent.click(copyButton);
         const copySpy = jest.spyOn(copyTaskDataToClipboard, "default");
-        await waitFor(() =>
-            expect(copySpy).toHaveBeenCalledWith({
-                ...mockTask,
-                deliverables: savedDeliverables,
-            })
-        );
+        await waitFor(() => expect(copySpy).toHaveBeenCalledWith(mockTask));
         await waitFor(() => {
             expect(clipboardSpy).toHaveBeenCalled();
         });

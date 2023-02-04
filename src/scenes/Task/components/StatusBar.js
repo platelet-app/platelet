@@ -111,14 +111,7 @@ function StatusBar(props) {
         try {
             const taskResult = await DataStore.query(models.Task, props.taskId);
             if (!taskResult) throw new Error("Task not found.");
-            const deliverablesResult = await DataStore.query(
-                models.Deliverable
-            );
-            const deliverables = deliverablesResult.filter(
-                (d) => d.task && d.task.id === taskResult.id
-            );
-            const result = { ...taskResult, deliverables };
-            copyTaskDataToClipboard(result).then(
+            await copyTaskDataToClipboard(taskResult).then(
                 () => {
                     setCopied(true);
                 },

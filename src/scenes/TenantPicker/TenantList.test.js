@@ -1,5 +1,5 @@
 import TenantList from "./TenantList";
-import Amplify from "aws-amplify";
+import { Amplify } from "aws-amplify";
 import { render } from "../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";

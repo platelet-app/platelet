@@ -30,9 +30,8 @@ import GetError from "../../../ErrorComponents/GetError";
 import UserChip from "../../../components/UserChip";
 import RecentlyAssignedUsers from "../../../components/RecentlyAssignedUsers";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
-import useTaskAssignees, {
-    ITaskAssignee,
-} from "../../../hooks/useTaskAssignees";
+import { ResolvedTaskAssignee } from "../../../resolved-models";
+import useTaskAssignees from "../../../hooks/useTaskAssignees";
 
 export const useStyles = makeStyles(() => ({
     italic: {
@@ -40,7 +39,7 @@ export const useStyles = makeStyles(() => ({
     },
 }));
 
-const sortByUserRole = (a: ITaskAssignee, b: ITaskAssignee) => {
+const sortByUserRole = (a: ResolvedTaskAssignee, b: ResolvedTaskAssignee) => {
     // coordinators first and riders second
     if (a.role === models.Role.COORDINATOR) {
         return -1;
@@ -243,7 +242,7 @@ const TaskAssignmentsPanel: React.FC<TaskAssignmentsPanelProps> = ({
                         <Grid container spacing={1} direction={"row"}>
                             {sortByCreatedTime(Object.values(state), "oldest")
                                 .sort(sortByUserRole)
-                                .map((assignment: ITaskAssignee) => {
+                                .map((assignment: ResolvedTaskAssignee) => {
                                     return (
                                         assignment &&
                                         assignment.assignee && (

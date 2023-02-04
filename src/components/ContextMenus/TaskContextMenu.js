@@ -62,11 +62,7 @@ function TaskContextMenu(props) {
                 props.task.id
             );
             if (taskResult) {
-                const deliverables = (
-                    await DataStore.query(models.Deliverable)
-                ).filter((d) => d.task && d.task.id === taskResult.id);
-                const result = { ...taskResult, deliverables };
-                copyTaskDataToClipboard(result).then(
+                await copyTaskDataToClipboard(taskResult).then(
                     function () {
                         dispatch(
                             displayInfoNotification("Copied to clipboard")
@@ -318,11 +314,9 @@ TaskContextMenu.propTypes = {
     iconColor: PropTypes.string,
     disableDeleted: PropTypes.bool,
     disableRelay: PropTypes.bool,
-    assignedRiders: PropTypes.arrayOf(PropTypes.object),
 };
 
 TaskContextMenu.defaultProps = {
-    assignedRiders: [],
     task: null,
 };
 

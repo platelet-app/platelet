@@ -148,6 +148,7 @@ TimeAndNamePicker.propTypes = {
     disabled: PropTypes.bool,
     disableUnsetMessage: PropTypes.bool,
     editMode: PropTypes.bool,
+    hideEditIcon: PropTypes.bool,
 };
 TimeAndNamePicker.defaultProps = {
     time: "",
@@ -160,6 +161,7 @@ TimeAndNamePicker.defaultProps = {
     disabled: false,
     disableUnsetMessage: false,
     editMode: false,
+    hideEditIcon: false,
 };
 
 export default TimeAndNamePicker;

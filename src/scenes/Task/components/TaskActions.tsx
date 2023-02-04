@@ -227,12 +227,12 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
                                             disabled={
                                                 isPosting ||
                                                 isFetching ||
-                                                checkDisabled(key)
+                                                checkDisabled(key as FieldsKeys)
                                             }
                                             aria-disabled={
                                                 isPosting ||
                                                 isFetching ||
-                                                checkDisabled(key)
+                                                checkDisabled(key as FieldsKeys)
                                             }
                                             aria-label={value}
                                             value={key}
@@ -260,13 +260,14 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
                                     const disabled =
                                         isPosting ||
                                         isFetching ||
-                                        checkDisabled(key);
+                                        checkDisabled(key as FieldsKeys);
                                     const tooltipKey =
                                         key === "timePickedUp"
                                             ? "timePickedUpSenderName"
                                             : "timeDroppedOffRecipientName";
-                                    const label =
-                                        getHumanReadableTimeLabel(key);
+                                    const label = getHumanReadableTimeLabel(
+                                        key as FieldsKeys
+                                    );
                                     let picker = (
                                         <TimePicker
                                             key={editKey}
@@ -321,7 +322,6 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
                                                 }
                                                 label={label}
                                                 nameLabel={textfieldNameLabel}
-                                                disableClear
                                                 disabled={isPosting}
                                                 disableUnsetMessage
                                                 time={

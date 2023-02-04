@@ -13,7 +13,9 @@ const dataStoreConflictHandler = async (
         remoteModel,
         localModel
     );
+    // @ts-ignore
     if (modelConstructor === models.Task) {
+        // @ts-ignore
         let newModel = modelConstructor.copyOf(remoteModel, (task) => {
             task.timePickedUp =
                 remoteModel.timePickedUp || localModel.timePickedUp;
@@ -35,6 +37,7 @@ const dataStoreConflictHandler = async (
         console.log("Resolved task conflict result:", newModel);
         const status = await determineTaskStatus(newModel);
         console.log("Updating task status to", status);
+        // @ts-ignore
         newModel = modelConstructor.copyOf(newModel, (task) => {
             task.status = status;
         });

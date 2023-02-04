@@ -31,12 +31,15 @@ export default async function duplicateTask(
         timeRejected,
         timeCancelled,
         riderResponsibility,
-        establishmentLocation,
-        dropOffLocation,
-        pickUpLocation,
         createdBy,
+        assignees,
+        deliverables,
+        comments,
         ...rest
-    } = { ...task };
+    } = task;
+    let pickUpLocation = await task.pickUpLocation;
+    let dropOffLocation = await task.dropOffLocation;
+    let establishmentLocation = await task.establishmentLocation;
     const author = await DataStore.query(models.User, createdById);
     if (!author) throw new Error("author not found");
     if (pickUpLocation?.listed === 0) {
@@ -122,13 +125,11 @@ export default async function duplicateTask(
     if (assignment) {
         assignment = await DataStore.save(assignment);
     }
+    const deliverablesResolved = await deliverables.toArray();
+    console.log(deliverablesResolved);
 
-    const deliverables = await DataStore.query(models.Deliverable);
-    const filteredDeliverables = deliverables.filter(
-        (d) => d.task && d.task.id === task.id
-    );
     const newDeliverables = await Promise.all(
-        filteredDeliverables.map((del) =>
+        deliverablesResolved.map((del) =>
             DataStore.save(
                 new models.Deliverable({
                     ..._.omit(del, ...ignoredFields),
