@@ -97,13 +97,11 @@ function AdminAddLocation() {
     };
 
     const verifyUniqueName = async (name) => {
-        const locations = await DataStore.query(
-            models.Location,
-            (l) => l.listed === 1
+        const locations = await DataStore.query(models.Location, (l) =>
+            l.listed("eq", 1).name("eq", name)
         );
-        if (!locations) return true;
-        const existingLocation = locations.find((l) => l.name === name);
-        return !existingLocation;
+        if (!locations || locations.length === 0) return true;
+        return false;
     };
 
     async function addNewLocation() {
