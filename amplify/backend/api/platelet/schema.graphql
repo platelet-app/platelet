@@ -214,6 +214,7 @@ timePickedUpSenderName: String
   deliverables: [Deliverable] @hasMany
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
   status: TaskStatus @index(name: "byStatus", queryField: "tasksByStatus")
+  isRiderUsingOwnVehicle: Int @default(value: "0")
 }
 
 type TaskAssignee

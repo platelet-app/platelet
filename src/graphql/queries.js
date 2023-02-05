@@ -292,6 +292,7 @@ export const getUser = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -1436,6 +1437,7 @@ export const getLocation = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -1465,6 +1467,7 @@ export const getLocation = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -1494,6 +1497,7 @@ export const getLocation = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -2094,6 +2098,7 @@ export const getTask = /* GraphQL */ `
         startedAt
       }
       status
+      isRiderUsingOwnVehicle
       createdAt
       updatedAt
       _version
@@ -2247,6 +2252,7 @@ export const listTasks = /* GraphQL */ `
           startedAt
         }
         status
+        isRiderUsingOwnVehicle
         createdAt
         updatedAt
         _version
@@ -2409,6 +2415,7 @@ export const syncTasks = /* GraphQL */ `
           startedAt
         }
         status
+        isRiderUsingOwnVehicle
         createdAt
         updatedAt
         _version
@@ -2573,6 +2580,7 @@ export const tasksByStatus = /* GraphQL */ `
           startedAt
         }
         status
+        isRiderUsingOwnVehicle
         createdAt
         updatedAt
         _version
@@ -2728,6 +2736,7 @@ export const getTaskAssignee = /* GraphQL */ `
           startedAt
         }
         status
+        isRiderUsingOwnVehicle
         createdAt
         updatedAt
         _version
@@ -2842,6 +2851,7 @@ export const listTaskAssignees = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -2916,6 +2926,7 @@ export const syncTaskAssignees = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -3403,6 +3414,7 @@ export const getDeliverable = /* GraphQL */ `
           startedAt
         }
         status
+        isRiderUsingOwnVehicle
         createdAt
         updatedAt
         _version
@@ -3483,6 +3495,7 @@ export const listDeliverables = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -3558,6 +3571,7 @@ export const syncDeliverables = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
