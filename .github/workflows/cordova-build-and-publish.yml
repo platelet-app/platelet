@@ -84,7 +84,7 @@ jobs:
       uses: r0adkll/upload-google-play@v1
       with:
         serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
-        packageName: $GOOGLE_PLAY_PACKAGE_NAME
+        packageName: ${{ vars.GOOGLE_PLAY_PACKAGE_NAME }}
         releaseFiles: installers/app-release.aab
         track: production
         status: completed
