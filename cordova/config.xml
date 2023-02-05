@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="app.platelet.platelet" version="1.1.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>platelet.app</name>
-    <description>platelet dispatch for blood bikes</description>
-    <author email="info@platelet.app" href="https://platelet.app">
-        platelet.app
+<widget id="uk.org.bloodbikes.NABBMobile" version="1.2.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>NABB Mobile</name>
+    <description>NABB dispatch for blood bikes</description>
+    <author email="bb.app@bloodbikes.org.uk" href="https://bloodbikes.org.uk">
+        NABB
     </author>
     <content src="/" />
     <allow-intent href="http://*/*" />
