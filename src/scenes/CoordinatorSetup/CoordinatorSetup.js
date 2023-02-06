@@ -1,5 +1,5 @@
 import React from "react";
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import {Grid} from '@mui/material';
 import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
@@ -12,7 +12,7 @@ import { EnhancedTable } from './components/EnhancedTable'
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
-const setupStyles = makeStyles((theme) => ({
+const setupStyles = makeStyles()((theme) => ({
     container: {
         display: "flex",
         flexDirection: "column",
@@ -34,7 +34,7 @@ const Item = styled(Paper)(({ theme }) => ({
   }));
 
 export const CoordinatorSetup = ({ show, onClose }) => {
-    const classes = setupStyles();
+    const { classes } = setupStyles();
     
     return (
         <div className={classes.container}>

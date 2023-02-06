@@ -13,7 +13,6 @@ import {
     Typography,
 } from "@mui/material";
 import PropTypes from "prop-types";
-import makeStyles from "@mui/styles/makeStyles";
 import { tasksStatus, userRoles } from "../../../apiConsts";
 import RiderPicker from "../../../components/RiderPicker";
 import CoordinatorPicker from "../../../components/CoordinatorPicker";
@@ -38,12 +37,6 @@ import GetError from "../../../ErrorComponents/GetError";
 import UserChip from "../../../components/UserChip";
 import RecentlyAssignedUsers from "../../../components/RecentlyAssignedUsers";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
-
-export const useStyles = makeStyles(() => ({
-    italic: {
-        fontStyle: "italic",
-    },
-}));
 
 const sortByUserRole = (a, b) => {
     // coordinators first and riders second

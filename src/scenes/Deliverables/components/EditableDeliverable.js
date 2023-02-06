@@ -5,10 +5,10 @@ import IncreaseDecreaseCounter from "../../../components/IncreaseDecreaseCounter
 import UnitSelector from "../../../components/UnitSelector";
 import _ from "lodash";
 import { IconButton, Stack, Tooltip } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import ArchitectureIcon from "@mui/icons-material/Architecture";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     button: {
         width: theme.spacing(4),
         height: theme.spacing(4),
@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
 function EditableDeliverable(props) {
     const deliverable = props.deliverable;
     const [showUnit, setShowUnit] = useState(false);
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     function handleCloseUnit() {
         setShowUnit((prevState) => !prevState);

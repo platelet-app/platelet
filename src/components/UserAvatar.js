@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import seedrandom from "seedrandom";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import PropTypes from "prop-types";
 import { generateS3Link } from "../amplifyUtilities";
 
@@ -46,7 +46,7 @@ const UserAvatar = React.memo((props) => {
 
     useEffect(() => getThumbnail(), [props.thumbnailKey, getThumbnail]);
 
-    const useStyles = makeStyles((theme) => ({
+    const useStyles = makeStyles()((theme) => ({
         card: {
             color: theme.palette.getContrastText(avatarFallbackColor),
             backgroundColor: avatarFallbackColor,
@@ -56,7 +56,7 @@ const UserAvatar = React.memo((props) => {
         },
     }));
 
-    const classes = useStyles();
+    const { classes } = useStyles();
     return (
         <Avatar
             onClick={props.onClick}

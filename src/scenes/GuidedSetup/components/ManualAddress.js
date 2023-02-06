@@ -3,7 +3,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import LabelItemPair from "../../../components/LabelItemPair";
 import ClickableTextField from "../../../components/ClickableTextField";
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import Divider from "@mui/material/Divider";
 
 const initialState = {
@@ -23,7 +23,7 @@ const initialState = {
     },
 };
 
-const useStyles = makeStyles({
+const useStyles = makeStyles()({
     root: {
         width: "100%",
         padding: "0 5px 30px 5px",
@@ -41,7 +41,7 @@ const useStyles = makeStyles({
 
 
 export const ManualAddress = (props) => {
-    const classes = useStyles();
+    const { classes } = useStyles();
     
     const [state, setState] = useState(initialState);
     const [protectedLocation, setProtectedLocation] = useState(false);

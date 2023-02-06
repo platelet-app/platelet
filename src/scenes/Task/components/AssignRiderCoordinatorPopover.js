@@ -7,23 +7,22 @@ import Grid from "@mui/material/Grid";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import { Tooltip } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
-import clsx from "clsx";
+import { makeStyles } from "tss-react/mui";
 import { AddCircleOutline } from "@mui/icons-material";
 import { userRoles } from "../../../apiConsts";
 
-const useStyles = makeStyles((theme) => ({
-    button: (props) => ({
-        color: props.iconColor,
+const useStyles = makeStyles()((theme, { iconColor }) => ({
+    button: {
+        color: iconColor,
         width: theme.spacing(4),
         height: theme.spacing(4),
-    }),
+    },
 }));
 
 function AssignRiderCoordinatorPopover(props) {
-    const { show, hide } = showHide();
+    const { show, hide } = showHide().classes;
     const [open, setOpen] = React.useState(false);
-    const classes = useStyles(props);
+    const { classes, cx } = useStyles({ iconColor: props.iconColor });
     const onSelect = (user) => {
         props.onSelect(
             user,
@@ -48,7 +47,8 @@ function AssignRiderCoordinatorPopover(props) {
                 aria-controls="long-menu"
                 aria-haspopup="true"
                 onClick={handleOpen}
-                size="large">
+                size="large"
+            >
                 <AddCircleOutline className={classes.button} />
             </IconButton>
         </Tooltip>
@@ -70,7 +70,7 @@ function AssignRiderCoordinatorPopover(props) {
                 <Grid item>
                     <CoordinatorPicker
                         size={"small"}
-                        className={clsx(open ? show : hide, classes.button)}
+                        className={cx(open ? show : hide, classes.button)}
                         exclude={props.exclude}
                         onSelect={onSelect}
                         label={"Select coordinator"}
@@ -90,7 +90,7 @@ function AssignRiderCoordinatorPopover(props) {
             >
                 <Grid item>
                     <RiderPicker
-                        className={clsx(open ? show : hide, classes.button)}
+                        className={cx(open ? show : hide, classes.button)}
                         exclude={props.exclude}
                         onSelect={onSelect}
                         size={"small"}

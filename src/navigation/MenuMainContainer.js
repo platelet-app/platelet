@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../index.css";
 import { useTheme } from "@mui/material/styles";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import AppBar from "@mui/material/AppBar";
 import IconButton from "@mui/material/IconButton";
 import MainWindow from "./MainWindow";
@@ -20,7 +20,7 @@ import {
     menuIndexSelector,
 } from "../redux/Selectors";
 
-const useStyles = makeStyles((theme) => {
+const useStyles = makeStyles()((theme) => {
     return {
         appBarComponents: {
             margin: "auto",
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => {
 });
 
 export function MenuMainContainer() {
-    const classes = useStyles();
+    const { classes } = useStyles();
     const [searchMode, setSearchMode] = useState(false);
     const menuIndex = useSelector(menuIndexSelector);
     const currentFilter = useSelector(dashboardFilterTermSelector);

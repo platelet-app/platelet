@@ -13,7 +13,7 @@ import AddableDeliverable from "./components/AddableDeliverable";
 import _ from "lodash";
 import GetError from "../../ErrorComponents/GetError";
 import DeliverableTags from "./DeliverableTags";
-import { makeStyles } from "@mui/styles";
+import { makeStyles } from 'tss-react/mui';
 
 const initialDeliverablesSortedState = {
     deliverables: [],
@@ -28,7 +28,7 @@ const tagsReducer = (previousValue, currentValue = []) => {
     return [...previousValue, ...filtered];
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     hint: {
         fontStyle: "italic",
         fontSize: 15,
@@ -54,7 +54,7 @@ function DeliverableGridSelect(props) {
         dataStoreModelSyncedStatusSelector
     ).DeliverableType;
     const [isFetching, setIsFetching] = useState(false);
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     const calculateTags = React.useCallback((currentTag, defaults) => {
         const existingTags = Object.values(defaults).map(

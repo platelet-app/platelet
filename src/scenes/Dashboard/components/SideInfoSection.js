@@ -1,7 +1,6 @@
 import React from "react";
-import clsx from "clsx";
 import { useTheme } from "@mui/material/styles";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
@@ -14,7 +13,7 @@ import Typography from "@mui/material/Typography";
 
 const drawerWidth = 400;
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     root: {
         display: "flex",
     },
@@ -57,13 +56,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SideInfoSection(props) {
-    const classes = useStyles();
+    const { classes, cx } = useStyles();
     const theme = useTheme();
     return (
         <div className={classes.root}>
             <CssBaseline />
             <main
-                className={clsx(classes.content, {
+                className={cx(classes.content, {
                     [classes.contentShift]: props.open,
                 })}
             >

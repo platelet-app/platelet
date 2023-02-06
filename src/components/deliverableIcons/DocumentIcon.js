@@ -1,17 +1,17 @@
 import React from "react";
 import { Avatar } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from "tss-react/mui";
 import DescriptionIcon from "@mui/icons-material/Description";
 import { deepPurple } from "@mui/material/colors";
 import PropTypes from "prop-types";
 
-const useStyles = makeStyles((theme) => ({
-    root: (size) => ({
+const useStyles = makeStyles()((theme, { size }) => ({
+    root: {
         color: theme.palette.getContrastText(deepPurple[500]),
         backgroundColor: deepPurple[500],
         width: theme.spacing(size),
         height: theme.spacing(size),
-    }),
+    },
     icon: {
         width: "100%",
         height: "100%",
@@ -19,7 +19,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function DocumentIcon({ size }) {
-    const classes = useStyles(size);
+    const { classes } = useStyles({
+        size,
+    });
     return (
         <Avatar
             aria-label="Document icon"

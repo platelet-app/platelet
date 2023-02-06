@@ -1,18 +1,18 @@
 import { Grid, IconButton } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import React from "react";
 import { deliverableIcons } from "../../../apiConsts";
 import { getDeliverableIconByEnum } from "../../../utilities";
 import PropTypes from "prop-types";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     selection: {
         background: theme.palette.background.default,
         borderRadius: 6,
     },
 }));
 function DeliverableIconPicker(props) {
-    const classes = useStyles();
+    const { classes } = useStyles();
     return (
         <Grid container>
             {Object.values(deliverableIcons).map((icon) => {

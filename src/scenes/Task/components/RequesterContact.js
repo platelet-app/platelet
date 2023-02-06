@@ -10,11 +10,12 @@ import EditIcon from "@mui/icons-material/Edit";
 import ClickableTextField from "../../../components/ClickableTextField";
 import LabelItemPair from "../../../components/LabelItemPair";
 import PropTypes from "prop-types";
-import { makeStyles, useTheme } from "@mui/styles";
+import { makeStyles } from 'tss-react/mui';
+import { useTheme } from '@mui/styles';
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import { TextFieldControlled } from "../../../components/TextFields";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles()({
     inset: {
         marginLeft: 20,
     },
@@ -49,7 +50,7 @@ function RequesterContact(props) {
         });
     };
 
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     return (
         <Stack>

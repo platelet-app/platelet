@@ -1,6 +1,6 @@
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from "tss-react/mui";
 
-export const dialogCardStyles = makeStyles((theme) => ({
+export const dialogCardStyles = makeStyles()((theme) => ({
     root: {
         padding: 15,
         width: "100%",

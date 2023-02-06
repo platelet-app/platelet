@@ -3,7 +3,7 @@ import "../App.css";
 import Card from "@mui/material/Card";
 import { styled } from "@mui/styles";
 
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from "tss-react/mui";
 import withTheme from "@mui/styles/withTheme";
 import { Paper } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 import IconButton from "@mui/material/IconButton";
 import ClearIcon from "@mui/icons-material/Clear";
 
-export const showHide = makeStyles({
+export const showHide = makeStyles()({
     hide: {
         display: "none",
     },
@@ -93,13 +93,3 @@ export function PaddedPaper(props) {
         </Paper>
     );
 }
-
-export const contextDots = makeStyles({
-    root: {
-        cursor: "context-menu",
-        position: "absolute",
-        bottom: 0,
-        right: 0,
-        zIndex: 1000,
-    },
-});

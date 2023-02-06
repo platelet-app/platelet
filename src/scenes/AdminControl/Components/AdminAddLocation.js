@@ -7,7 +7,7 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
@@ -44,7 +44,7 @@ const initialLocationState = {
     googleMapsPlaceId: null,
 };
 
-const useStyles = makeStyles({
+const useStyles = makeStyles()({
     root: {
         width: "100%",
         maxWidth: 460,
@@ -82,7 +82,7 @@ function AdminAddLocation() {
     const whoamiFetching = useSelector(loadingSelector);
     const [inputVerified, setInputVerified] = useState(false);
     const dispatch = useDispatch();
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     function verifyInput() {
         setInputVerified(!!state.name);

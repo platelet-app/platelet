@@ -3,7 +3,7 @@ import { PaddedPaper } from "../../styles/common";
 import TasksStatistics from "./components/TasksStatistics";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useDispatch, useSelector } from "react-redux";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import FormControl from "@mui/material/FormControl";
 import { Fade, InputLabel, MenuItem, Select, Stack } from "@mui/material";
 import { getWhoami } from "../../redux/Selectors";
@@ -13,7 +13,7 @@ import moment from "moment";
 import UserRoleSelect from "../../components/UserRoleSelect";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     formControl: {
         margin: theme.spacing(1),
         minWidth: 120,
@@ -44,7 +44,7 @@ const initialState = {
 
 function StatisticsDashboard() {
     const [state, setState] = useState(initialState);
-    const classes = useStyles();
+    const { classes } = useStyles();
     const [isFetching, setIsFetching] = useState(false);
     const whoami = useSelector(getWhoami);
     const [role, setRole] = useState(userRoles.coordinator);

@@ -2,9 +2,9 @@ import { Divider, Typography } from "@mui/material";
 import moment from "moment";
 import React from "react";
 import PropTypes from "prop-types";
-import { makeStyles } from "@mui/styles";
+import { makeStyles } from 'tss-react/mui';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     date: {
         fontStyle: "italic",
         maxWidth: "100%",
@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function DateStampDivider(props) {
-    const classes = useStyles();
+    const { classes } = useStyles();
     return (
         <Divider className={classes.date} orientation="horizontal">
             <Typography>

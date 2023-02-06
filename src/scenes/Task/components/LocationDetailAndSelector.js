@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import LabelItemPair from "../../../components/LabelItemPair";
 import ClickableTextField from "../../../components/ClickableTextField";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import Divider from "@mui/material/Divider";
 import { Box, Stack, Tooltip } from "@mui/material";
 import { ThemedLink } from "../../../styles/common";
@@ -12,7 +12,7 @@ import { encodeUUID } from "../../../utilities";
 import ClearButtonWithConfirmation from "../../../components/ClearButtonWithConfirmation";
 import CollapsibleToggle from "../../../components/CollapsibleToggle";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     root: {},
     label: {
         width: "90%",
@@ -64,7 +64,7 @@ const contactFields = {
 };
 
 function LocationDetailAndSelector(props) {
-    const classes = useStyles();
+    const { classes } = useStyles();
     const [state, setState] = useState(initialState);
     const [collapsed, setCollapsed] = useState(true);
 

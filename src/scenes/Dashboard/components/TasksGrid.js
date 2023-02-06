@@ -2,7 +2,7 @@ import React from "react";
 import _ from "lodash";
 import Grid from "@mui/material/Grid";
 import PropTypes from "prop-types";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import TasksGridColumn from "./TasksGridColumn";
 import { tasksStatus } from "../../../apiConsts";
 import { dashboardFilteredUserSelector } from "../../../redux/Selectors";
@@ -18,7 +18,7 @@ const getColumnTitle = (key) => {
     return key.join(" / ").replace(/_/g, " ");
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     addRelay: {
         visibility: "hidden",
         "&:hover $hoverDiv": {
@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function TasksGrid(props) {
-    const classes = useStyles();
+    const { classes } = useStyles();
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
 
     let justifyContent = "flex-start";

@@ -1,6 +1,6 @@
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from "tss-react/mui";
 
-export const Styles = makeStyles(({
+export const Styles = makeStyles()({
     wrapper: {
         marginTop: "30px",
         marginBottom: "30px",
@@ -24,5 +24,5 @@ export const Styles = makeStyles(({
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-end",
-    }
-}));
+    },
+});

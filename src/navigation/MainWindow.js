@@ -11,7 +11,7 @@ import LocationDetailRoute from "../scenes/LocationDetail/LocationDetailRoute";
 import StatisticsDashboard from "../scenes/Statistics/StatisticsDashboard";
 import { useDispatch, useSelector } from "react-redux";
 import { setMenuIndex } from "../redux/Actions";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import AdminAddUser from "../scenes/AdminControl/Components/AdminAddUser";
 import AdminAddVehicle from "../scenes/AdminControl/Components/AdminAddVehicle";
 import AdminAddLocation from "../scenes/AdminControl/Components/AdminAddLocation";
@@ -27,7 +27,7 @@ import UserDetailRoute from "../scenes/UserDetail/UserDetailRoute";
 function MainWindowContainer(props) {
     const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
     const navIndex = useSelector(menuIndexSelector);
-    const styles = makeStyles((theme) => ({
+    const styles = makeStyles()((theme) => ({
         root: {
             marginRight:
                 guidedSetupOpen && navIndex === "dashboard" ? 0 : "auto",
@@ -41,7 +41,7 @@ function MainWindowContainer(props) {
             },
         },
     }));
-    const classes = styles();
+    const { classes } = styles();
     return <Box className={classes.root}>{props.children}</Box>;
 }
 
