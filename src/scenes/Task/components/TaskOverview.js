@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import TaskDetailsPanel from "./TaskDetailsPanel";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
 import DeliverableDetails from "./DeliverableDetails";
 import TaskActions from "./TaskActions";
 import { Hidden, Stack } from "@mui/material";
@@ -47,12 +47,7 @@ function TaskOverview({ taskId, isFetching }) {
 
     return (
         <Container className={classes.root}>
-            <Grid
-                container
-                direction="row"
-                className={classes.container}
-                spacing={isSm ? 1 : 3}
-            >
+            <Grid container direction="row" spacing={isSm ? 1 : 3}>
                 <Grid item className={classes.item}>
                     <Stack direction={"column"} spacing={isSm ? 1 : 3}>
                         <TaskDetailsPanel
