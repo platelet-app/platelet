@@ -6,11 +6,13 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import { Link } from "react-router-dom";
 import Divider from "@mui/material/Divider";
+import * as models from "../models";
 import List from "@mui/material/List";
 import PropTypes from "prop-types";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import LocationCityIcon from "@mui/icons-material/LocationCity";
 import BarChartIcon from "@mui/icons-material/BarChart";
+import DescriptionIcon from "@mui/icons-material/Description";
 import { getWhoami } from "../redux/Selectors";
 
 function NavDrawerItems(props) {
@@ -18,6 +20,7 @@ function NavDrawerItems(props) {
     const menuIndex = useSelector((state) => state.menuIndex);
     const onSelect = props.onSelect;
     let adminLink = <></>;
+    let statisticsLink = <></>;
 
     if (whoami.roles) {
         if (whoami.roles.includes("ADMIN")) {
@@ -36,7 +39,27 @@ function NavDrawerItems(props) {
                 </ListItem>
             );
         }
+        if (
+            whoami.roles.includes(models.Role.ADMIN) ||
+            whoami.roles.includes(models.Role.COORDINATOR)
+        ) {
+            statisticsLink = (
+                <ListItem
+                    onClick={onSelect}
+                    selected={menuIndex === "statistics"}
+                    component={Link}
+                    to={"/statistics"}
+                    button
+                >
+                    <ListItemIcon>
+                        <BarChartIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Statistics"} />
+                </ListItem>
+            );
+        }
     }
+
     return (
         <div className={props.className}>
             <Divider />
@@ -97,10 +120,11 @@ function NavDrawerItems(props) {
                     button
                 >
                     <ListItemIcon>
-                        <BarChartIcon />
+                        <DescriptionIcon />
                     </ListItemIcon>
                     <ListItemText primary={"Reports"} />
                 </ListItem>
+                {statisticsLink}
                 {adminLink}
             </List>
         </div>
