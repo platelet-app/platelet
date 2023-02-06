@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
+import * as models from "../../models";
 import { PaddedPaper } from "../../styles/common";
 import TasksStatistics from "./components/TasksStatistics";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useDispatch, useSelector } from "react-redux";
 import makeStyles from "@mui/styles/makeStyles";
-import FormControl from "@mui/material/FormControl";
-import { Fade, InputLabel, MenuItem, Select, Stack } from "@mui/material";
+import { Fade, Stack } from "@mui/material";
 import { getWhoami } from "../../redux/Selectors";
 import getStats from "./utilities/getStats";
-import { userRoles } from "../../apiConsts";
 import moment from "moment";
-import UserRoleSelect from "../../components/UserRoleSelect";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
+import DaysSelection from "../../components/DaysSelection";
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -44,66 +43,35 @@ const initialState = {
 
 function StatisticsDashboard() {
     const [state, setState] = useState(initialState);
-    const classes = useStyles();
     const [isFetching, setIsFetching] = useState(false);
     const whoami = useSelector(getWhoami);
-    const [role, setRole] = useState(userRoles.coordinator);
     const [days, setDays] = useState(3);
     const dispatch = useDispatch();
 
-    const handleDaysChange = (event) => {
-        setDays(event.target.value);
+    const handleDaysChange = (value) => {
+        setDays(value);
     };
 
-    const picker = (
-        <div>
-            <FormControl className={classes.formControl}>
-                <InputLabel id="demo-simple-select-label">Days</InputLabel>
-                <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={days}
-                    onChange={handleDaysChange}
-                >
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={3}>3</MenuItem>
-                    <MenuItem value={5}>5</MenuItem>
-                    <MenuItem value={7}>7</MenuItem>
-                    <MenuItem value={14}>14</MenuItem>
-                    <MenuItem value={30}>30</MenuItem>
-                </Select>
-            </FormControl>
-        </div>
-    );
+    const getStatsData = React.useCallback(async () => {
+        try {
+            setIsFetching(true);
+            const newMoment = moment();
+            const start = newMoment.toISOString();
+            const end = newMoment.subtract(days, "day").toISOString();
+            const range = {
+                start,
+                end,
+            };
+            setState(await getStats(models.Role.COORDINATOR, range, whoami.id));
+            setIsFetching(false);
+        } catch (e) {
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+            setState(initialState);
+            console.log(e);
+        }
+    }, [days, whoami.id, dispatch]);
 
-    const getStatsData = React.useCallback(
-        async (role, days, whoami) => {
-            try {
-                setIsFetching(true);
-                const newMoment = moment();
-                const start = newMoment.toISOString();
-                const end = newMoment.subtract(days, "day").toISOString();
-                const range = {
-                    start,
-                    end,
-                };
-                setState(await getStats(role, range, whoami.id));
-                setIsFetching(false);
-            } catch (e) {
-                dispatch(
-                    displayErrorNotification("Sorry, something went wrong")
-                );
-                setState(initialState);
-                console.log(e);
-            }
-        },
-        [dispatch]
-    );
-
-    useEffect(
-        () => getStatsData(role, days, whoami),
-        [role, days, whoami, getStatsData]
-    );
+    useEffect(() => getStatsData(), [getStatsData]);
 
     return (
         <PaddedPaper>
@@ -113,14 +81,7 @@ function StatisticsDashboard() {
                 alignItems="center"
                 justifyContent="space-between"
             >
-                <Stack direction="row" spacing={2} alignItems="center">
-                    {picker}
-                    <UserRoleSelect
-                        value={[role]}
-                        onSelect={(value) => setRole(value)}
-                        exclude={[userRoles.user, userRoles.admin]}
-                    />
-                </Stack>
+                <DaysSelection value={days} onChange={handleDaysChange} />
                 <Fade
                     in={isFetching}
                     style={{
