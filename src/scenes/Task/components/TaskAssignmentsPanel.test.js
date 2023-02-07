@@ -112,7 +112,71 @@ describe("TaskAssignmentsPanel", () => {
         });
     });
 
-    it.only("displays chips of the assigned users", async () => {
+    test("setting the task as rider using own vehicle", async () => {
+        const mockTask = await DataStore.save(new models.Task({ tenantId }));
+        const mockUser = await DataStore.save(
+            new models.User({
+                tenantId,
+                roles: [models.Role.RIDER],
+                displayName: "test rider",
+            })
+        );
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(
+            <>
+                <FakeDispatchComponent />
+                <TaskAssignmentsPanel taskId={mockTask.id} />
+            </>,
+            { preloadedState }
+        );
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
+        expect(
+            screen.queryByRole("checkbox", {
+                name: "rider using own vehicle?",
+            })
+        ).toBeNull();
+        userEvent.click(screen.getByRole("button", { name: "RIDER" }));
+        userEvent.type(screen.getByRole("textbox"), mockUser.displayName);
+        userEvent.click(screen.getByText(mockUser.displayName));
+        await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(2));
+        userEvent.click(screen.getByRole("button", { name: "Edit Assignees" }));
+        expect(
+            await screen.findByText("Using charity vehicle")
+        ).toBeInTheDocument();
+        userEvent.click(screen.getByRole("button", { name: "Edit Assignees" }));
+        const ownVehicleCheckbox = screen.getByRole("checkbox", {
+            name: "rider using own vehicle?",
+        });
+        userEvent.click(ownVehicleCheckbox);
+        expect(ownVehicleCheckbox).toBeDisabled();
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockTask,
+                status: models.TaskStatus.ACTIVE,
+                isRiderUsingOwnVehicle: 1,
+            });
+        });
+        userEvent.click(screen.getByRole("button", { name: "Edit Assignees" }));
+        expect(screen.getByText("Using own vehicle")).toBeInTheDocument();
+        userEvent.click(screen.getByRole("button", { name: "Edit Assignees" }));
+        userEvent.click(screen.getByTestId("CancelIcon"));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenNthCalledWith(4, {
+                ...mockTask,
+                status: models.TaskStatus.NEW,
+                riderResponsibility: null,
+                isRiderUsingOwnVehicle: 0,
+            });
+        });
+        expect(
+            screen.queryByRole("checkbox", {
+                name: "rider using own vehicle?",
+            })
+        ).toBeNull();
+    });
+
+    it("displays chips of the assigned users", async () => {
         await saveAssignments();
         const querySpy = jest.spyOn(DataStore, "query");
         render(
@@ -122,7 +186,7 @@ describe("TaskAssignmentsPanel", () => {
             </>,
             { preloadedState }
         );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(2));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(5));
         // TODO: mock amplify Storage to test avatars
         //const avatarGroup = screen.queryAllByRole("img");
         // expect to have the correct number of avatars
@@ -146,10 +210,10 @@ describe("TaskAssignmentsPanel", () => {
             { preloadedState }
         );
         //await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(6));
         // click the expand button
         userEvent.click(screen.getByRole("button", { name: "Edit Assignees" }));
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(5));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(7));
         //await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(3));
         for (const user of fakeAssignments
             .filter((a) => a.task.id === fakeTask1.id)
@@ -183,7 +247,7 @@ describe("TaskAssignmentsPanel", () => {
                 },
             },
         });
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(2));
         expect(screen.queryByRole("combobox")).toBeNull();
         expect(screen.queryByText("No one assigned")).toBeNull();
     });
@@ -200,7 +264,7 @@ describe("TaskAssignmentsPanel", () => {
                 },
             },
         });
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(2));
         expect(screen.getByRole("combobox")).toBeInTheDocument();
         expect(screen.getAllByText("No one assigned")).toHaveLength(2);
     });
@@ -228,7 +292,7 @@ describe("TaskAssignmentsPanel", () => {
                     },
                 },
             });
-            await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
+            await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(2));
             expect(screen.getByRole("combobox")).toBeInTheDocument();
             expect(screen.getAllByText("No one assigned")).toHaveLength(1);
         }
@@ -340,7 +404,7 @@ describe("TaskAssignmentsPanel", () => {
                 expect.any(Function)
             )
         );*/
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(18));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(21));
         const roleOption = screen.getByText("COORDINATOR");
         userEvent.click(roleOption);
         /*await waitFor(() =>
@@ -350,7 +414,7 @@ describe("TaskAssignmentsPanel", () => {
                 expect.any(Function)
             )
         );*/
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(19));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(22));
         const textBox = screen.getByRole("textbox");
         userEvent.type(textBox, mockUser.displayName);
         const option = screen.getByText(mockUser.displayName);
@@ -385,7 +449,7 @@ describe("TaskAssignmentsPanel", () => {
             { preloadedState }
         );
         //await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(2));
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(11));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(13));
         expect(screen.getByText("RIDER")).toBeInTheDocument();
         const textBox = screen.getByRole("textbox");
         userEvent.type(textBox, mockUser.displayName);
@@ -409,7 +473,7 @@ describe("TaskAssignmentsPanel", () => {
             { preloadedState }
         );
         //await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(2));
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(12));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(14));
         userEvent.click(screen.getByTestId("CancelIcon"));
         await waitFor(() =>
             expect(deleteSpy).toHaveBeenCalledWith(
@@ -432,7 +496,7 @@ describe("TaskAssignmentsPanel", () => {
             </>,
             { preloadedState }
         );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(13));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(15));
         userEvent.click(screen.getByTestId("CancelIcon"));
         await waitFor(() =>
             expect(deleteSpy).toHaveBeenCalledWith(mockAssignment)
@@ -442,6 +506,7 @@ describe("TaskAssignmentsPanel", () => {
                 ...mockTask,
                 riderResponsibility: null,
                 status: tasksStatus.new,
+                isRiderUsingOwnVehicle: 0,
             });
         });
     });
@@ -482,7 +547,7 @@ describe("TaskAssignmentsPanel", () => {
             </>,
             { preloadedState }
         );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(14));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(16));
         const deleteButtons = await screen.findAllByTestId("CancelIcon");
         expect(deleteButtons).toHaveLength(2);
         userEvent.click(deleteButtons[0]);
@@ -514,7 +579,7 @@ describe("TaskAssignmentsPanel", () => {
             </>,
             { preloadedState }
         );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(15));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(17));
         userEvent.click(screen.getByRole("button", { name: "Edit Assignees" }));
         const deleteButtons = await screen.findAllByTestId("CancelIcon");
         expect(deleteButtons).toHaveLength(2);
@@ -570,7 +635,7 @@ describe("TaskAssignmentsPanel", () => {
             preloadedState,
         });
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
+            expect(querySpy).toHaveBeenCalledTimes(2);
         });
 
         if (role === userRoles.rider) {
@@ -671,8 +736,7 @@ describe("TaskAssignmentsPanel", () => {
             </>,
             { preloadedState }
         );
-        // 43???
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(43));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(20));
         userEvent.click(screen.getByTestId("CancelIcon"));
         await waitFor(() => expect(deleteSpy).not.toHaveBeenCalled());
         expect(
@@ -726,7 +790,7 @@ describe("TaskAssignmentsPanel", () => {
             </>,
             { preloadedState }
         );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(19));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(21));
         userEvent.click(screen.getByTestId("CancelIcon"));
         await waitFor(() => expect(deleteSpy).not.toHaveBeenCalled());
         expect(

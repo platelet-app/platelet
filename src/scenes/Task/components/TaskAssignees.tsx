@@ -1,6 +1,6 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import { Divider, Grid, Stack } from "@mui/material";
+import { Divider, Grid, Stack, Switch } from "@mui/material";
 import { userRoles } from "../../../apiConsts";
 import UserChip from "../../../components/UserChip";
 import { sortByCreatedTime } from "../../../utilities";
@@ -13,22 +13,34 @@ type TaskAssigneesProps = {
     assignees: models.TaskAssignee[];
     onRemove?: (arg0: string) => void;
     disabled?: boolean;
+    onChangeRiderUsingOwnVehicle?: () => void;
+    usingOwnVehicle?: boolean;
+    disableUsingOwnVehicleSwitch?: boolean;
 };
 
-const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
+const TaskAssignees: React.FC<TaskAssigneesProps> = ({
+    assignees,
+    onRemove = () => {},
+    disabled = false,
+    onChangeRiderUsingOwnVehicle = () => {},
+    usingOwnVehicle = false,
+    disableUsingOwnVehicleSwitch = false,
+}) => {
     const whoami = useSelector(getWhoami);
     const [confirmRemoveId, setConfirmRemoveId] = React.useState<string | null>(
         null
     );
     const handleRemove = (assignment: models.TaskAssignee) => {
-        if (props.onRemove) {
+        if (onRemove) {
             if (assignment.assignee?.id === whoami.id) {
                 setConfirmRemoveId(assignment.id);
             } else {
-                props.onRemove(assignment.id);
+                onRemove(assignment.id);
             }
         }
     };
+
+    const hasRiders = assignees.some((a) => a.role === userRoles.rider);
 
     const confirmationSelfDeleteDialog = (
         <ConfirmationDialog
@@ -36,8 +48,7 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
             onCancel={() => setConfirmRemoveId(null)}
             open={!!confirmRemoveId}
             onConfirmation={() => {
-                if (props.onRemove && confirmRemoveId)
-                    props.onRemove(confirmRemoveId);
+                if (onRemove && confirmRemoveId) onRemove(confirmRemoveId);
                 setConfirmRemoveId(null);
             }}
         >
@@ -52,7 +63,7 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
 
     const mappedAssigneeContents = [userRoles.coordinator, userRoles.rider].map(
         (role) => {
-            const assignmentsUnsorted = props.assignees.filter(
+            const assignmentsUnsorted = assignees.filter(
                 (a) => a.role === role
             );
             const assignments = sortByCreatedTime(
@@ -86,7 +97,7 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
                                         showResponsibility={
                                             role === userRoles.rider
                                         }
-                                        disabled={props.disabled}
+                                        disabled={disabled}
                                         user={user}
                                         onDelete={() =>
                                             handleRemove(assignment)
@@ -96,6 +107,38 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
                             );
                         })}
                     </Grid>
+                    {hasRiders && role === userRoles.rider && (
+                        <Grid
+                            container
+                            alignItems="center"
+                            direction="row"
+                            spacing={1}
+                        >
+                            <Grid item>
+                                <Typography
+                                    sx={{
+                                        cursor: disableUsingOwnVehicleSwitch
+                                            ? "default"
+                                            : "pointer",
+                                    }}
+                                    onClick={onChangeRiderUsingOwnVehicle}
+                                >
+                                    Using own vehicle?
+                                </Typography>
+                            </Grid>
+                            <Grid item>
+                                <Switch
+                                    inputProps={{
+                                        "aria-label":
+                                            "rider using own vehicle?",
+                                    }}
+                                    disabled={disableUsingOwnVehicleSwitch}
+                                    onChange={onChangeRiderUsingOwnVehicle}
+                                    checked={usingOwnVehicle}
+                                />
+                            </Grid>
+                        </Grid>
+                    )}
                     <Divider />
                 </>
             );
@@ -107,12 +150,6 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = (props) => {
             {mappedAssigneeContents}
         </>
     );
-};
-
-TaskAssignees.defaultProps = {
-    assignees: [],
-    onRemove: () => {},
-    disabled: false,
 };
 
 export default TaskAssignees;

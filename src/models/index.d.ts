@@ -375,6 +375,7 @@ type EagerTask = {
   readonly deliverables?: (Deliverable | null)[] | null;
   readonly comments?: (Comment | null)[] | null;
   readonly status?: TaskStatus | keyof typeof TaskStatus | null;
+  readonly isRiderUsingOwnVehicle?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -402,6 +403,7 @@ type LazyTask = {
   readonly deliverables: AsyncCollection<Deliverable>;
   readonly comments: AsyncCollection<Comment>;
   readonly status?: TaskStatus | keyof typeof TaskStatus | null;
+  readonly isRiderUsingOwnVehicle?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

@@ -92,12 +92,7 @@ function CommonStats(props) {
 }
 
 function PatchStats(props) {
-    let columns = [
-        "Responsibility",
-        ...Object.values(priorities),
-        "None",
-        "Total",
-    ];
+    let columns = ["Rider role", ...Object.values(priorities), "None", "Total"];
 
     const patchStats = props.stats.riderResponsibilities;
     const priorityStats = props.stats.priorities;
@@ -121,7 +116,7 @@ function PatchStats(props) {
                         return (
                             <TableRow key={patch} align="right">
                                 {columns.map((column) =>
-                                    column === "Responsibility" ? (
+                                    column === "Rider role" ? (
                                         <TableCell key={column}>
                                             {patch}
                                         </TableCell>
@@ -136,7 +131,7 @@ function PatchStats(props) {
                     })}
                     <TableRow align="right">
                         {columns.map((column) => {
-                            if (column === "Responsibility") {
+                            if (column === "Rider role") {
                                 return (
                                     <TableCell
                                         key={column}

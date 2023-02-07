@@ -31,35 +31,34 @@ import { useTheme } from "@mui/styles";
 import TaskGridColumnHeader from "./TaskGridColumnHeader";
 import TaskGridTasksList from "./TaskGridTasksList";
 
-const useStyles = () =>
-    makeStyles((theme) => ({
-        divider: {
-            width: "95%",
+const useStyles = makeStyles((theme) => ({
+    divider: {
+        width: "95%",
+    },
+    spacer: {
+        height: 35,
+    },
+    column: {
+        padding: 5,
+        backgroundColor: "rgba(180, 180, 180, 0.1)",
+        borderRadius: 5,
+        border: 0,
+        boxShadow: "0 2px 3px 1px rgba(100, 100, 100, .3)",
+        height: "100%",
+        maxWidth: 360,
+        minWidth: 285,
+        [theme.breakpoints.down("lg")]: {
+            padding: 0,
         },
-        spacer: {
-            height: 35,
-        },
-        column: {
-            padding: 5,
-            backgroundColor: "rgba(180, 180, 180, 0.1)",
-            borderRadius: 5,
-            border: 0,
-            boxShadow: "0 2px 3px 1px rgba(100, 100, 100, .3)",
-            height: "100%",
-            maxWidth: 360,
-            minWidth: 285,
-            [theme.breakpoints.down("lg")]: {
-                padding: 0,
-            },
-            [theme.breakpoints.down("sm")]: {
-                maxWidth: "100%",
-                width: "100%",
-            },
-        },
-        gridItem: {
+        [theme.breakpoints.down("sm")]: {
+            maxWidth: "100%",
             width: "100%",
         },
-    }));
+    },
+    gridItem: {
+        width: "100%",
+    },
+}));
 
 function TasksGridColumn(props) {
     const [state, setState] = useState([]);
@@ -75,9 +74,6 @@ function TasksGridColumn(props) {
     const dashboardFilter = useSelector(dashboardFilterTermSelector);
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const roleView = useSelector(getRoleView);
-    const selectedItemsAll = useSelector(selectedItemsSelector);
-    const tabIndex = useSelector(dashboardTabIndexSelector);
-    const isSomeSelected = useRef(false);
     const dataStoreModelSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     );
@@ -92,16 +88,8 @@ function TasksGridColumn(props) {
         unsubscribe: () => {},
     });
     const theme = useTheme();
-    useEffect(() => {
-        const selectedItems = selectedItemsAll[tabIndex];
-        if (!selectedItems) return;
-        const values = Object.values(selectedItems);
-        isSomeSelected.current = Object.values(state).some((t) =>
-            values.map((a) => a.id).includes(t.id)
-        );
-    });
 
-    const classes = useStyles(isSomeSelected.current)();
+    const classes = useStyles();
 
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 

@@ -1,27 +1,17 @@
 import React, { useEffect, useState } from "react";
+import * as models from "../../models";
 import { PaddedPaper } from "../../styles/common";
 import TasksStatistics from "./components/TasksStatistics";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useDispatch, useSelector } from "react-redux";
-import makeStyles from "@mui/styles/makeStyles";
-import FormControl from "@mui/material/FormControl";
-import { Fade, InputLabel, MenuItem, Select, Stack } from "@mui/material";
+import { Fade, Stack, Box, Divider } from "@mui/material";
 import { getWhoami } from "../../redux/Selectors";
 import getStats from "./utilities/getStats";
-import { userRoles } from "../../apiConsts";
 import moment from "moment";
-import UserRoleSelect from "../../components/UserRoleSelect";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
-
-const useStyles = makeStyles((theme) => ({
-    formControl: {
-        margin: theme.spacing(1),
-        minWidth: 120,
-    },
-    selectEmpty: {
-        marginTop: theme.spacing(2),
-    },
-}));
+import DaysSelection from "../../components/DaysSelection";
+import CoordinatorPicker from "../../components/CoordinatorPicker";
+import UserChip from "../../components/UserChip";
 
 const initialState = {
     common: {
@@ -44,92 +34,83 @@ const initialState = {
 
 function StatisticsDashboard() {
     const [state, setState] = useState(initialState);
-    const classes = useStyles();
     const [isFetching, setIsFetching] = useState(false);
+    const [adminSelectedUser, setAdminSelectedUser] = useState(null);
     const whoami = useSelector(getWhoami);
-    const [role, setRole] = useState(userRoles.coordinator);
     const [days, setDays] = useState(3);
     const dispatch = useDispatch();
 
-    const handleDaysChange = (event) => {
-        setDays(event.target.value);
+    const handleDaysChange = (value) => {
+        setDays(value);
     };
 
-    const picker = (
-        <div>
-            <FormControl className={classes.formControl}>
-                <InputLabel id="demo-simple-select-label">Days</InputLabel>
-                <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={days}
-                    onChange={handleDaysChange}
-                >
-                    <MenuItem value={1}>1</MenuItem>
-                    <MenuItem value={3}>3</MenuItem>
-                    <MenuItem value={5}>5</MenuItem>
-                    <MenuItem value={7}>7</MenuItem>
-                    <MenuItem value={14}>14</MenuItem>
-                    <MenuItem value={30}>30</MenuItem>
-                </Select>
-            </FormControl>
-        </div>
-    );
+    const getStatsData = React.useCallback(async () => {
+        try {
+            setIsFetching(true);
+            const newMoment = moment();
+            const start = newMoment.toISOString();
+            const end = newMoment.subtract(days, "day").toISOString();
+            const range = {
+                start,
+                end,
+            };
+            setState(
+                await getStats(
+                    models.Role.COORDINATOR,
+                    range,
+                    adminSelectedUser ? adminSelectedUser.id : whoami.id
+                )
+            );
+            setIsFetching(false);
+        } catch (e) {
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+            setState(initialState);
+            console.log(e);
+        }
+    }, [days, whoami.id, dispatch, adminSelectedUser]);
 
-    const getStatsData = React.useCallback(
-        async (role, days, whoami) => {
-            try {
-                setIsFetching(true);
-                const newMoment = moment();
-                const start = newMoment.toISOString();
-                const end = newMoment.subtract(days, "day").toISOString();
-                const range = {
-                    start,
-                    end,
-                };
-                setState(await getStats(role, range, whoami.id));
-                setIsFetching(false);
-            } catch (e) {
-                dispatch(
-                    displayErrorNotification("Sorry, something went wrong")
-                );
-                setState(initialState);
-                console.log(e);
-            }
-        },
-        [dispatch]
-    );
-
-    useEffect(
-        () => getStatsData(role, days, whoami),
-        [role, days, whoami, getStatsData]
-    );
+    useEffect(() => getStatsData(), [getStatsData]);
+    const isAdmin = whoami?.roles?.includes(models.Role.ADMIN);
 
     return (
         <PaddedPaper>
             <Stack
-                direction="row"
+                sx={{ paddingBottom: 3 }}
+                divider={<Divider />}
+                direction="column"
                 spacing={2}
-                alignItems="center"
-                justifyContent="space-between"
             >
-                <Stack direction="row" spacing={2} alignItems="center">
-                    {picker}
-                    <UserRoleSelect
-                        value={[role]}
-                        onSelect={(value) => setRole(value)}
-                        exclude={[userRoles.user, userRoles.admin]}
-                    />
-                </Stack>
-                <Fade
-                    in={isFetching}
-                    style={{
-                        transitionDelay: isFetching ? "800ms" : "0ms",
-                    }}
-                    unmountOnExit
+                <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
                 >
-                    <CircularProgress />
-                </Fade>
+                    <DaysSelection value={days} onChange={handleDaysChange} />
+                    <Fade
+                        in={isFetching}
+                        style={{
+                            transitionDelay: isFetching ? "800ms" : "0ms",
+                        }}
+                    >
+                        <CircularProgress />
+                    </Fade>
+                </Stack>
+                {isAdmin && !adminSelectedUser && (
+                    <Box sx={{ maxWidth: 400 }}>
+                        <CoordinatorPicker
+                            label="Select a coordinator..."
+                            onSelect={(v) => setAdminSelectedUser(v)}
+                        />
+                    </Box>
+                )}
+                {adminSelectedUser && (
+                    <Box>
+                        <UserChip
+                            user={adminSelectedUser}
+                            onDelete={() => setAdminSelectedUser(null)}
+                        />
+                    </Box>
+                )}
             </Stack>
             <TasksStatistics data={state} />
         </PaddedPaper>

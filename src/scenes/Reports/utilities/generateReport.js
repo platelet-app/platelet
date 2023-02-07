@@ -8,6 +8,7 @@ import { writeToString } from "@fast-csv/format";
 const taskFields = {
     id: "",
     createdAt: "",
+    isRiderUsingOwnVehicle: "",
     timeOfCall: "",
     priority: "",
     status: "",
@@ -265,6 +266,7 @@ export default async function generateReport(userId, role, days) {
     );
     finalTasks = await Promise.all(
         finalTasks.map(async (t) => {
+            const isRiderUsingOwnVehicle = !!t.isRiderUsingOwnVehicle;
             const comments = commentsAll.filter((c) => c.parentId === t.id);
             const items = deliverables.filter(
                 (d) => d.task && d.task.id === t.id
@@ -272,7 +274,7 @@ export default async function generateReport(userId, role, days) {
             const assignees = assignments.filter(
                 (assignment) => assignment.task && assignment.task.id === t.id
             );
-            return { ...t, comments, items, assignees };
+            return { ...t, comments, items, assignees, isRiderUsingOwnVehicle };
         })
     );
     return generateCSV(finalTasks);
