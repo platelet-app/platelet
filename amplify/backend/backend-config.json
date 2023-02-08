@@ -412,6 +412,14 @@
         }
       ]
     },
+    "AMPLIFY_function_plateletSendUserFeedback_plateletSendFromEmailAddress": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletSendUserFeedback"
+        }
+      ]
+    },
     "AMPLIFY_function_plateletSendUserFeedback_plateletSendToEmailAddress": {
       "usedBy": [
         {
