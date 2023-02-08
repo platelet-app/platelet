@@ -78,7 +78,7 @@ function* getWhoami() {
         const existingUser = yield call(
             [DataStore, DataStore.query],
             models.User,
-            (u) => u.name("eq", "offline")
+            (u) => u.name.eq("offline")
         );
         if (existingUser.length === 0) {
             let userResult = fakeUser;
@@ -139,19 +139,17 @@ function* getWhoami() {
                     syncExpressions: [
                         ...modelsToSync.map((model) =>
                             syncExpression(model, (m) =>
-                                m.tenantId("eq", tenantId)
+                                m.tenantId.eq(tenantId)
                             )
                         ),
-                        syncExpression(models.Tenant, (m) =>
-                            m.id("eq", tenantId)
-                        ),
+                        syncExpression(models.Tenant, (m) => m.id.eq(tenantId)),
                     ],
                     conflictHandler: dataStoreConflictHandler,
                 });
                 result = yield call(
                     [DataStore, DataStore.query],
                     models.User,
-                    (t) => t.cognitoId("eq", loggedInUser.attributes.sub)
+                    (t) => t.cognitoId.eq(loggedInUser.attributes.sub)
                 );
                 if (result && result.length === 0) {
                     result = yield call([API, API.graphql], {

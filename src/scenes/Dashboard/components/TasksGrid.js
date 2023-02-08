@@ -68,11 +68,8 @@ function TasksGrid(props) {
                 models.TaskStatus.ABANDONED,
                 models.TaskStatus.REJECTED,
             ]
-                .filter(
-                    (column) => _.intersection(excludeList, column).length === 0
-                )
+                .filter((column) => !excludeList.includes(column))
                 .map((taskKey) => {
-                    console.log(taskKey);
                     const title = getColumnTitle(taskKey);
                     return (
                         <Grid item key={title} className={classes.column}>

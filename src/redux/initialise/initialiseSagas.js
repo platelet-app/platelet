@@ -127,7 +127,7 @@ async function populateFakeData() {
     }
     const responsibilities = await DataStore.query(models.RiderResponsibility);
     const offlineUser = await DataStore.query(models.User, (u) =>
-        u.name("eq", "offline")
+        u.name.eq("offline")
     );
     if (offlineUser.length === 0) {
         const profilePicture = profilePictures.pop();
@@ -311,7 +311,7 @@ async function randomComment(task) {
 
     if (Math.floor(Math.random() * 10000) % 4 === 0) {
         const author = await DataStore.query(models.User, (u) =>
-            u.name("eq", "offline")
+            u.name.eq("offline")
         );
         if (author[0]) {
             await DataStore.save(
@@ -335,20 +335,20 @@ function generateRequesterContact() {
 
 async function populateTasks() {
     const whoamiFind = await DataStore.query(models.User, (u) =>
-        u.name("eq", "offline")
+        u.name.eq("offline")
     );
     const availableDeliverables = await DataStore.query(models.DeliverableType);
     const availableRiders = (await DataStore.query(models.User)).filter(
         (u) => u.roles && u.roles.includes(models.Role.RIDER)
     );
     const availableLocations = await DataStore.query(models.Location, (l) =>
-        l.listed("eq", 1)
+        l.listed.eq(1)
     );
     const whoami = whoamiFind[0];
 
     // tasksNew
     const tasksNewCheck = await DataStore.query(models.Task, (t) =>
-        t.status("eq", models.TaskStatus.NEW)
+        t.status.eq(models.TaskStatus.NEW)
     );
     if (tasksNewCheck.length === 0) {
         let timeOfCall = null;
@@ -392,10 +392,10 @@ async function populateTasks() {
     }
     // tasksCancelledRejected
     const tasksCancelledCheck = await DataStore.query(models.Task, (t) =>
-        t.status("eq", models.TaskStatus.CANCELLED)
+        t.status.eq(models.TaskStatus.CANCELLED)
     );
     const tasksRejectedCheck = await DataStore.query(models.Task, (t) =>
-        t.status("eq", models.TaskStatus.REJECTED)
+        t.status.eq(models.TaskStatus.REJECTED)
     );
     if ([...tasksCancelledCheck, ...tasksRejectedCheck].length === 0) {
         for (const i in _.range(5)) {
@@ -445,7 +445,7 @@ async function populateTasks() {
     }
     // tasksActive
     const tasksActiveCheck = await DataStore.query(models.Task, (task) =>
-        task.status("eq", models.TaskStatus.ACTIVE)
+        task.status.eq(models.TaskStatus.ACTIVE)
     );
     if (tasksActiveCheck.length === 0) {
         let timeOfCall = null;
@@ -499,7 +499,7 @@ async function populateTasks() {
     }
     // tasksPickedUp
     const tasksPickedUpCheck = await DataStore.query(models.Task, (task) =>
-        task.status("eq", models.TaskStatus.PICKED_UP)
+        task.status.eq(models.TaskStatus.PICKED_UP)
     );
     if (tasksPickedUpCheck.length === 0) {
         let timeOfCall = null;
@@ -557,11 +557,10 @@ async function populateTasks() {
     }
     // tasksDroppedOff
     const tasksDroppedOffCheck = await DataStore.query(models.Task, (task) =>
-        task.or((task) =>
-            task
-                .status("eq", models.TaskStatus.DROPPED_OFF)
-                .status("eq", models.TaskStatus.COMPLETED)
-        )
+        task.or((task) => [
+            task.status.eq(models.TaskStatus.DROPPED_OFF),
+            task.status.eq(models.TaskStatus.COMPLETED),
+        ])
     );
     if (tasksDroppedOffCheck.length === 0) {
         let timeOfCall = null;
