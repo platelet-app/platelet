@@ -49,7 +49,6 @@ async function sendFeedbackEmail(body, senderEmail = null) {
         },
         Source,
         ReplyToAddresses: [returnEmailAddress],
-        ReturnPath: plateletEmail,
     };
 
     return await ses.sendEmail(params).promise();
