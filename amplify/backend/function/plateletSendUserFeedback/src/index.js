@@ -15,6 +15,7 @@ async function sendFeedbackEmail(body, senderEmail = null) {
         region: process.env.REGION,
     });
     const plateletEmail = process.env.PLATELET_SEND_TO_EMAIL_ADDRESS;
+    const Source = process.env.PLATELET_SEND_FROM_EMAIL_ADDRESS;
     const returnEmailAddress =
         senderEmail || process.env.PLATELET_SEND_TO_EMAIL_ADDRESS;
 
@@ -46,7 +47,7 @@ async function sendFeedbackEmail(body, senderEmail = null) {
                 Data: "Feedback from",
             },
         },
-        Source: plateletEmail,
+        Source,
         ReplyToAddresses: [returnEmailAddress],
         ReturnPath: plateletEmail,
     };

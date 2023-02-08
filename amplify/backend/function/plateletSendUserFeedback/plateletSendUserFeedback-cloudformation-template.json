@@ -18,6 +18,9 @@
     },
     "plateletSendToEmailAddress": {
       "Type": "String"
+    },
+    "plateletSendFromEmailAddress": {
+      "Type": "String"
     }
   },
   "Conditions": {
@@ -75,6 +78,9 @@
             },
             "PLATELET_SEND_TO_EMAIL_ADDRESS": {
               "Ref": "plateletSendToEmailAddress"
+            },
+            "PLATELET_SEND_FROM_EMAIL_ADDRESS": {
+              "Ref": "plateletSendFromEmailAddress"
             }
           }
         },

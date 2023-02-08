@@ -1,3 +1,4 @@
 {
-    "plateletSendToEmailAddress": "bb.app@bloodbikes.org.uk"
+    "plateletSendToEmailAddress": "bb.app@bloodbikes.org.uk",
+    "plateletSendFromEmailAddress": "noreply@bloodbikes.cloud"
 }
