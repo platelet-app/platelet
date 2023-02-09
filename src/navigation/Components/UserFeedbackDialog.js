@@ -45,6 +45,7 @@ function UserFeedbackDialog({ open, onClose }) {
     const sendFeedback = React.useCallback(
         (emailAddress, body) => {
             setIsPosting(true);
+            emailAddress = emailAddress || null;
             const input = {
                 emailAddress,
                 body,
