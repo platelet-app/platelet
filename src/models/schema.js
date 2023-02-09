@@ -1427,6 +1427,15 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "status": {
+                    "name": "status",
+                    "isArray": false,
+                    "type": {
+                        "enum": "TaskStatus"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1457,6 +1466,16 @@ export const schema = {
                         "name": "byTenantId",
                         "fields": [
                             "tenantId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byStatus",
+                        "queryField": "handoversByStatus",
+                        "fields": [
+                            "status"
                         ]
                     }
                 },
@@ -2134,6 +2153,19 @@ export const schema = {
                 "ME"
             ]
         },
+        "TaskStatus": {
+            "name": "TaskStatus",
+            "values": [
+                "NEW",
+                "ACTIVE",
+                "PICKED_UP",
+                "DROPPED_OFF",
+                "CANCELLED",
+                "REJECTED",
+                "ABANDONED",
+                "COMPLETED"
+            ]
+        },
         "Priority": {
             "name": "Priority",
             "values": [
@@ -2161,19 +2193,6 @@ export const schema = {
                 "GRAM",
                 "ITEM",
                 "BOX"
-            ]
-        },
-        "TaskStatus": {
-            "name": "TaskStatus",
-            "values": [
-                "NEW",
-                "ACTIVE",
-                "PICKED_UP",
-                "DROPPED_OFF",
-                "CANCELLED",
-                "REJECTED",
-                "ABANDONED",
-                "COMPLETED"
             ]
         }
     },
@@ -2389,5 +2408,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.3.5",
-    "version": "807aea49669ce755d23afdb71af5760a"
+    "version": "ee42e832253bdb3569b3087f540c2772"
 };

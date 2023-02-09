@@ -14,6 +14,17 @@ export enum CommentVisibility {
   ME = "ME"
 }
 
+export enum TaskStatus {
+  NEW = "NEW",
+  ACTIVE = "ACTIVE",
+  PICKED_UP = "PICKED_UP",
+  DROPPED_OFF = "DROPPED_OFF",
+  CANCELLED = "CANCELLED",
+  REJECTED = "REJECTED",
+  ABANDONED = "ABANDONED",
+  COMPLETED = "COMPLETED"
+}
+
 export enum Priority {
   HIGH = "HIGH",
   MEDIUM = "MEDIUM",
@@ -35,17 +46,6 @@ export enum DeliverableUnit {
   GRAM = "GRAM",
   ITEM = "ITEM",
   BOX = "BOX"
-}
-
-export enum TaskStatus {
-  NEW = "NEW",
-  ACTIVE = "ACTIVE",
-  PICKED_UP = "PICKED_UP",
-  DROPPED_OFF = "DROPPED_OFF",
-  CANCELLED = "CANCELLED",
-  REJECTED = "REJECTED",
-  ABANDONED = "ABANDONED",
-  COMPLETED = "COMPLETED"
 }
 
 type EagerStatistics = {
@@ -492,6 +492,7 @@ type EagerHandover = {
   readonly handoverLocation?: Location | null;
   readonly assignedRider?: User | null;
   readonly orderInGrid: number;
+  readonly status?: TaskStatus | keyof typeof TaskStatus | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -504,6 +505,7 @@ type LazyHandover = {
   readonly handoverLocation: AsyncItem<Location | undefined>;
   readonly assignedRider: AsyncItem<User | undefined>;
   readonly orderInGrid: number;
+  readonly status?: TaskStatus | keyof typeof TaskStatus | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

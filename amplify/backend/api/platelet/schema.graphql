@@ -246,6 +246,7 @@ type Handover
   handoverLocation: Location @belongsTo
   assignedRider: User @belongsTo
   orderInGrid: Int!
+  status: TaskStatus @index(name: "byStatus", queryField: "handoversByStatus")
 }
 
 type Comment

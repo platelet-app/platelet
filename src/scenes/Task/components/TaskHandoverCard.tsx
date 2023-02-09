@@ -20,11 +20,11 @@ type TaskHandoversProps = {
 
 const TaskHandoverCard: React.FC<TaskHandoversProps> = ({
     handover,
-    onClear,
-    onMoveUp,
-    onMoveDown,
-    disableUp,
-    disableDown,
+    onClear = () => {},
+    onMoveUp = () => {},
+    onMoveDown = () => {},
+    disableUp = false,
+    disableDown = false,
 }) => {
     const dispatch = useDispatch();
     const saveLocation = async (location: models.Location) => {

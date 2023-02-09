@@ -79,6 +79,7 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
                     task: currentTask,
                     tenantId,
                     orderInGrid: highestOrderInGrid + 1,
+                    status: models.TaskStatus.NEW,
                 })
             );
         }
@@ -151,7 +152,11 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
                                     <Collapse key={h.id}>
                                         <TimelineItem>
                                             <TimelineSeparator>
-                                                <TimelineDot />
+                                                <TimelineDot
+                                                    sx={{
+                                                        backgroundColor: `taskStatus.${h.status}`,
+                                                    }}
+                                                />
                                                 {!isLast && (
                                                     <TimelineConnector />
                                                 )}
