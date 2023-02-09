@@ -2,15 +2,15 @@ import * as models from "../../../models";
 import { Typography, Divider, Stack } from "@mui/material";
 
 type TaskHandoverHeaderFooterProps = {
-    location: models.Location | null;
+    location?: models.Location | null;
     header?: boolean;
     footer?: boolean;
 };
 
 const TaskHandoverHeaderFooter: React.FC<TaskHandoverHeaderFooterProps> = ({
-    location,
-    header,
-    footer,
+    location = null,
+    header = false,
+    footer = false,
 }) => {
     if (!location) {
         return null;

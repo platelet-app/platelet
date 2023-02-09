@@ -2,7 +2,7 @@ import { Chip, Grid } from "@mui/material";
 
 export enum TaskOverViewTabValues {
     OVERVIEW = "Overview",
-    HANDOVERS = "Handovers",
+    HANDOVERS = "Route/Handovers",
 }
 
 type TaskOverviewTabsProps = {

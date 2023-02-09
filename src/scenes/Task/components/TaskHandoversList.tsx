@@ -16,141 +16,21 @@ import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineContent from "@mui/lab/TimelineContent";
 import TimelineDot from "@mui/lab/TimelineDot";
 import TaskHandoverHeaderFooter from "./TaskHandoverHeaderFooter";
+import { useTaskHandovers } from "../../../hooks/useTaskHandovers";
+import useTask from "../../../hooks/useTask";
 
 type TaskHandoversListProps = {
     taskId: string;
 };
 
-type TaskHandoverState = {
-    [key: string]: models.Handover;
-};
-
-function convertListDataToObject(list: models.Handover[]) {
-    const result: TaskHandoverState = {};
-    for (const item of list) {
-        result[item.id] = item;
-    }
-    return result;
-}
-
-type LocationStateType = {
-    pickUpLocation: models.Location | null;
-    dropOffLocation: models.Location | null;
-};
-
 const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
-    const [handovers, setHandovers] = React.useState<TaskHandoverState>({});
-    const [locationsState, setLocationsState] =
-        React.useState<LocationStateType>({
-            pickUpLocation: null,
-            dropOffLocation: null,
-        });
-
-    const [errorState, setErrorState] = React.useState<any | null>(null);
     const tenantId = useSelector(tenantIdSelector);
-    const handoverSubscription = React.useRef({ unsubscribe: () => {} });
-    const taskSubscription = React.useRef({ unsubscribe: () => {} });
-    const transitionEnabled = React.useRef(false);
-
-    const getTask = React.useCallback(async () => {
-        try {
-            const task = await DataStore.query(models.Task, taskId);
-            if (task) {
-                setLocationsState({
-                    pickUpLocation: task.pickUpLocation || null,
-                    dropOffLocation: task.dropOffLocation || null,
-                });
-                taskSubscription.current = DataStore.observe(
-                    models.Task,
-                    taskId
-                ).subscribe(({ element }) => {
-                    if (element)
-                        DataStore.query(models.Task, taskId).then((t) => {
-                            if (t) {
-                                setLocationsState({
-                                    pickUpLocation: t.pickUpLocation || null,
-                                    dropOffLocation: t.dropOffLocation || null,
-                                });
-                            }
-                        });
-                });
-            }
-        } catch (error) {
-            setErrorState(error);
-        }
-    }, [taskId]);
-
-    React.useEffect(() => {
-        getTask();
-        return () => {
-            taskSubscription.current.unsubscribe();
-        };
-    });
-
-    const getHandovers = React.useCallback(async () => {
-        try {
-            const result = (await DataStore.query(models.Handover)).filter(
-                (h) => h.task?.id === taskId
-            );
-            const handoverState = convertListDataToObject(result);
-
-            setHandovers(handoverState);
-            setTimeout(() => {
-                if (!transitionEnabled.current) {
-                    transitionEnabled.current = true;
-                }
-            }, 2000);
-            handoverSubscription.current = DataStore.observe(
-                models.Handover
-            ).subscribe(async ({ opType, element }) => {
-                // These ignores are in here because of DataStore not properly resolving relations
-                // this can be removed once DataStore is upgraded
-                // and the condition removed
-                //
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                if (element.task || element.taskHandoversId) {
-                    if (
-                        element.task?.id === taskId ||
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        element.taskHandoversId === taskId
-                    ) {
-                        if (opType === "DELETE") {
-                            setHandovers((prevState) =>
-                                _.omit(prevState, element.id)
-                            );
-                        } else {
-                            const newElement = await DataStore.query(
-                                models.Handover,
-                                element.id
-                            );
-                            if (newElement) {
-                                setHandovers((prevState) => ({
-                                    ...prevState,
-                                    [newElement.id]: newElement,
-                                }));
-                            }
-                        }
-                    }
-                }
-            });
-        } catch (error: any) {
-            console.log(error);
-            setErrorState(error);
-        }
-    }, [taskId]);
-
-    React.useEffect(() => {
-        getHandovers();
-        return () => {
-            handoverSubscription.current.unsubscribe();
-        };
-    }, [getHandovers]);
-
+    const { state, error } = useTaskHandovers(taskId);
+    const taskState = useTask(taskId);
+    const task = taskState.state;
     const moveHandoverUp = async (handover: models.Handover) => {
         const handoverIndex = handover.orderInGrid;
-        const handoverAbove = Object.values(handovers).find(
+        const handoverAbove = Object.values(state).find(
             (h) => h.orderInGrid === handoverIndex - 1
         );
         if (handoverAbove) {
@@ -169,7 +49,7 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
 
     const moveHandoverDown = async (handover: models.Handover) => {
         const handoverIndex = handover.orderInGrid;
-        const handoverBelow = Object.values(handovers).find(
+        const handoverBelow = Object.values(state).find(
             (h) => h.orderInGrid === handoverIndex + 1
         );
         if (handoverBelow) {
@@ -188,7 +68,7 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
 
     const saveHandover = React.useCallback(async () => {
         // get the current highest orderInGrid from handovers
-        const highestOrderInGrid = Object.values(handovers).reduce(
+        const highestOrderInGrid = Object.values(state).reduce(
             (acc, curr) => (curr.orderInGrid > acc ? curr.orderInGrid : acc),
             0
         );
@@ -202,7 +82,7 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
                 })
             );
         }
-    }, [taskId, tenantId, handovers]);
+    }, [taskId, tenantId, state]);
 
     const handleDelete = async (handover: models.Handover) => {
         const allCurrentHandovers = (
@@ -224,7 +104,7 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
         await DataStore.delete(handover);
     };
 
-    if (errorState) {
+    if (error) {
         return <Typography>Something went wrong.</Typography>;
     }
 
@@ -237,11 +117,8 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
                 maxWidth: "90%",
             }}
         >
-            <TaskHandoverHeaderFooter
-                header
-                location={locationsState.pickUpLocation}
-            />
-            {Object.values(handovers).length === 0 && (
+            <TaskHandoverHeaderFooter header location={task?.pickUpLocation} />
+            {Object.values(state).length === 0 && (
                 <Typography sx={{ padding: 1 }} variant="h5">
                     No handovers
                 </Typography>
@@ -261,14 +138,14 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
                     }}
                 >
                     <TransitionGroup>
-                        {Object.values(handovers)
+                        {Object.values(state)
                             .sort((a, b) => a.orderInGrid - b.orderInGrid)
                             .map((h) => {
                                 // check if it is the first or last item
                                 const isFirst = h.orderInGrid === 1;
                                 const isLast =
                                     h.orderInGrid ===
-                                    Object.values(handovers).length;
+                                    Object.values(state).length;
 
                                 return (
                                     <Collapse key={h.id}>
@@ -318,10 +195,7 @@ const TaskHandoversList: React.FC<TaskHandoversListProps> = ({ taskId }) => {
                     </IconButton>
                 </Stack>
             </Stack>
-            <TaskHandoverHeaderFooter
-                footer
-                location={locationsState.dropOffLocation}
-            />
+            <TaskHandoverHeaderFooter footer location={task?.dropOffLocation} />
         </Paper>
     );
 };
