@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TaskContextMenu copy to clipboard 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      "TOC: 23:24 FROM: test ward - line one, postcode TO: some ward - something, some postcode PRIORITY: high ITEMS: test deliverable x 1, test deliverable x 2, test deliverable x 3",
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;

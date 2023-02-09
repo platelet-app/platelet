@@ -1,7 +1,7 @@
 import * as models from "../models";
 import moment from "moment";
 
-export default function copyTaskDataToClipboard(task: models.Task) {
+export default function generateClipboardTextFromTask(task: models.Task) {
     const {
         pickUpLocation,
         priority,
@@ -46,16 +46,5 @@ export default function copyTaskDataToClipboard(task: models.Task) {
         if (value) result += `${first ? "" : " "}${key}: ${value}`;
         first = false;
     }
-
-    if ((window as any).cordova) {
-        return new Promise((resolve, reject) => {
-            (window as any).cordova.plugins.clipboard.copy(
-                result,
-                resolve,
-                reject
-            );
-        });
-    } else {
-        return navigator.clipboard.writeText(result);
-    }
+    return result;
 }
