@@ -982,6 +982,13 @@ export const schema = {
                         "associatedWith": "taskHandoversId"
                     }
                 },
+                "isRiderUsingOwnVehicle": {
+                    "name": "isRiderUsingOwnVehicle",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -2168,17 +2175,6 @@ export const schema = {
                 "ABANDONED",
                 "COMPLETED"
             ]
-        },
-        "Patch": {
-            "name": "Patch",
-            "values": [
-                "NORTH",
-                "WEST",
-                "EAST",
-                "SOUTH",
-                "RELIEF",
-                "AIR_AMBULANCE"
-            ]
         }
     },
     "nonModels": {
@@ -2392,6 +2388,6 @@ export const schema = {
             }
         }
     },
-    "codegenVersion": "3.3.2",
-    "version": "35ea781b936d43a5281047e026ffdbba"
+    "codegenVersion": "3.3.5",
+    "version": "807aea49669ce755d23afdb71af5760a"
 };

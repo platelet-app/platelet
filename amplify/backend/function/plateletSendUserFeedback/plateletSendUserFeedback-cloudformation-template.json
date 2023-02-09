@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"Amplify\",\"createdWith\":\"10.4.0\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
+  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"Amplify\",\"createdWith\":\"10.6.2\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
   "Parameters": {
     "CloudWatchRule": {
       "Type": "String",
@@ -17,6 +17,9 @@
       "Type": "String"
     },
     "plateletSendToEmailAddress": {
+      "Type": "String"
+    },
+    "plateletSendFromEmailAddress": {
       "Type": "String"
     }
   },
@@ -75,6 +78,9 @@
             },
             "PLATELET_SEND_TO_EMAIL_ADDRESS": {
               "Ref": "plateletSendToEmailAddress"
+            },
+            "PLATELET_SEND_FROM_EMAIL_ADDRESS": {
+              "Ref": "plateletSendFromEmailAddress"
             }
           }
         },
@@ -221,6 +227,14 @@
     "LambdaExecutionRole": {
       "Value": {
         "Ref": "LambdaExecutionRole"
+      }
+    },
+    "LambdaExecutionRoleArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "LambdaExecutionRole",
+          "Arn"
+        ]
       }
     }
   }

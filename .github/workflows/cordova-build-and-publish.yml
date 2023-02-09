@@ -12,7 +12,8 @@ jobs:
       matrix:
         node-version: [14.x]
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
@@ -84,7 +85,7 @@ jobs:
       uses: r0adkll/upload-google-play@v1
       with:
         serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
-        packageName: app.platelet.platelet
+        packageName: ${{ vars.GOOGLE_PLAY_PACKAGE_NAME }}
         releaseFiles: installers/app-release.aab
         track: production
         status: completed

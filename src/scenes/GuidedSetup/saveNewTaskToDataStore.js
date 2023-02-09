@@ -22,7 +22,12 @@ export async function saveNewTaskToDataStore(
     if (!author) {
         throw new Error("Author not found");
     }
-    let { locations, deliverables, comment, ...rest } = data;
+    let { locations, deliverables, comment, establishmentLocation, ...rest } =
+        data;
+    // I don't know why id is defined on establishmentLocation but not on other locations
+    if (establishmentLocation && establishmentLocation.listed === 0) {
+        establishmentLocation = await DataStore.save(establishmentLocation);
+    }
     let pickUpLocation = locations.pickUpLocation;
     if (locations.pickUpLocation && !locations.pickUpLocation.id) {
         pickUpLocation = await DataStore.save(
@@ -42,6 +47,7 @@ export async function saveNewTaskToDataStore(
         new models.Task({
             ...rest,
             pickUpLocation,
+            establishmentLocation,
             createdBy: author,
             dropOffLocation,
             status: tasksStatus.new,

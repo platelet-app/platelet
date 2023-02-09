@@ -380,6 +380,7 @@ export const onCreateUser = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -583,6 +584,7 @@ export const onUpdateUser = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -786,6 +788,7 @@ export const onDeleteUser = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -2078,6 +2081,7 @@ export const onCreateLocation = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -2107,6 +2111,7 @@ export const onCreateLocation = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -2136,6 +2141,7 @@ export const onCreateLocation = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -2317,6 +2323,7 @@ export const onUpdateLocation = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -2346,6 +2353,7 @@ export const onUpdateLocation = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -2375,6 +2383,7 @@ export const onUpdateLocation = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -2556,6 +2565,7 @@ export const onDeleteLocation = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -2585,6 +2595,7 @@ export const onDeleteLocation = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -2614,6 +2625,7 @@ export const onDeleteLocation = /* GraphQL */ `
           riderResponsibility
           priority
           status
+          isRiderUsingOwnVehicle
           createdAt
           updatedAt
           _version
@@ -3086,6 +3098,7 @@ export const onCreateTask = /* GraphQL */ `
         nextToken
         startedAt
       }
+      isRiderUsingOwnVehicle
       createdAt
       updatedAt
       _version
@@ -3510,6 +3523,7 @@ export const onUpdateTask = /* GraphQL */ `
         nextToken
         startedAt
       }
+      isRiderUsingOwnVehicle
       createdAt
       updatedAt
       _version
@@ -3934,6 +3948,7 @@ export const onDeleteTask = /* GraphQL */ `
         nextToken
         startedAt
       }
+      isRiderUsingOwnVehicle
       createdAt
       updatedAt
       _version
@@ -4092,6 +4107,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `
           nextToken
           startedAt
         }
+        isRiderUsingOwnVehicle
         createdAt
         updatedAt
         _version
@@ -4330,6 +4346,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
           nextToken
           startedAt
         }
+        isRiderUsingOwnVehicle
         createdAt
         updatedAt
         _version
@@ -4568,6 +4585,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
           nextToken
           startedAt
         }
+        isRiderUsingOwnVehicle
         createdAt
         updatedAt
         _version
@@ -4803,6 +4821,7 @@ export const onCreateHandover = /* GraphQL */ `
           nextToken
           startedAt
         }
+        isRiderUsingOwnVehicle
         createdAt
         updatedAt
         _version
@@ -5120,6 +5139,7 @@ export const onUpdateHandover = /* GraphQL */ `
           nextToken
           startedAt
         }
+        isRiderUsingOwnVehicle
         createdAt
         updatedAt
         _version
@@ -5437,6 +5457,7 @@ export const onDeleteHandover = /* GraphQL */ `
           nextToken
           startedAt
         }
+        isRiderUsingOwnVehicle
         createdAt
         updatedAt
         _version
@@ -6167,6 +6188,7 @@ export const onCreateDeliverable = /* GraphQL */ `
           nextToken
           startedAt
         }
+        isRiderUsingOwnVehicle
         createdAt
         updatedAt
         _version
@@ -6371,6 +6393,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
           nextToken
           startedAt
         }
+        isRiderUsingOwnVehicle
         createdAt
         updatedAt
         _version
@@ -6575,6 +6598,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
           nextToken
           startedAt
         }
+        isRiderUsingOwnVehicle
         createdAt
         updatedAt
         _version
