@@ -206,6 +206,20 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "assignedHandovers": {
+                    "name": "assignedHandovers",
+                    "isArray": true,
+                    "type": {
+                        "model": "Handover"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "userAssignedHandoversId"
+                    }
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -954,6 +968,20 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "handovers": {
+                    "name": "handovers",
+                    "isArray": true,
+                    "type": {
+                        "model": "Handover"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "taskHandoversId"
+                    }
+                },
                 "isRiderUsingOwnVehicle": {
                     "name": "isRiderUsingOwnVehicle",
                     "isArray": false,
@@ -1247,6 +1275,20 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "handoversAsLocation": {
+                    "name": "handoversAsLocation",
+                    "isArray": true,
+                    "type": {
+                        "model": "Handover"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "locationHandoversAsLocationId"
+                    }
+                },
                 "googleMapsPlaceId": {
                     "name": "googleMapsPlaceId",
                     "isArray": false,
@@ -1302,6 +1344,157 @@ export const schema = {
                                 "provider": "userPools",
                                 "allow": "groups",
                                 "groups": [
+                                    "ADMIN"
+                                ],
+                                "operations": [
+                                    "create",
+                                    "read",
+                                    "update"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "Handover": {
+            "name": "Handover",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "tenantId": {
+                    "name": "tenantId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "task": {
+                    "name": "task",
+                    "isArray": false,
+                    "type": {
+                        "model": "Task"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "taskHandoversId"
+                    }
+                },
+                "timeOfHandover": {
+                    "name": "timeOfHandover",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "handoverLocation": {
+                    "name": "handoverLocation",
+                    "isArray": false,
+                    "type": {
+                        "model": "Location"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "locationHandoversAsLocationId"
+                    }
+                },
+                "assignedRider": {
+                    "name": "assignedRider",
+                    "isArray": false,
+                    "type": {
+                        "model": "User"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "userAssignedHandoversId"
+                    }
+                },
+                "orderInGrid": {
+                    "name": "orderInGrid",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "status": {
+                    "name": "status",
+                    "isArray": false,
+                    "type": {
+                        "enum": "TaskStatus"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "Handovers",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantId",
+                        "fields": [
+                            "tenantId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byStatus",
+                        "queryField": "handoversByStatus",
+                        "fields": [
+                            "status"
+                        ]
+                    }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "read"
+                                ]
+                            },
+                            {
+                                "groupClaim": "cognito:groups",
+                                "provider": "userPools",
+                                "allow": "groups",
+                                "groups": [
+                                    "COORDINATOR",
                                     "ADMIN"
                                 ],
                                 "operations": [
@@ -1960,6 +2153,19 @@ export const schema = {
                 "ME"
             ]
         },
+        "TaskStatus": {
+            "name": "TaskStatus",
+            "values": [
+                "NEW",
+                "ACTIVE",
+                "PICKED_UP",
+                "DROPPED_OFF",
+                "CANCELLED",
+                "REJECTED",
+                "ABANDONED",
+                "COMPLETED"
+            ]
+        },
         "Priority": {
             "name": "Priority",
             "values": [
@@ -1987,19 +2193,6 @@ export const schema = {
                 "GRAM",
                 "ITEM",
                 "BOX"
-            ]
-        },
-        "TaskStatus": {
-            "name": "TaskStatus",
-            "values": [
-                "NEW",
-                "ACTIVE",
-                "PICKED_UP",
-                "DROPPED_OFF",
-                "CANCELLED",
-                "REJECTED",
-                "ABANDONED",
-                "COMPLETED"
             ]
         }
     },
@@ -2215,5 +2408,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.3.5",
-    "version": "3c3c2097a8699496ece95b504d3fb046"
+    "version": "ee42e832253bdb3569b3087f540c2772"
 };

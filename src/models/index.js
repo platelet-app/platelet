@@ -14,6 +14,17 @@ const CommentVisibility = {
   "ME": "ME"
 };
 
+const TaskStatus = {
+  "NEW": "NEW",
+  "ACTIVE": "ACTIVE",
+  "PICKED_UP": "PICKED_UP",
+  "DROPPED_OFF": "DROPPED_OFF",
+  "CANCELLED": "CANCELLED",
+  "REJECTED": "REJECTED",
+  "ABANDONED": "ABANDONED",
+  "COMPLETED": "COMPLETED"
+};
+
 const Priority = {
   "HIGH": "HIGH",
   "MEDIUM": "MEDIUM",
@@ -37,18 +48,7 @@ const DeliverableUnit = {
   "BOX": "BOX"
 };
 
-const TaskStatus = {
-  "NEW": "NEW",
-  "ACTIVE": "ACTIVE",
-  "PICKED_UP": "PICKED_UP",
-  "DROPPED_OFF": "DROPPED_OFF",
-  "CANCELLED": "CANCELLED",
-  "REJECTED": "REJECTED",
-  "ABANDONED": "ABANDONED",
-  "COMPLETED": "COMPLETED"
-};
-
-const { User, PossibleRiderResponsibilities, RiderResponsibility, Comment, TaskAssignee, Task, Location, Deliverable, DeliverableType, VehicleAssignment, Vehicle, Tenant, Statistics, SendFeedback, AddressAndContactDetails, S3Object } = initSchema(schema);
+const { User, PossibleRiderResponsibilities, RiderResponsibility, Comment, TaskAssignee, Task, Location, Handover, Deliverable, DeliverableType, VehicleAssignment, Vehicle, Tenant, Statistics, SendFeedback, AddressAndContactDetails, S3Object } = initSchema(schema);
 
 export {
   User,
@@ -58,6 +58,7 @@ export {
   TaskAssignee,
   Task,
   Location,
+  Handover,
   Deliverable,
   DeliverableType,
   VehicleAssignment,
@@ -65,10 +66,10 @@ export {
   Tenant,
   Role,
   CommentVisibility,
+  TaskStatus,
   Priority,
   DeliverableTypeIcon,
   DeliverableUnit,
-  TaskStatus,
   Statistics,
   SendFeedback,
   AddressAndContactDetails,

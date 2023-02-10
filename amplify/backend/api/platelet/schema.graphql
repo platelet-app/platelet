@@ -41,6 +41,7 @@ type User
   createdLocations: [Location] @hasMany
   createdVehicles: [Vehicle] @hasMany
   disabled: Int @default(value: "0")
+  assignedHandovers: [Handover] @hasMany
 }
 
 type PossibleRiderResponsibilities
@@ -136,6 +137,7 @@ type Location
   taskAsEstablishment: [Task] @hasMany(indexName: "byEstasblishmentLocation", fields: ["id"])
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
   disabled: Int @default(value: "0")
+  handoversAsLocation: [Handover] @hasMany
   googleMapsPlaceId: String
 }
 
@@ -214,6 +216,7 @@ timePickedUpSenderName: String
   deliverables: [Deliverable] @hasMany
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
   status: TaskStatus @index(name: "byStatus", queryField: "tasksByStatus")
+  handovers: [Handover] @hasMany
   isRiderUsingOwnVehicle: Int @default(value: "0")
 }
 
@@ -228,6 +231,22 @@ type TaskAssignee
   role: Role!
   task: Task! @belongsTo
   assignee: User! @belongsTo
+}
+
+type Handover
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["COORDINATOR", "ADMIN"], operations: [create, read, update]},
+])
+@model {
+  id: ID!
+  tenantId: ID! @index(name: "byTenantId")
+  task: Task! @belongsTo
+  timeOfHandover: AWSDateTime
+  handoverLocation: Location @belongsTo
+  assignedRider: User @belongsTo
+  orderInGrid: Int!
+  status: TaskStatus @index(name: "byStatus", queryField: "handoversByStatus")
 }
 
 type Comment
