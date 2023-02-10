@@ -122,14 +122,18 @@ function StatusBar(props) {
             );
             const result = { ...taskResult, deliverables };
             const textToCopy = generateClipboardTextFromTask(result);
-            copyStringToClipboard(textToCopy).then(
-                () => {
-                    setCopied(true);
-                },
-                () => {
-                    setCopyText(textToCopy);
-                }
-            );
+            try {
+                copyStringToClipboard(textToCopy).then(
+                    () => {
+                        setCopied(true);
+                    },
+                    () => {
+                        setCopyText(textToCopy);
+                    }
+                );
+            } catch (e) {
+                setCopyText(textToCopy);
+            }
         } catch (e) {
             console.log(e);
             setCopied(false);

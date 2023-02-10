@@ -19,8 +19,8 @@ function listener() {
 }
 
 function* initialiseBroadcastAPIListener() {
-    const channel = yield call(listener);
     try {
+        const channel = yield call(listener);
         while (true) {
             const broadcastData = yield take(channel);
             const data = broadcastData.payload;
@@ -29,9 +29,8 @@ function* initialiseBroadcastAPIListener() {
                 console.log("User was logged out through the broadcast API");
             }
         }
-    } finally {
-        // TODO: why does this run multiple times when interacting with the UI?
-        // console.log("stop BroadcastChannel");
+    } catch (error) {
+        console.log("failed to init broadcast listener", error);
     }
 }
 

@@ -23,7 +23,6 @@ import {
 } from "../../redux/Selectors";
 import determineTaskStatus from "../../utilities/determineTaskStatus";
 import duplicateTask from "../../utilities/duplicateTask";
-import copyTaskDataToClipboard from "../../utilities/copyTaskDataToClipboard";
 import generateClipboardTextFromTask from "../../utilities/generateClipboardTextFromTask";
 import { copyStringToClipboard } from "../../utilities/copyStringToClipboard";
 import CopyFailedDialog from "../CopyFailedDialog";
@@ -72,14 +71,20 @@ function TaskContextMenu(props) {
             ).filter((d) => d.task && d.task.id === taskResult.id);
             const result = { ...taskResult, deliverables };
             const textToCopy = generateClipboardTextFromTask(result);
-            copyStringToClipboard(textToCopy).then(
-                function () {
-                    dispatch(displayInfoNotification("Copied to clipboard"));
-                },
-                function () {
-                    setCopyText(textToCopy);
-                }
-            );
+            try {
+                copyStringToClipboard(textToCopy).then(
+                    function () {
+                        dispatch(
+                            displayInfoNotification("Copied to clipboard")
+                        );
+                    },
+                    function () {
+                        setCopyText(textToCopy);
+                    }
+                );
+            } catch (e) {
+                setCopyText(textToCopy);
+            }
         } catch (e) {
             console.log(e);
             dispatch(displayErrorNotification("Copy failed!"));
