@@ -1,6 +1,6 @@
 {
-    "short_name": "Platelet",
-    "name": "Platelet",
+    "short_name": "NABB",
+    "name": "NABB Control",
     "icons": [
         {
             "src": "icon/hires.png",
@@ -10,6 +10,6 @@
     ],
     "start_url": ".",
     "display": "standalone",
-    "theme_color": "#fd6d2a",
+    "theme_color": "#ed1f24",
     "background_color": "#282828"
 }
