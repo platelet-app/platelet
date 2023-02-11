@@ -486,7 +486,6 @@ export const schema = {
                                 "operations": [
                                     "create",
                                     "read",
-                                    "delete",
                                     "update"
                                 ]
                             }
