@@ -13,7 +13,7 @@ type User
 @auth(rules: [
   {allow: private, operations: [read]},
   {allow: owner, ownerField: "cognitoId", operations: [update]},
-  {allow: groups, groups: ["ADMIN"], operations: [update]},
+  {allow: groups, groups: ["ADMIN"], operations: [update, delete]},
 ])
 @model {
   id: ID!

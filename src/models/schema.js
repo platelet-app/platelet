@@ -276,7 +276,8 @@ export const schema = {
                                     "ADMIN"
                                 ],
                                 "operations": [
-                                    "update"
+                                    "update",
+                                    "delete"
                                 ]
                             }
                         ]
