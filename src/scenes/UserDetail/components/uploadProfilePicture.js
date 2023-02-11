@@ -73,23 +73,20 @@ async function uploadProfilePicture(userId, selectedFile) {
             );
             // just to generate the scaled files in the bucket
             // add 5 second delay because it doesn't work otherwise for some reason
-            await new Promise((resolve) => setTimeout(resolve, 5000)).then(
-                () => {
-                    API.graphql(
-                        graphqlOperation(getProfilePictureUrlQuery, {
-                            id: userId,
-                            width: 300,
-                            height: 300,
-                        })
-                    );
-                    API.graphql(
-                        graphqlOperation(getProfilePictureUrlQuery, {
-                            id: userId,
-                            width: 128,
-                            height: 128,
-                        })
-                    );
-                }
+            await new Promise((resolve) => setTimeout(resolve, 5000));
+            await API.graphql(
+                graphqlOperation(getProfilePictureUrlQuery, {
+                    id: userId,
+                    width: 300,
+                    height: 300,
+                })
+            );
+            await API.graphql(
+                graphqlOperation(getProfilePictureUrlQuery, {
+                    id: userId,
+                    width: 128,
+                    height: 128,
+                })
             );
         } catch (err) {
             console.log("error uploading file", err);
