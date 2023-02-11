@@ -256,7 +256,6 @@ function UserProfile(props) {
                 const existingResps = existing.map(
                     (r) => r.riderResponsibility
                 );
-                console.log(existing);
                 if (existing.length === 0) {
                     await DataStore.save(
                         new models.PossibleRiderResponsibilities({
