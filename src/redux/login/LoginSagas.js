@@ -43,16 +43,21 @@ export function* watchLogin() {
 }
 
 function* logout(action) {
-    if (action.data.broadcast) {
-        const channel = yield new BroadcastChannel(
-            "platelet-broadcast-channel"
-        );
-        yield call([channel, channel.postMessage], "logout");
+    try {
+        yield call([DataStore, DataStore.stop]);
+        yield call([DataStore, DataStore.clear]);
+        yield call([Auth, Auth.signOut]);
+        if (action.data.broadcast) {
+            const channel = yield new BroadcastChannel(
+                "platelet-broadcast-channel"
+            );
+            yield call([channel, channel.postMessage], "logout");
+        }
+    } catch (error) {
+        console.log(error);
+    } finally {
+        yield call([window, window.location.reload.bind(window.location)]);
     }
-    yield call([DataStore, DataStore.stop]);
-    yield call([DataStore, DataStore.clear]);
-    yield call([Auth, Auth.signOut]);
-    yield call([window, window.location.reload.bind(window.location)]);
 }
 
 export function* watchLogout() {

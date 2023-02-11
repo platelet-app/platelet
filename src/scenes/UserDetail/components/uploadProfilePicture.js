@@ -65,22 +65,6 @@ async function uploadProfilePicture(userId, selectedFile) {
                 },
                 body: selectedFile,
             });
-            let fileExists = false;
-            let tries = 0;
-            // check that the file was uploaded before continuing
-            // aaaaaaaaaaa
-            while (!fileExists) {
-                console.log("Checking if file exists");
-                tries++;
-                fileExists = await Storage.get(key);
-                if (!fileExists)
-                    console.log(`File not found, trying again... (${tries})`);
-                if (tries > 10) {
-                    throw new Error("File not found");
-                }
-            }
-            console.log("File found");
-
             const existingUser = await DataStore.query(models.User, userId);
             await DataStore.save(
                 models.User.copyOf(existingUser, (updated) => {
@@ -88,14 +72,14 @@ async function uploadProfilePicture(userId, selectedFile) {
                 })
             );
             // just to generate the scaled files in the bucket
-            console.log(
-                await API.graphql(
-                    graphqlOperation(getProfilePictureUrlQuery, {
-                        id: userId,
-                        width: 300,
-                        height: 300,
-                    })
-                )
+            // add 5 second delay because it doesn't work otherwise for some reason
+            await new Promise((resolve) => setTimeout(resolve, 5000));
+            await API.graphql(
+                graphqlOperation(getProfilePictureUrlQuery, {
+                    id: userId,
+                    width: 300,
+                    height: 300,
+                })
             );
             await API.graphql(
                 graphqlOperation(getProfilePictureUrlQuery, {

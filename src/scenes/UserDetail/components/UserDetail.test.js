@@ -170,9 +170,6 @@ describe("UserDetail", () => {
         expect(textBox).toHaveValue(takenName);
         userEvent.click(screen.getByRole("button", { name: "OK" }));
         await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(3, models.User);
-        });
-        await waitFor(() => {
             expect(
                 screen.getByText("Sorry, that display name is already taken")
             ).toBeInTheDocument();
@@ -386,8 +383,10 @@ describe("UserDetail", () => {
         ).toBeInTheDocument();
     });
 
-    test("add rider responsibilities to a user", async () => {
-        const user = await DataStore.save(new models.User(testUser));
+    test("add to and remove rider responsibilities from a user", async () => {
+        const user = await DataStore.save(
+            new models.User({ ...testUser, riderResponsibility: "testResp" })
+        );
         const riderResponsibility = await DataStore.save(
             new models.RiderResponsibility({ label: "testResp", tenantId })
         );
@@ -405,8 +404,8 @@ describe("UserDetail", () => {
             tenantId,
         });
         const querySpy = jest.spyOn(DataStore, "query");
-        const saveSpy = jest.spyOn(DataStore, "save");
         const deleteSpy = jest.spyOn(DataStore, "delete");
+        const saveSpy = jest.spyOn(DataStore, "save");
         render(<UserDetail userId={user.id} />, { preloadedState });
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(2);
@@ -416,12 +415,13 @@ describe("UserDetail", () => {
         userEvent.click(
             screen.getByRole("button", { name: "Edit Rider Roles" })
         );
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(3);
+        const addRiderRoleButton = await screen.findByRole("button", {
+            name: `Add Rider Role ${riderResponsibility.label}`,
         });
-        userEvent.click(
-            screen.getByRole("button", { name: "Add Rider Role testResp" })
-        );
+        const addRiderRoleButton2 = await screen.findByRole("button", {
+            name: `Add Rider Role ${riderResponsibility2.label}`,
+        });
+        userEvent.click(addRiderRoleButton);
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -430,30 +430,37 @@ describe("UserDetail", () => {
                 })
             );
         });
-        userEvent.click(
-            screen.getByRole("button", { name: "Add Rider Role second one" })
-        );
+        userEvent.click(addRiderRoleButton2);
         await waitFor(() => {
-            expect(saveSpy).toHaveBeenCalledTimes(3);
+            expect(saveSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    ...mockResultTwo,
+                    id: expect.any(String),
+                })
+            );
         });
-        expect(deleteSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
+        userEvent.click(addRiderRoleButton);
+        await waitFor(() => {
+            expect(deleteSpy).toHaveBeenCalledWith({
                 ...mockResultOne,
                 id: expect.any(String),
-            })
-        );
-        expect(saveSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                ...mockResultOne,
-                id: expect.any(String),
-            })
-        );
-        expect(saveSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                ...mockResultTwo,
-                id: expect.any(String),
-            })
-        );
+            });
+        });
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...user,
+                riderResponsibility: null,
+            });
+        });
+        await waitFor(() => {
+            expect(addRiderRoleButton).toHaveClass("MuiChip-outlined");
+        });
+        expect(addRiderRoleButton2).toHaveClass("MuiChip-default");
+        userEvent.click(screen.getByRole("button", { name: "Finish" }));
+        await waitFor(() => {
+            expect(screen.queryByText(riderResponsibility.label)).toBeNull();
+        });
+        expect(screen.getAllByText(riderResponsibility2.label)).toHaveLength(2);
     });
 
     test("change the current rider responsibility", async () => {
@@ -652,18 +659,11 @@ describe("UserDetail", () => {
         const user = await DataStore.save(new models.User(testUser));
         const querySpy = jest.spyOn(DataStore, "query");
         const unsubscribe = jest.fn();
-        const unsubscribe2 = jest.fn();
-        jest.spyOn(DataStore, "observe")
-            .mockImplementationOnce(() => {
-                return {
-                    subscribe: () => ({ unsubscribe }),
-                };
-            })
-            .mockImplementation(() => {
-                return {
-                    subscribe: () => ({ unsubscribe: unsubscribe2 }),
-                };
-            });
+        jest.spyOn(DataStore, "observe").mockImplementation(() => {
+            return {
+                subscribe: () => ({ unsubscribe: unsubscribe }),
+            };
+        });
         const { component } = render(<UserDetail userId={user.id} />, {
             preloadedState,
         });
@@ -671,7 +671,6 @@ describe("UserDetail", () => {
             expect(querySpy).toHaveBeenCalledTimes(2);
         });
         component.unmount();
-        expect(unsubscribe).toHaveBeenCalledTimes(1);
-        expect(unsubscribe2).toHaveBeenCalledTimes(1);
+        expect(unsubscribe).toHaveBeenCalledTimes(3);
     });
 });

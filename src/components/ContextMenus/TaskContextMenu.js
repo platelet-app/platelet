@@ -23,7 +23,9 @@ import {
 } from "../../redux/Selectors";
 import determineTaskStatus from "../../utilities/determineTaskStatus";
 import duplicateTask from "../../utilities/duplicateTask";
-import copyTaskDataToClipboard from "../../utilities/copyTaskDataToClipboard";
+import generateClipboardTextFromTask from "../../utilities/generateClipboardTextFromTask";
+import { copyStringToClipboard } from "../../utilities/copyStringToClipboard";
+import CopyFailedDialog from "../CopyFailedDialog";
 
 const initialState = {
     mouseX: null,
@@ -34,6 +36,7 @@ function TaskContextMenu(props) {
     const dispatch = useDispatch();
     const { task } = props;
     const [state, setState] = React.useState(initialState);
+    const [copyText, setCopyText] = React.useState(null);
     const [isPosting, setIsPosting] = React.useState(false);
     const roleView = useSelector(getRoleView);
     const whoami = useSelector(getWhoami);
@@ -62,28 +65,29 @@ function TaskContextMenu(props) {
                 models.Task,
                 props.task.id
             );
-            if (taskResult) {
-                const deliverables = (
-                    await DataStore.query(models.Deliverable)
-                ).filter((d) => d.task && d.task.id === taskResult.id);
-                const result = { ...taskResult, deliverables };
-                copyTaskDataToClipboard(result).then(
+            if (!taskResult) throw new Error("Task not found.");
+            const deliverables = (
+                await DataStore.query(models.Deliverable)
+            ).filter((d) => d.task && d.task.id === taskResult.id);
+            const result = { ...taskResult, deliverables };
+            const textToCopy = generateClipboardTextFromTask(result);
+            try {
+                copyStringToClipboard(textToCopy).then(
                     function () {
                         dispatch(
                             displayInfoNotification("Copied to clipboard")
                         );
-                        /* clipboard successfully set */
                     },
                     function () {
-                        dispatch(displayErrorNotification("Copy failed."));
-                        /* clipboard write failed */
+                        setCopyText(textToCopy);
                     }
                 );
-            } else {
-                dispatch(displayErrorNotification("Copy failed."));
+            } catch (e) {
+                setCopyText(textToCopy);
             }
         } catch (e) {
-            dispatch(displayErrorNotification("Copy failed."));
+            console.log(e);
+            dispatch(displayErrorNotification("Copy failed!"));
         }
     }
 
@@ -307,6 +311,10 @@ function TaskContextMenu(props) {
                     Delete
                 </MenuItem>
             </Menu>
+            <CopyFailedDialog
+                text={copyText}
+                onClose={() => setCopyText(null)}
+            />
         </>
     );
 }

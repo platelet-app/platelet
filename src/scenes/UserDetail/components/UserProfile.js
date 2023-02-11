@@ -20,6 +20,9 @@ import UserContactInformationDialog from "./UserContactInformationDialog";
 import UserAddressInformationDialog from "./UserAddressInformationDialog";
 import UserDisplayNameDialog from "./UserDisplayNameDialog";
 import PropTypes from "prop-types";
+import { convertListDataToObject } from "../../../utilities";
+import _ from "lodash";
+import usePossibleRiderResponsibilities from "../../../hooks/usePossibleRiderResponsibilities";
 
 const userFields = {
     name: "Name",
@@ -61,6 +64,13 @@ function UserProfile(props) {
     const whoami = useSelector(getWhoami);
     const tenantId = useSelector(tenantIdSelector);
     //const networkStatus = useSelector(networkStatusSelector);
+    const possibleRiderResponsibilitiesHook = usePossibleRiderResponsibilities(
+        props.user.id
+    );
+    const possibleRiderResponsibilities =
+        possibleRiderResponsibilitiesHook.state;
+    const setPossibleRiderResponsibilities =
+        possibleRiderResponsibilitiesHook.setState;
 
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
@@ -224,49 +234,68 @@ function UserProfile(props) {
     async function onChangePossibleResponsibilities(value) {
         if (value && tenantId) {
             setIsPostingRiderResponsibilities(true);
-            let possibleRiderResponsibilities = [];
-            if (
-                props.possibleRiderResponsibilities
-                    .map((r) => r.label)
-                    .includes(value.label)
-            ) {
-                possibleRiderResponsibilities =
-                    props.possibleRiderResponsibilities.filter(
-                        (r) => r.label !== value.label
-                    );
-            } else {
-                possibleRiderResponsibilities = [
-                    ...props.possibleRiderResponsibilities,
-                    value,
-                ];
-            }
-
             try {
+                const riderResponsibility = await DataStore.query(
+                    models.RiderResponsibility,
+                    value.id
+                );
+                const currentRiderResponsibilities = await DataStore.query(
+                    models.PossibleRiderResponsibilities
+                );
                 const existingUser = await DataStore.query(
                     models.User,
                     props.user.id
                 );
-                DataStore.query(models.PossibleRiderResponsibilities).then(
-                    (result) => {
-                        const existing = result.filter(
-                            (r) => r.user && r.user.id === existingUser.id
+                const existing = currentRiderResponsibilities
+                    .filter((resp) => {
+                        return (
+                            resp.user &&
+                            resp.user.id &&
+                            props.user?.id === resp.user.id
                         );
-                        for (const i of existing) {
-                            DataStore.delete(i);
+                    })
+                    .map((r) => r.riderResponsibility);
+                if (existing.length === 0) {
+                    await DataStore.save(
+                        new models.PossibleRiderResponsibilities({
+                            tenantId,
+                            riderResponsibility,
+                            user: existingUser,
+                        })
+                    );
+                } else {
+                    const isSet = existing.some(
+                        (r) => r.id === riderResponsibility.id
+                    );
+                    if (isSet) {
+                        const toDelete = currentRiderResponsibilities.filter(
+                            (r) =>
+                                r.riderResponsibility.id ===
+                                riderResponsibility.id
+                        );
+                        for (const r of toDelete) {
+                            await DataStore.delete(r);
                         }
-                    }
-                );
-                await Promise.all(
-                    possibleRiderResponsibilities.map((riderResponsibility) => {
-                        return DataStore.save(
+                        if (
+                            existingUser.riderResponsibility ===
+                            riderResponsibility.label
+                        ) {
+                            await DataStore.save(
+                                models.User.copyOf(existingUser, (updated) => {
+                                    updated.riderResponsibility = null;
+                                })
+                            );
+                        }
+                    } else {
+                        await DataStore.save(
                             new models.PossibleRiderResponsibilities({
                                 tenantId,
                                 riderResponsibility,
                                 user: existingUser,
                             })
                         );
-                    })
-                );
+                    }
+                }
                 setIsPostingRiderResponsibilities(false);
             } catch (e) {
                 console.log(e);
@@ -434,13 +463,13 @@ function UserProfile(props) {
                         justifyContent="space-between"
                         alignItems="center"
                     >
-                        {(props.possibleRiderResponsibilities &&
-                            props.possibleRiderResponsibilities.length > 0) ||
+                        {(possibleRiderResponsibilities &&
+                            possibleRiderResponsibilities.length > 0) ||
                         editResponsibilitiesMode ? (
                             <RiderResponsibilitySelect
                                 editMode={editResponsibilitiesMode}
                                 onSelect={onChangePossibleResponsibilities}
-                                value={props.possibleRiderResponsibilities}
+                                value={possibleRiderResponsibilities}
                                 disabled={isPostingRiderResponsibilities}
                             />
                         ) : (

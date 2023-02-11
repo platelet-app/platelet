@@ -15,7 +15,9 @@ import { displayErrorNotification } from "../../../redux/notifications/Notificat
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
-import copyTaskDataToClipboard from "../../../utilities/copyTaskDataToClipboard";
+import generateClipboardTextFromTask from "../../../utilities/generateClipboardTextFromTask";
+import { copyStringToClipboard } from "../../../utilities/copyStringToClipboard";
+import CopyFailedDialog from "../../../components/CopyFailedDialog";
 
 const colourBarPercent = "90%";
 
@@ -73,6 +75,7 @@ const dialogComponent = (status) =>
 
 function StatusBar(props) {
     const [copied, setCopied] = useState(null);
+    const [copyText, setCopyText] = useState(null);
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const dispatch = useDispatch();
@@ -118,14 +121,19 @@ function StatusBar(props) {
                 (d) => d.task && d.task.id === taskResult.id
             );
             const result = { ...taskResult, deliverables };
-            copyTaskDataToClipboard(result).then(
-                () => {
-                    setCopied(true);
-                },
-                () => {
-                    setCopied(false);
-                }
-            );
+            const textToCopy = generateClipboardTextFromTask(result);
+            try {
+                copyStringToClipboard(textToCopy).then(
+                    () => {
+                        setCopied(true);
+                    },
+                    () => {
+                        setCopyText(textToCopy);
+                    }
+                );
+            } catch (e) {
+                setCopyText(textToCopy);
+            }
         } catch (e) {
             console.log(e);
             setCopied(false);
@@ -145,48 +153,54 @@ function StatusBar(props) {
         copyColor = "secondary";
     }
     return (
-        <AppBar
-            position={isSm ? "relative" : "sticky"}
-            className={classes.root}
-        >
-            <Stack
-                direction={"row"}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-                sx={{ paddingTop: 1, width: "100%" }}
+        <>
+            <AppBar
+                position={isSm ? "relative" : "sticky"}
+                className={classes.root}
             >
-                <Hidden mdDown>
-                    <Button
-                        data-cy="task-status-close"
-                        onClick={props.handleClose}
-                    >
-                        Close
-                    </Button>
-                </Hidden>
-                <Hidden mdUp>
-                    <IconButton
-                        aria-label={"Close"}
-                        size={"small"}
-                        onClick={props.handleClose}
-                    >
-                        <ArrowButton size={3} direction={"back"} />
-                    </IconButton>
-                </Hidden>
-                <Typography
-                    data-cy="task-status"
-                    className={classes.statusText}
+                <Stack
+                    direction={"row"}
+                    justifyContent={"space-between"}
+                    alignItems={"center"}
+                    sx={{ paddingTop: 1, width: "100%" }}
                 >
-                    {taskStatusHumanReadable(status)}
-                </Typography>
-                <Chip
-                    onClick={copyToClipboard}
-                    variant={copied === null ? "outlined" : "default"}
-                    color={copyColor}
-                    sx={{ marginRight: isSm ? 0 : 2 }}
-                    label={copyLabel}
-                />
-            </Stack>
-        </AppBar>
+                    <Hidden mdDown>
+                        <Button
+                            data-cy="task-status-close"
+                            onClick={props.handleClose}
+                        >
+                            Close
+                        </Button>
+                    </Hidden>
+                    <Hidden mdUp>
+                        <IconButton
+                            aria-label={"Close"}
+                            size={"small"}
+                            onClick={props.handleClose}
+                        >
+                            <ArrowButton size={3} direction={"back"} />
+                        </IconButton>
+                    </Hidden>
+                    <Typography
+                        data-cy="task-status"
+                        className={classes.statusText}
+                    >
+                        {taskStatusHumanReadable(status)}
+                    </Typography>
+                    <Chip
+                        onClick={copyToClipboard}
+                        variant={copied === null ? "outlined" : "default"}
+                        color={copyColor}
+                        sx={{ marginRight: isSm ? 0 : 2 }}
+                        label={copyLabel}
+                    />
+                </Stack>
+            </AppBar>
+            <CopyFailedDialog
+                text={copyText}
+                onClose={() => setCopyText(null)}
+            />
+        </>
     );
 }
 
