@@ -11,14 +11,17 @@ type Tenant
 
 type User
 @auth(rules: [
+  {allow: groups, groups: ["ADMIN"], operations: [update, delete]},
   {allow: private, operations: [read]},
   {allow: owner, ownerField: "cognitoId", operations: [update]},
-  {allow: groups, groups: ["ADMIN"], operations: [update, delete]},
 ])
 @model {
   id: ID!
   username: String!
-  cognitoId: ID! @index(name: "byCognitoId", queryField: "getUserByCognitoId") @auth(rules: [{allow: private, operations: [read]}])
+  cognitoId: ID! @index(name: "byCognitoId", queryField: "getUserByCognitoId") @auth(rules: [
+    {allow: groups, groups: ["ADMIN"], operations: [update, delete]},
+    {allow: private, operations: [read]},
+  ])
   tenantId: ID! @index(name: "byTenantId")
   isPrimaryAdmin: Int @default(value: "0")
   contact: AddressAndContactDetails
@@ -27,12 +30,15 @@ type User
   roles: [Role!]!
   dateOfBirth: AWSDate
   riderResponsibility: String @auth(rules: [
+    {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [update, delete]},
     {allow: private, operations: [read]},
     {allow: owner, ownerField: "cognitoId", operations: [update]},
-    {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [update]},
   ])
   possibleRiderResponsibilities: [PossibleRiderResponsibilities] @hasMany
-  profilePictureURL(width: Int, height: Int): AWSURL @function(name: "plateletProfilePictureResolver-${env}") @auth(rules: [{allow: private, operations: [read]}])
+  profilePictureURL(width: Int, height: Int): AWSURL @function(name: "plateletProfilePictureResolver-${env}") @auth(rules: [
+    {allow: groups, groups: ["ADMIN"], operations: [update, delete]},
+    {allow: private, operations: [read]}
+  ])
   profilePicture: S3Object
   comments: [Comment] @hasMany
   assignments: [TaskAssignee] @hasMany
