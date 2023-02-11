@@ -288,7 +288,7 @@ enum DeliverableTypeIcon {
 type RiderResponsibility
 @auth(rules: [
   {allow: private, operations: [read]},
-  {allow: groups, groups: ["ADMIN"], operations: [create, read, delete, update]},
+  {allow: groups, groups: ["ADMIN"], operations: [create, read, update]},
 ])
 @model {
   id: ID!
