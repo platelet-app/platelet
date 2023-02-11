@@ -12,6 +12,7 @@ import { Stack, useMediaQuery, Divider } from "@mui/material";
 import { useTheme } from "@mui/styles";
 import CurrentRiderResponsibilitySelector from "./CurrentRiderResponsibilitySelector";
 import Skeleton from "@mui/material/Skeleton";
+import usePossibleRiderResponsibilities from "../../../hooks/usePossibleRiderResponsibilities";
 
 const initialUserState = {
     id: "",
@@ -22,7 +23,7 @@ const initialUserState = {
     displayName: "",
     name: "",
     roles: [],
-    responsibility: null,
+    riderResponsibility: null,
     dateOfBirth: null,
     patch: null,
     profilePictureURL: null,
@@ -32,9 +33,6 @@ const initialUserState = {
 export default function UserDetail({ userId }) {
     const [isFetching, setIsFetching] = useState(false);
     const [user, setUser] = useState(initialUserState);
-    const [possibleRiderResponsibilities, setPossibleRiderResponsibilities] =
-        useState([]);
-    const riderRespObserver = useRef({ unsubscribe: () => {} });
     const [notFound, setNotFound] = useState(false);
     const dispatch = useDispatch();
     const theme = useTheme();
@@ -43,14 +41,14 @@ export default function UserDetail({ userId }) {
         unsubscribe: () => {},
     });
 
+    const possibleRiderResponsibilities =
+        usePossibleRiderResponsibilities(userId).state;
+
     const loadedOnce = useRef(false);
 
     const userModelSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     ).User;
-    const riderResponsibilityModelSynced = useSelector(
-        dataStoreModelSyncedStatusSelector
-    ).RiderResponsibility;
 
     const newUserProfile = React.useCallback(
         async (userId) => {
@@ -58,42 +56,6 @@ export default function UserDetail({ userId }) {
             if (!loadedOnce.current) setIsFetching(true);
             try {
                 const userResult = await DataStore.query(models.User, userId);
-                // TODO: make this observeQuery when https://github.com/aws-amplify/amplify-js/issues/9682 is fixed
-                DataStore.query(models.PossibleRiderResponsibilities).then(
-                    (result) => {
-                        const filtered = result
-                            .filter((responsibility) => {
-                                return (
-                                    userResult &&
-                                    responsibility.user &&
-                                    responsibility.user.id &&
-                                    userResult.id === responsibility.user.id
-                                );
-                            })
-                            .map((r) => r.riderResponsibility);
-                        setPossibleRiderResponsibilities(filtered);
-                    }
-                );
-                riderRespObserver.current.unsubscribe();
-                riderRespObserver.current = DataStore.observe(
-                    models.PossibleRiderResponsibilities
-                ).subscribe(() => {
-                    DataStore.query(models.PossibleRiderResponsibilities).then(
-                        (result) => {
-                            const filtered = result
-                                .filter((responsibility) => {
-                                    return (
-                                        userResult &&
-                                        responsibility.user &&
-                                        responsibility.user.id &&
-                                        userResult.id === responsibility.user.id
-                                    );
-                                })
-                                .map((r) => r.riderResponsibility);
-                            setPossibleRiderResponsibilities(filtered);
-                        }
-                    );
-                });
                 observer.current = DataStore.observe(
                     models.User,
                     userId
@@ -121,15 +83,9 @@ export default function UserDetail({ userId }) {
     );
     useEffect(
         () => newUserProfile(userId),
-        [
-            userId,
-            userModelSynced,
-            riderResponsibilityModelSynced,
-            newUserProfile,
-        ]
+        [userId, userModelSynced, newUserProfile]
     );
 
-    useEffect(() => () => riderRespObserver.current.unsubscribe(), []);
     useEffect(() => () => observer.current.unsubscribe(), []);
 
     function handleUpdateRiderResponsibility(riderResponsibility) {
@@ -225,7 +181,7 @@ export default function UserDetail({ userId }) {
                     <Stack direction="column" spacing={3}>
                         <CurrentRiderResponsibilitySelector
                             available={possibleRiderResponsibilities}
-                            value={user.riderResponsibility}
+                            value={user.riderResponsibility || ""}
                             onChange={handleUpdateRiderResponsibility}
                         />
                         {possibleRiderResponsibilities &&
@@ -237,9 +193,6 @@ export default function UserDetail({ userId }) {
                             user={user}
                             quickUpdateRolesState={(roles) =>
                                 setUser({ ...user, roles })
-                            }
-                            possibleRiderResponsibilities={
-                                possibleRiderResponsibilities
                             }
                         />
                     </Stack>
