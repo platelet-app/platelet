@@ -246,15 +246,16 @@ function UserProfile(props) {
                     models.User,
                     props.user.id
                 );
-                const existing = currentRiderResponsibilities
-                    .filter((resp) => {
-                        return (
-                            resp.user &&
-                            resp.user.id &&
-                            props.user?.id === resp.user.id
-                        );
-                    })
-                    .map((r) => r.riderResponsibility);
+                const existing = currentRiderResponsibilities.filter((resp) => {
+                    return (
+                        resp.user &&
+                        resp.user.id &&
+                        props.user.id === resp.user.id
+                    );
+                });
+                const existingResps = existing.map(
+                    (r) => r.riderResponsibility
+                );
                 if (existing.length === 0) {
                     await DataStore.save(
                         new models.PossibleRiderResponsibilities({
@@ -264,11 +265,11 @@ function UserProfile(props) {
                         })
                     );
                 } else {
-                    const isSet = existing.some(
+                    const isSet = existingResps.some(
                         (r) => r.id === riderResponsibility.id
                     );
                     if (isSet) {
-                        const toDelete = currentRiderResponsibilities.filter(
+                        const toDelete = existing.filter(
                             (r) =>
                                 r.riderResponsibility.id ===
                                 riderResponsibility.id
