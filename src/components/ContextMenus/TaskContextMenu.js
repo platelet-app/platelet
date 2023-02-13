@@ -1,6 +1,6 @@
 import React from "react";
 import Menu from "@mui/material/Menu";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from "tss-react/mui";
 import MenuItem from "@mui/material/MenuItem";
 import { useDispatch, useSelector } from "react-redux";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -40,15 +40,14 @@ function TaskContextMenu(props) {
     const [isPosting, setIsPosting] = React.useState(false);
     const roleView = useSelector(getRoleView);
     const whoami = useSelector(getWhoami);
-    const deleteButtonClasses = deleteButtonStyles();
     const taskAssignees = useSelector(taskAssigneesSelector).items;
     const tenantId = useSelector(tenantIdSelector);
-    const useStyles = makeStyles({
+    const useStyles = makeStyles()({
         taskContextButton: {
             color: props.iconColor || "primary",
         },
     });
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     const actualRole = ["ALL", userRoles.coordinator].includes(roleView)
         ? userRoles.coordinator
@@ -300,16 +299,6 @@ function TaskContextMenu(props) {
                 <MenuItem disabled={task === null} onClick={copyToClipboard}>
                     Copy to clipboard
                 </MenuItem>
-                <MenuItem
-                    className={
-                        props.disableDeleted
-                            ? deleteButtonClasses.deleteButtonDisabled
-                            : deleteButtonClasses.deleteButton
-                    }
-                    onClick={onDelete}
-                >
-                    Delete
-                </MenuItem>
             </Menu>
             <CopyFailedDialog
                 text={copyText}
@@ -322,7 +311,6 @@ function TaskContextMenu(props) {
 TaskContextMenu.propTypes = {
     task: PropTypes.object,
     iconColor: PropTypes.string,
-    disableDeleted: PropTypes.bool,
     disableRelay: PropTypes.bool,
     assignedRiders: PropTypes.arrayOf(PropTypes.object),
 };

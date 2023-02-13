@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import deburr from "lodash/deburr";
 import Downshift from "downshift";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import MenuItem from "@mui/material/MenuItem";
@@ -92,7 +92,7 @@ function getSuggestions(suggestions, value, { showEmpty = false } = {}) {
 }
 
 function UsersSelect(props) {
-    let classes = makeStyles((theme) => ({
+    let classes = makeStyles()((theme) => ({
         root: {
             flexGrow: 1,
             height: 250,

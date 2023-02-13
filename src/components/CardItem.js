@@ -1,9 +1,9 @@
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import { Stack, Typography } from "@mui/material";
 import React from "react";
 import PropTypes from "prop-types";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles()({
     titleText: {
         fontSize: 14,
     },
@@ -15,7 +15,7 @@ const useStyles = makeStyles({
 });
 
 function CardItem(props) {
-    const classes = useStyles();
+    const { classes } = useStyles();
     return (
         <Stack
             sx={{ width: props.width }}

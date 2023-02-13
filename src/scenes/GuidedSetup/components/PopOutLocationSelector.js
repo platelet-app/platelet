@@ -4,7 +4,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import LabelItemPair from "../../../components/LabelItemPair";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import Divider from "@mui/material/Divider";
 import { Box, Button, Stack, Tooltip } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
@@ -14,7 +14,7 @@ import CollapsibleToggle from "../../../components/CollapsibleToggle";
 import PopOutLocationSelectorForm from "./PopoutLocationSelectorForm";
 import { protectedFields } from "../../../apiConsts";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     label: {
         maxWidth: "250px",
     },
@@ -48,7 +48,7 @@ const contactFields = {
 };
 
 function PopOutLocationSelector(props) {
-    const classes = useStyles();
+    const { classes } = useStyles();
     const [state, setState] = useState(null);
     const oldState = useRef(null);
     const [editMode, setEditMode] = useState(false);

@@ -4,7 +4,7 @@ import Dialog from "@mui/material/Dialog";
 import { useDispatch, useSelector } from "react-redux";
 import { decodeUUID } from "../../utilities";
 import { useTheme } from "@mui/material/styles";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import useMediaQuery from "@mui/material/useMediaQuery";
 import NotFound from "../../ErrorComponents/NotFound";
 import GetError from "../../ErrorComponents/GetError";
@@ -21,7 +21,7 @@ import { setSelectionActionsPending } from "../../redux/selectionMode/selectionM
 const drawerWidth = 420;
 const drawerWidthMd = 420;
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     paper: {
         boxShadow: "none",
         background: theme.palette.background.default,
@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 
 const DialogWrapper = (props) => {
     const { handleClose } = props;
-    const classes = useStyles();
+    const { classes } = useStyles();
     return (
         <Dialog
             onKeyUp={(e) => {
@@ -73,7 +73,7 @@ const DialogWrapper = (props) => {
 
 function TaskDialogCompact(props) {
     const [notFound, setNotFound] = useState(false);
-    const classes = useStyles();
+    const { classes } = useStyles();
     const theme = useTheme();
     const isMd = useMediaQuery(theme.breakpoints.down("lg"));
     const taskObserver = useRef({ unsubscribe: () => {} });

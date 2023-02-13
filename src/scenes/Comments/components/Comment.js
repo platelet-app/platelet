@@ -77,7 +77,7 @@ function Comment(props) {
         ...props,
         editMode: editMode,
     });
-    const classes = commentStyles();
+    const { classes } = commentStyles();
 
     useEffect(() => {
         setState(props.comment);

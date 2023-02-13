@@ -6,12 +6,12 @@ import { InputAdornment, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import PropTypes from "prop-types";
 import { dashboardFilterTermSelector } from "../redux/Selectors";
 import { styled } from "@mui/material/styles";
 
-const useStyles = makeStyles((theme) => {
+const useStyles = makeStyles()((theme) => {
     return {
         root: {
             [theme.breakpoints.down("md")]: {
@@ -41,7 +41,7 @@ function TaskFilterTextField({ sx }) {
     const dispatch = useDispatch();
     const currentFilter = useSelector(dashboardFilterTermSelector);
     const [value, setValue] = useState("");
-    const classes = useStyles();
+    const { classes } = useStyles();
     const firstMount = useRef(true);
 
     function onChangeFilterText(e) {

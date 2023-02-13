@@ -14,7 +14,7 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from "tss-react/mui";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
@@ -61,7 +61,7 @@ export function AddCircleButtonSmall(props) {
 }
 
 function SmallCirclePlusButton(props) {
-    const useStyles = makeStyles((theme) => ({
+    const useStyles = makeStyles()((theme) => ({
         button: {
             color: props.colour,
             width: theme.spacing(4),
@@ -72,7 +72,7 @@ function SmallCirclePlusButton(props) {
             height: theme.spacing(4),
         },
     }));
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     return (
         <Tooltip title={props.tooltip}>
@@ -105,7 +105,7 @@ SmallCirclePlusButton.propTypes = {
 };
 
 function ArrowButton(props) {
-    const useStyles = makeStyles((theme) => ({
+    const useStyles = makeStyles()((theme) => ({
         button: {
             color: props.colour,
             width: theme.spacing(props.size),
@@ -116,7 +116,7 @@ function ArrowButton(props) {
             height: theme.spacing(props.size),
         },
     }));
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     let arrowIcon = <></>;
     if (props.direction === "up")

@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import {useSelector} from "react-redux";
 import FormControl from "@mui/material/FormControl";
 import {InputLabel, MenuItem, Select} from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles()(theme => ({
     formControl: {
         margin: theme.spacing(1),
         width: "100%",
@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
 
 function DeliverablesSelect(props) {
     const availableDeliverables = useSelector(state => state.availableDeliverables.deliverables)
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     const onSelect = (e) => {
         if (e.target.value)

@@ -19,7 +19,7 @@ import { deliverableUnits, userRoles } from "../../../apiConsts";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 
 function DeliverableDetails(props) {
-    const cardClasses = dialogCardStyles();
+    const { classes } = dialogCardStyles();
     const [collapsed, setCollapsed] = useState(true);
     const [state, setState] = useState({});
     const tenantId = useSelector(tenantIdSelector);
@@ -238,7 +238,7 @@ function DeliverableDetails(props) {
         return <GetError />;
     } else {
         return (
-            <Paper className={cardClasses.root}>
+            <Paper className={classes.root}>
                 <Stack
                     direction={"column"}
                     justifyContent={"center"}

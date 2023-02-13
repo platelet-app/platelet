@@ -1,8 +1,8 @@
 import React from "react";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import { TextFieldUncontrolled } from "./TextFields";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     root: {
         display: "flex",
         flexDirection: "column",
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 const fields = { name: "Name", telephoneNumber: "Telephone" };
 
 export const ContactForm = ({ values, onChange, italicTel }) => {
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     return (
         <form className={classes.root} noValidate autoComplete="off">

@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import TaskDetailsPanel from "./TaskDetailsPanel";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from "tss-react/mui";
 import DeliverableDetails from "./DeliverableDetails";
 import TaskActions from "./TaskActions";
 import { Hidden, Stack } from "@mui/material";
@@ -13,7 +13,7 @@ import LocationDetailsPanel from "./LocationDetailsPanel";
 import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
 import CommentsSection from "../../Comments/CommentsSection";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     root: {
         maxWidth: 1800,
         padding: 15,
@@ -41,18 +41,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function TaskOverview({ taskId, isFetching }) {
-    const classes = useStyles();
+    const { classes } = useStyles();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     return (
         <Container className={classes.root}>
-            <Grid
-                container
-                direction="row"
-                className={classes.container}
-                spacing={isSm ? 1 : 3}
-            >
+            <Grid container direction="row" spacing={isSm ? 1 : 3}>
                 <Grid item className={classes.item}>
                     <Stack direction={"column"} spacing={isSm ? 1 : 3}>
                         <TaskDetailsPanel

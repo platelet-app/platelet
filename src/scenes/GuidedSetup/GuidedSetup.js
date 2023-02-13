@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from "tss-react/mui";
 import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -66,7 +66,7 @@ const a11yProps = (index) => {
     };
 };
 
-const guidedSetupStyles = makeStyles((theme) => ({
+const guidedSetupStyles = makeStyles()((theme) => ({
     wrapper: {
         display: "flex",
         flexDirection: "column",
@@ -134,7 +134,7 @@ const defaultComment = {
 const initialEstablishmentSameAsPickUpState = false;
 
 export const GuidedSetup = () => {
-    const classes = guidedSetupStyles();
+    const { classes } = guidedSetupStyles();
     const [tabIndex, setTabIndex] = React.useState(0);
     const [formValues, setFormValues] = useState(defaultValues);
     const [establishmentSameAsPickup, setEstablishmentSameAsPickup] = useState(
@@ -151,7 +151,7 @@ export const GuidedSetup = () => {
     const dispatch = useDispatch();
     const locations = useRef({ pickUpLocation: null, dropOffLocation: null });
     const [pickUpOverride, setPickUpOverride] = useState(null);
-    const { show, hide } = showHide();
+    const { show, hide } = showHide().classes;
     const [discardConfirmationOpen, setDiscardConfirmationOpen] =
         useState(false);
     const whoami = useSelector(getWhoami);

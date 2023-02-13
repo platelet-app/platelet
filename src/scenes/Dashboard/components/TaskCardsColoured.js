@@ -7,7 +7,7 @@ import CardItem from "../../../components/CardItem";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import UserAvatar from "../../../components/UserAvatar";
 import { Divider, Stack, Tooltip, Typography } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from "tss-react/mui";
 import { StyledCard } from "../../../styles/common";
 import Badge from "@mui/material/Badge";
 import MessageIcon from "@mui/icons-material/Message";
@@ -30,45 +30,57 @@ const generateClass = (theme, status) => {
     };
 };
 
-const useStyles = makeStyles((theme) => ({
-    cardContent: {
-        paddingTop: 5,
-        userSelect: "none",
-    },
-    NEW: generateClass(theme, "NEW"),
-    ACTIVE: generateClass(theme, "ACTIVE"),
-    PICKED_UP: generateClass(theme, "PICKED_UP"),
-    DROPPED_OFF: generateClass(theme, "DROPPED_OFF"),
-    COMPLETED: generateClass(theme, "COMPLETED"),
-    CANCELLED: generateClass(theme, "CANCELLED"),
-    REJECTED: generateClass(theme, "REJECTED"),
-    ABANDONED: generateClass(theme, "ABANDONED"),
-    itemTopBarContainer: {
-        width: "100%",
-        height: 30,
-        paddingBottom: 10,
-    },
-    divider: { width: "0%", margin: 4 },
-    typography: { fontSize: "14px" },
-    badgeCircle: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: 32,
-        height: 32,
-        borderRadius: "50%",
-        backgroundColor:
-            theme.palette.mode === "dark"
-                ? "rgba(0,0,0,0.4)"
-                : "rgba(255,255,255,0.5)",
-    },
-}));
+const useStyles = makeStyles()((theme) => {
+    const statuses = {};
+    statuses.NEW = generateClass(theme, "NEW");
+    statuses.ACTIVE = generateClass(theme, "ACTIVE");
+    statuses.PICKED_UP = generateClass(theme, "PICKED_UP");
+    statuses.DROPPED_OFF = generateClass(theme, "DROPPED_OFF");
+    statuses.COMPLETED = generateClass(theme, "COMPLETED");
+    statuses.CANCELLED = generateClass(theme, "CANCELLED");
+    statuses.REJECTED = generateClass(theme, "REJECTED");
+    statuses.ABANDONED = generateClass(theme, "ABANDONED");
+    return {
+        ...statuses,
+        cardContent: {
+            paddingTop: 5,
+            userSelect: "none",
+        },
+        NEW: generateClass(theme, "NEW"),
+        ACTIVE: generateClass(theme, "ACTIVE"),
+        PICKED_UP: generateClass(theme, "PICKED_UP"),
+        DROPPED_OFF: generateClass(theme, "DROPPED_OFF"),
+        COMPLETED: generateClass(theme, "COMPLETED"),
+        CANCELLED: generateClass(theme, "CANCELLED"),
+        REJECTED: generateClass(theme, "REJECTED"),
+        ABANDONED: generateClass(theme, "ABANDONED"),
+        itemTopBarContainer: {
+            width: "100%",
+            height: 30,
+            paddingBottom: 10,
+        },
+        divider: { width: "0%", margin: 4 },
+        typography: { fontSize: "14px" },
+        badgeCircle: {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: 32,
+            height: 32,
+            borderRadius: "50%",
+            backgroundColor:
+                theme.palette.mode === "dark"
+                    ? "rgba(0,0,0,0.4)"
+                    : "rgba(255,255,255,0.5)",
+        },
+    };
+});
 
 const TaskCard = (props) => {
     const assigneesDisplayString = props.assignees
         .map((assignee) => assignee.displayName)
         .join(", ");
-    const classes = useStyles();
+    const { classes } = useStyles();
     let pickUpTitle = "";
     if (props.pickUpLocation) {
         pickUpTitle = props.pickUpLocation.line1

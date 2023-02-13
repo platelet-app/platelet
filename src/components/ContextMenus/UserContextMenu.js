@@ -5,10 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import IconButton from "@mui/material/IconButton";
 import { createPostingSelector } from "../../redux/LoadingSelectors";
-import {
-    deleteUserRequest,
-    restoreUserRequest,
-} from "../../redux/users/UsersActions";
+import { deleteUserRequest } from "../../redux/users/UsersActions";
 import { deleteButtonStyles } from "./contextMenuCSS";
 import { getWhoami } from "../../redux/Selectors";
 
@@ -18,7 +15,7 @@ const initialState = {
 };
 
 export default function UserContextMenu(props) {
-    const classes = deleteButtonStyles();
+    const { classes } = deleteButtonStyles();
     const whoami = useSelector(getWhoami);
     const [state, setState] = React.useState(initialState);
     const postingSelector = createPostingSelector([
@@ -45,37 +42,40 @@ export default function UserContextMenu(props) {
         setState(initialState);
     };
 
-    return <>
-        <IconButton
-            aria-label="more"
-            aria-controls="long-menu"
-            aria-haspopup="true"
-            onClick={handleClick}
-            disabled={isPosting}
-            size="large">
-            <MoreVertIcon />
-        </IconButton>
-        <Menu
-            keepMounted
-            open={state.mouseY !== null}
-            onClose={handleClose}
-            anchorReference="anchorPosition"
-            anchorPosition={
-                state.mouseY !== null && state.mouseX !== null
-                    ? { top: state.mouseY, left: state.mouseX }
-                    : undefined
-            }
-        >
-            <MenuItem
-                className={
-                    whoami.roles.includes("ADMIN")
-                        ? classes.deleteButton
-                        : classes.deleteButtonDisabled
-                }
-                onClick={onDelete}
+    return (
+        <>
+            <IconButton
+                aria-label="more"
+                aria-controls="long-menu"
+                aria-haspopup="true"
+                onClick={handleClick}
+                disabled={isPosting}
+                size="large"
             >
-                Delete
-            </MenuItem>
-        </Menu>
-    </>;
+                <MoreVertIcon />
+            </IconButton>
+            <Menu
+                keepMounted
+                open={state.mouseY !== null}
+                onClose={handleClose}
+                anchorReference="anchorPosition"
+                anchorPosition={
+                    state.mouseY !== null && state.mouseX !== null
+                        ? { top: state.mouseY, left: state.mouseX }
+                        : undefined
+                }
+            >
+                <MenuItem
+                    className={
+                        whoami.roles.includes("ADMIN")
+                            ? classes.deleteButton
+                            : classes.deleteButtonDisabled
+                    }
+                    onClick={onDelete}
+                >
+                    Delete
+                </MenuItem>
+            </Menu>
+        </>
+    );
 }

@@ -1,23 +1,23 @@
 import Typography from "@mui/material/Typography";
 import React from "react";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from "tss-react/mui";
 import PropTypes from "prop-types";
 import { Stack, Tooltip } from "@mui/material";
 import { deliverableIcons } from "../../../apiConsts";
 import { getDeliverableIconByEnum } from "../../../utilities";
 
-const useStyles = makeStyles(() => ({
-    root: (props) => ({
+const useStyles = makeStyles()(({ compact }) => ({
+    root: {
         width: "100%",
         backgroundColor: "rgba(180, 180, 180, 0.1)",
-    }),
-    label: (props) => ({
-        maxWidth: props.compact ? 120 : 200,
-    }),
+    },
+    label: {
+        maxWidth: compact ? 120 : 200,
+    },
 }));
 
 function DeliverableCard(props) {
-    const classes = useStyles(props);
+    const { classes } = useStyles({ compact: props.compact });
     const maxTextLength = props.compact ? 12 : 22;
     return (
         <Stack

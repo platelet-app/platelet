@@ -6,20 +6,19 @@ import { showHide } from "../../../styles/common";
 import { sortByCreatedTime } from "../../../utilities";
 import TaskItem from "./TaskItem";
 import DateStampDivider from "./TimeStampDivider";
-import clsx from "clsx";
-import { makeStyles } from "@mui/styles";
+import { makeStyles } from "tss-react/mui";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles()({
     taskItem: {
         width: "100%",
     },
 });
 
 function TaskGridTasksList(props) {
-    const { show, hide } = showHide();
+    const { show, hide } = showHide().classes;
     let displayDate = false;
     let lastTime = new Date();
-    const classes = useStyles();
+    const { classes, cx } = useStyles();
     const filteredTasksIdsList = props.includeList || [];
     return (
         <Stack
@@ -48,7 +47,7 @@ function TaskGridTasksList(props) {
                     }
                     return (
                         <Box
-                            className={clsx(
+                            className={cx(
                                 classes.taskItem,
                                 props.includeList === null ||
                                     props.includeList.includes(task.id)
@@ -72,7 +71,6 @@ function TaskGridTasksList(props) {
                                 animate={props.animate}
                                 task={task}
                                 taskUUID={task.id}
-                                deleteDisabled
                             />
                         </Box>
                     );

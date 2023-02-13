@@ -6,11 +6,11 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
 import ClearIcon from "@mui/icons-material/Clear";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 
 function IncreaseDecreaseCounter(props) {
     const [state, setState] = useState(props.value);
-    const useStyles = makeStyles((theme) => ({
+    const useStyles = makeStyles()((theme) => ({
         button: {
             width: theme.spacing(4),
             height: theme.spacing(4),
@@ -20,7 +20,7 @@ function IncreaseDecreaseCounter(props) {
             height: theme.spacing(4),
         },
     }));
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     return (
         <Grid

@@ -17,7 +17,7 @@ const initialState = {
 };
 
 export default function CommentContextMenu(props) {
-    const classes = deleteButtonStyles();
+    const { classes } = deleteButtonStyles();
     const [state, setState] = React.useState(initialState);
     const [comment, setComment] = useState(props.comment);
     const [deleteConfirmation, setDeleteConfirmation] = useState(false);

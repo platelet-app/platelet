@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import NavDrawerItems from "./NavDrawerItems";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Stack, SwipeableDrawer } from "@mui/material";
 import { useCordovaBackButton } from "../hooks/useCordovaBackButton";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles()({
     list: {
         width: 250,
     },
@@ -15,7 +15,7 @@ const useStyles = makeStyles({
 
 export default function MobileNavigationDrawer() {
     const [open, setOpen] = useState(false);
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     useCordovaBackButton(() => {
         setOpen(false);

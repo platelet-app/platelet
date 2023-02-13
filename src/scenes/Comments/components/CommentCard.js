@@ -19,8 +19,8 @@ import { getWhoami } from "../../../redux/Selectors";
 import { commentVisibility } from "../../../apiConsts";
 
 const CommentCard = React.memo((props) => {
-    const { show, hide } = showHide();
-    const classes = commentStyles();
+    const { show, hide } = showHide().classes;
+    const { classes } = commentStyles();
     const timeCreatedString = moment(props.timeCreated).calendar();
     const whoami = useSelector(getWhoami);
     const Card =

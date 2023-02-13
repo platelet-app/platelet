@@ -18,7 +18,7 @@ import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 
 function LocationDetailsPanel(props) {
-    const classes = dialogCardStyles();
+    const { classes } = dialogCardStyles();
     const dispatch = useDispatch();
     // I have no idea why the imported selector is undefined here
     const tenantId = useSelector((state) => state.tenantId);

@@ -19,7 +19,7 @@ import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 import RiderResponsibilityDetail from "./RiderResponsibilityDetail";
 
 function TaskDetailsPanel(props) {
-    const cardClasses = dialogCardStyles();
+    const { classes } = dialogCardStyles();
     const [state, setState] = useState({
         reference: null,
         timeOfCall: null,
@@ -177,13 +177,13 @@ function TaskDetailsPanel(props) {
         return <GetError />;
     } else if (isFetching) {
         return (
-            <Paper className={cardClasses.root}>
+            <Paper className={classes.root}>
                 <Skeleton variant="rectangular" width="100%" height={200} />
             </Paper>
         );
     } else {
         return (
-            <Paper className={cardClasses.root}>
+            <Paper className={classes.root}>
                 <Stack direction={"column"} spacing={1}>
                     {state.reference && (
                         <LabelItemPair label={"Reference"}>

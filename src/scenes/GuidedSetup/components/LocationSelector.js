@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import LabelItemPair from "../../../components/LabelItemPair";
 import ClickableTextField from "../../../components/ClickableTextField";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from "tss-react/mui";
 import Divider from "@mui/material/Divider";
 import { Tooltip } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
@@ -14,7 +14,7 @@ import { showHide } from "../../../styles/common";
 import { encodeUUID } from "../../../utilities";
 import ClearButtonWithConfirmation from "../../Task/components/ClearButtonWithConfirmation";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles()({
     root: {
         maxWidth: "350px",
     },
@@ -47,11 +47,11 @@ const initialState = {
 };
 
 function LocationSelector(props) {
-    const classes = useStyles();
+    const { classes } = useStyles();
     const [state, setState] = useState(initialState);
     const [protectedLocation, setProtectedLocation] = useState(false);
     const [presetMode, setPresetMode] = useState(false);
-    const { show, hide } = showHide();
+    const { show, hide } = showHide().classes;
 
     function updateStateFromProps() {
         if (props.location) {

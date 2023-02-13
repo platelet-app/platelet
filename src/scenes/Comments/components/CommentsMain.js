@@ -2,13 +2,13 @@ import Grid from "@mui/material/Grid";
 import React from "react";
 import NewCommentCard from "./NewCommentCard";
 import { useSelector } from "react-redux";
-import { makeStyles } from "@mui/styles";
+import { makeStyles } from 'tss-react/mui';
 import PropTypes from "prop-types";
 import { getWhoami } from "../../../redux/Selectors";
 import Comment from "./Comment";
 
 function CommentsMain(props) {
-    const useStyles = makeStyles(() => ({
+    const useStyles = makeStyles()(() => ({
         root: {
             flexGrow: 1,
             width: "100%",
@@ -24,7 +24,7 @@ function CommentsMain(props) {
             height: 5,
         },
     }));
-    const classes = useStyles();
+    const { classes } = useStyles();
     const whoami = useSelector(getWhoami);
 
     return (

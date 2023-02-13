@@ -12,7 +12,7 @@ export const NotesAndPriority = ({
     handleVisibilityChange,
     onChangePriority,
 }) => {
-    const classes = Styles();
+    const { classes } = Styles();
     const [visibility, setVisibility] = useState(commentVisibility.everyone);
 
     return (

@@ -3,13 +3,13 @@ import * as selectionModeActions from "../../../redux/selectionMode/selectionMod
 import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
 import { useDispatch, useSelector } from "react-redux";
+import { makeStyles } from "tss-react/mui";
 import IconButton from "@mui/material/IconButton";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { saveDashboardRoleMode } from "../../../utilities";
 import Typography from "@mui/material/Typography";
-import { showHide } from "../../../styles/common";
 import {
     setDashboardFilteredUser,
     setDashboardTabIndex,
@@ -44,7 +44,6 @@ const DashboardDetailTabs: React.FC<DashboardDetailTabsProps> = ({
     const whoami = useSelector(getWhoami);
     const dashboardFilter = useSelector(dashboardFilterTermSelector);
     const roleView = useSelector(getRoleView);
-    const { show, hide } = showHide();
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
     const theme = useTheme();
@@ -182,11 +181,13 @@ const DashboardDetailTabs: React.FC<DashboardDetailTabsProps> = ({
                     }}
                 >
                     <MenuItem
-                        className={
-                            whoami.roles.includes(models.Role.COORDINATOR)
-                                ? show
-                                : hide
-                        }
+                        sx={{
+                            display: whoami.roles.includes(
+                                models.Role.COORDINATOR
+                            )
+                                ? ""
+                                : "none",
+                        }}
                         onClick={() => {
                             setAnchorElRoleMenu(null);
                             if (roleView !== "ALL") {
@@ -199,11 +200,13 @@ const DashboardDetailTabs: React.FC<DashboardDetailTabsProps> = ({
                         All Tasks
                     </MenuItem>
                     <MenuItem
-                        className={
-                            whoami.roles.includes(models.Role.COORDINATOR)
-                                ? show
-                                : hide
-                        }
+                        sx={{
+                            display: whoami.roles.includes(
+                                models.Role.COORDINATOR
+                            )
+                                ? ""
+                                : "none",
+                        }}
                         onClick={() => {
                             setAnchorElRoleMenu(null);
                             if (roleView !== models.Role.COORDINATOR) {
@@ -216,11 +219,11 @@ const DashboardDetailTabs: React.FC<DashboardDetailTabsProps> = ({
                         Coordinator
                     </MenuItem>
                     <MenuItem
-                        className={
-                            whoami.roles.includes(models.Role.RIDER)
-                                ? show
-                                : hide
-                        }
+                        sx={{
+                            display: whoami.roles.includes(models.Role.RIDER)
+                                ? ""
+                                : "none",
+                        }}
                         onClick={() => {
                             setAnchorElRoleMenu(null);
                             if (roleView !== models.Role.RIDER) {

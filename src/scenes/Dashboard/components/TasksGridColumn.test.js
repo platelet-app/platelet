@@ -180,7 +180,7 @@ describe("TasksGridColumn", () => {
             expect(links).toHaveLength(10);
             for (const link of links) {
                 expect(link.firstChild.className).toMatch(
-                    new RegExp(`makeStyles-${taskStatus}`)
+                    new RegExp(`${taskStatus}`)
                 );
             }
         }

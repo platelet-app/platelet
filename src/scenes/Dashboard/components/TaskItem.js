@@ -9,7 +9,8 @@ import * as selectionActions from "../../../redux/selectionMode/selectionModeAct
 import { encodeUUID } from "../../../utilities";
 import PropTypes from "prop-types";
 import { Box, Grow, Skeleton, ToggleButton } from "@mui/material";
-import { makeStyles, useTheme } from "@mui/styles";
+import { makeStyles } from "tss-react/mui";
+import { useTheme } from "@mui/styles";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
 import { commentVisibility, userRoles } from "../../../apiConsts";
 import * as models from "../../../models/index";
@@ -26,18 +27,22 @@ import {
 import { useInView } from "react-intersection-observer";
 import useLongPressEventContextMenu from "../../../hooks/useLongPressEventContextMenu";
 
-const useStyles = (isSelected) =>
-    makeStyles((theme) => ({
+const useStyles = makeStyles()((theme, { isSelected }, classes) => {
+    const background =
+        theme.palette.mode === "dark"
+            ? "radial-gradient(circle, rgba(64,64,64,1) 30%, rgba(0,0,0,0) 100%)"
+            : `radial-gradient(circle, ${theme.palette.background.paper} 30%, rgba(0,0,0,0) 100%)`;
+    return {
         root: {
             position: "relative",
             "&:hover": {
-                "& $dots": {
+                [`& .${classes.dots}`]: {
                     display: isSelected ? "none" : "inline",
                 },
-                "& $select": {
+                [`& .${classes.select}`]: {
                     display: "inline",
                 },
-                "& $overlay": {
+                [`& .${classes.overlay}`]: {
                     display: "inline",
                     [theme.breakpoints.down("sm")]: {
                         display: isSelected ? "inline" : "none",
@@ -61,40 +66,29 @@ const useStyles = (isSelected) =>
             width: "100%",
             height: "100%",
         },
-        dots: () => {
-            const background =
-                theme.palette.mode === "dark"
-                    ? "radial-gradient(circle, rgba(64,64,64,1) 30%, rgba(0,0,0,0) 100%)"
-                    : `radial-gradient(circle, ${theme.palette.background.paper} 30%, rgba(0,0,0,0) 100%)`;
-            return {
-                background: background,
-                borderRadius: "1em",
-                position: "absolute",
-                bottom: 4,
-                right: 4,
-                display: "none",
-                zIndex: 90,
-            };
+        dots: {
+            background,
+            borderRadius: "1em",
+            position: "absolute",
+            bottom: 4,
+            right: 4,
+            display: "none",
+            zIndex: 90,
         },
-        select: () => {
-            const background =
-                theme.palette.mode === "dark"
-                    ? "radial-gradient(circle, rgba(64,64,64,1) 30%, rgba(0,0,0,0) 100%)"
-                    : `radial-gradient(circle, ${theme.palette.background.paper} 30%, rgba(0,0,0,0) 100%)`;
-            return {
-                background: isSelected
-                    ? theme.palette.background.paper
-                    : background,
-                margin: 2,
-                borderRadius: "1em",
-                position: "absolute",
-                bottom: 4,
-                left: 4,
-                display: isSelected ? "inline" : "none",
-                zIndex: 90,
-            };
+        select: {
+            background: isSelected
+                ? theme.palette.background.paper
+                : background,
+            margin: 2,
+            borderRadius: "1em",
+            position: "absolute",
+            bottom: 4,
+            left: 4,
+            display: isSelected ? "inline" : "none",
+            zIndex: 90,
         },
-    }));
+    };
+});
 
 const ItemWrapper = ({
     children,
@@ -166,7 +160,9 @@ const TaskItem = React.memo((props) => {
     const dispatch = useDispatch();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
-    const classes = useStyles(isSelected)();
+    const { classes } = useStyles({
+        isSelected,
+    });
 
     const { ref, inView } = useInView({
         threshold: 0,
@@ -323,7 +319,6 @@ const TaskItem = React.memo((props) => {
                     <>
                         <div className={classes.dots}>
                             <TaskContextMenu
-                                disableDeleted={props.deleteDisabled}
                                 disableRelay={!!props.relayNext}
                                 assignedRiders={assignedRiders}
                                 task={task}
@@ -362,7 +357,6 @@ TaskItem.defaultProps = {
 TaskItem.propTypes = {
     task: PropTypes.object,
     view: PropTypes.string,
-    deleteDisabled: PropTypes.bool,
     animate: PropTypes.bool,
 };
 
