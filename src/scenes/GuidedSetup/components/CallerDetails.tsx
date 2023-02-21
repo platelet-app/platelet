@@ -90,7 +90,19 @@ export const CallerDetails: React.FC<CallerDetailType> = ({
             </Typography>
             <DateTimePicker
                 label="Time of call"
-                renderInput={(params) => <TextField {...params} />}
+                ampm={false}
+                renderInput={(params) => {
+                    const { inputProps } = params;
+                    return (
+                        <TextField
+                            {...params}
+                            inputProps={{
+                                ...inputProps,
+                                "aria-label": "Time of call",
+                            }}
+                        />
+                    );
+                }}
                 value={timeOfCall}
                 onChange={onChangeTimeOfCall}
                 onError={onInvalidTimeOfCall}

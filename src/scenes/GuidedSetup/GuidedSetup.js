@@ -466,7 +466,7 @@ export const GuidedSetup = () => {
                     <Button
                         data-cy="save-to-dash-button"
                         onClick={handleSave}
-                        disabled={isPosting || timeOfCallInvalid}
+                        disabled={isPosting || !timeOfCall || timeOfCallInvalid}
                         variant="contained"
                         autoFocus
                     >
