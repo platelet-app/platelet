@@ -1,6 +1,6 @@
 import DashboardDetailTabs from "./DashboardDetailTabs";
 import { createMatchMedia, render } from "../../../test-utils";
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import * as models from "../../../models";
 import GuidedSetupDrawer from "./GuidedSetupDrawer";
@@ -24,9 +24,13 @@ describe("DashboardDetailTabs", () => {
         expect(completedTab).toHaveClass("MuiChip-colorPrimary");
     });
 
-    test("role view menu", () => {
+    test("role view menu", async () => {
         const mockUser = new models.User({
-            roles: [models.Role.COORDINATOR, models.Role.RIDER],
+            roles: [
+                models.Role.COORDINATOR,
+                models.Role.RIDER,
+                models.Role.USER,
+            ],
         });
         const preloadedState = {
             roleView: "ALL",
@@ -35,15 +39,25 @@ describe("DashboardDetailTabs", () => {
 
         render(<DashboardDetailTabs />, { preloadedState });
         expect(screen.getByText("ALL")).toBeInTheDocument();
-        const roleViewMenu = screen.getByRole("button", {
-            name: "Role Selection Menu",
-        });
+        const roleViewMenu = screen.getByText("ALL");
         userEvent.click(roleViewMenu);
-        const roleViewMenuItems = screen.getAllByRole("menuitem");
+        const roleViewMenuItems = await screen.findAllByRole("option");
         expect(roleViewMenuItems).toHaveLength(3);
-        expect(roleViewMenuItems[0]).toHaveTextContent("All Tasks");
-        expect(roleViewMenuItems[1]).toHaveTextContent("Coordinator");
-        expect(roleViewMenuItems[2]).toHaveTextContent("Rider");
+        expect(roleViewMenuItems[0]).toHaveTextContent("ALL");
+        expect(roleViewMenuItems[1]).toHaveTextContent("COORDINATOR");
+        expect(roleViewMenuItems[2]).toHaveTextContent("RIDER");
+        userEvent.click(roleViewMenuItems[1]);
+        await waitFor(() => {
+            expect(screen.queryByRole("option")).toBeNull();
+        });
+        const roleViewMenu2 = screen.getByText("COORDINATOR");
+        userEvent.click(roleViewMenu2);
+        const roleViewMenuItems2 = await screen.findAllByRole("option");
+        userEvent.click(roleViewMenuItems2[2]);
+        await waitFor(() => {
+            expect(screen.queryByRole("option")).toBeNull();
+        });
+        expect(screen.getByText("RIDER")).toBeInTheDocument();
     });
 
     test("hide role menu if only a rider", () => {
@@ -51,7 +65,7 @@ describe("DashboardDetailTabs", () => {
             roles: [models.Role.RIDER],
         });
         const preloadedState = {
-            roleView: "ALL",
+            roleView: "RIDER",
             whoami: { user: mockUser },
         };
 
@@ -61,6 +75,23 @@ describe("DashboardDetailTabs", () => {
                 name: "Role Selection Menu",
             })
         ).toBeNull();
+    });
+
+    test("hide rider role if only a coordinator", () => {
+        const mockUser = new models.User({
+            roles: [models.Role.COORDINATOR],
+        });
+        const preloadedState = {
+            roleView: "ALL",
+            whoami: { user: mockUser },
+        };
+
+        render(<DashboardDetailTabs />, { preloadedState });
+        userEvent.click(screen.getByText("ALL"));
+        const roleViewMenuItems = screen.getAllByRole("option");
+        expect(roleViewMenuItems).toHaveLength(2);
+        expect(roleViewMenuItems[0]).toHaveTextContent("ALL");
+        expect(roleViewMenuItems[1]).toHaveTextContent("COORDINATOR");
     });
 
     it("toggles between create new and clear if a search is in place", async () => {

@@ -4,7 +4,7 @@ import * as models from "../../../models/index";
 import { useSelector } from "react-redux";
 import { Skeleton, Stack, useMediaQuery } from "@mui/material";
 import PropTypes from "prop-types";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
 import {
     dashboardFilteredUserSelector,
     getRoleView,
@@ -13,8 +13,6 @@ import {
     taskAssigneesSelector,
     dataStoreModelSyncedStatusSelector,
     dashboardFilterTermSelector,
-    selectedItemsSelector,
-    dashboardTabIndexSelector,
     selectionActionsPendingSelector,
 } from "../../../redux/Selectors";
 import { DataStore } from "aws-amplify";

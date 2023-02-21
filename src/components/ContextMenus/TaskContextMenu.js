@@ -5,7 +5,6 @@ import MenuItem from "@mui/material/MenuItem";
 import { useDispatch, useSelector } from "react-redux";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import IconButton from "@mui/material/IconButton";
-import { deleteButtonStyles } from "./contextMenuCSS";
 import PropTypes from "prop-types";
 import * as assigneeActions from "../../redux/taskAssignees/taskAssigneesActions";
 import * as models from "../../models/index";
@@ -174,10 +173,6 @@ function TaskContextMenu(props) {
                 setTimeValue(null, "timeRejected");
             })
         );
-    }
-
-    function onDelete(e) {
-        handleClose(e);
     }
 
     async function onDuplicate(e) {

@@ -20,8 +20,6 @@ import UserContactInformationDialog from "./UserContactInformationDialog";
 import UserAddressInformationDialog from "./UserAddressInformationDialog";
 import UserDisplayNameDialog from "./UserDisplayNameDialog";
 import PropTypes from "prop-types";
-import { convertListDataToObject } from "../../../utilities";
-import _ from "lodash";
 import usePossibleRiderResponsibilities from "../../../hooks/usePossibleRiderResponsibilities";
 
 const userFields = {
@@ -69,8 +67,6 @@ function UserProfile(props) {
     );
     const possibleRiderResponsibilities =
         possibleRiderResponsibilitiesHook.state;
-    const setPossibleRiderResponsibilities =
-        possibleRiderResponsibilitiesHook.setState;
 
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));

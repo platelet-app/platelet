@@ -1,4 +1,4 @@
-import { API, graphqlOperation, Storage } from "aws-amplify";
+import { API, graphqlOperation } from "aws-amplify";
 import { DataStore } from "aws-amplify";
 import { S3ObjectAccessLevels } from "../../../apiConsts";
 import * as models from "../../../models";

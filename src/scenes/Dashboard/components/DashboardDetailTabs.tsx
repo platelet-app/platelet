@@ -3,13 +3,8 @@ import * as selectionModeActions from "../../../redux/selectionMode/selectionMod
 import AddIcon from "@mui/icons-material/Add";
 import Box from "@mui/material/Box";
 import { useDispatch, useSelector } from "react-redux";
-import { makeStyles } from "tss-react/mui";
-import IconButton from "@mui/material/IconButton";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { saveDashboardRoleMode } from "../../../utilities";
-import Typography from "@mui/material/Typography";
 import {
     setDashboardFilteredUser,
     setDashboardTabIndex,
@@ -17,7 +12,7 @@ import {
     setRoleView,
 } from "../../../redux/Actions";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
-import { Chip, Fab, Hidden, Stack } from "@mui/material";
+import { Chip, Fab, FormControl, Hidden, Select, Stack } from "@mui/material";
 import { useTheme, useMediaQuery } from "@mui/material";
 import {
     dashboardFilteredUserSelector,
@@ -38,9 +33,6 @@ const DashboardDetailTabs: React.FC<DashboardDetailTabsProps> = ({
     disableAddButton,
 }) => {
     const dispatch = useDispatch();
-    const [anchorElRoleMenu, setAnchorElRoleMenu] = React.useState<
-        (EventTarget & HTMLSpanElement) | null
-    >(null);
     const whoami = useSelector(getWhoami);
     const dashboardFilter = useSelector(dashboardFilterTermSelector);
     const roleView = useSelector(getRoleView);
@@ -50,16 +42,6 @@ const DashboardDetailTabs: React.FC<DashboardDetailTabsProps> = ({
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
     const isMd = useMediaQuery(theme.breakpoints.down("md"));
     const dashboardTabIndex = useSelector(dashboardTabIndexSelector);
-    const isCoordinator =
-        whoami && whoami.roles.includes(models.Role.COORDINATOR);
-    let roleViewText = "";
-    if (roleView) {
-        if (isMd) {
-            roleViewText = `${roleView.substring(0, 5).toUpperCase()}`;
-        } else {
-            roleViewText = roleView.toUpperCase();
-        }
-    }
 
     const handleChange = (newValue: number) => {
         dispatch(setDashboardTabIndex(newValue));
@@ -137,106 +119,86 @@ const DashboardDetailTabs: React.FC<DashboardDetailTabsProps> = ({
             </Hidden>
             <Stack
                 spacing={1}
-                direction={"row"}
+                direction={"row-reverse"}
                 justifyContent={"flex-start"}
                 alignItems={"center"}
             >
-                {isCoordinator && (
-                    <>
-                        <Typography
-                            onClick={(event) => {
-                                setAnchorElRoleMenu(event.currentTarget);
-                            }}
-                            sx={{ cursor: "pointer" }}
-                            data-cy="role-identifier"
-                        >
-                            {roleViewText}
-                        </Typography>
-                        <IconButton
-                            data-cy="role-menu-button"
-                            aria-label="Role Selection Menu"
-                            aria-controls="simple-menu"
-                            aria-haspopup="true"
-                            onClick={(event) => {
-                                setAnchorElRoleMenu(event.currentTarget);
-                            }}
-                            size="large"
-                        >
-                            <ArrowDropDownIcon />
-                        </IconButton>
-                    </>
-                )}
-
                 <Hidden smDown>
                     {["ALL", models.Role.COORDINATOR].includes(roleView) &&
                         addClearButton}
                 </Hidden>
-                <Menu
-                    data-cy="role-menu"
-                    anchorEl={anchorElRoleMenu}
-                    keepMounted
-                    open={Boolean(anchorElRoleMenu)}
-                    onClose={() => {
-                        setAnchorElRoleMenu(null);
-                    }}
-                >
-                    <MenuItem
+                <FormControl variant="outlined">
+                    <Select
                         sx={{
-                            display: whoami.roles.includes(
-                                models.Role.COORDINATOR
-                            )
-                                ? ""
-                                : "none",
+                            right: 5,
+                            borderRadius: 2,
+                            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "orange",
+                            },
+                            "&:hover .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "orange",
+                            },
                         }}
-                        onClick={() => {
-                            setAnchorElRoleMenu(null);
-                            if (roleView !== "ALL") {
-                                dispatch(setRoleView("ALL"));
-                                saveDashboardRoleMode("ALL");
-                                clearAllSelectedItems();
-                            }
-                        }}
+                        disabled={guidedSetupOpen}
+                        size="small"
+                        data-cy="role-menu"
+                        value={roleView}
                     >
-                        All Tasks
-                    </MenuItem>
-                    <MenuItem
-                        sx={{
-                            display: whoami.roles.includes(
-                                models.Role.COORDINATOR
-                            )
-                                ? ""
-                                : "none",
-                        }}
-                        onClick={() => {
-                            setAnchorElRoleMenu(null);
-                            if (roleView !== models.Role.COORDINATOR) {
-                                dispatch(setRoleView(models.Role.COORDINATOR));
-                                saveDashboardRoleMode(models.Role.COORDINATOR);
-                                clearAllSelectedItems();
-                            }
-                        }}
-                    >
-                        Coordinator
-                    </MenuItem>
-                    <MenuItem
-                        sx={{
-                            display: whoami.roles.includes(models.Role.RIDER)
-                                ? ""
-                                : "none",
-                        }}
-                        onClick={() => {
-                            setAnchorElRoleMenu(null);
-                            if (roleView !== models.Role.RIDER) {
-                                dispatch(setRoleView(models.Role.RIDER));
-                                dispatch(setDashboardFilteredUser(null));
-                                saveDashboardRoleMode(models.Role.RIDER);
-                                clearAllSelectedItems();
-                            }
-                        }}
-                    >
-                        Rider
-                    </MenuItem>
-                </Menu>
+                        {whoami.roles.includes(models.Role.COORDINATOR) && (
+                            <MenuItem
+                                value="ALL"
+                                onClick={() => {
+                                    if (roleView !== "ALL") {
+                                        dispatch(setRoleView("ALL"));
+                                        saveDashboardRoleMode("ALL");
+                                        clearAllSelectedItems();
+                                    }
+                                }}
+                            >
+                                ALL
+                            </MenuItem>
+                        )}
+                        {whoami.roles.includes(models.Role.COORDINATOR) && (
+                            <MenuItem
+                                value={models.Role.COORDINATOR}
+                                onClick={() => {
+                                    if (roleView !== models.Role.COORDINATOR) {
+                                        dispatch(
+                                            setRoleView(models.Role.COORDINATOR)
+                                        );
+                                        saveDashboardRoleMode(
+                                            models.Role.COORDINATOR
+                                        );
+                                        clearAllSelectedItems();
+                                    }
+                                }}
+                            >
+                                {isMd ? "COORD" : "COORDINATOR"}
+                            </MenuItem>
+                        )}
+                        {whoami.roles.includes(models.Role.RIDER) && (
+                            <MenuItem
+                                value={models.Role.RIDER}
+                                onClick={() => {
+                                    if (roleView !== models.Role.RIDER) {
+                                        dispatch(
+                                            setRoleView(models.Role.RIDER)
+                                        );
+                                        dispatch(
+                                            setDashboardFilteredUser(null)
+                                        );
+                                        saveDashboardRoleMode(
+                                            models.Role.RIDER
+                                        );
+                                        clearAllSelectedItems();
+                                    }
+                                }}
+                            >
+                                RIDER
+                            </MenuItem>
+                        )}
+                    </Select>
+                </FormControl>
             </Stack>
         </Stack>
     );
