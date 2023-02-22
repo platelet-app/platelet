@@ -112,7 +112,7 @@ type AddressAndContactDetails {
 type Location
 @auth(rules: [
   {allow: private, operations: [read]},
-  {allow: groups, groups: ["ADMIN"], operations: [create, read, update]},
+  {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [create, read, update]},
 ])
 @model {
   id: ID!

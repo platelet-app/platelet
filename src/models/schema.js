@@ -1301,7 +1301,8 @@ export const schema = {
                                 "provider": "userPools",
                                 "allow": "groups",
                                 "groups": [
-                                    "ADMIN"
+                                    "ADMIN",
+                                    "COORDINATOR"
                                 ],
                                 "operations": [
                                     "create",
