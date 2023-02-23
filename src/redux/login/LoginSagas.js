@@ -44,18 +44,20 @@ export function* watchLogin() {
 
 function* logout(action) {
     try {
-        yield call([DataStore, DataStore.stop]);
-        yield call([DataStore, DataStore.clear]);
-        yield call([Auth, Auth.signOut]);
         if (action.data.broadcast) {
             const channel = yield new BroadcastChannel(
                 "platelet-broadcast-channel"
             );
             yield call([channel, channel.postMessage], "logout");
         }
+        yield call([DataStore, DataStore.stop]);
+        yield call([DataStore, DataStore.clear]);
     } catch (error) {
         console.log(error);
     } finally {
+        // if DataStore fails to clear for some reason
+        // we still want to logout the user
+        yield call([Auth, Auth.signOut]);
         yield call([window, window.location.reload.bind(window.location)]);
     }
 }
