@@ -1,5 +1,5 @@
 import React from 'react';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import Popover from '@mui/material/Popover';
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
@@ -10,14 +10,14 @@ import UsersSelect from "../../../components/UsersSelect";
 import {useDispatch} from "react-redux";
 import {SmallCirclePlusButton} from "../../../components/Buttons";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     root: {
         padding: theme.spacing(2),
     }
 }));
 
 export default function CollaboratorPickerPopover(props) {
-    const classes = useStyles();
+    const { classes } = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const dispatch = useDispatch();
 

@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import * as selectionActions from "../../../redux/selectionMode/selectionModeActions";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { makeStyles } from 'tss-react/mui';
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
@@ -13,7 +13,7 @@ import {
     selectedItemsSelector,
 } from "../../../redux/Selectors";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles()({
     header: {
         fontWeight: "bold",
     },
@@ -32,7 +32,7 @@ function TaskGridColumnHeader(props) {
     const dispatch = useDispatch();
     const dashboardFilter = useSelector(dashboardFilterTermSelector);
 
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     function handleSelectCheckBoxClick() {
         const selectedItems = selectedItemsAll[tabIndex] || [];

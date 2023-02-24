@@ -1,6 +1,6 @@
 import Paper from "@mui/material/Paper";
-import { styled } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
+import { styled } from "@mui/material/styles";
+import { makeStyles } from "tss-react/mui";
 
 export const CommentCardStyled = styled(Paper)({
     position: "relative",
@@ -28,7 +28,7 @@ export const PrivateCommentCardStyled = styled(Paper)({
     },
 });
 
-export const commentStyles = makeStyles((theme) => ({
+export const commentStyles = makeStyles()((theme) => ({
     newComment: {
         width: "100%",
         minWidth: 350,

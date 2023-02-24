@@ -2,13 +2,13 @@ import React from "react";
 import UserAvatar from "../../../components/UserAvatar";
 import { Link as RouterLink } from "react-router-dom";
 import { encodeUUID } from "../../../utilities";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import PropTypes from "prop-types";
 import { Typography } from "@mui/material";
 import { Grid } from "@mui/material";
 import { ThemedLink } from "../../../styles/common";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles()({
     link: {
         textDecoration: "none",
         "&:hover": {
@@ -19,7 +19,7 @@ const useStyles = makeStyles({
 });
 
 const CommentAuthor = React.memo((props) => {
-    const classes = useStyles();
+    const { classes } = useStyles();
     if (!props.userId) {
         return null;
     }

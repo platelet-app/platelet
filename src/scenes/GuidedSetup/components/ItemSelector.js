@@ -9,7 +9,7 @@ import {
 import DeliverableCard from "../../../scenes/Deliverables/components/DeliverableCard";
 import DeliverablesSkeleton from "../../../scenes/Deliverables/components/DeliverablesSkeleton";
 import { styled } from "@mui/material/styles";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import Box from "@mui/material/Box";
 import { Paper } from "@mui/material";
 import { dialogCardStyles } from "../../Task/styles/DialogCompactStyles";
@@ -18,7 +18,7 @@ import { v4 as uuidv4 } from "uuid";
 import { SmallCirclePlusButton } from "../../../components/Buttons";
 import { showHide } from "../../../styles/common";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles()({
     root: {
         width: "100%",
         maxWidth: 350,
@@ -81,10 +81,15 @@ export default function ItemSelector(props) {
     const loadingSelector = createLoadingSelector(["GET_DELIVERABLES"]);
     const [truncated, setTruncated] = useState(false);
     const isFetching = useSelector((state) => loadingSelector(state));
-    const classes = useStyles();
+    const { classes } = useStyles();
     const cardClasses = dialogCardStyles();
 
-    const { show, hide } = useStyles(showHide);
+    const {
+        show,
+        hide
+    } = useStyles(showHide, {
+        props: showHide
+    });
 
     let emptyDeliverable = {
         task_uuid: props.taskUUID,

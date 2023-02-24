@@ -9,11 +9,11 @@ import { displayErrorNotification } from "../redux/notifications/NotificationsAc
 import { Button, Stack, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
 import { matchSorter } from "match-sorter";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment } from "@mui/material";
 
-const useStyles = makeStyles((theme) => {
+const useStyles = makeStyles()((theme) => {
     return {
         root: {
             [theme.breakpoints.down("md")]: {
@@ -38,7 +38,7 @@ export default function LocationsList() {
     const [filteredLocations, setFilteredLocations] = useState([]);
     const whoami = useSelector(getWhoami);
     const dispatch = useDispatch();
-    const classes = useStyles();
+    const { classes } = useStyles();
     const observer = useRef({ unsubscribe: () => {} });
 
     function onChangeFilterText(e) {

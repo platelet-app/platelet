@@ -1,8 +1,8 @@
 import React from "react";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from "tss-react/mui";
 import { TextFieldUncontrolled } from "./TextFields";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     root: {
         display: "flex",
         flexDirection: "column",
@@ -18,9 +18,23 @@ const useStyles = makeStyles((theme) => ({
 
 const fields = { name: "Name", telephoneNumber: "Telephone" };
 
-export const ContactForm = ({ values, onChange, italicTel }) => {
-    const classes = useStyles();
+type ValuesType = {
+    name: string;
+    telephoneNumber: string;
+};
 
+type ContactFormProps = {
+    onChange: (contact: any) => void;
+    values: ValuesType;
+    italicTel: boolean;
+};
+
+export const ContactForm: React.FC<ContactFormProps> = ({
+    values,
+    onChange,
+    italicTel,
+}) => {
+    const { classes } = useStyles();
     return (
         <form className={classes.root} noValidate autoComplete="off">
             {Object.entries(fields).map(([key, value]) => (
@@ -38,8 +52,11 @@ export const ContactForm = ({ values, onChange, italicTel }) => {
                     fullWidth
                     tel={key === "telephoneNumber"}
                     label={value}
-                    value={values[key]}
-                    onChange={(e) => onChange({ [key]: e.target.value })}
+                    value={(values as any)[key]}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const { value } = e.target;
+                        onChange({ [key]: value });
+                    }}
                     variant="outlined"
                 />
             ))}

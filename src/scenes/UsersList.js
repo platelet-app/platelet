@@ -13,10 +13,10 @@ import { userRoles } from "../apiConsts";
 import { TextFieldControlled } from "../components/TextFields";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import { matchSorter } from "match-sorter";
 
-const useStyles = makeStyles((theme) => {
+const useStyles = makeStyles()((theme) => {
     return {
         root: {
             [theme.breakpoints.down("md")]: {
@@ -37,7 +37,7 @@ export default function UsersList() {
     const observer = useRef({ unsubscribe: () => {} });
     const whoami = useSelector(getWhoami);
     const dispatch = useDispatch();
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     function onChangeFilterText(e) {
         setFilteredUsers(

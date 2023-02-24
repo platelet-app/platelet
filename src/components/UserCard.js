@@ -5,7 +5,7 @@ import UserAvatar from "./UserAvatar";
 import IconButton from "@mui/material/IconButton";
 import ClearIcon from "@mui/icons-material/Clear";
 import { Box, Stack, styled } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import { ThemedLink } from "../styles/common";
 
 const UserBox = styled(Box)({
@@ -15,7 +15,7 @@ const UserBox = styled(Box)({
     maxWidth: 500,
 });
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     button: {
         width: theme.spacing(4),
         height: theme.spacing(4),
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function UserCard(props) {
-    const classes = useStyles();
+    const { classes } = useStyles();
     const deleteButton = props.onDelete ? (
         <IconButton
             aria-label="delete"

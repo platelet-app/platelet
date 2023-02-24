@@ -6,11 +6,11 @@ import Moment from "react-moment";
 import IconButton from "@mui/material/IconButton";
 import { Stack, Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import moment from "moment";
 import TimeAndNamePickerDialog from "./TimeAndNamePickerDialog";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles()({
     button: {
         height: 9,
     },
@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 });
 
 function TimeAndNamePicker(props) {
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     // check if props.time is today
     function isToday() {

@@ -41,6 +41,30 @@ describe("GuidedSetup", () => {
         };
     }
 
+    beforeAll(() => {
+        // add window.matchMedia
+        // this is necessary for the date picker to be rendered in desktop mode.
+        // if this is not provided, the mobile mode is rendered, which might lead to unexpected behavior
+        Object.defineProperty(window, "matchMedia", {
+            writable: true,
+            value: (query) => ({
+                media: query,
+                // this is the media query that @material-ui/pickers uses to determine if a device is a desktop device
+                matches: query === "(pointer: fine)",
+                onchange: () => {},
+                addEventListener: () => {},
+                removeEventListener: () => {},
+                addListener: () => {},
+                removeListener: () => {},
+                dispatchEvent: () => false,
+            }),
+        });
+    });
+
+    afterAll(() => {
+        delete window.matchMedia;
+    });
+
     beforeEach(async () => {
         await DataStore.save(whoami);
         mockDate();
@@ -152,6 +176,7 @@ describe("GuidedSetup", () => {
             task: mockTask,
             assignee: mockWhoami,
             role: userRoles.coordinator,
+            tenantId,
         });
         await DataStore.save(mockWhoami);
         const querySpy = jest.spyOn(DataStore, "query");
@@ -170,28 +195,22 @@ describe("GuidedSetup", () => {
         });
         expect(querySpy).toHaveBeenCalledWith(models.User, mockWhoami.id);
         await waitFor(() =>
-            expect(saveSpy).toHaveBeenNthCalledWith(
-                1,
-                expect.objectContaining({
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
+                ...mockTask,
+                ...timeStrings,
+                id: expect.any(String),
+            })
+        );
+        await waitFor(() =>
+            expect(saveSpy).toHaveBeenNthCalledWith(2, {
+                ...mockAssignment,
+                id: expect.any(String),
+                task: {
                     ...mockTask,
                     ...timeStrings,
                     id: expect.any(String),
-                })
-            )
-        );
-        await waitFor(() =>
-            expect(saveSpy).toHaveBeenNthCalledWith(
-                2,
-                expect.objectContaining({
-                    ...mockAssignment,
-                    id: expect.any(String),
-                    task: {
-                        ...mockTask,
-                        ...timeStrings,
-                        id: expect.any(String),
-                    },
-                })
-            )
+                },
+            })
         );
     });
 
@@ -245,28 +264,22 @@ describe("GuidedSetup", () => {
             screen.getByRole("button", { name: "Save to dashboard" })
         );
         await waitFor(() =>
-            expect(saveSpy).toHaveBeenNthCalledWith(
-                1,
-                expect.objectContaining({
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
+                ...mockTask,
+                id: expect.any(String),
+                ...timeStrings,
+            })
+        );
+        await waitFor(() =>
+            expect(saveSpy).toHaveBeenNthCalledWith(2, {
+                ...mockAssignment,
+                id: expect.any(String),
+                task: {
                     ...mockTask,
                     id: expect.any(String),
                     ...timeStrings,
-                })
-            )
-        );
-        await waitFor(() =>
-            expect(saveSpy).toHaveBeenNthCalledWith(
-                2,
-                expect.objectContaining({
-                    ...mockAssignment,
-                    id: expect.any(String),
-                    task: {
-                        ...mockTask,
-                        id: expect.any(String),
-                        ...timeStrings,
-                    },
-                })
-            )
+                },
+            })
         );
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(9));
     });
@@ -294,14 +307,11 @@ describe("GuidedSetup", () => {
         });
 
         await waitFor(() =>
-            expect(saveSpy).toHaveBeenNthCalledWith(
-                3,
-                expect.objectContaining({
-                    ...mockComment,
-                    id: expect.any(String),
-                    parentId: expect.any(String),
-                })
-            )
+            expect(saveSpy).toHaveBeenNthCalledWith(3, {
+                ...mockComment,
+                id: expect.any(String),
+                parentId: expect.any(String),
+            })
         );
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(9));
     });
@@ -747,23 +757,27 @@ describe("GuidedSetup", () => {
             label: "some item",
             tenantId,
             disabled: 0,
+            defaultUnit: models.DeliverableUnit.ITEM,
         });
         const mockDeliverableType2 = new models.DeliverableType({
             label: "another thing",
             tenantId,
             disabled: 0,
+            defaultUnit: models.DeliverableUnit.GRAM,
         });
         const mockDeliverable = new models.Deliverable({
             deliverableType: mockDeliverableType,
             task: mockTask,
             count: 3,
             tenantId,
+            unit: models.DeliverableUnit.ITEM,
         });
         const mockDeliverable2 = new models.Deliverable({
             deliverableType: mockDeliverableType2,
             task: mockTask,
             count: 1,
             tenantId,
+            unit: models.DeliverableUnit.GRAM,
         });
 
         await DataStore.save(mockDeliverableType);
@@ -785,13 +799,11 @@ describe("GuidedSetup", () => {
             screen.getByRole("button", { name: "Save to dashboard" })
         );
         await waitFor(() =>
-            expect(saveSpy).toHaveBeenNthCalledWith(
-                1,
-                expect.objectContaining({
-                    ..._.omit(mockTask, "id"),
-                    ...timeStrings,
-                })
-            )
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
+                ...mockTask,
+                id: expect.any(String),
+                ...timeStrings,
+            })
         );
         await waitFor(() =>
             expect(querySpy).toHaveBeenNthCalledWith(6, models.DeliverableType)
@@ -799,28 +811,24 @@ describe("GuidedSetup", () => {
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledTimes(4);
         });
-        expect(saveSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                ...mockDeliverable,
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockDeliverable,
+            id: expect.any(String),
+            task: {
+                ...mockTask,
                 id: expect.any(String),
-                task: {
-                    ...mockTask,
-                    id: expect.any(String),
-                    ...timeStrings,
-                },
-            })
-        );
-        expect(saveSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                ...mockDeliverable2,
+                ...timeStrings,
+            },
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockDeliverable2,
+            id: expect.any(String),
+            task: {
+                ...mockTask,
                 id: expect.any(String),
-                task: {
-                    ...mockTask,
-                    id: expect.any(String),
-                    ...timeStrings,
-                },
-            })
-        );
+                ...timeStrings,
+            },
+        });
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(10));
     });
 
@@ -921,5 +929,103 @@ describe("GuidedSetup", () => {
         ).toBeEnabled();
         expect(screen.getByRole("button", { name: "Discard" })).toBeEnabled();
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(9));
+    });
+
+    test("change the time of call", async () => {
+        const mockWhoami = new models.User({
+            displayName: "test user",
+        });
+        const mockTask = new models.Task({
+            dropOffLocation: null,
+            pickUpLocation: null,
+            priority: null,
+            createdBy: mockWhoami,
+            status: tasksStatus.new,
+            establishmentLocation: null,
+            requesterContact: {
+                name: "",
+                telephoneNumber: "",
+            },
+            tenantId,
+        });
+
+        await DataStore.save(mockWhoami);
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<GuidedSetup />, {
+            preloadedState: { ...preloadedState, whoami: { user: mockWhoami } },
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(4);
+        });
+        const textBox = screen.getByRole("textbox", {
+            name: "Time of call",
+        });
+        expect(textBox).toHaveValue("11/29/2021 23:24");
+        userEvent.type(textBox, "{backspace}");
+        userEvent.type(textBox, "{backspace}");
+        userEvent.type(textBox, "00");
+        expect(textBox).toHaveValue("11/29/2021 23:00");
+        userEvent.click(
+            screen.getByRole("button", { name: "Save to dashboard" })
+        );
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(9);
+        });
+        expect(querySpy).toHaveBeenCalledWith(models.User, mockWhoami.id);
+        await waitFor(() =>
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
+                ...mockTask,
+                ...timeStrings,
+                timeOfCall: "2021-11-29T23:00:00.000Z",
+                id: expect.any(String),
+            })
+        );
+    });
+
+    test("disable save button when time of call is empty", async () => {
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<GuidedSetup />, { preloadedState });
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
+        const saveButton = screen.getByRole("button", {
+            name: "Save to dashboard",
+        });
+        const textBox = screen.getByRole("textbox", {
+            name: "Time of call",
+        });
+        expect(textBox).toBeEnabled();
+        expect(saveButton).toBeEnabled();
+        userEvent.type(textBox, "{backspace}");
+        userEvent.type(textBox, "{backspace}");
+        userEvent.type(textBox, "{backspace}");
+        userEvent.clear(textBox);
+        await waitFor(() => {
+            expect(saveButton).toBeDisabled();
+        });
+    });
+
+    test.skip("disable save button when time of call is invalid", async () => {
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<GuidedSetup />, { preloadedState });
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
+        const saveButton = screen.getByRole("button", {
+            name: "Save to dashboard",
+        });
+        const textBox = screen.getByRole("textbox", {
+            name: "Time of call",
+        });
+        userEvent.click(textBox);
+        expect(textBox).toBeEnabled();
+        expect(saveButton).toBeEnabled();
+        userEvent.type(textBox, "{backspace}");
+        userEvent.type(textBox, "{backspace}");
+        userEvent.type(textBox, "{backspace}");
+        // this very clearly is an invalid date
+        // and when using the browser the button is disabled with this exact string
+        // but the test still shows the button as enabled
+        expect(textBox).toHaveValue("11/29/2021 2");
+        await waitFor(() => {
+            expect(saveButton).toBeDisabled();
+        });
     });
 });

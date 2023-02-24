@@ -14,9 +14,9 @@ import { TextFieldControlled } from "../components/TextFields";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment } from "@mui/material";
 import { matchSorter } from "match-sorter";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 
-const useStyles = makeStyles((theme) => {
+const useStyles = makeStyles()((theme) => {
     return {
         root: {
             [theme.breakpoints.down("md")]: {
@@ -35,7 +35,7 @@ function VehicleList() {
     const whoami = useSelector(getWhoami);
     const vehiclesRef = useRef([]);
     const [filteredVehicles, setFilteredVehicles] = useState([]);
-    const classes = useStyles();
+    const { classes } = useStyles();
     const vehiclesObserver = useRef({ unsubscribe: () => {} });
 
     function onChangeFilterText(e) {

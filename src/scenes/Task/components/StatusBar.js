@@ -8,7 +8,7 @@ import { taskStatusHumanReadable } from "../../../utilities";
 
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from "tss-react/mui";
 import IconButton from "@mui/material/IconButton";
 import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
@@ -59,19 +59,19 @@ const generateClass = (theme, status) => {
     }
 };
 
-const dialogComponent = (status) =>
-    makeStyles((theme) => {
-        return {
-            root: generateClass(theme, status),
-            statusText: {
-                fontWeight: "bold",
-                color: theme.palette.mode === "dark" ? "white" : "black",
-            },
-            items: {
-                marginTop: 5,
-            },
-        };
-    });
+const useStyles = makeStyles()((theme, { status }) => {
+    const root = generateClass(theme, status);
+    return {
+        root,
+        statusText: {
+            fontWeight: "bold",
+            color: theme.palette.mode === "dark" ? "white" : "black",
+        },
+        items: {
+            marginTop: 5,
+        },
+    };
+});
 
 function StatusBar(props) {
     const [copied, setCopied] = useState(null);
@@ -84,7 +84,7 @@ function StatusBar(props) {
     ).Task;
     const taskObserver = useRef({ unsubscribe: () => {} });
     const [status, setStatus] = useState(null);
-    const classes = dialogComponent(status)();
+    const { classes } = useStyles({ status });
 
     const getTask = React.useCallback(async (taskId) => {
         try {

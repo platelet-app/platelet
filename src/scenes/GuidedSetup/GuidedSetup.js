@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from "tss-react/mui";
 import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -66,7 +66,7 @@ const a11yProps = (index) => {
     };
 };
 
-const guidedSetupStyles = makeStyles((theme) => ({
+const guidedSetupStyles = makeStyles()((theme) => ({
     wrapper: {
         display: "flex",
         flexDirection: "column",
@@ -134,7 +134,7 @@ const defaultComment = {
 const initialEstablishmentSameAsPickUpState = false;
 
 export const GuidedSetup = () => {
-    const classes = guidedSetupStyles();
+    const { classes } = guidedSetupStyles();
     const [tabIndex, setTabIndex] = React.useState(0);
     const [formValues, setFormValues] = useState(defaultValues);
     const [establishmentSameAsPickup, setEstablishmentSameAsPickup] = useState(
@@ -147,11 +147,13 @@ export const GuidedSetup = () => {
     const deliverables = useRef({});
     const requesterContact = useRef(defaultContact);
     const comment = useRef(defaultComment);
-    const timeOfCall = useRef(new Date().toISOString());
+    const [timeOfCall, setTimeOfCall] = useState(new Date());
+    const [timeOfCallInvalid, setTimeOfCallInvalid] = useState(false);
+    const originalTimeOfCall = useRef(null);
     const dispatch = useDispatch();
     const locations = useRef({ pickUpLocation: null, dropOffLocation: null });
     const [pickUpOverride, setPickUpOverride] = useState(null);
-    const { show, hide } = showHide();
+    const { show, hide } = showHide().classes;
     const [discardConfirmationOpen, setDiscardConfirmationOpen] =
         useState(false);
     const whoami = useSelector(getWhoami);
@@ -204,6 +206,7 @@ export const GuidedSetup = () => {
     const handleSave = async () => {
         setIsPosting(true);
         try {
+            console.log(timeOfCall);
             await saveNewTaskToDataStore(
                 {
                     ...formValues,
@@ -211,7 +214,10 @@ export const GuidedSetup = () => {
                     locations: locations.current,
                     requesterContact: requesterContact.current,
                     comment: comment.current,
-                    timeOfCall: timeOfCall.current,
+                    timeOfCall:
+                        timeOfCall?.toISOString() ||
+                        originalTimeOfCall.current?.toISOString() ||
+                        new Date().toISOString(),
                 },
                 tenantId,
                 whoami && whoami.id
@@ -231,6 +237,7 @@ export const GuidedSetup = () => {
 
     const handleDiscard = React.useCallback(() => {
         if (
+            originalTimeOfCall.current !== timeOfCall ||
             !_.isEqual(formValues, defaultValues) ||
             !_.isEqual(requesterContact.current, defaultContact) ||
             !_.isEqual(comment.current.body, defaultComment.body) ||
@@ -244,6 +251,7 @@ export const GuidedSetup = () => {
         }
     }, [
         formValues,
+        timeOfCall,
         deliverables,
         locations,
         requesterContact,
@@ -264,6 +272,10 @@ export const GuidedSetup = () => {
     function setLocation(key, location) {
         locations.current[key] = location;
     }
+
+    const handleTimeOfCallChange = (value) => {
+        setTimeOfCall(value);
+    };
 
     const handleDeliverablesChange = (value) => {
         if (!value || !value.id) {
@@ -294,7 +306,9 @@ export const GuidedSetup = () => {
 
     useEffect(() => {
         if (guidedSetupOpen) {
-            timeOfCall.current = new Date().toISOString();
+            const newTimeOfCall = new Date();
+            setTimeOfCall(newTimeOfCall);
+            originalTimeOfCall.current = newTimeOfCall;
         } else {
             setFormValues(defaultValues);
             deliverables.current = {};
@@ -359,6 +373,7 @@ export const GuidedSetup = () => {
                     <Box className={tabIndex === 0 ? show : hide}>
                         <CallerDetails
                             values={formValues}
+                            timeOfCall={timeOfCall}
                             establishmentSameAsPickup={
                                 establishmentSameAsPickup
                             }
@@ -367,6 +382,11 @@ export const GuidedSetup = () => {
                             onChangeEstablishmentSameAsPickUp={
                                 handleEstablishmentSameAsPickupChange
                             }
+                            onChangeTimeOfCall={handleTimeOfCallChange}
+                            onInvalidTimeOfCall={(error) => {
+                                if (error) setTimeOfCallInvalid(true);
+                                else setTimeOfCallInvalid(false);
+                            }}
                         />
                     </Box>
                     <Box className={tabIndex === 1 ? show : hide}>
@@ -446,7 +466,7 @@ export const GuidedSetup = () => {
                     <Button
                         data-cy="save-to-dash-button"
                         onClick={handleSave}
-                        disabled={isPosting}
+                        disabled={isPosting || !timeOfCall || timeOfCallInvalid}
                         variant="contained"
                         autoFocus
                     >

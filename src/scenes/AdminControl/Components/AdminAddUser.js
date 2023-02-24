@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Skeleton } from "@mui/material";
 import { Button, TextField, Typography, Stack } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { PaddedPaper } from "../../../styles/common";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,7 +18,7 @@ import * as mutations from "../../../graphql/mutations";
 import { API, graphqlOperation } from "aws-amplify";
 import UserRoleSelect from "../../../components/UserRoleSelect";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles()({
     root: {
         maxWidth: 460,
     },
@@ -47,7 +47,7 @@ function AdminAddUser() {
     const [inputVerified, setInputVerified] = useState(false);
     const [isPosting, setIsPosting] = useState(false);
     const dispatch = useDispatch();
-    const classes = useStyles();
+    const { classes } = useStyles();
     const [rolesState, setRolesState] = useState([]);
 
     function onClickToggle(key) {

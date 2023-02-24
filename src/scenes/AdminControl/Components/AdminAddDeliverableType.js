@@ -1,5 +1,5 @@
 import { Button, Grid, Skeleton, TextField, Typography } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import React, { useEffect, useState } from "react";
 import { PaddedPaper } from "../../../styles/common";
 import * as models from "../../../models/index";
@@ -21,7 +21,7 @@ const initialDeliverableTypeState = {
     tags: [],
 };
 
-const useStyles = makeStyles({
+const useStyles = makeStyles()({
     root: {
         width: "100%",
         maxWidth: 460,
@@ -43,7 +43,7 @@ function AdminAddDeliverableType() {
     const [isPosting, setIsPosting] = useState(false);
     const [inputVerified, setInputVerified] = useState(false);
     const dispatch = useDispatch();
-    const classes = useStyles();
+    const { classes } = useStyles();
     const whoami = useSelector(getWhoami);
 
     async function addDeliverableTypeToStore() {

@@ -11,7 +11,7 @@ import LocationDetailRoute from "../scenes/LocationDetail/LocationDetailRoute";
 import StatisticsDashboard from "../scenes/Statistics/StatisticsDashboard";
 import { useDispatch, useSelector } from "react-redux";
 import { setMenuIndex } from "../redux/Actions";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from "tss-react/mui";
 import AdminAddUser from "../scenes/AdminControl/Components/AdminAddUser";
 import AdminAddVehicle from "../scenes/AdminControl/Components/AdminAddVehicle";
 import AdminAddLocation from "../scenes/AdminControl/Components/AdminAddLocation";
@@ -24,24 +24,24 @@ import { Box } from "@mui/material";
 import Reports from "../scenes/Reports/Reports";
 import UserDetailRoute from "../scenes/UserDetail/UserDetailRoute";
 
+const useStyles = makeStyles()((theme, { navIndex, guidedSetupOpen }) => ({
+    root: {
+        marginRight: guidedSetupOpen && navIndex === "dashboard" ? 0 : "auto",
+        marginLeft: navIndex === "dashboard" ? 0 : 200,
+        paddingTop: 10,
+        paddingBottom: 10,
+        [theme.breakpoints.down("md")]: {
+            paddingTop: 5,
+            marginLeft: 0,
+            marginRight: 0,
+        },
+    },
+}));
+
 function MainWindowContainer(props) {
     const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
     const navIndex = useSelector(menuIndexSelector);
-    const styles = makeStyles((theme) => ({
-        root: {
-            marginRight:
-                guidedSetupOpen && navIndex === "dashboard" ? 0 : "auto",
-            marginLeft: navIndex === "dashboard" ? 0 : 200,
-            paddingTop: 10,
-            paddingBottom: 10,
-            [theme.breakpoints.down("md")]: {
-                paddingTop: 5,
-                marginLeft: 0,
-                marginRight: 0,
-            },
-        },
-    }));
-    const classes = styles();
+    const { classes } = useStyles({ guidedSetupOpen, navIndex });
     return <Box className={classes.root}>{props.children}</Box>;
 }
 

@@ -1,21 +1,44 @@
-import { Stack, Typography } from "@mui/material";
+import { DateTimePicker } from "@mui/lab";
+import * as models from "../../../models";
+import { Stack, TextField, Typography } from "@mui/material";
 import React from "react";
 import { ContactForm } from "../../../components/ContactForm";
 import EstablishmentDetails from "./EstablishmentDetails";
 
-export const CallerDetails = ({
+type CallerDetailType = {
+    onChangeContact: (contact: any) => void;
+    onChangeLocation: (location: any) => void;
+    establishmentSameAsPickup: boolean;
+    onChangeEstablishmentSameAsPickUp: (
+        establishmentSameAsPickup: boolean
+    ) => void;
+    timeOfCall: Date;
+    onChangeTimeOfCall: (timeOfCall: Date | null) => void;
+    onInvalidTimeOfCall: (error: any) => void;
+};
+
+type StateType = {
+    name: string;
+    telephoneNumber: string;
+    establishment: null | models.Location;
+};
+
+export const CallerDetails: React.FC<CallerDetailType> = ({
     onChangeContact,
     onChangeLocation,
     establishmentSameAsPickup,
     onChangeEstablishmentSameAsPickUp,
+    onChangeTimeOfCall,
+    timeOfCall,
+    onInvalidTimeOfCall,
 }) => {
-    const [state, setState] = React.useState({
+    const [state, setState] = React.useState<StateType>({
         name: "",
         telephoneNumber: "",
         establishment: null,
     });
 
-    const handleSelectLocation = (location) => {
+    const handleSelectLocation = (location: models.Location) => {
         onChangeLocation(location);
         if (
             !state.telephoneNumber &&
@@ -25,8 +48,8 @@ export const CallerDetails = ({
         ) {
             setState((prevState) => ({
                 ...prevState,
-                establishment: location,
-                telephoneNumber: location.contact.telephoneNumber,
+                establishment: location || null,
+                telephoneNumber: location.contact?.telephoneNumber || "",
             }));
             onChangeContact({
                 name: state.name,
@@ -65,6 +88,25 @@ export const CallerDetails = ({
             <Typography variant="h6">
                 What are their contact details?
             </Typography>
+            <DateTimePicker
+                label="Time of call"
+                ampm={false}
+                renderInput={(params) => {
+                    const { inputProps } = params;
+                    return (
+                        <TextField
+                            {...params}
+                            inputProps={{
+                                ...inputProps,
+                                "aria-label": "Time of call",
+                            }}
+                        />
+                    );
+                }}
+                value={timeOfCall}
+                onChange={onChangeTimeOfCall}
+                onError={onInvalidTimeOfCall}
+            />
             <EstablishmentDetails
                 sameAsPickUp={establishmentSameAsPickup}
                 value={state.establishment}
@@ -76,11 +118,8 @@ export const CallerDetails = ({
             <ContactForm
                 values={state}
                 italicTel={
-                    state.establishment &&
-                    state.establishment.contact &&
-                    state.establishment.contact.telephoneNumber &&
                     state.telephoneNumber ===
-                        state.establishment.contact.telephoneNumber
+                    state.establishment?.contact?.telephoneNumber
                 }
                 onChange={(value) => {
                     setState((prevState) => ({ ...prevState, ...value }));

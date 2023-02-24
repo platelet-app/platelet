@@ -23,44 +23,38 @@ import UserChip from "../../../components/UserChip";
 import { setDashboardFilteredUser } from "../../../redux/Actions";
 import moment from "moment";
 import * as models from "../../../models";
-import { makeStyles } from "@mui/styles";
+import { makeStyles } from "tss-react/mui";
 import convertModelsToObject, {
     PersistentModelObjectType,
 } from "../../../utilities/convertModelsToObject";
 
-const useStyles = makeStyles((theme: any) => ({
+const useStyles = makeStyles()((theme: any) => ({
     gradientContainer: {
         position: "relative",
         height: 40,
         display: "flex",
         alignItems: "center",
     },
-    gradientLeft: () => {
-        const background = `linear-gradient(90deg, ${theme.palette.background.paper} 0%, rgba(0,0,0,0) 100%)`;
-        return {
-            background: background,
-            width: 35,
-            height: "85%",
-            position: "absolute",
-            zIndex: 90,
-        };
+    gradientLeft: {
+        background: `linear-gradient(90deg, ${theme.palette.background.paper} 0%, rgba(0,0,0,0) 100%)`,
+        width: 35,
+        height: "85%",
+        position: "absolute",
+        zIndex: 90,
     },
-    gradientRight: () => {
-        const background = `linear-gradient(90deg, rgba(0,0,0,0) 0%, ${theme.palette.background.paper} 100%)`;
-        return {
-            background: background,
-            width: 35,
-            height: "85%",
-            position: "absolute",
-            right: 0,
-            zIndex: 90,
-        };
+    gradientRight: {
+        background: `linear-gradient(90deg, rgba(0,0,0,0) 0%, ${theme.palette.background.paper} 100%)`,
+        width: 35,
+        height: "85%",
+        position: "absolute",
+        right: 0,
+        zIndex: 90,
     },
 }));
 
 function LeftArrow() {
     const theme = useTheme();
-    const classes = useStyles();
+    const { classes } = useStyles();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const { isFirstItemVisible, isLastItemVisible, scrollPrev } =
         React.useContext(VisibilityContext);
@@ -100,7 +94,7 @@ function LeftArrow() {
 
 function RightArrow() {
     const theme = useTheme();
-    const classes = useStyles();
+    const { classes } = useStyles();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const { isLastItemVisible, isFirstItemVisible, scrollNext } =
         React.useContext(VisibilityContext);

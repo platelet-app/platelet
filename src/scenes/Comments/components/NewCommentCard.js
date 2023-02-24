@@ -26,7 +26,7 @@ function NewCommentCard(props) {
     const tenantId = useSelector(tenantIdSelector);
     const dispatch = useDispatch();
 
-    const classes = commentStyles();
+    const { classes } = commentStyles();
 
     async function addComment() {
         setIsPosting(true);

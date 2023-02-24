@@ -56,7 +56,7 @@ function TaskActions(props) {
 
     const taskObserver = useRef({ unsubscribe: () => {} });
     const dispatch = useDispatch();
-    const cardClasses = dialogCardStyles();
+    const { classes } = dialogCardStyles();
     const taskModelsSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     ).Task;
@@ -223,7 +223,7 @@ function TaskActions(props) {
     } else {
         return (
             <>
-                <Paper className={cardClasses.root}>
+                <Paper className={classes.root}>
                     <Stack direction={"column"} spacing={2}>
                         <Typography variant={"h6"}>Actions</Typography>
                         <Divider />

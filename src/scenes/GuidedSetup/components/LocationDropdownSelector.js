@@ -2,10 +2,10 @@ import React from "react";
 import Grid from "@mui/material/Grid";
 import PropTypes from "prop-types";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import { encodeUUID } from "../../../utilities";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles()({
     root: {
         width: "100%",
         marginBottom: "30px",
@@ -25,7 +25,7 @@ const useStyles = makeStyles({
 });
 
 export const LocationDropdownSelector = (props) => {
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     const presetName =
         props.location && props.location.name ? props.location.name : "";

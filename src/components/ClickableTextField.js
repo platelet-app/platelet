@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import Typography from "@mui/material/Typography";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from 'tss-react/mui';
 import PropTypes from "prop-types";
 import { TextFieldUncontrolled } from "./TextFields";
-import clsx from "clsx";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     text: {
         maxWidth: 300,
         [theme.breakpoints.down("lg")]: {
@@ -41,7 +40,7 @@ function ClickableTextField(props) {
     const [value, setValue] = useState("");
     const firstValue = useRef(props.value);
 
-    const classes = useStyles();
+    const { classes, cx } = useStyles();
 
     function onChange(e) {
         props.onChange(e.target.value);
@@ -85,7 +84,7 @@ function ClickableTextField(props) {
         <Typography
             noWrap
             aria-label={label}
-            className={clsx(
+            className={cx(
                 classes.hoverHighlight,
                 classes.enabled,
                 classes.text
@@ -100,7 +99,7 @@ function ClickableTextField(props) {
             noWrap
             aria-label={label}
             onClick={toggleEditMode}
-            className={clsx(
+            className={cx(
                 classes.hoverHighlight,
                 classes.label,
                 classes.enabled,
@@ -120,7 +119,7 @@ function ClickableTextField(props) {
                 inputProps={{
                     "aria-label": label,
                 }}
-                className={clsx(classes.label, classes.text)}
+                className={cx(classes.label, classes.text)}
                 tel={props.tel}
                 onPressEnter={(ev) => {
                     onFinishedEntry(ev);

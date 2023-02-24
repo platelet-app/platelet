@@ -1,9 +1,9 @@
 import React from "react";
 import Typography from '@mui/material/Typography';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import {Grid} from '@mui/material';
 
-const riderJobActivityStyles = makeStyles((theme) => ({
+const riderJobActivityStyles = makeStyles()((theme) => ({
     wrapper: {
         marginBottom: "100px",
     },
@@ -21,7 +21,7 @@ const riderJobActivityStyles = makeStyles((theme) => ({
   }));
 
 export const RiderJobActivity = () => {
-    const classes = riderJobActivityStyles();
+    const { classes } = riderJobActivityStyles();
 
     return (
         <div className={classes.wrapper}>

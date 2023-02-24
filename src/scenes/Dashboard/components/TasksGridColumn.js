@@ -4,7 +4,7 @@ import * as models from "../../../models/index";
 import { useSelector } from "react-redux";
 import { Skeleton, Stack, useMediaQuery } from "@mui/material";
 import PropTypes from "prop-types";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from "tss-react/mui";
 import {
     dashboardFilteredUserSelector,
     getRoleView,
@@ -13,8 +13,6 @@ import {
     taskAssigneesSelector,
     dataStoreModelSyncedStatusSelector,
     dashboardFilterTermSelector,
-    selectedItemsSelector,
-    dashboardTabIndexSelector,
     selectionActionsPendingSelector,
 } from "../../../redux/Selectors";
 import { DataStore } from "aws-amplify";
@@ -31,7 +29,7 @@ import { useTheme } from "@mui/styles";
 import TaskGridColumnHeader from "./TaskGridColumnHeader";
 import TaskGridTasksList from "./TaskGridTasksList";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme) => ({
     divider: {
         width: "95%",
     },
@@ -89,7 +87,7 @@ function TasksGridColumn(props) {
     });
     const theme = useTheme();
 
-    const classes = useStyles();
+    const { classes } = useStyles();
 
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 

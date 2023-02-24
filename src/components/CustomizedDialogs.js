@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 
-import withStyles from '@mui/styles/withStyles';
-import makeStyles from '@mui/styles/makeStyles';
+import { withStyles } from 'tss-react/mui';
+import { makeStyles } from 'tss-react/mui';
 import Dialog from '@mui/material/Dialog';
 import MuiDialogTitle from '@mui/material/DialogTitle';
 import MuiDialogContent from '@mui/material/DialogContent';
@@ -24,7 +24,7 @@ const styles = (theme) => ({
   },
 });
 
-const DialogTitle = withStyles(styles)((props) => {
+const DialogTitle = withStyles((props) => {
   const { children, classes, onClose, ...other } = props;
   return (
     <MuiDialogTitle disableTypography className={classes.root} {...other}>
@@ -40,23 +40,23 @@ const DialogTitle = withStyles(styles)((props) => {
       ) : null}
     </MuiDialogTitle>
   );
-});
+}, styles);
 
-const DialogContent = withStyles((theme) => ({
+const DialogContent = withStyles(MuiDialogContent, (theme) => ({
   root: {
     padding: theme.spacing(2),
   },
-}))(MuiDialogContent);
+}));
 
-const DialogActions = withStyles((theme) => ({
+const DialogActions = withStyles(MuiDialogActions, (theme) => ({
   root: {
     display: "inline-block",
     margin: 0,
     padding: theme.spacing(1),
   },
-}))(MuiDialogActions);
+}));
 
-const CustomizedDialogsStyles = makeStyles((theme) => ({
+const CustomizedDialogsStyles = makeStyles()((theme) => ({
   dialogPaper: {
     minHeight: '60vh',
     maxHeight: '60vh',
@@ -64,7 +64,7 @@ const CustomizedDialogsStyles = makeStyles((theme) => ({
 }));
 
 export const CustomizedDialogs = ({ open, onClose, children })  => {
-  const classes = CustomizedDialogsStyles()
+  const { classes } = CustomizedDialogsStyles()
   return (
     <Dialog 
       classes={{ paper: classes.dialogPaper }}

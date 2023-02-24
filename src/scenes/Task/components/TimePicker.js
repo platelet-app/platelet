@@ -7,14 +7,13 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import IconButton from "@mui/material/IconButton";
 import { Stack, TextField, Tooltip, useMediaQuery } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import { showHide } from "../../../styles/common";
-import makeStyles from "@mui/styles/makeStyles";
+import { makeStyles } from "tss-react/mui";
 import { DateTimePicker } from "@mui/lab";
 import moment from "moment";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import { useTheme } from "@mui/styles";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles()({
     button: {
         height: 9,
     },
@@ -25,10 +24,9 @@ const useStyles = makeStyles({
 
 function TimePicker(props) {
     const [state, setState] = useState(new Date(props.time));
-    const classes = useStyles();
+    const { classes } = useStyles();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
-    const { show, hide } = showHide();
 
     function onClear() {
         props.onChange(null);
@@ -94,7 +92,7 @@ function TimePicker(props) {
                                     <EditIcon />
                                 </IconButton>
                             </Tooltip>
-                            <div className={props.disableClear ? hide : show}>
+                            {!props.disableClear && (
                                 <Tooltip title={"Clear"}>
                                     <IconButton
                                         aria-label={"Clear"}
@@ -106,7 +104,7 @@ function TimePicker(props) {
                                         <CancelIcon />
                                     </IconButton>
                                 </Tooltip>
-                            </div>
+                            )}
                         </>
                     )}
                 </Stack>
