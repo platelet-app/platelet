@@ -78,7 +78,7 @@ function LocationProfile(props) {
         }
     }
 
-    let editAddressToggle = <></>;
+    let editAddressToggle = <div></div>;
     if (whoami.roles) {
         if (whoami.roles.includes(userRoles.admin)) {
             editAddressToggle = (
@@ -94,7 +94,7 @@ function LocationProfile(props) {
         }
     }
 
-    let editContactToggle = <></>;
+    let editContactToggle = <div></div>;
     if (whoami.roles) {
         if (whoami.roles.includes(userRoles.admin)) {
             editContactToggle = (
@@ -152,21 +152,20 @@ function LocationProfile(props) {
                 direction={"row"}
                 justifyContent={"space-between"}
                 alignItems={"center"}
-                spacing={3}
             >
                 {header}
                 {editNameToggle}
             </Stack>
             <Divider />
+            <Stack
+                direction={"row-reverse"}
+                justifyContent={"space-between"}
+                alignItems={"top"}
+            >
+                {editAddressToggle}
+                <Typography fontWeight="bold">Address</Typography>
+            </Stack>
             <Box sx={{ width: "100%" }}>
-                <Stack
-                    direction={"row-reverse"}
-                    justifyContent={"space-between"}
-                    alignItems={"top"}
-                >
-                    {editAddressToggle}
-                    <Typography fontWeight="bold">Address</Typography>
-                </Stack>
                 {Object.keys(locationFields).map((key) => {
                     return (
                         <Typography key={key} noWrap>
@@ -177,7 +176,7 @@ function LocationProfile(props) {
             </Box>
             {props.location && props.location.contact && <Divider />}
             {props.location.contact && (
-                <Box sx={{ width: "100%" }}>
+                <>
                     <Stack
                         direction={"row-reverse"}
                         justifyContent={"space-between"}
@@ -186,18 +185,20 @@ function LocationProfile(props) {
                         {editContactToggle}
                         <Typography fontWeight="bold">Contact</Typography>
                     </Stack>
-                    {Object.entries(locationContactFields).map(
-                        ([key, label]) => {
-                            return (
-                                <LabelItemPair key={key} label={label}>
-                                    <Typography noWrap align={"right"}>
-                                        {props.location.contact[key]}
-                                    </Typography>
-                                </LabelItemPair>
-                            );
-                        }
-                    )}
-                </Box>
+                    <Box sx={{ width: "100%" }}>
+                        {Object.entries(locationContactFields).map(
+                            ([key, label]) => {
+                                return (
+                                    <LabelItemPair key={key} label={label}>
+                                        <Typography noWrap align={"right"}>
+                                            {props.location.contact[key]}
+                                        </Typography>
+                                    </LabelItemPair>
+                                );
+                            }
+                        )}
+                    </Box>
+                </>
             )}
             <ConfirmationDialog
                 fullScreen={isSm}
