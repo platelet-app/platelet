@@ -26,7 +26,7 @@ describe("MultipleSelectionActionsMenu", () => {
         };
     }
 
-    beforeAll(() => {
+    beforeEach(() => {
         // add window.matchMedia
         // this is necessary for the date picker to be rendered in desktop mode.
         // if this is not provided, the mobile mode is rendered, which might lead to unexpected behavior
@@ -46,7 +46,7 @@ describe("MultipleSelectionActionsMenu", () => {
         });
     });
 
-    afterAll(() => {
+    afterEach(() => {
         delete window.matchMedia;
     });
 
