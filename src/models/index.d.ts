@@ -48,34 +48,6 @@ export enum TaskStatus {
   COMPLETED = "COMPLETED"
 }
 
-type EagerStatistics = {
-  readonly numCancelled?: number | null;
-  readonly numCompleted?: number | null;
-  readonly numDroppedOff?: number | null;
-  readonly numRejected?: number | null;
-  readonly numAbandoned?: number | null;
-  readonly numActive?: number | null;
-  readonly numPickedUp?: number | null;
-  readonly numNew?: number | null;
-  readonly numTest?: number | null;
-}
-
-type LazyStatistics = {
-  readonly numCancelled?: number | null;
-  readonly numCompleted?: number | null;
-  readonly numDroppedOff?: number | null;
-  readonly numRejected?: number | null;
-  readonly numAbandoned?: number | null;
-  readonly numActive?: number | null;
-  readonly numPickedUp?: number | null;
-  readonly numNew?: number | null;
-  readonly numTest?: number | null;
-}
-
-export declare type Statistics = LazyLoading extends LazyLoadingDisabled ? EagerStatistics : LazyStatistics
-
-export declare const Statistics: (new (init: ModelInit<Statistics>) => Statistics)
-
 type EagerSendFeedback = {
   readonly successState?: boolean | null;
 }
@@ -141,6 +113,34 @@ type LazyS3Object = {
 export declare type S3Object = LazyLoading extends LazyLoadingDisabled ? EagerS3Object : LazyS3Object
 
 export declare const S3Object: (new (init: ModelInit<S3Object>) => S3Object)
+
+type EagerStatistics = {
+  readonly numCancelled?: number | null;
+  readonly numCompleted?: number | null;
+  readonly numDroppedOff?: number | null;
+  readonly numRejected?: number | null;
+  readonly numAbandoned?: number | null;
+  readonly numActive?: number | null;
+  readonly numPickedUp?: number | null;
+  readonly numNew?: number | null;
+  readonly numTest?: number | null;
+}
+
+type LazyStatistics = {
+  readonly numCancelled?: number | null;
+  readonly numCompleted?: number | null;
+  readonly numDroppedOff?: number | null;
+  readonly numRejected?: number | null;
+  readonly numAbandoned?: number | null;
+  readonly numActive?: number | null;
+  readonly numPickedUp?: number | null;
+  readonly numNew?: number | null;
+  readonly numTest?: number | null;
+}
+
+export declare type Statistics = LazyLoading extends LazyLoadingDisabled ? EagerStatistics : LazyStatistics
+
+export declare const Statistics: (new (init: ModelInit<Statistics>) => Statistics)
 
 type UserMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
@@ -305,6 +305,7 @@ type EagerComment = {
   readonly body?: string | null;
   readonly author?: User | null;
   readonly visibility?: CommentVisibility | keyof typeof CommentVisibility | null;
+  readonly archived?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -316,6 +317,7 @@ type LazyComment = {
   readonly body?: string | null;
   readonly author: AsyncItem<User | undefined>;
   readonly visibility?: CommentVisibility | keyof typeof CommentVisibility | null;
+  readonly archived?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -332,6 +334,7 @@ type EagerTaskAssignee = {
   readonly role: Role | keyof typeof Role;
   readonly task: Task;
   readonly assignee: User;
+  readonly archived?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -342,6 +345,7 @@ type LazyTaskAssignee = {
   readonly role: Role | keyof typeof Role;
   readonly task: AsyncItem<Task>;
   readonly assignee: AsyncItem<User>;
+  readonly archived?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -376,6 +380,7 @@ type EagerTask = {
   readonly comments?: (Comment | null)[] | null;
   readonly status?: TaskStatus | keyof typeof TaskStatus | null;
   readonly isRiderUsingOwnVehicle?: number | null;
+  readonly archived?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -404,6 +409,7 @@ type LazyTask = {
   readonly comments: AsyncCollection<Comment>;
   readonly status?: TaskStatus | keyof typeof TaskStatus | null;
   readonly isRiderUsingOwnVehicle?: number | null;
+  readonly archived?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -437,6 +443,7 @@ type EagerLocation = {
   readonly comments?: (Comment | null)[] | null;
   readonly disabled?: number | null;
   readonly googleMapsPlaceId?: string | null;
+  readonly archived?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -464,6 +471,7 @@ type LazyLocation = {
   readonly comments: AsyncCollection<Comment>;
   readonly disabled?: number | null;
   readonly googleMapsPlaceId?: string | null;
+  readonly archived?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -483,6 +491,7 @@ type EagerDeliverable = {
   readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit | null;
   readonly orderInGrid?: number | null;
   readonly comments?: (Comment | null)[] | null;
+  readonly archived?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -496,6 +505,7 @@ type LazyDeliverable = {
   readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit | null;
   readonly orderInGrid?: number | null;
   readonly comments: AsyncCollection<Comment>;
+  readonly archived?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

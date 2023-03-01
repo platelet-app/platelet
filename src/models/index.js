@@ -48,7 +48,7 @@ const TaskStatus = {
   "COMPLETED": "COMPLETED"
 };
 
-const { User, PossibleRiderResponsibilities, RiderResponsibility, Comment, TaskAssignee, Task, Location, Deliverable, DeliverableType, VehicleAssignment, Vehicle, Tenant, Statistics, SendFeedback, AddressAndContactDetails, S3Object } = initSchema(schema);
+const { User, PossibleRiderResponsibilities, RiderResponsibility, Comment, TaskAssignee, Task, Location, Deliverable, DeliverableType, VehicleAssignment, Vehicle, Tenant, SendFeedback, AddressAndContactDetails, S3Object, Statistics } = initSchema(schema);
 
 export {
   User,
@@ -69,8 +69,8 @@ export {
   DeliverableTypeIcon,
   DeliverableUnit,
   TaskStatus,
-  Statistics,
   SendFeedback,
   AddressAndContactDetails,
-  S3Object
+  S3Object,
+  Statistics
 };

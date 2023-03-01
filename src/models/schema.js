@@ -547,6 +547,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "archived": {
+                    "name": "archived",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -586,6 +593,15 @@ export const schema = {
                         "name": "byTenantId",
                         "fields": [
                             "tenantId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byArchived",
+                        "fields": [
+                            "archived"
                         ]
                     }
                 },
@@ -682,6 +698,13 @@ export const schema = {
                         "targetName": "userAssignmentsId"
                     }
                 },
+                "archived": {
+                    "name": "archived",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -712,6 +735,15 @@ export const schema = {
                         "name": "byTenantId",
                         "fields": [
                             "tenantId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byArchived",
+                        "fields": [
+                            "archived"
                         ]
                     }
                 },
@@ -960,6 +992,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "archived": {
+                    "name": "archived",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1026,6 +1065,17 @@ export const schema = {
                         "name": "byStatus",
                         "queryField": "tasksByStatus",
                         "fields": [
+                            "status"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byArchivedStatus",
+                        "queryField": "tasksByArchivedStatus",
+                        "fields": [
+                            "archived",
                             "status"
                         ]
                     }
@@ -1253,6 +1303,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "archived": {
+                    "name": "archived",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1283,6 +1340,15 @@ export const schema = {
                         "name": "byTenantId",
                         "fields": [
                             "tenantId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byArchived",
+                        "fields": [
+                            "archived"
                         ]
                     }
                 },
@@ -1395,6 +1461,13 @@ export const schema = {
                         "associatedWith": "parentId"
                     }
                 },
+                "archived": {
+                    "name": "archived",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1425,6 +1498,15 @@ export const schema = {
                         "name": "byTenantId",
                         "fields": [
                             "tenantId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byArchived",
+                        "fields": [
+                            "archived"
                         ]
                     }
                 },
@@ -2004,74 +2086,6 @@ export const schema = {
         }
     },
     "nonModels": {
-        "Statistics": {
-            "name": "Statistics",
-            "fields": {
-                "numCancelled": {
-                    "name": "numCancelled",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numCompleted": {
-                    "name": "numCompleted",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numDroppedOff": {
-                    "name": "numDroppedOff",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numRejected": {
-                    "name": "numRejected",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numAbandoned": {
-                    "name": "numAbandoned",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numActive": {
-                    "name": "numActive",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numPickedUp": {
-                    "name": "numPickedUp",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numNew": {
-                    "name": "numNew",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numTest": {
-                    "name": "numTest",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                }
-            }
-        },
         "SendFeedback": {
             "name": "SendFeedback",
             "fields": {
@@ -2212,8 +2226,76 @@ export const schema = {
                     "attributes": []
                 }
             }
+        },
+        "Statistics": {
+            "name": "Statistics",
+            "fields": {
+                "numCancelled": {
+                    "name": "numCancelled",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numCompleted": {
+                    "name": "numCompleted",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numDroppedOff": {
+                    "name": "numDroppedOff",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numRejected": {
+                    "name": "numRejected",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numAbandoned": {
+                    "name": "numAbandoned",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numActive": {
+                    "name": "numActive",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numPickedUp": {
+                    "name": "numPickedUp",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numNew": {
+                    "name": "numNew",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numTest": {
+                    "name": "numTest",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                }
+            }
         }
     },
     "codegenVersion": "3.3.5",
-    "version": "3c3c2097a8699496ece95b504d3fb046"
+    "version": "277600d8d1c147821bdd715169c5c631"
 };

@@ -144,6 +144,21 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "plateletArchiver": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "plateletImageResize": {
       "build": true,
       "dependsOn": [

@@ -137,6 +137,7 @@ type Location
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
   disabled: Int @default(value: "0")
   googleMapsPlaceId: String
+  archived: Int @default(value: "0") @index(name: "byArchived")
 }
 
 type Task
@@ -215,6 +216,7 @@ timePickedUpSenderName: String
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
   status: TaskStatus @index(name: "byStatus", queryField: "tasksByStatus")
   isRiderUsingOwnVehicle: Int @default(value: "0")
+  archived: Int @default(value: "0") @index(name: "byArchivedStatus", queryField: "tasksByArchivedStatus", sortKeyFields: ["status"])
 }
 
 type TaskAssignee
@@ -228,6 +230,7 @@ type TaskAssignee
   role: Role!
   task: Task! @belongsTo
   assignee: User! @belongsTo
+  archived: Int @default(value: "0") @index(name: "byArchived")
 }
 
 type Comment
@@ -243,6 +246,7 @@ type Comment
   body: String
   author: User @belongsTo
   visibility: CommentVisibility
+  archived: Int @default(value: "0") @index(name: "byArchived")
 }
 
 type DeliverableType
@@ -275,6 +279,7 @@ type Deliverable
   unit: DeliverableUnit
   orderInGrid: Int
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
+  archived: Int @default(value: "0") @index(name: "byArchived")
 }
 
 enum DeliverableTypeIcon {
@@ -360,7 +365,6 @@ type Statistics {
 
 type Query {
   profilePictureUploadURL(userId: ID!): AWSURL @function(name: "plateletProfilePictureUploadURLResolver-${env}") @auth(rules: [{allow: private}])
-  getStatistics(tenantId: ID!): Statistics @function(name: "plateletGetStatistics-${env}") @auth(rules: [{allow: private}])
   sendUserFeedback(emailAddress: AWSEmail, body: String): SendFeedback @function(name: "plateletSendUserFeedback-${env}") @auth(rules: [{allow: private}])
+  testArchiver: String @function(name: "plateletArchiver-${env}")
 }
- 
