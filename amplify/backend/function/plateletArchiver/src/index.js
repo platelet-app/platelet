@@ -16,7 +16,6 @@ const { HttpRequest } = require("@aws-sdk/protocol-http");
 const { default: fetch, Request } = require("node-fetch");
 
 const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
-const GRAPHQL_API_KEY = process.env.API_PLATELET_GRAPHQLAPIKEYOUTPUT;
 
 const query = /* GraphQL */ `
     query LIST_TASKS_BY_ARCHIVE_STATUS(
@@ -34,23 +33,66 @@ const query = /* GraphQL */ `
     }
 `;
 
+const getTaskAssigneesQuery = /* GraphQL */ `
+    query GetTaskAssignees($id: ID!) {
+        getTask(id: $id) {
+            id
+            assignees {
+                items {
+                    id
+                    _version
+                }
+            };
+        };
+    };
+`;
+
+const getTaskDeliverablesQuery = /* GraphQL */ `
+    query GetTaskDeliverables($id: ID!) {
+        getTask(id: $id) {
+            id
+            deliverables {
+                items {
+                    id
+                    _version
+                }
+            };
+        };
+    };
+`;
+
 const updateTaskMutation = /* GraphQL */ `
     mutation UpdateTask($input: UpdateTaskInput!) {
         updateTask(input: $input) {
             id
             createdAt
+            archived
         }
     }
 `;
 
-const getUnArchivedTasksByStatus = async (status) => {
-    const variables = {
-        archived: 0,
-        status: { eq: status },
+const updateDeliverableMutation = /* GraphQL */ `
+    mutation UpdateDeliverable($input: UpdateDeliverableInput!) {
+        updateDeliverable(input: $input) {
+            id
+            createdAt
+            archived
+        };
     };
+`;
 
+const updateTaskAssigneeMutation = /* GraphQL */ `
+    mutation UpdateTaskAssignee($input: UpdateTaskAssigneeInput!) {
+        updateTaskAssignee(input: $input) {
+            id
+            createdAt
+            archived
+        };
+    };
+`;
+
+const makeNewRequest = async (query, variables) => {
     const endpoint = new URL(GRAPHQL_ENDPOINT);
-
     const signer = new SignatureV4({
         credentials: defaultProvider(),
         region: process.env.REGION,
@@ -73,19 +115,109 @@ const getUnArchivedTasksByStatus = async (status) => {
     });
 
     const signed = await signer.sign(requestToBeSigned);
-    const request = new Request(endpoint, signed);
+    return new Request(endpoint, signed);
+};
 
+const getTaskAssignees = async (task) => {
+    const items = [];
+    let nextToken = null;
+    do {
+        const variables = {
+            id: task.id,
+            taskAssignees: { nextToken },
+        };
+        console.log("taskkkk", task);
+        const request = await makeNewRequest(getTaskAssigneesQuery, variables);
+        const response = await fetch(request);
+        const body = await response.json();
+        console.log("bodyy", body);
+        if (body.data.getTask) {
+            console.log(body.data.getTask);
+            items.push(...body.data.getTask.assignees.items);
+            nextToken = body.data.getTask.assignees.nextToken;
+        }
+    } while (nextToken);
+    return items.flat();
+};
+
+const getDeliverables = async (task) => {
+    const items = [];
+    let nextToken = null;
+    do {
+        const variables = {
+            id: task.id,
+            deliverables: { nextToken },
+        };
+        const request = await makeNewRequest(
+            getTaskDeliverablesQuery,
+            variables
+        );
+        const response = await fetch(request);
+        const body = await response.json();
+        if (body.data.getTask) {
+            console.log(body.data.getTask);
+            items.push(...body.data.getTask.deliverables.items);
+            nextToken = body.data.getTask.deliverables.nextToken;
+        }
+    } while (nextToken);
+    return items.flat();
+};
+
+const getUnArchivedTasksByStatus = async (status) => {
+    const items = [];
+    let nextToken = null;
+
+    do {
+        const variables = {
+            archived: 0,
+            status: { eq: status },
+            nextToken,
+        };
+        const request = await makeNewRequest(query, variables);
+        const response = await fetch(request);
+        const body = await response.json();
+        if (body.data.tasksByArchivedStatus) {
+            items.push(...body.data.tasksByArchivedStatus.items);
+            nextToken = body.data.tasksByArchivedStatus.nextToken;
+        } else {
+            nextToken = null;
+        }
+    } while (nextToken);
+
+    return items.flat();
+};
+
+const updateTaskAssignees = async (assignment) => {
+    const variables = {
+        input: {
+            id: assignment.id,
+            archived: 1,
+            _version: assignment._version,
+        },
+    };
+    const request = await makeNewRequest(updateTaskAssigneeMutation, variables);
     const response = await fetch(request);
     const body = await response.json();
-    if (body.data.tasksByArchivedStatus) {
-        return body.data.tasksByArchivedStatus.items;
-    } else {
-        return [];
-    }
+    console.log(`BODY: ${JSON.stringify(body)}`);
+    return body.data.updateTaskAssignee;
+};
+
+const updateDeliverable = async (deliverable) => {
+    const variables = {
+        input: {
+            id: deliverable.id,
+            archived: 1,
+            _version: deliverable._version,
+        },
+    };
+    const request = await makeNewRequest(updateDeliverableMutation, variables);
+    const response = await fetch(request);
+    const body = await response.json();
+    console.log(`BODY: ${JSON.stringify(body)}`);
+    return body.data.updateDeliverable;
 };
 
 const updateTask = async (task) => {
-    const endpoint = new URL(GRAPHQL_ENDPOINT);
     const variables = {
         input: {
             id: task.id,
@@ -93,37 +225,10 @@ const updateTask = async (task) => {
             _version: task._version,
         },
     };
-
-    const signer = new SignatureV4({
-        credentials: defaultProvider(),
-        region: process.env.REGION,
-        service: "appsync",
-        sha256: Sha256,
-    });
-
-    const requestToBeSigned = new HttpRequest({
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            host: endpoint.host,
-        },
-        hostname: endpoint.host,
-        body: JSON.stringify({
-            query: updateTaskMutation,
-            variables,
-        }),
-        path: endpoint.pathname,
-    });
-
-    const signed = await signer.sign(requestToBeSigned);
-    const request = new Request(endpoint, signed);
-
+    const request = await makeNewRequest(updateTaskMutation, variables);
     const response = await fetch(request);
     const body = await response.json();
-    console.log(`BODY: ${JSON.stringify(body)}`);
-    return {
-        body: JSON.stringify(body),
-    };
+    return body.data.updateTask;
 };
 
 exports.handler = async (event) => {
@@ -134,11 +239,29 @@ exports.handler = async (event) => {
         )
     );
     const tasksFlattened = tasks.flat();
-    console.log(tasksFlattened);
     await Promise.all(
         tasksFlattened.map(async (task) => {
-            await updateTask(task);
+            const assignees = await getTaskAssignees(task);
+            const updateAssigneesResult = await Promise.all(
+                assignees.map((assignment) => updateTaskAssignees(assignment))
+            );
+            console.log("updateAssigneesResult", updateAssigneesResult);
+
+            if (updateAssigneesResult.some((a) => a.archived !== 1)) {
+                throw new Error("Failed to archive task assignees");
+            }
+            const deliverables = await getDeliverables(task);
+            const updateDeliverablesResult = await Promise.all(
+                deliverables.map((deliverable) =>
+                    updateDeliverable(deliverable)
+                )
+            );
+            console.log("updateDeliverablesResult", updateDeliverablesResult);
+            if (updateDeliverablesResult.some((a) => a.archived !== 1)) {
+                throw new Error("Failed to archive task deliverables");
+            }
+            const updateTaskResult = await updateTask(task);
         })
     );
-    return JSON.stringify(tasksFlattened);
+    return tasksFlattened;
 };
