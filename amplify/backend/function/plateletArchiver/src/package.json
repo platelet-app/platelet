@@ -12,6 +12,7 @@
     "@aws-sdk/credential-provider-node": "^3.281.0",
     "@aws-sdk/protocol-http": "^3.272.0",
     "@aws-sdk/signature-v4": "^3.272.0",
+    "moment": "^2.29.4",
     "node-fetch": "2"
   }
 }

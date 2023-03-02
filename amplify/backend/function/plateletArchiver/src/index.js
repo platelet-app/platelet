@@ -14,6 +14,7 @@ const { defaultProvider } = require("@aws-sdk/credential-provider-node");
 const { SignatureV4 } = require("@aws-sdk/signature-v4");
 const { HttpRequest } = require("@aws-sdk/protocol-http");
 const { default: fetch, Request } = require("node-fetch");
+const moment = require("moment");
 
 const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
 
@@ -126,13 +127,10 @@ const getTaskAssignees = async (task) => {
             id: task.id,
             taskAssignees: { nextToken },
         };
-        console.log("taskkkk", task);
         const request = await makeNewRequest(getTaskAssigneesQuery, variables);
         const response = await fetch(request);
         const body = await response.json();
-        console.log("bodyy", body);
         if (body.data.getTask) {
-            console.log(body.data.getTask);
             items.push(...body.data.getTask.assignees.items);
             nextToken = body.data.getTask.assignees.nextToken;
         }
@@ -155,7 +153,6 @@ const getDeliverables = async (task) => {
         const response = await fetch(request);
         const body = await response.json();
         if (body.data.getTask) {
-            console.log(body.data.getTask);
             items.push(...body.data.getTask.deliverables.items);
             nextToken = body.data.getTask.deliverables.nextToken;
         }
@@ -239,8 +236,12 @@ exports.handler = async (event) => {
         )
     );
     const tasksFlattened = tasks.flat();
+    const oneWeekAgo = moment.utc().subtract(7, "days").toISOString();
+    const filtered = tasksFlattened.filter(
+        (task) => task.createdAt && task.createdAt < oneWeekAgo
+    );
     await Promise.all(
-        tasksFlattened.map(async (task) => {
+        filtered.map(async (task) => {
             const assignees = await getTaskAssignees(task);
             const updateAssigneesResult = await Promise.all(
                 assignees.map((assignment) => updateTaskAssignees(assignment))
@@ -263,5 +264,5 @@ exports.handler = async (event) => {
             const updateTaskResult = await updateTask(task);
         })
     );
-    return tasksFlattened;
+    return filtered;
 };
