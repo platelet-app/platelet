@@ -23,6 +23,7 @@ import { guidedSetupOpenSelector, menuIndexSelector } from "../redux/Selectors";
 import { Box } from "@mui/material";
 import Reports from "../scenes/Reports/Reports";
 import UserDetailRoute from "../scenes/UserDetail/UserDetailRoute";
+import TaskHistory from "../scenes/TaskHistory";
 
 const useStyles = makeStyles()((theme, { navIndex, guidedSetupOpen }) => ({
     root: {
@@ -179,6 +180,14 @@ export default function MainWindow(_props) {
                         render={(props) => {
                             dispatch(setMenuIndex("dashboard"));
                             return <TaskDialogCompact {...props} />;
+                        }}
+                    />
+                    <Route
+                        exact
+                        path="/history"
+                        render={(props) => {
+                            dispatch(setMenuIndex("history"));
+                            return <TaskHistory {...props} />;
                         }}
                     />
                     <Route component={NotFound} />
