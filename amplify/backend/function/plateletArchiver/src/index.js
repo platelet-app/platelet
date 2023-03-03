@@ -32,6 +32,21 @@ const query = /* GraphQL */ `
             items {
                 id
                 createdAt
+                establishmentLocation {
+                    id
+                    listed
+                    _version
+                }
+                pickUpLocation {
+                    id
+                    listed
+                    _version
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    _version
+                }
                 _version
             }
             nextToken
@@ -108,6 +123,15 @@ const updateDeliverableMutation = /* GraphQL */ `
 const updateCommentMutation = /* GraphQL */ `
     mutation UpdateComment($input: UpdateCommentInput!) {
         updateComment(input: $input) {
+            id
+            archived
+        };
+    };
+`;
+
+const updateLocationMutation = /* GraphQL */ `
+    mutation UpdateLocation($input: UpdateLocationInput!) {
+        updateLocation(input: $input) {
             id
             archived
         };
@@ -282,6 +306,20 @@ const updateComment = async (comment) => {
     return body.data.updateComment;
 };
 
+const updateLocation = async (location) => {
+    const variables = {
+        input: {
+            id: location.id,
+            archived: 1,
+            _version: location._version,
+        },
+    };
+    const request = await makeNewRequest(updateLocationMutation, variables);
+    const response = await fetch(request);
+    const body = await response.json();
+    return body.data.updateLocation;
+};
+
 const updateTask = async (task) => {
     const variables = {
         input: {
@@ -312,6 +350,34 @@ exports.handler = async (event) => {
         filtered.map(async (task) => {
             try {
                 console.log("Updating task: ", task);
+                const {
+                    establishmentLocation,
+                    pickUpLocation,
+                    dropOffLocation,
+                } = task;
+
+                if (
+                    establishmentLocation &&
+                    establishmentLocation.listed === 0
+                ) {
+                    updateLocation(establishmentLocation);
+                    console.log(
+                        "Archived establishment location",
+                        establishmentLocation.id
+                    );
+                }
+                if (pickUpLocation && pickUpLocation.listed === 0) {
+                    updateLocation(pickUpLocation);
+                    console.log("Archived pick up location", pickUpLocation.id);
+                }
+                if (dropOffLocation && dropOffLocation.listed === 0) {
+                    updateLocation(dropOffLocation);
+                    console.log(
+                        "Archived drop off location",
+                        dropOffLocation.id
+                    );
+                }
+
                 const assignees = await getTaskAssignees(task);
                 console.log("Found assignees: ", assignees);
                 const updateAssigneesResult = await Promise.all(
