@@ -22,8 +22,13 @@ const query = /* GraphQL */ `
     query LIST_TASKS_BY_ARCHIVE_STATUS(
         $archived: Int!
         $status: ModelStringKeyConditionInput
+        $nextToken: String
     ) {
-        tasksByArchivedStatus(archived: $archived, status: $status) {
+        tasksByArchivedStatus(
+            archived: $archived
+            status: $status
+            nextToken: $nextToken
+        ) {
             items {
                 id
                 createdAt
@@ -35,42 +40,48 @@ const query = /* GraphQL */ `
 `;
 
 const getTaskAssigneesQuery = /* GraphQL */ `
-    query GetTaskAssignees($id: ID!) {
+    query GetTaskAssignees(
+        $id: ID!,
+        $nextToken: String
+    ) {
         getTask(id: $id) {
             id
-            assignees {
+            assignees(nextToken: $nextToken) {
                 items {
                     id
                     _version
                 }
+                nextToken
             };
         };
     };
 `;
 
 const getTaskDeliverablesQuery = /* GraphQL */ `
-    query GetTaskDeliverables($id: ID!) {
+    query GetTaskDeliverables($id: ID!, $nextToken: String) {
         getTask(id: $id) {
             id
-            deliverables {
+            deliverables(nextToken: $nextToken) {
                 items {
                     id
                     _version
                 }
+                nextToken
             };
         };
     };
 `;
 
 const getTaskCommentsQuery = /* GraphQL */ `
-    query GetTaskComments($id: ID!) {
+    query GetTaskComments($id: ID!, $nextToken: String) {
         getTask(id: $id) {
             id
-            comments {
+            comments(nextToken: $nextToken) {
                 items {
                     id
                     _version
                 }
+                nextToken
             };
         };
     };
@@ -145,7 +156,7 @@ const getTaskAssignees = async (task) => {
     do {
         const variables = {
             id: task.id,
-            taskAssignees: { nextToken },
+            nextToken,
         };
         const request = await makeNewRequest(getTaskAssigneesQuery, variables);
         const response = await fetch(request);
@@ -153,6 +164,8 @@ const getTaskAssignees = async (task) => {
         if (body.data.getTask) {
             items.push(...body.data.getTask.assignees.items);
             nextToken = body.data.getTask.assignees.nextToken;
+        } else {
+            nextToken = null;
         }
     } while (nextToken);
     return items.flat();
@@ -164,7 +177,7 @@ const getDeliverables = async (task) => {
     do {
         const variables = {
             id: task.id,
-            deliverables: { nextToken },
+            nextToken,
         };
         const request = await makeNewRequest(
             getTaskDeliverablesQuery,
@@ -175,6 +188,8 @@ const getDeliverables = async (task) => {
         if (body.data.getTask) {
             items.push(...body.data.getTask.deliverables.items);
             nextToken = body.data.getTask.deliverables.nextToken;
+        } else {
+            nextToken = null;
         }
     } while (nextToken);
     return items.flat();
@@ -186,7 +201,7 @@ const getComments = async (task) => {
     do {
         const variables = {
             id: task.id,
-            comments: { nextToken },
+            nextToken,
         };
         const request = await makeNewRequest(getTaskCommentsQuery, variables);
         const response = await fetch(request);
@@ -194,6 +209,8 @@ const getComments = async (task) => {
         if (body.data.getTask) {
             items.push(...body.data.getTask.comments.items);
             nextToken = body.data.getTask.comments.nextToken;
+        } else {
+            nextToken = null;
         }
     } while (nextToken);
     return items.flat();
@@ -234,7 +251,6 @@ const updateTaskAssignees = async (assignment) => {
     const request = await makeNewRequest(updateTaskAssigneeMutation, variables);
     const response = await fetch(request);
     const body = await response.json();
-    console.log(`BODY: ${JSON.stringify(body)}`);
     return body.data.updateTaskAssignee;
 };
 
@@ -249,7 +265,6 @@ const updateDeliverable = async (deliverable) => {
     const request = await makeNewRequest(updateDeliverableMutation, variables);
     const response = await fetch(request);
     const body = await response.json();
-    console.log(`BODY: ${JSON.stringify(body)}`);
     return body.data.updateDeliverable;
 };
 
@@ -264,7 +279,6 @@ const updateComment = async (comment) => {
     const request = await makeNewRequest(updateCommentMutation, variables);
     const response = await fetch(request);
     const body = await response.json();
-    console.log(`BODY: ${JSON.stringify(body)}`);
     return body.data.updateComment;
 };
 
@@ -296,34 +310,52 @@ exports.handler = async (event) => {
     );
     await Promise.all(
         filtered.map(async (task) => {
-            const assignees = await getTaskAssignees(task);
-            const updateAssigneesResult = await Promise.all(
-                assignees.map((assignment) => updateTaskAssignees(assignment))
-            );
-            console.log("updateAssigneesResult", updateAssigneesResult);
+            try {
+                console.log("Updating task: ", task);
+                const assignees = await getTaskAssignees(task);
+                console.log("Found assignees: ", assignees);
+                const updateAssigneesResult = await Promise.all(
+                    assignees.map((assignment) =>
+                        updateTaskAssignees(assignment)
+                    )
+                );
+                console.log("updateAssigneesResult", updateAssigneesResult);
 
-            if (updateAssigneesResult.some((a) => a.archived !== 1)) {
-                throw new Error("Failed to archive task assignees");
+                if (updateAssigneesResult.some((a) => a.archived !== 1)) {
+                    throw new Error("Failed to archive task assignees");
+                }
+                const deliverables = await getDeliverables(task);
+                console.log("Found deliverables: ", deliverables);
+                const updateDeliverablesResult = await Promise.all(
+                    deliverables.map((deliverable) =>
+                        updateDeliverable(deliverable)
+                    )
+                );
+                console.log(
+                    "updateDeliverablesResult",
+                    updateDeliverablesResult
+                );
+                if (updateDeliverablesResult.some((a) => a.archived !== 1)) {
+                    throw new Error("Failed to archive task deliverables");
+                }
+                const comments = await getComments(task);
+                console.log("Found comments: ", comments);
+                const updateCommentsResult = await Promise.all(
+                    comments.map((comment) => updateComment(comment))
+                );
+                console.log("updateCommentsResult", updateCommentsResult);
+                if (updateCommentsResult.some((a) => a.archived !== 1)) {
+                    throw new Error("Failed to archive task comments");
+                }
+                const updateTaskResult = await updateTask(task);
+                console.log("updateTaskResult", updateTaskResult);
+            } catch (e) {
+                console.log(
+                    "Task archive process failed and has not been archived for: ",
+                    task
+                );
+                console.error("Error: ", e);
             }
-            const deliverables = await getDeliverables(task);
-            const updateDeliverablesResult = await Promise.all(
-                deliverables.map((deliverable) =>
-                    updateDeliverable(deliverable)
-                )
-            );
-            console.log("updateDeliverablesResult", updateDeliverablesResult);
-            if (updateDeliverablesResult.some((a) => a.archived !== 1)) {
-                throw new Error("Failed to archive task deliverables");
-            }
-            const comments = await getComments(task);
-            const updateCommentsResult = await Promise.all(
-                comments.map((comment) => updateComment(comment))
-            );
-            console.log("updateCommentsResult", updateCommentsResult);
-            if (updateCommentsResult.some((a) => a.archived !== 1)) {
-                throw new Error("Failed to archive task comments");
-            }
-            const updateTaskResult = await updateTask(task);
         })
     );
     return filtered;
