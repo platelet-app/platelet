@@ -10,8 +10,11 @@ import userEvent from "@testing-library/user-event";
 import mediaQuery from "css-mediaquery";
 import { DataStore } from "aws-amplify";
 
+const tenantId = "tenantId";
+
 const preloadedState = {
     roleView: "ALL",
+    tenantId,
     whoami: {
         user: { displayName: "Test User", roles: [userRoles.coordinator] },
     },
@@ -567,9 +570,11 @@ describe("TaskDetailsPanel", () => {
         const mockEstablishment = new models.Location({
             name: "Test Unlisted",
             listed: 0,
+            tenantId,
         });
         const mockTask = new models.Task({
             timeOfCall,
+            tenantId,
             priority: priorities.high,
             reference: "test-reference",
             establishmentLocation: null,
