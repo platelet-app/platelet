@@ -324,51 +324,19 @@
         }
       ]
     },
-    "AMPLIFY_function_plateletImageResize_deploymentBucketName": {
+    "AMPLIFY_function_plateletArchiver_deploymentBucketName": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "plateletImageResize"
+          "resourceName": "plateletArchiver"
         }
       ]
     },
-    "AMPLIFY_function_plateletImageResize_resizeHeight": {
+    "AMPLIFY_function_plateletArchiver_s3Key": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "plateletImageResize"
-        }
-      ]
-    },
-    "AMPLIFY_function_plateletImageResize_resizeWidth": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "plateletImageResize"
-        }
-      ]
-    },
-    "AMPLIFY_function_plateletImageResize_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "plateletImageResize"
-        }
-      ]
-    },
-    "AMPLIFY_function_plateletImageResize_thumbnailHeight": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "plateletImageResize"
-        }
-      ]
-    },
-    "AMPLIFY_function_plateletImageResize_thumbnailWidth": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "plateletImageResize"
+          "resourceName": "plateletArchiver"
         }
       ]
     },
