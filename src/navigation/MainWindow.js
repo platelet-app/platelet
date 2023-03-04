@@ -23,7 +23,7 @@ import { guidedSetupOpenSelector, menuIndexSelector } from "../redux/Selectors";
 import { Box } from "@mui/material";
 import Reports from "../scenes/Reports/Reports";
 import UserDetailRoute from "../scenes/UserDetail/UserDetailRoute";
-import TaskHistory from "../scenes/TaskHistory";
+import TaskHistory from "../scenes/TaskHistory/TaskHistory";
 
 const useStyles = makeStyles()((theme, { navIndex, guidedSetupOpen }) => ({
     root: {
