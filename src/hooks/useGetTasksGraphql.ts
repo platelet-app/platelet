@@ -1,5 +1,4 @@
 import React from "react";
-import * as queries from "../graphql/queries";
 import { GraphQLQuery } from "@aws-amplify/api";
 import { API } from "aws-amplify";
 import { Task, ListTasksQuery } from "../API";
@@ -7,6 +6,51 @@ import { Task, ListTasksQuery } from "../API";
 type StateType = {
     [key: string]: Task;
 };
+
+export const listTasks = /* GraphQL */ `
+    query ListTasks(
+        $filter: ModelTaskFilterInput
+        $limit: Int
+        $nextToken: String
+    ) {
+        listTasks(filter: $filter, limit: $limit, nextToken: $nextToken) {
+            items {
+                id
+                timeOfCall
+                riderResponsibility
+                priority
+                status
+                archived
+                createdAt
+                assignees {
+                    items {
+                        assignee {
+                            displayName
+                            profilePicture {
+                                key
+                            }
+                        }
+                    }
+                }
+                pickUpLocation {
+                    name
+                    ward
+                    line1
+                }
+                dropOffLocation {
+                    ward
+                    line1
+                    name
+                }
+                _version
+                _deleted
+                _lastChangedAt
+            }
+            nextToken
+            startedAt
+        }
+    }
+`;
 
 const useGetTasksGraphql = (limit: number = 10) => {
     const [state, setState] = React.useState<StateType>({});
@@ -22,7 +66,7 @@ const useGetTasksGraphql = (limit: number = 10) => {
             };
 
             const result = await API.graphql<GraphQLQuery<ListTasksQuery>>({
-                query: queries.listTasks,
+                query: listTasks,
                 variables,
             });
             const tasks = result.data?.listTasks?.items;
@@ -49,7 +93,7 @@ const useGetTasksGraphql = (limit: number = 10) => {
             limit,
         };
         const result = await API.graphql<GraphQLQuery<ListTasksQuery>>({
-            query: queries.listTasks,
+            query: listTasks,
             variables,
         });
         const tasks = result.data?.listTasks?.items;
