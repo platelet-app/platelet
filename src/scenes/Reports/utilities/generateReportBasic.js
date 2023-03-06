@@ -6,12 +6,11 @@ import * as models from "../../../models";
 import { writeToString } from "@fast-csv/format";
 
 const taskFields = {
-    createdAt: "",
-    isRiderUsingOwnVehicle: "",
     timeOfCall: "",
+    riderResponsibility: "",
+    isRiderUsingOwnVehicle: "",
     priority: "",
     status: "",
-    riderResponsibility: "",
     timePickedUp: "",
     timeDroppedOff: "",
     timeRiderHome: "",
@@ -20,20 +19,13 @@ const taskFields = {
 const locationFields = {
     ward: "",
     line1: "",
-    line2: "",
-    line3: "",
     town: "",
-    county: "",
-    state: "",
-    country: "",
     postcode: "",
 };
 
 const itemFields = {
-    createdAt: "",
     label: "",
     count: "",
-    unit: "",
 };
 
 const requesterContactFields = {
@@ -42,14 +34,11 @@ const requesterContactFields = {
 };
 
 const assigneeFields = {
-    createdAt: "",
-    displayName: "",
     name: "",
     role: "",
 };
 
 const commentFields = {
-    createdAt: "",
     author: "",
     body: "",
 };
@@ -74,9 +63,9 @@ function generateCountedHeader(count, fields, prefix) {
 async function generateCSV(data) {
     const rows = [];
     const headers = [];
-    const commentsCount = data.reduce((acc, task) => {
-        if (task.comments && task.comments.length > acc)
-            return task.comments.length;
+    const assigneesCount = data.reduce((acc, task) => {
+        if (task.assignees && task.assignees.length > acc)
+            return task.assignees.length;
         else return acc;
     }, 0);
     const itemOffsetCount =
@@ -86,37 +75,37 @@ async function generateCSV(data) {
             ...Object.keys(locationFields),
             ...Object.keys(requesterContactFields),
         ].length +
-        commentsCount * Object.keys(commentFields).length;
+        assigneesCount * Object.keys(assigneeFields).length;
 
     const itemsCount = data.reduce((acc, task) => {
         if (task.items && task.items.length > acc) return task.items.length;
         else return acc;
     }, 0);
 
-    const assigneeOffsetCount =
+    const commentsOffsetCount =
         itemOffsetCount + itemsCount * Object.keys(itemFields).length;
 
-    const assigneesCount = data.reduce((acc, task) => {
-        if (task.assignees && task.assignees.length > acc)
-            return task.assignees.length;
+    const commentsCount = data.reduce((acc, task) => {
+        if (task.comments && task.comments.length > acc)
+            return task.comments.length;
         else return acc;
     }, 0);
 
     headers.push(generateHeader(taskFields));
+    headers.push(generateHeader(requesterContactFields, "requesterContact"));
     headers.push(generateHeader(locationFields, "pickUpLocation"));
     headers.push(generateHeader(locationFields, "dropOffLocation"));
-    headers.push(generateHeader(requesterContactFields, "requesterContact"));
-    if (commentsCount > 0) {
+    if (assigneesCount > 0) {
         headers.push(
-            generateCountedHeader(commentsCount, commentFields, "comment")
+            generateCountedHeader(assigneesCount, assigneeFields, "assignee")
         );
     }
     if (itemsCount > 0) {
         headers.push(generateCountedHeader(itemsCount, itemFields, "item"));
     }
-    if (assigneesCount > 0) {
+    if (commentsCount > 0) {
         headers.push(
-            generateCountedHeader(assigneesCount, assigneeFields, "assignee")
+            generateCountedHeader(commentsCount, commentFields, "comment")
         );
     }
     console.log(headers);
@@ -137,6 +126,14 @@ async function generateCSV(data) {
         Object.keys(taskFields).forEach((key) => {
             row.push(rest[key]);
         });
+        if (requesterContact)
+            Object.keys(requesterContactFields).forEach((key) => {
+                row.push(requesterContact[key]);
+            });
+        else
+            Object.values(requesterContactFields).forEach((value) => {
+                row.push(value);
+            });
         if (pickUpLocation)
             Object.keys(locationFields).forEach((key) => {
                 row.push(pickUpLocation[key] || locationFields[key]);
@@ -154,23 +151,14 @@ async function generateCSV(data) {
             Object.values(locationFields).forEach((value) => {
                 row.push(value);
             });
-        if (requesterContact)
-            Object.keys(requesterContactFields).forEach((key) => {
-                row.push(requesterContact[key]);
-            });
-        else
-            Object.values(requesterContactFields).forEach((value) => {
-                row.push(value);
-            });
-        if (comments && comments.length > 0) {
-            comments.forEach((comment) => {
-                Object.keys(commentFields).forEach((key) => {
-                    if (key === "author") {
-                        row.push(
-                            comment[key].displayName || commentFields[key]
-                        );
+
+        if (assignees && assignees.length > 0) {
+            assignees.forEach((item) => {
+                Object.keys(assigneeFields).forEach((key) => {
+                    if (["displayName", "name"].includes(key)) {
+                        row.push(item.assignee[key] || assigneeFields[key]);
                     } else {
-                        row.push(comment[key] || commentFields[key]);
+                        row.push(item[key] || assigneeFields[key]);
                     }
                 });
             });
@@ -193,18 +181,20 @@ async function generateCSV(data) {
             });
         }
 
-        if (assignees && assignees.length > 0) {
-            if (row.length !== assigneeOffsetCount) {
-                _.range(assigneeOffsetCount - row.length).forEach(() => {
+        if (comments && comments.length > 0) {
+            if (row.length !== commentsOffsetCount) {
+                _.range(commentsOffsetCount - row.length).forEach(() => {
                     row.push("");
                 });
             }
-            assignees.forEach((item) => {
-                Object.keys(assigneeFields).forEach((key) => {
-                    if (["displayName", "name"].includes(key)) {
-                        row.push(item.assignee[key] || assigneeFields[key]);
+            comments.forEach((comment) => {
+                Object.keys(commentFields).forEach((key) => {
+                    if (key === "author") {
+                        row.push(
+                            comment[key].displayName || commentFields[key]
+                        );
                     } else {
-                        row.push(item[key] || assigneeFields[key]);
+                        row.push(comment[key] || commentFields[key]);
                     }
                 });
             });
@@ -222,7 +212,6 @@ export default async function generateReport(userId, role, days) {
         .toISOString();
     let finalTasks = [];
     const assignments = await DataStore.query(models.TaskAssignee);
-    debugger;
     if (role !== "ALL") {
         const filteredAssignments = assignments.filter(
             (assignment) =>
@@ -262,7 +251,11 @@ export default async function generateReport(userId, role, days) {
     );
     finalTasks = await Promise.all(
         finalTasks.map(async (t) => {
-            const isRiderUsingOwnVehicle = !!t.isRiderUsingOwnVehicle;
+            const isRiderUsingOwnVehicleBool = !!t.isRiderUsingOwnVehicle;
+            const isRiderUsingOwnVehicle = isRiderUsingOwnVehicleBool
+                ? "TRUE"
+                : "FALSE";
+
             const comments = commentsAll.filter((c) => c.parentId === t.id);
             const items = deliverables.filter(
                 (d) => d.task && d.task.id === t.id
