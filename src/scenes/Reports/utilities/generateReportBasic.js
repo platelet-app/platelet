@@ -205,7 +205,7 @@ async function generateCSV(data) {
     return await writeToString(rows);
 }
 
-export default async function generateReport(userId, role, days) {
+export default async function generateReportBasic(userId, role, days) {
     const timeStamp = moment
         .utc()
         .subtract(days.toString(), "days")
