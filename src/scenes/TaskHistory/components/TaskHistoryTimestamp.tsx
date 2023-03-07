@@ -15,6 +15,7 @@ const TaskHistoryTimestamp: React.FC<TaskHistoryTimestampProps> = ({
         <Typography
             sx={{
                 fontStyle: "italic",
+                fontSize: "0.9rem",
                 maxWidth: "100%",
                 color: "gray",
                 "&:hover": {

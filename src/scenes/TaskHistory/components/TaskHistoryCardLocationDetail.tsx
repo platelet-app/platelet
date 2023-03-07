@@ -24,16 +24,13 @@ const TaskHistoryCardLocationDetail: React.FC<TaskHistoryCardLocationDetailProps
                     <Typography sx={{ fontWeight: "bold" }}>
                         {location.name}
                     </Typography>
-                    <Typography>{addressString}</Typography>
+                    <Typography sx={{ fontSize: "0.9rem" }}>
+                        {addressString}
+                    </Typography>
                 </Stack>
             );
         } else {
-            return (
-                <Stack>
-                    <div></div>
-                    <div></div>
-                </Stack>
-            );
+            return null;
         }
     };
 

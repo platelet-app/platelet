@@ -94,7 +94,7 @@ const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
             <Stack
                 sx={{
                     padding: 2,
-                    minHeight: 200,
+                    minHeight: 180,
                     "&:hover": {
                         backgroundColor: "rgba(0, 0, 0, 0.04)",
                     },
