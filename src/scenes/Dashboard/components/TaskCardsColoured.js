@@ -11,6 +11,7 @@ import { makeStyles } from "tss-react/mui";
 import { StyledCard } from "../../../styles/common";
 import Badge from "@mui/material/Badge";
 import MessageIcon from "@mui/icons-material/Message";
+import CommentsBadge from "../../../components/CommentsBadge";
 
 const colourBarPercent = "90%";
 
@@ -62,11 +63,15 @@ const useStyles = makeStyles()((theme) => {
         divider: { width: "0%", margin: 4 },
         typography: { fontSize: "14px" },
         badgeCircle: {
+            "&::after": {
+                content: "''",
+                width: 10,
+            },
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            width: 32,
-            height: 32,
+            width: 35,
+            height: 35,
             borderRadius: "50%",
             backgroundColor:
                 theme.palette.mode === "dark"
@@ -127,21 +132,11 @@ const TaskCard = (props) => {
                     alignItems={"center"}
                 >
                     {props.commentCount > 0 ? (
-                        <Tooltip
-                            data-testid="comment-count-tooltip"
-                            title={`${props.commentCount} ${
-                                props.commentCount === 1
-                                    ? "comment"
-                                    : "comments"
-                            }`}
-                            placement={"top"}
-                        >
-                            <Badge color={"primary"}>
-                                <div className={classes.badgeCircle}>
-                                    <MessageIcon />
-                                </div>
-                            </Badge>
-                        </Tooltip>
+                        <Badge color={"primary"}>
+                            <div className={classes.badgeCircle}>
+                                <CommentsBadge count={props.commentCount} />
+                            </div>
+                        </Badge>
                     ) : (
                         <div></div>
                     )}
