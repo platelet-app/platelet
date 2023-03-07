@@ -1,5 +1,5 @@
 import { Location } from "../../../API";
-import { Box, Chip, Grid, Paper, Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 
 type TaskHistoryCardLocationDetailProps = {
     location?: Location | null;
@@ -7,21 +7,34 @@ type TaskHistoryCardLocationDetailProps = {
 
 const TaskHistoryCardLocationDetail: React.FC<TaskHistoryCardLocationDetailProps> =
     ({ location }) => {
-        const addressString = location
-            ? `${location.ward}, ${location.line1}`
-            : "";
-        return (
-            <Stack>
-                {location ? (
-                    <Typography variant="h6">{location.name}</Typography>
-                ) : (
-                    <Typography sx={{ fontStyle: "italic" }} variant="h6">
-                        No location
+        let addressString = "";
+        if (location) {
+            const items = [
+                location.ward,
+                location.line1,
+                location.town,
+                location.postcode,
+            ];
+            const filtered = items.filter((item) => item && item !== null);
+            addressString = filtered.join(", ");
+        }
+        if (location) {
+            return (
+                <Stack>
+                    <Typography sx={{ fontWeight: "bold" }}>
+                        {location.name}
                     </Typography>
-                )}
-                <Typography>{addressString}</Typography>
-            </Stack>
-        );
+                    <Typography>{addressString}</Typography>
+                </Stack>
+            );
+        } else {
+            return (
+                <Stack>
+                    <div></div>
+                    <div></div>
+                </Stack>
+            );
+        }
     };
 
 export default TaskHistoryCardLocationDetail;
