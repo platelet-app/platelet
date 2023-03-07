@@ -1,29 +1,4 @@
 export type AmplifyDependentResourcesAttributes = {
-  "api": {
-    "platelet": {
-      "GraphQLAPIEndpointOutput": "string",
-      "GraphQLAPIIdOutput": "string"
-    }
-  },
-  "auth": {
-    "platelet61a0ac07": {
-      "AppClientID": "string",
-      "AppClientIDWeb": "string",
-      "CreatedSNSRole": "string",
-      "IdentityPoolId": "string",
-      "IdentityPoolName": "string",
-      "UserPoolArn": "string",
-      "UserPoolId": "string",
-      "UserPoolName": "string"
-    },
-    "userPoolGroups": {
-      "ADMINGroupRole": "string",
-      "COORDINATORGroupRole": "string",
-      "RIDERGroupRole": "string",
-      "SUPERGroupRole": "string",
-      "USERGroupRole": "string"
-    }
-  },
   "function": {
     "PlateletTaskResolvers": {
       "Arn": "string",
@@ -86,12 +61,6 @@ export type AmplifyDependentResourcesAttributes = {
     "plateletPlace": {
       "Arn": "string",
       "Name": "string",
-      "Region": "string"
-    }
-  },
-  "storage": {
-    "plateletStorage": {
-      "BucketName": "string",
       "Region": "string"
     }
   }

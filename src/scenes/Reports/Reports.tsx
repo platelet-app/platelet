@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import DaysSelection from "../../components/DaysSelection";
 import { PaddedPaper } from "../../styles/common";
-import generateReport from "./utilities/generateReport";
+import generateReportBasic from "./utilities/generateReportBasic";
 import { useDispatch, useSelector } from "react-redux";
 import {
     dataStoreReadyStatusSelector,
@@ -53,7 +53,7 @@ function Reports() {
             const fileName = `${
                 finalUser.name
             }_${role}_${timeStamp}_to_${moment()}.csv`;
-            const result = await generateReport(finalUser.id, role, days);
+            const result = await generateReportBasic(finalUser.id, role, days);
             downloadCSVFile(result, fileName);
             setIsPosting(false);
         } catch (err) {

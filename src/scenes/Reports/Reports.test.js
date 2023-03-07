@@ -5,7 +5,7 @@ import Reports from "./Reports";
 import { render } from "../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import * as gr from "./utilities/generateReport";
+import * as gr from "./utilities/generateReportBasic";
 import { userRoles } from "../../apiConsts";
 import { setReadyStatus } from "../../redux/awsHubListener/awsHubListenerActions";
 import { Days, dayOptions } from "../../components/DaysSelection";
