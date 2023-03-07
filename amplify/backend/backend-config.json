@@ -144,6 +144,11 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "plateletGetStatistics": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "plateletProfilePictureResolver": {
       "build": true,
       "dependsOn": [
