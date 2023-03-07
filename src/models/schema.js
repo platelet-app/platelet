@@ -1237,8 +1237,10 @@ export const schema = {
                     "type": "key",
                     "properties": {
                         "name": "byTenantId",
+                        "queryField": "getTasksByTenantId",
                         "fields": [
-                            "tenantId"
+                            "tenantId",
+                            "timeOfCall"
                         ]
                     }
                 },

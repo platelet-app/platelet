@@ -1151,6 +1151,16 @@ export type ModelTaskFilterInput = {
   userCreatedTasksId?: ModelIDInput | null,
 };
 
+export type ModelStringKeyConditionInput = {
+  eq?: string | null,
+  le?: string | null,
+  lt?: string | null,
+  ge?: string | null,
+  gt?: string | null,
+  between?: Array< string | null > | null,
+  beginsWith?: string | null,
+};
+
 export type ModelTaskAssigneeFilterInput = {
   id?: ModelIDInput | null,
   tenantId?: ModelIDInput | null,
@@ -4962,6 +4972,50 @@ export type SyncTasksQueryVariables = {
 
 export type SyncTasksQuery = {
   syncTasks?:  {
+    __typename: "ModelTaskConnection",
+    items:  Array< {
+      __typename: "Task",
+      id: string,
+      tenantId: string,
+      dateCreated: string,
+      timeOfCall?: string | null,
+      timePickedUp?: string | null,
+      timePickedUpSenderName?: string | null,
+      timeDroppedOff?: string | null,
+      timeDroppedOffRecipientName?: string | null,
+      timeCancelled?: string | null,
+      timeRejected?: string | null,
+      timeRiderHome?: string | null,
+      pickUpLocationId?: string | null,
+      dropOffLocationId?: string | null,
+      establishmentLocationId?: string | null,
+      riderResponsibility?: string | null,
+      priority?: Priority | null,
+      status?: TaskStatus | null,
+      isRiderUsingOwnVehicle?: number | null,
+      createdAt: string,
+      updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
+      userCreatedTasksId?: string | null,
+    } | null >,
+    nextToken?: string | null,
+    startedAt?: number | null,
+  } | null,
+};
+
+export type GetTasksByTenantIdQueryVariables = {
+  tenantId: string,
+  timeOfCall?: ModelStringKeyConditionInput | null,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelTaskFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type GetTasksByTenantIdQuery = {
+  getTasksByTenantId?:  {
     __typename: "ModelTaskConnection",
     items:  Array< {
       __typename: "Task",

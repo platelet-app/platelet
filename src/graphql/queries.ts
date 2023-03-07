@@ -971,6 +971,54 @@ export const syncTasks = /* GraphQL */ `
     }
   }
 `;
+export const getTasksByTenantId = /* GraphQL */ `
+  query GetTasksByTenantId(
+    $tenantId: ID!
+    $timeOfCall: ModelStringKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelTaskFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    getTasksByTenantId(
+      tenantId: $tenantId
+      timeOfCall: $timeOfCall
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        tenantId
+        dateCreated
+        timeOfCall
+        timePickedUp
+        timePickedUpSenderName
+        timeDroppedOff
+        timeDroppedOffRecipientName
+        timeCancelled
+        timeRejected
+        timeRiderHome
+        pickUpLocationId
+        dropOffLocationId
+        establishmentLocationId
+        riderResponsibility
+        priority
+        status
+        isRiderUsingOwnVehicle
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedTasksId
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
 export const tasksByStatus = /* GraphQL */ `
   query TasksByStatus(
     $status: TaskStatus!

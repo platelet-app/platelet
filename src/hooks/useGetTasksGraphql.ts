@@ -1,19 +1,29 @@
 import React from "react";
 import { GraphQLQuery } from "@aws-amplify/api";
 import { API } from "aws-amplify";
-import { Task, ListTasksQuery } from "../API";
+import { Task, GetTasksByTenantIdQuery } from "../API";
+import { useSelector } from "react-redux";
+import { tenantIdSelector } from "../redux/Selectors";
 
 type StateType = {
     [key: string]: Task;
 };
 
-export const listTasks = /* GraphQL */ `
-    query ListTasks(
+export const getTasksByTenantId = /* GraphQL */ `
+    query GetTasksByTenantId(
         $filter: ModelTaskFilterInput
         $limit: Int
         $nextToken: String
+        $tenantId: ID!
+        $sortDirection: ModelSortDirection
     ) {
-        listTasks(filter: $filter, limit: $limit, nextToken: $nextToken) {
+        getTasksByTenantId(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+            tenantId: $tenantId
+            sortDirection: $sortDirection
+        ) {
             items {
                 id
                 timeOfCall
@@ -72,21 +82,27 @@ export const listTasks = /* GraphQL */ `
 const useGetTasksGraphql = (limit: number = 10) => {
     const [state, setState] = React.useState<StateType>({});
     const [finished, setFinished] = React.useState(false);
+    const tenantId = useSelector(tenantIdSelector);
 
     const nextToken = React.useRef<string | null | undefined>(null);
 
     const getNext = React.useCallback(async () => {
+        if (!tenantId) return;
         if (nextToken.current) {
             const variables = {
                 limit,
                 nextToken: nextToken.current,
+                tenantId,
+                sortDirection: "DESC",
             };
 
-            const result = await API.graphql<GraphQLQuery<ListTasksQuery>>({
-                query: listTasks,
+            const result = await API.graphql<
+                GraphQLQuery<GetTasksByTenantIdQuery>
+            >({
+                query: getTasksByTenantId,
                 variables,
             });
-            const tasks = result.data?.listTasks?.items;
+            const tasks = result.data?.getTasksByTenantId?.items;
             if (tasks) {
                 setState((prevState) => ({
                     ...prevState,
@@ -97,24 +113,31 @@ const useGetTasksGraphql = (limit: number = 10) => {
                 }));
             }
 
-            if (result.data?.listTasks?.nextToken) {
-                nextToken.current = result.data.listTasks.nextToken;
+            if (result.data?.getTasksByTenantId?.nextToken) {
+                nextToken.current = result.data.getTasksByTenantId.nextToken;
             } else {
                 setFinished(true);
             }
         }
-    }, [limit]);
+    }, [limit, tenantId]);
 
     const getTasks = React.useCallback(async () => {
+        debugger;
+        if (!tenantId) return;
         const variables = {
             limit,
+            tenantId,
+            sortDirection: "DESC",
         };
-        const result = await API.graphql<GraphQLQuery<ListTasksQuery>>({
-            query: listTasks,
-            variables,
-        });
-        const tasks = result.data?.listTasks?.items;
+        const result = await API.graphql<GraphQLQuery<GetTasksByTenantIdQuery>>(
+            {
+                query: getTasksByTenantId,
+                variables,
+            }
+        );
+        const tasks = result.data?.getTasksByTenantId?.items;
         if (tasks) {
+            console.log(tasks);
             setState(
                 tasks.reduce((acc, task) => {
                     if (task) acc[task.id] = task;
@@ -122,12 +145,12 @@ const useGetTasksGraphql = (limit: number = 10) => {
                 }, {} as StateType)
             );
         }
-        if (result.data?.listTasks?.nextToken) {
-            nextToken.current = result.data.listTasks.nextToken;
+        if (result.data?.getTasksByTenantId?.nextToken) {
+            nextToken.current = result.data.getTasksByTenantId.nextToken;
         } else {
             setFinished(true);
         }
-    }, [limit]);
+    }, [limit, tenantId]);
 
     React.useEffect(() => {
         getTasks();
