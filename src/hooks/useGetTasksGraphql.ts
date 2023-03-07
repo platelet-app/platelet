@@ -20,7 +20,6 @@ export const listTasks = /* GraphQL */ `
                 riderResponsibility
                 priority
                 status
-                archived
                 createdAt
                 assignees {
                     items {
@@ -36,11 +35,29 @@ export const listTasks = /* GraphQL */ `
                     name
                     ward
                     line1
+                    town
+                    postcode
                 }
                 dropOffLocation {
                     ward
                     line1
                     name
+                    town
+                    postcode
+                }
+                deliverables {
+                    items {
+                        count
+                        deliverableType {
+                            label
+                            icon
+                        }
+                    }
+                }
+                comments {
+                    items {
+                        id
+                    }
                 }
                 _version
                 _deleted
