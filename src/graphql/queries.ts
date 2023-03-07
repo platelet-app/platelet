@@ -653,7 +653,6 @@ export const getLocation = /* GraphQL */ `
       }
       disabled
       googleMapsPlaceId
-      archived
       createdAt
       updatedAt
       _version
@@ -687,7 +686,6 @@ export const listLocations = /* GraphQL */ `
         what3words
         disabled
         googleMapsPlaceId
-        archived
         createdAt
         updatedAt
         _version
@@ -730,7 +728,6 @@ export const syncLocations = /* GraphQL */ `
         what3words
         disabled
         googleMapsPlaceId
-        archived
         createdAt
         updatedAt
         _version
@@ -812,7 +809,6 @@ export const getTask = /* GraphQL */ `
         what3words
         disabled
         googleMapsPlaceId
-        archived
         createdAt
         updatedAt
         _version
@@ -837,7 +833,6 @@ export const getTask = /* GraphQL */ `
         what3words
         disabled
         googleMapsPlaceId
-        archived
         createdAt
         updatedAt
         _version
@@ -862,7 +857,6 @@ export const getTask = /* GraphQL */ `
         what3words
         disabled
         googleMapsPlaceId
-        archived
         createdAt
         updatedAt
         _version
@@ -886,7 +880,6 @@ export const getTask = /* GraphQL */ `
       }
       status
       isRiderUsingOwnVehicle
-      archived
       createdAt
       updatedAt
       _version
@@ -922,7 +915,6 @@ export const listTasks = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
-        archived
         createdAt
         updatedAt
         _version
@@ -967,7 +959,6 @@ export const syncTasks = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
-        archived
         createdAt
         updatedAt
         _version
@@ -1014,56 +1005,6 @@ export const tasksByStatus = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
-        archived
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        userCreatedTasksId
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
-export const tasksByArchivedStatus = /* GraphQL */ `
-  query TasksByArchivedStatus(
-    $archived: Int!
-    $status: ModelStringKeyConditionInput
-    $sortDirection: ModelSortDirection
-    $filter: ModelTaskFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    tasksByArchivedStatus(
-      archived: $archived
-      status: $status
-      sortDirection: $sortDirection
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        tenantId
-        dateCreated
-        timeOfCall
-        timePickedUp
-        timePickedUpSenderName
-        timeDroppedOff
-        timeDroppedOffRecipientName
-        timeCancelled
-        timeRejected
-        timeRiderHome
-        pickUpLocationId
-        dropOffLocationId
-        establishmentLocationId
-        riderResponsibility
-        priority
-        status
-        isRiderUsingOwnVehicle
-        archived
         createdAt
         updatedAt
         _version
@@ -1101,7 +1042,6 @@ export const getTaskAssignee = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
-        archived
         createdAt
         updatedAt
         _version
@@ -1128,7 +1068,6 @@ export const getTaskAssignee = /* GraphQL */ `
         _deleted
         _lastChangedAt
       }
-      archived
       createdAt
       updatedAt
       _version
@@ -1150,7 +1089,6 @@ export const listTaskAssignees = /* GraphQL */ `
         id
         tenantId
         role
-        archived
         createdAt
         updatedAt
         _version
@@ -1181,7 +1119,6 @@ export const syncTaskAssignees = /* GraphQL */ `
         id
         tenantId
         role
-        archived
         createdAt
         updatedAt
         _version
@@ -1222,7 +1159,6 @@ export const getComment = /* GraphQL */ `
         _lastChangedAt
       }
       visibility
-      archived
       createdAt
       updatedAt
       _version
@@ -1246,7 +1182,6 @@ export const listComments = /* GraphQL */ `
         tenantId
         body
         visibility
-        archived
         createdAt
         updatedAt
         _version
@@ -1279,7 +1214,6 @@ export const syncComments = /* GraphQL */ `
         tenantId
         body
         visibility
-        archived
         createdAt
         updatedAt
         _version
@@ -1415,7 +1349,6 @@ export const getDeliverable = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
-        archived
         createdAt
         updatedAt
         _version
@@ -1430,7 +1363,6 @@ export const getDeliverable = /* GraphQL */ `
         nextToken
         startedAt
       }
-      archived
       createdAt
       updatedAt
       _version
@@ -1454,7 +1386,6 @@ export const listDeliverables = /* GraphQL */ `
         count
         unit
         orderInGrid
-        archived
         createdAt
         updatedAt
         _version
@@ -1487,7 +1418,6 @@ export const syncDeliverables = /* GraphQL */ `
         count
         unit
         orderInGrid
-        archived
         createdAt
         updatedAt
         _version
@@ -1581,163 +1511,25 @@ export const profilePictureUploadURL = /* GraphQL */ `
     profilePictureUploadURL(userId: $userId)
   }
 `;
+export const getStatistics = /* GraphQL */ `
+  query GetStatistics($tenantId: ID!) {
+    getStatistics(tenantId: $tenantId) {
+      numCancelled
+      numCompleted
+      numDroppedOff
+      numRejected
+      numAbandoned
+      numActive
+      numPickedUp
+      numNew
+      numTest
+    }
+  }
+`;
 export const sendUserFeedback = /* GraphQL */ `
   query SendUserFeedback($emailAddress: AWSEmail, $body: String) {
     sendUserFeedback(emailAddress: $emailAddress, body: $body) {
       successState
-    }
-  }
-`;
-export const archiveTasks = /* GraphQL */ `
-  query ArchiveTasks {
-    archiveTasks {
-      id
-      tenantId
-      createdBy {
-        id
-        username
-        cognitoId
-        tenantId
-        isPrimaryAdmin
-        displayName
-        name
-        roles
-        dateOfBirth
-        riderResponsibility
-        profilePictureURL
-        disabled
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      dateCreated
-      timeOfCall
-      timePickedUp
-      timePickedUpSenderName
-      timeDroppedOff
-      timeDroppedOffRecipientName
-      timeCancelled
-      timeRejected
-      timeRiderHome
-      requesterContact {
-        name
-        telephoneNumber
-        mobileNumber
-        emailAddress
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
-      }
-      pickUpLocationId
-      dropOffLocationId
-      establishmentLocationId
-      pickUpLocation {
-        id
-        tenantId
-        name
-        listed
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
-        disabled
-        googleMapsPlaceId
-        archived
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        userCreatedLocationsId
-      }
-      dropOffLocation {
-        id
-        tenantId
-        name
-        listed
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
-        disabled
-        googleMapsPlaceId
-        archived
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        userCreatedLocationsId
-      }
-      establishmentLocation {
-        id
-        tenantId
-        name
-        listed
-        ward
-        line1
-        line2
-        line3
-        town
-        county
-        state
-        country
-        postcode
-        what3words
-        disabled
-        googleMapsPlaceId
-        archived
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        userCreatedLocationsId
-      }
-      riderResponsibility
-      assignees {
-        nextToken
-        startedAt
-      }
-      priority
-      deliverables {
-        nextToken
-        startedAt
-      }
-      comments {
-        nextToken
-        startedAt
-      }
-      status
-      isRiderUsingOwnVehicle
-      archived
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-      userCreatedTasksId
     }
   }
 `;
