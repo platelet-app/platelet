@@ -93,8 +93,8 @@ const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
         >
             <Stack
                 sx={{
-                    padding: 2,
-                    minHeight: 180,
+                    padding: 1,
+                    minHeight: 160,
                     "&:hover": {
                         backgroundColor: "rgba(0, 0, 0, 0.04)",
                     },
@@ -113,8 +113,8 @@ const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
                     location={task.dropOffLocation}
                 />
                 <Stack direction="row" spacing={2}>
-                    {task?.createdAt && (
-                        <TaskHistoryTimestamp timestamp={task.createdAt} />
+                    {task?.timeOfCall && (
+                        <TaskHistoryTimestamp timestamp={task.timeOfCall} />
                     )}
                     {taskBadge}
                 </Stack>
