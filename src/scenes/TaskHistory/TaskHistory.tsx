@@ -1,12 +1,12 @@
 import React from "react";
-import { Skeleton, Stack } from "@mui/material";
+import { Skeleton, Stack, Typography } from "@mui/material";
 import { useInView } from "react-intersection-observer";
 import useGetTasksGraphql from "../../hooks/useGetTasksGraphql";
 import _ from "lodash";
 import TaskHistoryCard from "./components/TaskHistoryCard";
 
 const TaskHistory: React.FC = () => {
-    const { state, getNext, finished } = useGetTasksGraphql();
+    const { state, getNext, finished, error } = useGetTasksGraphql();
     const { ref, inView } = useInView({
         threshold: 0,
     });
@@ -23,6 +23,7 @@ const TaskHistory: React.FC = () => {
                 {state.map((task) => (
                     <TaskHistoryCard key={task.id} task={task} />
                 ))}
+                {error && <Typography>Sorry, something went wrong.</Typography>}
                 <div ref={ref} />
                 {!finished &&
                     _.range(0, 4).map((i) => (
