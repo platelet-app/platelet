@@ -79,7 +79,13 @@ export const getTasksByTenantId = /* GraphQL */ `
     }
 `;
 
-const useGetTasksGraphql = (limit: number = 10) => {
+const sortByCreatedAt = (a: any, b: any) => {
+    if (a.createdAt > b.createdAt) return -1;
+    if (a.createdAt < b.createdAt) return 1;
+    return 0;
+};
+
+const useGetTasksGraphql = (limit: number = 10, sortDirection = "DESC") => {
     const [state, setState] = React.useState<StateType>({});
     const [finished, setFinished] = React.useState(false);
     const [error, setError] = React.useState<Error | null>(null);
@@ -95,7 +101,7 @@ const useGetTasksGraphql = (limit: number = 10) => {
                     limit,
                     nextToken: nextToken.current,
                     tenantId,
-                    sortDirection: "DESC",
+                    sortDirection,
                 };
 
                 const result = await API.graphql<
@@ -106,9 +112,10 @@ const useGetTasksGraphql = (limit: number = 10) => {
                 });
                 const tasks = result.data?.getTasksByTenantId?.items;
                 if (tasks) {
+                    const tasksSorted = tasks.sort(sortByCreatedAt);
                     setState((prevState) => ({
                         ...prevState,
-                        ...tasks.reduce((acc, task) => {
+                        ...tasksSorted.reduce((acc, task) => {
                             if (task) acc[task.id] = task;
                             return acc;
                         }, {} as StateType),
@@ -129,7 +136,7 @@ const useGetTasksGraphql = (limit: number = 10) => {
             setFinished(true);
             console.log(e);
         }
-    }, [limit, tenantId]);
+    }, [limit, tenantId, sortDirection]);
 
     const getTasks = React.useCallback(async () => {
         try {
@@ -137,7 +144,7 @@ const useGetTasksGraphql = (limit: number = 10) => {
             const variables = {
                 limit,
                 tenantId,
-                sortDirection: "DESC",
+                sortDirection,
             };
             const result = await API.graphql<
                 GraphQLQuery<GetTasksByTenantIdQuery>
@@ -147,9 +154,9 @@ const useGetTasksGraphql = (limit: number = 10) => {
             });
             const tasks = result.data?.getTasksByTenantId?.items;
             if (tasks) {
-                console.log(tasks);
+                const tasksSorted = tasks.sort(sortByCreatedAt);
                 setState(
-                    tasks.reduce((acc, task) => {
+                    tasksSorted.reduce((acc, task) => {
                         if (task) acc[task.id] = task;
                         return acc;
                     }, {} as StateType)
@@ -167,7 +174,7 @@ const useGetTasksGraphql = (limit: number = 10) => {
             setFinished(true);
             console.log(e);
         }
-    }, [limit, tenantId]);
+    }, [limit, tenantId, sortDirection]);
 
     React.useEffect(() => {
         getTasks();

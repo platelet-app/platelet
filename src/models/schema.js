@@ -1240,7 +1240,7 @@ export const schema = {
                         "queryField": "getTasksByTenantId",
                         "fields": [
                             "tenantId",
-                            "timeOfCall"
+                            "dateCreated"
                         ]
                     }
                 },

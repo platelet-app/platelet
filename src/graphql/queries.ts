@@ -974,7 +974,7 @@ export const syncTasks = /* GraphQL */ `
 export const getTasksByTenantId = /* GraphQL */ `
   query GetTasksByTenantId(
     $tenantId: ID!
-    $timeOfCall: ModelStringKeyConditionInput
+    $dateCreated: ModelStringKeyConditionInput
     $sortDirection: ModelSortDirection
     $filter: ModelTaskFilterInput
     $limit: Int
@@ -982,7 +982,7 @@ export const getTasksByTenantId = /* GraphQL */ `
   ) {
     getTasksByTenantId(
       tenantId: $tenantId
-      timeOfCall: $timeOfCall
+      dateCreated: $dateCreated
       sortDirection: $sortDirection
       filter: $filter
       limit: $limit

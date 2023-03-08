@@ -5007,7 +5007,7 @@ export type SyncTasksQuery = {
 
 export type GetTasksByTenantIdQueryVariables = {
   tenantId: string,
-  timeOfCall?: ModelStringKeyConditionInput | null,
+  dateCreated?: ModelStringKeyConditionInput | null,
   sortDirection?: ModelSortDirection | null,
   filter?: ModelTaskFilterInput | null,
   limit?: number | null,

@@ -113,8 +113,8 @@ const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
                     location={task.dropOffLocation}
                 />
                 <Stack direction="row" spacing={2}>
-                    {task?.timeOfCall && (
-                        <TaskHistoryTimestamp timestamp={task.timeOfCall} />
+                    {task?.createdAt && (
+                        <TaskHistoryTimestamp timestamp={task.createdAt} />
                     )}
                     {taskBadge}
                 </Stack>
