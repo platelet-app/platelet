@@ -21,10 +21,10 @@ const TaskHistoryCardLocationDetail: React.FC<TaskHistoryCardLocationDetailProps
         if (location) {
             return (
                 <Stack>
-                    <Typography sx={{ fontWeight: "bold" }}>
+                    <Typography noWrap sx={{ fontWeight: "bold" }}>
                         {location.name}
                     </Typography>
-                    <Typography sx={{ fontSize: "0.9rem" }}>
+                    <Typography noWrap sx={{ fontSize: "0.9rem" }}>
                         {addressString}
                     </Typography>
                 </Stack>

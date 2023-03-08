@@ -1,9 +1,15 @@
 import React from "react";
 import { GraphQLQuery } from "@aws-amplify/api";
 import { API } from "aws-amplify";
-import { Task, GetTasksByTenantIdQuery, ModelSortDirection } from "../API";
+import {
+    Task,
+    GetTasksByTenantIdQuery,
+    ModelSortDirection,
+    Comment,
+    CommentVisibility,
+} from "../API";
 import { useSelector } from "react-redux";
-import { tenantIdSelector } from "../redux/Selectors";
+import { getWhoami, tenantIdSelector } from "../redux/Selectors";
 
 type StateType = {
     [key: string]: Task;
@@ -71,6 +77,10 @@ export const getTasksByTenantId = /* GraphQL */ `
                 comments {
                     items {
                         id
+                        visibility
+                        author {
+                            id
+                        }
                     }
                 }
                 _version
@@ -104,9 +114,24 @@ const useGetTasksGraphql = (
     const [isFetching, setIsFetching] = React.useState(false);
     const [isFinished, setIsFinished] = React.useState(false);
     const [error, setError] = React.useState<Error | null>(null);
+    const whoami = useSelector(getWhoami);
     const tenantId = useSelector(tenantIdSelector);
 
     const nextToken = React.useRef<string | null | undefined>(null);
+
+    const filterComments = React.useCallback(
+        (comments: (Comment | null)[]) => {
+            return comments.filter(
+                (c) =>
+                    c &&
+                    (c.visibility === CommentVisibility.EVERYONE ||
+                        (c.visibility === CommentVisibility.ME &&
+                            c.author &&
+                            c.author.id === whoami.id))
+            );
+        },
+        [whoami]
+    );
 
     const getNext = React.useCallback(async () => {
         try {
@@ -132,12 +157,23 @@ const useGetTasksGraphql = (
                     const tasksSorted = tasks.sort((a, b) =>
                         sortByCreatedAt(a, b, sortDirection)
                     );
+                    const result = tasksSorted.reduce((acc, task) => {
+                        if (task) {
+                            const filtered = filterComments(
+                                // @ts-ignore
+                                task.comments?.items || []
+                            );
+                            acc[task.id] = {
+                                ...task,
+                                // @ts-ignore
+                                comments: { items: filtered },
+                            };
+                        }
+                        return acc;
+                    }, {} as StateType);
                     setState((prevState) => ({
                         ...prevState,
-                        ...tasksSorted.reduce((acc, task) => {
-                            if (task) acc[task.id] = task;
-                            return acc;
-                        }, {} as StateType),
+                        ...result,
                     }));
                 }
 
@@ -155,7 +191,7 @@ const useGetTasksGraphql = (
             setIsFinished(true);
             console.log(e);
         }
-    }, [limit, tenantId, sortDirection, startDate, endDate]);
+    }, [limit, tenantId, sortDirection, startDate, endDate, filterComments]);
 
     const getTasks = React.useCallback(async () => {
         try {
@@ -175,16 +211,26 @@ const useGetTasksGraphql = (
                 variables,
             });
             const tasks = result.data?.getTasksByTenantId?.items;
+
             if (tasks) {
                 const tasksSorted = tasks.sort((a, b) =>
                     sortByCreatedAt(a, b, sortDirection)
                 );
-                setState(
-                    tasksSorted.reduce((acc, task) => {
-                        if (task) acc[task.id] = task;
-                        return acc;
-                    }, {} as StateType)
-                );
+                const result = tasksSorted.reduce((acc, task) => {
+                    if (task) {
+                        const filtered = filterComments(
+                            // @ts-ignore
+                            task.comments?.items || []
+                        );
+                        acc[task.id] = {
+                            ...task,
+                            // @ts-ignore
+                            comments: { items: filtered },
+                        };
+                    }
+                    return acc;
+                }, {} as StateType);
+                setState(result);
             }
             if (result.data?.getTasksByTenantId?.nextToken) {
                 nextToken.current = result.data.getTasksByTenantId.nextToken;
@@ -200,7 +246,7 @@ const useGetTasksGraphql = (
         } finally {
             setIsFetching(false);
         }
-    }, [limit, tenantId, sortDirection, startDate, endDate]);
+    }, [limit, tenantId, sortDirection, startDate, endDate, filterComments]);
 
     React.useEffect(() => {
         getTasks();
