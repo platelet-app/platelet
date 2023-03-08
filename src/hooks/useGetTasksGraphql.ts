@@ -30,6 +30,7 @@ export const getTasksByTenantId = /* GraphQL */ `
             items {
                 id
                 timeOfCall
+                dateCreated
                 riderResponsibility
                 priority
                 status
@@ -104,8 +105,6 @@ const useGetTasksGraphql = (
     const [isFinished, setIsFinished] = React.useState(false);
     const [error, setError] = React.useState<Error | null>(null);
     const tenantId = useSelector(tenantIdSelector);
-
-    console.log(startDate, endDate);
 
     const nextToken = React.useRef<string | null | undefined>(null);
 

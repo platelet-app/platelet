@@ -25,7 +25,6 @@ const CommentsBadge: React.FC<CommentsBadgeProps> = ({
     count,
     iconSize = 20,
 }) => {
-    console.log(count);
     if (count > 0) {
         return (
             <Box>
