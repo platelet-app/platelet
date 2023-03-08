@@ -19,7 +19,7 @@ export const dayOptions = {
 
 type DaysSelectionProps = {
     onChange: (arg0: Days) => any;
-    value?: Days;
+    value?: Days | null;
 };
 
 const DaysSelection: React.FC<DaysSelectionProps> = ({ onChange, value }) => {
@@ -38,7 +38,5 @@ const DaysSelection: React.FC<DaysSelectionProps> = ({ onChange, value }) => {
         </Grid>
     );
 };
-DaysSelection.defaultProps = {
-    value: Days.THREE_DAYS,
-};
+
 export default DaysSelection;

@@ -1,7 +1,7 @@
 import React from "react";
 import { GraphQLQuery } from "@aws-amplify/api";
 import { API } from "aws-amplify";
-import { Task, GetTasksByTenantIdQuery } from "../API";
+import { Task, GetTasksByTenantIdQuery, ModelSortDirection } from "../API";
 import { useSelector } from "react-redux";
 import { tenantIdSelector } from "../redux/Selectors";
 
@@ -16,6 +16,8 @@ export const getTasksByTenantId = /* GraphQL */ `
         $nextToken: String
         $tenantId: ID!
         $sortDirection: ModelSortDirection
+        $startDate: String
+        $endDate: String
     ) {
         getTasksByTenantId(
             filter: $filter
@@ -23,6 +25,7 @@ export const getTasksByTenantId = /* GraphQL */ `
             nextToken: $nextToken
             tenantId: $tenantId
             sortDirection: $sortDirection
+            dateCreated: { between: [$startDate, $endDate] }
         ) {
             items {
                 id
@@ -79,17 +82,30 @@ export const getTasksByTenantId = /* GraphQL */ `
     }
 `;
 
-const sortByCreatedAt = (a: any, b: any) => {
-    if (a.createdAt > b.createdAt) return -1;
-    if (a.createdAt < b.createdAt) return 1;
-    return 0;
+const sortByCreatedAt = (a: any, b: any, direction: ModelSortDirection) => {
+    const createdAtA = new Date(a.createdAt);
+    const createdAtB = new Date(b.createdAt);
+
+    if (direction === ModelSortDirection.ASC) {
+        return createdAtA.getTime() - createdAtB.getTime();
+    } else {
+        return createdAtB.getTime() - createdAtA.getTime();
+    }
 };
 
-const useGetTasksGraphql = (limit: number = 10, sortDirection = "DESC") => {
+const useGetTasksGraphql = (
+    limit: number = 10,
+    sortDirection: ModelSortDirection = ModelSortDirection.DESC,
+    startDate: Date | null = null,
+    endDate: Date | null = null
+) => {
     const [state, setState] = React.useState<StateType>({});
-    const [finished, setFinished] = React.useState(false);
+    const [isFetching, setIsFetching] = React.useState(false);
+    const [isFinished, setIsFinished] = React.useState(false);
     const [error, setError] = React.useState<Error | null>(null);
     const tenantId = useSelector(tenantIdSelector);
+
+    console.log(startDate, endDate);
 
     const nextToken = React.useRef<string | null | undefined>(null);
 
@@ -102,6 +118,8 @@ const useGetTasksGraphql = (limit: number = 10, sortDirection = "DESC") => {
                     nextToken: nextToken.current,
                     tenantId,
                     sortDirection,
+                    startDate: startDate?.toISOString().substring(0, 10),
+                    endDate: endDate?.toISOString().substring(0, 10),
                 };
 
                 const result = await API.graphql<
@@ -112,7 +130,9 @@ const useGetTasksGraphql = (limit: number = 10, sortDirection = "DESC") => {
                 });
                 const tasks = result.data?.getTasksByTenantId?.items;
                 if (tasks) {
-                    const tasksSorted = tasks.sort(sortByCreatedAt);
+                    const tasksSorted = tasks.sort((a, b) =>
+                        sortByCreatedAt(a, b, sortDirection)
+                    );
                     setState((prevState) => ({
                         ...prevState,
                         ...tasksSorted.reduce((acc, task) => {
@@ -126,25 +146,28 @@ const useGetTasksGraphql = (limit: number = 10, sortDirection = "DESC") => {
                     nextToken.current =
                         result.data.getTasksByTenantId.nextToken;
                 } else {
-                    setFinished(true);
+                    setIsFinished(true);
                 }
             }
         } catch (e: unknown) {
             if (e instanceof Error) {
                 setError(e);
             }
-            setFinished(true);
+            setIsFinished(true);
             console.log(e);
         }
-    }, [limit, tenantId, sortDirection]);
+    }, [limit, tenantId, sortDirection, startDate, endDate]);
 
     const getTasks = React.useCallback(async () => {
         try {
             if (!tenantId) return;
+            setIsFetching(true);
             const variables = {
                 limit,
                 tenantId,
                 sortDirection,
+                startDate: startDate?.toISOString(),
+                endDate: endDate?.toISOString(),
             };
             const result = await API.graphql<
                 GraphQLQuery<GetTasksByTenantIdQuery>
@@ -154,7 +177,9 @@ const useGetTasksGraphql = (limit: number = 10, sortDirection = "DESC") => {
             });
             const tasks = result.data?.getTasksByTenantId?.items;
             if (tasks) {
-                const tasksSorted = tasks.sort(sortByCreatedAt);
+                const tasksSorted = tasks.sort((a, b) =>
+                    sortByCreatedAt(a, b, sortDirection)
+                );
                 setState(
                     tasksSorted.reduce((acc, task) => {
                         if (task) acc[task.id] = task;
@@ -165,22 +190,30 @@ const useGetTasksGraphql = (limit: number = 10, sortDirection = "DESC") => {
             if (result.data?.getTasksByTenantId?.nextToken) {
                 nextToken.current = result.data.getTasksByTenantId.nextToken;
             } else {
-                setFinished(true);
+                setIsFinished(true);
             }
         } catch (e: unknown) {
             if (e instanceof Error) {
                 setError(e);
             }
-            setFinished(true);
+            setIsFinished(true);
             console.log(e);
+        } finally {
+            setIsFetching(false);
         }
-    }, [limit, tenantId, sortDirection]);
+    }, [limit, tenantId, sortDirection, startDate, endDate]);
 
     React.useEffect(() => {
         getTasks();
     }, [getTasks]);
 
-    return { state: Object.values(state), getNext, finished, error };
+    return {
+        state: Object.values(state),
+        getNext,
+        isFinished,
+        isFetching,
+        error,
+    };
 };
 
 export default useGetTasksGraphql;
