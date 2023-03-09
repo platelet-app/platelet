@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Skeleton, Stack, Typography } from "@mui/material";
+import { Box, Grid, Skeleton, Stack, Typography } from "@mui/material";
 import { useInView } from "react-intersection-observer";
 import useGetTasksGraphql from "../../hooks/useGetTasksGraphql";
 import _ from "lodash";
@@ -8,7 +8,7 @@ import TaskHistoryControls from "./components/TaskHistoryControls";
 import { ModelSortDirection } from "../../API";
 import DateStampDivider from "../Dashboard/components/TimeStampDivider";
 
-const limit = 10;
+const limit = 20;
 
 const TaskHistory: React.FC = () => {
     let displayDate = false;
@@ -88,17 +88,21 @@ const TaskHistory: React.FC = () => {
                 })}
                 {error && <Typography>Sorry, something went wrong.</Typography>}
                 <div ref={ref} />
-                {!isFinished &&
-                    _.range(0, 4).map((i) => (
-                        <Skeleton
-                            sx={{
-                                height: 200,
-                                width: 800,
-                                borderRadius: 4,
-                            }}
-                            key={i}
-                        />
-                    ))}
+                {!isFinished && (
+                    <Grid container data-testid="task-history-skeleton">
+                        {_.range(0, 4).map((i) => (
+                            <Grid key={i} item>
+                                <Skeleton
+                                    sx={{
+                                        height: 200,
+                                        width: 800,
+                                        borderRadius: 4,
+                                    }}
+                                />
+                            </Grid>
+                        ))}
+                    </Grid>
+                )}
             </Stack>
         </>
     );
