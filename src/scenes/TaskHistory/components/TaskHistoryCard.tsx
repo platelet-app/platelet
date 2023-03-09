@@ -103,8 +103,10 @@ const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
                 direction="column"
             >
                 <Grid direction="row" container spacing={1}>
-                    {chips.map((chip) => (
-                        <Grid item>{chip}</Grid>
+                    {chips.map((chip, index) => (
+                        <Grid key={index} item>
+                            {chip}
+                        </Grid>
                     ))}
                 </Grid>
                 <TaskHistoryCardLocationDetail location={task.pickUpLocation} />

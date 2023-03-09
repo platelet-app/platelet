@@ -79,6 +79,7 @@ const TaskHistoryControls: React.FC<TaskHistoryControlsProps> = ({
                 spacing={1}
             >
                 <Select
+                    data-testid="task-history-sort-direction-select"
                     sx={{
                         width: 200,
                         borderRadius: 2,

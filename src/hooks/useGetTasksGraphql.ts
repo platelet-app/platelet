@@ -153,6 +153,12 @@ const useGetTasksGraphql = (
                     variables,
                 });
                 const tasks = result.data?.getTasksByTenantId?.items;
+                if (result.data?.getTasksByTenantId?.nextToken) {
+                    nextToken.current =
+                        result.data.getTasksByTenantId.nextToken;
+                } else {
+                    setIsFinished(true);
+                }
                 if (tasks) {
                     const tasksSorted = tasks.sort((a, b) =>
                         sortByCreatedAt(a, b, sortDirection)
@@ -175,13 +181,6 @@ const useGetTasksGraphql = (
                         ...prevState,
                         ...result,
                     }));
-                }
-
-                if (result.data?.getTasksByTenantId?.nextToken) {
-                    nextToken.current =
-                        result.data.getTasksByTenantId.nextToken;
-                } else {
-                    setIsFinished(true);
                 }
             }
         } catch (e: unknown) {

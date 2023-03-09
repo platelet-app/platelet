@@ -60,10 +60,8 @@ const TaskHistory: React.FC = () => {
                     let component = (
                         <TaskHistoryCard key={task.id} task={task} />
                     );
-                    console.log(task.dateCreated);
                     if (task.dateCreated) {
                         const timeComparison = new Date(task.dateCreated);
-                        console.log(timeComparison, lastTime);
                         if (
                             timeComparison.getDate() <=
                             lastTime.getDate() - 1

@@ -5,6 +5,7 @@ import { render } from "../../test-utils";
 import { API, DataStore } from "aws-amplify";
 import { screen, waitFor } from "@testing-library/react";
 import * as APITypes from "../../API";
+import userEvent from "@testing-library/user-event";
 
 const tenantId = "testTenantId";
 
@@ -126,7 +127,6 @@ describe("TaskHistory", () => {
         await waitFor(() => {
             expect(screen.queryByTestId("task-history-skeleton")).toBeNull();
         });
-        expect(graphqlSpy).toMatchSnapshot();
         expect(screen.getByText("HIGH")).toBeInTheDocument();
         expect(screen.getByText("COMPLETED")).toBeInTheDocument();
         expect(screen.getByText("someDisplayName")).toBeInTheDocument();
@@ -145,10 +145,22 @@ describe("TaskHistory", () => {
             )
         ).toBeInTheDocument();
         expect(screen.getByText("3")).toBeInTheDocument();
+        const graphqlSpyCallArguments =
+            graphqlSpy.mock.calls[0][0]["variables"];
+        expect(graphqlSpyCallArguments).toMatchInlineSnapshot(`
+            Object {
+              "endDate": "2021-11-29T23:24:58.987Z",
+              "limit": 20,
+              "sortDirection": "DESC",
+              "startDate": "2000-01-01T00:00:00.000Z",
+              "tenantId": "testTenantId",
+            }
+        `);
     });
     it("paginates results", async () => {
         const secondTask = {
             ...mockTask,
+            id: "someId2",
             status: APITypes.TaskStatus.PICKED_UP,
         };
         const graphqlSpy = jest
@@ -173,11 +185,80 @@ describe("TaskHistory", () => {
             });
         render(<TaskHistory />, { preloadedState });
         expect(await screen.findByText("COMPLETED")).toBeInTheDocument();
+        expect(screen.getByTestId("task-history-skeleton")).toBeInTheDocument();
         mockAllIsIntersecting(true);
         await waitFor(() => {
             expect(screen.queryByTestId("task-history-skeleton")).toBeNull();
         });
         expect(screen.getByText("PICKED UP")).toBeInTheDocument();
-        expect(graphqlSpy).toMatchSnapshot();
+        expect(graphqlSpy).toHaveBeenCalledTimes(2);
+        const graphqlSpyCallArguments =
+            graphqlSpy.mock.calls[0][0]["variables"];
+        expect(graphqlSpyCallArguments).toMatchInlineSnapshot(`
+            Object {
+              "endDate": "2021-11-29T23:24:59.137Z",
+              "limit": 20,
+              "sortDirection": "DESC",
+              "startDate": "2000-01-01T00:00:00.000Z",
+              "tenantId": "testTenantId",
+            }
+        `);
+        const graphqlSpyCallArguments2 =
+            graphqlSpy.mock.calls[1][0]["variables"];
+        expect(graphqlSpyCallArguments2).toMatchInlineSnapshot(`
+            Object {
+              "endDate": "2021-11-29",
+              "limit": 20,
+              "nextToken": "someNextToken",
+              "sortDirection": "DESC",
+              "startDate": "2000-01-01",
+              "tenantId": "testTenantId",
+            }
+        `);
+    });
+    it("sort results", async () => {
+        const secondTask = {
+            ...mockTask,
+            id: "someId2",
+            createdAt: "2021-04-01T00:00:00.000Z",
+            status: APITypes.TaskStatus.PICKED_UP,
+        };
+        const graphqlSpy = jest.spyOn(API, "graphql").mockResolvedValueOnce({
+            data: {
+                getTasksByTenantId: {
+                    items: [mockTask, secondTask],
+                    nextToken: null,
+                    startedAt: 1620000000000,
+                },
+            },
+        });
+        render(<TaskHistory />, { preloadedState });
+        await waitFor(() => {
+            expect(screen.queryByTestId("task-history-skeleton")).toBeNull();
+        });
+        expect(await screen.findByText("COMPLETED")).toBeInTheDocument();
+        expect(screen.getByText("PICKED UP")).toBeInTheDocument();
+        expect(graphqlSpy).toHaveBeenCalledTimes(1);
+        const graphqlSpyCallArguments =
+            graphqlSpy.mock.calls[0][0]["variables"];
+        expect(graphqlSpyCallArguments).toMatchInlineSnapshot(`
+            Object {
+              "endDate": "2021-11-29T23:24:59.437Z",
+              "limit": 20,
+              "sortDirection": "DESC",
+              "startDate": "2000-01-01T00:00:00.000Z",
+              "tenantId": "testTenantId",
+            }
+        `);
+        userEvent.click(
+            screen.getByTestId("task-history-sort-direction-select")
+        );
+        userEvent.click(screen.getByText("Oldest"));
+        await waitFor(() => {
+            expect(graphqlSpy).toHaveBeenCalledTimes(2);
+        });
+        const graphqlSpyCallArguments2 =
+            graphqlSpy.mock.calls[1][0]["variables"];
+        expect(graphqlSpyCallArguments2).toMatchInlineSnapshot();
     });
 });
