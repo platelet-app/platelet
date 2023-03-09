@@ -28,6 +28,7 @@ const DaysSelection: React.FC<DaysSelectionProps> = ({ onChange, value }) => {
             {Object.entries(dayOptions).map(([label, day]) => (
                 <Grid item key={day}>
                     <Chip
+                        aria-label={label}
                         label={label}
                         variant={value === day ? "filled" : "outlined"}
                         color={value === day ? "primary" : "default"}

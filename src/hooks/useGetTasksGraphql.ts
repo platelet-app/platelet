@@ -158,6 +158,7 @@ const useGetTasksGraphql = (
                         result.data.getTasksByTenantId.nextToken;
                 } else {
                     setIsFinished(true);
+                    nextToken.current = null;
                 }
                 if (tasks) {
                     const tasksSorted = tasks.sort((a, b) =>
@@ -188,6 +189,7 @@ const useGetTasksGraphql = (
                 setError(e);
             }
             setIsFinished(true);
+            nextToken.current = null;
             console.log(e);
         }
     }, [limit, tenantId, sortDirection, startDate, endDate, filterComments]);
@@ -195,13 +197,14 @@ const useGetTasksGraphql = (
     const getTasks = React.useCallback(async () => {
         try {
             if (!tenantId) return;
+            setIsFinished(false);
             setIsFetching(true);
             const variables = {
                 limit,
                 tenantId,
                 sortDirection,
-                startDate: startDate?.toISOString(),
-                endDate: endDate?.toISOString(),
+                startDate: startDate?.toISOString().substring(0, 10),
+                endDate: endDate?.toISOString().substring(0, 10),
             };
             const result = await API.graphql<
                 GraphQLQuery<GetTasksByTenantIdQuery>

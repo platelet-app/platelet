@@ -123,13 +123,26 @@ const TaskHistoryControls: React.FC<TaskHistoryControlsProps> = ({
                         <Grid item>
                             <DateRangePicker
                                 startText="From"
+                                inputFormat="dd/MM/yyyy"
                                 endText="To"
                                 value={customDaysRange}
                                 onChange={handleDateChange}
                                 renderInput={(startProps, endProps) => (
                                     <Stack spacing={1} direction="row">
-                                        <TextField {...startProps} />
-                                        <TextField {...endProps} />
+                                        <TextField
+                                            {...startProps}
+                                            inputProps={{
+                                                ...startProps.inputProps,
+                                                "aria-label": "Start date",
+                                            }}
+                                        />
+                                        <TextField
+                                            {...endProps}
+                                            inputProps={{
+                                                ...endProps.inputProps,
+                                                "aria-label": "End date",
+                                            }}
+                                        />
                                     </Stack>
                                 )}
                             />
@@ -137,7 +150,8 @@ const TaskHistoryControls: React.FC<TaskHistoryControlsProps> = ({
                     )}
                     <Grid item>
                         <Chip
-                            label={"Custom"}
+                            label="Custom"
+                            aria-label="Custom"
                             variant={customRange ? "filled" : "outlined"}
                             color={customRange ? "primary" : "default"}
                             onClick={handleChangeToCustom}
