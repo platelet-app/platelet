@@ -40,6 +40,7 @@
         "moment": "^2.29.4",
         "moment-timezone": "^0.5.35",
         "notistack": "^2.0.2",
+        "prettier": "^2.8.4",
         "prop-types": "^15.7.2",
         "react": "^17.0.2",
         "react-cropper": "^2.1.8",
