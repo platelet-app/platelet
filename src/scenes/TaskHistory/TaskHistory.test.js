@@ -173,10 +173,10 @@ describe("TaskHistory", () => {
             graphqlSpy.mock.calls[0][0]["variables"];
         expect(graphqlSpyCallArguments).toMatchInlineSnapshot(`
             Object {
-              "endDate": "2021-11-29",
+              "endDate": "2021-11-29T23:24:58.987Z",
               "limit": 20,
               "sortDirection": "DESC",
-              "startDate": "2000-01-01",
+              "startDate": "2000-01-01T00:00:00.000Z",
               "tenantId": "testTenantId",
             }
         `);
@@ -220,10 +220,10 @@ describe("TaskHistory", () => {
             graphqlSpy.mock.calls[0][0]["variables"];
         expect(graphqlSpyCallArguments).toMatchInlineSnapshot(`
             Object {
-              "endDate": "2021-11-29",
+              "endDate": "2021-11-29T23:24:59.137Z",
               "limit": 20,
               "sortDirection": "DESC",
-              "startDate": "2000-01-01",
+              "startDate": "2000-01-01T00:00:00.000Z",
               "tenantId": "testTenantId",
             }
         `);
@@ -231,11 +231,11 @@ describe("TaskHistory", () => {
             graphqlSpy.mock.calls[1][0]["variables"];
         expect(graphqlSpyCallArguments2).toMatchInlineSnapshot(`
             Object {
-              "endDate": "2021-11-29",
+              "endDate": "2021-11-29T23:24:59.137Z",
               "limit": 20,
               "nextToken": "someNextToken",
               "sortDirection": "DESC",
-              "startDate": "2000-01-01",
+              "startDate": "2000-01-01T00:00:00.000Z",
               "tenantId": "testTenantId",
             }
         `);
@@ -279,10 +279,10 @@ describe("TaskHistory", () => {
             graphqlSpy.mock.calls[0][0]["variables"];
         expect(graphqlSpyCallArguments).toMatchInlineSnapshot(`
             Object {
-              "endDate": "2021-11-29",
+              "endDate": "2021-11-29T23:24:59.437Z",
               "limit": 20,
               "sortDirection": "DESC",
-              "startDate": "2000-01-01",
+              "startDate": "2000-01-01T00:00:00.000Z",
               "tenantId": "testTenantId",
             }
         `);
@@ -295,10 +295,10 @@ describe("TaskHistory", () => {
             graphqlSpy.mock.calls[1][0]["variables"];
         expect(graphqlSpyCallArguments2).toMatchInlineSnapshot(`
             Object {
-              "endDate": "2021-11-29",
+              "endDate": "2021-11-29T23:24:59.437Z",
               "limit": 20,
               "sortDirection": "ASC",
-              "startDate": "2000-01-01",
+              "startDate": "2000-01-01T00:00:00.000Z",
               "tenantId": "testTenantId",
             }
         `);
@@ -366,10 +366,10 @@ describe("TaskHistory", () => {
         // 3 days before 29th
         expect(graphqlSpyCallArguments).toMatchInlineSnapshot(`
             Object {
-              "endDate": "2021-11-26",
+              "endDate": "2021-11-26T23:25:00.037Z",
               "limit": 20,
               "sortDirection": "DESC",
-              "startDate": "2000-01-01",
+              "startDate": "2000-01-01T00:00:00.000Z",
               "tenantId": "testTenantId",
             }
         `);
@@ -382,10 +382,10 @@ describe("TaskHistory", () => {
         // 7 days before 29th
         expect(graphqlSpyCallArguments2).toMatchInlineSnapshot(`
             Object {
-              "endDate": "2021-11-22",
+              "endDate": "2021-11-22T23:25:00.037Z",
               "limit": 20,
               "sortDirection": "DESC",
-              "startDate": "2000-01-01",
+              "startDate": "2000-01-01T00:00:00.000Z",
               "tenantId": "testTenantId",
             }
         `);
@@ -398,10 +398,10 @@ describe("TaskHistory", () => {
         // back to the 29th
         expect(graphqlSpyCallArguments3).toMatchInlineSnapshot(`
             Object {
-              "endDate": "2021-11-29",
+              "endDate": "2021-11-29T23:25:00.037Z",
               "limit": 20,
               "sortDirection": "DESC",
-              "startDate": "2000-01-01",
+              "startDate": "2000-01-01T00:00:00.000Z",
               "tenantId": "testTenantId",
             }
         `);
@@ -436,10 +436,10 @@ describe("TaskHistory", () => {
             graphqlSpy.mock.calls[1][0]["variables"];
         expect(graphqlSpyCallArguments).toMatchInlineSnapshot(`
             Object {
-              "endDate": "2021-11-29",
+              "endDate": "2021-11-29T23:25:00.187Z",
               "limit": 20,
               "sortDirection": "DESC",
-              "startDate": "2021-11-29",
+              "startDate": "2021-11-29T23:25:00.187Z",
               "tenantId": "testTenantId",
             }
         `);
@@ -448,10 +448,10 @@ describe("TaskHistory", () => {
             graphqlSpy.mock.calls[2][0]["variables"];
         expect(graphqlSpyCallArguments2).toMatchInlineSnapshot(`
             Object {
-              "endDate": "2021-11-24",
+              "endDate": "2021-11-24T00:00:00.000Z",
               "limit": 20,
               "sortDirection": "DESC",
-              "startDate": "2021-11-29",
+              "startDate": "2021-11-29T23:25:00.187Z",
               "tenantId": "testTenantId",
             }
         `);
@@ -464,10 +464,10 @@ describe("TaskHistory", () => {
         // back to the long default range
         expect(graphqlSpyCallArguments3).toMatchInlineSnapshot(`
             Object {
-              "endDate": "2021-11-29",
+              "endDate": "2021-11-29T23:25:00.237Z",
               "limit": 20,
               "sortDirection": "DESC",
-              "startDate": "2000-01-01",
+              "startDate": "2000-01-01T00:00:00.000Z",
               "tenantId": "testTenantId",
             }
         `);

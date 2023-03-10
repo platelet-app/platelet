@@ -1045,6 +1045,7 @@ export const createTask = /* GraphQL */ `
     createTask(input: $input, condition: $condition) {
       id
       tenantId
+      createdAt
       createdBy {
         id
         username
@@ -1180,7 +1181,6 @@ export const createTask = /* GraphQL */ `
       }
       status
       isRiderUsingOwnVehicle
-      createdAt
       updatedAt
       _version
       _deleted
@@ -1197,6 +1197,7 @@ export const updateTask = /* GraphQL */ `
     updateTask(input: $input, condition: $condition) {
       id
       tenantId
+      createdAt
       createdBy {
         id
         username
@@ -1332,7 +1333,6 @@ export const updateTask = /* GraphQL */ `
       }
       status
       isRiderUsingOwnVehicle
-      createdAt
       updatedAt
       _version
       _deleted
@@ -1349,6 +1349,7 @@ export const deleteTask = /* GraphQL */ `
     deleteTask(input: $input, condition: $condition) {
       id
       tenantId
+      createdAt
       createdBy {
         id
         username
@@ -1484,7 +1485,6 @@ export const deleteTask = /* GraphQL */ `
       }
       status
       isRiderUsingOwnVehicle
-      createdAt
       updatedAt
       _version
       _deleted
@@ -1505,6 +1505,7 @@ export const createTaskAssignee = /* GraphQL */ `
       task {
         id
         tenantId
+        createdAt
         dateCreated
         timeOfCall
         timePickedUp
@@ -1521,7 +1522,6 @@ export const createTaskAssignee = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
-        createdAt
         updatedAt
         _version
         _deleted
@@ -1569,6 +1569,7 @@ export const updateTaskAssignee = /* GraphQL */ `
       task {
         id
         tenantId
+        createdAt
         dateCreated
         timeOfCall
         timePickedUp
@@ -1585,7 +1586,6 @@ export const updateTaskAssignee = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
-        createdAt
         updatedAt
         _version
         _deleted
@@ -1633,6 +1633,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
       task {
         id
         tenantId
+        createdAt
         dateCreated
         timeOfCall
         timePickedUp
@@ -1649,7 +1650,6 @@ export const deleteTaskAssignee = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
-        createdAt
         updatedAt
         _version
         _deleted
@@ -1905,6 +1905,7 @@ export const createDeliverable = /* GraphQL */ `
       task {
         id
         tenantId
+        createdAt
         dateCreated
         timeOfCall
         timePickedUp
@@ -1921,7 +1922,6 @@ export const createDeliverable = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
-        createdAt
         updatedAt
         _version
         _deleted
@@ -1970,6 +1970,7 @@ export const updateDeliverable = /* GraphQL */ `
       task {
         id
         tenantId
+        createdAt
         dateCreated
         timeOfCall
         timePickedUp
@@ -1986,7 +1987,6 @@ export const updateDeliverable = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
-        createdAt
         updatedAt
         _version
         _deleted
@@ -2035,6 +2035,7 @@ export const deleteDeliverable = /* GraphQL */ `
       task {
         id
         tenantId
+        createdAt
         dateCreated
         timeOfCall
         timePickedUp
@@ -2051,7 +2052,6 @@ export const deleteDeliverable = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
-        createdAt
         updatedAt
         _version
         _deleted

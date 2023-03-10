@@ -745,6 +745,7 @@ export const getTask = /* GraphQL */ `
     getTask(id: $id) {
       id
       tenantId
+      createdAt
       createdBy {
         id
         username
@@ -880,7 +881,6 @@ export const getTask = /* GraphQL */ `
       }
       status
       isRiderUsingOwnVehicle
-      createdAt
       updatedAt
       _version
       _deleted
@@ -899,6 +899,7 @@ export const listTasks = /* GraphQL */ `
       items {
         id
         tenantId
+        createdAt
         dateCreated
         timeOfCall
         timePickedUp
@@ -915,7 +916,6 @@ export const listTasks = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
-        createdAt
         updatedAt
         _version
         _deleted
@@ -943,6 +943,7 @@ export const syncTasks = /* GraphQL */ `
       items {
         id
         tenantId
+        createdAt
         dateCreated
         timeOfCall
         timePickedUp
@@ -959,7 +960,6 @@ export const syncTasks = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
-        createdAt
         updatedAt
         _version
         _deleted
@@ -974,7 +974,7 @@ export const syncTasks = /* GraphQL */ `
 export const listTasksByTenantId = /* GraphQL */ `
   query ListTasksByTenantId(
     $tenantId: ID!
-    $dateCreated: ModelStringKeyConditionInput
+    $createdAt: ModelStringKeyConditionInput
     $sortDirection: ModelSortDirection
     $filter: ModelTaskFilterInput
     $limit: Int
@@ -982,7 +982,7 @@ export const listTasksByTenantId = /* GraphQL */ `
   ) {
     listTasksByTenantId(
       tenantId: $tenantId
-      dateCreated: $dateCreated
+      createdAt: $createdAt
       sortDirection: $sortDirection
       filter: $filter
       limit: $limit
@@ -991,6 +991,7 @@ export const listTasksByTenantId = /* GraphQL */ `
       items {
         id
         tenantId
+        createdAt
         dateCreated
         timeOfCall
         timePickedUp
@@ -1007,7 +1008,6 @@ export const listTasksByTenantId = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
-        createdAt
         updatedAt
         _version
         _deleted
@@ -1037,6 +1037,7 @@ export const tasksByStatus = /* GraphQL */ `
       items {
         id
         tenantId
+        createdAt
         dateCreated
         timeOfCall
         timePickedUp
@@ -1053,7 +1054,6 @@ export const tasksByStatus = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
-        createdAt
         updatedAt
         _version
         _deleted
@@ -1074,6 +1074,7 @@ export const getTaskAssignee = /* GraphQL */ `
       task {
         id
         tenantId
+        createdAt
         dateCreated
         timeOfCall
         timePickedUp
@@ -1090,7 +1091,6 @@ export const getTaskAssignee = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
-        createdAt
         updatedAt
         _version
         _deleted
@@ -1381,6 +1381,7 @@ export const getDeliverable = /* GraphQL */ `
       task {
         id
         tenantId
+        createdAt
         dateCreated
         timeOfCall
         timePickedUp
@@ -1397,7 +1398,6 @@ export const getDeliverable = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
-        createdAt
         updatedAt
         _version
         _deleted

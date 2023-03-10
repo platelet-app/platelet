@@ -67,7 +67,7 @@ export const listTasksByTenantId = /* GraphQL */ `
             nextToken: $nextToken
             tenantId: $tenantId
             sortDirection: $sortDirection
-            dateCreated: { between: [$startDate, $endDate] }
+            createdAt: { between: [$startDate, $endDate] }
         ) {
             items {
                 id
@@ -178,8 +178,8 @@ const useGetTasksGraphql = (
                     nextToken: nextToken.current,
                     tenantId,
                     sortDirection,
-                    startDate: startDate?.toISOString().substring(0, 10),
-                    endDate: endDate?.toISOString().substring(0, 10),
+                    startDate: startDate?.toISOString(),
+                    endDate: endDate?.toISOString(),
                 };
 
                 const result = await API.graphql<
@@ -241,8 +241,8 @@ const useGetTasksGraphql = (
                 limit,
                 tenantId,
                 sortDirection,
-                startDate: startDate?.toISOString().substring(0, 10),
-                endDate: endDate?.toISOString().substring(0, 10),
+                startDate: startDate?.toISOString(),
+                endDate: endDate?.toISOString(),
             };
             const result = await API.graphql<
                 GraphQLQuery<ListTasksByTenantIdQuery>
