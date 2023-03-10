@@ -3,7 +3,7 @@ import { GraphQLQuery } from "@aws-amplify/api";
 import { API } from "aws-amplify";
 import {
     Task,
-    GetTasksByTenantIdQuery,
+    ListTasksByTenantIdQuery,
     ModelSortDirection,
     Comment,
     CommentVisibility,
@@ -15,8 +15,8 @@ type StateType = {
     [key: string]: Task;
 };
 
-export const getTasksByTenantId = /* GraphQL */ `
-    query GetTasksByTenantId(
+export const listTasksByTenantId = /* GraphQL */ `
+    query ListTasksByTenantId(
         $filter: ModelTaskFilterInput
         $limit: Int
         $nextToken: String
@@ -25,7 +25,7 @@ export const getTasksByTenantId = /* GraphQL */ `
         $startDate: String
         $endDate: String
     ) {
-        getTasksByTenantId(
+        listTasksByTenantId(
             filter: $filter
             limit: $limit
             nextToken: $nextToken
@@ -147,15 +147,15 @@ const useGetTasksGraphql = (
                 };
 
                 const result = await API.graphql<
-                    GraphQLQuery<GetTasksByTenantIdQuery>
+                    GraphQLQuery<ListTasksByTenantIdQuery>
                 >({
-                    query: getTasksByTenantId,
+                    query: listTasksByTenantId,
                     variables,
                 });
-                const tasks = result.data?.getTasksByTenantId?.items;
-                if (result.data?.getTasksByTenantId?.nextToken) {
+                const tasks = result.data?.listTasksByTenantId?.items;
+                if (result.data?.listTasksByTenantId?.nextToken) {
                     nextToken.current =
-                        result.data.getTasksByTenantId.nextToken;
+                        result.data.listTasksByTenantId.nextToken;
                 } else {
                     setIsFinished(true);
                     nextToken.current = null;
@@ -207,12 +207,12 @@ const useGetTasksGraphql = (
                 endDate: endDate?.toISOString().substring(0, 10),
             };
             const result = await API.graphql<
-                GraphQLQuery<GetTasksByTenantIdQuery>
+                GraphQLQuery<ListTasksByTenantIdQuery>
             >({
-                query: getTasksByTenantId,
+                query: listTasksByTenantId,
                 variables,
             });
-            const tasks = result.data?.getTasksByTenantId?.items;
+            const tasks = result.data?.listTasksByTenantId?.items;
 
             if (tasks) {
                 const tasksSorted = tasks.sort((a, b) =>
@@ -234,8 +234,8 @@ const useGetTasksGraphql = (
                 }, {} as StateType);
                 setState(result);
             }
-            if (result.data?.getTasksByTenantId?.nextToken) {
-                nextToken.current = result.data.getTasksByTenantId.nextToken;
+            if (result.data?.listTasksByTenantId?.nextToken) {
+                nextToken.current = result.data.listTasksByTenantId.nextToken;
             } else {
                 setIsFinished(true);
             }

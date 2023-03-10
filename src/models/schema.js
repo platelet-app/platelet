@@ -1,89 +1,5 @@
 export const schema = {
     "models": {
-        "Tenant": {
-            "name": "Tenant",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "name": {
-                    "name": "name",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "referenceIdentifier": {
-                    "name": "referenceIdentifier",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "admin": {
-                    "name": "admin",
-                    "isArray": false,
-                    "type": {
-                        "model": "User"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "HAS_ONE",
-                        "associatedWith": "id",
-                        "targetName": "tenantAdminId"
-                    }
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "tenantAdminId": {
-                    "name": "tenantAdminId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                }
-            },
-            "syncable": true,
-            "pluralName": "Tenants",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "auth",
-                    "properties": {
-                        "rules": [
-                            {
-                                "allow": "private",
-                                "operations": [
-                                    "read"
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         "User": {
             "name": "User",
             "fields": {
@@ -472,8 +388,8 @@ export const schema = {
                 }
             ]
         },
-        "Vehicle": {
-            "name": "Vehicle",
+        "RiderResponsibility": {
+            "name": "RiderResponsibility",
             "fields": {
                 "id": {
                     "name": "id",
@@ -489,81 +405,12 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "createdBy": {
-                    "name": "createdBy",
-                    "isArray": false,
-                    "type": {
-                        "model": "User"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "userCreatedVehiclesId"
-                    }
-                },
-                "name": {
-                    "name": "name",
+                "label": {
+                    "name": "label",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
-                },
-                "manufacturer": {
-                    "name": "manufacturer",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "model": {
-                    "name": "model",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "dateOfManufacture": {
-                    "name": "dateOfManufacture",
-                    "isArray": false,
-                    "type": "AWSDate",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "dateOfRegistration": {
-                    "name": "dateOfRegistration",
-                    "isArray": false,
-                    "type": "AWSDate",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "assignments": {
-                    "name": "assignments",
-                    "isArray": true,
-                    "type": {
-                        "model": "VehicleAssignment"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "vehicleAssignmentsId"
-                    }
-                },
-                "comments": {
-                    "name": "comments",
-                    "isArray": true,
-                    "type": {
-                        "model": "Comment"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "parentId"
-                    }
                 },
                 "disabled": {
                     "name": "disabled",
@@ -571,6 +418,20 @@ export const schema = {
                     "type": "Int",
                     "isRequired": false,
                     "attributes": []
+                },
+                "possibleUsers": {
+                    "name": "possibleUsers",
+                    "isArray": true,
+                    "type": {
+                        "model": "PossibleRiderResponsibilities"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "riderResponsibilityPossibleUsersId"
+                    }
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -590,7 +451,7 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "Vehicles",
+            "pluralName": "RiderResponsibilities",
             "attributes": [
                 {
                     "type": "model",
@@ -633,8 +494,144 @@ export const schema = {
                 }
             ]
         },
-        "VehicleAssignment": {
-            "name": "VehicleAssignment",
+        "Comment": {
+            "name": "Comment",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "parentId": {
+                    "name": "parentId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "tenantId": {
+                    "name": "tenantId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "body": {
+                    "name": "body",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "author": {
+                    "name": "author",
+                    "isArray": false,
+                    "type": {
+                        "model": "User"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "userCommentsId"
+                    }
+                },
+                "visibility": {
+                    "name": "visibility",
+                    "isArray": false,
+                    "type": {
+                        "enum": "CommentVisibility"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "Comments",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byParent",
+                        "fields": [
+                            "parentId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantId",
+                        "fields": [
+                            "tenantId"
+                        ]
+                    }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "read"
+                                ]
+                            },
+                            {
+                                "provider": "userPools",
+                                "ownerField": "owner",
+                                "allow": "owner",
+                                "operations": [
+                                    "create",
+                                    "read",
+                                    "delete",
+                                    "update"
+                                ],
+                                "identityClaim": "cognito:username"
+                            },
+                            {
+                                "groupClaim": "cognito:groups",
+                                "provider": "userPools",
+                                "allow": "groups",
+                                "groups": [
+                                    "ADMIN"
+                                ],
+                                "operations": [
+                                    "create",
+                                    "read",
+                                    "delete",
+                                    "update"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "TaskAssignee": {
+            "name": "TaskAssignee",
             "fields": {
                 "id": {
                     "name": "id",
@@ -650,17 +647,26 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "vehicle": {
-                    "name": "vehicle",
+                "role": {
+                    "name": "role",
                     "isArray": false,
                     "type": {
-                        "model": "Vehicle"
+                        "enum": "Role"
+                    },
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "task": {
+                    "name": "task",
+                    "isArray": false,
+                    "type": {
+                        "model": "Task"
                     },
                     "isRequired": true,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "vehicleAssignmentsId"
+                        "targetName": "taskAssigneesId"
                     }
                 },
                 "assignee": {
@@ -673,7 +679,7 @@ export const schema = {
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "userVehicleAssignmentsId"
+                        "targetName": "userAssignmentsId"
                     }
                 },
                 "createdAt": {
@@ -694,7 +700,7 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "VehicleAssignments",
+            "pluralName": "TaskAssignees",
             "attributes": [
                 {
                     "type": "model",
@@ -724,14 +730,331 @@ export const schema = {
                                 "provider": "userPools",
                                 "allow": "groups",
                                 "groups": [
-                                    "ADMIN",
                                     "COORDINATOR",
-                                    "RIDER"
+                                    "RIDER",
+                                    "ADMIN"
                                 ],
                                 "operations": [
                                     "create",
                                     "read",
                                     "delete"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "Task": {
+            "name": "Task",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "tenantId": {
+                    "name": "tenantId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "createdBy": {
+                    "name": "createdBy",
+                    "isArray": false,
+                    "type": {
+                        "model": "User"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "userCreatedTasksId"
+                    }
+                },
+                "dateCreated": {
+                    "name": "dateCreated",
+                    "isArray": false,
+                    "type": "AWSDate",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "timeOfCall": {
+                    "name": "timeOfCall",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "timePickedUp": {
+                    "name": "timePickedUp",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "timePickedUpSenderName": {
+                    "name": "timePickedUpSenderName",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "timeDroppedOff": {
+                    "name": "timeDroppedOff",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "timeDroppedOffRecipientName": {
+                    "name": "timeDroppedOffRecipientName",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "timeCancelled": {
+                    "name": "timeCancelled",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "timeRejected": {
+                    "name": "timeRejected",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "timeRiderHome": {
+                    "name": "timeRiderHome",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "requesterContact": {
+                    "name": "requesterContact",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "AddressAndContactDetails"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "pickUpLocation": {
+                    "name": "pickUpLocation",
+                    "isArray": false,
+                    "type": {
+                        "model": "Location"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "pickUpLocationId"
+                    }
+                },
+                "dropOffLocation": {
+                    "name": "dropOffLocation",
+                    "isArray": false,
+                    "type": {
+                        "model": "Location"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "dropOffLocationId"
+                    }
+                },
+                "establishmentLocation": {
+                    "name": "establishmentLocation",
+                    "isArray": false,
+                    "type": {
+                        "model": "Location"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "establishmentLocationId"
+                    }
+                },
+                "riderResponsibility": {
+                    "name": "riderResponsibility",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "assignees": {
+                    "name": "assignees",
+                    "isArray": true,
+                    "type": {
+                        "model": "TaskAssignee"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "taskAssigneesId"
+                    }
+                },
+                "priority": {
+                    "name": "priority",
+                    "isArray": false,
+                    "type": {
+                        "enum": "Priority"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "deliverables": {
+                    "name": "deliverables",
+                    "isArray": true,
+                    "type": {
+                        "model": "Deliverable"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "taskDeliverablesId"
+                    }
+                },
+                "comments": {
+                    "name": "comments",
+                    "isArray": true,
+                    "type": {
+                        "model": "Comment"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "parentId"
+                    }
+                },
+                "status": {
+                    "name": "status",
+                    "isArray": false,
+                    "type": {
+                        "enum": "TaskStatus"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "isRiderUsingOwnVehicle": {
+                    "name": "isRiderUsingOwnVehicle",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "Tasks",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantId",
+                        "queryField": "listTasksByTenantId",
+                        "fields": [
+                            "tenantId",
+                            "dateCreated"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byPickUpLocation",
+                        "fields": [
+                            "pickUpLocationId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byDropOffLocation",
+                        "fields": [
+                            "dropOffLocationId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byEstasblishmentLocation",
+                        "fields": [
+                            "establishmentLocationId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byStatus",
+                        "queryField": "tasksByStatus",
+                        "fields": [
+                            "status"
+                        ]
+                    }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "read"
+                                ]
+                            },
+                            {
+                                "groupClaim": "cognito:groups",
+                                "provider": "userPools",
+                                "allow": "groups",
+                                "groups": [
+                                    "COORDINATOR",
+                                    "RIDER",
+                                    "ADMIN"
+                                ],
+                                "operations": [
+                                    "create",
+                                    "read",
+                                    "update"
                                 ]
                             }
                         ]
@@ -994,8 +1317,8 @@ export const schema = {
                 }
             ]
         },
-        "Task": {
-            "name": "Task",
+        "Deliverable": {
+            "name": "Deliverable",
             "fields": {
                 "id": {
                     "name": "id",
@@ -1011,173 +1334,54 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "createdBy": {
-                    "name": "createdBy",
+                "deliverableType": {
+                    "name": "deliverableType",
                     "isArray": false,
                     "type": {
-                        "model": "User"
+                        "model": "DeliverableType"
                     },
                     "isRequired": false,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "userCreatedTasksId"
+                        "targetName": "deliverableTypeDeliverablesId"
                     }
                 },
-                "dateCreated": {
-                    "name": "dateCreated",
-                    "isArray": false,
-                    "type": "AWSDate",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "timeOfCall": {
-                    "name": "timeOfCall",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "timePickedUp": {
-                    "name": "timePickedUp",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "timePickedUpSenderName": {
-                    "name": "timePickedUpSenderName",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "timeDroppedOff": {
-                    "name": "timeDroppedOff",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "timeDroppedOffRecipientName": {
-                    "name": "timeDroppedOffRecipientName",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "timeCancelled": {
-                    "name": "timeCancelled",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "timeRejected": {
-                    "name": "timeRejected",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "timeRiderHome": {
-                    "name": "timeRiderHome",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "requesterContact": {
-                    "name": "requesterContact",
+                "task": {
+                    "name": "task",
                     "isArray": false,
                     "type": {
-                        "nonModel": "AddressAndContactDetails"
-                    },
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "pickUpLocation": {
-                    "name": "pickUpLocation",
-                    "isArray": false,
-                    "type": {
-                        "model": "Location"
+                        "model": "Task"
                     },
                     "isRequired": false,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "pickUpLocationId"
+                        "targetName": "taskDeliverablesId"
                     }
                 },
-                "dropOffLocation": {
-                    "name": "dropOffLocation",
+                "count": {
+                    "name": "count",
                     "isArray": false,
-                    "type": {
-                        "model": "Location"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "dropOffLocationId"
-                    }
-                },
-                "establishmentLocation": {
-                    "name": "establishmentLocation",
-                    "isArray": false,
-                    "type": {
-                        "model": "Location"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "establishmentLocationId"
-                    }
-                },
-                "riderResponsibility": {
-                    "name": "riderResponsibility",
-                    "isArray": false,
-                    "type": "String",
+                    "type": "Int",
                     "isRequired": false,
                     "attributes": []
                 },
-                "assignees": {
-                    "name": "assignees",
-                    "isArray": true,
-                    "type": {
-                        "model": "TaskAssignee"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "taskAssigneesId"
-                    }
-                },
-                "priority": {
-                    "name": "priority",
+                "unit": {
+                    "name": "unit",
                     "isArray": false,
                     "type": {
-                        "enum": "Priority"
+                        "enum": "DeliverableUnit"
                     },
                     "isRequired": false,
                     "attributes": []
                 },
-                "deliverables": {
-                    "name": "deliverables",
-                    "isArray": true,
-                    "type": {
-                        "model": "Deliverable"
-                    },
+                "orderInGrid": {
+                    "name": "orderInGrid",
+                    "isArray": false,
+                    "type": "Int",
                     "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "taskDeliverablesId"
-                    }
+                    "attributes": []
                 },
                 "comments": {
                     "name": "comments",
@@ -1193,22 +1397,6 @@ export const schema = {
                         "associatedWith": "parentId"
                     }
                 },
-                "status": {
-                    "name": "status",
-                    "isArray": false,
-                    "type": {
-                        "enum": "TaskStatus"
-                    },
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "isRiderUsingOwnVehicle": {
-                    "name": "isRiderUsingOwnVehicle",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -1227,161 +1415,7 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "Tasks",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byTenantId",
-                        "queryField": "getTasksByTenantId",
-                        "fields": [
-                            "tenantId",
-                            "dateCreated"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byPickUpLocation",
-                        "fields": [
-                            "pickUpLocationId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byDropOffLocation",
-                        "fields": [
-                            "dropOffLocationId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byEstasblishmentLocation",
-                        "fields": [
-                            "establishmentLocationId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byStatus",
-                        "queryField": "tasksByStatus",
-                        "fields": [
-                            "status"
-                        ]
-                    }
-                },
-                {
-                    "type": "auth",
-                    "properties": {
-                        "rules": [
-                            {
-                                "allow": "private",
-                                "operations": [
-                                    "read"
-                                ]
-                            },
-                            {
-                                "groupClaim": "cognito:groups",
-                                "provider": "userPools",
-                                "allow": "groups",
-                                "groups": [
-                                    "COORDINATOR",
-                                    "RIDER",
-                                    "ADMIN"
-                                ],
-                                "operations": [
-                                    "create",
-                                    "read",
-                                    "update"
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "TaskAssignee": {
-            "name": "TaskAssignee",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "tenantId": {
-                    "name": "tenantId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "role": {
-                    "name": "role",
-                    "isArray": false,
-                    "type": {
-                        "enum": "Role"
-                    },
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "task": {
-                    "name": "task",
-                    "isArray": false,
-                    "type": {
-                        "model": "Task"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "taskAssigneesId"
-                    }
-                },
-                "assignee": {
-                    "name": "assignee",
-                    "isArray": false,
-                    "type": {
-                        "model": "User"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "userAssignmentsId"
-                    }
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "TaskAssignees",
+            "pluralName": "Deliverables",
             "attributes": [
                 {
                     "type": "model",
@@ -1411,144 +1445,9 @@ export const schema = {
                                 "provider": "userPools",
                                 "allow": "groups",
                                 "groups": [
+                                    "ADMIN",
                                     "COORDINATOR",
-                                    "RIDER",
-                                    "ADMIN"
-                                ],
-                                "operations": [
-                                    "create",
-                                    "read",
-                                    "delete"
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "Comment": {
-            "name": "Comment",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "parentId": {
-                    "name": "parentId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "tenantId": {
-                    "name": "tenantId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "body": {
-                    "name": "body",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "author": {
-                    "name": "author",
-                    "isArray": false,
-                    "type": {
-                        "model": "User"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "userCommentsId"
-                    }
-                },
-                "visibility": {
-                    "name": "visibility",
-                    "isArray": false,
-                    "type": {
-                        "enum": "CommentVisibility"
-                    },
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "Comments",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byParent",
-                        "fields": [
-                            "parentId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byTenantId",
-                        "fields": [
-                            "tenantId"
-                        ]
-                    }
-                },
-                {
-                    "type": "auth",
-                    "properties": {
-                        "rules": [
-                            {
-                                "allow": "private",
-                                "operations": [
-                                    "read"
-                                ]
-                            },
-                            {
-                                "provider": "userPools",
-                                "ownerField": "owner",
-                                "allow": "owner",
-                                "operations": [
-                                    "create",
-                                    "read",
-                                    "delete",
-                                    "update"
-                                ],
-                                "identityClaim": "cognito:username"
-                            },
-                            {
-                                "groupClaim": "cognito:groups",
-                                "provider": "userPools",
-                                "allow": "groups",
-                                "groups": [
-                                    "ADMIN"
+                                    "RIDER"
                                 ],
                                 "operations": [
                                     "create",
@@ -1694,8 +1593,8 @@ export const schema = {
                 }
             ]
         },
-        "Deliverable": {
-            "name": "Deliverable",
+        "VehicleAssignment": {
+            "name": "VehicleAssignment",
             "fields": {
                 "id": {
                     "name": "id",
@@ -1711,67 +1610,30 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "deliverableType": {
-                    "name": "deliverableType",
+                "vehicle": {
+                    "name": "vehicle",
                     "isArray": false,
                     "type": {
-                        "model": "DeliverableType"
+                        "model": "Vehicle"
                     },
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "deliverableTypeDeliverablesId"
+                        "targetName": "vehicleAssignmentsId"
                     }
                 },
-                "task": {
-                    "name": "task",
+                "assignee": {
+                    "name": "assignee",
                     "isArray": false,
                     "type": {
-                        "model": "Task"
+                        "model": "User"
                     },
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "taskDeliverablesId"
-                    }
-                },
-                "count": {
-                    "name": "count",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "unit": {
-                    "name": "unit",
-                    "isArray": false,
-                    "type": {
-                        "enum": "DeliverableUnit"
-                    },
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "orderInGrid": {
-                    "name": "orderInGrid",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "comments": {
-                    "name": "comments",
-                    "isArray": true,
-                    "type": {
-                        "model": "Comment"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "parentId"
+                        "targetName": "userVehicleAssignmentsId"
                     }
                 },
                 "createdAt": {
@@ -1792,7 +1654,7 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "Deliverables",
+            "pluralName": "VehicleAssignments",
             "attributes": [
                 {
                     "type": "model",
@@ -1829,8 +1691,7 @@ export const schema = {
                                 "operations": [
                                     "create",
                                     "read",
-                                    "delete",
-                                    "update"
+                                    "delete"
                                 ]
                             }
                         ]
@@ -1838,8 +1699,8 @@ export const schema = {
                 }
             ]
         },
-        "RiderResponsibility": {
-            "name": "RiderResponsibility",
+        "Vehicle": {
+            "name": "Vehicle",
             "fields": {
                 "id": {
                     "name": "id",
@@ -1855,12 +1716,81 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "label": {
-                    "name": "label",
+                "createdBy": {
+                    "name": "createdBy",
+                    "isArray": false,
+                    "type": {
+                        "model": "User"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "userCreatedVehiclesId"
+                    }
+                },
+                "name": {
+                    "name": "name",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": []
+                },
+                "manufacturer": {
+                    "name": "manufacturer",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "model": {
+                    "name": "model",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "dateOfManufacture": {
+                    "name": "dateOfManufacture",
+                    "isArray": false,
+                    "type": "AWSDate",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "dateOfRegistration": {
+                    "name": "dateOfRegistration",
+                    "isArray": false,
+                    "type": "AWSDate",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "assignments": {
+                    "name": "assignments",
+                    "isArray": true,
+                    "type": {
+                        "model": "VehicleAssignment"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "vehicleAssignmentsId"
+                    }
+                },
+                "comments": {
+                    "name": "comments",
+                    "isArray": true,
+                    "type": {
+                        "model": "Comment"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "parentId"
+                    }
                 },
                 "disabled": {
                     "name": "disabled",
@@ -1868,20 +1798,6 @@ export const schema = {
                     "type": "Int",
                     "isRequired": false,
                     "attributes": []
-                },
-                "possibleUsers": {
-                    "name": "possibleUsers",
-                    "isArray": true,
-                    "type": {
-                        "model": "PossibleRiderResponsibilities"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "riderResponsibilityPossibleUsersId"
-                    }
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -1901,7 +1817,7 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "RiderResponsibilities",
+            "pluralName": "Vehicles",
             "attributes": [
                 {
                     "type": "model",
@@ -1943,51 +1859,93 @@ export const schema = {
                     }
                 }
             ]
+        },
+        "Tenant": {
+            "name": "Tenant",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "name": {
+                    "name": "name",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "referenceIdentifier": {
+                    "name": "referenceIdentifier",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "admin": {
+                    "name": "admin",
+                    "isArray": false,
+                    "type": {
+                        "model": "User"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "HAS_ONE",
+                        "associatedWith": "id",
+                        "targetName": "tenantAdminId"
+                    }
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "tenantAdminId": {
+                    "name": "tenantAdminId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                }
+            },
+            "syncable": true,
+            "pluralName": "Tenants",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
         }
     },
     "enums": {
-        "DeliverableTypeIcon": {
-            "name": "DeliverableTypeIcon",
-            "values": [
-                "BUG",
-                "CHILD",
-                "DOCUMENT",
-                "EQUIPMENT",
-                "OTHER"
-            ]
-        },
-        "TaskStatus": {
-            "name": "TaskStatus",
-            "values": [
-                "NEW",
-                "ACTIVE",
-                "PICKED_UP",
-                "DROPPED_OFF",
-                "CANCELLED",
-                "REJECTED",
-                "ABANDONED",
-                "COMPLETED"
-            ]
-        },
-        "Priority": {
-            "name": "Priority",
-            "values": [
-                "HIGH",
-                "MEDIUM",
-                "LOW"
-            ]
-        },
-        "DeliverableUnit": {
-            "name": "DeliverableUnit",
-            "values": [
-                "NONE",
-                "LITER",
-                "MILLILITER",
-                "GRAM",
-                "ITEM",
-                "BOX"
-            ]
-        },
         "Role": {
             "name": "Role",
             "values": [
@@ -2003,31 +1961,127 @@ export const schema = {
                 "EVERYONE",
                 "ME"
             ]
+        },
+        "Priority": {
+            "name": "Priority",
+            "values": [
+                "HIGH",
+                "MEDIUM",
+                "LOW"
+            ]
+        },
+        "DeliverableTypeIcon": {
+            "name": "DeliverableTypeIcon",
+            "values": [
+                "BUG",
+                "CHILD",
+                "DOCUMENT",
+                "EQUIPMENT",
+                "OTHER"
+            ]
+        },
+        "DeliverableUnit": {
+            "name": "DeliverableUnit",
+            "values": [
+                "NONE",
+                "LITER",
+                "MILLILITER",
+                "GRAM",
+                "ITEM",
+                "BOX"
+            ]
+        },
+        "TaskStatus": {
+            "name": "TaskStatus",
+            "values": [
+                "NEW",
+                "ACTIVE",
+                "PICKED_UP",
+                "DROPPED_OFF",
+                "CANCELLED",
+                "REJECTED",
+                "ABANDONED",
+                "COMPLETED"
+            ]
         }
     },
     "nonModels": {
-        "S3Object": {
-            "name": "S3Object",
+        "Statistics": {
+            "name": "Statistics",
             "fields": {
-                "bucket": {
-                    "name": "bucket",
+                "numCancelled": {
+                    "name": "numCancelled",
                     "isArray": false,
-                    "type": "String",
-                    "isRequired": true,
+                    "type": "Int",
+                    "isRequired": false,
                     "attributes": []
                 },
-                "key": {
-                    "name": "key",
+                "numCompleted": {
+                    "name": "numCompleted",
                     "isArray": false,
-                    "type": "String",
-                    "isRequired": true,
+                    "type": "Int",
+                    "isRequired": false,
                     "attributes": []
                 },
-                "region": {
-                    "name": "region",
+                "numDroppedOff": {
+                    "name": "numDroppedOff",
                     "isArray": false,
-                    "type": "String",
-                    "isRequired": true,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numRejected": {
+                    "name": "numRejected",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numAbandoned": {
+                    "name": "numAbandoned",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numActive": {
+                    "name": "numActive",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numPickedUp": {
+                    "name": "numPickedUp",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numNew": {
+                    "name": "numNew",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "numTest": {
+                    "name": "numTest",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                }
+            }
+        },
+        "SendFeedback": {
+            "name": "SendFeedback",
+            "fields": {
+                "successState": {
+                    "name": "successState",
+                    "isArray": false,
+                    "type": "Boolean",
+                    "isRequired": false,
                     "attributes": []
                 }
             }
@@ -2135,87 +2189,33 @@ export const schema = {
                 }
             }
         },
-        "SendFeedback": {
-            "name": "SendFeedback",
+        "S3Object": {
+            "name": "S3Object",
             "fields": {
-                "successState": {
-                    "name": "successState",
+                "bucket": {
+                    "name": "bucket",
                     "isArray": false,
-                    "type": "Boolean",
-                    "isRequired": false,
-                    "attributes": []
-                }
-            }
-        },
-        "Statistics": {
-            "name": "Statistics",
-            "fields": {
-                "numCancelled": {
-                    "name": "numCancelled",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
+                    "type": "String",
+                    "isRequired": true,
                     "attributes": []
                 },
-                "numCompleted": {
-                    "name": "numCompleted",
+                "key": {
+                    "name": "key",
                     "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
+                    "type": "String",
+                    "isRequired": true,
                     "attributes": []
                 },
-                "numDroppedOff": {
-                    "name": "numDroppedOff",
+                "region": {
+                    "name": "region",
                     "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numRejected": {
-                    "name": "numRejected",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numAbandoned": {
-                    "name": "numAbandoned",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numActive": {
-                    "name": "numActive",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numPickedUp": {
-                    "name": "numPickedUp",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numNew": {
-                    "name": "numNew",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "numTest": {
-                    "name": "numTest",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
+                    "type": "String",
+                    "isRequired": true,
                     "attributes": []
                 }
             }
         }
     },
-    "codegenVersion": "3.3.6",
+    "codegenVersion": "3.3.5",
     "version": "3c3c2097a8699496ece95b504d3fb046"
 };

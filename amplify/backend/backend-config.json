@@ -315,6 +315,22 @@
         }
       ]
     },
+    "AMPLIFY_function_plateletGetStatistics_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletGetStatistics"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletGetStatistics_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletGetStatistics"
+        }
+      ]
+    },
     "AMPLIFY_function_plateletProfilePictureResolver_deploymentBucketName": {
       "usedBy": [
         {

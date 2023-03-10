@@ -139,7 +139,7 @@ describe("TaskHistory", () => {
     it("displays task details", async () => {
         const graphqlSpy = jest.spyOn(API, "graphql").mockResolvedValueOnce({
             data: {
-                getTasksByTenantId: {
+                listTasksByTenantId: {
                     items: [mockTask],
                     nextToken: null,
                     startedAt: 1620000000000,
@@ -191,7 +191,7 @@ describe("TaskHistory", () => {
             .spyOn(API, "graphql")
             .mockResolvedValueOnce({
                 data: {
-                    getTasksByTenantId: {
+                    listTasksByTenantId: {
                         items: [mockTask],
                         nextToken: "someNextToken",
                         startedAt: 1620000000000,
@@ -200,7 +200,7 @@ describe("TaskHistory", () => {
             })
             .mockResolvedValueOnce({
                 data: {
-                    getTasksByTenantId: {
+                    listTasksByTenantId: {
                         items: [secondTask],
                         nextToken: null,
                         startedAt: 1620000000001,
@@ -251,7 +251,7 @@ describe("TaskHistory", () => {
             .spyOn(API, "graphql")
             .mockResolvedValueOnce({
                 data: {
-                    getTasksByTenantId: {
+                    listTasksByTenantId: {
                         items: [mockTask, secondTask],
                         nextToken: null,
                         startedAt: 1620000000000,
@@ -260,7 +260,7 @@ describe("TaskHistory", () => {
             })
             .mockResolvedValueOnce({
                 data: {
-                    getTasksByTenantId: {
+                    listTasksByTenantId: {
                         items: [secondTask, mockTask],
                         nextToken: null,
                         startedAt: 1620000000000,
@@ -323,7 +323,7 @@ describe("TaskHistory", () => {
             .spyOn(API, "graphql")
             .mockResolvedValueOnce({
                 data: {
-                    getTasksByTenantId: {
+                    listTasksByTenantId: {
                         items: [],
                         nextToken: "someToken",
                         startedAt: 1620000000000,
@@ -346,7 +346,7 @@ describe("TaskHistory", () => {
     test("click the different days", async () => {
         const graphqlSpy = jest.spyOn(API, "graphql").mockResolvedValue({
             data: {
-                getTasksByTenantId: {
+                listTasksByTenantId: {
                     items: [],
                     nextToken: null,
                     startedAt: 1620000000000,
@@ -409,7 +409,7 @@ describe("TaskHistory", () => {
     test("custom date range", async () => {
         const graphqlSpy = jest.spyOn(API, "graphql").mockResolvedValue({
             data: {
-                getTasksByTenantId: {
+                listTasksByTenantId: {
                     items: [],
                     nextToken: null,
                     startedAt: 1620000000000,

@@ -5005,7 +5005,7 @@ export type SyncTasksQuery = {
   } | null,
 };
 
-export type GetTasksByTenantIdQueryVariables = {
+export type ListTasksByTenantIdQueryVariables = {
   tenantId: string,
   dateCreated?: ModelStringKeyConditionInput | null,
   sortDirection?: ModelSortDirection | null,
@@ -5014,8 +5014,8 @@ export type GetTasksByTenantIdQueryVariables = {
   nextToken?: string | null,
 };
 
-export type GetTasksByTenantIdQuery = {
-  getTasksByTenantId?:  {
+export type ListTasksByTenantIdQuery = {
+  listTasksByTenantId?:  {
     __typename: "ModelTaskConnection",
     items:  Array< {
       __typename: "Task",

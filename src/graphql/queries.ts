@@ -971,8 +971,8 @@ export const syncTasks = /* GraphQL */ `
     }
   }
 `;
-export const getTasksByTenantId = /* GraphQL */ `
-  query GetTasksByTenantId(
+export const listTasksByTenantId = /* GraphQL */ `
+  query ListTasksByTenantId(
     $tenantId: ID!
     $dateCreated: ModelStringKeyConditionInput
     $sortDirection: ModelSortDirection
@@ -980,7 +980,7 @@ export const getTasksByTenantId = /* GraphQL */ `
     $limit: Int
     $nextToken: String
   ) {
-    getTasksByTenantId(
+    listTasksByTenantId(
       tenantId: $tenantId
       dateCreated: $dateCreated
       sortDirection: $sortDirection
