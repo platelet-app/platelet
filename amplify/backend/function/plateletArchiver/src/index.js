@@ -147,7 +147,7 @@ const updateTaskAssigneeMutation = /* GraphQL */ `
     };
 `;
 
-const makeNewRequest = async (query, variables) => {
+let makeNewRequest = async (query, variables) => {
     const endpoint = new URL(GRAPHQL_ENDPOINT);
     const signer = new SignatureV4({
         credentials: defaultProvider(),
@@ -173,6 +173,8 @@ const makeNewRequest = async (query, variables) => {
     const signed = await signer.sign(requestToBeSigned);
     return new Request(endpoint, signed);
 };
+
+exports.makeNewRequest = makeNewRequest;
 
 const getTaskAssignees = async (task) => {
     const items = [];
@@ -334,7 +336,11 @@ const updateTask = async (task) => {
     return body.data.updateTask;
 };
 
-exports.handler = async (event) => {
+exports.handler = async (event, makeNewRequestTest) => {
+    if (makeNewRequestTest && process.env.NODE_ENV === "test") {
+        console.log("TESTING");
+        makeNewRequest = makeNewRequestTest;
+    }
     console.log(`EVENT: ${JSON.stringify(event)}`);
     const tasks = await Promise.all(
         ["COMPLETED", "REJECTED", "ABANDONED", "CANCELLED"].map((status) =>
