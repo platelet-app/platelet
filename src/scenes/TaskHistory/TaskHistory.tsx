@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Grid, Skeleton, Stack, Typography } from "@mui/material";
+import { Box, Grid, Paper, Skeleton, Stack, Typography } from "@mui/material";
 import { useInView } from "react-intersection-observer";
 import useGetTasksGraphql from "../../hooks/useGetTasksGraphql";
 import _ from "lodash";
@@ -46,6 +46,8 @@ const TaskHistory: React.FC = () => {
         }
     }, [inView, getNext, state, isFinished]);
 
+    const skeletonRange = state.length ? 1 : 20;
+
     return (
         <>
             <Stack spacing={1}>
@@ -87,19 +89,19 @@ const TaskHistory: React.FC = () => {
                 {error && <Typography>Sorry, something went wrong.</Typography>}
                 <div ref={ref} />
                 {!isFinished && (
-                    <Grid container data-testid="task-history-skeleton">
-                        {_.range(0, 4).map((i) => (
-                            <Grid key={i} item>
+                    <Stack spacing={1} data-testid="task-history-skeleton">
+                        {_.range(0, skeletonRange).map((i) => (
+                            <Box key={i} sx={{ maxWidth: 1200 }}>
                                 <Skeleton
+                                    variant="rectangular"
+                                    height={140}
                                     sx={{
-                                        height: 200,
-                                        width: 800,
                                         borderRadius: 4,
                                     }}
                                 />
-                            </Grid>
+                            </Box>
                         ))}
-                    </Grid>
+                    </Stack>
                 )}
             </Stack>
         </>

@@ -3,16 +3,52 @@ import { GraphQLQuery } from "@aws-amplify/api";
 import { API } from "aws-amplify";
 import {
     Task,
-    ListTasksByTenantIdQuery,
     ModelSortDirection,
     Comment,
     CommentVisibility,
+    Location,
+    Priority,
+    TaskStatus,
 } from "../API";
 import { useSelector } from "react-redux";
 import { getWhoami, tenantIdSelector } from "../redux/Selectors";
 
 type StateType = {
     [key: string]: Task;
+};
+
+// this is to keep typescript happy about filtering
+// the comments
+type ListTasksByTenantIdQuery = {
+    listTasksByTenantId?: {
+        __typename: "ModelTaskConnection";
+        items: Array<{
+            __typename: "Task";
+            id: string;
+            tenantId: string;
+            dateCreated: string;
+            timeOfCall?: string | null;
+            pickUpLocation?: Location | null;
+            dropOffLocation?: Location | null;
+            riderResponsibility?: string | null;
+            priority?: Priority | null;
+            status?: TaskStatus | null;
+            comments?: {
+                __typename: "ModelCommentConnection";
+                items: Array<Comment>;
+                nextToken?: string | null;
+                startedAt?: number | null;
+            } | null;
+            createdAt: string;
+            updatedAt: string;
+            _version: number;
+            _deleted?: boolean | null;
+            _lastChangedAt: number;
+            userCreatedTasksId?: string | null;
+        } | null>;
+        nextToken?: string | null;
+        startedAt?: number | null;
+    } | null;
 };
 
 export const listTasksByTenantId = /* GraphQL */ `
@@ -167,13 +203,14 @@ const useGetTasksGraphql = (
                     const result = tasksSorted.reduce((acc, task) => {
                         if (task) {
                             const filtered = filterComments(
-                                // @ts-ignore
                                 task.comments?.items || []
                             );
                             acc[task.id] = {
                                 ...task,
-                                // @ts-ignore
-                                comments: { items: filtered },
+                                comments: {
+                                    __typename: "ModelCommentConnection",
+                                    items: filtered,
+                                },
                             };
                         }
                         return acc;
@@ -197,6 +234,7 @@ const useGetTasksGraphql = (
     const getTasks = React.useCallback(async () => {
         try {
             if (!tenantId) return;
+            setState({});
             setIsFinished(false);
             setIsFetching(true);
             const variables = {
@@ -221,13 +259,14 @@ const useGetTasksGraphql = (
                 const result = tasksSorted.reduce((acc, task) => {
                     if (task) {
                         const filtered = filterComments(
-                            // @ts-ignore
                             task.comments?.items || []
                         );
                         acc[task.id] = {
                             ...task,
-                            // @ts-ignore
-                            comments: { items: filtered },
+                            comments: {
+                                __typename: "ModelCommentConnection",
+                                items: filtered,
+                            },
                         };
                     }
                     return acc;
