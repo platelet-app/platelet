@@ -61,14 +61,20 @@ export function RiderResponsibilityChips() {
 
     const onSave = async () => {
         try {
-            await DataStore.save(
-                models.RiderResponsibility.copyOf(
-                    editItem,
-                    (upd) => (upd.label = inputValue)
-                )
-            );
-            setEditItem(null);
-            setInputValue("");
+            if (editItem) {
+                const existing = await DataStore.query(
+                    models.RiderResponsibility,
+                    editItem.id
+                );
+                await DataStore.save(
+                    models.RiderResponsibility.copyOf(
+                        existing,
+                        (upd) => (upd.label = inputValue)
+                    )
+                );
+                setEditItem(null);
+                setInputValue("");
+            }
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification("Sorry, something went wrong"));

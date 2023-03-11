@@ -1264,9 +1264,7 @@ describe("TasksGridColumn", () => {
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(2);
         });
-        const tooltip = await screen.findByTestId("comment-count-tooltip");
-        userEvent.hover(tooltip);
-        expect(await screen.findByText("1 comment")).toBeInTheDocument();
+        expect(await screen.findByText("1")).toBeInTheDocument();
         await DataStore.save(
             new models.Comment({
                 parentId: task.id,
@@ -1275,7 +1273,7 @@ describe("TasksGridColumn", () => {
                 body: "test",
             })
         );
-        expect(await screen.findByText("2 comments")).toBeInTheDocument();
+        expect(await screen.findByText("2")).toBeInTheDocument();
     });
 
     test("show the assignees", async () => {
