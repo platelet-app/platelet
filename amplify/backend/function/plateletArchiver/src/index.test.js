@@ -1,6 +1,6 @@
 const indexModule = require("./index");
 const { default: fetch } = require("node-fetch");
-//const makeNewRequest = require("./index").makeNewRequest;
+
 const mockTaskNewer = {
     id: "anotherTaskId",
     status: "COMPLETED",
@@ -40,6 +40,12 @@ const mockTask = {
 const fakeData = {
     tasksByArchivedStatus: {
         items: [mockTask, mockTaskNewer],
+        nextToken: "tasktoken",
+    },
+};
+const fakeDataSecond = {
+    tasksByArchivedStatus: {
+        items: [mockTaskNewer],
         nextToken: null,
     },
 };
@@ -172,6 +178,7 @@ describe("plateletArchiver", () => {
         const requestSpy = jest.spyOn(indexModule, "makeNewRequest");
         jest.spyOn(fetch, "default")
             .mockImplementationOnce(setupFetchStub(fakeData))
+            .mockImplementationOnce(setupFetchStub(fakeDataSecond))
             .mockImplementationOnce(setupFetchStub(fakeEmptyData))
             .mockImplementationOnce(setupFetchStub(fakeEmptyData))
             .mockImplementationOnce(setupFetchStub(fakeEmptyData))
@@ -194,6 +201,32 @@ describe("plateletArchiver", () => {
         expect(requestSpy).not.toHaveBeenCalledWith(
             expect.anything(),
             expect.objectContaining({ id: "anotherTaskId" })
+        );
+    });
+    test("failure to archive an assignee", async () => {
+        const unArchivedFakeAssigneeReturn = {
+            updateTaskAssignee: {
+                id: "someAssignmentId",
+                archived: 0,
+            },
+        };
+        const requestSpy = jest.spyOn(indexModule, "makeNewRequest");
+        jest.spyOn(fetch, "default")
+            .mockImplementationOnce(setupFetchStub(fakeData))
+            .mockImplementationOnce(setupFetchStub(fakeDataSecond))
+            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
+            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
+            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
+            .mockImplementationOnce(setupFetchStub({}))
+            .mockImplementationOnce(setupFetchStub(fakeAssigneeDataSecond))
+            .mockImplementationOnce(
+                setupFetchStub(unArchivedFakeAssigneeReturn)
+            );
+        await indexModule.handler({}, indexModule.makeNewRequest);
+        expect(requestSpy).toMatchSnapshot();
+        expect(requestSpy).not.toHaveBeenCalledWith(
+            expect.stringMatching(/updateTask\(/),
+            expect.objectContaining({ id: "someTaskId" })
         );
     });
 });
