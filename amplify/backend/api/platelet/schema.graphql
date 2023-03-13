@@ -228,7 +228,7 @@ type TaskAssignee
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
   role: Role!
-  task: Task! @belongsTo
+  task: Task @belongsTo
   assignee: User! @belongsTo
   archived: Int @default(value: "0") @index(name: "byArchived")
 }
@@ -366,5 +366,4 @@ type Statistics {
 type Query {
   profilePictureUploadURL(userId: ID!): AWSURL @function(name: "plateletProfilePictureUploadURLResolver-${env}") @auth(rules: [{allow: private}])
   sendUserFeedback(emailAddress: AWSEmail, body: String): SendFeedback @function(name: "plateletSendUserFeedback-${env}") @auth(rules: [{allow: private}])
-  archiveTasks: String @function(name: "plateletArchiver-${env}") @auth(rules: [{allow: groups, groups: ["SUPER"]}])
 }

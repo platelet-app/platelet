@@ -144,6 +144,21 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "plateletArchiveNullTasks": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "plateletArchiver": {
       "build": true,
       "dependsOn": [
@@ -327,6 +342,22 @@
         {
           "category": "function",
           "resourceName": "plateletAdminChangeUserRoles"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletArchiveNullTasks_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletArchiveNullTasks"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletArchiveNullTasks_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletArchiveNullTasks"
         }
       ]
     },
