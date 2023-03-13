@@ -332,7 +332,7 @@ type EagerTaskAssignee = {
   readonly id: string;
   readonly tenantId: string;
   readonly role: Role | keyof typeof Role;
-  readonly task: Task;
+  readonly task?: Task | null;
   readonly assignee: User;
   readonly archived?: number | null;
   readonly createdAt?: string | null;
@@ -343,7 +343,7 @@ type LazyTaskAssignee = {
   readonly id: string;
   readonly tenantId: string;
   readonly role: Role | keyof typeof Role;
-  readonly task: AsyncItem<Task>;
+  readonly task: AsyncItem<Task | undefined>;
   readonly assignee: AsyncItem<User>;
   readonly archived?: number | null;
   readonly createdAt?: string | null;

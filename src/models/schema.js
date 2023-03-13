@@ -678,7 +678,7 @@ export const schema = {
                     "type": {
                         "model": "Task"
                     },
-                    "isRequired": true,
+                    "isRequired": false,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
@@ -2297,5 +2297,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.3.5",
-    "version": "277600d8d1c147821bdd715169c5c631"
+    "version": "8dc531c5dbabc97daa9f6d20a89d99a6"
 };
