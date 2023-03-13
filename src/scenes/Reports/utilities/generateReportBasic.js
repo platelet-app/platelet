@@ -215,6 +215,7 @@ export default async function generateReportBasic(userId, role, days) {
     if (role !== "ALL") {
         const filteredAssignments = assignments.filter(
             (assignment) =>
+                assignment.task &&
                 assignment.role === role &&
                 assignment.assignee &&
                 assignment.assignee.id === userId &&

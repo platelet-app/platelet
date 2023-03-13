@@ -49,7 +49,7 @@ function RiderConfirmationHomeContents({
                     a.role("eq", userRoles.rider)
                 )
             )
-                .filter((a) => a.assignee && a.assignee.id === userId)
+                .filter((a) => a.task && a.assignee && a.assignee.id === userId)
                 .map((a) => a.task);
             const droppedOff = riderTasks.filter(
                 (t) => t && t.status === tasksStatus.droppedOff

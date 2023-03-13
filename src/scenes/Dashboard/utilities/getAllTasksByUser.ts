@@ -15,7 +15,7 @@ export default async function getAllTasksByUser(
     );
     let allTasks = [];
     const riderTaskIds = roleAssignments
-        .filter((a) => a.assignee && userId === a.assignee.id)
+        .filter((a) => a.task && userId === a.assignee.id)
         .map((a) => a.task && a.task.id);
     if (!riderTaskIds || riderTaskIds.length === 0) {
         return {};
@@ -29,7 +29,7 @@ export default async function getAllTasksByUser(
                 task
                     .or((task) =>
                         riderTaskIds.reduce(
-                            (task, id) => task.id("eq", id),
+                            (task, id) => task.id("eq", id || ""),
                             task
                         )
                     )
@@ -56,7 +56,7 @@ export default async function getAllTasksByUser(
                 task
                     .or((task) =>
                         riderTaskIds.reduce(
-                            (task, id) => task.id("eq", id),
+                            (task, id) => task.id("eq", id || ""),
                             task
                         )
                     )

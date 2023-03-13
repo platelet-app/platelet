@@ -14,8 +14,8 @@ export default async function getAllMyTasks(
         (assignee) => assignee.role === roleView
     );
     const myTasksIds = roleViewAssignments
-        .filter((a) => a?.assignee.id === userId)
-        .map((a2) => a2?.task.id);
+        .filter((a) => a.task && a?.assignee.id === userId)
+        .map((a2) => a2?.task?.id);
     let filteredTasks = [];
     if (!myTasksIds || myTasksIds.length === 0) {
         return {};
@@ -27,7 +27,10 @@ export default async function getAllMyTasks(
             (task) =>
                 task
                     .or((task) =>
-                        myTasksIds.reduce((task, id) => task.id("eq", id), task)
+                        myTasksIds.reduce(
+                            (task, id) => task.id("eq", id || ""),
+                            task
+                        )
                     )
                     .or((task) =>
                         keys.reduce(
@@ -51,7 +54,10 @@ export default async function getAllMyTasks(
             (task) =>
                 task
                     .or((task) =>
-                        myTasksIds.reduce((task, id) => task.id("eq", id), task)
+                        myTasksIds.reduce(
+                            (task, id) => task.id("eq", id || ""),
+                            task
+                        )
                     )
                     .or((task) =>
                         keys.reduce(
