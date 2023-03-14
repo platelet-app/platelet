@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Grid, Paper, Skeleton, Stack, Typography } from "@mui/material";
+import { Box, Skeleton, Stack, Typography } from "@mui/material";
 import { useInView } from "react-intersection-observer";
 import useGetTasksGraphql from "../../hooks/useGetTasksGraphql";
 import _ from "lodash";
@@ -7,6 +7,7 @@ import TaskHistoryCard from "./components/TaskHistoryCard";
 import TaskHistoryControls from "./components/TaskHistoryControls";
 import { ModelSortDirection } from "../../API";
 import DateStampDivider from "../Dashboard/components/TimeStampDivider";
+import TaskHistoryTaskDialog from "./components/TaskHistoryTaskDialog";
 
 const limit = 20;
 
@@ -22,6 +23,7 @@ const TaskHistory: React.FC = () => {
         startDate: new Date("2000-01-01"),
         endDate: new Date(),
     });
+    const [openTaskId, setOpenTaskId] = React.useState<string | null>(null);
     const { state, getNext, isFinished, isFetching, error } =
         useGetTasksGraphql(
             limit,
@@ -60,7 +62,12 @@ const TaskHistory: React.FC = () => {
                 {state.map((task) => {
                     displayDate = false;
                     let component = (
-                        <TaskHistoryCard key={task.id} task={task} />
+                        <Box
+                            onClick={() => setOpenTaskId(task.id)}
+                            key={task.id}
+                        >
+                            <TaskHistoryCard task={task} />
+                        </Box>
                     );
                     if (task.dateCreated) {
                         const timeComparison = new Date(task.dateCreated);
@@ -73,14 +80,17 @@ const TaskHistory: React.FC = () => {
                         }
                         if (displayDate) {
                             component = (
-                                <React.Fragment key={task.id}>
+                                <Box
+                                    onClick={() => setOpenTaskId(task.id)}
+                                    key={task.id}
+                                >
                                     <Box sx={{ maxWidth: 800 }}>
                                         <DateStampDivider
                                             date={lastTime.toISOString()}
                                         />
                                     </Box>
                                     <TaskHistoryCard task={task} />
-                                </React.Fragment>
+                                </Box>
                             );
                         }
                     }
@@ -104,6 +114,7 @@ const TaskHistory: React.FC = () => {
                     </Stack>
                 )}
             </Stack>
+            {openTaskId && <TaskHistoryTaskDialog taskId={openTaskId} />}
         </>
     );
 };
