@@ -95,7 +95,6 @@ const generateTimelineContent = (task: Task) => {
     // sort everything by value
     // but keep it as an object with original keys
     const sorted = orderByOldestFirst(filtered);
-    console.log(sorted);
     const result = Object.keys(sorted).map((key) => {
         const isLastItem =
             Object.keys(sorted).indexOf(key) === Object.keys(sorted).length - 1;
@@ -111,8 +110,9 @@ const generateTimelineContent = (task: Task) => {
         );
         if (assigneeTimes[key as keyof typeof assigneeTimes]) {
             const assignee = assignees.find((assignee) => assignee?.id === key);
+            console.log(assignee?.assignee);
             return (
-                <TimelineItem>
+                <TimelineItem key={assignee?.id}>
                     {separator}
                     <TimelineContent>
                         Assignee: {assignee?.assignee?.displayName}{" "}
@@ -125,7 +125,7 @@ const generateTimelineContent = (task: Task) => {
                 (deliverable) => deliverable?.id === key
             );
             return (
-                <TimelineItem>
+                <TimelineItem key={deliverable?.id}>
                     {separator}
                     <TimelineContent>
                         Deliverable: {deliverable?.deliverableType?.label}{" "}
@@ -136,7 +136,7 @@ const generateTimelineContent = (task: Task) => {
         } else if (commentTimes[key as keyof typeof commentTimes]) {
             const comment = comments.find((comment) => comment?.id === key);
             return (
-                <TimelineItem>
+                <TimelineItem key={comment?.id}>
                     {separator}
                     <TimelineContent>
                         Comment: {comment?.body}{" "}
@@ -147,7 +147,7 @@ const generateTimelineContent = (task: Task) => {
         } else if (keyTimes[key as keyof typeof keyTimes]) {
             const time = keyTimes[key as keyof typeof keyTimes];
             return (
-                <TimelineItem>
+                <TimelineItem key={key}>
                     {separator}
                     <TimelineContent>
                         {key}: <Moment format="HH:mm">{time || ""}</Moment>

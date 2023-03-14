@@ -3,7 +3,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import PropTypes from "prop-types";
-import { Box, Stack } from "@mui/material";
+import { Box, Skeleton, Stack } from "@mui/material";
 import { styled } from "@mui/styles";
 import { useCordovaBackButton } from "../../../hooks/useCordovaBackButton";
 import TaskHistoryTimeline from "./TaskHistoryTimeline";
@@ -23,6 +23,15 @@ const TaskHistoryTaskDialog: React.FC<TaskHistoryTaskDialogProps> = ({
     taskId,
 }) => {
     const { state, isFetching, error, notFound } = useTaskGraphQL(taskId);
+    if (isFetching) {
+        return (
+            <Skeleton
+                data-testid="task-history-dialog-fetching"
+                variant="rectangular"
+                height={400}
+            />
+        );
+    }
     return (
         <RoundedDialog open={true}>
             <DialogContent>
