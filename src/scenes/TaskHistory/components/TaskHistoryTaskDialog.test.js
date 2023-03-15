@@ -147,4 +147,33 @@ describe("TaskHistoryTaskDialog", () => {
         const variables = graphqlSpy.mock.calls[0][0].variables;
         expect(variables).toEqual({ id: "someId" });
     });
+
+    test("error handling", async () => {
+        jest.spyOn(API, "graphql").mockRejectedValueOnce(
+            new Error("some error")
+        );
+        render(<TaskHistoryTaskDialog taskId="someId" />);
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId("task-history-dialog-fetching")
+            ).toBeNull();
+        });
+        expect(
+            screen.getByText("Sorry, something went wrong.")
+        ).toBeInTheDocument();
+    });
+    test("not found", async () => {
+        jest.spyOn(API, "graphql").mockResolvedValueOnce({
+            data: {
+                getTask: null,
+            },
+        });
+        render(<TaskHistoryTaskDialog taskId="someId" />);
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId("task-history-dialog-fetching")
+            ).toBeNull();
+        });
+        expect(screen.getByText("Task not found.")).toBeInTheDocument();
+    });
 });

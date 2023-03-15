@@ -3,7 +3,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import PropTypes from "prop-types";
-import { Box, Skeleton, Stack } from "@mui/material";
+import { Box, Skeleton, Stack, Typography } from "@mui/material";
 import { styled } from "@mui/styles";
 import { useCordovaBackButton } from "../../../hooks/useCordovaBackButton";
 import TaskHistoryTimeline from "./TaskHistoryTimeline";
@@ -31,14 +31,19 @@ const TaskHistoryTaskDialog: React.FC<TaskHistoryTaskDialogProps> = ({
                 height={400}
             />
         );
+    } else if (error) {
+        return <Typography>Sorry, something went wrong.</Typography>;
+    } else if (notFound) {
+        return <Typography>Task not found.</Typography>;
+    } else {
+        return (
+            <RoundedDialog open={true}>
+                <DialogContent>
+                    <TaskHistoryTimeline task={state} />
+                </DialogContent>
+            </RoundedDialog>
+        );
     }
-    return (
-        <RoundedDialog open={true}>
-            <DialogContent>
-                <TaskHistoryTimeline task={state} />
-            </DialogContent>
-        </RoundedDialog>
-    );
 };
 
 export default TaskHistoryTaskDialog;
