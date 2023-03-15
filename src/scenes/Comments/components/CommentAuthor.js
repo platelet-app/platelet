@@ -2,7 +2,7 @@ import React from "react";
 import UserAvatar from "../../../components/UserAvatar";
 import { Link as RouterLink } from "react-router-dom";
 import { encodeUUID } from "../../../utilities";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
 import PropTypes from "prop-types";
 import { Typography } from "@mui/material";
 import { Grid } from "@mui/material";
@@ -18,7 +18,7 @@ const useStyles = makeStyles()({
     avatar: { textDecoration: "none" },
 });
 
-const CommentAuthor = React.memo((props) => {
+const CommentAuthor = (props) => {
     const { classes } = useStyles();
     if (!props.userId) {
         return null;
@@ -63,7 +63,7 @@ const CommentAuthor = React.memo((props) => {
             </Grid>
         </Grid>
     );
-});
+};
 
 CommentAuthor.propTypes = {
     userId: PropTypes.string,
