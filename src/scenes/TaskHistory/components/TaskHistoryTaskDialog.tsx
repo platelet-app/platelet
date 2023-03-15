@@ -19,29 +19,48 @@ const RoundedDialog = styled(Dialog)(({ fullScreen }) => ({
     },
 }));
 
+const DialogWrapper: React.FC<{ children: React.ReactNode }> = ({
+    children,
+}) => {
+    return (
+        <RoundedDialog open={true}>
+            <DialogContent>{children}</DialogContent>
+        </RoundedDialog>
+    );
+};
+
 const TaskHistoryTaskDialog: React.FC<TaskHistoryTaskDialogProps> = ({
     taskId,
 }) => {
     const { state, isFetching, error, notFound } = useTaskGraphQL(taskId);
     if (isFetching) {
         return (
-            <Skeleton
-                data-testid="task-history-dialog-fetching"
-                variant="rectangular"
-                height={400}
-            />
+            <DialogWrapper>
+                <Skeleton
+                    data-testid="task-history-dialog-fetching"
+                    variant="rectangular"
+                    height={400}
+                    width={400}
+                />
+            </DialogWrapper>
         );
     } else if (error) {
-        return <Typography>Sorry, something went wrong.</Typography>;
+        return (
+            <DialogWrapper>
+                <Typography>Sorry, something went wrong.</Typography>
+            </DialogWrapper>
+        );
     } else if (notFound) {
-        return <Typography>Task not found.</Typography>;
+        return (
+            <DialogWrapper>
+                <Typography>Task not found.</Typography>
+            </DialogWrapper>
+        );
     } else {
         return (
-            <RoundedDialog open={true}>
-                <DialogContent>
-                    <TaskHistoryTimeline task={state} />
-                </DialogContent>
-            </RoundedDialog>
+            <DialogWrapper>
+                <TaskHistoryTimeline task={state} />
+            </DialogWrapper>
         );
     }
 };

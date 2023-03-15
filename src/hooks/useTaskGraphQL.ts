@@ -7,9 +7,12 @@ import {
     Deliverable,
     Comment,
     Role,
+    CommentVisibility,
 } from "../API";
 import { GraphQLQuery } from "@aws-amplify/api";
 import { API } from "aws-amplify";
+import { useSelector } from "react-redux";
+import { getWhoami } from "../redux/Selectors";
 
 export const getTask = /* GraphQL */ `
     query GetTask($id: ID!) {
@@ -27,6 +30,14 @@ export const getTask = /* GraphQL */ `
             requesterContact {
                 name
                 telephoneNumber
+            }
+            createdBy {
+                id
+                name
+                displayName
+                profilePicture {
+                    key
+                }
             }
             pickUpLocation {
                 id
@@ -88,6 +99,10 @@ export const getTask = /* GraphQL */ `
                     assignee {
                         id
                         name
+                        displayName
+                        profilePicture {
+                            key
+                        }
                     }
                 }
                 nextToken
@@ -112,9 +127,13 @@ export const getTask = /* GraphQL */ `
                 items {
                     id
                     createdAt
+                    visibility
                     author {
                         id
                         displayName
+                        profilePicture {
+                            key
+                        }
                     }
                     body
                     _version
@@ -303,6 +322,7 @@ const useTaskGraphQL = (taskId: string) => {
     const [isFetching, setIsFetching] = React.useState(false);
     const [error, setError] = React.useState<Error | null>(null);
     const [notFound, setNotFound] = React.useState(false);
+    const whoami = useSelector(getWhoami);
 
     const getTask = React.useCallback(async () => {
         setIsFetching(true);
@@ -310,16 +330,34 @@ const useTaskGraphQL = (taskId: string) => {
         setError(null);
         try {
             const task = await fetchTask(taskId);
-            if (task) setState(task);
-            else setNotFound(true);
+            if (task) {
+                const filteredComments = task.comments?.items?.filter(
+                    (comment) =>
+                        comment &&
+                        (comment.visibility === CommentVisibility.EVERYONE ||
+                            (comment.visibility === CommentVisibility.ME &&
+                                comment.author?.id === whoami?.id))
+                );
+                if (filteredComments && task.comments) {
+                    setState({
+                        ...task,
+                        comments: { ...task.comments, items: filteredComments },
+                    });
+                } else {
+                    setState(task);
+                }
+            } else {
+                setNotFound(true);
+            }
             setIsFetching(false);
         } catch (e: unknown) {
             if (e instanceof Error) {
                 setError(e);
             }
+            console.log(e);
             setIsFetching(false);
         }
-    }, [taskId]);
+    }, [taskId, whoami]);
 
     React.useEffect(() => {
         getTask();

@@ -120,6 +120,8 @@
         "@testing-library/cypress": "^8.0.2",
         "@testing-library/jest-dom": "^5.15.0",
         "@types/lodash": "^4.14.185",
+        "@types/react-linkify": "^1.0.1",
+        "@types/react-router-dom": "^5.3.3",
         "@types/uuid": "^8.3.4",
         "@welldone-software/why-did-you-render": "^6.2.3",
         "canvas": "^2.8.0",

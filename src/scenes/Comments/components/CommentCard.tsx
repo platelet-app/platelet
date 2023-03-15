@@ -26,6 +26,7 @@ type CommentCardProps = {
     numEdits?: number;
     timeCreated?: string;
     children: React.ReactNode;
+    noAlign?: boolean;
 };
 
 type CardProps = {
@@ -40,6 +41,7 @@ const CommentCard: React.FC<CommentCardProps> = React.memo(
         children,
         numEdits = 0,
         timeCreated,
+        noAlign,
     }) => {
         const { show, hide } = showHide().classes;
         const { classes } = commentStyles();
@@ -62,7 +64,7 @@ const CommentCard: React.FC<CommentCardProps> = React.memo(
                 direction={"column"}
                 wrap={"nowrap"}
                 alignItems={
-                    author && whoami.id === author.id
+                    !noAlign && author && whoami.id === author.id
                         ? "flex-end"
                         : "flex-start"
                 }
