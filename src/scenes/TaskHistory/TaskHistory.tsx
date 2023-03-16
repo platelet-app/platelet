@@ -114,7 +114,12 @@ const TaskHistory: React.FC = () => {
                     </Stack>
                 )}
             </Stack>
-            {openTaskId && <TaskHistoryTaskDialog taskId={openTaskId} />}
+            {openTaskId && (
+                <TaskHistoryTaskDialog
+                    taskId={openTaskId}
+                    onClose={() => setOpenTaskId(null)}
+                />
+            )}
         </>
     );
 };

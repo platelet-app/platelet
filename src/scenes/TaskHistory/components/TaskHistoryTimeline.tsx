@@ -11,10 +11,11 @@ import { Task } from "../../../API";
 import { TimelineOppositeContent } from "@mui/lab";
 import CommentCard from "../../Comments/components/CommentCard";
 import { Link, useHistory } from "react-router-dom";
-import { Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import UserChip from "../../../components/UserChip";
 import DeliverableChip from "./DeliverableChip";
 import { encodeUUID } from "../../../utilities";
+import DateStampDivider from "../../Dashboard/components/TimeStampDivider";
 
 function orderByOldestFirst(
     obj: Record<string, string>
@@ -140,21 +141,32 @@ const generateTimelineContent = (task: Task, history: any) => {
     // sort everything by value
     // but keep it as an object with original keys
     const sorted = orderByOldestFirst(filtered);
-    const result = Object.keys(sorted).map((key) => {
+    let lastTime = new Date("2100-1-30");
+    let timeDivider = <></>;
+    const result = Object.entries(sorted).map(([key, value]) => {
         const isLastItem =
             Object.keys(sorted).indexOf(key) === Object.keys(sorted).length - 1;
-        const Separator: React.FC<{ color: string }> = isLastItem
-            ? ({ color }) => (
-                  <TimelineSeparator>
-                      <TimelineDot sx={{ backgroundColor: color }} />
-                  </TimelineSeparator>
-              )
-            : ({ color }) => (
-                  <TimelineSeparator>
-                      <TimelineDot sx={{ backgroundColor: color }} />
-                      <TimelineConnector />
-                  </TimelineSeparator>
-              );
+        const timeComparison = new Date(value);
+        // if timeComparison is the day before lastTime
+        // then we need to add a divider
+        if (timeComparison.getDate() !== lastTime.getDate()) {
+            console.log("adding divider");
+            lastTime = timeComparison;
+            timeDivider = (
+                <DateStampDivider date={timeComparison.toISOString()} />
+            );
+        } else {
+            console.log("not adding divider");
+            timeDivider = <></>;
+        }
+        const Separator: React.FC<{
+            color: string;
+        }> = ({ color }) => (
+            <TimelineSeparator>
+                <TimelineDot sx={{ backgroundColor: color }} />
+                {!isLastItem && <TimelineConnector />}
+            </TimelineSeparator>
+        );
         let color = "secondary.main";
         if (assigneeTimes[key as keyof typeof assigneeTimes]) {
             const assignee = assignees.find((assignee) => assignee?.id === key);
@@ -163,21 +175,26 @@ const generateTimelineContent = (task: Task, history: any) => {
             if (assignee?.assignee) {
                 const encodedId = encodeUUID(assignee.assignee.id);
                 return (
-                    <TimelineItem key={assignee?.id}>
-                        <TimelineOppositeContent sx={{ flex: 0 }}>
-                            <Moment format="HH:mm">{assignee.createdAt}</Moment>
-                        </TimelineOppositeContent>
-                        <Separator color={color} />
-                        <TimelineContent>
-                            Assigned to {role}{" "}
-                            <Link to={`/user/${encodedId}`}>
-                                <UserChip
-                                    onClick={() => {}}
-                                    user={assignee.assignee}
-                                />
-                            </Link>
-                        </TimelineContent>
-                    </TimelineItem>
+                    <>
+                        {timeDivider}
+                        <TimelineItem key={assignee?.id}>
+                            <TimelineOppositeContent sx={{ flex: 0 }}>
+                                <Moment format="HH:mm">
+                                    {assignee.createdAt}
+                                </Moment>
+                            </TimelineOppositeContent>
+                            <Separator color={color} />
+                            <TimelineContent>
+                                Assigned to {role}{" "}
+                                <Link to={`/user/${encodedId}`}>
+                                    <UserChip
+                                        onClick={() => {}}
+                                        user={assignee.assignee}
+                                    />
+                                </Link>
+                            </TimelineContent>
+                        </TimelineItem>
+                    </>
                 );
             } else {
                 return null;
@@ -188,18 +205,21 @@ const generateTimelineContent = (task: Task, history: any) => {
             );
             if (deliverable) {
                 return (
-                    <TimelineItem key={deliverable?.id}>
-                        <TimelineOppositeContent sx={{ flex: 0 }}>
-                            <Moment format="HH:mm">
-                                {deliverable?.createdAt}
-                            </Moment>
-                        </TimelineOppositeContent>
-                        <Separator color={color} />
-                        <TimelineContent>
-                            Added item{" "}
-                            <DeliverableChip deliverable={deliverable} />
-                        </TimelineContent>
-                    </TimelineItem>
+                    <>
+                        {timeDivider}
+                        <TimelineItem key={deliverable?.id}>
+                            <TimelineOppositeContent sx={{ flex: 0 }}>
+                                <Moment format="HH:mm">
+                                    {deliverable?.createdAt}
+                                </Moment>
+                            </TimelineOppositeContent>
+                            <Separator color={color} />
+                            <TimelineContent>
+                                Added item{" "}
+                                <DeliverableChip deliverable={deliverable} />
+                            </TimelineContent>
+                        </TimelineItem>
+                    </>
                 );
             } else {
                 return null;
@@ -207,31 +227,34 @@ const generateTimelineContent = (task: Task, history: any) => {
         } else if (commentTimes[key as keyof typeof commentTimes]) {
             const comment = comments.find((comment) => comment?.id === key);
             return (
-                <TimelineItem key={comment?.id}>
-                    <TimelineOppositeContent sx={{ flex: 0 }}>
-                        <Moment format="HH:mm">{comment?.createdAt}</Moment>
-                    </TimelineOppositeContent>
-                    <Separator color={color} />
-                    <TimelineContent>
-                        <CommentCard
-                            numEdits={comment ? comment?._version - 1 : 0}
-                            author={comment?.author}
-                            visibility={comment?.visibility}
-                            showAuthor
-                            noAlign
-                        >
-                            <Typography
-                                sx={{
-                                    padding: 2,
-                                    whiteSpace: "pre-line",
-                                }}
-                                align={"justify"}
+                <>
+                    {timeDivider}
+                    <TimelineItem key={comment?.id}>
+                        <TimelineOppositeContent sx={{ flex: 0 }}>
+                            <Moment format="HH:mm">{comment?.createdAt}</Moment>
+                        </TimelineOppositeContent>
+                        <Separator color={color} />
+                        <TimelineContent>
+                            <CommentCard
+                                numEdits={comment ? comment?._version - 1 : 0}
+                                author={comment?.author}
+                                visibility={comment?.visibility}
+                                showAuthor
+                                noAlign
                             >
-                                <Linkify>{comment?.body}</Linkify>
-                            </Typography>
-                        </CommentCard>
-                    </TimelineContent>
-                </TimelineItem>
+                                <Typography
+                                    sx={{
+                                        padding: 2,
+                                        whiteSpace: "pre-line",
+                                    }}
+                                    align={"justify"}
+                                >
+                                    <Linkify>{comment?.body}</Linkify>
+                                </Typography>
+                            </CommentCard>
+                        </TimelineContent>
+                    </TimelineItem>
+                </>
             );
         } else if (key === "createdAt") {
             color = "taskStatus.NEW";
@@ -247,15 +270,18 @@ const generateTimelineContent = (task: Task, history: any) => {
             );
 
             return (
-                <TimelineItem key={key}>
-                    <TimelineOppositeContent sx={{ flex: 0 }}>
-                        <Moment format="HH:mm">
-                            {keyTimes[key as keyof typeof keyTimes] || ""}
-                        </Moment>
-                    </TimelineOppositeContent>
-                    <Separator color={color} />
-                    {content}
-                </TimelineItem>
+                <>
+                    {timeDivider}
+                    <TimelineItem key={key}>
+                        <TimelineOppositeContent sx={{ flex: 0 }}>
+                            <Moment format="HH:mm">
+                                {keyTimes[key as keyof typeof keyTimes] || ""}
+                            </Moment>
+                        </TimelineOppositeContent>
+                        <Separator color={color} />
+                        {content}
+                    </TimelineItem>
+                </>
             );
         } else if (key === "timePickedUp") {
             const time = keyTimes[key as keyof typeof keyTimes];
@@ -264,13 +290,16 @@ const generateTimelineContent = (task: Task, history: any) => {
                 ? `Picked up from ${timePickedUpSenderName}`
                 : "Picked up";
             return (
-                <TimelineItem key={key}>
-                    <TimelineOppositeContent sx={{ flex: 0 }}>
-                        <Moment format="HH:mm">{time || ""}</Moment>
-                    </TimelineOppositeContent>
-                    <Separator color={color} />
-                    <TimelineContent>{content}</TimelineContent>
-                </TimelineItem>
+                <>
+                    {timeDivider}
+                    <TimelineItem key={key}>
+                        <TimelineOppositeContent sx={{ flex: 0 }}>
+                            <Moment format="HH:mm">{time || ""}</Moment>
+                        </TimelineOppositeContent>
+                        <Separator color={color} />
+                        <TimelineContent>{content}</TimelineContent>
+                    </TimelineItem>
+                </>
             );
         } else if (key === "timeDroppedOff") {
             const time = keyTimes[key as keyof typeof keyTimes];
@@ -279,27 +308,33 @@ const generateTimelineContent = (task: Task, history: any) => {
                 ? `Delivered to ${timeDroppedOffRecipientName}`
                 : "Delivered";
             return (
-                <TimelineItem key={key}>
-                    <TimelineOppositeContent sx={{ flex: 0 }}>
-                        <Moment format="HH:mm">{time || ""}</Moment>
-                    </TimelineOppositeContent>
-                    <Separator color={color} />
-                    <TimelineContent>{content}</TimelineContent>
-                </TimelineItem>
+                <>
+                    {timeDivider}
+                    <TimelineItem key={key}>
+                        <TimelineOppositeContent sx={{ flex: 0 }}>
+                            <Moment format="HH:mm">{time || ""}</Moment>
+                        </TimelineOppositeContent>
+                        <Separator color={color} />
+                        <TimelineContent>{content}</TimelineContent>
+                    </TimelineItem>
+                </>
             );
         } else if (keyTimes[key as keyof typeof keyTimes]) {
             const time = keyTimes[key as keyof typeof keyTimes];
             color = getColor(key);
             return (
-                <TimelineItem key={key}>
-                    <TimelineOppositeContent sx={{ flex: 0 }}>
-                        <Moment format="HH:mm">{time || ""}</Moment>
-                    </TimelineOppositeContent>
-                    <Separator color={color} />
-                    <TimelineContent>
-                        {getHumanReadableTimeLabel(key)}
-                    </TimelineContent>
-                </TimelineItem>
+                <>
+                    {timeDivider}
+                    <TimelineItem key={key}>
+                        <TimelineOppositeContent sx={{ flex: 0 }}>
+                            <Moment format="HH:mm">{time || ""}</Moment>
+                        </TimelineOppositeContent>
+                        <Separator color={color} />
+                        <TimelineContent>
+                            {getHumanReadableTimeLabel(key)}
+                        </TimelineContent>
+                    </TimelineItem>
+                </>
             );
         } else {
             return null;
