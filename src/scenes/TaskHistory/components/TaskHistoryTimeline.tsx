@@ -10,7 +10,7 @@ import TimelineDot from "@mui/lab/TimelineDot";
 import { Task } from "../../../API";
 import { TimelineOppositeContent } from "@mui/lab";
 import CommentCard from "../../Comments/components/CommentCard";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Typography } from "@mui/material";
 import UserChip from "../../../components/UserChip";
 import DeliverableChip from "./DeliverableChip";
@@ -170,12 +170,12 @@ const generateTimelineContent = (task: Task, history: any) => {
                         <Separator color={color} />
                         <TimelineContent>
                             Assigned to {role}{" "}
-                            <UserChip
-                                onClick={() => {
-                                    history.push(`/user/${encodedId}`);
-                                }}
-                                user={assignee.assignee}
-                            />
+                            <Link to={`/user/${encodedId}`}>
+                                <UserChip
+                                    onClick={() => {}}
+                                    user={assignee.assignee}
+                                />
+                            </Link>
                         </TimelineContent>
                     </TimelineItem>
                 );
@@ -238,12 +238,9 @@ const generateTimelineContent = (task: Task, history: any) => {
             const content = createdBy ? (
                 <TimelineContent>
                     Created by{" "}
-                    <UserChip
-                        onClick={() => {
-                            history.push(`/user/${encodeUUID(createdBy.id)}`);
-                        }}
-                        user={createdBy}
-                    />
+                    <Link to={`/user/${encodeUUID(createdBy.id)}`}>
+                        <UserChip onClick={() => {}} user={createdBy} />
+                    </Link>
                 </TimelineContent>
             ) : (
                 <>Created</>
