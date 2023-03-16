@@ -27,6 +27,30 @@ describe("MultipleSelectionActionsMenu", () => {
     }
 
     beforeEach(() => {
+        // add window.matchMedia
+        // this is necessary for the date picker to be rendered in desktop mode.
+        // if this is not provided, the mobile mode is rendered, which might lead to unexpected behavior
+        Object.defineProperty(window, "matchMedia", {
+            writable: true,
+            value: (query) => ({
+                media: query,
+                // this is the media query that @material-ui/pickers uses to determine if a device is a desktop device
+                matches: query === "(pointer: fine)",
+                onchange: () => {},
+                addEventListener: () => {},
+                removeEventListener: () => {},
+                addListener: () => {},
+                removeListener: () => {},
+                dispatchEvent: () => false,
+            }),
+        });
+    });
+
+    afterEach(() => {
+        delete window.matchMedia;
+    });
+
+    beforeEach(() => {
         jest.restoreAllMocks();
     });
     afterEach(async () => {
@@ -1772,8 +1796,7 @@ describe("MultipleSelectionActionsMenu", () => {
         });
     });
 
-    it.skip("disables the confirmation button if the time is invalid", async () => {
-        // skipped because for some reason the date picker is read only when used in jest
+    it("disables the confirmation button if the time is invalid", async () => {
         const mockTask = await DataStore.save(
             new models.Task({ status: models.TaskStatus.NEW })
         );
@@ -1821,11 +1844,10 @@ describe("MultipleSelectionActionsMenu", () => {
         });
         expect(buttonToClick).toBeEnabled();
         userEvent.click(buttonToClick);
-        const dateBox = screen.getByRole("textbox", { name: /Choose date/ });
+        const dateBox = screen.getByRole("textbox", { name: "" });
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeEnabled();
-        userEvent.clear(dateBox);
-        expect(dateBox).toHaveValue("");
+        userEvent.type(dateBox, "{backspace}{backspace}{backspace}");
         await waitFor(() => {
             expect(okButton).toBeDisabled();
         });

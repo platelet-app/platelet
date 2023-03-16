@@ -144,17 +144,8 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
-    "plateletImageResize": {
+    "plateletGetStatistics": {
       "build": true,
-      "dependsOn": [
-        {
-          "attributes": [
-            "BucketName"
-          ],
-          "category": "storage",
-          "resourceName": "plateletStorage"
-        }
-      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
@@ -321,54 +312,6 @@
         {
           "category": "function",
           "resourceName": "plateletAdminChangeUserRoles"
-        }
-      ]
-    },
-    "AMPLIFY_function_plateletImageResize_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "plateletImageResize"
-        }
-      ]
-    },
-    "AMPLIFY_function_plateletImageResize_resizeHeight": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "plateletImageResize"
-        }
-      ]
-    },
-    "AMPLIFY_function_plateletImageResize_resizeWidth": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "plateletImageResize"
-        }
-      ]
-    },
-    "AMPLIFY_function_plateletImageResize_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "plateletImageResize"
-        }
-      ]
-    },
-    "AMPLIFY_function_plateletImageResize_thumbnailHeight": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "plateletImageResize"
-        }
-      ]
-    },
-    "AMPLIFY_function_plateletImageResize_thumbnailWidth": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "plateletImageResize"
         }
       ]
     },

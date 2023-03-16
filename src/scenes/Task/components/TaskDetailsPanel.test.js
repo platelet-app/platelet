@@ -10,8 +10,11 @@ import userEvent from "@testing-library/user-event";
 import mediaQuery from "css-mediaquery";
 import { DataStore } from "aws-amplify";
 
+const tenantId = "tenantId";
+
 const preloadedState = {
     roleView: "ALL",
+    tenantId,
     whoami: {
         user: { displayName: "Test User", roles: [userRoles.coordinator] },
     },
@@ -28,11 +31,29 @@ function createMatchMedia(width) {
 }
 
 describe("TaskDetailsPanel", () => {
-    beforeAll(() => {
-        window.matchMedia = createMatchMedia(window.innerWidth);
+    const originalMatchMedia = window.matchMedia;
+    beforeEach(() => {
+        // add window.matchMedia
+        // this is necessary for the date picker to be rendered in desktop mode.
+        // if this is not provided, the mobile mode is rendered, which might lead to unexpected behavior
+        Object.defineProperty(window, "matchMedia", {
+            writable: true,
+            value: (query) => ({
+                media: query,
+                // this is the media query that @material-ui/pickers uses to determine if a device is a desktop device
+                matches: query === "(pointer: fine)",
+                onchange: () => {},
+                addEventListener: () => {},
+                removeEventListener: () => {},
+                addListener: () => {},
+                removeListener: () => {},
+                dispatchEvent: () => false,
+            }),
+        });
     });
 
     afterEach(async () => {
+        window.matchMedia = originalMatchMedia;
         jest.restoreAllMocks();
         const tasks = await DataStore.query(models.Task);
         const locations = await DataStore.query(models.Location);
@@ -549,9 +570,11 @@ describe("TaskDetailsPanel", () => {
         const mockEstablishment = new models.Location({
             name: "Test Unlisted",
             listed: 0,
+            tenantId,
         });
         const mockTask = new models.Task({
             timeOfCall,
+            tenantId,
             priority: priorities.high,
             reference: "test-reference",
             establishmentLocation: null,
@@ -800,7 +823,7 @@ describe("TaskDetailsPanel", () => {
         ).toBeInTheDocument();
     });
 
-    test("view and set the time", async () => {
+    test("view and change the time of call", async () => {
         const timeOfCall = new Date().toISOString();
         const mockTask = new models.Task({
             riderResponsibility: "North",
@@ -820,13 +843,21 @@ describe("TaskDetailsPanel", () => {
         userEvent.click(
             screen.getByRole("button", { name: "edit Time of call" })
         );
-        const dateField = screen.getByRole("textbox", { name: /Choose date/ });
+        const dateField = screen.getByRole("textbox");
         expect(dateField).toHaveValue(
             moment(timeOfCall).format("DD/MM/YYYY HH:mm")
         );
+        userEvent.clear(dateField);
+        userEvent.type(dateField, "01/01/2021 12:00");
+        await waitFor(() => {
+            expect(dateField).toHaveValue("01/01/2021 12:00");
+        });
         userEvent.click(screen.getByRole("button", { name: "OK" }));
         await waitFor(() => {
-            expect(saveSpy).toHaveBeenCalledWith({ ...mockTask });
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockTask,
+                timeOfCall: "2021-01-01T12:00:00.000Z",
+            });
         });
     });
 
@@ -852,18 +883,15 @@ describe("TaskDetailsPanel", () => {
         userEvent.click(
             screen.getByRole("button", { name: "edit Time of call" })
         );
-        const dateField = screen.getByRole("textbox", { name: /Choose date/ });
-        expect(dateField).toHaveValue(
-            moment(timeOfCall).format("DD/MM/YYYY HH:mm")
-        );
-        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        const okButton = screen.getByRole("button", { name: "OK" });
+        userEvent.click(okButton);
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledWith({ ...mockTask });
         });
         expect(
             screen.getByText("Sorry, something went wrong")
         ).toBeInTheDocument();
-        expect(dateField).toBeInTheDocument();
+        expect(okButton).toBeInTheDocument();
     });
 
     test.each`

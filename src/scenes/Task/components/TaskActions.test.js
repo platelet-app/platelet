@@ -32,13 +32,39 @@ describe("TaskActions", () => {
         };
     }
 
+    beforeAll(() => {
+        // add window.matchMedia
+        // this is necessary for the date picker to be rendered in desktop mode.
+        // if this is not provided, the mobile mode is rendered, which might lead to unexpected behavior
+        Object.defineProperty(window, "matchMedia", {
+            writable: true,
+            value: (query) => ({
+                media: query,
+                // this is the media query that @material-ui/pickers uses to determine if a device is a desktop device
+                matches: query === "(pointer: fine)",
+                onchange: () => {},
+                addEventListener: () => {},
+                removeEventListener: () => {},
+                addListener: () => {},
+                removeListener: () => {},
+                dispatchEvent: () => false,
+            }),
+        });
+    });
+
+    afterAll(() => {
+        delete window.matchMedia;
+    });
+
     afterEach(async () => {
         global.Date = RealDate;
     });
+
     beforeEach(async () => {
         jest.restoreAllMocks();
         mockDate();
     });
+
     it("renders", async () => {
         const spy = jest.spyOn(DataStore, "query");
         render(<TaskActions taskId={"test"} />);
@@ -910,6 +936,7 @@ describe("TaskActions", () => {
         status
         ${tasksStatus.cancelled} | ${tasksStatus.rejected} | ${tasksStatus.completed}
     `("change the times without a name", async ({ status }) => {
+        global.Date = RealDate;
         const date = new Date();
         let mockTask;
         if (status === tasksStatus.cancelled) {
@@ -963,55 +990,58 @@ describe("TaskActions", () => {
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
-        if (status === tasksStatus.timeRejected) {
+        if (status === tasksStatus.rejected) {
             userEvent.click(
                 screen.getByRole("button", { name: "edit Time rejected" })
             );
-            const dateField = screen.getByRole("textbox", {
-                name: /Choose date/,
-            });
+            const dateField = screen.getByRole("textbox", { name: "" });
             expect(dateField).toHaveValue(
                 moment(date).format("DD/MM/YYYY HH:mm")
             );
+            userEvent.clear(dateField);
+            userEvent.type(dateField, "01/01/2021 12:00");
             const okButton = screen.getByRole("button", { name: "OK" });
             userEvent.click(okButton);
             await waitFor(() => {
                 expect(saveSpy).toHaveBeenCalledWith({
                     ...mockTask,
+                    timeRejected: "2021-01-01T12:00:00.000Z",
                 });
             });
         } else if (status === tasksStatus.cancelled) {
             userEvent.click(
                 screen.getByRole("button", { name: "edit Time cancelled" })
             );
-            const dateField = screen.getByRole("textbox", {
-                name: /Choose date/,
-            });
+            const dateField = screen.getByRole("textbox", { name: "" });
             expect(dateField).toHaveValue(
                 moment(date).format("DD/MM/YYYY HH:mm")
             );
+            userEvent.clear(dateField);
+            userEvent.type(dateField, "01/01/2021 12:00");
             const okButton = screen.getByRole("button", { name: "OK" });
             userEvent.click(okButton);
             await waitFor(() => {
                 expect(saveSpy).toHaveBeenCalledWith({
                     ...mockTask,
+                    timeCancelled: "2021-01-01T12:00:00.000Z",
                 });
             });
         } else if (status === tasksStatus.completed) {
             userEvent.click(
                 screen.getByRole("button", { name: "edit Time rider home" })
             );
-            const dateField = screen.getByRole("textbox", {
-                name: /Choose date/,
-            });
+            const dateField = screen.getByRole("textbox", { name: "" });
             expect(dateField).toHaveValue(
                 moment(date).format("DD/MM/YYYY HH:mm")
             );
+            userEvent.clear(dateField);
+            userEvent.type(dateField, "01/01/2021 12:00");
             const okButton = screen.getByRole("button", { name: "OK" });
             userEvent.click(okButton);
             await waitFor(() => {
                 expect(saveSpy).toHaveBeenCalledWith({
                     ...mockTask,
+                    timeRiderHome: "2021-01-01T12:00:00.000Z",
                 });
             });
         }
@@ -1063,9 +1093,7 @@ describe("TaskActions", () => {
         userEvent.click(
             screen.getByRole("button", { name: "edit Time cancelled" })
         );
-        const dateField = screen.getByRole("textbox", {
-            name: /Choose date/,
-        });
+        const dateField = screen.getByRole("textbox", { name: "" });
         expect(dateField).toHaveValue(moment(date).format("DD/MM/YYYY HH:mm"));
         const okButton = screen.getByRole("button", { name: "OK" });
         userEvent.click(okButton);
@@ -1131,9 +1159,7 @@ describe("TaskActions", () => {
             const nameField = screen.getByRole("textbox", {
                 name: "Sender name",
             });
-            const dateField = screen.getByRole("textbox", {
-                name: /Choose date/,
-            });
+            const dateField = screen.getByRole("textbox", { name: "" });
             expect(dateField).toHaveValue(
                 moment(date).format("DD/MM/YYYY HH:mm")
             );
@@ -1168,9 +1194,7 @@ describe("TaskActions", () => {
                 name: "Recipient name",
             });
             expect(nameField).toHaveValue(mockTask.timeDroppedOffRecipientName);
-            const dateField = screen.getByRole("textbox", {
-                name: /Choose date/,
-            });
+            const dateField = screen.getByRole("textbox", { name: "" });
             expect(dateField).toHaveValue(
                 moment(date2).format("DD/MM/YYYY HH:mm")
             );
@@ -1247,9 +1271,7 @@ describe("TaskActions", () => {
         const nameField = screen.getByRole("textbox", {
             name: "Sender name",
         });
-        const dateField = screen.getByRole("textbox", {
-            name: /Choose date/,
-        });
+        const dateField = screen.getByRole("textbox", { name: "" });
         expect(dateField).toHaveValue(moment(date).format("DD/MM/YYYY HH:mm"));
         expect(nameField).toHaveValue(mockTask.timePickedUpSenderName);
         userEvent.type(nameField, more);

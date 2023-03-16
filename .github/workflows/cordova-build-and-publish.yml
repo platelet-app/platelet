@@ -41,7 +41,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ secrets.AWS_REGION }}
       run: |
-        npm install -g @aws-amplify/cli --unsafe-perm=true
+        npm install -g @aws-amplify/cli@10.8 --unsafe-perm=true
         amplify pull --appId ${{ secrets.AMPLIFY_APP_ID }} --envName ${{ secrets.AMPLIFY_ENV_NAME }} -y
         amplify codegen models
     - name: Production Build
