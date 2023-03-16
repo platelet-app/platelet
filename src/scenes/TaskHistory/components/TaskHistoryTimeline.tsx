@@ -235,30 +235,31 @@ const generateTimelineContent = (task: Task, history: any) => {
             );
         } else if (key === "createdAt") {
             color = "taskStatus.NEW";
-            if (createdBy) {
-                const encodedId = encodeUUID(createdBy.id);
-                return (
-                    <TimelineItem key={key}>
-                        <TimelineOppositeContent sx={{ flex: 0 }}>
-                            <Moment format="HH:mm">
-                                {keyTimes[key as keyof typeof keyTimes] || ""}
-                            </Moment>
-                        </TimelineOppositeContent>
-                        <Separator color={color} />
-                        <TimelineContent>
-                            Created by{" "}
-                            <UserChip
-                                onClick={() => {
-                                    history.push(`/user/${encodedId}`);
-                                }}
-                                user={createdBy}
-                            />
-                        </TimelineContent>
-                    </TimelineItem>
-                );
-            } else {
-                return null;
-            }
+            const content = createdBy ? (
+                <TimelineContent>
+                    Created by{" "}
+                    <UserChip
+                        onClick={() => {
+                            history.push(`/user/${encodeUUID(createdBy.id)}`);
+                        }}
+                        user={createdBy}
+                    />
+                </TimelineContent>
+            ) : (
+                <>Created</>
+            );
+
+            return (
+                <TimelineItem key={key}>
+                    <TimelineOppositeContent sx={{ flex: 0 }}>
+                        <Moment format="HH:mm">
+                            {keyTimes[key as keyof typeof keyTimes] || ""}
+                        </Moment>
+                    </TimelineOppositeContent>
+                    <Separator color={color} />
+                    {content}
+                </TimelineItem>
+            );
         } else if (key === "timePickedUp") {
             const time = keyTimes[key as keyof typeof keyTimes];
             color = getColor(key);

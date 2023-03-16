@@ -24,9 +24,12 @@ describe("TaskHistoryTaskDialog", () => {
         mockTask = {
             id: "someId",
             timeOfCall: "2021-05-01T13:00:00.000Z",
+            createdBy: mockWhoami,
             createdAt: "2021-05-01T12:30:00.000Z",
             dateCreated: "2021-05-01",
             timePickedUp: "2021-05-01T13:30:00.000Z",
+            timePickedUpSenderName: "pickup name",
+            timeDroppedOffRecipientName: "dropoff name",
             timeDroppedOff: "2021-05-01T14:30:00.000Z",
             timeRiderHome: "2021-05-01T15:30:00.000Z",
             timeCancelled: "2021-05-01T16:30:00.000Z",
@@ -142,8 +145,15 @@ describe("TaskHistoryTaskDialog", () => {
         for (const timeCheck of timeChecks) {
             expect(previous.compareDocumentPosition(timeCheck)).toBe(4);
         }
-
-        expect(screen.getByText(/some assignee/)).toBeInTheDocument();
+        expect(screen.getByText("someDisplayName")).toBeInTheDocument();
+        expect(screen.getByText("some assignee")).toBeInTheDocument();
+        expect(screen.getByText("woo")).toBeInTheDocument();
+        expect(screen.getByText("stuff and things")).toBeInTheDocument();
+        expect(screen.getByText("Another Person")).toBeInTheDocument();
+        expect(screen.getByText("Someone Person")).toBeInTheDocument();
+        expect(screen.getByText("someDeliverable x 1")).toBeInTheDocument();
+        expect(screen.getByText(/pickup name/)).toBeInTheDocument();
+        expect(screen.getByText(/dropoff name/)).toBeInTheDocument();
         const variables = graphqlSpy.mock.calls[0][0].variables;
         expect(variables).toEqual({ id: "someId" });
     });
