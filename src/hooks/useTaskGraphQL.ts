@@ -325,6 +325,7 @@ const useTaskGraphQL = (taskId: string) => {
     const whoami = useSelector(getWhoami);
 
     const getTask = React.useCallback(async () => {
+        if (!taskId) return;
         setIsFetching(true);
         setNotFound(false);
         setError(null);

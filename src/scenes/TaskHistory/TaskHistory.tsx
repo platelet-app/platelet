@@ -8,6 +8,8 @@ import TaskHistoryControls from "./components/TaskHistoryControls";
 import { ModelSortDirection } from "../../API";
 import DateStampDivider from "../Dashboard/components/TimeStampDivider";
 import TaskHistoryTaskDialog from "./components/TaskHistoryTaskDialog";
+import { Link, useLocation } from "react-router-dom";
+import { encodeUUID } from "../../utilities";
 
 const limit = 20;
 
@@ -23,7 +25,7 @@ const TaskHistory: React.FC = () => {
         startDate: new Date("2000-01-01"),
         endDate: new Date(),
     });
-    const [openTaskId, setOpenTaskId] = React.useState<string | null>(null);
+    const location = useLocation();
     const { state, getNext, isFinished, isFetching, error } =
         useGetTasksGraphql(
             limit,
@@ -62,12 +64,16 @@ const TaskHistory: React.FC = () => {
                 {state.map((task) => {
                     displayDate = false;
                     let component = (
-                        <Box
-                            onClick={() => setOpenTaskId(task.id)}
+                        <Link
+                            style={{ textDecoration: "none" }}
                             key={task.id}
+                            to={{
+                                pathname: `/history/${encodeUUID(task.id)}`,
+                                state: { background: location },
+                            }}
                         >
                             <TaskHistoryCard task={task} />
-                        </Box>
+                        </Link>
                     );
                     if (task.dateCreated) {
                         const timeComparison = new Date(task.dateCreated);
@@ -80,16 +86,23 @@ const TaskHistory: React.FC = () => {
                         }
                         if (displayDate) {
                             component = (
-                                <Box
-                                    onClick={() => setOpenTaskId(task.id)}
-                                    key={task.id}
-                                >
+                                <Box key={task.id}>
                                     <Box sx={{ maxWidth: 800 }}>
                                         <DateStampDivider
                                             date={lastTime.toISOString()}
                                         />
                                     </Box>
-                                    <TaskHistoryCard task={task} />
+                                    <Link
+                                        to={{
+                                            pathname: `/history/${encodeUUID(
+                                                task.id
+                                            )}`,
+                                            state: { background: location },
+                                        }}
+                                        style={{ textDecoration: "none" }}
+                                    >
+                                        <TaskHistoryCard task={task} />
+                                    </Link>
                                 </Box>
                             );
                         }
@@ -114,12 +127,6 @@ const TaskHistory: React.FC = () => {
                     </Stack>
                 )}
             </Stack>
-            {openTaskId && (
-                <TaskHistoryTaskDialog
-                    taskId={openTaskId}
-                    onClose={() => setOpenTaskId(null)}
-                />
-            )}
         </>
     );
 };
