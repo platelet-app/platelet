@@ -94,6 +94,7 @@ export const getTask = /* GraphQL */ `
             assignees {
                 items {
                     id
+                    _deleted
                     createdAt
                     role
                     assignee {
@@ -112,6 +113,7 @@ export const getTask = /* GraphQL */ `
             deliverables {
                 items {
                     id
+                    _deleted
                     createdAt
                     deliverableType {
                         id
@@ -126,6 +128,7 @@ export const getTask = /* GraphQL */ `
             comments {
                 items {
                     id
+                    _deleted
                     createdAt
                     visibility
                     author {

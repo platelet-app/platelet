@@ -6,8 +6,7 @@ import _ from "lodash";
 import TaskHistoryCard from "./components/TaskHistoryCard";
 import TaskHistoryControls from "./components/TaskHistoryControls";
 import { ModelSortDirection } from "../../API";
-import DateStampDivider from "../Dashboard/components/TimeStampDivider";
-import TaskHistoryTaskDialog from "./components/TaskHistoryTaskDialog";
+import DateStampDivider from "../../components/DateStampDivider";
 import { Link, useLocation } from "react-router-dom";
 import { encodeUUID } from "../../utilities";
 

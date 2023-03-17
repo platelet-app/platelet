@@ -15,7 +15,7 @@ import { Box, Stack, Typography } from "@mui/material";
 import UserChip from "../../../components/UserChip";
 import DeliverableChip from "./DeliverableChip";
 import { encodeUUID } from "../../../utilities";
-import DateStampDivider from "../../Dashboard/components/TimeStampDivider";
+import DateStampDivider from "../../../components/DateStampDivider";
 
 function orderByOldestFirst(
     obj: Record<string, string>
@@ -170,6 +170,7 @@ const generateTimelineContent = (task: Task, history: any) => {
         let color = "secondary.main";
         if (assigneeTimes[key as keyof typeof assigneeTimes]) {
             const assignee = assignees.find((assignee) => assignee?.id === key);
+            if (!assignee || assignee?._deleted) return null;
             const role = assignee?.role?.toLowerCase();
             color = role === "rider" ? "taskStatus.ACTIVE" : "taskStatus.NEW";
             if (assignee?.assignee) {
@@ -186,7 +187,10 @@ const generateTimelineContent = (task: Task, history: any) => {
                             <Separator color={color} />
                             <TimelineContent>
                                 Assigned to {role}{" "}
-                                <Link to={`/user/${encodedId}`}>
+                                <Link
+                                    style={{ textDecoration: "none" }}
+                                    to={`/user/${encodedId}`}
+                                >
                                     <UserChip
                                         onClick={() => {}}
                                         user={assignee.assignee}
@@ -203,29 +207,27 @@ const generateTimelineContent = (task: Task, history: any) => {
             const deliverable = deliverables.find(
                 (deliverable) => deliverable?.id === key
             );
-            if (deliverable) {
-                return (
-                    <>
-                        {timeDivider}
-                        <TimelineItem key={deliverable?.id}>
-                            <TimelineOppositeContent sx={{ flex: 0 }}>
-                                <Moment format="HH:mm">
-                                    {deliverable?.createdAt}
-                                </Moment>
-                            </TimelineOppositeContent>
-                            <Separator color={color} />
-                            <TimelineContent>
-                                Added item{" "}
-                                <DeliverableChip deliverable={deliverable} />
-                            </TimelineContent>
-                        </TimelineItem>
-                    </>
-                );
-            } else {
-                return null;
-            }
+            if (!deliverable || deliverable?._deleted) return null;
+            return (
+                <>
+                    {timeDivider}
+                    <TimelineItem key={deliverable?.id}>
+                        <TimelineOppositeContent sx={{ flex: 0 }}>
+                            <Moment format="HH:mm">
+                                {deliverable?.createdAt}
+                            </Moment>
+                        </TimelineOppositeContent>
+                        <Separator color={color} />
+                        <TimelineContent>
+                            Added item{" "}
+                            <DeliverableChip deliverable={deliverable} />
+                        </TimelineContent>
+                    </TimelineItem>
+                </>
+            );
         } else if (commentTimes[key as keyof typeof commentTimes]) {
             const comment = comments.find((comment) => comment?.id === key);
+            if (!comment || comment?._deleted) return null;
             return (
                 <>
                     {timeDivider}
@@ -261,7 +263,10 @@ const generateTimelineContent = (task: Task, history: any) => {
             const content = createdBy ? (
                 <TimelineContent>
                     Created by{" "}
-                    <Link to={`/user/${encodeUUID(createdBy.id)}`}>
+                    <Link
+                        style={{ textDecoration: "none" }}
+                        to={`/user/${encodeUUID(createdBy.id)}`}
+                    >
                         <UserChip onClick={() => {}} user={createdBy} />
                     </Link>
                 </TimelineContent>

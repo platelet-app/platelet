@@ -4,6 +4,7 @@ import { screen, waitFor } from "@testing-library/react";
 import * as APITypes from "../../../API";
 import * as models from "../../../models";
 import { API, DataStore } from "aws-amplify";
+import userEvent from "@testing-library/user-event";
 
 const tenantId = "tenantId";
 
@@ -49,6 +50,17 @@ describe("TaskHistoryTaskDialog", () => {
                             },
                         },
                     },
+                    {
+                        id: "someAssigneeId2",
+                        createdAt: "2021-05-01T18:00:00.000Z",
+                        _deleted: true,
+                        assignee: {
+                            displayName: "deleted assignee",
+                            profilePicture: {
+                                key: "someKey",
+                            },
+                        },
+                    },
                 ],
             },
             pickUpLocation: {
@@ -76,6 +88,16 @@ describe("TaskHistoryTaskDialog", () => {
                             icon: APITypes.DeliverableTypeIcon.BUG,
                         },
                     },
+                    {
+                        id: "anotherDeliverableId",
+                        count: 1,
+                        _deleted: true,
+                        createdAt: "2021-05-01T18:30:00.000Z",
+                        deliverableType: {
+                            label: "deleted deliverable",
+                            icon: APITypes.DeliverableTypeIcon.BUG,
+                        },
+                    },
                 ],
             },
             comments: {
@@ -93,6 +115,17 @@ describe("TaskHistoryTaskDialog", () => {
                     {
                         id: "anotherCommentId",
                         body: "stuff and things",
+                        createdAt: "2021-05-01T20:30:00.000Z",
+                        visibility: APITypes.CommentVisibility.EVERYONE,
+                        author: {
+                            displayName: "Another Person",
+                            id: "someUserId",
+                        },
+                    },
+                    {
+                        id: "anotherCommentIddddddd",
+                        body: "deleted comment",
+                        _deleted: true,
                         createdAt: "2021-05-01T20:30:00.000Z",
                         visibility: APITypes.CommentVisibility.EVERYONE,
                         author: {
@@ -129,6 +162,7 @@ describe("TaskHistoryTaskDialog", () => {
                 screen.queryByTestId("task-history-dialog-fetching")
             ).toBeNull();
         });
+        userEvent.click(screen.getByText("Timeline/Comments"));
         const timeChecks = [
             screen.getByText("13:30"),
             screen.getByText("14:30"),
@@ -154,6 +188,9 @@ describe("TaskHistoryTaskDialog", () => {
         expect(screen.getByText("someDeliverable x 1")).toBeInTheDocument();
         expect(screen.getByText(/pickup name/)).toBeInTheDocument();
         expect(screen.getByText(/dropoff name/)).toBeInTheDocument();
+        expect(screen.queryByText("deleted deliverable")).toBeNull();
+        expect(screen.queryByText("deleted comment")).toBeNull();
+        expect(screen.queryByText("deleted assignee")).toBeNull();
         const variables = graphqlSpy.mock.calls[0][0].variables;
         expect(variables).toEqual({ id: "someId" });
     });
