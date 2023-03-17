@@ -10,7 +10,7 @@
         "@emotion/styled": "^11.3.0",
         "@fast-csv/format": "^4.3.5",
         "@fontsource/roboto": "^4.5.1",
-        "@mui/icons-material": "^5.0.3",
+        "@mui/icons-material": "^5.11.11",
         "@mui/lab": "^5.0.0-alpha.50",
         "@mui/material": "^5.0.3",
         "@mui/styled-engine-sc": "^5.0.3",
