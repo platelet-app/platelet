@@ -45,7 +45,9 @@ jobs:
         amplify pull --appId ${{ secrets.AMPLIFY_APP_ID }} --envName ${{ secrets.AMPLIFY_ENV_NAME }} -y
         amplify codegen models
     - name: Production Build
-      run: npm run build
+      run: |
+        cp cordova/index.html public
+        npm run build
       env:
         REACT_APP_DEMO_MODE: false
         REACT_APP_OFFLINE_ONLY: false
