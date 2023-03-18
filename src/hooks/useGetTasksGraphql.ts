@@ -79,6 +79,7 @@ export const listTasksByTenantId = /* GraphQL */ `
                 createdAt
                 assignees {
                     items {
+                        _deleted
                         assignee {
                             displayName
                             profilePicture {
@@ -104,6 +105,7 @@ export const listTasksByTenantId = /* GraphQL */ `
                 deliverables {
                     items {
                         count
+                        _deleted
                         deliverableType {
                             label
                             icon
@@ -113,6 +115,7 @@ export const listTasksByTenantId = /* GraphQL */ `
                 comments {
                     items {
                         id
+                        _deleted
                         visibility
                         author {
                             id

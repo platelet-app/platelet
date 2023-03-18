@@ -79,6 +79,15 @@ describe("TaskHistory", () => {
                             },
                         },
                     },
+                    {
+                        _deleted: true,
+                        assignee: {
+                            displayName: "deletedDisplayName",
+                            profilePicture: {
+                                key: "someKey",
+                            },
+                        },
+                    },
                 ],
             },
             pickUpLocation: {
@@ -101,6 +110,14 @@ describe("TaskHistory", () => {
                         count: 1,
                         deliverableType: {
                             label: "someDeliverable",
+                            icon: APITypes.DeliverableTypeIcon.BUG,
+                        },
+                    },
+                    {
+                        count: 1,
+                        _deleted: true,
+                        deliverableType: {
+                            label: "deletedDeliverable",
                             icon: APITypes.DeliverableTypeIcon.BUG,
                         },
                     },
@@ -127,6 +144,12 @@ describe("TaskHistory", () => {
                         id: "someId",
                         visibility: APITypes.CommentVisibility.ME,
                         author: { id: "another" },
+                    },
+                    {
+                        id: "deletedComment",
+                        _deleted: true,
+                        visibility: APITypes.CommentVisibility.EVERYONE,
+                        author: { id: mockWhoami.id },
                     },
                 ],
             },
@@ -157,6 +180,8 @@ describe("TaskHistory", () => {
         expect(screen.getByText("someDeliverable x 1")).toBeInTheDocument();
         expect(screen.getByText("someRiderResponsibility")).toBeInTheDocument();
         expect(screen.getByText("pickup name")).toBeInTheDocument();
+        expect(screen.queryByText("deletedDeliverable x 1")).toBeNull();
+        expect(screen.queryByText("deletedDisplayName")).toBeNull();
         expect(
             screen.getByText(
                 "pickup ward, pickup line1, pickup town, pickup postcode"

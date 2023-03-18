@@ -29,8 +29,11 @@ const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
     let taskBadge = <div></div>;
 
     if (task?.comments?.items) {
-        if (task.comments.items.length > 0) {
-            taskBadge = <CommentsBadge count={task.comments.items.length} />;
+        const filterDeleted = task.comments.items.filter(
+            (comment) => comment && !comment._deleted
+        );
+        if (filterDeleted?.length > 0) {
+            taskBadge = <CommentsBadge count={filterDeleted.length} />;
         }
     }
 
@@ -46,7 +49,10 @@ const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
     }
     let assigneeChips: React.ReactElement[] = [];
     if (task.assignees?.items) {
-        assigneeChips = task?.assignees?.items?.map((assignment) => {
+        const filterDeleted = task.assignees?.items?.filter(
+            (assignee) => assignee && !assignee._deleted
+        );
+        assigneeChips = filterDeleted.map((assignment) => {
             if (assignment?.assignee) {
                 return <UserChip size="small" user={assignment?.assignee} />;
             } else {
@@ -56,7 +62,10 @@ const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
     }
     let deliverableChips: React.ReactElement[] = [];
     if (task.deliverables?.items) {
-        deliverableChips = task?.deliverables?.items?.map((deliverable) => {
+        const filterDeleted = task.deliverables?.items?.filter(
+            (deliverable) => deliverable && !deliverable._deleted
+        );
+        deliverableChips = filterDeleted.map((deliverable) => {
             if (deliverable) {
                 return <DeliverableChip deliverable={deliverable} />;
             } else {
