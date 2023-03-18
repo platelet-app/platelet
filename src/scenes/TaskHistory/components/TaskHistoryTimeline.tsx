@@ -10,8 +10,8 @@ import TimelineDot from "@mui/lab/TimelineDot";
 import { Task } from "../../../API";
 import { TimelineOppositeContent } from "@mui/lab";
 import CommentCard from "../../Comments/components/CommentCard";
-import { Link, useHistory } from "react-router-dom";
-import { Box, Stack, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
+import { Box, Typography } from "@mui/material";
 import UserChip from "../../../components/UserChip";
 import DeliverableChip from "./DeliverableChip";
 import { encodeUUID } from "../../../utilities";
@@ -67,7 +67,7 @@ const getColor = (key: string) => {
     }
 };
 
-const generateTimelineContent = (task: Task, history: any) => {
+const generateTimelineContent = (task: Task) => {
     const {
         createdAt,
         timePickedUp,
@@ -144,6 +144,27 @@ const generateTimelineContent = (task: Task, history: any) => {
     let lastTime = new Date("2100-1-30");
     let timeDivider = <></>;
     const result = Object.entries(sorted).map(([key, value]) => {
+        const sxDeleted = {
+            "&::before": {
+                content: "''",
+                borderRadius: "1em",
+                position: "absolute",
+                paddingBottom: 9,
+                width: "100%",
+                height: "100%",
+                backgroundColor: "rgba(0, 0, 0, 0.4)",
+                zIndex: 1,
+            },
+            "&::after": {
+                content: "'deleted'",
+                color: "red",
+                fontStyle: "italic",
+                position: "absolute",
+                bottom: 10,
+                right: 20,
+            },
+        };
+
         const isLastItem =
             Object.keys(sorted).indexOf(key) === Object.keys(sorted).length - 1;
         const timeComparison = new Date(value);
@@ -168,15 +189,16 @@ const generateTimelineContent = (task: Task, history: any) => {
         let color = "secondary.main";
         if (assigneeTimes[key as keyof typeof assigneeTimes]) {
             const assignee = assignees.find((assignee) => assignee?.id === key);
-            if (!assignee || assignee?._deleted) return null;
+            if (!assignee) return null;
+            const deleted = assignee?._deleted;
             const role = assignee?.role?.toLowerCase();
             color = role === "rider" ? "taskStatus.ACTIVE" : "taskStatus.NEW";
             if (assignee?.assignee) {
                 const encodedId = encodeUUID(assignee.assignee.id);
                 return (
-                    <React.Fragment key={key}>
+                    <Box key={key}>
                         {timeDivider}
-                        <TimelineItem>
+                        <TimelineItem sx={deleted ? sxDeleted : {}}>
                             <TimelineOppositeContent sx={{ flex: 0 }}>
                                 <Moment format="HH:mm">
                                     {assignee.createdAt}
@@ -196,7 +218,7 @@ const generateTimelineContent = (task: Task, history: any) => {
                                 </Link>
                             </TimelineContent>
                         </TimelineItem>
-                    </React.Fragment>
+                    </Box>
                 );
             } else {
                 return null;
@@ -205,11 +227,12 @@ const generateTimelineContent = (task: Task, history: any) => {
             const deliverable = deliverables.find(
                 (deliverable) => deliverable?.id === key
             );
-            if (!deliverable || deliverable?._deleted) return null;
+            if (!deliverable) return null;
+            const deleted = deliverable?._deleted;
             return (
-                <React.Fragment key={key}>
+                <Box key={key}>
                     {timeDivider}
-                    <TimelineItem>
+                    <TimelineItem sx={deleted ? sxDeleted : {}}>
                         <TimelineOppositeContent sx={{ flex: 0 }}>
                             <Moment format="HH:mm">
                                 {deliverable?.createdAt}
@@ -221,13 +244,13 @@ const generateTimelineContent = (task: Task, history: any) => {
                             <DeliverableChip deliverable={deliverable} />
                         </TimelineContent>
                     </TimelineItem>
-                </React.Fragment>
+                </Box>
             );
         } else if (commentTimes[key as keyof typeof commentTimes]) {
             const comment = comments.find((comment) => comment?.id === key);
             if (!comment || comment?._deleted) return null;
             return (
-                <React.Fragment key={key}>
+                <Box key={key}>
                     {timeDivider}
                     <TimelineItem>
                         <TimelineOppositeContent sx={{ flex: 0 }}>
@@ -254,7 +277,7 @@ const generateTimelineContent = (task: Task, history: any) => {
                             </CommentCard>
                         </TimelineContent>
                     </TimelineItem>
-                </React.Fragment>
+                </Box>
             );
         } else if (key === "createdAt") {
             color = "taskStatus.NEW";
@@ -273,7 +296,7 @@ const generateTimelineContent = (task: Task, history: any) => {
             );
 
             return (
-                <React.Fragment key={key}>
+                <Box key={key}>
                     {timeDivider}
                     <TimelineItem>
                         <TimelineOppositeContent sx={{ flex: 0 }}>
@@ -284,7 +307,7 @@ const generateTimelineContent = (task: Task, history: any) => {
                         <Separator color={color} />
                         {content}
                     </TimelineItem>
-                </React.Fragment>
+                </Box>
             );
         } else if (key === "timePickedUp") {
             const time = keyTimes[key as keyof typeof keyTimes];
@@ -293,7 +316,7 @@ const generateTimelineContent = (task: Task, history: any) => {
                 ? `Picked up from ${timePickedUpSenderName}`
                 : "Picked up";
             return (
-                <React.Fragment key={key}>
+                <Box key={key}>
                     {timeDivider}
                     <TimelineItem>
                         <TimelineOppositeContent sx={{ flex: 0 }}>
@@ -302,7 +325,7 @@ const generateTimelineContent = (task: Task, history: any) => {
                         <Separator color={color} />
                         <TimelineContent>{content}</TimelineContent>
                     </TimelineItem>
-                </React.Fragment>
+                </Box>
             );
         } else if (key === "timeDroppedOff") {
             const time = keyTimes[key as keyof typeof keyTimes];
@@ -311,7 +334,7 @@ const generateTimelineContent = (task: Task, history: any) => {
                 ? `Delivered to ${timeDroppedOffRecipientName}`
                 : "Delivered";
             return (
-                <React.Fragment key={key}>
+                <Box key={key}>
                     {timeDivider}
                     <TimelineItem>
                         <TimelineOppositeContent sx={{ flex: 0 }}>
@@ -320,13 +343,13 @@ const generateTimelineContent = (task: Task, history: any) => {
                         <Separator color={color} />
                         <TimelineContent>{content}</TimelineContent>
                     </TimelineItem>
-                </React.Fragment>
+                </Box>
             );
         } else if (keyTimes[key as keyof typeof keyTimes]) {
             const time = keyTimes[key as keyof typeof keyTimes];
             color = getColor(key);
             return (
-                <React.Fragment key={key}>
+                <Box key={key}>
                     {timeDivider}
                     <TimelineItem>
                         <TimelineOppositeContent sx={{ flex: 0 }}>
@@ -337,7 +360,7 @@ const generateTimelineContent = (task: Task, history: any) => {
                             {getHumanReadableTimeLabel(key)}
                         </TimelineContent>
                     </TimelineItem>
-                </React.Fragment>
+                </Box>
             );
         } else {
             return null;
@@ -351,9 +374,8 @@ type TaskHistoryTimelineProps = {
 };
 
 const TaskHistoryTimeline: React.FC<TaskHistoryTimelineProps> = ({ task }) => {
-    const history = useHistory();
     if (task) {
-        const items = generateTimelineContent(task, history);
+        const items = generateTimelineContent(task);
         return (
             <Timeline
                 sx={{

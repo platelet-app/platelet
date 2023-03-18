@@ -56,7 +56,7 @@ describe("TaskHistoryTaskDialog", () => {
                     },
                     {
                         id: "someAssigneeId2",
-                        createdAt: "2021-05-01T18:00:00.000Z",
+                        createdAt: "2021-05-01T18:15:00.000Z",
                         _deleted: true,
                         assignee: {
                             displayName: "deleted assignee",
@@ -96,7 +96,7 @@ describe("TaskHistoryTaskDialog", () => {
                         id: "anotherDeliverableId",
                         count: 1,
                         _deleted: true,
-                        createdAt: "2021-05-01T18:30:00.000Z",
+                        createdAt: "2021-05-01T18:45:00.000Z",
                         deliverableType: {
                             label: "deleted deliverable",
                             icon: APITypes.DeliverableTypeIcon.BUG,
@@ -130,7 +130,7 @@ describe("TaskHistoryTaskDialog", () => {
                         id: "anotherCommentIddddddd",
                         body: "deleted comment",
                         _deleted: true,
-                        createdAt: "2021-05-01T20:30:00.000Z",
+                        createdAt: "2021-05-01T20:45:00.000Z",
                         visibility: APITypes.CommentVisibility.EVERYONE,
                         author: {
                             displayName: "Another Person",
@@ -213,9 +213,9 @@ describe("TaskHistoryTaskDialog", () => {
         expect(screen.getByText("someDeliverable x 1")).toBeInTheDocument();
         expect(screen.getByText(/pickup name/)).toBeInTheDocument();
         expect(screen.getByText(/dropoff name/)).toBeInTheDocument();
-        expect(screen.queryByText("deleted deliverable")).toBeNull();
         expect(screen.queryByText("deleted comment")).toBeNull();
-        expect(screen.queryByText("deleted assignee")).toBeNull();
+        expect(screen.getByText("deleted deliverable x 1")).toBeInTheDocument();
+        expect(screen.getByText("deleted assignee")).toBeInTheDocument();
         const variables = graphqlSpy.mock.calls[0][0].variables;
         expect(variables).toEqual({ id: "someId" });
     });

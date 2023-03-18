@@ -14,12 +14,6 @@ const Accordion = styled((props: AccordionProps) => (
 ))(({ theme }) => ({
     border: `1px solid ${theme.palette.divider}`,
     borderRadius: "1em",
-    "&:not(:last-child)": {
-        borderBottom: 0,
-    },
-    "&:before": {
-        display: "none",
-    },
 }));
 
 type TaskHistoryTaskDialogContentProps = {
