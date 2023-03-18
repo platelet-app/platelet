@@ -1,5 +1,7 @@
 import { Task } from "../../../API";
-import { Paper } from "@mui/material";
+import { Chip, Paper, Stack, Typography } from "@mui/material";
+import TaskHistoryLabelItemPair from "./TaskHistoryLabelItemPair";
+import Moment from "react-moment";
 
 type TaskHistoryTaskDialogSummaryProps = {
     task: Task;
@@ -8,7 +10,25 @@ type TaskHistoryTaskDialogSummaryProps = {
 const TaskHistoryTaskDialogSummary: React.FC<
     TaskHistoryTaskDialogSummaryProps
 > = ({ task }) => {
-    return <Paper></Paper>;
+    return (
+        <Paper>
+            <Stack direction="column" spacing={1}>
+                <TaskHistoryLabelItemPair label="Priority">
+                    <Chip label={task.priority} />
+                </TaskHistoryLabelItemPair>
+                <TaskHistoryLabelItemPair label="Rider role">
+                    <Chip label={task.riderResponsibility} />
+                </TaskHistoryLabelItemPair>
+                <TaskHistoryLabelItemPair label="Time of call">
+                    <Typography>
+                        <Moment format="DD/MM/yyyy, HH:mm">
+                            {task.timeOfCall || ""}
+                        </Moment>
+                    </Typography>
+                </TaskHistoryLabelItemPair>
+            </Stack>
+        </Paper>
+    );
 };
 
 export default TaskHistoryTaskDialogSummary;

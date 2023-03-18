@@ -150,13 +150,11 @@ const generateTimelineContent = (task: Task, history: any) => {
         // if timeComparison is the day before lastTime
         // then we need to add a divider
         if (timeComparison.getDate() !== lastTime.getDate()) {
-            console.log("adding divider");
             lastTime = timeComparison;
             timeDivider = (
                 <DateStampDivider date={timeComparison.toISOString()} />
             );
         } else {
-            console.log("not adding divider");
             timeDivider = <></>;
         }
         const Separator: React.FC<{
@@ -176,9 +174,9 @@ const generateTimelineContent = (task: Task, history: any) => {
             if (assignee?.assignee) {
                 const encodedId = encodeUUID(assignee.assignee.id);
                 return (
-                    <>
+                    <React.Fragment key={key}>
                         {timeDivider}
-                        <TimelineItem key={assignee?.id}>
+                        <TimelineItem>
                             <TimelineOppositeContent sx={{ flex: 0 }}>
                                 <Moment format="HH:mm">
                                     {assignee.createdAt}
@@ -198,7 +196,7 @@ const generateTimelineContent = (task: Task, history: any) => {
                                 </Link>
                             </TimelineContent>
                         </TimelineItem>
-                    </>
+                    </React.Fragment>
                 );
             } else {
                 return null;
@@ -209,9 +207,9 @@ const generateTimelineContent = (task: Task, history: any) => {
             );
             if (!deliverable || deliverable?._deleted) return null;
             return (
-                <>
+                <React.Fragment key={key}>
                     {timeDivider}
-                    <TimelineItem key={deliverable?.id}>
+                    <TimelineItem>
                         <TimelineOppositeContent sx={{ flex: 0 }}>
                             <Moment format="HH:mm">
                                 {deliverable?.createdAt}
@@ -223,15 +221,15 @@ const generateTimelineContent = (task: Task, history: any) => {
                             <DeliverableChip deliverable={deliverable} />
                         </TimelineContent>
                     </TimelineItem>
-                </>
+                </React.Fragment>
             );
         } else if (commentTimes[key as keyof typeof commentTimes]) {
             const comment = comments.find((comment) => comment?.id === key);
             if (!comment || comment?._deleted) return null;
             return (
-                <>
+                <React.Fragment key={key}>
                     {timeDivider}
-                    <TimelineItem key={comment?.id}>
+                    <TimelineItem>
                         <TimelineOppositeContent sx={{ flex: 0 }}>
                             <Moment format="HH:mm">{comment?.createdAt}</Moment>
                         </TimelineOppositeContent>
@@ -256,7 +254,7 @@ const generateTimelineContent = (task: Task, history: any) => {
                             </CommentCard>
                         </TimelineContent>
                     </TimelineItem>
-                </>
+                </React.Fragment>
             );
         } else if (key === "createdAt") {
             color = "taskStatus.NEW";
@@ -275,9 +273,9 @@ const generateTimelineContent = (task: Task, history: any) => {
             );
 
             return (
-                <>
+                <React.Fragment key={key}>
                     {timeDivider}
-                    <TimelineItem key={key}>
+                    <TimelineItem>
                         <TimelineOppositeContent sx={{ flex: 0 }}>
                             <Moment format="HH:mm">
                                 {keyTimes[key as keyof typeof keyTimes] || ""}
@@ -286,7 +284,7 @@ const generateTimelineContent = (task: Task, history: any) => {
                         <Separator color={color} />
                         {content}
                     </TimelineItem>
-                </>
+                </React.Fragment>
             );
         } else if (key === "timePickedUp") {
             const time = keyTimes[key as keyof typeof keyTimes];
@@ -295,16 +293,16 @@ const generateTimelineContent = (task: Task, history: any) => {
                 ? `Picked up from ${timePickedUpSenderName}`
                 : "Picked up";
             return (
-                <>
+                <React.Fragment key={key}>
                     {timeDivider}
-                    <TimelineItem key={key}>
+                    <TimelineItem>
                         <TimelineOppositeContent sx={{ flex: 0 }}>
                             <Moment format="HH:mm">{time || ""}</Moment>
                         </TimelineOppositeContent>
                         <Separator color={color} />
                         <TimelineContent>{content}</TimelineContent>
                     </TimelineItem>
-                </>
+                </React.Fragment>
             );
         } else if (key === "timeDroppedOff") {
             const time = keyTimes[key as keyof typeof keyTimes];
@@ -313,24 +311,24 @@ const generateTimelineContent = (task: Task, history: any) => {
                 ? `Delivered to ${timeDroppedOffRecipientName}`
                 : "Delivered";
             return (
-                <>
+                <React.Fragment key={key}>
                     {timeDivider}
-                    <TimelineItem key={key}>
+                    <TimelineItem>
                         <TimelineOppositeContent sx={{ flex: 0 }}>
                             <Moment format="HH:mm">{time || ""}</Moment>
                         </TimelineOppositeContent>
                         <Separator color={color} />
                         <TimelineContent>{content}</TimelineContent>
                     </TimelineItem>
-                </>
+                </React.Fragment>
             );
         } else if (keyTimes[key as keyof typeof keyTimes]) {
             const time = keyTimes[key as keyof typeof keyTimes];
             color = getColor(key);
             return (
-                <>
+                <React.Fragment key={key}>
                     {timeDivider}
-                    <TimelineItem key={key}>
+                    <TimelineItem>
                         <TimelineOppositeContent sx={{ flex: 0 }}>
                             <Moment format="HH:mm">{time || ""}</Moment>
                         </TimelineOppositeContent>
@@ -339,7 +337,7 @@ const generateTimelineContent = (task: Task, history: any) => {
                             {getHumanReadableTimeLabel(key)}
                         </TimelineContent>
                     </TimelineItem>
-                </>
+                </React.Fragment>
             );
         } else {
             return null;

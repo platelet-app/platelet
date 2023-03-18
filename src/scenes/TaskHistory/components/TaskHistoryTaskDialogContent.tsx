@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import TaskHistoryTaskDialogSummary from "./TaskHistoryTaskDialogSummary";
+import TaskHistoryTaskDialogRequesterContact from "./TaskHistoryTaskDialogRequesterContact";
 
 const Accordion = styled((props: AccordionProps) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -28,11 +29,24 @@ type TaskHistoryTaskDialogContentProps = {
 const TaskHistoryTaskDialogContent: React.FC<
     TaskHistoryTaskDialogContentProps
 > = ({ task }) => {
+    const { requesterContact } = task;
     return (
         <>
             <TaskHistoryTaskDialogSummary task={task} />
+            {requesterContact && (
+                <TaskHistoryTaskDialogRequesterContact
+                    requesterContact={requesterContact}
+                />
+            )}
             <Accordion>
-                <AccordionSummary expandIcon={<ExpandCircleDownIcon />}>
+                <AccordionSummary
+                    sx={{
+                        "&:hover": {
+                            backgroundColor: "rgba(0, 0, 0, 0.04)",
+                        },
+                    }}
+                    expandIcon={<ExpandCircleDownIcon />}
+                >
                     <Typography>Timeline/Comments</Typography>
                 </AccordionSummary>
                 <AccordionDetails>

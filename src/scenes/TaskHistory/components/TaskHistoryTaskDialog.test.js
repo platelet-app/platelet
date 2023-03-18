@@ -32,6 +32,10 @@ describe("TaskHistoryTaskDialog", () => {
             timePickedUpSenderName: "pickup name",
             timeDroppedOffRecipientName: "dropoff name",
             timeDroppedOff: "2021-05-01T14:30:00.000Z",
+            requesterContact: {
+                name: "requester name",
+                telephoneNumber: "01234567800",
+            },
             timeRiderHome: "2021-05-01T15:30:00.000Z",
             timeCancelled: "2021-05-01T16:30:00.000Z",
             timeRejected: "2021-05-01T17:30:00.000Z",
@@ -148,6 +152,27 @@ describe("TaskHistoryTaskDialog", () => {
                 screen.queryByTestId("task-history-dialog-fetching")
             ).toBeNull();
         });
+    });
+
+    it("shows task details", async () => {
+        API.graphql = jest.fn().mockResolvedValue({
+            data: {
+                getTask: mockTask,
+            },
+        });
+        render(<TaskHistoryTaskDialog taskId="someId" />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId("task-history-dialog-fetching")
+            ).toBeNull();
+        });
+        expect(screen.getByText(APITypes.Priority.HIGH)).toBeInTheDocument();
+        expect(screen.getByText("someRiderResponsibility")).toBeInTheDocument();
+        expect(screen.getByText("01/05/2021, 13:00")).toBeInTheDocument();
+        expect(screen.getByText("01234567800")).toBeInTheDocument();
+        expect(screen.getByText("requester name")).toBeInTheDocument();
     });
 
     it("displays a timeline", async () => {
