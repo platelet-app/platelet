@@ -3,7 +3,6 @@ import { Box } from "@mui/system";
 import PropTypes from "prop-types";
 import React from "react";
 import { showHide } from "../../../styles/common";
-import { sortByCreatedTime } from "../../../utilities";
 import TaskItem from "./TaskItem";
 import DateStampDivider from "./TimeStampDivider";
 import { makeStyles } from "tss-react/mui";
@@ -13,6 +12,25 @@ const useStyles = makeStyles()({
         width: "100%",
     },
 });
+
+export function sortByCreatedTime(items, order = "newest") {
+    if (!items || items.length === 0) return [];
+    if (order !== "newest") {
+        return items.sort((a, b) => {
+            return (
+                new Date(a.createdAt || a.timeOfCall) -
+                new Date(b.createdAt || b.timeOfCall)
+            );
+        });
+    } else {
+        return items.sort((a, b) => {
+            return (
+                new Date(b.createdAt || b.timeOfCall) -
+                new Date(a.createdAt || a.timeOfCall)
+            );
+        });
+    }
+}
 
 function TaskGridTasksList(props) {
     const { show, hide } = showHide().classes;
