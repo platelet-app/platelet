@@ -379,8 +379,6 @@ const TaskHistoryTimeline: React.FC<TaskHistoryTimelineProps> = ({ task }) => {
         return (
             <Timeline
                 sx={{
-                    minWidth: 500,
-                    maxWidth: 1200,
                     "& .MuiTimelineItem-root:before": {
                         flex: 0,
                     },

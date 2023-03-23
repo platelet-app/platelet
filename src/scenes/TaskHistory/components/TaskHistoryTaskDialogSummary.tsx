@@ -2,7 +2,6 @@ import { Task } from "../../../API";
 import { Chip, Paper, Stack, Typography } from "@mui/material";
 import TaskHistoryLabelItemPair from "./TaskHistoryLabelItemPair";
 import Moment from "react-moment";
-import TaskStatusChip from "./TaskStatusChip";
 
 type TaskHistoryTaskDialogSummaryProps = {
     task: Task;

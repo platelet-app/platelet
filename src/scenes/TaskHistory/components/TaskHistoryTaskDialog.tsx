@@ -1,21 +1,22 @@
 import Dialog from "@mui/material/Dialog";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import {
     Button,
     IconButton,
     Skeleton,
-    Stack,
     Tooltip,
     Typography,
+    useMediaQuery,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import ExploreIcon from "@mui/icons-material/Explore";
 import CloseIcon from "@mui/icons-material/Close";
 import useTaskGraphQL from "../../../hooks/useTaskGraphQL";
 import { useHistory } from "react-router";
 import TaskHistoryTaskDialogContent from "./TaskHistoryTaskDialogContent";
 import { encodeUUID } from "../../../utilities";
+import { useTheme } from "@mui/material/styles";
 
 type DialogWrapperProps = {
     children: React.ReactNode;
@@ -25,17 +26,6 @@ type DialogWrapperProps = {
 type TaskHistoryTaskDialogProps = {
     taskId: string;
 };
-
-const RoundedDialog = styled(Dialog)(({ fullScreen, theme }) => ({
-    "& .MuiDialog-paper": {
-        borderRadius: fullScreen ? "0em" : "1em",
-        background:
-            theme.palette.mode === "light"
-                ? theme.palette.background.default
-                : undefined,
-        minHeight: 300,
-    },
-}));
 
 const DialogWrapper: React.FC<DialogWrapperProps> = ({ children, taskId }) => {
     const history = useHistory();
@@ -48,26 +38,50 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({ children, taskId }) => {
         history.push(`/task/${encodeUUID(taskId)}`);
     };
 
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+
     return (
-        <RoundedDialog onClose={onClose} open>
+        <Dialog
+            PaperProps={{
+                sx: {
+                    background: theme.palette.background.default,
+                    padding: 0,
+                    borderRadius: isSm ? 0 : "1em",
+                    minHeight: 300,
+                },
+            }}
+            fullScreen={isSm}
+            onClose={onClose}
+            open
+        >
             <DialogActions style={{ justifyContent: "space-between" }}>
                 <Tooltip title="Close">
                     <IconButton onClick={onClose}>
-                        <CloseIcon />
+                        {isSm ? <ArrowBackIcon /> : <CloseIcon />}
                     </IconButton>
                 </Tooltip>
-                {taskId && (
+                {taskId && !isSm && (
                     <Button
-                        sx={{ width: "40%" }}
+                        sx={{
+                            width: "50%",
+                        }}
                         variant="contained"
                         onClick={dashboardNavigate}
                     >
                         View on dashboard
                     </Button>
                 )}
+                {taskId && isSm && (
+                    <Tooltip title="View on dashboard">
+                        <IconButton onClick={dashboardNavigate}>
+                            <ExploreIcon />
+                        </IconButton>
+                    </Tooltip>
+                )}
             </DialogActions>
-            <DialogContent>{children}</DialogContent>
-        </RoundedDialog>
+            <DialogContent sx={{ padding: 1 }}>{children}</DialogContent>
+        </Dialog>
     );
 };
 
@@ -83,7 +97,7 @@ const TaskHistoryTaskDialog: React.FC<TaskHistoryTaskDialogProps> = ({
                     data-testid="task-history-dialog-fetching"
                     variant="rectangular"
                     height={400}
-                    width={400}
+                    width={300}
                 />
             </DialogWrapper>
         );
