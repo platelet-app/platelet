@@ -1,21 +1,34 @@
-import { Paper, Stack, Typography } from "@mui/material";
-import { AddressAndContactDetails } from "../../../API";
+import { Divider, Paper, Stack, Typography } from "@mui/material";
+import { AddressAndContactDetails, Location } from "../../../API";
 import TaskHistoryLabelItemPair from "./TaskHistoryLabelItemPair";
 
 type TaskHistoryTaskDialogRequesterContactProps = {
     requesterContact: AddressAndContactDetails;
+    establishment?: Location | null;
 };
 
 const TaskHistoryTaskDialogRequesterContact: React.FC<
     TaskHistoryTaskDialogRequesterContactProps
-> = ({ requesterContact }) => {
+> = ({ requesterContact, establishment }) => {
     return (
-        <Paper>
+        <Paper
+            sx={{
+                borderRadius: "1em",
+                padding: 1,
+            }}
+        >
             <Stack direction="column" spacing={1}>
+                <Typography variant="h5">Caller details</Typography>
+                <Divider />
+                {establishment && (
+                    <TaskHistoryLabelItemPair label="Establishment">
+                        <Typography>{establishment.name}</Typography>
+                    </TaskHistoryLabelItemPair>
+                )}
                 <TaskHistoryLabelItemPair label="Name">
                     <Typography>{requesterContact.name || ""}</Typography>
                 </TaskHistoryLabelItemPair>
-                <TaskHistoryLabelItemPair label="telephoneNumber">
+                <TaskHistoryLabelItemPair label="Telephone">
                     <Typography>
                         {requesterContact.telephoneNumber || ""}
                     </Typography>

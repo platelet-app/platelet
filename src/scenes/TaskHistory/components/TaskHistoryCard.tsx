@@ -39,7 +39,7 @@ const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
 
     let chips = [];
     if (task.status) {
-        chips.push(<TaskStatusChip status={task.status} />);
+        chips.push(<TaskStatusChip size="small" status={task.status} />);
     }
     if (task.priority) {
         chips.push(<Chip size="small" label={task.priority} />);

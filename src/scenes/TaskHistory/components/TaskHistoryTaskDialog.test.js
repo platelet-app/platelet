@@ -187,7 +187,6 @@ describe("TaskHistoryTaskDialog", () => {
                 screen.queryByTestId("task-history-dialog-fetching")
             ).toBeNull();
         });
-        userEvent.click(screen.getByText("Timeline/Comments"));
         const timeChecks = [
             screen.getByText("13:30"),
             screen.getByText("14:30"),
@@ -211,8 +210,8 @@ describe("TaskHistoryTaskDialog", () => {
         expect(screen.getByText("Another Person")).toBeInTheDocument();
         expect(screen.getByText("Someone Person")).toBeInTheDocument();
         expect(screen.getByText("someDeliverable x 1")).toBeInTheDocument();
-        expect(screen.getByText(/pickup name/)).toBeInTheDocument();
-        expect(screen.getByText(/dropoff name/)).toBeInTheDocument();
+        expect(screen.getByText(/from pickup name/)).toBeInTheDocument();
+        expect(screen.getByText(/to dropoff name/)).toBeInTheDocument();
         expect(screen.queryByText("deleted comment")).toBeNull();
         expect(screen.getByText("deleted deliverable x 1")).toBeInTheDocument();
         expect(screen.getByText("deleted assignee")).toBeInTheDocument();

@@ -1,20 +1,22 @@
 import { Stack, Typography } from "@mui/material";
 
-type TaskHistoryLabelItemPairProps = {
-    label: string;
+type LabelItemPairProps = {
+    label?: string;
     children: React.ReactNode;
 };
 
-const TaskHistoryLabelItemPair: React.FC<TaskHistoryLabelItemPairProps> = ({
-    label,
-    children,
-}) => {
+const LabelItemPair: React.FC<LabelItemPairProps> = ({ label, children }) => {
+    const actualLabel = label ? `${label}:` : "";
     return (
-        <Stack direction="row" justifySelf="center" alignItems="space-between">
-            <Typography>{label}</Typography>
+        <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+        >
+            <Typography>{actualLabel}</Typography>
             {children}
         </Stack>
     );
 };
 
-export default TaskHistoryLabelItemPair;
+export default LabelItemPair;

@@ -2,6 +2,7 @@ import { Task } from "../../../API";
 import { Chip, Paper, Stack, Typography } from "@mui/material";
 import TaskHistoryLabelItemPair from "./TaskHistoryLabelItemPair";
 import Moment from "react-moment";
+import TaskStatusChip from "./TaskStatusChip";
 
 type TaskHistoryTaskDialogSummaryProps = {
     task: Task;
@@ -11,21 +12,32 @@ const TaskHistoryTaskDialogSummary: React.FC<
     TaskHistoryTaskDialogSummaryProps
 > = ({ task }) => {
     return (
-        <Paper>
+        <Paper
+            sx={{
+                padding: 1,
+                borderRadius: "1em",
+            }}
+        >
             <Stack direction="column" spacing={1}>
-                <TaskHistoryLabelItemPair label="Priority">
-                    <Chip label={task.priority} />
-                </TaskHistoryLabelItemPair>
-                <TaskHistoryLabelItemPair label="Rider role">
-                    <Chip label={task.riderResponsibility} />
-                </TaskHistoryLabelItemPair>
-                <TaskHistoryLabelItemPair label="Time of call">
-                    <Typography>
-                        <Moment format="DD/MM/yyyy, HH:mm">
-                            {task.timeOfCall || ""}
-                        </Moment>
-                    </Typography>
-                </TaskHistoryLabelItemPair>
+                {task.priority && (
+                    <TaskHistoryLabelItemPair label="Priority">
+                        {task.priority}
+                    </TaskHistoryLabelItemPair>
+                )}
+                {task.riderResponsibility && (
+                    <TaskHistoryLabelItemPair label="Rider role">
+                        <Chip label={task.riderResponsibility} />
+                    </TaskHistoryLabelItemPair>
+                )}
+                {task.timeOfCall && (
+                    <TaskHistoryLabelItemPair label="Time of call">
+                        <Typography>
+                            <Moment format="DD/MM/yyyy, HH:mm">
+                                {task.timeOfCall || ""}
+                            </Moment>
+                        </Typography>
+                    </TaskHistoryLabelItemPair>
+                )}
             </Stack>
         </Paper>
     );

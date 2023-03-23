@@ -8,6 +8,8 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import TaskHistoryTaskDialogSummary from "./TaskHistoryTaskDialogSummary";
 import TaskHistoryTaskDialogRequesterContact from "./TaskHistoryTaskDialogRequesterContact";
+import { Paper, Stack } from "@mui/material";
+import TaskHistoryTaskDialogLocation from "./TaskHistoryTaskDialogLocation";
 
 const Accordion = styled((props: AccordionProps) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -25,29 +27,30 @@ const TaskHistoryTaskDialogContent: React.FC<
 > = ({ task }) => {
     const { requesterContact } = task;
     return (
-        <>
+        <Stack spacing={2}>
             <TaskHistoryTaskDialogSummary task={task} />
             {requesterContact && (
                 <TaskHistoryTaskDialogRequesterContact
                     requesterContact={requesterContact}
+                    establishment={task.establishmentLocation}
                 />
             )}
-            <Accordion>
-                <AccordionSummary
-                    sx={{
-                        "&:hover": {
-                            backgroundColor: "rgba(0, 0, 0, 0.04)",
-                        },
-                    }}
-                    expandIcon={<ExpandCircleDownIcon />}
-                >
-                    <Typography>Timeline/Comments</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <TaskHistoryTimeline task={task} />
-                </AccordionDetails>
-            </Accordion>
-        </>
+            <Paper sx={{ borderRadius: "1em", padding: 1 }}>
+                <TaskHistoryTimeline task={task} />
+            </Paper>
+            {task.pickUpLocation && (
+                <TaskHistoryTaskDialogLocation
+                    location={task.pickUpLocation}
+                    title="Collect from"
+                />
+            )}
+            {task.dropOffLocation && (
+                <TaskHistoryTaskDialogLocation
+                    location={task.dropOffLocation}
+                    title="Deliver to"
+                />
+            )}
+        </Stack>
     );
 };
 

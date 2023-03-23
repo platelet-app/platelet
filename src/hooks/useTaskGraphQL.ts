@@ -52,6 +52,10 @@ export const getTask = /* GraphQL */ `
                 state
                 country
                 postcode
+                contact {
+                    name
+                    telephoneNumber
+                }
                 what3words
                 createdAt
                 updatedAt
@@ -69,26 +73,17 @@ export const getTask = /* GraphQL */ `
                 state
                 country
                 postcode
+                contact {
+                    name
+                    telephoneNumber
+                }
                 what3words
                 createdAt
                 updatedAt
             }
             establishmentLocation {
                 id
-                listed
                 name
-                ward
-                line1
-                line2
-                line3
-                town
-                county
-                state
-                country
-                postcode
-                what3words
-                createdAt
-                updatedAt
             }
             riderResponsibility
             assignees {
@@ -328,7 +323,7 @@ const useTaskGraphQL = (taskId: string) => {
     const whoami = useSelector(getWhoami);
 
     const getTask = React.useCallback(async () => {
-        if (!taskId) return;
+        if (!taskId || !whoami) return;
         setIsFetching(true);
         setNotFound(false);
         setError(null);

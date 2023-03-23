@@ -26,10 +26,12 @@ const generateLabel = (status: models.TaskStatus) => {
 
 type TaskStatusChipProps = {
     status?: models.TaskStatus | null;
+    size?: "small" | "medium";
 };
 
 const TaskStatusChip: React.FC<TaskStatusChipProps> = ({
     status = models.TaskStatus.NEW,
+    size = "medium",
 }) => {
     if (status) {
         return (
@@ -37,7 +39,7 @@ const TaskStatusChip: React.FC<TaskStatusChipProps> = ({
                 sx={{
                     backgroundColor: alpha(colors[status], 0.2),
                 }}
-                size="small"
+                size={size}
                 label={generateLabel(status)}
             />
         );
