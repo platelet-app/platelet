@@ -36,6 +36,9 @@ describe("TaskHistoryTaskDialog", () => {
                 name: "requester name",
                 telephoneNumber: "01234567800",
             },
+            establishmentLocation: {
+                name: "establishment name",
+            },
             timeRiderHome: "2021-05-01T15:30:00.000Z",
             timeCancelled: "2021-05-01T16:30:00.000Z",
             timeRejected: "2021-05-01T17:30:00.000Z",
@@ -73,6 +76,10 @@ describe("TaskHistoryTaskDialog", () => {
                 line1: "pickup line1",
                 town: "pickup town",
                 postcode: "pickup postcode",
+                contact: {
+                    name: "pickup contact name",
+                    telephoneNumber: "01234567888",
+                },
             },
             dropOffLocation: {
                 ward: "dropoff ward",
@@ -80,6 +87,10 @@ describe("TaskHistoryTaskDialog", () => {
                 name: "dropoff name",
                 town: "dropoff town",
                 postcode: "dropoff postcode",
+                contact: {
+                    name: "dropoff contact name",
+                    telephoneNumber: "01234567899",
+                },
             },
             deliverables: {
                 items: [
@@ -173,6 +184,24 @@ describe("TaskHistoryTaskDialog", () => {
         expect(screen.getByText("01/05/2021, 13:00")).toBeInTheDocument();
         expect(screen.getByText("01234567800")).toBeInTheDocument();
         expect(screen.getByText("requester name")).toBeInTheDocument();
+        expect(screen.getByText("establishment name")).toBeInTheDocument();
+        const expandButtons = screen.getAllByText("Expand to see more");
+        userEvent.click(expandButtons[0]);
+        userEvent.click(expandButtons[1]);
+        expect(screen.getByText("pickup name")).toBeInTheDocument();
+        expect(screen.getByText("pickup ward")).toBeInTheDocument();
+        expect(screen.getByText("pickup line1")).toBeInTheDocument();
+        expect(screen.getByText("pickup town")).toBeInTheDocument();
+        expect(screen.getByText("pickup postcode")).toBeInTheDocument();
+        expect(screen.getByText("pickup contact name")).toBeInTheDocument();
+        expect(screen.getByText("01234567888")).toBeInTheDocument();
+        expect(screen.getByText("dropoff name")).toBeInTheDocument();
+        expect(screen.getByText("dropoff ward")).toBeInTheDocument();
+        expect(screen.getByText("dropoff line1")).toBeInTheDocument();
+        expect(screen.getByText("dropoff town")).toBeInTheDocument();
+        expect(screen.getByText("dropoff postcode")).toBeInTheDocument();
+        expect(screen.getByText("dropoff contact name")).toBeInTheDocument();
+        expect(screen.getByText("01234567899")).toBeInTheDocument();
     });
 
     it("displays a timeline", async () => {

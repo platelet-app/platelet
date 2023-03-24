@@ -6,17 +6,18 @@ import {
     Button,
     IconButton,
     Skeleton,
+    Stack,
     Tooltip,
     Typography,
     useMediaQuery,
 } from "@mui/material";
-import ExploreIcon from "@mui/icons-material/Explore";
 import CloseIcon from "@mui/icons-material/Close";
 import useTaskGraphQL from "../../../hooks/useTaskGraphQL";
 import { useHistory } from "react-router";
 import TaskHistoryTaskDialogContent from "./TaskHistoryTaskDialogContent";
 import { encodeUUID } from "../../../utilities";
 import { useTheme } from "@mui/material/styles";
+import _ from "lodash";
 
 type DialogWrapperProps = {
     children: React.ReactNode;
@@ -90,12 +91,31 @@ const TaskHistoryTaskDialog: React.FC<TaskHistoryTaskDialogProps> = ({
     if (isFetching) {
         return (
             <DialogWrapper taskId={taskId}>
-                <Skeleton
-                    data-testid="task-history-dialog-fetching"
-                    variant="rectangular"
-                    height={400}
-                    width={300}
-                />
+                <Stack alignItems="center" spacing={2}>
+                    {_.range(0, 2).map(() => (
+                        <Skeleton
+                            variant="rectangular"
+                            height={100}
+                            width={"100%"}
+                            sx={{ borderRadius: "1em" }}
+                        />
+                    ))}
+                    <Skeleton
+                        data-testid="task-history-dialog-fetching"
+                        variant="rectangular"
+                        height={600}
+                        width={"100%"}
+                        sx={{ borderRadius: "1em" }}
+                    />
+                    {_.range(0, 2).map(() => (
+                        <Skeleton
+                            sx={{ borderRadius: "1em" }}
+                            variant="rectangular"
+                            height={150}
+                            width={"100%"}
+                        />
+                    ))}
+                </Stack>
             </DialogWrapper>
         );
     } else if (error) {
