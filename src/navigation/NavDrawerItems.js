@@ -14,6 +14,7 @@ import LocationCityIcon from "@mui/icons-material/LocationCity";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import DescriptionIcon from "@mui/icons-material/Description";
 import { getWhoami } from "../redux/Selectors";
+import HistoryIcon from "@mui/icons-material/History";
 
 function NavDrawerItems(props) {
     const whoami = useSelector(getWhoami);
@@ -48,7 +49,7 @@ function NavDrawerItems(props) {
                     button
                 >
                     <ListItemIcon>
-                        <SupervisorAccountIcon />
+                        <HistoryIcon />
                     </ListItemIcon>
                     <ListItemText primary={"History"} />
                 </ListItem>

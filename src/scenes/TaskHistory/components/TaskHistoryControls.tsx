@@ -1,17 +1,19 @@
 import React from "react";
+import { useTheme } from "@mui/material/styles";
 import {
-    Chip,
-    Grid,
+    IconButton,
     MenuItem,
     Paper,
     Select,
     Stack,
     TextField,
+    useMediaQuery,
 } from "@mui/material";
 import { ModelSortDirection } from "../../../API";
 import DaysSelection, { Days } from "../../../components/DaysSelection";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { DateRangePicker, DateRange } from "@mui/lab";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 type TaskHistoryControlsProps = {
     sortDirection: ModelSortDirection;
@@ -27,7 +29,6 @@ const TaskHistoryControls: React.FC<TaskHistoryControlsProps> = ({
     isFetching,
 }) => {
     const [days, setDays] = React.useState<Days | null>(null);
-    const [customRange, setCustomRange] = React.useState(false);
     const [customDaysRange, setCustomDaysRange] = React.useState<
         DateRange<Date>
     >([new Date(), new Date()]);
@@ -36,6 +37,10 @@ const TaskHistoryControls: React.FC<TaskHistoryControlsProps> = ({
         if (days === newDays) {
             setDays(null);
             setDateRange(new Date("2000-01-01"), new Date());
+        } else if (newDays === Days.CUSTOM) {
+            setDays(newDays);
+            setCustomDaysRange([new Date(), new Date()]);
+            setDateRange(new Date(), new Date());
         } else {
             setDays(newDays);
             const startDate = new Date("2000-01-01");
@@ -52,30 +57,23 @@ const TaskHistoryControls: React.FC<TaskHistoryControlsProps> = ({
         }
     };
 
-    const handleChangeToCustom = () => {
-        setDays(null);
-        if (customRange) {
-            setCustomRange(false);
-            setDateRange(new Date("2000-01-01"), new Date());
-        } else {
-            setCustomRange(true);
-            setCustomDaysRange([new Date(), new Date()]);
-            setDateRange(new Date(), new Date());
-        }
-    };
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+
+    const customRange = days === Days.CUSTOM;
 
     return (
         <Paper
             sx={{
                 borderRadius: 4,
-                maxWidth: 1200,
+                maxWidth: 800,
                 padding: 1,
             }}
         >
             <Stack
                 sx={{ minHeight: 80 }}
-                direction="row"
-                alignItems="center"
+                direction={isSm ? "column" : "row"}
+                alignItems={isSm ? "flex-start" : "center"}
                 spacing={1}
             >
                 <Select
@@ -110,54 +108,52 @@ const TaskHistoryControls: React.FC<TaskHistoryControlsProps> = ({
                         Oldest
                     </MenuItem>
                 </Select>
-                <Grid container direction="row" alignItems="center" spacing={1}>
-                    {!customRange && (
-                        <Grid item>
-                            <DaysSelection
-                                value={days}
-                                onChange={handleChangeDays}
-                            />
-                        </Grid>
-                    )}
-                    {customRange && (
-                        <Grid item>
-                            <DateRangePicker
-                                startText="From"
-                                inputFormat="dd/MM/yyyy"
-                                endText="To"
-                                value={customDaysRange}
-                                onChange={handleDateChange}
-                                renderInput={(startProps, endProps) => (
-                                    <Stack spacing={1} direction="row">
-                                        <TextField
-                                            {...startProps}
-                                            inputProps={{
-                                                ...startProps.inputProps,
-                                                "aria-label": "Start date",
-                                            }}
-                                        />
-                                        <TextField
-                                            {...endProps}
-                                            inputProps={{
-                                                ...endProps.inputProps,
-                                                "aria-label": "End date",
-                                            }}
-                                        />
-                                    </Stack>
-                                )}
-                            />
-                        </Grid>
-                    )}
-                    <Grid item>
-                        <Chip
-                            label="Custom"
-                            aria-label="Custom"
-                            variant={customRange ? "filled" : "outlined"}
-                            color={customRange ? "primary" : "default"}
-                            onClick={handleChangeToCustom}
+                {!customRange && (
+                    <DaysSelection
+                        value={days}
+                        onChange={handleChangeDays}
+                        showCustom
+                    />
+                )}
+                {customRange && (
+                    <Stack direction="row">
+                        <DateRangePicker
+                            startText="From"
+                            inputFormat="dd/MM/yyyy"
+                            endText="To"
+                            value={customDaysRange}
+                            onChange={handleDateChange}
+                            renderInput={(startProps, endProps) => (
+                                <Stack spacing={1} direction="row">
+                                    <TextField
+                                        {...startProps}
+                                        size="small"
+                                        inputProps={{
+                                            ...startProps.inputProps,
+                                            "aria-label": "Start date",
+                                        }}
+                                    />
+                                    <TextField
+                                        {...endProps}
+                                        size="small"
+                                        inputProps={{
+                                            ...endProps.inputProps,
+                                            "aria-label": "End date",
+                                        }}
+                                    />
+                                </Stack>
+                            )}
                         />
-                    </Grid>
-                </Grid>
+                        <IconButton
+                            aria-label="back to days selection"
+                            onClick={() => {
+                                handleChangeDays(Days.CUSTOM);
+                            }}
+                        >
+                            <ArrowBackIcon />
+                        </IconButton>
+                    </Stack>
+                )}
                 {isFetching && <LoadingSpinner delay={800} progress={0} />}
             </Stack>
         </Paper>

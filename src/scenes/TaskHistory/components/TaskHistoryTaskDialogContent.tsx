@@ -2,7 +2,7 @@ import { Task } from "../../../API";
 import TaskHistoryTimeline from "./TaskHistoryTimeline";
 import TaskHistoryTaskDialogSummary from "./TaskHistoryTaskDialogSummary";
 import TaskHistoryTaskDialogRequesterContact from "./TaskHistoryTaskDialogRequesterContact";
-import { Paper, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import TaskHistoryTaskDialogLocation from "./TaskHistoryTaskDialogLocation";
 
 type TaskHistoryTaskDialogContentProps = {
@@ -22,9 +22,7 @@ const TaskHistoryTaskDialogContent: React.FC<
                     establishment={task.establishmentLocation}
                 />
             )}
-            <Paper sx={{ borderRadius: "1em", padding: 1 }}>
-                <TaskHistoryTimeline task={task} />
-            </Paper>
+            <TaskHistoryTimeline task={task} />
             {task.pickUpLocation && (
                 <TaskHistoryTaskDialogLocation
                     location={task.pickUpLocation}

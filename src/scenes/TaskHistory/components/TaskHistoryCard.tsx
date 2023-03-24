@@ -96,18 +96,17 @@ const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
     return (
         <Paper
             sx={{
-                borderRadius: 4,
-                maxWidth: 1200,
+                borderRadius: "1em",
             }}
         >
             <Stack
                 sx={{
                     padding: 1,
-                    minHeight: 160,
                     "&:hover": {
                         backgroundColor: "rgba(0, 0, 0, 0.04)",
                     },
                 }}
+                spacing={0.5}
                 justifyContent="space-between"
                 direction="column"
             >

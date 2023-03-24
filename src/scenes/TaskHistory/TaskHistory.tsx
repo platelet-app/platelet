@@ -63,16 +63,17 @@ const TaskHistory: React.FC = () => {
                 {state.map((task) => {
                     displayDate = false;
                     let component = (
-                        <Link
-                            style={{ textDecoration: "none" }}
-                            key={task.id}
-                            to={{
-                                pathname: `/history/${encodeUUID(task.id)}`,
-                                state: { background: location },
-                            }}
-                        >
-                            <TaskHistoryCard task={task} />
-                        </Link>
+                        <Box sx={{ maxWidth: 800 }} key={task.id}>
+                            <Link
+                                style={{ textDecoration: "none" }}
+                                to={{
+                                    pathname: `/history/${encodeUUID(task.id)}`,
+                                    state: { background: location },
+                                }}
+                            >
+                                <TaskHistoryCard task={task} />
+                            </Link>
+                        </Box>
                     );
                     if (task.dateCreated) {
                         const timeComparison = new Date(task.dateCreated);
@@ -85,8 +86,8 @@ const TaskHistory: React.FC = () => {
                         }
                         if (displayDate) {
                             component = (
-                                <Box key={task.id}>
-                                    <Box sx={{ maxWidth: 800 }}>
+                                <Box sx={{ maxWidth: 800 }} key={task.id}>
+                                    <Box>
                                         <DateStampDivider
                                             date={lastTime.toISOString()}
                                         />
@@ -113,10 +114,10 @@ const TaskHistory: React.FC = () => {
                 {!isFinished && (
                     <Stack spacing={1} data-testid="task-history-skeleton">
                         {_.range(0, skeletonRange).map((i) => (
-                            <Box key={i} sx={{ maxWidth: 1200 }}>
+                            <Box key={i} sx={{ maxWidth: 800 }}>
                                 <Skeleton
                                     variant="rectangular"
-                                    height={140}
+                                    height={100}
                                     sx={{
                                         borderRadius: 4,
                                     }}

@@ -25,7 +25,7 @@ const TaskHistoryTaskDialogSummary: React.FC<
                 )}
                 {task.riderResponsibility && (
                     <TaskHistoryLabelItemPair label="Rider role">
-                        <Chip label={task.riderResponsibility} />
+                        {task.riderResponsibility}
                     </TaskHistoryLabelItemPair>
                 )}
                 {task.timeOfCall && (

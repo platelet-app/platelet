@@ -61,7 +61,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({ children, taskId }) => {
                         {isSm ? <ArrowBackIcon /> : <CloseIcon />}
                     </IconButton>
                 </Tooltip>
-                {taskId && !isSm && (
+                {taskId && (
                     <Button
                         sx={{
                             width: "50%",
@@ -72,15 +72,12 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({ children, taskId }) => {
                         View on dashboard
                     </Button>
                 )}
-                {taskId && isSm && (
-                    <Tooltip title="View on dashboard">
-                        <IconButton onClick={dashboardNavigate}>
-                            <ExploreIcon />
-                        </IconButton>
-                    </Tooltip>
-                )}
             </DialogActions>
-            <DialogContent sx={{ padding: 1 }}>{children}</DialogContent>
+            <DialogContent
+                sx={{ padding: isSm ? 1 : 3, minWidth: isSm ? 0 : 500 }}
+            >
+                {children}
+            </DialogContent>
         </Dialog>
     );
 };

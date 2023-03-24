@@ -179,18 +179,16 @@ describe("TaskHistory", () => {
         expect(screen.getByText("someDisplayName")).toBeInTheDocument();
         expect(screen.getByText("someDeliverable x 1")).toBeInTheDocument();
         expect(screen.getByText("someRiderResponsibility")).toBeInTheDocument();
-        expect(screen.getByText("pickup name")).toBeInTheDocument();
         expect(screen.queryByText("deletedDeliverable x 1")).toBeNull();
         expect(screen.queryByText("deletedDisplayName")).toBeNull();
         expect(
             screen.getByText(
-                "pickup ward, pickup line1, pickup town, pickup postcode"
+                "pickup name, pickup ward, pickup line1, pickup town, pickup postcode"
             )
         ).toBeInTheDocument();
-        expect(screen.getByText("dropoff name")).toBeInTheDocument();
         expect(
             screen.getByText(
-                "dropoff ward, dropoff line1, dropoff town, dropoff postcode"
+                "dropoff name, dropoff ward, dropoff line1, dropoff town, dropoff postcode"
             )
         ).toBeInTheDocument();
         expect(screen.getByText("3")).toBeInTheDocument();
@@ -480,7 +478,9 @@ describe("TaskHistory", () => {
               "tenantId": "testTenantId",
             }
         `);
-        userEvent.click(screen.getByRole("button", { name: "Custom" }));
+        userEvent.click(
+            screen.getByRole("button", { name: "back to days selection" })
+        );
         await waitFor(() => {
             expect(graphqlSpy).toHaveBeenCalledTimes(4);
         });
