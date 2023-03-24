@@ -7,9 +7,11 @@ import {
     Select,
     Stack,
     TextField,
+    Tooltip,
     useMediaQuery,
 } from "@mui/material";
 import { ModelSortDirection } from "../../../API";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import DaysSelection, { Days } from "../../../components/DaysSelection";
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { DateRangePicker, DateRange } from "@mui/lab";
@@ -20,6 +22,7 @@ type TaskHistoryControlsProps = {
     setSortDirection: (sortDirection: ModelSortDirection) => void;
     setDateRange(startDate: Date, endDate: Date): void;
     isFetching: boolean;
+    onRefresh: () => void;
 };
 
 const TaskHistoryControls: React.FC<TaskHistoryControlsProps> = ({
@@ -27,11 +30,13 @@ const TaskHistoryControls: React.FC<TaskHistoryControlsProps> = ({
     setSortDirection,
     setDateRange,
     isFetching,
+    onRefresh,
 }) => {
     const [days, setDays] = React.useState<Days | null>(null);
     const [customDaysRange, setCustomDaysRange] = React.useState<
         DateRange<Date>
     >([new Date(), new Date()]);
+    const [refreshKey, setRefreshKey] = React.useState(0);
 
     const handleChangeDays = (newDays: Days) => {
         if (days === newDays) {
@@ -62,6 +67,35 @@ const TaskHistoryControls: React.FC<TaskHistoryControlsProps> = ({
 
     const customRange = days === Days.CUSTOM;
 
+    const handleRefresh = () => {
+        setRefreshKey(refreshKey + 1);
+        onRefresh();
+    };
+
+    const refreshButton = (
+        <Tooltip title="Refresh">
+            <IconButton
+                data-testid="refresh-task-history"
+                onClick={handleRefresh}
+            >
+                <RefreshIcon
+                    key={refreshKey}
+                    sx={{
+                        animation: "spin 1s linear reverse",
+                        "@keyframes spin": {
+                            "0%": {
+                                transform: "rotate(360deg)",
+                            },
+                            "100%": {
+                                transform: "rotate(0deg)",
+                            },
+                        },
+                    }}
+                />
+            </IconButton>
+        </Tooltip>
+    );
+
     return (
         <Paper
             sx={{
@@ -76,38 +110,47 @@ const TaskHistoryControls: React.FC<TaskHistoryControlsProps> = ({
                 alignItems={isSm ? "flex-start" : "center"}
                 spacing={1}
             >
-                <Select
-                    data-testid="task-history-sort-direction-select"
-                    sx={{
-                        width: 200,
-                        borderRadius: 2,
-                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "orange",
-                        },
-                        "&:hover .MuiOutlinedInput-notchedOutline": {
-                            borderColor: "orange",
-                        },
-                    }}
-                    size="small"
-                    value={sortDirection}
+                <Stack
+                    sx={{ width: isSm ? "100%" : "auto" }}
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    spacing={1}
                 >
-                    <MenuItem
-                        value="DESC"
-                        onClick={() => {
-                            setSortDirection(ModelSortDirection.DESC);
+                    <Select
+                        data-testid="task-history-sort-direction-select"
+                        sx={{
+                            width: 200,
+                            borderRadius: 2,
+                            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "orange",
+                            },
+                            "&:hover .MuiOutlinedInput-notchedOutline": {
+                                borderColor: "orange",
+                            },
                         }}
+                        size="small"
+                        value={sortDirection}
                     >
-                        Newest
-                    </MenuItem>
-                    <MenuItem
-                        value="ASC"
-                        onClick={() => {
-                            setSortDirection(ModelSortDirection.ASC);
-                        }}
-                    >
-                        Oldest
-                    </MenuItem>
-                </Select>
+                        <MenuItem
+                            value="DESC"
+                            onClick={() => {
+                                setSortDirection(ModelSortDirection.DESC);
+                            }}
+                        >
+                            Newest
+                        </MenuItem>
+                        <MenuItem
+                            value="ASC"
+                            onClick={() => {
+                                setSortDirection(ModelSortDirection.ASC);
+                            }}
+                        >
+                            Oldest
+                        </MenuItem>
+                    </Select>
+                    {isSm && refreshButton}
+                </Stack>
                 {!customRange && (
                     <DaysSelection
                         value={days}
@@ -154,6 +197,7 @@ const TaskHistoryControls: React.FC<TaskHistoryControlsProps> = ({
                         </IconButton>
                     </Stack>
                 )}
+                {!isSm && refreshButton}
                 {isFetching && <LoadingSpinner delay={800} progress={0} />}
             </Stack>
         </Paper>

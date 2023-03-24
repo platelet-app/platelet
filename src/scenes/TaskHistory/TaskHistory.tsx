@@ -25,7 +25,7 @@ const TaskHistory: React.FC = () => {
         endDate: new Date(),
     });
     const location = useLocation();
-    const { state, getNext, isFinished, isFetching, error } =
+    const { state, getNext, isFinished, isFetching, error, refresh } =
         useGetTasksGraphql(
             limit,
             sortDirection,
@@ -55,6 +55,7 @@ const TaskHistory: React.FC = () => {
         <>
             <Stack spacing={1}>
                 <TaskHistoryControls
+                    onRefresh={refresh}
                     sortDirection={sortDirection}
                     setSortDirection={(v) => setSortDirection(v)}
                     setDateRange={handleSetDateRange}

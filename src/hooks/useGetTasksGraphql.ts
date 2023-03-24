@@ -296,12 +296,17 @@ const useGetTasksGraphql = (
         getTasks();
     }, [getTasks]);
 
+    const refresh = React.useCallback(() => {
+        getTasks();
+    }, [getTasks]);
+
     return {
         state: Object.values(state),
         getNext,
         isFinished,
         isFetching,
         error,
+        refresh,
     };
 };
 
