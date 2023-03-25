@@ -39,6 +39,7 @@ const TaskHistoryControls: React.FC<TaskHistoryControlsProps> = ({
     const [refreshKey, setRefreshKey] = React.useState(0);
 
     const handleChangeDays = (newDays: Days) => {
+        setSortDirection(ModelSortDirection.DESC);
         if (days === newDays) {
             setDays(null);
             setDateRange(new Date("2000-01-01"), new Date());
@@ -117,38 +118,41 @@ const TaskHistoryControls: React.FC<TaskHistoryControlsProps> = ({
                     justifyContent="space-between"
                     spacing={1}
                 >
-                    <Select
-                        data-testid="task-history-sort-direction-select"
-                        sx={{
-                            width: 200,
-                            borderRadius: 2,
-                            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "orange",
-                            },
-                            "&:hover .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "orange",
-                            },
-                        }}
-                        size="small"
-                        value={sortDirection}
-                    >
-                        <MenuItem
-                            value="DESC"
-                            onClick={() => {
-                                setSortDirection(ModelSortDirection.DESC);
+                    {customRange && (
+                        <Select
+                            data-testid="task-history-sort-direction-select"
+                            sx={{
+                                width: 200,
+                                borderRadius: 2,
+                                "&.Mui-focused .MuiOutlinedInput-notchedOutline":
+                                    {
+                                        borderColor: "orange",
+                                    },
+                                "&:hover .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: "orange",
+                                },
                             }}
+                            size="small"
+                            value={sortDirection}
                         >
-                            Newest
-                        </MenuItem>
-                        <MenuItem
-                            value="ASC"
-                            onClick={() => {
-                                setSortDirection(ModelSortDirection.ASC);
-                            }}
-                        >
-                            Oldest
-                        </MenuItem>
-                    </Select>
+                            <MenuItem
+                                value="DESC"
+                                onClick={() => {
+                                    setSortDirection(ModelSortDirection.DESC);
+                                }}
+                            >
+                                Newest
+                            </MenuItem>
+                            <MenuItem
+                                value="ASC"
+                                onClick={() => {
+                                    setSortDirection(ModelSortDirection.ASC);
+                                }}
+                            >
+                                Oldest
+                            </MenuItem>
+                        </Select>
+                    )}
                     {isSm && refreshButton}
                 </Stack>
                 {!customRange && (
