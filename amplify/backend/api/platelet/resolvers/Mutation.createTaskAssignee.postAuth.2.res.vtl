@@ -1,0 +1,16 @@
+## Raise a GraphQL field error in case of a datasource invocation error
+#if($ctx.error)
+    $util.error($ctx.error.message, $ctx.error.type)
+#end
+
+#set( $task = $ctx.result )
+
+#if( $util.isNull($task) == false )
+    #if( $task.archived == 1 )
+        $util.error("This task is already archived.", "TaskArchivedError")
+    #else
+        $util.toJson({})
+    #end
+#else
+    $util.error("The task cannot be found", "TaskNotFoundError")
+#end

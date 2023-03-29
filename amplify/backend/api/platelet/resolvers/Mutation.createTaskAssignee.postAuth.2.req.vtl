@@ -1,1 +1,6 @@
-$util.error("Task is archived.")
+{
+    "operation": "GetItem",
+    "key": {
+        "id": $util.dynamodb.toDynamoDBJson($ctx.args.input.taskAssigneesId)
+    }
+}

@@ -1,5 +1,11 @@
-import { AmplifyApiGraphQlResourceStackTemplate } from '@aws-amplify/cli-extensibility-helper';
+import { AmplifyApiGraphQlResourceStackTemplate } from "@aws-amplify/cli-extensibility-helper";
+import { overrideDataSourceByFileName } from "./overrideHelpers"; // <<== the helper file in this repo
 
-export function override(resources: AmplifyApiGraphQlResourceStackTemplate) {
-	resources.models["TaskAssignee"].appsyncFunctions["MutationcreateTaskAssigneepostAuth1FunctionMutationcreateTaskAssigneepostAuth1Function.AppSyncFunction"].dataSourceName = "TaskTable";
-}
+export const override = (resources: AmplifyApiGraphQlResourceStackTemplate) => {
+    overrideDataSourceByFileName(
+        resources,
+        "Mutation.createTaskAssignee.postAuth.2", // <== The name of your file (without the extension)
+        "TaskAssignee", // <== The model that this resolver falls within
+        "TaskTable" // <== The new datasource that you want to use
+    );
+};
