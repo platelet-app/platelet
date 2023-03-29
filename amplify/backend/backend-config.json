@@ -393,38 +393,6 @@
         }
       ]
     },
-    "AMPLIFY_function_plateletImageResize_resizeHeight": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "plateletImageResize"
-        }
-      ]
-    },
-    "AMPLIFY_function_plateletImageResize_resizeWidth": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "plateletImageResize"
-        }
-      ]
-    },
-    "AMPLIFY_function_plateletImageResize_thumbnailHeight": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "plateletImageResize"
-        }
-      ]
-    },
-    "AMPLIFY_function_plateletImageResize_thumbnailWidth": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "plateletImageResize"
-        }
-      ]
-    },
     "AMPLIFY_function_plateletProfilePictureResolver_deploymentBucketName": {
       "usedBy": [
         {

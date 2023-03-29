@@ -228,7 +228,7 @@ type TaskAssignee
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
   role: Role!
-  task: Task @belongsTo
+  task: Task! @belongsTo
   assignee: User! @belongsTo
   archived: Int @default(value: "0") @index(name: "byArchived")
 }
