@@ -116,14 +116,9 @@ function* getWhoami() {
                 for (const model of Object.values(models)) {
                     if (
                         [
-                            "Task",
                             "User",
-                            "TaskAssignee",
                             "RiderResponsibility",
-                            "Comment",
-                            "Location",
                             "Vehicle",
-                            "Deliverable",
                             "DeliverableType",
                             "PossibleRiderResponsibilities",
                         ].includes(model.name)
@@ -131,6 +126,13 @@ function* getWhoami() {
                         modelsToSync.push(model);
                     }
                 }
+                const archivedModels = [
+                    models.Task,
+                    models.Comment,
+                    models.Location,
+                    models.TaskAssignee,
+                    models.Deliverable,
+                ];
 
                 yield call([DataStore, DataStore.configure], {
                     errorHandler: (err) => {
@@ -141,6 +143,14 @@ function* getWhoami() {
                         ...modelsToSync.map((model) =>
                             syncExpression(model, (m) =>
                                 m.tenantId("eq", tenantId)
+                            )
+                        ),
+                        ...archivedModels.map((model) =>
+                            syncExpression(
+                                model,
+                                (m) => m.tenantId("eq", tenantId)
+                                // TODO: Uncomment when migration completed
+                                // .archived("eq", 0)
                             )
                         ),
                         syncExpression(models.Tenant, (m) =>

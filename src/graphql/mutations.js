@@ -319,6 +319,7 @@ export const createUser = /* GraphQL */ `
           tenantId
           body
           visibility
+          archived
           createdAt
           updatedAt
           _version
@@ -335,6 +336,7 @@ export const createUser = /* GraphQL */ `
           id
           tenantId
           role
+          archived
           createdAt
           updatedAt
           _version
@@ -381,6 +383,7 @@ export const createUser = /* GraphQL */ `
           priority
           status
           isRiderUsingOwnVehicle
+          archived
           createdAt
           updatedAt
           _version
@@ -409,6 +412,7 @@ export const createUser = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -508,6 +512,7 @@ export const updateUser = /* GraphQL */ `
           tenantId
           body
           visibility
+          archived
           createdAt
           updatedAt
           _version
@@ -524,6 +529,7 @@ export const updateUser = /* GraphQL */ `
           id
           tenantId
           role
+          archived
           createdAt
           updatedAt
           _version
@@ -570,6 +576,7 @@ export const updateUser = /* GraphQL */ `
           priority
           status
           isRiderUsingOwnVehicle
+          archived
           createdAt
           updatedAt
           _version
@@ -598,6 +605,7 @@ export const updateUser = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -697,6 +705,7 @@ export const deleteUser = /* GraphQL */ `
           tenantId
           body
           visibility
+          archived
           createdAt
           updatedAt
           _version
@@ -713,6 +722,7 @@ export const deleteUser = /* GraphQL */ `
           id
           tenantId
           role
+          archived
           createdAt
           updatedAt
           _version
@@ -759,6 +769,7 @@ export const deleteUser = /* GraphQL */ `
           priority
           status
           isRiderUsingOwnVehicle
+          archived
           createdAt
           updatedAt
           _version
@@ -787,6 +798,7 @@ export const deleteUser = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -1232,6 +1244,7 @@ export const createVehicle = /* GraphQL */ `
           tenantId
           body
           visibility
+          archived
           createdAt
           updatedAt
           _version
@@ -1356,6 +1369,7 @@ export const updateVehicle = /* GraphQL */ `
           tenantId
           body
           visibility
+          archived
           createdAt
           updatedAt
           _version
@@ -1480,6 +1494,7 @@ export const deleteVehicle = /* GraphQL */ `
           tenantId
           body
           visibility
+          archived
           createdAt
           updatedAt
           _version
@@ -2012,6 +2027,7 @@ export const createLocation = /* GraphQL */ `
           priority
           status
           isRiderUsingOwnVehicle
+          archived
           createdAt
           updatedAt
           _version
@@ -2042,6 +2058,7 @@ export const createLocation = /* GraphQL */ `
           priority
           status
           isRiderUsingOwnVehicle
+          archived
           createdAt
           updatedAt
           _version
@@ -2072,6 +2089,7 @@ export const createLocation = /* GraphQL */ `
           priority
           status
           isRiderUsingOwnVehicle
+          archived
           createdAt
           updatedAt
           _version
@@ -2089,6 +2107,7 @@ export const createLocation = /* GraphQL */ `
           tenantId
           body
           visibility
+          archived
           createdAt
           updatedAt
           _version
@@ -2102,6 +2121,7 @@ export const createLocation = /* GraphQL */ `
       }
       disabled
       googleMapsPlaceId
+      archived
       createdAt
       updatedAt
       _version
@@ -2235,6 +2255,7 @@ export const updateLocation = /* GraphQL */ `
           priority
           status
           isRiderUsingOwnVehicle
+          archived
           createdAt
           updatedAt
           _version
@@ -2265,6 +2286,7 @@ export const updateLocation = /* GraphQL */ `
           priority
           status
           isRiderUsingOwnVehicle
+          archived
           createdAt
           updatedAt
           _version
@@ -2295,6 +2317,7 @@ export const updateLocation = /* GraphQL */ `
           priority
           status
           isRiderUsingOwnVehicle
+          archived
           createdAt
           updatedAt
           _version
@@ -2312,6 +2335,7 @@ export const updateLocation = /* GraphQL */ `
           tenantId
           body
           visibility
+          archived
           createdAt
           updatedAt
           _version
@@ -2325,6 +2349,7 @@ export const updateLocation = /* GraphQL */ `
       }
       disabled
       googleMapsPlaceId
+      archived
       createdAt
       updatedAt
       _version
@@ -2458,6 +2483,7 @@ export const deleteLocation = /* GraphQL */ `
           priority
           status
           isRiderUsingOwnVehicle
+          archived
           createdAt
           updatedAt
           _version
@@ -2488,6 +2514,7 @@ export const deleteLocation = /* GraphQL */ `
           priority
           status
           isRiderUsingOwnVehicle
+          archived
           createdAt
           updatedAt
           _version
@@ -2518,6 +2545,7 @@ export const deleteLocation = /* GraphQL */ `
           priority
           status
           isRiderUsingOwnVehicle
+          archived
           createdAt
           updatedAt
           _version
@@ -2535,6 +2563,7 @@ export const deleteLocation = /* GraphQL */ `
           tenantId
           body
           visibility
+          archived
           createdAt
           updatedAt
           _version
@@ -2548,6 +2577,7 @@ export const deleteLocation = /* GraphQL */ `
       }
       disabled
       googleMapsPlaceId
+      archived
       createdAt
       updatedAt
       _version
@@ -2729,6 +2759,7 @@ export const createTask = /* GraphQL */ `
         }
         disabled
         googleMapsPlaceId
+        archived
         createdAt
         updatedAt
         _version
@@ -2804,6 +2835,7 @@ export const createTask = /* GraphQL */ `
         }
         disabled
         googleMapsPlaceId
+        archived
         createdAt
         updatedAt
         _version
@@ -2879,6 +2911,7 @@ export const createTask = /* GraphQL */ `
         }
         disabled
         googleMapsPlaceId
+        archived
         createdAt
         updatedAt
         _version
@@ -2892,6 +2925,7 @@ export const createTask = /* GraphQL */ `
           id
           tenantId
           role
+          archived
           createdAt
           updatedAt
           _version
@@ -2911,6 +2945,7 @@ export const createTask = /* GraphQL */ `
           count
           unit
           orderInGrid
+          archived
           createdAt
           updatedAt
           _version
@@ -2929,6 +2964,7 @@ export const createTask = /* GraphQL */ `
           tenantId
           body
           visibility
+          archived
           createdAt
           updatedAt
           _version
@@ -2942,6 +2978,7 @@ export const createTask = /* GraphQL */ `
       }
       status
       isRiderUsingOwnVehicle
+      archived
       createdAt
       updatedAt
       _version
@@ -3123,6 +3160,7 @@ export const updateTask = /* GraphQL */ `
         }
         disabled
         googleMapsPlaceId
+        archived
         createdAt
         updatedAt
         _version
@@ -3198,6 +3236,7 @@ export const updateTask = /* GraphQL */ `
         }
         disabled
         googleMapsPlaceId
+        archived
         createdAt
         updatedAt
         _version
@@ -3273,6 +3312,7 @@ export const updateTask = /* GraphQL */ `
         }
         disabled
         googleMapsPlaceId
+        archived
         createdAt
         updatedAt
         _version
@@ -3286,6 +3326,7 @@ export const updateTask = /* GraphQL */ `
           id
           tenantId
           role
+          archived
           createdAt
           updatedAt
           _version
@@ -3305,6 +3346,7 @@ export const updateTask = /* GraphQL */ `
           count
           unit
           orderInGrid
+          archived
           createdAt
           updatedAt
           _version
@@ -3323,6 +3365,7 @@ export const updateTask = /* GraphQL */ `
           tenantId
           body
           visibility
+          archived
           createdAt
           updatedAt
           _version
@@ -3336,6 +3379,7 @@ export const updateTask = /* GraphQL */ `
       }
       status
       isRiderUsingOwnVehicle
+      archived
       createdAt
       updatedAt
       _version
@@ -3517,6 +3561,7 @@ export const deleteTask = /* GraphQL */ `
         }
         disabled
         googleMapsPlaceId
+        archived
         createdAt
         updatedAt
         _version
@@ -3592,6 +3637,7 @@ export const deleteTask = /* GraphQL */ `
         }
         disabled
         googleMapsPlaceId
+        archived
         createdAt
         updatedAt
         _version
@@ -3667,6 +3713,7 @@ export const deleteTask = /* GraphQL */ `
         }
         disabled
         googleMapsPlaceId
+        archived
         createdAt
         updatedAt
         _version
@@ -3680,6 +3727,7 @@ export const deleteTask = /* GraphQL */ `
           id
           tenantId
           role
+          archived
           createdAt
           updatedAt
           _version
@@ -3699,6 +3747,7 @@ export const deleteTask = /* GraphQL */ `
           count
           unit
           orderInGrid
+          archived
           createdAt
           updatedAt
           _version
@@ -3717,6 +3766,7 @@ export const deleteTask = /* GraphQL */ `
           tenantId
           body
           visibility
+          archived
           createdAt
           updatedAt
           _version
@@ -3730,6 +3780,7 @@ export const deleteTask = /* GraphQL */ `
       }
       status
       isRiderUsingOwnVehicle
+      archived
       createdAt
       updatedAt
       _version
@@ -3815,6 +3866,7 @@ export const createTaskAssignee = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -3839,6 +3891,7 @@ export const createTaskAssignee = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -3863,6 +3916,7 @@ export const createTaskAssignee = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -3886,6 +3940,7 @@ export const createTaskAssignee = /* GraphQL */ `
         }
         status
         isRiderUsingOwnVehicle
+        archived
         createdAt
         updatedAt
         _version
@@ -3961,6 +4016,7 @@ export const createTaskAssignee = /* GraphQL */ `
         _deleted
         _lastChangedAt
       }
+      archived
       createdAt
       updatedAt
       _version
@@ -4047,6 +4103,7 @@ export const updateTaskAssignee = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -4071,6 +4128,7 @@ export const updateTaskAssignee = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -4095,6 +4153,7 @@ export const updateTaskAssignee = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -4118,6 +4177,7 @@ export const updateTaskAssignee = /* GraphQL */ `
         }
         status
         isRiderUsingOwnVehicle
+        archived
         createdAt
         updatedAt
         _version
@@ -4193,6 +4253,7 @@ export const updateTaskAssignee = /* GraphQL */ `
         _deleted
         _lastChangedAt
       }
+      archived
       createdAt
       updatedAt
       _version
@@ -4279,6 +4340,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -4303,6 +4365,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -4327,6 +4390,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -4350,6 +4414,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
         }
         status
         isRiderUsingOwnVehicle
+        archived
         createdAt
         updatedAt
         _version
@@ -4425,6 +4490,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
         _deleted
         _lastChangedAt
       }
+      archived
       createdAt
       updatedAt
       _version
@@ -4514,6 +4580,7 @@ export const createComment = /* GraphQL */ `
         _lastChangedAt
       }
       visibility
+      archived
       createdAt
       updatedAt
       _version
@@ -4603,6 +4670,7 @@ export const updateComment = /* GraphQL */ `
         _lastChangedAt
       }
       visibility
+      archived
       createdAt
       updatedAt
       _version
@@ -4692,6 +4760,7 @@ export const deleteComment = /* GraphQL */ `
         _lastChangedAt
       }
       visibility
+      archived
       createdAt
       updatedAt
       _version
@@ -4720,6 +4789,7 @@ export const createDeliverableType = /* GraphQL */ `
           count
           unit
           orderInGrid
+          archived
           createdAt
           updatedAt
           _version
@@ -4759,6 +4829,7 @@ export const updateDeliverableType = /* GraphQL */ `
           count
           unit
           orderInGrid
+          archived
           createdAt
           updatedAt
           _version
@@ -4798,6 +4869,7 @@ export const deleteDeliverableType = /* GraphQL */ `
           count
           unit
           orderInGrid
+          archived
           createdAt
           updatedAt
           _version
@@ -4912,6 +4984,7 @@ export const createDeliverable = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -4936,6 +5009,7 @@ export const createDeliverable = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -4960,6 +5034,7 @@ export const createDeliverable = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -4983,6 +5058,7 @@ export const createDeliverable = /* GraphQL */ `
         }
         status
         isRiderUsingOwnVehicle
+        archived
         createdAt
         updatedAt
         _version
@@ -5000,6 +5076,7 @@ export const createDeliverable = /* GraphQL */ `
           tenantId
           body
           visibility
+          archived
           createdAt
           updatedAt
           _version
@@ -5011,6 +5088,7 @@ export const createDeliverable = /* GraphQL */ `
         nextToken
         startedAt
       }
+      archived
       createdAt
       updatedAt
       _version
@@ -5114,6 +5192,7 @@ export const updateDeliverable = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -5138,6 +5217,7 @@ export const updateDeliverable = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -5162,6 +5242,7 @@ export const updateDeliverable = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -5185,6 +5266,7 @@ export const updateDeliverable = /* GraphQL */ `
         }
         status
         isRiderUsingOwnVehicle
+        archived
         createdAt
         updatedAt
         _version
@@ -5202,6 +5284,7 @@ export const updateDeliverable = /* GraphQL */ `
           tenantId
           body
           visibility
+          archived
           createdAt
           updatedAt
           _version
@@ -5213,6 +5296,7 @@ export const updateDeliverable = /* GraphQL */ `
         nextToken
         startedAt
       }
+      archived
       createdAt
       updatedAt
       _version
@@ -5316,6 +5400,7 @@ export const deleteDeliverable = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -5340,6 +5425,7 @@ export const deleteDeliverable = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -5364,6 +5450,7 @@ export const deleteDeliverable = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -5387,6 +5474,7 @@ export const deleteDeliverable = /* GraphQL */ `
         }
         status
         isRiderUsingOwnVehicle
+        archived
         createdAt
         updatedAt
         _version
@@ -5404,6 +5492,7 @@ export const deleteDeliverable = /* GraphQL */ `
           tenantId
           body
           visibility
+          archived
           createdAt
           updatedAt
           _version
@@ -5415,6 +5504,7 @@ export const deleteDeliverable = /* GraphQL */ `
         nextToken
         startedAt
       }
+      archived
       createdAt
       updatedAt
       _version
@@ -5591,6 +5681,7 @@ export const registerUser = /* GraphQL */ `
           tenantId
           body
           visibility
+          archived
           createdAt
           updatedAt
           _version
@@ -5607,6 +5698,7 @@ export const registerUser = /* GraphQL */ `
           id
           tenantId
           role
+          archived
           createdAt
           updatedAt
           _version
@@ -5653,6 +5745,7 @@ export const registerUser = /* GraphQL */ `
           priority
           status
           isRiderUsingOwnVehicle
+          archived
           createdAt
           updatedAt
           _version
@@ -5681,6 +5774,7 @@ export const registerUser = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version
@@ -5868,6 +5962,7 @@ export const updateUserRoles = /* GraphQL */ `
           tenantId
           body
           visibility
+          archived
           createdAt
           updatedAt
           _version
@@ -5884,6 +5979,7 @@ export const updateUserRoles = /* GraphQL */ `
           id
           tenantId
           role
+          archived
           createdAt
           updatedAt
           _version
@@ -5930,6 +6026,7 @@ export const updateUserRoles = /* GraphQL */ `
           priority
           status
           isRiderUsingOwnVehicle
+          archived
           createdAt
           updatedAt
           _version
@@ -5958,6 +6055,7 @@ export const updateUserRoles = /* GraphQL */ `
           what3words
           disabled
           googleMapsPlaceId
+          archived
           createdAt
           updatedAt
           _version

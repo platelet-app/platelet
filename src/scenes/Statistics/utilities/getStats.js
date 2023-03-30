@@ -7,7 +7,7 @@ export default async function getStats(role, range, whoamiId) {
         common: {},
         priorities: {},
         riders: {},
-        responsibilities: {},
+        riderResponsibilities: {},
     };
     // get all tasks within the date range
     const tasksWithinRange = await DataStore.query(models.Task, (t) =>
@@ -26,7 +26,7 @@ export default async function getStats(role, range, whoamiId) {
     );
     // get all of my tasks as a coordinator that fit in the range
     const myCoordAssignments = coordAssignmentsAll.filter(
-        (a) => a.assignee && a.assignee.id === whoamiId
+        (a) => a.task && a.assignee && a.assignee.id === whoamiId
     );
     const myTasks = myCoordAssignments
         .filter((ta) => taskIds.includes(ta.task.id))
@@ -56,8 +56,8 @@ export default async function getStats(role, range, whoamiId) {
         models.TaskAssignee,
         (a) => a.role("eq", userRoles.rider)
     );
-    const taskAssignments = riderAssignmentsAll.filter((ta) =>
-        myTaskIds.includes(ta.task.id)
+    const taskAssignments = riderAssignmentsAll.filter(
+        (ta) => ta.task && myTaskIds.includes(ta.task.id)
     );
     const activeRiders = {};
     for (const assignment of taskAssignments) {

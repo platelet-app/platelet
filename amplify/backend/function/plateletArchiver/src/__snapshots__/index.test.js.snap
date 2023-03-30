@@ -1,0 +1,886 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`plateletArchiver archive some tasks, ignore the newer task 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      "
+    query LIST_TASKS_BY_ARCHIVE_STATUS(
+        $archived: Int!
+        $status: ModelStringKeyConditionInput
+        $nextToken: String
+    ) {
+        tasksByArchivedStatus(
+            archived: $archived
+            status: $status
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                createdAt
+                establishmentLocation {
+                    id
+                    listed
+                    _version
+                }
+                pickUpLocation {
+                    id
+                    listed
+                    _version
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    _version
+                }
+                _version
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "archived": 0,
+        "nextToken": null,
+        "status": {
+          "eq": "COMPLETED",
+        },
+      },
+    ],
+    [
+      "
+    query LIST_TASKS_BY_ARCHIVE_STATUS(
+        $archived: Int!
+        $status: ModelStringKeyConditionInput
+        $nextToken: String
+    ) {
+        tasksByArchivedStatus(
+            archived: $archived
+            status: $status
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                createdAt
+                establishmentLocation {
+                    id
+                    listed
+                    _version
+                }
+                pickUpLocation {
+                    id
+                    listed
+                    _version
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    _version
+                }
+                _version
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "archived": 0,
+        "nextToken": null,
+        "status": {
+          "eq": "REJECTED",
+        },
+      },
+    ],
+    [
+      "
+    query LIST_TASKS_BY_ARCHIVE_STATUS(
+        $archived: Int!
+        $status: ModelStringKeyConditionInput
+        $nextToken: String
+    ) {
+        tasksByArchivedStatus(
+            archived: $archived
+            status: $status
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                createdAt
+                establishmentLocation {
+                    id
+                    listed
+                    _version
+                }
+                pickUpLocation {
+                    id
+                    listed
+                    _version
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    _version
+                }
+                _version
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "archived": 0,
+        "nextToken": null,
+        "status": {
+          "eq": "ABANDONED",
+        },
+      },
+    ],
+    [
+      "
+    query LIST_TASKS_BY_ARCHIVE_STATUS(
+        $archived: Int!
+        $status: ModelStringKeyConditionInput
+        $nextToken: String
+    ) {
+        tasksByArchivedStatus(
+            archived: $archived
+            status: $status
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                createdAt
+                establishmentLocation {
+                    id
+                    listed
+                    _version
+                }
+                pickUpLocation {
+                    id
+                    listed
+                    _version
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    _version
+                }
+                _version
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "archived": 0,
+        "nextToken": null,
+        "status": {
+          "eq": "CANCELLED",
+        },
+      },
+    ],
+    [
+      "
+    query LIST_TASKS_BY_ARCHIVE_STATUS(
+        $archived: Int!
+        $status: ModelStringKeyConditionInput
+        $nextToken: String
+    ) {
+        tasksByArchivedStatus(
+            archived: $archived
+            status: $status
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                createdAt
+                establishmentLocation {
+                    id
+                    listed
+                    _version
+                }
+                pickUpLocation {
+                    id
+                    listed
+                    _version
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    _version
+                }
+                _version
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "archived": 0,
+        "nextToken": "tasktoken",
+        "status": {
+          "eq": "COMPLETED",
+        },
+      },
+    ],
+    [
+      "
+    mutation UpdateLocation($input: UpdateLocationInput!) {
+        updateLocation(input: $input) {
+            id
+            archived
+        };
+    };
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 1,
+          "id": undefined,
+        },
+      },
+    ],
+    [
+      "
+    query GetTaskAssignees(
+        $id: ID!,
+        $nextToken: String
+    ) {
+        getTask(id: $id) {
+            id
+            assignees(nextToken: $nextToken) {
+                items {
+                    id
+                    _version
+                }
+                nextToken
+            };
+        };
+    };
+",
+      {
+        "id": "someTaskId",
+        "nextToken": null,
+      },
+    ],
+    [
+      "
+    query GetTaskAssignees(
+        $id: ID!,
+        $nextToken: String
+    ) {
+        getTask(id: $id) {
+            id
+            assignees(nextToken: $nextToken) {
+                items {
+                    id
+                    _version
+                }
+                nextToken
+            };
+        };
+    };
+",
+      {
+        "id": "someTaskId",
+        "nextToken": "asstoken",
+      },
+    ],
+    [
+      "
+    mutation UpdateTaskAssignee($input: UpdateTaskAssigneeInput!) {
+        updateTaskAssignee(input: $input) {
+            id
+            archived
+        };
+    };
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 1,
+          "id": "someAssignmentId",
+        },
+      },
+    ],
+    [
+      "
+    mutation UpdateTaskAssignee($input: UpdateTaskAssigneeInput!) {
+        updateTaskAssignee(input: $input) {
+            id
+            archived
+        };
+    };
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 1,
+          "id": "someAssignmentId",
+        },
+      },
+    ],
+    [
+      "
+    query GetTaskDeliverables($id: ID!, $nextToken: String) {
+        getTask(id: $id) {
+            id
+            deliverables(nextToken: $nextToken) {
+                items {
+                    id
+                    _version
+                }
+                nextToken
+            };
+        };
+    };
+",
+      {
+        "id": "someTaskId",
+        "nextToken": null,
+      },
+    ],
+    [
+      "
+    query GetTaskDeliverables($id: ID!, $nextToken: String) {
+        getTask(id: $id) {
+            id
+            deliverables(nextToken: $nextToken) {
+                items {
+                    id
+                    _version
+                }
+                nextToken
+            };
+        };
+    };
+",
+      {
+        "id": "someTaskId",
+        "nextToken": "deltoken",
+      },
+    ],
+    [
+      "
+    mutation UpdateDeliverable($input: UpdateDeliverableInput!) {
+        updateDeliverable(input: $input) {
+            id
+            archived
+        };
+    };
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 1,
+          "id": "someDeliverableId",
+        },
+      },
+    ],
+    [
+      "
+    mutation UpdateDeliverable($input: UpdateDeliverableInput!) {
+        updateDeliverable(input: $input) {
+            id
+            archived
+        };
+    };
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 1,
+          "id": "someDeliverableId",
+        },
+      },
+    ],
+    [
+      "
+    query GetTaskComments($id: ID!, $nextToken: String) {
+        getTask(id: $id) {
+            id
+            comments(nextToken: $nextToken) {
+                items {
+                    id
+                    _version
+                }
+                nextToken
+            };
+        };
+    };
+",
+      {
+        "id": "someTaskId",
+        "nextToken": null,
+      },
+    ],
+    [
+      "
+    query GetTaskComments($id: ID!, $nextToken: String) {
+        getTask(id: $id) {
+            id
+            comments(nextToken: $nextToken) {
+                items {
+                    id
+                    _version
+                }
+                nextToken
+            };
+        };
+    };
+",
+      {
+        "id": "someTaskId",
+        "nextToken": "comtoken",
+      },
+    ],
+    [
+      "
+    mutation UpdateComment($input: UpdateCommentInput!) {
+        updateComment(input: $input) {
+            id
+            archived
+        };
+    };
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 1,
+          "id": "someCommentId",
+        },
+      },
+    ],
+    [
+      "
+    mutation UpdateComment($input: UpdateCommentInput!) {
+        updateComment(input: $input) {
+            id
+            archived
+        };
+    };
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 1,
+          "id": "someCommentId",
+        },
+      },
+    ],
+    [
+      "
+    mutation UpdateTask($input: UpdateTaskInput!) {
+        updateTask(input: $input) {
+            id
+            archived
+        }
+    }
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 1,
+          "id": "someTaskId",
+        },
+      },
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;
+
+exports[`plateletArchiver failure to archive an assignee 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      "
+    query LIST_TASKS_BY_ARCHIVE_STATUS(
+        $archived: Int!
+        $status: ModelStringKeyConditionInput
+        $nextToken: String
+    ) {
+        tasksByArchivedStatus(
+            archived: $archived
+            status: $status
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                createdAt
+                establishmentLocation {
+                    id
+                    listed
+                    _version
+                }
+                pickUpLocation {
+                    id
+                    listed
+                    _version
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    _version
+                }
+                _version
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "archived": 0,
+        "nextToken": null,
+        "status": {
+          "eq": "COMPLETED",
+        },
+      },
+    ],
+    [
+      "
+    query LIST_TASKS_BY_ARCHIVE_STATUS(
+        $archived: Int!
+        $status: ModelStringKeyConditionInput
+        $nextToken: String
+    ) {
+        tasksByArchivedStatus(
+            archived: $archived
+            status: $status
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                createdAt
+                establishmentLocation {
+                    id
+                    listed
+                    _version
+                }
+                pickUpLocation {
+                    id
+                    listed
+                    _version
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    _version
+                }
+                _version
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "archived": 0,
+        "nextToken": null,
+        "status": {
+          "eq": "REJECTED",
+        },
+      },
+    ],
+    [
+      "
+    query LIST_TASKS_BY_ARCHIVE_STATUS(
+        $archived: Int!
+        $status: ModelStringKeyConditionInput
+        $nextToken: String
+    ) {
+        tasksByArchivedStatus(
+            archived: $archived
+            status: $status
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                createdAt
+                establishmentLocation {
+                    id
+                    listed
+                    _version
+                }
+                pickUpLocation {
+                    id
+                    listed
+                    _version
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    _version
+                }
+                _version
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "archived": 0,
+        "nextToken": null,
+        "status": {
+          "eq": "ABANDONED",
+        },
+      },
+    ],
+    [
+      "
+    query LIST_TASKS_BY_ARCHIVE_STATUS(
+        $archived: Int!
+        $status: ModelStringKeyConditionInput
+        $nextToken: String
+    ) {
+        tasksByArchivedStatus(
+            archived: $archived
+            status: $status
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                createdAt
+                establishmentLocation {
+                    id
+                    listed
+                    _version
+                }
+                pickUpLocation {
+                    id
+                    listed
+                    _version
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    _version
+                }
+                _version
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "archived": 0,
+        "nextToken": null,
+        "status": {
+          "eq": "CANCELLED",
+        },
+      },
+    ],
+    [
+      "
+    query LIST_TASKS_BY_ARCHIVE_STATUS(
+        $archived: Int!
+        $status: ModelStringKeyConditionInput
+        $nextToken: String
+    ) {
+        tasksByArchivedStatus(
+            archived: $archived
+            status: $status
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                createdAt
+                establishmentLocation {
+                    id
+                    listed
+                    _version
+                }
+                pickUpLocation {
+                    id
+                    listed
+                    _version
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    _version
+                }
+                _version
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "archived": 0,
+        "nextToken": "tasktoken",
+        "status": {
+          "eq": "COMPLETED",
+        },
+      },
+    ],
+    [
+      "
+    mutation UpdateLocation($input: UpdateLocationInput!) {
+        updateLocation(input: $input) {
+            id
+            archived
+        };
+    };
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 1,
+          "id": undefined,
+        },
+      },
+    ],
+    [
+      "
+    query GetTaskAssignees(
+        $id: ID!,
+        $nextToken: String
+    ) {
+        getTask(id: $id) {
+            id
+            assignees(nextToken: $nextToken) {
+                items {
+                    id
+                    _version
+                }
+                nextToken
+            };
+        };
+    };
+",
+      {
+        "id": "someTaskId",
+        "nextToken": null,
+      },
+    ],
+    [
+      "
+    mutation UpdateTaskAssignee($input: UpdateTaskAssigneeInput!) {
+        updateTaskAssignee(input: $input) {
+            id
+            archived
+        };
+    };
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 1,
+          "id": "someAssignmentId",
+        },
+      },
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;

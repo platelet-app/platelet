@@ -143,7 +143,7 @@ const completedTabFilter = (assignment: models.TaskAssignee) => {
             models.TaskStatus.ABANDONED,
             models.TaskStatus.CANCELLED,
             models.TaskStatus.COMPLETED,
-        ].some((ts) => assignment.task.status === ts) &&
+        ].some((ts) => assignment.task?.status === ts) &&
         moment(assignment.task.createdAt).isAfter(moment().subtract(1, "week"))
     );
 };
@@ -156,7 +156,7 @@ const inProgressTabFilter = (assignment: models.TaskAssignee) => {
             models.TaskStatus.ACTIVE,
             models.TaskStatus.PICKED_UP,
             models.TaskStatus.DROPPED_OFF,
-        ].some((ts) => assignment.task.status === ts)
+        ].some((ts) => assignment.task?.status === ts)
     );
 };
 

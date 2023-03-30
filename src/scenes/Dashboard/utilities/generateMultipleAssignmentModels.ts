@@ -43,7 +43,7 @@ async function generateMultipleAssignmentModels(
     const filtered = result.filter((assignment) => {
         return !allAssignees.some((assignee) => {
             return (
-                assignment.task.id === assignee.task.id &&
+                assignment.task?.id === assignee.task?.id &&
                 assignment.assignee.id === assignee.assignee.id &&
                 assignment.role === assignee.role
             );
