@@ -25,16 +25,18 @@ const TaskHistoryTaskDialogRequesterContact: React.FC<
                         <Typography noWrap>{establishment.name}</Typography>
                     </TaskHistoryLabelItemPair>
                 )}
-                <TaskHistoryLabelItemPair label="Name">
-                    <Typography noWrap>
-                        {requesterContact.name || ""}
-                    </Typography>
-                </TaskHistoryLabelItemPair>
-                <TaskHistoryLabelItemPair label="Telephone">
-                    <Typography noWrap>
-                        {requesterContact.telephoneNumber || ""}
-                    </Typography>
-                </TaskHistoryLabelItemPair>
+                {requesterContact.name && (
+                    <TaskHistoryLabelItemPair label="Name">
+                        <Typography noWrap>{requesterContact.name}</Typography>
+                    </TaskHistoryLabelItemPair>
+                )}
+                {requesterContact.telephoneNumber && (
+                    <TaskHistoryLabelItemPair label="Telephone">
+                        <Typography noWrap>
+                            {requesterContact.telephoneNumber}
+                        </Typography>
+                    </TaskHistoryLabelItemPair>
+                )}
             </Stack>
         </Paper>
     );

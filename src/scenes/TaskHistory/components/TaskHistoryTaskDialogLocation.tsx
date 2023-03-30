@@ -110,7 +110,6 @@ const TaskHistoryTaskDialogLocation: React.FC<
                     {locationContent.map((item) => item)}
                     {contactContent.map((item) => item)}
                 </Stack>
-                <Divider />
             </Stack>
         </Paper>
     );
