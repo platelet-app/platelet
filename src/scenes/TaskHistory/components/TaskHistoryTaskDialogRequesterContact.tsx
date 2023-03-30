@@ -22,14 +22,16 @@ const TaskHistoryTaskDialogRequesterContact: React.FC<
                 <Divider />
                 {establishment && (
                     <TaskHistoryLabelItemPair label="Establishment">
-                        <Typography>{establishment.name}</Typography>
+                        <Typography noWrap>{establishment.name}</Typography>
                     </TaskHistoryLabelItemPair>
                 )}
                 <TaskHistoryLabelItemPair label="Name">
-                    <Typography>{requesterContact.name || ""}</Typography>
+                    <Typography noWrap>
+                        {requesterContact.name || ""}
+                    </Typography>
                 </TaskHistoryLabelItemPair>
                 <TaskHistoryLabelItemPair label="Telephone">
-                    <Typography>
+                    <Typography noWrap>
                         {requesterContact.telephoneNumber || ""}
                     </Typography>
                 </TaskHistoryLabelItemPair>

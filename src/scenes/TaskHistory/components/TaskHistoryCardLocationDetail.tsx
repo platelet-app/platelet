@@ -11,7 +11,6 @@ const TaskHistoryCardLocationDetail: React.FC<
     let addressString = "";
     if (location) {
         const items = [
-            location.name,
             location.ward,
             location.line1,
             location.town,

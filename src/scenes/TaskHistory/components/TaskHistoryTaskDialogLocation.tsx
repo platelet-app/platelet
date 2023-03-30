@@ -27,14 +27,9 @@ const contactFields = {
     telephoneNumber: "Telephone",
 };
 
-const hiddenFields = ["line2", "line3", "town", "county", "country"];
-
 const TaskHistoryTaskDialogLocation: React.FC<
     TaskHistoryTaskDialogLocationProps
 > = ({ location, title }) => {
-    const [hideHiddenFields, setHideHiddenFields] = React.useState(true);
-    const handleExpand = () => setHideHiddenFields(!hideHiddenFields);
-
     const presetName = location && location.name ? location.name : "";
     const locationLink =
         location && location.id ? `/location/${encodeUUID(location.id)}` : "";
@@ -75,7 +70,7 @@ const TaskHistoryTaskDialogLocation: React.FC<
         contactContent = Object.entries(contactFields).map(([key, value]) => {
             const data = location?.contact?.[key as keyof typeof contactFields];
             console.log(data);
-            if (data && !hideHiddenFields) {
+            if (data) {
                 return (
                     <TaskHistoryLabelItemPair key={key} label={value}>
                         <Typography>{data}</Typography>
@@ -88,22 +83,14 @@ const TaskHistoryTaskDialogLocation: React.FC<
 
     let locationContent: React.ReactNode[] = [];
     if (location) {
-        locationContent = Object.entries(fields).map(([key, value]) => {
-            if (
-                !location?.[key as keyof typeof fields] ||
-                (hideHiddenFields && hiddenFields.includes(key))
-            ) {
+        locationContent = Object.keys(fields).map((key) => {
+            if (!location?.[key as keyof typeof fields]) {
                 return <></>;
             }
             return (
-                <TaskHistoryLabelItemPair
-                    key={key}
-                    label={hideHiddenFields ? value : ""}
-                >
-                    <Typography>
-                        {location?.[key as keyof typeof fields]}
-                    </Typography>
-                </TaskHistoryLabelItemPair>
+                <Typography>
+                    {location?.[key as keyof typeof fields]}
+                </Typography>
             );
         });
     }
@@ -124,10 +111,6 @@ const TaskHistoryTaskDialogLocation: React.FC<
                     {contactContent.map((item) => item)}
                 </Stack>
                 <Divider />
-                <CollapsibleToggle
-                    value={hideHiddenFields}
-                    onClick={handleExpand}
-                />
             </Stack>
         </Paper>
     );

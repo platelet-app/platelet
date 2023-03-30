@@ -185,9 +185,6 @@ describe("TaskHistoryTaskDialog", () => {
         expect(screen.getByText("01234567800")).toBeInTheDocument();
         expect(screen.getByText("requester name")).toBeInTheDocument();
         expect(screen.getByText("establishment name")).toBeInTheDocument();
-        const expandButtons = screen.getAllByText("Expand to see more");
-        userEvent.click(expandButtons[0]);
-        userEvent.click(expandButtons[1]);
         expect(screen.getByText("pickup name")).toBeInTheDocument();
         expect(screen.getByText("pickup ward")).toBeInTheDocument();
         expect(screen.getByText("pickup line1")).toBeInTheDocument();
