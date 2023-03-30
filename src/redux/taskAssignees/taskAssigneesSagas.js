@@ -55,9 +55,11 @@ function* initializeTaskAssigneesObserver() {
     try {
         while (true) {
             const result = yield take(channel);
-            const filtered = result.items.filter((a) => a.task);
             // DataStore bug workaround for issue #9682 on github
-            const fixed = yield call(dataStoreNestedWorkAroundMapper, filtered);
+            const fixed = yield call(
+                dataStoreNestedWorkAroundMapper,
+                result.items
+            );
             yield put(
                 actions.setTaskAssignees({
                     ...result,
