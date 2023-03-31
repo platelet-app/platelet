@@ -1,5 +1,5 @@
 import { Button, Skeleton, Stack, Typography } from "@mui/material";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
 import React, { useEffect, useState } from "react";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { PaddedPaper } from "../../../styles/common";
@@ -51,9 +51,7 @@ function AdminAddRiderResponsibility() {
             if (checker && checker.length > 0) {
                 setIsPosting(false);
                 dispatch(
-                    displayErrorNotification(
-                        "This rider responsibility already exists"
-                    )
+                    displayErrorNotification("This rider role already exists")
                 );
                 return;
             }
@@ -68,7 +66,7 @@ function AdminAddRiderResponsibility() {
             setState(initialRiderResponsibilityState);
             setIsPosting(false);
         } catch (error) {
-            console.log("error adding rider responsibility:", error);
+            console.log("error adding rider role:", error);
             setIsPosting(false);
             dispatch(displayErrorNotification("Sorry, something went wrong"));
         }
@@ -100,9 +98,7 @@ function AdminAddRiderResponsibility() {
                     alignItems={"top"}
                     spacing={3}
                 >
-                    <Typography variant={"h5"}>
-                        Add a new rider responsibility
-                    </Typography>
+                    <Typography variant={"h5"}>Add a new rider role</Typography>
 
                     {Object.keys(fields).map((key) => {
                         return (
@@ -125,7 +121,7 @@ function AdminAddRiderResponsibility() {
                         disabled={!inputVerified || isPosting}
                         onClick={addRiderResponsibilityToStore}
                     >
-                        Add rider responsibility
+                        Add rider role
                     </Button>
                 </Stack>
             </PaddedPaper>
