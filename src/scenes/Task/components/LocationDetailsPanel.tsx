@@ -1,4 +1,5 @@
 import LocationDetailAndSelector from "./LocationDetailAndSelector";
+import { GraphQLQuery } from "@aws-amplify/api";
 import React, { useEffect, useRef, useState } from "react";
 import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
@@ -14,6 +15,7 @@ import * as mutations from "../../../graphql/mutations";
 import * as queries from "../../../graphql/queries";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
+import { GetTaskQuery } from "../../../API";
 
 export const protectedFields = [
     "id",
@@ -245,24 +247,28 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
                         })
                     );
                     if (process.env.REACT_APP_OFFLINE_ONLY !== "true") {
-                        const gqlClearResult = await API.graphql(
-                            graphqlOperation(queries.getTask, {
-                                id: taskId,
-                            })
-                        );
-                        // TODO: when merge old tasks pull request
-                        // get the type from there
-                        // @ts-ignore
-                        const { id, _version } = gqlClearResult.data.getTask;
-                        await API.graphql(
-                            graphqlOperation(mutations.updateTask, {
-                                input: {
-                                    id,
-                                    _version,
-                                    [`${locationKey}Id`]: null,
-                                },
-                            })
-                        );
+                        const variables = {
+                            id: taskId,
+                        };
+                        const gqlClearResult = await API.graphql<
+                            GraphQLQuery<GetTaskQuery>
+                        >({
+                            query: queries.getTask,
+                            variables,
+                        });
+                        const data = gqlClearResult.data?.getTask;
+                        if (data) {
+                            const { id, _version } = data;
+                            await API.graphql(
+                                graphqlOperation(mutations.updateTask, {
+                                    input: {
+                                        id,
+                                        _version,
+                                        [`${locationKey}Id`]: null,
+                                    },
+                                })
+                            );
+                        }
                     }
                 } else {
                     // clear the fields for an unlisted location before deleting it
@@ -289,23 +295,28 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
                             })
                         );
                         if (process.env.REACT_APP_OFFLINE_ONLY !== "true") {
-                            const gqlClearResult = await API.graphql(
-                                graphqlOperation(queries.getTask, {
-                                    id: taskId,
-                                })
-                            );
-                            const { id, _version } =
-                                // @ts-ignore
-                                gqlClearResult.data.getTask;
-                            await API.graphql(
-                                graphqlOperation(mutations.updateTask, {
-                                    input: {
-                                        id,
-                                        _version,
-                                        [`${locationKey}Id`]: null,
-                                    },
-                                })
-                            );
+                            const variables = {
+                                id: taskId,
+                            };
+                            const gqlClearResult = await API.graphql<
+                                GraphQLQuery<GetTaskQuery>
+                            >({
+                                query: queries.getTask,
+                                variables,
+                            });
+                            const data = gqlClearResult.data?.getTask;
+                            if (data) {
+                                const { id, _version } = data;
+                                await API.graphql(
+                                    graphqlOperation(mutations.updateTask, {
+                                        input: {
+                                            id,
+                                            _version,
+                                            [`${locationKey}Id`]: null,
+                                        },
+                                    })
+                                );
+                            }
                         }
                         DataStore.delete(currentLocation);
                     }
