@@ -653,6 +653,7 @@ export const getLocation = /* GraphQL */ `
       }
       disabled
       googleMapsPlaceId
+      archived
       createdAt
       updatedAt
       _version
@@ -686,6 +687,7 @@ export const listLocations = /* GraphQL */ `
         what3words
         disabled
         googleMapsPlaceId
+        archived
         createdAt
         updatedAt
         _version
@@ -728,6 +730,7 @@ export const syncLocations = /* GraphQL */ `
         what3words
         disabled
         googleMapsPlaceId
+        archived
         createdAt
         updatedAt
         _version
@@ -810,6 +813,7 @@ export const getTask = /* GraphQL */ `
         what3words
         disabled
         googleMapsPlaceId
+        archived
         createdAt
         updatedAt
         _version
@@ -834,6 +838,7 @@ export const getTask = /* GraphQL */ `
         what3words
         disabled
         googleMapsPlaceId
+        archived
         createdAt
         updatedAt
         _version
@@ -858,6 +863,7 @@ export const getTask = /* GraphQL */ `
         what3words
         disabled
         googleMapsPlaceId
+        archived
         createdAt
         updatedAt
         _version
@@ -881,6 +887,7 @@ export const getTask = /* GraphQL */ `
       }
       status
       isRiderUsingOwnVehicle
+      archived
       updatedAt
       _version
       _deleted
@@ -916,6 +923,7 @@ export const listTasks = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
+        archived
         updatedAt
         _version
         _deleted
@@ -960,6 +968,7 @@ export const syncTasks = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
+        archived
         updatedAt
         _version
         _deleted
@@ -1008,6 +1017,7 @@ export const listTasksByTenantId = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
+        archived
         updatedAt
         _version
         _deleted
@@ -1054,6 +1064,56 @@ export const tasksByStatus = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
+        archived
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedTasksId
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+export const tasksByArchivedStatus = /* GraphQL */ `
+  query TasksByArchivedStatus(
+    $archived: Int!
+    $status: ModelStringKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelTaskFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    tasksByArchivedStatus(
+      archived: $archived
+      status: $status
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        tenantId
+        createdAt
+        dateCreated
+        timeOfCall
+        timePickedUp
+        timePickedUpSenderName
+        timeDroppedOff
+        timeDroppedOffRecipientName
+        timeCancelled
+        timeRejected
+        timeRiderHome
+        pickUpLocationId
+        dropOffLocationId
+        establishmentLocationId
+        riderResponsibility
+        priority
+        status
+        isRiderUsingOwnVehicle
+        archived
         updatedAt
         _version
         _deleted
@@ -1091,6 +1151,7 @@ export const getTaskAssignee = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
+        archived
         updatedAt
         _version
         _deleted
@@ -1116,6 +1177,7 @@ export const getTaskAssignee = /* GraphQL */ `
         _deleted
         _lastChangedAt
       }
+      archived
       createdAt
       updatedAt
       _version
@@ -1137,6 +1199,7 @@ export const listTaskAssignees = /* GraphQL */ `
         id
         tenantId
         role
+        archived
         createdAt
         updatedAt
         _version
@@ -1167,6 +1230,7 @@ export const syncTaskAssignees = /* GraphQL */ `
         id
         tenantId
         role
+        archived
         createdAt
         updatedAt
         _version
@@ -1207,6 +1271,7 @@ export const getComment = /* GraphQL */ `
         _lastChangedAt
       }
       visibility
+      archived
       createdAt
       updatedAt
       _version
@@ -1230,6 +1295,7 @@ export const listComments = /* GraphQL */ `
         tenantId
         body
         visibility
+        archived
         createdAt
         updatedAt
         _version
@@ -1262,6 +1328,7 @@ export const syncComments = /* GraphQL */ `
         tenantId
         body
         visibility
+        archived
         createdAt
         updatedAt
         _version
@@ -1398,6 +1465,7 @@ export const getDeliverable = /* GraphQL */ `
         priority
         status
         isRiderUsingOwnVehicle
+        archived
         updatedAt
         _version
         _deleted
@@ -1411,6 +1479,7 @@ export const getDeliverable = /* GraphQL */ `
         nextToken
         startedAt
       }
+      archived
       createdAt
       updatedAt
       _version
@@ -1434,6 +1503,7 @@ export const listDeliverables = /* GraphQL */ `
         count
         unit
         orderInGrid
+        archived
         createdAt
         updatedAt
         _version
@@ -1466,6 +1536,7 @@ export const syncDeliverables = /* GraphQL */ `
         count
         unit
         orderInGrid
+        archived
         createdAt
         updatedAt
         _version
@@ -1557,21 +1628,6 @@ export const syncRiderResponsibilities = /* GraphQL */ `
 export const profilePictureUploadURL = /* GraphQL */ `
   query ProfilePictureUploadURL($userId: ID!) {
     profilePictureUploadURL(userId: $userId)
-  }
-`;
-export const getStatistics = /* GraphQL */ `
-  query GetStatistics($tenantId: ID!) {
-    getStatistics(tenantId: $tenantId) {
-      numCancelled
-      numCompleted
-      numDroppedOff
-      numRejected
-      numAbandoned
-      numActive
-      numPickedUp
-      numNew
-      numTest
-    }
   }
 `;
 export const sendUserFeedback = /* GraphQL */ `
