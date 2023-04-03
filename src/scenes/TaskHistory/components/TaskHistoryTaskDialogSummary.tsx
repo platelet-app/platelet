@@ -1,5 +1,5 @@
 import { Task } from "../../../API";
-import { Chip, Paper, Stack, Typography } from "@mui/material";
+import { Paper, Stack, Typography } from "@mui/material";
 import TaskHistoryLabelItemPair from "./TaskHistoryLabelItemPair";
 import Moment from "react-moment";
 

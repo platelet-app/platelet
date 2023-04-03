@@ -1,7 +1,6 @@
 import { Divider, Paper, Stack, Tooltip, Typography } from "@mui/material";
 import React from "react";
 import { Location } from "../../../API";
-import CollapsibleToggle from "../../../components/CollapsibleToggle";
 import { ThemedLink } from "../../../styles/common";
 import { encodeUUID } from "../../../utilities";
 import TaskHistoryLabelItemPair from "./TaskHistoryLabelItemPair";
