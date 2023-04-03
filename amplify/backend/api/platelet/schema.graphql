@@ -147,7 +147,8 @@ type Task
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId", queryField: "listTasksByTenantId", sortKeyFields: ["createdAt"])
+  createdAt: String @auth(rules: [{allow: private, operations: [read]}])
   createdBy: User @belongsTo
   dateCreated: AWSDate!
   timeOfCall: AWSDateTime

@@ -10,7 +10,6 @@ import { Divider, Stack, Tooltip, Typography } from "@mui/material";
 import { makeStyles } from "tss-react/mui";
 import { StyledCard } from "../../../styles/common";
 import Badge from "@mui/material/Badge";
-import MessageIcon from "@mui/icons-material/Message";
 import CommentsBadge from "../../../components/CommentsBadge";
 
 const colourBarPercent = "90%";

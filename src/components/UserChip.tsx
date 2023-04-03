@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Avatar, Chip } from "@mui/material";
 import { generateS3Link } from "../amplifyUtilities";
 import * as models from "../models";
+import { User } from "../API";
 
 type UserChipProps = {
-    user: models.User;
+    user: models.User | User;
     onClick?: () => void;
     onDelete?: () => void;
     variant?: "filled" | "outlined" | undefined;
@@ -18,6 +19,7 @@ type UserChipProps = {
         | undefined;
     showResponsibility?: boolean;
     disabled?: boolean;
+    size?: "small" | "medium";
 };
 
 const UserChip: React.FC<UserChipProps> = (props) => {
@@ -63,6 +65,7 @@ const UserChip: React.FC<UserChipProps> = (props) => {
     if (thumbnail) {
         return (
             <Chip
+                size={props.size}
                 onClick={props.onClick}
                 variant={props.variant}
                 disabled={props.disabled}
@@ -75,6 +78,7 @@ const UserChip: React.FC<UserChipProps> = (props) => {
     } else {
         return (
             <Chip
+                size={props.size}
                 onDelete={props.onDelete}
                 variant={props.variant}
                 disabled={props.disabled}

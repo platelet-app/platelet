@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { showHide } from "../../../styles/common";
 import TaskItem from "./TaskItem";
-import DateStampDivider from "./TimeStampDivider";
+import DateStampDivider from "../../../components/DateStampDivider";
 import { makeStyles } from "tss-react/mui";
 
 const useStyles = makeStyles()({
@@ -82,7 +82,10 @@ function TaskGridTasksList(props) {
                                 sx={{ width: "100%" }}
                             >
                                 {displayDate && (
-                                    <DateStampDivider date={lastTime} />
+                                    <DateStampDivider
+                                        calendar
+                                        date={lastTime}
+                                    />
                                 )}
                             </Box>
                             <TaskItem

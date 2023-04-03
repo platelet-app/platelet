@@ -1027,6 +1027,13 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdBy": {
                     "name": "createdBy",
                     "isArray": false,
@@ -1232,14 +1239,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
                 "updatedAt": {
                     "name": "updatedAt",
                     "isArray": false,
@@ -1260,8 +1259,10 @@ export const schema = {
                     "type": "key",
                     "properties": {
                         "name": "byTenantId",
+                        "queryField": "listTasksByTenantId",
                         "fields": [
-                            "tenantId"
+                            "tenantId",
+                            "createdAt"
                         ]
                     }
                 },
@@ -2297,5 +2298,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.0",
-    "version": "277600d8d1c147821bdd715169c5c631"
+    "version": "ea735c89c2c9ccf51b6873fe55322390"
 };

@@ -167,7 +167,7 @@ type LocationMetaData = {
 }
 
 type TaskMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
+  readOnlyFields: 'updatedAt';
 }
 
 type TaskAssigneeMetaData = {
@@ -425,6 +425,7 @@ export declare const Location: (new (init: ModelInit<Location, LocationMetaData>
 type EagerTask = {
   readonly id: string;
   readonly tenantId: string;
+  readonly createdAt?: string | null;
   readonly createdBy?: User | null;
   readonly dateCreated: string;
   readonly timeOfCall?: string | null;
@@ -447,13 +448,13 @@ type EagerTask = {
   readonly status?: TaskStatus | keyof typeof TaskStatus | null;
   readonly isRiderUsingOwnVehicle?: number | null;
   readonly archived?: number | null;
-  readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
 
 type LazyTask = {
   readonly id: string;
   readonly tenantId: string;
+  readonly createdAt?: string | null;
   readonly createdBy: AsyncItem<User | undefined>;
   readonly dateCreated: string;
   readonly timeOfCall?: string | null;
@@ -476,7 +477,6 @@ type LazyTask = {
   readonly status?: TaskStatus | keyof typeof TaskStatus | null;
   readonly isRiderUsingOwnVehicle?: number | null;
   readonly archived?: number | null;
-  readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
 
