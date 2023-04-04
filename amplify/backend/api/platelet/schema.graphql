@@ -54,7 +54,7 @@ type PossibleRiderResponsibilities
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read]}])
   user: User! @belongsTo
   riderResponsibility: RiderResponsibility! @belongsTo
 }
@@ -72,7 +72,7 @@ type Vehicle
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read]}])
   createdBy: User @belongsTo
   name: String
   manufacturer: String
@@ -81,7 +81,7 @@ type Vehicle
   dateOfRegistration: AWSDate
   assignments: [VehicleAssignment] @hasMany
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
-  disabled: Int @default(value: "0")
+  disabled: Int @default(value: "0") 
 }
 
 type VehicleAssignment
@@ -91,7 +91,7 @@ type VehicleAssignment
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read]}])
   vehicle: Vehicle! @belongsTo
   assignee: User! @belongsTo
 }
@@ -120,7 +120,7 @@ type Location
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read]}])
   createdBy: User @belongsTo
   name: String
   listed: Int
@@ -141,7 +141,7 @@ type Location
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
   disabled: Int @default(value: "0")
   googleMapsPlaceId: String
-  archived: Int @default(value: "0") @index(name: "byArchived")
+  archived: Int @default(value: "0") @index(name: "byArchived") @auth(rules: [{allow: private, operations: [read]}])
 }
 
 type Task
@@ -151,7 +151,7 @@ type Task
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId", queryField: "listTasksByTenantId", sortKeyFields: ["createdAt"])
+  tenantId: ID! @index(name: "byTenantId", queryField: "listTasksByTenantId", sortKeyFields: ["createdAt"]) @auth(rules: [{allow: private, operations: [read]}])
   createdAt: String @auth(rules: [{allow: private, operations: [read]}])
   createdBy: User @belongsTo
   dateCreated: AWSDate!
@@ -221,7 +221,7 @@ timePickedUpSenderName: String
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
   status: TaskStatus @index(name: "byStatus", queryField: "tasksByStatus")
   isRiderUsingOwnVehicle: Int @default(value: "0")
-  archived: Int @default(value: "0") @index(name: "byArchivedStatus", queryField: "tasksByArchivedStatus", sortKeyFields: ["status"])
+  archived: Int @default(value: "0") @index(name: "byArchivedStatus", queryField: "tasksByArchivedStatus", sortKeyFields: ["status"]) @auth(rules: [{allow: private, operations: [read]}])
 }
 
 type TaskAssignee
@@ -231,11 +231,11 @@ type TaskAssignee
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read]}])
   role: Role!
   task: Task! @belongsTo
   assignee: User! @belongsTo
-  archived: Int @default(value: "0") @index(name: "byArchived")
+  archived: Int @default(value: "0") @index(name: "byArchived") @auth(rules: [{allow: private, operations: [read]}])
 }
 
 type Comment
@@ -247,11 +247,11 @@ type Comment
 @model {
   id: ID!
   parentId: ID @index(name: "byParent")
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read]}])
   body: String
   author: User @belongsTo
   visibility: CommentVisibility
-  archived: Int @default(value: "0") @index(name: "byArchived")
+  archived: Int @default(value: "0") @index(name: "byArchived") @auth(rules: [{allow: private, operations: [read]}])
 }
 
 type DeliverableType
@@ -262,7 +262,7 @@ type DeliverableType
 @model {
   id: ID!
   label: String!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read]}])
   icon: DeliverableTypeIcon
   defaultUnit: DeliverableUnit
   deliverables: [Deliverable] @hasMany
@@ -277,14 +277,14 @@ type Deliverable
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read]}])
   deliverableType: DeliverableType @belongsTo
   task: Task @belongsTo
   count: Int
   unit: DeliverableUnit
   orderInGrid: Int
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
-  archived: Int @default(value: "0") @index(name: "byArchived")
+  archived: Int @default(value: "0") @index(name: "byArchived") @auth(rules: [{allow: private, operations: [read]}])
 }
 
 enum DeliverableTypeIcon {
@@ -302,7 +302,7 @@ type RiderResponsibility
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read]}])
   label: String!
   disabled: Int @default(value: "0")
   possibleUsers: [PossibleRiderResponsibilities] @hasMany
