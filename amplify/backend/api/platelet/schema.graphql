@@ -16,31 +16,35 @@ type User
   {allow: groups, groups: ["ADMIN"], operations: [update]},
 ])
 @model {
-  id: ID!
-  username: String!
-  cognitoId: ID! @index(name: "byCognitoId", queryField: "getUserByCognitoId") @auth(rules: [{allow: private, operations: [read]}])
-  tenantId: ID! @index(name: "byTenantId")
-  isPrimaryAdmin: Int @default(value: "0")
-  contact: AddressAndContactDetails
-  displayName: String!
-  name: String
-  roles: [Role!]!
-  dateOfBirth: AWSDate
-  riderResponsibility: String @auth(rules: [
+  id: ID! @auth(rules: [
     {allow: private, operations: [read]},
     {allow: owner, ownerField: "cognitoId", operations: [update]},
     {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [update]},
   ])
+  username: String! @auth(rules: [{allow: private, operations: [read]}])
+  cognitoId: ID! @index(name: "byCognitoId", queryField: "getUserByCognitoId") @auth(rules: [{allow: private, operations: [read]}])
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read]}])
+  isPrimaryAdmin: Int @default(value: "0") @auth(rules: [{allow: private, operations: [read]}])
+  contact: AddressAndContactDetails
+  displayName: String!
+  name: String
+  roles: [Role!]! @auth(rules: [{allow: private, operations: [read]}])
+  dateOfBirth: AWSDate
+  riderResponsibility: String @auth(rules: [
+    {allow: private, operations: [read]},
+    {allow: owner, ownerField: "cognitoId", operations: [update, delete]},
+    {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [update, delete]},
+  ])
   possibleRiderResponsibilities: [PossibleRiderResponsibilities] @hasMany
   profilePictureURL(width: Int, height: Int): AWSURL @function(name: "plateletProfilePictureResolver-${env}") @auth(rules: [{allow: private, operations: [read]}])
-  profilePicture: S3Object
+  profilePicture: S3Object @auth(rules: [{allow: private, operations: [read]}])
   comments: [Comment] @hasMany
   assignments: [TaskAssignee] @hasMany
   vehicleAssignments: [VehicleAssignment] @hasMany
   createdTasks: [Task] @hasMany
   createdLocations: [Location] @hasMany
   createdVehicles: [Vehicle] @hasMany
-  disabled: Int @default(value: "0")
+  disabled: Int @default(value: "0") @auth(rules: [{allow: private, operations: [read]}])
 }
 
 type PossibleRiderResponsibilities
