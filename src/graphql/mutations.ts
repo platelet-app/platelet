@@ -1713,6 +1713,7 @@ export const createComment = /* GraphQL */ `
   ) {
     createComment(input: $input, condition: $condition) {
       id
+      owner
       parentId
       tenantId
       body
@@ -1743,7 +1744,6 @@ export const createComment = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCommentsId
-      owner
     }
   }
 `;
@@ -1754,6 +1754,7 @@ export const updateComment = /* GraphQL */ `
   ) {
     updateComment(input: $input, condition: $condition) {
       id
+      owner
       parentId
       tenantId
       body
@@ -1784,7 +1785,6 @@ export const updateComment = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCommentsId
-      owner
     }
   }
 `;
@@ -1795,6 +1795,7 @@ export const deleteComment = /* GraphQL */ `
   ) {
     deleteComment(input: $input, condition: $condition) {
       id
+      owner
       parentId
       tenantId
       body
@@ -1825,7 +1826,6 @@ export const deleteComment = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCommentsId
-      owner
     }
   }
 `;

@@ -1248,6 +1248,7 @@ export const getComment = /* GraphQL */ `
   query GetComment($id: ID!) {
     getComment(id: $id) {
       id
+      owner
       parentId
       tenantId
       body
@@ -1278,7 +1279,6 @@ export const getComment = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCommentsId
-      owner
     }
   }
 `;
@@ -1291,6 +1291,7 @@ export const listComments = /* GraphQL */ `
     listComments(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
+        owner
         parentId
         tenantId
         body
@@ -1302,7 +1303,6 @@ export const listComments = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCommentsId
-        owner
       }
       nextToken
       startedAt
@@ -1324,6 +1324,7 @@ export const syncComments = /* GraphQL */ `
     ) {
       items {
         id
+        owner
         parentId
         tenantId
         body
@@ -1335,7 +1336,6 @@ export const syncComments = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCommentsId
-        owner
       }
       nextToken
       startedAt

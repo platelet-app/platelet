@@ -1485,6 +1485,13 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "owner": {
+                    "name": "owner",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "parentId": {
                     "name": "parentId",
                     "isArray": false,
@@ -2298,5 +2305,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.0",
-    "version": "ea735c89c2c9ccf51b6873fe55322390"
+    "version": "25cd75e1bf43c183a39aad9ef5d9e1b2"
 };

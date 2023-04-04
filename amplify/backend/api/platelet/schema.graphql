@@ -247,6 +247,7 @@ type Comment
 @model {
   id: ID!
   parentId: ID @index(name: "byParent")
+  owner: String @auth(rules: [{ allow: owner, operations: [read, delete] }])
   tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read]}])
   body: String
   author: User @belongsTo

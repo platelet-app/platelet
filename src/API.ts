@@ -198,6 +198,7 @@ export type ModelCommentConnection = {
 export type Comment = {
   __typename: "Comment",
   id: string,
+  owner?: string | null,
   parentId?: string | null,
   tenantId: string,
   body?: string | null,
@@ -210,7 +211,6 @@ export type Comment = {
   _deleted?: boolean | null,
   _lastChangedAt: number,
   userCommentsId?: string | null,
-  owner?: string | null,
 };
 
 export enum CommentVisibility {
@@ -880,6 +880,7 @@ export type DeleteTaskAssigneeInput = {
 
 export type CreateCommentInput = {
   id?: string | null,
+  owner?: string | null,
   parentId?: string | null,
   tenantId: string,
   body?: string | null,
@@ -890,6 +891,7 @@ export type CreateCommentInput = {
 };
 
 export type ModelCommentConditionInput = {
+  owner?: ModelStringInput | null,
   parentId?: ModelIDInput | null,
   tenantId?: ModelIDInput | null,
   body?: ModelStringInput | null,
@@ -908,6 +910,7 @@ export type ModelCommentVisibilityInput = {
 
 export type UpdateCommentInput = {
   id: string,
+  owner?: string | null,
   parentId?: string | null,
   tenantId?: string | null,
   body?: string | null,
@@ -1201,6 +1204,7 @@ export type ModelTaskAssigneeFilterInput = {
 
 export type ModelCommentFilterInput = {
   id?: ModelIDInput | null,
+  owner?: ModelStringInput | null,
   parentId?: ModelIDInput | null,
   tenantId?: ModelIDInput | null,
   body?: ModelStringInput | null,
@@ -3320,6 +3324,7 @@ export type CreateCommentMutation = {
   createComment?:  {
     __typename: "Comment",
     id: string,
+    owner?: string | null,
     parentId?: string | null,
     tenantId: string,
     body?: string | null,
@@ -3351,7 +3356,6 @@ export type CreateCommentMutation = {
     _deleted?: boolean | null,
     _lastChangedAt: number,
     userCommentsId?: string | null,
-    owner?: string | null,
   } | null,
 };
 
@@ -3364,6 +3368,7 @@ export type UpdateCommentMutation = {
   updateComment?:  {
     __typename: "Comment",
     id: string,
+    owner?: string | null,
     parentId?: string | null,
     tenantId: string,
     body?: string | null,
@@ -3395,7 +3400,6 @@ export type UpdateCommentMutation = {
     _deleted?: boolean | null,
     _lastChangedAt: number,
     userCommentsId?: string | null,
-    owner?: string | null,
   } | null,
 };
 
@@ -3408,6 +3412,7 @@ export type DeleteCommentMutation = {
   deleteComment?:  {
     __typename: "Comment",
     id: string,
+    owner?: string | null,
     parentId?: string | null,
     tenantId: string,
     body?: string | null,
@@ -3439,7 +3444,6 @@ export type DeleteCommentMutation = {
     _deleted?: boolean | null,
     _lastChangedAt: number,
     userCommentsId?: string | null,
-    owner?: string | null,
   } | null,
 };
 
@@ -5334,6 +5338,7 @@ export type GetCommentQuery = {
   getComment?:  {
     __typename: "Comment",
     id: string,
+    owner?: string | null,
     parentId?: string | null,
     tenantId: string,
     body?: string | null,
@@ -5365,7 +5370,6 @@ export type GetCommentQuery = {
     _deleted?: boolean | null,
     _lastChangedAt: number,
     userCommentsId?: string | null,
-    owner?: string | null,
   } | null,
 };
 
@@ -5381,6 +5385,7 @@ export type ListCommentsQuery = {
     items:  Array< {
       __typename: "Comment",
       id: string,
+      owner?: string | null,
       parentId?: string | null,
       tenantId: string,
       body?: string | null,
@@ -5392,7 +5397,6 @@ export type ListCommentsQuery = {
       _deleted?: boolean | null,
       _lastChangedAt: number,
       userCommentsId?: string | null,
-      owner?: string | null,
     } | null >,
     nextToken?: string | null,
     startedAt?: number | null,
@@ -5412,6 +5416,7 @@ export type SyncCommentsQuery = {
     items:  Array< {
       __typename: "Comment",
       id: string,
+      owner?: string | null,
       parentId?: string | null,
       tenantId: string,
       body?: string | null,
@@ -5423,7 +5428,6 @@ export type SyncCommentsQuery = {
       _deleted?: boolean | null,
       _lastChangedAt: number,
       userCommentsId?: string | null,
-      owner?: string | null,
     } | null >,
     nextToken?: string | null,
     startedAt?: number | null,
@@ -7581,6 +7585,7 @@ export type OnCreateCommentSubscription = {
   onCreateComment?:  {
     __typename: "Comment",
     id: string,
+    owner?: string | null,
     parentId?: string | null,
     tenantId: string,
     body?: string | null,
@@ -7612,7 +7617,6 @@ export type OnCreateCommentSubscription = {
     _deleted?: boolean | null,
     _lastChangedAt: number,
     userCommentsId?: string | null,
-    owner?: string | null,
   } | null,
 };
 
@@ -7625,6 +7629,7 @@ export type OnUpdateCommentSubscription = {
   onUpdateComment?:  {
     __typename: "Comment",
     id: string,
+    owner?: string | null,
     parentId?: string | null,
     tenantId: string,
     body?: string | null,
@@ -7656,7 +7661,6 @@ export type OnUpdateCommentSubscription = {
     _deleted?: boolean | null,
     _lastChangedAt: number,
     userCommentsId?: string | null,
-    owner?: string | null,
   } | null,
 };
 
@@ -7669,6 +7673,7 @@ export type OnDeleteCommentSubscription = {
   onDeleteComment?:  {
     __typename: "Comment",
     id: string,
+    owner?: string | null,
     parentId?: string | null,
     tenantId: string,
     body?: string | null,
@@ -7700,7 +7705,6 @@ export type OnDeleteCommentSubscription = {
     _deleted?: boolean | null,
     _lastChangedAt: number,
     userCommentsId?: string | null,
-    owner?: string | null,
   } | null,
 };
 
