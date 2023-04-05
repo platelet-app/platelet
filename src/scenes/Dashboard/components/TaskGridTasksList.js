@@ -58,7 +58,7 @@ function TaskGridTasksList(props) {
                         timeComparison &&
                         (filteredTasksIdsList.length === 0 ||
                             filteredTasksIdsList.includes(task.id)) &&
-                        timeComparison.getDate() <= lastTime.getDate() - 1
+                        timeComparison.getDate() !== lastTime.getDate()
                     ) {
                         lastTime = timeComparison;
                         displayDate = true;
