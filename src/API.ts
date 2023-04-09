@@ -198,8 +198,8 @@ export type ModelCommentConnection = {
 export type Comment = {
   __typename: "Comment",
   id: string,
-  owner?: string | null,
   parentId?: string | null,
+  owner?: string | null,
   tenantId: string,
   body?: string | null,
   author?: User | null,
@@ -880,8 +880,8 @@ export type DeleteTaskAssigneeInput = {
 
 export type CreateCommentInput = {
   id?: string | null,
-  owner?: string | null,
   parentId?: string | null,
+  owner?: string | null,
   tenantId: string,
   body?: string | null,
   visibility?: CommentVisibility | null,
@@ -891,8 +891,8 @@ export type CreateCommentInput = {
 };
 
 export type ModelCommentConditionInput = {
-  owner?: ModelStringInput | null,
   parentId?: ModelIDInput | null,
+  owner?: ModelStringInput | null,
   tenantId?: ModelIDInput | null,
   body?: ModelStringInput | null,
   visibility?: ModelCommentVisibilityInput | null,
@@ -910,8 +910,8 @@ export type ModelCommentVisibilityInput = {
 
 export type UpdateCommentInput = {
   id: string,
-  owner?: string | null,
   parentId?: string | null,
+  owner?: string | null,
   tenantId?: string | null,
   body?: string | null,
   visibility?: CommentVisibility | null,
@@ -1204,8 +1204,8 @@ export type ModelTaskAssigneeFilterInput = {
 
 export type ModelCommentFilterInput = {
   id?: ModelIDInput | null,
-  owner?: ModelStringInput | null,
   parentId?: ModelIDInput | null,
+  owner?: ModelStringInput | null,
   tenantId?: ModelIDInput | null,
   body?: ModelStringInput | null,
   visibility?: ModelCommentVisibilityInput | null,
@@ -3324,8 +3324,8 @@ export type CreateCommentMutation = {
   createComment?:  {
     __typename: "Comment",
     id: string,
-    owner?: string | null,
     parentId?: string | null,
+    owner?: string | null,
     tenantId: string,
     body?: string | null,
     author?:  {
@@ -3368,8 +3368,8 @@ export type UpdateCommentMutation = {
   updateComment?:  {
     __typename: "Comment",
     id: string,
-    owner?: string | null,
     parentId?: string | null,
+    owner?: string | null,
     tenantId: string,
     body?: string | null,
     author?:  {
@@ -3412,8 +3412,8 @@ export type DeleteCommentMutation = {
   deleteComment?:  {
     __typename: "Comment",
     id: string,
-    owner?: string | null,
     parentId?: string | null,
+    owner?: string | null,
     tenantId: string,
     body?: string | null,
     author?:  {
@@ -5338,8 +5338,8 @@ export type GetCommentQuery = {
   getComment?:  {
     __typename: "Comment",
     id: string,
-    owner?: string | null,
     parentId?: string | null,
+    owner?: string | null,
     tenantId: string,
     body?: string | null,
     author?:  {
@@ -5385,8 +5385,8 @@ export type ListCommentsQuery = {
     items:  Array< {
       __typename: "Comment",
       id: string,
-      owner?: string | null,
       parentId?: string | null,
+      owner?: string | null,
       tenantId: string,
       body?: string | null,
       visibility?: CommentVisibility | null,
@@ -5416,8 +5416,8 @@ export type SyncCommentsQuery = {
     items:  Array< {
       __typename: "Comment",
       id: string,
-      owner?: string | null,
       parentId?: string | null,
+      owner?: string | null,
       tenantId: string,
       body?: string | null,
       visibility?: CommentVisibility | null,
@@ -7585,8 +7585,8 @@ export type OnCreateCommentSubscription = {
   onCreateComment?:  {
     __typename: "Comment",
     id: string,
-    owner?: string | null,
     parentId?: string | null,
+    owner?: string | null,
     tenantId: string,
     body?: string | null,
     author?:  {
@@ -7629,8 +7629,8 @@ export type OnUpdateCommentSubscription = {
   onUpdateComment?:  {
     __typename: "Comment",
     id: string,
-    owner?: string | null,
     parentId?: string | null,
+    owner?: string | null,
     tenantId: string,
     body?: string | null,
     author?:  {
@@ -7673,8 +7673,8 @@ export type OnDeleteCommentSubscription = {
   onDeleteComment?:  {
     __typename: "Comment",
     id: string,
-    owner?: string | null,
     parentId?: string | null,
+    owner?: string | null,
     tenantId: string,
     body?: string | null,
     author?:  {

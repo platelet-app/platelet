@@ -1248,8 +1248,8 @@ export const getComment = /* GraphQL */ `
   query GetComment($id: ID!) {
     getComment(id: $id) {
       id
-      owner
       parentId
+      owner
       tenantId
       body
       author {
@@ -1291,8 +1291,8 @@ export const listComments = /* GraphQL */ `
     listComments(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        owner
         parentId
+        owner
         tenantId
         body
         visibility
@@ -1324,8 +1324,8 @@ export const syncComments = /* GraphQL */ `
     ) {
       items {
         id
-        owner
         parentId
+        owner
         tenantId
         body
         visibility

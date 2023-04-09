@@ -1713,8 +1713,8 @@ export const createComment = /* GraphQL */ `
   ) {
     createComment(input: $input, condition: $condition) {
       id
-      owner
       parentId
+      owner
       tenantId
       body
       author {
@@ -1754,8 +1754,8 @@ export const updateComment = /* GraphQL */ `
   ) {
     updateComment(input: $input, condition: $condition) {
       id
-      owner
       parentId
+      owner
       tenantId
       body
       author {
@@ -1795,8 +1795,8 @@ export const deleteComment = /* GraphQL */ `
   ) {
     deleteComment(input: $input, condition: $condition) {
       id
-      owner
       parentId
+      owner
       tenantId
       body
       author {

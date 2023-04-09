@@ -516,8 +516,8 @@ export declare const TaskAssignee: (new (init: ModelInit<TaskAssignee, TaskAssig
 
 type EagerComment = {
   readonly id: string;
-  readonly owner?: string | null;
   readonly parentId?: string | null;
+  readonly owner?: string | null;
   readonly tenantId: string;
   readonly body?: string | null;
   readonly author?: User | null;
@@ -529,8 +529,8 @@ type EagerComment = {
 
 type LazyComment = {
   readonly id: string;
-  readonly owner?: string | null;
   readonly parentId?: string | null;
+  readonly owner?: string | null;
   readonly tenantId: string;
   readonly body?: string | null;
   readonly author: AsyncItem<User | undefined>;
