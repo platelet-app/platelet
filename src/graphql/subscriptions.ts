@@ -105,8 +105,11 @@ export const onDeleteTenant = /* GraphQL */ `
   }
 `;
 export const onCreateUser = /* GraphQL */ `
-  subscription OnCreateUser($filter: ModelSubscriptionUserFilterInput) {
-    onCreateUser(filter: $filter) {
+  subscription OnCreateUser(
+    $filter: ModelSubscriptionUserFilterInput
+    $cognitoId: String
+  ) {
+    onCreateUser(filter: $filter, cognitoId: $cognitoId) {
       id
       username
       cognitoId
@@ -177,8 +180,11 @@ export const onCreateUser = /* GraphQL */ `
   }
 `;
 export const onUpdateUser = /* GraphQL */ `
-  subscription OnUpdateUser($filter: ModelSubscriptionUserFilterInput) {
-    onUpdateUser(filter: $filter) {
+  subscription OnUpdateUser(
+    $filter: ModelSubscriptionUserFilterInput
+    $cognitoId: String
+  ) {
+    onUpdateUser(filter: $filter, cognitoId: $cognitoId) {
       id
       username
       cognitoId
@@ -249,8 +255,11 @@ export const onUpdateUser = /* GraphQL */ `
   }
 `;
 export const onDeleteUser = /* GraphQL */ `
-  subscription OnDeleteUser($filter: ModelSubscriptionUserFilterInput) {
-    onDeleteUser(filter: $filter) {
+  subscription OnDeleteUser(
+    $filter: ModelSubscriptionUserFilterInput
+    $cognitoId: String
+  ) {
+    onDeleteUser(filter: $filter, cognitoId: $cognitoId) {
       id
       username
       cognitoId

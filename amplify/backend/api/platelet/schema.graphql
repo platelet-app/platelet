@@ -12,14 +12,14 @@ type Tenant
 type User
 @auth(rules: [
   {allow: private, operations: [read]},
-  {allow: owner, ownerField: "cognitoId", operations: [update]},
-  {allow: groups, groups: ["ADMIN"], operations: [update]},
+  {allow: owner, ownerField: "cognitoId", operations: [read, update]},
+  {allow: groups, groups: ["ADMIN"], operations: [read, update]},
 ])
 @model {
   id: ID! @auth(rules: [
     {allow: private, operations: [read]},
-    {allow: owner, ownerField: "cognitoId", operations: [update]},
-    {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [update]},
+    {allow: owner, ownerField: "cognitoId", operations: [read, update]},
+    {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [read, update]},
   ])
   username: String! @auth(rules: [{allow: private, operations: [read]}])
   cognitoId: ID! @index(name: "byCognitoId", queryField: "getUserByCognitoId") @auth(rules: [{allow: private, operations: [read]}])
@@ -32,12 +32,12 @@ type User
   dateOfBirth: AWSDate
   riderResponsibility: String @auth(rules: [
     {allow: private, operations: [read]},
-    {allow: owner, ownerField: "cognitoId", operations: [update, delete]},
-    {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [update, delete]},
+    {allow: owner, ownerField: "cognitoId", operations: [read, update, delete]},
+    {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [read, update, delete]},
   ])
   possibleRiderResponsibilities: [PossibleRiderResponsibilities] @hasMany
   profilePictureURL(width: Int, height: Int): AWSURL @function(name: "plateletProfilePictureResolver-${env}") @auth(rules: [{allow: private, operations: [read]}])
-  profilePicture: S3Object @auth(rules: [{allow: private, operations: [read]}])
+  profilePicture: S3Object
   comments: [Comment] @hasMany
   assignments: [TaskAssignee] @hasMany
   vehicleAssignments: [VehicleAssignment] @hasMany

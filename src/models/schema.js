@@ -348,6 +348,7 @@ export const schema = {
                                 "ownerField": "cognitoId",
                                 "allow": "owner",
                                 "operations": [
+                                    "read",
                                     "update"
                                 ],
                                 "identityClaim": "cognito:username"
@@ -360,6 +361,7 @@ export const schema = {
                                     "ADMIN"
                                 ],
                                 "operations": [
+                                    "read",
                                     "update"
                                 ]
                             }

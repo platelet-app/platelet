@@ -5868,6 +5868,7 @@ export type OnDeleteTenantSubscription = {
 
 export type OnCreateUserSubscriptionVariables = {
   filter?: ModelSubscriptionUserFilterInput | null,
+  cognitoId?: string | null,
 };
 
 export type OnCreateUserSubscription = {
@@ -5953,6 +5954,7 @@ export type OnCreateUserSubscription = {
 
 export type OnUpdateUserSubscriptionVariables = {
   filter?: ModelSubscriptionUserFilterInput | null,
+  cognitoId?: string | null,
 };
 
 export type OnUpdateUserSubscription = {
@@ -6038,6 +6040,7 @@ export type OnUpdateUserSubscription = {
 
 export type OnDeleteUserSubscriptionVariables = {
   filter?: ModelSubscriptionUserFilterInput | null,
+  cognitoId?: string | null,
 };
 
 export type OnDeleteUserSubscription = {
