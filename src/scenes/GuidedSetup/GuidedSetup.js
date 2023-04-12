@@ -358,6 +358,7 @@ export const GuidedSetup = () => {
                             className={classes.tabButton}
                         />
                         <Tab
+                            data-testid="guided-setup-notes-tab"
                             icon={<NotesIcon className={classes.btnIcon} />}
                             label={
                                 <div>

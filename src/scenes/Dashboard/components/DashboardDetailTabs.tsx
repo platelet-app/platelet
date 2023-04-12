@@ -51,6 +51,7 @@ const DashboardDetailTabs: React.FC<DashboardDetailTabsProps> = ({
         <Stack sx={{ padding: 0.5 }} spacing={isSm ? 1 : 2} direction="row">
             <Chip
                 key="dashboard-tab-0"
+                data-testid="dashboard-tab-inprogress"
                 aria-label="Dashboard in Progress"
                 sx={{ padding: 1 }}
                 label="IN PROGRESS"
@@ -59,6 +60,7 @@ const DashboardDetailTabs: React.FC<DashboardDetailTabsProps> = ({
             />
             <Chip
                 key="dashboard-tab-1"
+                data-testid="dashboard-tab-completed"
                 aria-label="Dashboard Completed"
                 sx={{ padding: 1 }}
                 onClick={() => handleChange(1)}
@@ -141,7 +143,7 @@ const DashboardDetailTabs: React.FC<DashboardDetailTabsProps> = ({
                         }}
                         disabled={guidedSetupOpen}
                         size="small"
-                        data-cy="role-menu"
+                        data-testId="role-menu"
                         value={roleView}
                     >
                         {whoami.roles.includes(models.Role.COORDINATOR) && (

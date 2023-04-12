@@ -28,14 +28,13 @@ import "cypress-localstorage-commands";
 import _ from "lodash";
 import "@testing-library/cypress/add-commands";
 import "./auth-provider-commands/cognito";
+import { aliasMutation } from "../utils/graphql-test-utils";
 
 const Auth = require("aws-amplify").Auth;
 const Amplify = require("aws-amplify").Amplify;
 const DataStore = require("aws-amplify").DataStore;
 const models = require("../../src/models");
 
-const username = Cypress.env("username");
-const password = Cypress.env("password");
 const userPoolId = Cypress.env("userPoolId");
 const clientId = Cypress.env("clientId");
 const tenantId = Cypress.env("tenantId");
@@ -104,7 +103,16 @@ DataStore.configure({
     ],
 });
 
-Cypress.Commands.add("signIn", () => {
+Cypress.Commands.add("signIn", (role) => {
+    let username = Cypress.env("adminusername");
+    let password = Cypress.env("adminpassword");
+    if (role === "RIDER") {
+        username = Cypress.env("riderusername");
+        password = Cypress.env("riderpassword");
+    } else if (role === "COORDINATOR") {
+        username = Cypress.env("coordusername");
+        password = Cypress.env("coordpassword");
+    }
     cy.then(() => Auth.signIn(username, password)).then((cognitoUser) => {
         const idToken = cognitoUser.signInUserSession.idToken.jwtToken;
         const accessToken = cognitoUser.signInUserSession.accessToken.jwtToken;
@@ -125,6 +133,9 @@ Cypress.Commands.add("signIn", () => {
 Cypress.Commands.add("clearTasks", (status) => {
     // iterate through all tasks and mark them cancelled
     cy.visit("/");
+    cy.intercept("POST", endpoint, (req) => {
+        aliasMutation(req, "updateTask");
+    });
     cy.get(`[data-cy=${status}-title-skeleton]`, { timeout: 10000 })
         .should("not.exist")
         .then(() => {
@@ -137,29 +148,46 @@ Cypress.Commands.add("clearTasks", (status) => {
                         ).length === 1
                     )
                         return;
-                    cy.get(`[data-cy=tasks-kanban-column-${status}]`)
-                        .children()
-                        .each((el) => {
-                            cy.get(el).click();
-                            cy.get(
-                                "[data-cy=task-timeCancelled-button"
-                            ).click();
-                            cy.get("[data-cy=confirmation-ok-button").click();
-                            cy.get("[data-cy=task-status-close").click();
-                        });
+
+                    cy.get(`[data-testid=${status}-select-all]`).click();
+                    cy.get('[aria-label="Selection Cancelled"]').click({
+                        force: true,
+                    });
+                    cy.get("[data-testid=confirmation-ok-button]").click();
+                    cy.get("[data-testid=confirmation-ok-button]").then(
+                        (el) => {
+                            if (el.length > 0) {
+                                cy.get("[data-testid=confirmation-ok-button]")
+                                    .eq(1)
+                                    .click();
+                            }
+                        }
+                    );
+                    cy.get(`[data-cy=tasks-kanban-column-${status}]`).should(
+                        "be.empty"
+                    );
+                    // wait for updateTask to be called for each task
+                    cy.wait(`@gqlupdateTaskMutation`, { timeout: 10000 }).then(
+                        (interception) => {
+                            expect(interception.response.statusCode).to.equal(
+                                200
+                            );
+                        }
+                    );
                 });
         });
 });
 
 Cypress.Commands.add("populateTasks", () => {
     for (const i of _.range(1, 5)) {
-        cy.get("[data-cy=create-task-button").click();
+        cy.get("[data-cy=create-task-button]").click();
+        cy.get("[data-testid=guided-setup-notes-tab]").click();
         cy.get(
             i > 2
-                ? "[data-cy=new-task-priority-MEDIUM"
-                : "[data-cy=new-task-priority-LOW"
+                ? "[data-cy=new-task-priority-MEDIUM]"
+                : "[data-cy=new-task-priority-LOW]"
         ).click();
-        cy.get("[data-cy=save-to-dash-button").click();
+        cy.get("[data-cy=save-to-dash-button]").click();
     }
 });
 
