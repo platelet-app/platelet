@@ -229,7 +229,6 @@ type EagerUser = {
   readonly dateOfBirth?: string | null;
   readonly riderResponsibility?: string | null;
   readonly possibleRiderResponsibilities?: (PossibleRiderResponsibilities | null)[] | null;
-  readonly profilePictureURL?: string | null;
   readonly profilePicture?: S3Object | null;
   readonly comments?: (Comment | null)[] | null;
   readonly assignments?: (TaskAssignee | null)[] | null;
@@ -255,7 +254,6 @@ type LazyUser = {
   readonly dateOfBirth?: string | null;
   readonly riderResponsibility?: string | null;
   readonly possibleRiderResponsibilities: AsyncCollection<PossibleRiderResponsibilities>;
-  readonly profilePictureURL?: string | null;
   readonly profilePicture?: S3Object | null;
   readonly comments: AsyncCollection<Comment>;
   readonly assignments: AsyncCollection<TaskAssignee>;

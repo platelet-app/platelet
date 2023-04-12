@@ -155,8 +155,6 @@ let makeNewRequest = async (query, variables) => {
 exports.makeNewRequest = makeNewRequest;
 
 const getItems = async (query, key) => {
-    debugger;
-    console.log(key);
     const items = [];
     let nextToken = null;
     do {

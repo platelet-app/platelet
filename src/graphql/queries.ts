@@ -19,7 +19,6 @@ export const getTenant = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -121,7 +120,6 @@ export const getUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      profilePictureURL
       profilePicture {
         bucket
         key
@@ -178,7 +176,6 @@ export const listUsers = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -215,7 +212,6 @@ export const syncUsers = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -254,7 +250,6 @@ export const getUserByCognitoId = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -283,7 +278,6 @@ export const getPossibleRiderResponsibilities = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -384,7 +378,6 @@ export const getVehicle = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -509,7 +502,6 @@ export const getVehicleAssignment = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -599,7 +591,6 @@ export const getLocation = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -760,7 +751,6 @@ export const getTask = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1169,7 +1159,6 @@ export const getTaskAssignee = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1263,7 +1252,6 @@ export const getComment = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1628,6 +1616,11 @@ export const syncRiderResponsibilities = /* GraphQL */ `
 export const profilePictureUploadURL = /* GraphQL */ `
   query ProfilePictureUploadURL($userId: ID!) {
     profilePictureUploadURL(userId: $userId)
+  }
+`;
+export const profilePictureURL = /* GraphQL */ `
+  query ProfilePictureURL($userId: ID!, $width: Int, $height: Int) {
+    profilePictureURL(userId: $userId, width: $width, height: $height)
   }
 `;
 export const sendUserFeedback = /* GraphQL */ `

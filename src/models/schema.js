@@ -183,13 +183,6 @@ export const schema = {
                         "associatedWith": "userPossibleRiderResponsibilitiesId"
                     }
                 },
-                "profilePictureURL": {
-                    "name": "profilePictureURL",
-                    "isArray": false,
-                    "type": "AWSURL",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "profilePicture": {
                     "name": "profilePicture",
                     "isArray": false,
@@ -2307,5 +2300,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.0",
-    "version": "25cd75e1bf43c183a39aad9ef5d9e1b2"
+    "version": "29a25bac5837be13ad9f993c317e2c5d"
 };

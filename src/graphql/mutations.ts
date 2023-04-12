@@ -22,7 +22,6 @@ export const createTenant = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -59,7 +58,6 @@ export const updateTenant = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -96,7 +94,6 @@ export const deleteTenant = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -149,7 +146,6 @@ export const createUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      profilePictureURL
       profilePicture {
         bucket
         key
@@ -224,7 +220,6 @@ export const updateUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      profilePictureURL
       profilePicture {
         bucket
         key
@@ -299,7 +294,6 @@ export const deleteUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      profilePictureURL
       profilePicture {
         bucket
         key
@@ -357,7 +351,6 @@ export const createPossibleRiderResponsibilities = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -405,7 +398,6 @@ export const updatePossibleRiderResponsibilities = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -453,7 +445,6 @@ export const deletePossibleRiderResponsibilities = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -501,7 +492,6 @@ export const createVehicle = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -551,7 +541,6 @@ export const updateVehicle = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -601,7 +590,6 @@ export const deleteVehicle = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -667,7 +655,6 @@ export const createVehicleAssignment = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -720,7 +707,6 @@ export const updateVehicleAssignment = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -773,7 +759,6 @@ export const deleteVehicleAssignment = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -810,7 +795,6 @@ export const createLocation = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -893,7 +877,6 @@ export const updateLocation = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -976,7 +959,6 @@ export const deleteLocation = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1060,7 +1042,6 @@ export const createTask = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1216,7 +1197,6 @@ export const updateTask = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1372,7 +1352,6 @@ export const deleteTask = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1555,7 +1534,6 @@ export const createTaskAssignee = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1621,7 +1599,6 @@ export const updateTaskAssignee = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1687,7 +1664,6 @@ export const deleteTaskAssignee = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1728,7 +1704,6 @@ export const createComment = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1769,7 +1744,6 @@ export const updateComment = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1810,7 +1784,6 @@ export const deleteComment = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -2214,7 +2187,6 @@ export const registerUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      profilePictureURL
       profilePicture {
         bucket
         key
@@ -2278,7 +2250,6 @@ export const registerTenant = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -2328,7 +2299,6 @@ export const updateUserRoles = /* GraphQL */ `
         nextToken
         startedAt
       }
-      profilePictureURL
       profilePicture {
         bucket
         key

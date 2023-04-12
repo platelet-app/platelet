@@ -184,6 +184,14 @@
       "dependsOn": [
         {
           "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        },
+        {
+          "attributes": [
             "BucketName"
           ],
           "category": "storage",

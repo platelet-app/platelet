@@ -8,9 +8,15 @@
         "@types/aws-lambda": "^8.10.92"
     },
     "dependencies": {
+        "@aws-crypto/sha256-js": "^4.0.0",
         "@aws-sdk/client-s3": "^3.113.0",
+        "@aws-sdk/credential-provider-node": "^3.310.0",
+        "@aws-sdk/protocol-http": "^3.310.0",
         "@aws-sdk/s3-request-presigner": "^3.113.0",
+        "@aws-sdk/signature-v4": "^3.310.0",
         "aws-sdk": "^2.1157.0",
+        "graphql-tag": "^2.12.6",
+        "node-fetch": "^2.6.9",
         "sharp": "^0.30.7"
     },
     "scripts": {

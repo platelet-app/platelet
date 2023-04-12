@@ -36,7 +36,6 @@ type User
     {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [read, update, delete]},
   ])
   possibleRiderResponsibilities: [PossibleRiderResponsibilities] @hasMany
-  profilePictureURL(width: Int, height: Int): AWSURL @function(name: "plateletProfilePictureResolver-${env}") @auth(rules: [{allow: private, operations: [read]}])
   profilePicture: S3Object
   comments: [Comment] @hasMany
   assignments: [TaskAssignee] @hasMany
@@ -371,5 +370,6 @@ type Statistics {
 
 type Query {
   profilePictureUploadURL(userId: ID!): AWSURL @function(name: "plateletProfilePictureUploadURLResolver-${env}") @auth(rules: [{allow: private}])
+  profilePictureURL(userId: ID!, width: Int, height: Int): AWSURL @function(name: "plateletProfilePictureResolver-${env}") @auth(rules: [{allow: private}])
   sendUserFeedback(emailAddress: AWSEmail, body: String): SendFeedback @function(name: "plateletSendUserFeedback-${env}") @auth(rules: [{allow: private}])
 }

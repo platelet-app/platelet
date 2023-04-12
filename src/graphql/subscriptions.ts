@@ -19,7 +19,6 @@ export const onCreateTenant = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -53,7 +52,6 @@ export const onUpdateTenant = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -87,7 +85,6 @@ export const onDeleteTenant = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -140,7 +137,6 @@ export const onCreateUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      profilePictureURL
       profilePicture {
         bucket
         key
@@ -215,7 +211,6 @@ export const onUpdateUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      profilePictureURL
       profilePicture {
         bucket
         key
@@ -290,7 +285,6 @@ export const onDeleteUser = /* GraphQL */ `
         nextToken
         startedAt
       }
-      profilePictureURL
       profilePicture {
         bucket
         key
@@ -347,7 +341,6 @@ export const onCreatePossibleRiderResponsibilities = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -394,7 +387,6 @@ export const onUpdatePossibleRiderResponsibilities = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -441,7 +433,6 @@ export const onDeletePossibleRiderResponsibilities = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -486,7 +477,6 @@ export const onCreateVehicle = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -533,7 +523,6 @@ export const onUpdateVehicle = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -580,7 +569,6 @@ export const onDeleteVehicle = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -645,7 +633,6 @@ export const onCreateVehicleAssignment = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -697,7 +684,6 @@ export const onUpdateVehicleAssignment = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -749,7 +735,6 @@ export const onDeleteVehicleAssignment = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -783,7 +768,6 @@ export const onCreateLocation = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -863,7 +847,6 @@ export const onUpdateLocation = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -943,7 +926,6 @@ export const onDeleteLocation = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1024,7 +1006,6 @@ export const onCreateTask = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1177,7 +1158,6 @@ export const onUpdateTask = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1330,7 +1310,6 @@ export const onDeleteTask = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1512,7 +1491,6 @@ export const onCreateTaskAssignee = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1577,7 +1555,6 @@ export const onUpdateTaskAssignee = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1642,7 +1619,6 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1683,7 +1659,6 @@ export const onCreateComment = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1724,7 +1699,6 @@ export const onUpdateComment = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
@@ -1765,7 +1739,6 @@ export const onDeleteComment = /* GraphQL */ `
         roles
         dateOfBirth
         riderResponsibility
-        profilePictureURL
         disabled
         createdAt
         updatedAt
