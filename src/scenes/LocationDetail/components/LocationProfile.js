@@ -23,7 +23,7 @@ export const locationFields = {
     country: "Country",
     state: "State",
     postcode: "Postcode",
-    // what3words: "What 3 Words",
+    what3words: "What 3 Words",
 };
 
 export const locationContactFields = {

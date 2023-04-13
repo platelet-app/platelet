@@ -23,6 +23,8 @@ import { guidedSetupOpenSelector, menuIndexSelector } from "../redux/Selectors";
 import { Box } from "@mui/material";
 import Reports from "../scenes/Reports/Reports";
 import UserDetailRoute from "../scenes/UserDetail/UserDetailRoute";
+import TaskHistory from "../scenes/TaskHistory/TaskHistory";
+import TaskHistoryTaskRoute from "../scenes/TaskHistory/components/TaskHistoryTaskRoute";
 
 const useStyles = makeStyles()((theme, { navIndex, guidedSetupOpen }) => ({
     root: {
@@ -49,7 +51,6 @@ export default function MainWindow(_props) {
     let location = useLocation();
     const dispatch = useDispatch();
     let background = location.state && location.state.background;
-
     // whenever returning an item, set the MenuIndex to update the drawer menu
     return (
         <MainWindowContainer>
@@ -181,14 +182,37 @@ export default function MainWindow(_props) {
                             return <TaskDialogCompact {...props} />;
                         }}
                     />
+                    <Route
+                        exact
+                        path="/history/:task_uuid_b62"
+                        render={(props) => {
+                            dispatch(setMenuIndex("history"));
+                            return <TaskHistoryTaskRoute {...props} />;
+                        }}
+                    />
+                    <Route
+                        exact
+                        path="/history"
+                        render={(props) => {
+                            dispatch(setMenuIndex("history"));
+                            return <TaskHistory {...props} />;
+                        }}
+                    />
                     <Route component={NotFound} />
                 </Switch>
-                {background && (
+                {background && background.pathname === "/" && (
                     <Route
                         path="/task/:task_uuid_b62"
                         children={<TaskDialogCompact />}
                     />
                 )}
+                {background &&
+                    ["/history", "/history/"].includes(background.pathname) && (
+                        <Route
+                            path="/history/:task_uuid_b62"
+                            children={<TaskHistoryTaskRoute />}
+                        />
+                    )}
             </main>
         </MainWindowContainer>
     );

@@ -655,6 +655,33 @@ describe("UserDetail", () => {
         });
     });
 
+    test("don't show profile picture button if not admin or owner", async () => {
+        const user = await DataStore.save(new models.User(testUser));
+        const whoami = new models.User({
+            displayName: "whoami",
+            roles: [userRoles.user],
+        });
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<UserDetail userId={user.id} />, {
+            ...preloadedState,
+            whoami: { user: whoami },
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        expect(screen.queryByText("Upload Picture")).toBeNull();
+    });
+
+    test("show upload picture if owner", async () => {
+        const user = await DataStore.save(whoami);
+        const querySpy = jest.spyOn(DataStore, "query");
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(2);
+        });
+        expect(screen.getByText("Upload Picture")).toBeInTheDocument();
+    });
+
     test("unsubscribe observers on unmount", async () => {
         const user = await DataStore.save(new models.User(testUser));
         const querySpy = jest.spyOn(DataStore, "query");

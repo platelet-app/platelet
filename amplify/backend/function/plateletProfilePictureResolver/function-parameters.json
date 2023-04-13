@@ -1,5 +1,10 @@
 {
   "permissions": {
+    "api": {
+      "platelet": [
+        "Query"
+      ]
+    },
     "storage": {
       "plateletStorage": [
         "create",

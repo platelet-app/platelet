@@ -211,6 +211,7 @@ describe("CommentsSection", () => {
         const mockComment = await DataStore.save(mockCommentInput);
         const deleteSpy = jest.spyOn(DataStore, "delete");
         const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
         render(<CommentsSection parentId={parentId} />, {
             preloadedState,
         });
@@ -234,15 +235,12 @@ describe("CommentsSection", () => {
             );
         });
         userEvent.click(screen.getByText("OK"));
+        const mockCommentCleared = { ...mockComment, body: "" };
         await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(
-                2,
-                models.Comment,
-                mockComment.id
-            );
+            expect(saveSpy).toHaveBeenCalledWith(mockCommentCleared);
         });
         await waitFor(() => {
-            expect(deleteSpy).toHaveBeenNthCalledWith(1, mockComment);
+            expect(deleteSpy).toHaveBeenCalledWith(mockCommentCleared);
         });
         await waitFor(() => {
             expect(screen.queryByText(mockComment.body)).toBeNull();

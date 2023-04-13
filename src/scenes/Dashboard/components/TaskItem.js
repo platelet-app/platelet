@@ -209,13 +209,6 @@ const TaskItem = React.memo((props) => {
     const getAssignees = React.useCallback(
         (visibility, roleView, task, allAssignees) => {
             if (!visibility || !roleView || !task) return;
-            // inefficient method of getting assignees
-            /*const allAssignments = (
-            await DataStore.query(models.TaskAssignee)
-        ).filter(
-            (assignment) => assignment.task && assignment.task.id === task.id
-        );
-        */
             const taskAssignees =
                 allAssignees && allAssignees.items
                     ? allAssignees.items.filter(

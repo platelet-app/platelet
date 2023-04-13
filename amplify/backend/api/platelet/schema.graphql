@@ -12,27 +12,30 @@ type Tenant
 type User
 @auth(rules: [
   {allow: private, operations: [read]},
-  {allow: owner, ownerField: "cognitoId", operations: [update]},
-  {allow: groups, groups: ["ADMIN"], operations: [update]},
+  {allow: owner, ownerField: "cognitoId", operations: [read, update]},
+  {allow: groups, groups: ["ADMIN"], operations: [read, update]},
 ])
 @model {
-  id: ID!
-  username: String!
+  id: ID! @auth(rules: [
+    {allow: private, operations: [read]},
+    {allow: owner, ownerField: "cognitoId", operations: [read, update]},
+    {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [read, update]},
+  ])
+  username: String! @auth(rules: [{allow: private, operations: [read]}])
   cognitoId: ID! @index(name: "byCognitoId", queryField: "getUserByCognitoId") @auth(rules: [{allow: private, operations: [read]}])
-  tenantId: ID! @index(name: "byTenantId")
-  isPrimaryAdmin: Int @default(value: "0")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
+  isPrimaryAdmin: Int @default(value: "0") @auth(rules: [{allow: private, operations: [read]}])
   contact: AddressAndContactDetails
   displayName: String!
   name: String
-  roles: [Role!]!
+  roles: [Role!]! @auth(rules: [{allow: private, operations: [read]}])
   dateOfBirth: AWSDate
   riderResponsibility: String @auth(rules: [
     {allow: private, operations: [read]},
-    {allow: owner, ownerField: "cognitoId", operations: [update]},
-    {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [update]},
+    {allow: owner, ownerField: "cognitoId", operations: [read, update, delete]},
+    {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [read, update, delete]},
   ])
   possibleRiderResponsibilities: [PossibleRiderResponsibilities] @hasMany
-  profilePictureURL(width: Int, height: Int): AWSURL @function(name: "plateletProfilePictureResolver-${env}") @auth(rules: [{allow: private, operations: [read]}])
   profilePicture: S3Object
   comments: [Comment] @hasMany
   assignments: [TaskAssignee] @hasMany
@@ -40,7 +43,7 @@ type User
   createdTasks: [Task] @hasMany
   createdLocations: [Location] @hasMany
   createdVehicles: [Vehicle] @hasMany
-  disabled: Int @default(value: "0")
+  disabled: Int @default(value: "0") @auth(rules: [{allow: private, operations: [read]}])
 }
 
 type PossibleRiderResponsibilities
@@ -50,7 +53,7 @@ type PossibleRiderResponsibilities
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
   user: User! @belongsTo
   riderResponsibility: RiderResponsibility! @belongsTo
 }
@@ -68,7 +71,7 @@ type Vehicle
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
   createdBy: User @belongsTo
   name: String
   manufacturer: String
@@ -87,7 +90,7 @@ type VehicleAssignment
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
   vehicle: Vehicle! @belongsTo
   assignee: User! @belongsTo
 }
@@ -116,7 +119,7 @@ type Location
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
   createdBy: User @belongsTo
   name: String
   listed: Int
@@ -137,6 +140,7 @@ type Location
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
   disabled: Int @default(value: "0")
   googleMapsPlaceId: String
+  archived: Int @default(value: "0") @index(name: "byArchived") @auth(rules: [{allow: private, operations: [read, create]}])
 }
 
 type Task
@@ -146,7 +150,8 @@ type Task
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId", queryField: "listTasksByTenantId", sortKeyFields: ["createdAt"]) @auth(rules: [{allow: private, operations: [read, create]}])
+  createdAt: String @auth(rules: [{allow: private, operations: [read]}])
   createdBy: User @belongsTo
   dateCreated: AWSDate!
   timeOfCall: AWSDateTime
@@ -215,6 +220,7 @@ timePickedUpSenderName: String
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
   status: TaskStatus @index(name: "byStatus", queryField: "tasksByStatus")
   isRiderUsingOwnVehicle: Int @default(value: "0")
+  archived: Int @default(value: "0") @index(name: "byArchivedStatus", queryField: "tasksByArchivedStatus", sortKeyFields: ["status"]) @auth(rules: [{allow: private, operations: [read, create]}])
 }
 
 type TaskAssignee
@@ -224,10 +230,11 @@ type TaskAssignee
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
   role: Role!
   task: Task! @belongsTo
   assignee: User! @belongsTo
+  archived: Int @default(value: "0") @index(name: "byArchived") @auth(rules: [{allow: private, operations: [read, create]}])
 }
 
 type Comment
@@ -239,10 +246,12 @@ type Comment
 @model {
   id: ID!
   parentId: ID @index(name: "byParent")
-  tenantId: ID! @index(name: "byTenantId")
+  owner: String @auth(rules: [{ allow: owner, operations: [read, delete] }])
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
   body: String
   author: User @belongsTo
   visibility: CommentVisibility
+  archived: Int @default(value: "0") @index(name: "byArchived") @auth(rules: [{allow: private, operations: [read, create]}])
 }
 
 type DeliverableType
@@ -253,7 +262,7 @@ type DeliverableType
 @model {
   id: ID!
   label: String!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
   icon: DeliverableTypeIcon
   defaultUnit: DeliverableUnit
   deliverables: [Deliverable] @hasMany
@@ -268,13 +277,14 @@ type Deliverable
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
   deliverableType: DeliverableType @belongsTo
   task: Task @belongsTo
   count: Int
   unit: DeliverableUnit
   orderInGrid: Int
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
+  archived: Int @default(value: "0") @index(name: "byArchived") @auth(rules: [{allow: private, operations: [read, create]}])
 }
 
 enum DeliverableTypeIcon {
@@ -292,7 +302,7 @@ type RiderResponsibility
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
   label: String!
   disabled: Int @default(value: "0")
   possibleUsers: [PossibleRiderResponsibilities] @hasMany
@@ -360,7 +370,6 @@ type Statistics {
 
 type Query {
   profilePictureUploadURL(userId: ID!): AWSURL @function(name: "plateletProfilePictureUploadURLResolver-${env}") @auth(rules: [{allow: private}])
-  getStatistics(tenantId: ID!): Statistics @function(name: "plateletGetStatistics-${env}") @auth(rules: [{allow: private}])
+  profilePictureURL(userId: ID!, width: Int, height: Int): AWSURL @function(name: "plateletProfilePictureResolver-${env}") @auth(rules: [{allow: private}])
   sendUserFeedback(emailAddress: AWSEmail, body: String): SendFeedback @function(name: "plateletSendUserFeedback-${env}") @auth(rules: [{allow: private}])
 }
- 

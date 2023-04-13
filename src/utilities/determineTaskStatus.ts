@@ -12,7 +12,7 @@ interface TaskInterface {
 }
 
 interface Assignee {
-    task: TaskInterface;
+    task?: TaskInterface | null;
     assignee: object;
 }
 

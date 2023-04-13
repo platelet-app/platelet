@@ -7,9 +7,19 @@ export enum Days {
     FIVE_DAYS = 5,
     ONE_WEEK = 7,
     TWO_WEEKS = 14,
+    CUSTOM = 0,
 }
 
-export const dayOptions = {
+type DayOptions = {
+    "1 day": Days;
+    "3 days": Days;
+    "5 days": Days;
+    "One week": Days;
+    "Two weeks": Days;
+    Custom?: Days;
+};
+
+export const dayOptions: DayOptions = {
     "1 day": Days.ONE_DAY,
     "3 days": Days.THREE_DAYS,
     "5 days": Days.FIVE_DAYS,
@@ -19,15 +29,28 @@ export const dayOptions = {
 
 type DaysSelectionProps = {
     onChange: (arg0: Days) => any;
-    value?: Days;
+    value?: Days | null;
+    size?: "small" | "medium";
+    showCustom?: boolean;
 };
 
-const DaysSelection: React.FC<DaysSelectionProps> = ({ onChange, value }) => {
+const DaysSelection: React.FC<DaysSelectionProps> = ({
+    onChange,
+    value,
+    size = "medium",
+    showCustom = false,
+}) => {
+    let fields = { ...dayOptions };
+    if (showCustom) {
+        fields = { ...dayOptions, Custom: Days.CUSTOM };
+    }
     return (
         <Grid container direction="row" spacing={1}>
-            {Object.entries(dayOptions).map(([label, day]) => (
+            {Object.entries(fields).map(([label, day]) => (
                 <Grid item key={day}>
                     <Chip
+                        size={size}
+                        aria-label={label}
                         label={label}
                         variant={value === day ? "filled" : "outlined"}
                         color={value === day ? "primary" : "default"}
@@ -38,7 +61,5 @@ const DaysSelection: React.FC<DaysSelectionProps> = ({ onChange, value }) => {
         </Grid>
     );
 };
-DaysSelection.defaultProps = {
-    value: Days.THREE_DAYS,
-};
+
 export default DaysSelection;

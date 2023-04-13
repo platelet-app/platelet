@@ -12,10 +12,13 @@ export default async function getAllMyTasksWithUser(
     allAssignments: models.TaskAssignee[]
 ) {
     const myAssignments = allAssignments.filter(
-        (a) => a.role === roleView && a.assignee && a.assignee.id === userId
+        (a) => a.role === roleView && a.task && a.assignee.id === userId
     );
     const theirAssignments = allAssignments.filter(
-        (a) => a.role === models.Role.RIDER && a.assignee?.id === filteredUser
+        (a) =>
+            a.role === models.Role.RIDER &&
+            a.task &&
+            a.assignee?.id === filteredUser
     );
     const intersectingTasks = myAssignments.filter((a) =>
         theirAssignments.some((b) => b.task?.id === a.task?.id)
@@ -33,7 +36,7 @@ export default async function getAllMyTasksWithUser(
                 task
                     .or((task) =>
                         intersectingTasksIds.reduce(
-                            (task, id) => task.id("eq", id),
+                            (task, id) => task.id("eq", id || ""),
                             task
                         )
                     )
@@ -60,7 +63,7 @@ export default async function getAllMyTasksWithUser(
                 task
                     .or((task) =>
                         intersectingTasksIds.reduce(
-                            (task, id) => task.id("eq", id),
+                            (task, id) => task.id("eq", id || ""),
                             task
                         )
                     )

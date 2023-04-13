@@ -14,12 +14,14 @@ import LocationCityIcon from "@mui/icons-material/LocationCity";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import DescriptionIcon from "@mui/icons-material/Description";
 import { getWhoami } from "../redux/Selectors";
+import HistoryIcon from "@mui/icons-material/History";
 
 function NavDrawerItems(props) {
     const whoami = useSelector(getWhoami);
     const menuIndex = useSelector((state) => state.menuIndex);
     const onSelect = props.onSelect;
     let adminLink = <></>;
+    let historyLink = <></>;
     let statisticsLink = <></>;
 
     if (whoami.roles) {
@@ -36,6 +38,20 @@ function NavDrawerItems(props) {
                         <SupervisorAccountIcon />
                     </ListItemIcon>
                     <ListItemText primary={"Admin"} />
+                </ListItem>
+            );
+            historyLink = (
+                <ListItem
+                    onClick={onSelect}
+                    selected={menuIndex === "history"}
+                    component={Link}
+                    to={"/history"}
+                    button
+                >
+                    <ListItemIcon>
+                        <HistoryIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"History"} />
                 </ListItem>
             );
         }
@@ -125,6 +141,7 @@ function NavDrawerItems(props) {
                     <ListItemText primary={"Reports"} />
                 </ListItem>
                 {statisticsLink}
+                {historyLink}
                 {adminLink}
             </List>
         </div>

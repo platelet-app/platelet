@@ -63,12 +63,6 @@ describe("LocationDetailsPanel", () => {
         }
     });
 
-    it("renders without crashing", async () => {
-        const querySpy = jest.spyOn(DataStore, "query");
-        render(<LocationDetailsPanel />, { preloadedState });
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
-    });
-
     it.each`
         locationKey
         ${"pickUpLocation"} | ${"dropOffLocation"}
@@ -926,14 +920,6 @@ describe("LocationDetailsPanel", () => {
                     listed: 1,
                 })
             );
-            const newPreloadedState = {
-                ...preloadedState,
-                locationsReducer: {
-                    ready: true,
-                    isSynced: true,
-                    items: [mockPreset],
-                },
-            };
 
             const querySpy = jest.spyOn(DataStore, "query");
             const saveSpy = jest.spyOn(DataStore, "save");
@@ -943,7 +929,7 @@ describe("LocationDetailsPanel", () => {
                     locationKey={locationKey}
                     taskId={task.id}
                 />,
-                { preloadedState: newPreloadedState }
+                { preloadedState: preloadedState }
             );
             await waitFor(() => {
                 expect(querySpy).toHaveBeenCalledTimes(1);

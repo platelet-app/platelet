@@ -31,7 +31,6 @@ exports.deleteUser = gql`
             roles
             dateOfBirth
             riderResponsibility
-            profilePictureURL
             profilePictureThumbnailURL
             profilePicture {
                 bucket

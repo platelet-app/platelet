@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import LabelItemPair from "../../../components/LabelItemPair";
 import ClickableTextField from "../../../components/ClickableTextField";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
 import Divider from "@mui/material/Divider";
 import { Box, Stack, Tooltip } from "@mui/material";
 import { ThemedLink } from "../../../styles/common";
@@ -219,17 +219,19 @@ function LocationDetailAndSelector(props) {
                         onClick={() => setCollapsed((prevState) => !prevState)}
                         value={collapsed}
                     />
-                    {props.location && !props.disableClear && props.editMode && (
-                        <ClearButtonWithConfirmation
-                            disabled={props.disabled}
-                            onClear={props.onClear}
-                        >
-                            <Typography>
-                                Are you sure you want to clear the {props.label}{" "}
-                                location?
-                            </Typography>
-                        </ClearButtonWithConfirmation>
-                    )}
+                    {props.location &&
+                        !props.disableClear &&
+                        props.editMode && (
+                            <ClearButtonWithConfirmation
+                                disabled={props.disabled}
+                                onClear={props.onClear}
+                            >
+                                <Typography>
+                                    Are you sure you want to clear the{" "}
+                                    {props.label} location?
+                                </Typography>
+                            </ClearButtonWithConfirmation>
+                        )}
                 </Stack>
             </Stack>
         </Box>
@@ -249,6 +251,7 @@ LocationDetailAndSelector.propTypes = {
     onEdit: PropTypes.func,
     showContact: PropTypes.bool,
     noLink: PropTypes.bool,
+    editMode: PropTypes.bool,
 };
 
 LocationDetailAndSelector.defaultProps = {
@@ -263,6 +266,7 @@ LocationDetailAndSelector.defaultProps = {
     onEdit: () => {},
     showContact: true,
     noLink: false,
+    editMode: false,
 };
 
 export default LocationDetailAndSelector;

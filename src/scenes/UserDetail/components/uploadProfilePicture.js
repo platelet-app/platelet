@@ -21,14 +21,6 @@ if (
     aws_config = require("../../../aws-exports");
 }
 
-const getProfilePictureUrlQuery = `
-  query GetUser($id: ID! $width: Int $height: Int) {
-    getUser(id: $id) {
-      profilePictureURL(width: $width height: $height)
-    }
-  }
-`;
-
 async function uploadProfilePicture(userId, selectedFile) {
     if (selectedFile) {
         const bucket = aws_config.default
@@ -75,15 +67,15 @@ async function uploadProfilePicture(userId, selectedFile) {
             // add 5 second delay because it doesn't work otherwise for some reason
             await new Promise((resolve) => setTimeout(resolve, 5000));
             await API.graphql(
-                graphqlOperation(getProfilePictureUrlQuery, {
-                    id: userId,
+                graphqlOperation(queries.profilePictureURL, {
+                    userId,
                     width: 300,
                     height: 300,
                 })
             );
             await API.graphql(
-                graphqlOperation(getProfilePictureUrlQuery, {
-                    id: userId,
+                graphqlOperation(queries.profilePictureURL, {
+                    userId,
                     width: 128,
                     height: 128,
                 })

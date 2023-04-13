@@ -122,6 +122,7 @@ LoadingSpinner.propTypes = {
     delay: PropTypes.number,
     sx: PropTypes.object,
     onComplete: PropTypes.func,
+    error: PropTypes.bool,
 };
 
 LoadingSpinner.defaultProps = {
@@ -131,6 +132,7 @@ LoadingSpinner.defaultProps = {
     sx: {},
     onComplete: () => {},
     progress: null,
+    error: false,
 };
 
 export default LoadingSpinner;

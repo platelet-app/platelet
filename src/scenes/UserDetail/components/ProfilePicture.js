@@ -4,12 +4,19 @@ import { Paper, Stack } from "@mui/material";
 import ProfilePictureCropper from "./ProfilePictureCropper";
 import uploadProfilePicture from "./uploadProfilePicture";
 import { generateS3Link } from "../../../amplifyUtilities";
+import { useSelector } from "react-redux";
+import { getWhoami } from "../../../redux/Selectors";
+import * as models from "../../../models";
 
 export default function ProfilePicture(props) {
     const [image, setImage] = useState(null);
     const [newImage, setNewImage] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [imageUrl, setImageUrl] = useState("");
+    const whoami = useSelector(getWhoami);
+
+    const picturePermission =
+        whoami.roles.includes(models.Role.ADMIN) || whoami.id === props.userId;
 
     const onChange = (e) => {
         e.preventDefault();
@@ -51,6 +58,8 @@ export default function ProfilePicture(props) {
             } catch (e) {
                 console.log(e);
             }
+        } else {
+            setImageUrl("");
         }
     }, []);
     useEffect(
@@ -102,7 +111,7 @@ export default function ProfilePicture(props) {
                 spacing={2}
             >
                 {profilePicture}
-                {props.editable ? picUploadButton : <></>}
+                {picturePermission && props.editable && picUploadButton}
             </Stack>
         </Paper>
     );

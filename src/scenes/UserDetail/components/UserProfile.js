@@ -84,6 +84,17 @@ function UserProfile(props) {
     let editPossibleResponsibilitiesToggle = <></>;
 
     if (whoami.roles) {
+        if (whoami.roles.includes(userRoles.admin)) {
+            editRoleToggle = (
+                <EditModeToggleButton
+                    value={editRoleMode}
+                    aria-label="Edit Roles"
+                    onChange={(v) => {
+                        setEditRoleMode(v);
+                    }}
+                />
+            );
+        }
         if (
             whoami.roles.includes(userRoles.admin) ||
             whoami.id === props.user.id
@@ -118,15 +129,6 @@ function UserProfile(props) {
                 />
             );
 
-            editRoleToggle = (
-                <EditModeToggleButton
-                    value={editRoleMode}
-                    aria-label="Edit Roles"
-                    onChange={(v) => {
-                        setEditRoleMode(v);
-                    }}
-                />
-            );
             editPossibleResponsibilitiesToggle = (
                 <EditModeToggleButton
                     value={editResponsibilitiesMode}

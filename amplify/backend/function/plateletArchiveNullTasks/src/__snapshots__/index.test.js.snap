@@ -1,0 +1,430 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`plateletArchiver convert items from null archived to 0 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      "
+    query listTasks($nextToken: String) {
+        listTasks(nextToken: $nextToken) {
+            items {
+                id
+                _version
+                archived
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "nextToken": null,
+      },
+    ],
+    [
+      "
+    query listTasks($nextToken: String) {
+        listTasks(nextToken: $nextToken) {
+            items {
+                id
+                _version
+                archived
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "nextToken": "tasktoken",
+      },
+    ],
+    [
+      "
+    query listComments($nextToken: String) {
+        listComments(nextToken: $nextToken) {
+            items {
+                id
+                _version
+                archived
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "nextToken": null,
+      },
+    ],
+    [
+      "
+    query listComments($nextToken: String) {
+        listComments(nextToken: $nextToken) {
+            items {
+                id
+                _version
+                archived
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "nextToken": "comtoken",
+      },
+    ],
+    [
+      "
+    query listLocations($nextToken: String) {
+        listLocations(nextToken: $nextToken) {
+            items {
+                id
+                _version
+                archived
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "nextToken": null,
+      },
+    ],
+    [
+      "
+    query listLocations($nextToken: String) {
+        listLocations(nextToken: $nextToken) {
+            items {
+                id
+                _version
+                archived
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "nextToken": "loctoken",
+      },
+    ],
+    [
+      "
+    query listDeliverables($nextToken: String) {
+        listDeliverables(nextToken: $nextToken) {
+            items {
+                id
+                _version
+                archived
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "nextToken": null,
+      },
+    ],
+    [
+      "
+    query listDeliverables($nextToken: String) {
+        listDeliverables(nextToken: $nextToken) {
+            items {
+                id
+                _version
+                archived
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "nextToken": "deltoken",
+      },
+    ],
+    [
+      "
+    query listTaskAssignees($nextToken: String) {
+        listTaskAssignees(nextToken: $nextToken) {
+            items {
+                id
+                _version
+                archived
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "nextToken": null,
+      },
+    ],
+    [
+      "
+    query listTaskAssignees($nextToken: String) {
+        listTaskAssignees(nextToken: $nextToken) {
+            items {
+                id
+                _version
+                archived
+            }
+            nextToken
+        }
+    }
+",
+      {
+        "nextToken": "asstoken",
+      },
+    ],
+    [
+      "
+    mutation UpdateTask($input: UpdateTaskInput!) {
+        updateTask(input: $input) {
+            id
+            archived
+        }
+    }
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 0,
+          "id": "someTaskId",
+        },
+      },
+    ],
+    [
+      "
+    mutation UpdateTask($input: UpdateTaskInput!) {
+        updateTask(input: $input) {
+            id
+            archived
+        }
+    }
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 0,
+          "id": "anotherTaskId",
+        },
+      },
+    ],
+    [
+      "
+    mutation UpdateComment($input: UpdateCommentInput!) {
+        updateComment(input: $input) {
+            id
+            archived
+        };
+    };
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 0,
+          "id": "someCommentId",
+        },
+      },
+    ],
+    [
+      "
+    mutation UpdateComment($input: UpdateCommentInput!) {
+        updateComment(input: $input) {
+            id
+            archived
+        };
+    };
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 0,
+          "id": "someCommentId",
+        },
+      },
+    ],
+    [
+      "
+    mutation UpdateLocation($input: UpdateLocationInput!) {
+        updateLocation(input: $input) {
+            id
+            archived
+        };
+    };
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 0,
+          "id": "someLocationId",
+        },
+      },
+    ],
+    [
+      "
+    mutation UpdateLocation($input: UpdateLocationInput!) {
+        updateLocation(input: $input) {
+            id
+            archived
+        };
+    };
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 0,
+          "id": "someLocationId",
+        },
+      },
+    ],
+    [
+      "
+    mutation UpdateDeliverable($input: UpdateDeliverableInput!) {
+        updateDeliverable(input: $input) {
+            id
+            archived
+        };
+    };
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 0,
+          "id": "someDeliverableId",
+        },
+      },
+    ],
+    [
+      "
+    mutation UpdateDeliverable($input: UpdateDeliverableInput!) {
+        updateDeliverable(input: $input) {
+            id
+            archived
+        };
+    };
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 0,
+          "id": "someDeliverableId",
+        },
+      },
+    ],
+    [
+      "
+    mutation UpdateTaskAssignee($input: UpdateTaskAssigneeInput!) {
+        updateTaskAssignee(input: $input) {
+            id
+            archived
+        };
+    };
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 0,
+          "id": "someAssignmentId",
+        },
+      },
+    ],
+    [
+      "
+    mutation UpdateTaskAssignee($input: UpdateTaskAssigneeInput!) {
+        updateTaskAssignee(input: $input) {
+            id
+            archived
+        };
+    };
+",
+      {
+        "input": {
+          "_version": 1,
+          "archived": 0,
+          "id": "someAssignmentId",
+        },
+      },
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;

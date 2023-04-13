@@ -35,7 +35,16 @@ export default function CommentContextMenu(props) {
             models.Comment,
             props.commentUUID
         );
-        if (existingComment) await DataStore.delete(existingComment);
+        await DataStore.save(
+            models.Comment.copyOf(existingComment, (updated) => {
+                updated.body = "";
+            })
+        );
+        const commentAgain = await DataStore.query(
+            models.Comment,
+            props.commentUUID
+        );
+        if (existingComment) await DataStore.delete(commentAgain);
     }
 
     async function handleDelete() {

@@ -29,7 +29,6 @@ const testUserModel = new models.User({
     displayName: "Mock User",
     roles: Object.values(userRoles),
     dateOfBirth: null,
-    profilePictureURL: null,
     profilePictureThumbnailURL: null,
 });
 
