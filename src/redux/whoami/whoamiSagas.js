@@ -24,6 +24,7 @@ const fakeUser = {
     displayName: "Offline User",
     roles: Object.values(userRoles),
     dateOfBirth: null,
+    profilePictureURL: null,
     profilePictureThumbnailURL: null,
 };
 
@@ -32,6 +33,7 @@ const testUserModel = new models.User({
     displayName: "Mock User",
     roles: Object.values(userRoles),
     dateOfBirth: null,
+    profilePictureURL: null,
     profilePictureThumbnailURL: null,
 });
 const testUser = { ...testUserModel, id: "whoami" };

@@ -46,6 +46,7 @@ exports.updateUser = /* GraphQL */ gql`
                 nextToken
                 startedAt
             }
+            profilePictureURL
             profilePicture {
                 bucket
                 key

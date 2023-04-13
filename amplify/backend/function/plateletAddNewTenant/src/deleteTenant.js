@@ -35,6 +35,7 @@ exports.deleteTenant = gql`
                 roles
                 dateOfBirth
                 riderResponsibility
+                profilePictureURL
                 profilePictureThumbnailURL
                 profilePicture {
                     bucket

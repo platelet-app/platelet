@@ -26,6 +26,7 @@ const initialUserState = {
     riderResponsibility: null,
     dateOfBirth: null,
     patch: null,
+    profilePictureURL: null,
     disabled: 0,
 };
 

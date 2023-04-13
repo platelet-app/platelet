@@ -35,6 +35,7 @@ exports.updateTenant = gql`
                 roles
                 dateOfBirth
                 riderResponsibility
+                profilePictureURL
                 profilePictureThumbnailURL
                 profilePicture {
                     bucket

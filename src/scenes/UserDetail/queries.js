@@ -13,6 +13,7 @@ export const getUserQuery = /* GraphQL */ `
             roles
             dateOfBirth
             patch
+            profilePictureURL
             profilePictureThumbnailURL
             active
         }
