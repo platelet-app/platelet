@@ -16,11 +16,7 @@ type User
   {allow: groups, groups: ["ADMIN"], operations: [update]},
 ])
 @model {
-  id: ID! @auth(rules: [
-    {allow: private, operations: [read]},
-    {allow: owner, ownerField: "cognitoId", operations: [update]},
-    {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [update]},
-  ])
+  id: ID!
   username: String!
   cognitoId: ID! @index(name: "byCognitoId", queryField: "getUserByCognitoId") @auth(rules: [{allow: private, operations: [read]}])
   tenantId: ID! @index(name: "byTenantId")
@@ -32,8 +28,8 @@ type User
   dateOfBirth: AWSDate
   riderResponsibility: String @auth(rules: [
     {allow: private, operations: [read]},
-    {allow: owner, ownerField: "cognitoId", operations: [update, delete]},
-    {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [update, delete]},
+    {allow: owner, ownerField: "cognitoId", operations: [update]},
+    {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [update]},
   ])
   possibleRiderResponsibilities: [PossibleRiderResponsibilities] @hasMany
   profilePictureURL(width: Int, height: Int): AWSURL @function(name: "plateletProfilePictureResolver-${env}") @auth(rules: [{allow: private, operations: [read]}])
