@@ -76,7 +76,6 @@ async function getCachedImageKey(key, width, height) {
 
 exports.handler = async (event) => {
     console.log(`Invoke: event = ${JSON.stringify(event, null, 2)}`);
-    return null;
     try {
         let { width, height } = event.arguments || {
             width: null,
