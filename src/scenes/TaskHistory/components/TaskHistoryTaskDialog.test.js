@@ -24,6 +24,7 @@ describe("TaskHistoryTaskDialog", () => {
         preloadedState = { ...preloadedState, whoami: { user: mockWhoami } };
         mockTask = {
             id: "someId",
+            archived: 0,
             timeOfCall: "2021-05-01T13:00:00.000Z",
             createdBy: mockWhoami,
             createdAt: "2021-05-01T12:30:00.000Z",
@@ -199,6 +200,28 @@ describe("TaskHistoryTaskDialog", () => {
         expect(screen.getByText("dropoff postcode")).toBeInTheDocument();
         expect(screen.getByText("dropoff contact name")).toBeInTheDocument();
         expect(screen.getByText("01234567899")).toBeInTheDocument();
+        expect(
+            screen.getByRole("button", { name: "View on dashboard" })
+        ).toBeInTheDocument();
+    });
+
+    test("don't show view on dashboard button if it is archived", async () => {
+        API.graphql = jest.fn().mockResolvedValue({
+            data: {
+                getTask: { ...mockTask, archived: 1 },
+            },
+        });
+        render(<TaskHistoryTaskDialog taskId="someId" />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId("task-history-dialog-fetching")
+            ).toBeNull();
+        });
+        expect(
+            screen.queryByRole("button", { name: "View on dashboard" })
+        ).toBeNull();
     });
 
     it("displays a timeline", async () => {

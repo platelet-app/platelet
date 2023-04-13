@@ -19,6 +19,7 @@ export const getTask = /* GraphQL */ `
         getTask(id: $id) {
             id
             createdAt
+            archived
             timeOfCall
             timePickedUp
             timePickedUpSenderName
@@ -149,6 +150,7 @@ export type GetTaskQuery = {
     getTask?: {
         __typename: "Task";
         id: string;
+        archived?: number | null;
         tenantId: string;
         createdAt?: string | null;
         createdBy?: {

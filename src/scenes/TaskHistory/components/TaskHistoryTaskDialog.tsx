@@ -22,13 +22,18 @@ import _ from "lodash";
 type DialogWrapperProps = {
     children: React.ReactNode;
     taskId: string;
+    showDashboardButton?: boolean;
 };
 
 type TaskHistoryTaskDialogProps = {
     taskId: string;
 };
 
-const DialogWrapper: React.FC<DialogWrapperProps> = ({ children, taskId }) => {
+const DialogWrapper: React.FC<DialogWrapperProps> = ({
+    children,
+    taskId,
+    showDashboardButton = false,
+}) => {
     const history = useHistory();
     function onClose(e: React.MouseEvent<HTMLButtonElement>) {
         e.stopPropagation();
@@ -62,7 +67,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({ children, taskId }) => {
                         {isSm ? <ArrowBackIcon /> : <CloseIcon />}
                     </IconButton>
                 </Tooltip>
-                {taskId && (
+                {taskId && showDashboardButton && (
                     <Button
                         sx={{
                             width: "50%",
@@ -132,7 +137,10 @@ const TaskHistoryTaskDialog: React.FC<TaskHistoryTaskDialogProps> = ({
         );
     } else if (state) {
         return (
-            <DialogWrapper taskId={taskId}>
+            <DialogWrapper
+                taskId={taskId}
+                showDashboardButton={state.archived === 0}
+            >
                 <TaskHistoryTaskDialogContent task={state} />
             </DialogWrapper>
         );
