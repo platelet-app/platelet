@@ -10,7 +10,11 @@
         {
             "username": "offline",
             "displayName": "Offline User",
-            "roles": ["RIDER", "COORDINATOR", "ADMIN"],
+            "roles": [
+                "RIDER",
+                "COORDINATOR",
+                "ADMIN"
+            ],
             "name": "Offline User",
             "dateOfBirth": null,
             "address": {
@@ -22,7 +26,6 @@
                 "postcode": "EEE AAA",
                 "what3words": "some.what.words"
             },
-            "profilePictureURL": null,
             "profilePictureThumbnailURL": null,
             "active": 1,
             "disabled": 0
@@ -40,7 +43,9 @@
                 "postcode": "BS19NR",
                 "what3words": "some.what.words"
             },
-            "roles": ["COORDINATOR"],
+            "roles": [
+                "COORDINATOR"
+            ],
             "active": 1,
             "disabled": 0
         },
@@ -57,7 +62,9 @@
                 "postcode": "BS6 8ZY",
                 "what3words": "some.what.words"
             },
-            "roles": ["COORDINATOR"],
+            "roles": [
+                "COORDINATOR"
+            ],
             "active": 1,
             "disabled": 0
         },
@@ -74,7 +81,9 @@
                 "postcode": "BS1 1PA",
                 "what3words": "some.what.words"
             },
-            "roles": ["RIDER"],
+            "roles": [
+                "RIDER"
+            ],
             "active": 1,
             "disabled": 0
         },
@@ -91,7 +100,10 @@
                 "postcode": "BS1 3ZR",
                 "what3words": "some.what.words"
             },
-            "roles": ["RIDER", "COORDINATOR"],
+            "roles": [
+                "RIDER",
+                "COORDINATOR"
+            ],
             "active": 1,
             "disabled": 0
         },
@@ -108,7 +120,10 @@
                 "postcode": "BS6 1PP",
                 "what3words": "some.what.words"
             },
-            "roles": ["RIDER", "COORDINATOR"],
+            "roles": [
+                "RIDER",
+                "COORDINATOR"
+            ],
             "active": 1,
             "disabled": 0
         },
@@ -125,7 +140,9 @@
                 "postcode": "BS1 3YD",
                 "what3words": "some.what.words"
             },
-            "roles": ["RIDER"],
+            "roles": [
+                "RIDER"
+            ],
             "active": 1,
             "disabled": 0
         }
@@ -265,70 +282,90 @@
     "deliverables": [
         {
             "label": "Sample",
-            "tags": ["sample"],
+            "tags": [
+                "sample"
+            ],
             "icon": "BUG",
             "defaultUnit": "ITEM",
             "disabled": 0
         },
         {
             "label": "Covid sample",
-            "tags": ["sample"],
+            "tags": [
+                "sample"
+            ],
             "icon": "BUG",
             "defaultUnit": "ITEM",
             "disabled": 0
         },
         {
             "label": "MRSA sample",
-            "tags": ["sample"],
+            "tags": [
+                "sample"
+            ],
             "icon": "BUG",
             "defaultUnit": "ITEM",
             "disabled": 0
         },
         {
             "label": "Document",
-            "tags": ["document"],
+            "tags": [
+                "document"
+            ],
             "icon": "DOCUMENT",
             "defaultUnit": "ITEM",
             "disabled": 0
         },
         {
             "label": "Milk",
-            "tags": ["maternity"],
+            "tags": [
+                "maternity"
+            ],
             "icon": "CHILD",
             "defaultUnit": "LITRE",
             "disabled": 0
         },
         {
             "label": "Anti-D",
-            "tags": ["maternity"],
+            "tags": [
+                "maternity"
+            ],
             "icon": "CHILD",
             "defaultUnit": "LITRE",
             "disabled": 0
         },
         {
             "label": "Bloods",
-            "tags": ["blood"],
+            "tags": [
+                "blood"
+            ],
             "icon": "OTHER",
             "defaultUnit": "LITRE",
             "disabled": 0
         },
         {
             "label": "Platelets",
-            "tags": ["blood"],
+            "tags": [
+                "blood"
+            ],
             "icon": "OTHER",
             "defaultUnit": "LITRE",
             "disabled": 0
         },
         {
             "label": "Bloods",
-            "tags": ["blood"],
+            "tags": [
+                "blood"
+            ],
             "icon": "OTHER",
             "defaultUnit": "LITRE",
             "disabled": 0
         },
         {
             "label": "Equipment",
-            "tags": ["equipment"],
+            "tags": [
+                "equipment"
+            ],
             "icon": "EQUIPMENT",
             "defaultUnit": "ITEM",
             "disabled": 0

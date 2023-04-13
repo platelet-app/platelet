@@ -163,7 +163,6 @@ export type GetTaskQuery = {
             roles: Array<Role>;
             dateOfBirth?: string | null;
             riderResponsibility?: string | null;
-            profilePictureURL?: string | null;
             disabled?: number | null;
             createdAt: string;
             updatedAt: string;
