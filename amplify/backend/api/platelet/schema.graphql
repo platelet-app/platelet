@@ -36,7 +36,6 @@ type User
     {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [update, delete]},
   ])
   possibleRiderResponsibilities: [PossibleRiderResponsibilities] @hasMany
-  profilePictureURL(width: Int, height: Int): AWSURL @function(name: "plateletProfilePictureResolver-${env}") @auth(rules: [{allow: private, operations: [read]}])
   profilePicture: S3Object
   comments: [Comment] @hasMany
   assignments: [TaskAssignee] @hasMany
