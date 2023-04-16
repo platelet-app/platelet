@@ -44,7 +44,7 @@ export default function CommentContextMenu(props) {
             models.Comment,
             props.commentUUID
         );
-        if (existingComment) await DataStore.delete(commentAgain);
+        if (commentAgain) await DataStore.delete(commentAgain);
     }
 
     async function handleDelete() {

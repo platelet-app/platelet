@@ -25,6 +25,21 @@ export const protectedFields = [
     "updatedAt",
     "createdAt",
     "tenantId",
+    "archived",
+];
+
+const locationClearFields = [
+    "ward",
+    "line1",
+    "line2",
+    "line3",
+    "town",
+    "county",
+    "state",
+    "country",
+    "postcode",
+    "what3words",
+    "contact",
 ];
 
 type LocationType = {
@@ -273,16 +288,11 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
                 } else {
                     // clear the fields for an unlisted location before deleting it
                     if (currentLocation) {
-                        await DataStore.save(
+                        const cleared = await DataStore.save(
                             models.Location.copyOf(
                                 currentLocation,
                                 (updated) => {
-                                    for (const field of Object.keys(
-                                        _.omit(
-                                            currentLocation,
-                                            ...protectedFields
-                                        )
-                                    )) {
+                                    for (const field of locationClearFields) {
                                         updated[field as keyof LocationType] =
                                             null;
                                     }
@@ -318,7 +328,7 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
                                 );
                             }
                         }
-                        DataStore.delete(currentLocation);
+                        DataStore.delete(cleared);
                     }
                 }
             }
