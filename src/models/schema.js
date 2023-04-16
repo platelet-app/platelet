@@ -997,7 +997,8 @@ export const schema = {
                                 "operations": [
                                     "create",
                                     "read",
-                                    "update"
+                                    "update",
+                                    "delete"
                                 ]
                             }
                         ]
@@ -1595,6 +1596,7 @@ export const schema = {
                             {
                                 "allow": "private",
                                 "operations": [
+                                    "create",
                                     "read"
                                 ]
                             },

@@ -53,7 +53,7 @@ type PossibleRiderResponsibilities
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
+  tenantId: ID! @index(name: "byTenantId")
   user: User! @belongsTo
   riderResponsibility: RiderResponsibility! @belongsTo
 }
@@ -71,7 +71,11 @@ type Vehicle
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
+  tenantId: ID! @index(name: "byTenantId")
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["ADMIN"], operations: [create, read]},
+    ])
   createdBy: User @belongsTo
   name: String
   manufacturer: String
@@ -90,7 +94,7 @@ type VehicleAssignment
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
+  tenantId: ID! @index(name: "byTenantId")
   vehicle: Vehicle! @belongsTo
   assignee: User! @belongsTo
 }
@@ -115,11 +119,15 @@ type AddressAndContactDetails {
 type Location
 @auth(rules: [
   {allow: private, operations: [read]},
-  {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [create, read, update]},
+  {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [create, read, update, delete]},
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
+  tenantId: ID! @index(name: "byTenantId")
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [create, read, delete]},
+    ])
   createdBy: User @belongsTo
   name: String
   listed: Int
@@ -140,7 +148,11 @@ type Location
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
   disabled: Int @default(value: "0")
   googleMapsPlaceId: String
-  archived: Int @default(value: "0") @index(name: "byArchived") @auth(rules: [{allow: private, operations: [read, create]}])
+  archived: Int @default(value: "0") @index(name: "byArchived")
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [create, read, delete]},
+    ])
 }
 
 type Task
@@ -150,77 +162,85 @@ type Task
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId", queryField: "listTasksByTenantId", sortKeyFields: ["createdAt"]) @auth(rules: [{allow: private, operations: [read, create]}])
+  tenantId: ID! @index(name: "byTenantId", queryField: "listTasksByTenantId", sortKeyFields: ["createdAt"])
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read]},
+    ])
   createdAt: String @auth(rules: [{allow: private, operations: [read]}])
   createdBy: User @belongsTo
   dateCreated: AWSDate!
   timeOfCall: AWSDateTime
   timePickedUp: AWSDateTime
-@auth(rules: [
-  {allow: private, operations: [read]},
-  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
-])
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+    ])
 timePickedUpSenderName: String
-@auth(rules: [
-  {allow: private, operations: [read]},
-  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
-])
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+    ])
   timeDroppedOff: AWSDateTime
-@auth(rules: [
-  {allow: private, operations: [read]},
-  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
-])
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+    ])
   timeDroppedOffRecipientName: String
-@auth(rules: [
-  {allow: private, operations: [read]},
-  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
-])
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+    ])
   timeCancelled: AWSDateTime
-@auth(rules: [
-  {allow: private, operations: [read]},
-  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
-])
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+    ])
   timeRejected: AWSDateTime
-@auth(rules: [
-  {allow: private, operations: [read]},
-  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
-])
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+    ])
   timeRiderHome: AWSDateTime
-@auth(rules: [
-  {allow: private, operations: [read]},
-  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
-])
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+    ])
   requesterContact: AddressAndContactDetails
   pickUpLocationId: ID @index(name: "byPickUpLocation")
-@auth(rules: [
-  {allow: private, operations: [read]},
-  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
-])
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+    ])
   dropOffLocationId: ID @index(name: "byDropOffLocation")
-@auth(rules: [
-  {allow: private, operations: [read]},
-  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
-])
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+    ])
   establishmentLocationId: ID @index(name: "byEstasblishmentLocation")
   pickUpLocation: Location @belongsTo(fields: ["pickUpLocationId"])
   dropOffLocation: Location @belongsTo(fields: ["dropOffLocationId"])
   establishmentLocation: Location @belongsTo(fields: ["establishmentLocationId"])
   riderResponsibility: String
-@auth(rules: [
-  {allow: private, operations: [read]},
-  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
-])
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+    ])
   assignees: [TaskAssignee] @hasMany
   priority: Priority
-@auth(rules: [
-  {allow: private, operations: [read]},
-  {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
-])
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+    ])
   deliverables: [Deliverable] @hasMany
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
   status: TaskStatus @index(name: "byStatus", queryField: "tasksByStatus")
   isRiderUsingOwnVehicle: Int @default(value: "0")
-  archived: Int @default(value: "0") @index(name: "byArchivedStatus", queryField: "tasksByArchivedStatus", sortKeyFields: ["status"]) @auth(rules: [{allow: private, operations: [read, create]}])
+  archived: Int @default(value: "0") @index(name: "byArchivedStatus", queryField: "tasksByArchivedStatus", sortKeyFields: ["status"])
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read]},
+    ])
 }
 
 type TaskAssignee
@@ -230,28 +250,47 @@ type TaskAssignee
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
+  tenantId: ID! @index(name: "byTenantId")
   role: Role!
   task: Task! @belongsTo
   assignee: User! @belongsTo
-  archived: Int @default(value: "0") @index(name: "byArchived") @auth(rules: [{allow: private, operations: [read, create]}])
+  archived: Int @default(value: "0") @index(name: "byArchived")
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, delete]},
+    ])
 }
 
 type Comment
 @auth(rules: [
-  {allow: private, operations: [read]},
+  {allow: private, operations: [create, read]},
   {allow: owner, operations: [create, read, delete, update]},
   {allow: groups, groups: ["ADMIN"], operations: [create, read, delete, update]},
 ])
 @model {
   id: ID!
   parentId: ID @index(name: "byParent")
-  owner: String @auth(rules: [{ allow: owner, operations: [read, delete] }])
-  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
+  owner: String
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: owner, operations: [create, read, delete]},
+      {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
+    ])
+  tenantId: ID! @index(name: "byTenantId")
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: owner, operations: [create, read, delete]},
+      {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
+    ])
   body: String
   author: User @belongsTo
   visibility: CommentVisibility
-  archived: Int @default(value: "0") @index(name: "byArchived") @auth(rules: [{allow: private, operations: [read, create]}])
+  archived: Int @default(value: "0") @index(name: "byArchived")
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: owner, operations: [create, read, delete]},
+      {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
+    ])
 }
 
 type DeliverableType
@@ -262,7 +301,11 @@ type DeliverableType
 @model {
   id: ID!
   label: String!
-  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
+  tenantId: ID! @index(name: "byTenantId")
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["ADMIN"], operations: [create, read]},
+    ])
   icon: DeliverableTypeIcon
   defaultUnit: DeliverableUnit
   deliverables: [Deliverable] @hasMany
@@ -277,14 +320,22 @@ type Deliverable
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
+  tenantId: ID! @index(name: "byTenantId")
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["ADMIN", "COORDINATOR", "RIDER"], operations: [create, read, delete]},
+    ])
   deliverableType: DeliverableType @belongsTo
   task: Task @belongsTo
   count: Int
   unit: DeliverableUnit
   orderInGrid: Int
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
-  archived: Int @default(value: "0") @index(name: "byArchived") @auth(rules: [{allow: private, operations: [read, create]}])
+  archived: Int @default(value: "0") @index(name: "byArchived")
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["ADMIN", "COORDINATOR", "RIDER"], operations: [create, read, delete]},
+    ])
 }
 
 enum DeliverableTypeIcon {
@@ -302,7 +353,11 @@ type RiderResponsibility
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
+  tenantId: ID! @index(name: "byTenantId")
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["ADMIN"], operations: [create, read]},
+    ])
   label: String!
   disabled: Int @default(value: "0")
   possibleUsers: [PossibleRiderResponsibilities] @hasMany
