@@ -3,10 +3,10 @@ import { takeLatest } from "@redux-saga/core/effects";
 import _ from "lodash";
 import { call, take, put } from "redux-saga/effects";
 import { eventChannel } from "redux-saga";
-import { DataStore } from "aws-amplify";
+import { DataStore, Predicates } from "aws-amplify";
 import * as models from "../../models";
 import dataStoreNestedWorkAroundMapper from "./dataStoreNestedWorkAroundMapper";
-import LocalPredicates from "../../utilities/predicates";
+//import LocalPredicates from "../../utilities/predicates";
 
 function listener() {
     return eventChannel((emitter) => {
@@ -15,7 +15,8 @@ function listener() {
             observer.unsubscribe();
             observer = DataStore.observeQuery(
                 models.TaskAssignee,
-                LocalPredicates.unarchived,
+                Predicates.ALL,
+                //LocalPredicates.unarchived,
                 { sort: (s) => s.createdAt("DESCENDING") }
             ).subscribe((result) => {
                 console.log(result);
@@ -35,8 +36,8 @@ function listener() {
             }
         );
         const taskObserver = DataStore.observe(
-            models.Task,
-            LocalPredicates.unarchived
+            models.Task
+            //LocalPredicates.unarchived
         ).subscribe((result) => {
             if (result.opType === "UPDATE") {
                 debouncedRestartObserver();
