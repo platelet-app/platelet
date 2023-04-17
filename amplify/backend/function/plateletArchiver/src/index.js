@@ -28,6 +28,7 @@ const query = /* GraphQL */ `
             archived: $archived
             status: $status
             nextToken: $nextToken
+            limit: 100
         ) {
             items {
                 id
@@ -245,24 +246,17 @@ const getComments = async (task) => {
 const getUnArchivedTasksByStatus = async (status) => {
     const items = [];
     let nextToken = null;
-
-    do {
-        const variables = {
-            archived: 0,
-            status: { eq: status },
-            nextToken,
-        };
-        const request = await makeNewRequest(query, variables);
-        const response = await fetch(request);
-        const body = await response.json();
-        if (body.data.tasksByArchivedStatus) {
-            items.push(...body.data.tasksByArchivedStatus.items);
-            nextToken = body.data.tasksByArchivedStatus.nextToken;
-        } else {
-            nextToken = null;
-        }
-    } while (nextToken);
-
+    const variables = {
+        archived: 0,
+        status: { eq: status },
+        nextToken,
+    };
+    const request = await makeNewRequest(query, variables);
+    const response = await fetch(request);
+    const body = await response.json();
+    if (body.data.tasksByArchivedStatus) {
+        items.push(...body.data.tasksByArchivedStatus.items);
+    }
     return items.flat();
 };
 
