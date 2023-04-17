@@ -175,18 +175,34 @@ let makeNewRequest = async (query, variables) => {
 exports.makeNewRequest = makeNewRequest;
 
 const getItems = async (query, key) => {
+    let tries = 0;
     const items = [];
     let nextToken = null;
-    const variables = {
-        nextToken,
-    };
-    const request = await makeNewRequest(query, variables);
-    const response = await fetch(request);
-    const body = await response.json();
-    console.log("BODY", body);
-    if (body.data[key]) {
-        items.push(...body.data[key].items);
-    }
+    do {
+        console.log("tries", tries);
+        if (tries === 200) {
+            console.log("Couldn't find any", key);
+            return [];
+        }
+        const variables = {
+            nextToken,
+        };
+        const request = await makeNewRequest(query, variables);
+        const response = await fetch(request);
+        const body = await response.json();
+        console.log("BODY", body);
+        if (body.data[key]) {
+            if (body.data[key].items?.length === 0) {
+                nextToken = body.data[key].nextToken;
+                tries++;
+            } else {
+                items.push(...body.data[key].items);
+                nextToken = null;
+            }
+        } else {
+            nextToken = null;
+        }
+    } while (nextToken);
     const flat = items.flat();
     const filtered = flat.filter(filterNull);
     return filtered;
