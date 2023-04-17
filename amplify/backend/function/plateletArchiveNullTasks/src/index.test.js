@@ -166,6 +166,22 @@ describe("plateletArchiver", () => {
         const requestSpy = jest.spyOn(indexModule, "makeNewRequest");
         jest.spyOn(fetch, "default")
             .mockImplementationOnce(setupFetchStub(fakeData))
+            .mockImplementationOnce(setupFetchStub(fakeTaskReturn))
+            .mockImplementationOnce(setupFetchStub(fakeCommentData))
+            .mockImplementationOnce(setupFetchStub(fakeCommentReturn))
+            .mockImplementationOnce(setupFetchStub(fakeLocationData))
+            .mockImplementationOnce(setupFetchStub(fakeLocationReturn))
+            .mockImplementationOnce(setupFetchStub(fakeDeliverableData))
+            .mockImplementationOnce(setupFetchStub(fakeDeliverableReturn))
+            .mockImplementationOnce(setupFetchStub(fakeAssigneeData))
+            .mockImplementationOnce(setupFetchStub(fakeAssigneeReturn));
+        await indexModule.handler({}, indexModule.makeNewRequest);
+        expect(requestSpy).toMatchSnapshot();
+    });
+    test.skip("with nextToken convert items from null archived to 0", async () => {
+        const requestSpy = jest.spyOn(indexModule, "makeNewRequest");
+        jest.spyOn(fetch, "default")
+            .mockImplementationOnce(setupFetchStub(fakeData))
             .mockImplementationOnce(setupFetchStub(fakeDataSecond))
             .mockImplementationOnce(setupFetchStub(fakeTaskReturn))
             .mockImplementationOnce(setupFetchStub(fakeTaskReturn))

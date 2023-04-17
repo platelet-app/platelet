@@ -18,8 +18,12 @@ const { default: fetch, Request } = require("node-fetch");
 const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
 
 const listTasks = /* GraphQL */ `
-    query listTasks($nextToken: String, filter: {archived: {ne: 0}, and: {archived: {ne: 1}}}, limit: 100) {
-        listTasks(nextToken: $nextToken) {
+    query listTasks($nextToken: String) {
+        listTasks(
+            nextToken: $nextToken
+            filter: { archived: { ne: 0 }, and: { archived: { ne: 1 } } }
+            limit: 100
+        ) {
             items {
                 id
                 _version
@@ -31,8 +35,12 @@ const listTasks = /* GraphQL */ `
 `;
 
 const listComments = /* GraphQL */ `
-    query listComments($nextToken: String, filter: {archived: {ne: 0}, and: {archived: {ne: 1}}}, limit: 100) {
-        listComments(nextToken: $nextToken) {
+    query listComments($nextToken: String) {
+        listComments(
+            nextToken: $nextToken
+            filter: { archived: { ne: 0 }, and: { archived: { ne: 1 } } }
+            limit: 100
+        ) {
             items {
                 id
                 _version
@@ -43,8 +51,12 @@ const listComments = /* GraphQL */ `
     }
 `;
 const listLocations = /* GraphQL */ `
-    query listLocations($nextToken: String, filter: {archived: {ne: 0}, and: {archived: {ne: 1}}}, limit: 100) {
-        listLocations(nextToken: $nextToken) {
+    query listLocations($nextToken: String) {
+        listLocations(
+            nextToken: $nextToken
+            filter: { archived: { ne: 0 }, and: { archived: { ne: 1 } } }
+            limit: 100
+        ) {
             items {
                 id
                 _version
@@ -56,8 +68,12 @@ const listLocations = /* GraphQL */ `
 `;
 
 const listDeliverables = /* GraphQL */ `
-    query listDeliverables($nextToken: String, filter: {archived: {ne: 0}, and: {archived: {ne: 1}}}, limit: 100) {
-        listDeliverables(nextToken: $nextToken) {
+    query listDeliverables($nextToken: String) {
+        listDeliverables(
+            nextToken: $nextToken
+            filter: { archived: { ne: 0 }, and: { archived: { ne: 1 } } }
+            limit: 100
+        ) {
             items {
                 id
                 _version
@@ -68,8 +84,12 @@ const listDeliverables = /* GraphQL */ `
     }
 `;
 const listTaskAssignees = /* GraphQL */ `
-    query listTaskAssignees($nextToken: String, filter: {archived: {ne: 0}, and: {archived: {ne: 1}}}, limit: 100) {
-        listTaskAssignees(nextToken: $nextToken) {
+    query listTaskAssignees($nextToken: String) {
+        listTaskAssignees(
+            nextToken: $nextToken
+            filter: { archived: { ne: 0 }, and: { archived: { ne: 1 } } }
+            limit: 100
+        ) {
             items {
                 id
                 _version
@@ -157,20 +177,16 @@ exports.makeNewRequest = makeNewRequest;
 const getItems = async (query, key) => {
     const items = [];
     let nextToken = null;
-    do {
-        const variables = {
-            nextToken,
-        };
-        const request = await makeNewRequest(query, variables);
-        const response = await fetch(request);
-        const body = await response.json();
-        if (body.data[key]) {
-            items.push(...body.data[key].items);
-            nextToken = body.data[key].nextToken;
-        } else {
-            nextToken = null;
-        }
-    } while (nextToken);
+    const variables = {
+        nextToken,
+    };
+    const request = await makeNewRequest(query, variables);
+    const response = await fetch(request);
+    const body = await response.json();
+    console.log("BODY", body);
+    if (body.data[key]) {
+        items.push(...body.data[key].items);
+    }
     const flat = items.flat();
     const filtered = flat.filter(filterNull);
     return filtered;
