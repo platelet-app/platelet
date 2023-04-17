@@ -331,6 +331,7 @@ const updateTask = async (task) => {
 };
 
 exports.handler = async (event, makeNewRequestTest) => {
+    return [];
     if (makeNewRequestTest && process.env.NODE_ENV === "test") {
         console.log("TESTING");
         makeNewRequest = makeNewRequestTest;
