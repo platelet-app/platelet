@@ -6,6 +6,7 @@ import { eventChannel } from "redux-saga";
 import { DataStore, Predicates } from "aws-amplify";
 import * as models from "../../models";
 import dataStoreNestedWorkAroundMapper from "./dataStoreNestedWorkAroundMapper";
+//import LocalPredicates from "../../utilities/predicates";
 
 function listener() {
     return eventChannel((emitter) => {
@@ -15,8 +16,10 @@ function listener() {
             observer = DataStore.observeQuery(
                 models.TaskAssignee,
                 Predicates.ALL,
-                { sort: (s) => s.createdAt("desc") }
+                //LocalPredicates.unarchived,
+                { sort: (s) => s.createdAt("DESCENDING") }
             ).subscribe((result) => {
+                console.log(result);
                 emitter(result);
             });
         }
@@ -32,13 +35,14 @@ function listener() {
                 }
             }
         );
-        const taskObserver = DataStore.observe(models.Task).subscribe(
-            (result) => {
-                if (result.opType === "UPDATE") {
-                    debouncedRestartObserver();
-                }
+        const taskObserver = DataStore.observe(
+            models.Task
+            //LocalPredicates.unarchived
+        ).subscribe((result) => {
+            if (result.opType === "UPDATE") {
+                debouncedRestartObserver();
             }
-        );
+        });
 
         restartObserver();
 
@@ -50,7 +54,7 @@ function listener() {
     });
 }
 
-function* initializeTaskAssigneesObserver() {
+function* initializeTaskAssigneesObserver(): Generator<any, any, any> {
     const channel = yield call(listener);
     try {
         while (true) {

@@ -6,7 +6,11 @@ exports[`plateletArchiver convert items from null archived to 0 1`] = `
     [
       "
     query listTasks($nextToken: String) {
-        listTasks(nextToken: $nextToken) {
+        listTasks(
+            nextToken: $nextToken
+            filter: { archived: { ne: 0 }, and: { archived: { ne: 1 } } }
+            limit: 100
+        ) {
             items {
                 id
                 _version
@@ -18,159 +22,6 @@ exports[`plateletArchiver convert items from null archived to 0 1`] = `
 ",
       {
         "nextToken": null,
-      },
-    ],
-    [
-      "
-    query listTasks($nextToken: String) {
-        listTasks(nextToken: $nextToken) {
-            items {
-                id
-                _version
-                archived
-            }
-            nextToken
-        }
-    }
-",
-      {
-        "nextToken": "tasktoken",
-      },
-    ],
-    [
-      "
-    query listComments($nextToken: String) {
-        listComments(nextToken: $nextToken) {
-            items {
-                id
-                _version
-                archived
-            }
-            nextToken
-        }
-    }
-",
-      {
-        "nextToken": null,
-      },
-    ],
-    [
-      "
-    query listComments($nextToken: String) {
-        listComments(nextToken: $nextToken) {
-            items {
-                id
-                _version
-                archived
-            }
-            nextToken
-        }
-    }
-",
-      {
-        "nextToken": "comtoken",
-      },
-    ],
-    [
-      "
-    query listLocations($nextToken: String) {
-        listLocations(nextToken: $nextToken) {
-            items {
-                id
-                _version
-                archived
-            }
-            nextToken
-        }
-    }
-",
-      {
-        "nextToken": null,
-      },
-    ],
-    [
-      "
-    query listLocations($nextToken: String) {
-        listLocations(nextToken: $nextToken) {
-            items {
-                id
-                _version
-                archived
-            }
-            nextToken
-        }
-    }
-",
-      {
-        "nextToken": "loctoken",
-      },
-    ],
-    [
-      "
-    query listDeliverables($nextToken: String) {
-        listDeliverables(nextToken: $nextToken) {
-            items {
-                id
-                _version
-                archived
-            }
-            nextToken
-        }
-    }
-",
-      {
-        "nextToken": null,
-      },
-    ],
-    [
-      "
-    query listDeliverables($nextToken: String) {
-        listDeliverables(nextToken: $nextToken) {
-            items {
-                id
-                _version
-                archived
-            }
-            nextToken
-        }
-    }
-",
-      {
-        "nextToken": "deltoken",
-      },
-    ],
-    [
-      "
-    query listTaskAssignees($nextToken: String) {
-        listTaskAssignees(nextToken: $nextToken) {
-            items {
-                id
-                _version
-                archived
-            }
-            nextToken
-        }
-    }
-",
-      {
-        "nextToken": null,
-      },
-    ],
-    [
-      "
-    query listTaskAssignees($nextToken: String) {
-        listTaskAssignees(nextToken: $nextToken) {
-            items {
-                id
-                _version
-                archived
-            }
-            nextToken
-        }
-    }
-",
-      {
-        "nextToken": "asstoken",
       },
     ],
     [
@@ -192,19 +43,23 @@ exports[`plateletArchiver convert items from null archived to 0 1`] = `
     ],
     [
       "
-    mutation UpdateTask($input: UpdateTaskInput!) {
-        updateTask(input: $input) {
-            id
-            archived
+    query listComments($nextToken: String) {
+        listComments(
+            nextToken: $nextToken
+            filter: { archived: { ne: 0 }, and: { archived: { ne: 1 } } }
+            limit: 100
+        ) {
+            items {
+                id
+                _version
+                archived
+            }
+            nextToken
         }
     }
 ",
       {
-        "input": {
-          "_version": 1,
-          "archived": 0,
-          "id": "anotherTaskId",
-        },
+        "nextToken": null,
       },
     ],
     [
@@ -226,19 +81,23 @@ exports[`plateletArchiver convert items from null archived to 0 1`] = `
     ],
     [
       "
-    mutation UpdateComment($input: UpdateCommentInput!) {
-        updateComment(input: $input) {
-            id
-            archived
-        };
-    };
+    query listLocations($nextToken: String) {
+        listLocations(
+            nextToken: $nextToken
+            filter: { archived: { ne: 0 }, and: { archived: { ne: 1 } } }
+            limit: 100
+        ) {
+            items {
+                id
+                _version
+                archived
+            }
+            nextToken
+        }
+    }
 ",
       {
-        "input": {
-          "_version": 1,
-          "archived": 0,
-          "id": "someCommentId",
-        },
+        "nextToken": null,
       },
     ],
     [
@@ -260,19 +119,23 @@ exports[`plateletArchiver convert items from null archived to 0 1`] = `
     ],
     [
       "
-    mutation UpdateLocation($input: UpdateLocationInput!) {
-        updateLocation(input: $input) {
-            id
-            archived
-        };
-    };
+    query listDeliverables($nextToken: String) {
+        listDeliverables(
+            nextToken: $nextToken
+            filter: { archived: { ne: 0 }, and: { archived: { ne: 1 } } }
+            limit: 100
+        ) {
+            items {
+                id
+                _version
+                archived
+            }
+            nextToken
+        }
+    }
 ",
       {
-        "input": {
-          "_version": 1,
-          "archived": 0,
-          "id": "someLocationId",
-        },
+        "nextToken": null,
       },
     ],
     [
@@ -294,36 +157,23 @@ exports[`plateletArchiver convert items from null archived to 0 1`] = `
     ],
     [
       "
-    mutation UpdateDeliverable($input: UpdateDeliverableInput!) {
-        updateDeliverable(input: $input) {
-            id
-            archived
-        };
-    };
+    query listTaskAssignees($nextToken: String) {
+        listTaskAssignees(
+            nextToken: $nextToken
+            filter: { archived: { ne: 0 }, and: { archived: { ne: 1 } } }
+            limit: 100
+        ) {
+            items {
+                id
+                _version
+                archived
+            }
+            nextToken
+        }
+    }
 ",
       {
-        "input": {
-          "_version": 1,
-          "archived": 0,
-          "id": "someDeliverableId",
-        },
-      },
-    ],
-    [
-      "
-    mutation UpdateTaskAssignee($input: UpdateTaskAssigneeInput!) {
-        updateTaskAssignee(input: $input) {
-            id
-            archived
-        };
-    };
-",
-      {
-        "input": {
-          "_version": 1,
-          "archived": 0,
-          "id": "someAssignmentId",
-        },
+        "nextToken": null,
       },
     ],
     [
@@ -345,46 +195,6 @@ exports[`plateletArchiver convert items from null archived to 0 1`] = `
     ],
   ],
   "results": [
-    {
-      "type": "return",
-      "value": Promise {},
-    },
-    {
-      "type": "return",
-      "value": Promise {},
-    },
-    {
-      "type": "return",
-      "value": Promise {},
-    },
-    {
-      "type": "return",
-      "value": Promise {},
-    },
-    {
-      "type": "return",
-      "value": Promise {},
-    },
-    {
-      "type": "return",
-      "value": Promise {},
-    },
-    {
-      "type": "return",
-      "value": Promise {},
-    },
-    {
-      "type": "return",
-      "value": Promise {},
-    },
-    {
-      "type": "return",
-      "value": Promise {},
-    },
-    {
-      "type": "return",
-      "value": Promise {},
-    },
     {
       "type": "return",
       "value": Promise {},

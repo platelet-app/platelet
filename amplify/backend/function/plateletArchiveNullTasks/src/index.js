@@ -19,7 +19,11 @@ const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
 
 const listTasks = /* GraphQL */ `
     query listTasks($nextToken: String) {
-        listTasks(nextToken: $nextToken) {
+        listTasks(
+            nextToken: $nextToken
+            filter: { archived: { ne: 0 }, and: { archived: { ne: 1 } } }
+            limit: 100
+        ) {
             items {
                 id
                 _version
@@ -32,7 +36,11 @@ const listTasks = /* GraphQL */ `
 
 const listComments = /* GraphQL */ `
     query listComments($nextToken: String) {
-        listComments(nextToken: $nextToken) {
+        listComments(
+            nextToken: $nextToken
+            filter: { archived: { ne: 0 }, and: { archived: { ne: 1 } } }
+            limit: 100
+        ) {
             items {
                 id
                 _version
@@ -44,7 +52,11 @@ const listComments = /* GraphQL */ `
 `;
 const listLocations = /* GraphQL */ `
     query listLocations($nextToken: String) {
-        listLocations(nextToken: $nextToken) {
+        listLocations(
+            nextToken: $nextToken
+            filter: { archived: { ne: 0 }, and: { archived: { ne: 1 } } }
+            limit: 100
+        ) {
             items {
                 id
                 _version
@@ -57,7 +69,11 @@ const listLocations = /* GraphQL */ `
 
 const listDeliverables = /* GraphQL */ `
     query listDeliverables($nextToken: String) {
-        listDeliverables(nextToken: $nextToken) {
+        listDeliverables(
+            nextToken: $nextToken
+            filter: { archived: { ne: 0 }, and: { archived: { ne: 1 } } }
+            limit: 100
+        ) {
             items {
                 id
                 _version
@@ -69,7 +85,11 @@ const listDeliverables = /* GraphQL */ `
 `;
 const listTaskAssignees = /* GraphQL */ `
     query listTaskAssignees($nextToken: String) {
-        listTaskAssignees(nextToken: $nextToken) {
+        listTaskAssignees(
+            nextToken: $nextToken
+            filter: { archived: { ne: 0 }, and: { archived: { ne: 1 } } }
+            limit: 100
+        ) {
             items {
                 id
                 _version
@@ -157,20 +177,16 @@ exports.makeNewRequest = makeNewRequest;
 const getItems = async (query, key) => {
     const items = [];
     let nextToken = null;
-    do {
-        const variables = {
-            nextToken,
-        };
-        const request = await makeNewRequest(query, variables);
-        const response = await fetch(request);
-        const body = await response.json();
-        if (body.data[key]) {
-            items.push(...body.data[key].items);
-            nextToken = body.data[key].nextToken;
-        } else {
-            nextToken = null;
-        }
-    } while (nextToken);
+    const variables = {
+        nextToken,
+    };
+    const request = await makeNewRequest(query, variables);
+    const response = await fetch(request);
+    const body = await response.json();
+    console.log("BODY", body);
+    if (body.data[key]) {
+        items.push(...body.data[key].items);
+    }
     const flat = items.flat();
     const filtered = flat.filter(filterNull);
     return filtered;
@@ -255,32 +271,35 @@ exports.handler = async (event, makeNewRequestTest) => {
         console.log("TESTING");
         makeNewRequest = makeNewRequestTest;
     }
+    const results = [];
     console.log(`EVENT: ${JSON.stringify(event)}`);
     const tasks = await getItems(listTasks, "listTasks");
     console.log("tasks", tasks);
+    const updateTasks = await Promise.all(tasks.map(updateTask));
+    results.push(...updateTasks);
     const comments = await getItems(listComments, "listComments");
     console.log("comments", comments);
+    const updateComments = await Promise.all(comments.map(updateComment));
+    results.push(...updateComments);
     const locations = await getItems(listLocations, "listLocations");
     console.log("locations", locations);
+    const updateLocations = await Promise.all(locations.map(updateLocation));
+    results.push(...updateLocations);
     const deliverables = await getItems(listDeliverables, "listDeliverables");
     console.log("deliverables", deliverables);
+    const updateDeliverables = await Promise.all(
+        deliverables.map(updateDeliverable)
+    );
+    results.push(...updateDeliverables);
     const taskAssignees = await getItems(
         listTaskAssignees,
         "listTaskAssignees"
     );
     console.log("taskAssignees", taskAssignees);
-    const updateTasks = tasks.map(updateTask);
-    const updateComments = comments.map(updateComment);
-    const updateLocations = locations.map(updateLocation);
-    const updateDeliverables = deliverables.map(updateDeliverable);
-    const updateTaskAssignees = taskAssignees.map(updateTaskAssignee);
-    const results = await Promise.all([
-        ...updateTasks,
-        ...updateComments,
-        ...updateLocations,
-        ...updateDeliverables,
-        ...updateTaskAssignees,
-    ]);
+    const updateTaskAssignees = await Promise.all(
+        taskAssignees.map(updateTaskAssignee)
+    );
+    results.push(...updateTaskAssignees);
     console.log("RESULTS:", results);
     return results;
 };

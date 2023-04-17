@@ -58,6 +58,7 @@ const fakeAssignments = fakeUsers.map((user) => {
         assignee: user,
         task: count <= 2 ? fakeTask1 : fakeTask2,
         role: count % 2 === 0 ? userRoles.coordinator : userRoles.rider,
+        archived: 0,
     });
 });
 
@@ -237,11 +238,13 @@ describe("TaskAssignmentsPanel", () => {
                             assignee: fakeUsers[0],
                             task: fakeTask1,
                             role: userRoles.coordinator,
+                            archived: 0,
                         }),
                         new models.TaskAssignee({
                             assignee: fakeUsers[1],
                             task: fakeTask1,
                             role: userRoles.rider,
+                            archived: 0,
                         }),
                     ],
                 },
@@ -287,6 +290,7 @@ describe("TaskAssignmentsPanel", () => {
                                 task: fakeTask1,
                                 role: role,
                                 assignee: fakeUsers[0],
+                                archived: 0,
                             }),
                         ],
                     },
@@ -304,6 +308,7 @@ describe("TaskAssignmentsPanel", () => {
                 displayName: uuidv4(),
                 roles: [userRoles.rider],
                 riderResponsibility: uuidv4(),
+                tenantId,
             })
         );
         const mockTask = fakeTask1;
@@ -311,6 +316,7 @@ describe("TaskAssignmentsPanel", () => {
             assignee: mockUser,
             task: mockTask,
             role: userRoles.rider,
+            tenantId,
         });
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
@@ -352,33 +358,41 @@ describe("TaskAssignmentsPanel", () => {
                 `${mockUser.displayName} (${mockUser.riderResponsibility})`
             )
         ).toBeInTheDocument();
-        expect(saveSpy).toHaveBeenNthCalledWith(
-            1,
-            expect.objectContaining({
-                ..._.omit(mockAssignment, "id"),
-                assignee: expect.objectContaining(_.omit(mockUser, "id")),
-                task: expect.objectContaining(_.omit(mockTask, "id")),
-            })
-        );
-        expect(saveSpy).toHaveBeenNthCalledWith(
-            2,
-            expect.objectContaining({
-                ..._.omit(mockTask, "id"),
-                status: tasksStatus.active,
-            })
-        );
+        expect(saveSpy).toHaveBeenNthCalledWith(1, {
+            ...mockAssignment,
+            id: expect.any(String),
+            assignee: { ...mockUser, id: expect.any(String) },
+            task: { ...mockTask, id: expect.any(String) },
+        });
+        expect(saveSpy).toHaveBeenNthCalledWith(2, {
+            ...mockTask,
+            id: expect.any(String),
+            status: tasksStatus.active,
+            riderResponsibility: mockUser.riderResponsibility,
+        });
         expect(
             await screen.findByText("Task moved to ACTIVE")
         ).toBeInTheDocument();
     });
 
     test("select and assign a coordinator", async () => {
-        const mockTask = fakeTask1;
-        const mockUser = fakeUsers[0];
+        const mockTask = await DataStore.save(
+            new models.Task({
+                status: models.TaskStatus.NEW,
+            })
+        );
+        const mockUser = await DataStore.save(
+            new models.User({
+                displayName: "some coord name",
+                roles: [userRoles.coordinator],
+                tenantId,
+            })
+        );
         const mockAssignment = new models.TaskAssignee({
             assignee: mockUser,
             task: mockTask,
             role: userRoles.coordinator,
+            tenantId,
         });
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
@@ -404,7 +418,7 @@ describe("TaskAssignmentsPanel", () => {
                 expect.any(Function)
             )
         );*/
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(21));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(12));
         const roleOption = screen.getByText("COORDINATOR");
         userEvent.click(roleOption);
         /*await waitFor(() =>
@@ -414,7 +428,7 @@ describe("TaskAssignmentsPanel", () => {
                 expect.any(Function)
             )
         );*/
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(22));
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(13));
         const textBox = screen.getByRole("textbox");
         userEvent.type(textBox, mockUser.displayName);
         const option = screen.getByText(mockUser.displayName);
@@ -422,13 +436,12 @@ describe("TaskAssignmentsPanel", () => {
         userEvent.click(option);
         await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(1));
         expect(screen.getByText(mockUser.displayName)).toBeInTheDocument();
-        expect(saveSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                ..._.omit(mockAssignment, "id"),
-                assignee: expect.objectContaining(_.omit(mockUser, "id")),
-                task: expect.objectContaining(_.omit(mockTask, "id")),
-            })
-        );
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockAssignment,
+            id: expect.any(String),
+            assignee: { ...mockUser, id: expect.any(String) },
+            task: { ...mockTask, id: expect.any(String) },
+        });
     });
 
     test("failure on assigning a user", async () => {
@@ -476,9 +489,10 @@ describe("TaskAssignmentsPanel", () => {
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(14));
         userEvent.click(screen.getByTestId("CancelIcon"));
         await waitFor(() =>
-            expect(deleteSpy).toHaveBeenCalledWith(
-                expect.objectContaining(_.omit(mockAssignment, "id"))
-            )
+            expect(deleteSpy).toHaveBeenCalledWith({
+                ...mockAssignment,
+                id: expect.any(String),
+            })
         );
     });
 
@@ -528,6 +542,7 @@ describe("TaskAssignmentsPanel", () => {
                 task: mockTask,
                 assignee: firstUser,
                 role: userRoles.rider,
+                archived: 0,
             })
         );
         await DataStore.save(
@@ -535,6 +550,7 @@ describe("TaskAssignmentsPanel", () => {
                 task: mockTask,
                 assignee: anotherUser,
                 role: userRoles.rider,
+                archived: 0,
             })
         );
         const querySpy = jest.spyOn(DataStore, "query");
@@ -608,9 +624,11 @@ describe("TaskAssignmentsPanel", () => {
             task: mockTask,
             role: role,
             assignee: mockWhoami,
+            archived: 0,
         });
         const mockOppositeRoleAssign = new models.TaskAssignee({
             task: mockTask,
+            archived: 0,
             role:
                 role === userRoles.rider
                     ? userRoles.coordinator
@@ -671,6 +689,7 @@ describe("TaskAssignmentsPanel", () => {
             task: mockTask,
             role: userRoles.coordinator,
             assignee: mockUser2,
+            archived: 0,
             tenantId,
         });
         await DataStore.save(mockAssignee);
@@ -691,6 +710,7 @@ describe("TaskAssignmentsPanel", () => {
                 task: mockTask,
                 assignee: mockUser,
                 role: userRoles.rider,
+                archived: 0,
                 tenantId,
             })
         );
@@ -723,6 +743,7 @@ describe("TaskAssignmentsPanel", () => {
             assignee: mockWhoami,
             task: mockTask,
             role: userRoles.coordinator,
+            archived: 0,
             tenantId,
         });
 
@@ -745,9 +766,10 @@ describe("TaskAssignmentsPanel", () => {
         const okButton = screen.getByRole("button", { name: "OK" });
         userEvent.click(okButton);
         await waitFor(() =>
-            expect(deleteSpy).toHaveBeenCalledWith(
-                expect.objectContaining(_.omit(mockAssignment, "id"))
-            )
+            expect(deleteSpy).toHaveBeenCalledWith({
+                ...mockAssignment,
+                id: expect.any(String),
+            })
         );
         await waitFor(() => {
             expect(okButton).not.toBeInTheDocument();
@@ -777,6 +799,7 @@ describe("TaskAssignmentsPanel", () => {
             assignee: mockWhoami,
             task: mockTask,
             role: userRoles.coordinator,
+            archived: 0,
             tenantId,
         });
 
