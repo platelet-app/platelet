@@ -18,7 +18,7 @@ const { default: fetch, Request } = require("node-fetch");
 const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
 
 const listTasks = /* GraphQL */ `
-    query listTasks($nextToken: String) {
+    query listTasks($nextToken: String, filter: {archived: {ne: 0}, and: {archived: {ne: 1}}}, limit: 100) {
         listTasks(nextToken: $nextToken) {
             items {
                 id
@@ -31,7 +31,7 @@ const listTasks = /* GraphQL */ `
 `;
 
 const listComments = /* GraphQL */ `
-    query listComments($nextToken: String) {
+    query listComments($nextToken: String, filter: {archived: {ne: 0}, and: {archived: {ne: 1}}}, limit: 100) {
         listComments(nextToken: $nextToken) {
             items {
                 id
@@ -43,7 +43,7 @@ const listComments = /* GraphQL */ `
     }
 `;
 const listLocations = /* GraphQL */ `
-    query listLocations($nextToken: String) {
+    query listLocations($nextToken: String, filter: {archived: {ne: 0}, and: {archived: {ne: 1}}}, limit: 100) {
         listLocations(nextToken: $nextToken) {
             items {
                 id
@@ -56,7 +56,7 @@ const listLocations = /* GraphQL */ `
 `;
 
 const listDeliverables = /* GraphQL */ `
-    query listDeliverables($nextToken: String) {
+    query listDeliverables($nextToken: String, filter: {archived: {ne: 0}, and: {archived: {ne: 1}}}, limit: 100) {
         listDeliverables(nextToken: $nextToken) {
             items {
                 id
@@ -68,7 +68,7 @@ const listDeliverables = /* GraphQL */ `
     }
 `;
 const listTaskAssignees = /* GraphQL */ `
-    query listTaskAssignees($nextToken: String) {
+    query listTaskAssignees($nextToken: String, filter: {archived: {ne: 0}, and: {archived: {ne: 1}}}, limit: 100) {
         listTaskAssignees(nextToken: $nextToken) {
             items {
                 id
@@ -255,32 +255,35 @@ exports.handler = async (event, makeNewRequestTest) => {
         console.log("TESTING");
         makeNewRequest = makeNewRequestTest;
     }
+    const results = [];
     console.log(`EVENT: ${JSON.stringify(event)}`);
     const tasks = await getItems(listTasks, "listTasks");
     console.log("tasks", tasks);
+    const updateTasks = await Promise.all(tasks.map(updateTask));
+    results.push(...updateTasks);
     const comments = await getItems(listComments, "listComments");
     console.log("comments", comments);
+    const updateComments = await Promise.all(comments.map(updateComment));
+    results.push(...updateComments);
     const locations = await getItems(listLocations, "listLocations");
     console.log("locations", locations);
+    const updateLocations = await Promise.all(locations.map(updateLocation));
+    results.push(...updateLocations);
     const deliverables = await getItems(listDeliverables, "listDeliverables");
     console.log("deliverables", deliverables);
+    const updateDeliverables = await Promise.all(
+        deliverables.map(updateDeliverable)
+    );
+    results.push(...updateDeliverables);
     const taskAssignees = await getItems(
         listTaskAssignees,
         "listTaskAssignees"
     );
     console.log("taskAssignees", taskAssignees);
-    const updateTasks = tasks.map(updateTask);
-    const updateComments = comments.map(updateComment);
-    const updateLocations = locations.map(updateLocation);
-    const updateDeliverables = deliverables.map(updateDeliverable);
-    const updateTaskAssignees = taskAssignees.map(updateTaskAssignee);
-    const results = await Promise.all([
-        ...updateTasks,
-        ...updateComments,
-        ...updateLocations,
-        ...updateDeliverables,
-        ...updateTaskAssignees,
-    ]);
+    const updateTaskAssignees = await Promise.all(
+        taskAssignees.map(updateTaskAssignee)
+    );
+    results.push(...updateTaskAssignees);
     console.log("RESULTS:", results);
     return results;
 };
