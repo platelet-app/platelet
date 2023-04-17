@@ -58,6 +58,7 @@ describe("TaskHistory", () => {
             new models.User({
                 tenantId,
                 displayName: "someDisplayName",
+                roles: [models.Role.ADMIN],
             })
         );
         preloadedState = { ...preloadedState, whoami: { user: mockWhoami } };
@@ -554,5 +555,20 @@ describe("TaskHistory", () => {
               "tenantId": "testTenantId",
             }
         `);
+    });
+
+    test("hide if you don't have the right role", async () => {
+        const mockWhoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                displayName: "someDisplayName",
+                roles: [models.Role.RIDER],
+            })
+        );
+        const preloadedState = { tenantId, whoami: { user: mockWhoami } };
+        render(<TaskHistory />, { preloadedState });
+        expect(
+            screen.getByText("Sorry, you don't have access to this page.")
+        ).toBeInTheDocument();
     });
 });

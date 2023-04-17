@@ -40,6 +40,11 @@ function NavDrawerItems(props) {
                     <ListItemText primary={"Admin"} />
                 </ListItem>
             );
+        }
+        if (
+            whoami.roles.includes(models.Role.ADMIN) ||
+            whoami.roles.includes(models.Role.COORDINATOR)
+        ) {
             historyLink = (
                 <ListItem
                     onClick={onSelect}
@@ -54,11 +59,6 @@ function NavDrawerItems(props) {
                     <ListItemText primary={"History"} />
                 </ListItem>
             );
-        }
-        if (
-            whoami.roles.includes(models.Role.ADMIN) ||
-            whoami.roles.includes(models.Role.COORDINATOR)
-        ) {
             statisticsLink = (
                 <ListItem
                     onClick={onSelect}

@@ -9,12 +9,16 @@ import { ModelSortDirection } from "../../API";
 import DateStampDivider from "../../components/DateStampDivider";
 import { Link, useLocation } from "react-router-dom";
 import { encodeUUID } from "../../utilities";
+import { useSelector } from "react-redux";
+import { getWhoami } from "../../redux/Selectors";
+import * as models from "../../models";
 
 const limit = 20;
 
 const TaskHistory: React.FC = () => {
     let displayDate = false;
     let lastTime = new Date();
+    const whoami = useSelector(getWhoami);
     const [sortDirection, setSortDirection] =
         React.useState<ModelSortDirection>(ModelSortDirection.DESC);
     const [dateRange, setDateRange] = React.useState<{
@@ -35,6 +39,9 @@ const TaskHistory: React.FC = () => {
     const { ref, inView } = useInView({
         threshold: 0,
     });
+    const hasPermission =
+        whoami.roles.includes(models.Role.ADMIN) ||
+        whoami.roles.includes(models.Role.COORDINATOR);
 
     const handleSetDateRange = (
         startDate: Date | null,
@@ -51,85 +58,95 @@ const TaskHistory: React.FC = () => {
 
     const skeletonRange = state.length ? 1 : 20;
 
-    return (
-        <>
-            <Stack spacing={1}>
-                <TaskHistoryControls
-                    onRefresh={refresh}
-                    sortDirection={sortDirection}
-                    setSortDirection={(v) => setSortDirection(v)}
-                    setDateRange={handleSetDateRange}
-                    isFetching={isFetching}
-                />
-                {state.map((task) => {
-                    displayDate = false;
-                    let component = (
-                        <Box sx={{ maxWidth: 800 }} key={task.id}>
-                            <Link
-                                style={{ textDecoration: "none" }}
-                                to={{
-                                    pathname: `/history/${encodeUUID(task.id)}`,
-                                    state: { background: location },
-                                }}
-                            >
-                                <TaskHistoryCard task={task} />
-                            </Link>
-                        </Box>
-                    );
-                    if (task.dateCreated) {
-                        const timeComparison = new Date(task.dateCreated);
-                        if (
-                            timeComparison.getDate() <=
-                            lastTime.getDate() - 1
-                        ) {
-                            lastTime = timeComparison;
-                            displayDate = true;
-                        }
-                        if (displayDate) {
-                            component = (
-                                <Box sx={{ maxWidth: 800 }} key={task.id}>
-                                    <Box>
-                                        <DateStampDivider
-                                            date={lastTime.toISOString()}
-                                        />
-                                    </Box>
-                                    <Link
-                                        to={{
-                                            pathname: `/history/${encodeUUID(
-                                                task.id
-                                            )}`,
-                                            state: { background: location },
-                                        }}
-                                        style={{ textDecoration: "none" }}
-                                    >
-                                        <TaskHistoryCard task={task} />
-                                    </Link>
-                                </Box>
-                            );
-                        }
-                    }
-                    return component;
-                })}
-                {error && <Typography>Sorry, something went wrong.</Typography>}
-                <div ref={ref} />
-                {!isFinished && (
-                    <Stack spacing={1} data-testid="task-history-skeleton">
-                        {_.range(0, skeletonRange).map((i) => (
-                            <Box key={i} sx={{ maxWidth: 800 }}>
-                                <Skeleton
-                                    variant="rectangular"
-                                    height={100}
-                                    sx={{
-                                        borderRadius: 4,
+    if (hasPermission) {
+        return (
+            <>
+                <Stack spacing={1}>
+                    <TaskHistoryControls
+                        onRefresh={refresh}
+                        sortDirection={sortDirection}
+                        setSortDirection={(v) => setSortDirection(v)}
+                        setDateRange={handleSetDateRange}
+                        isFetching={isFetching}
+                    />
+                    {state.map((task) => {
+                        displayDate = false;
+                        let component = (
+                            <Box sx={{ maxWidth: 800 }} key={task.id}>
+                                <Link
+                                    style={{ textDecoration: "none" }}
+                                    to={{
+                                        pathname: `/history/${encodeUUID(
+                                            task.id
+                                        )}`,
+                                        state: { background: location },
                                     }}
-                                />
+                                >
+                                    <TaskHistoryCard task={task} />
+                                </Link>
                             </Box>
-                        ))}
-                    </Stack>
-                )}
-            </Stack>
-        </>
-    );
+                        );
+                        if (task.dateCreated) {
+                            const timeComparison = new Date(task.dateCreated);
+                            if (
+                                timeComparison.getDate() <=
+                                lastTime.getDate() - 1
+                            ) {
+                                lastTime = timeComparison;
+                                displayDate = true;
+                            }
+                            if (displayDate) {
+                                component = (
+                                    <Box sx={{ maxWidth: 800 }} key={task.id}>
+                                        <Box>
+                                            <DateStampDivider
+                                                date={lastTime.toISOString()}
+                                            />
+                                        </Box>
+                                        <Link
+                                            to={{
+                                                pathname: `/history/${encodeUUID(
+                                                    task.id
+                                                )}`,
+                                                state: { background: location },
+                                            }}
+                                            style={{ textDecoration: "none" }}
+                                        >
+                                            <TaskHistoryCard task={task} />
+                                        </Link>
+                                    </Box>
+                                );
+                            }
+                        }
+                        return component;
+                    })}
+                    {error && (
+                        <Typography>Sorry, something went wrong.</Typography>
+                    )}
+                    <div ref={ref} />
+                    {!isFinished && (
+                        <Stack spacing={1} data-testid="task-history-skeleton">
+                            {_.range(0, skeletonRange).map((i) => (
+                                <Box key={i} sx={{ maxWidth: 800 }}>
+                                    <Skeleton
+                                        variant="rectangular"
+                                        height={100}
+                                        sx={{
+                                            borderRadius: 4,
+                                        }}
+                                    />
+                                </Box>
+                            ))}
+                        </Stack>
+                    )}
+                </Stack>
+            </>
+        );
+    } else {
+        return (
+            <Typography>Sorry, you don't have access to this page.</Typography>
+        );
+    }
 };
 
 export default TaskHistory;
