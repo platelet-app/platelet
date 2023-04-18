@@ -144,11 +144,8 @@ function* getWhoami() {
                             )
                         ),
                         ...archivedModels.map((model) =>
-                            syncExpression(
-                                model,
-                                (m) => m.tenantId("eq", tenantId)
-                                // TODO: Uncomment when migration completed
-                                // .archived("eq", 0)
+                            syncExpression(model, (m) =>
+                                m.tenantId("eq", tenantId).archived("eq", 0)
                             )
                         ),
                         syncExpression(models.Tenant, (m) =>
