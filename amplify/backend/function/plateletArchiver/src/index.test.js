@@ -27,8 +27,10 @@ const mockTask = {
     pickUpLocation: {
         listed: 1,
         _version: 1,
+        id: "someLocationIdListed",
     },
     dropOffLocation: {
+        id: "someLocationIdUnlisted",
         listed: 0,
         _version: 1,
     },
@@ -174,11 +176,11 @@ describe("plateletArchiver", () => {
         expect(typeof indexModule.handler).toBe("function");
     });
 
-    test.only("archive some tasks, ignore the newer task", async () => {
+    test("archive some tasks, ignore the newer task", async () => {
         const requestSpy = jest.spyOn(indexModule, "makeNewRequest");
         jest.spyOn(fetch, "default")
             .mockImplementationOnce(setupFetchStub(fakeData))
-            //.mockImplementationOnce(setupFetchStub(fakeDataSecond))
+            .mockImplementationOnce(setupFetchStub(fakeDataSecond))
             .mockImplementationOnce(setupFetchStub(fakeEmptyData))
             .mockImplementationOnce(setupFetchStub(fakeEmptyData))
             .mockImplementationOnce(setupFetchStub(fakeEmptyData))
