@@ -60,7 +60,6 @@ function PopOutLocationSelectorForm(props) {
     };
 
     const handleCancel = () => {
-        setState(initialState);
         props.onCancel();
     };
 

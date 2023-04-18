@@ -4,7 +4,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import LabelItemPair from "../../../components/LabelItemPair";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
 import Divider from "@mui/material/Divider";
 import { Box, Button, Stack, Tooltip } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
@@ -233,23 +233,26 @@ function PopOutLocationSelector(props) {
                                 }
                                 value={collapsed}
                             />
-                            {state && !props.disableClear && !props.override && (
-                                <ClearButtonWithConfirmation
-                                    disabled={props.disabled}
-                                    onClear={onClickClearButton}
-                                >
-                                    <Typography>
-                                        Are you sure you want to clear the
-                                        location?
-                                    </Typography>
-                                </ClearButtonWithConfirmation>
-                            )}
+                            {state &&
+                                !props.disableClear &&
+                                !props.override && (
+                                    <ClearButtonWithConfirmation
+                                        disabled={props.disabled}
+                                        onClear={onClickClearButton}
+                                    >
+                                        <Typography>
+                                            Are you sure you want to clear the
+                                            location?
+                                        </Typography>
+                                    </ClearButtonWithConfirmation>
+                                )}
                         </Stack>
                     </>
                 )}
             </Stack>
             <PopOutLocationSelectorForm
                 open={editMode}
+                key={editMode}
                 onConfirmation={handleConfirmation}
                 label={`Enter ${props.label}`}
                 location={state}
