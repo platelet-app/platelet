@@ -246,17 +246,25 @@ const getComments = async (task) => {
 const getUnArchivedTasksByStatus = async (status) => {
     const items = [];
     let nextToken = null;
-    const variables = {
-        archived: 0,
-        status: { eq: status },
-        nextToken,
-    };
-    const request = await makeNewRequest(query, variables);
-    const response = await fetch(request);
-    const body = await response.json();
-    if (body.data.tasksByArchivedStatus) {
-        items.push(...body.data.tasksByArchivedStatus.items);
-    }
+
+    do {
+        const variables = {
+            archived: 0,
+            status: { eq: status },
+            nextToken,
+        };
+        const request = await makeNewRequest(query, variables);
+        const response = await fetch(request);
+        const body = await response.json();
+        if (body.data.tasksByArchivedStatus) {
+            items.push(...body.data.tasksByArchivedStatus.items);
+            nextToken = null;
+            //nextToken = body.data.tasksByArchivedStatus.nextToken;
+        } else {
+            nextToken = null;
+        }
+    } while (nextToken);
+
     return items.flat();
 };
 
@@ -331,7 +339,6 @@ const updateTask = async (task) => {
 };
 
 exports.handler = async (event, makeNewRequestTest) => {
-    return [];
     if (makeNewRequestTest && process.env.NODE_ENV === "test") {
         console.log("TESTING");
         makeNewRequest = makeNewRequestTest;
