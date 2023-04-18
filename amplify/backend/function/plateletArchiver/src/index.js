@@ -28,7 +28,6 @@ const query = /* GraphQL */ `
             archived: $archived
             status: $status
             nextToken: $nextToken
-            limit: 100
         ) {
             items {
                 id
@@ -258,8 +257,7 @@ const getUnArchivedTasksByStatus = async (status) => {
         const body = await response.json();
         if (body.data.tasksByArchivedStatus) {
             items.push(...body.data.tasksByArchivedStatus.items);
-            nextToken = null;
-            //nextToken = body.data.tasksByArchivedStatus.nextToken;
+            nextToken = body.data.tasksByArchivedStatus.nextToken;
         } else {
             nextToken = null;
         }
