@@ -83,12 +83,12 @@ function Dashboard() {
                 (savedRoleMode === "ALL" &&
                     whoami.roles.includes(userRoles.coordinator))
             ) {
-                dispatch(setRoleView(savedRoleMode));
+                dispatch(setRoleView([savedRoleMode]));
             } else if (whoami.roles.includes(userRoles.coordinator)) {
-                dispatch(setRoleView(userRoles.coordinator));
+                dispatch(setRoleView([userRoles.coordinator]));
                 saveDashboardRoleMode(userRoles.coordinator);
             } else if (whoami.roles.includes(userRoles.rider)) {
-                dispatch(setRoleView(userRoles.rider));
+                dispatch(setRoleView([userRoles.rider]));
                 dispatch(setDashboardFilteredUser(null));
                 saveDashboardRoleMode(userRoles.rider);
             }

@@ -208,6 +208,7 @@ const TaskItem = React.memo((props) => {
 
     const getAssignees = React.useCallback(
         (visibility, roleView, task, allAssignees) => {
+            return;
             if (!visibility || !roleView || !task) return;
             const taskAssignees =
                 allAssignees && allAssignees.items

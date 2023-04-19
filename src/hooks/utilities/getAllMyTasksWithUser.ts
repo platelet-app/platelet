@@ -12,7 +12,7 @@ export default async function getAllMyTasksWithUser(
     allAssignments: models.TaskAssignee[]
 ): Promise<TaskStateType> {
     const myAssignments = allAssignments.filter(
-        (a) => a.role === roleView && a.task && a.assignee.id === userId
+        (a) => roleView?.includes(a.role) && a.task && a.assignee.id === userId
     );
     const theirAssignments = allAssignments.filter(
         (a) =>

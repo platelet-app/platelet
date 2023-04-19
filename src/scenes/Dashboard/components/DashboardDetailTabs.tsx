@@ -24,6 +24,7 @@ import {
 } from "../../../redux/Selectors";
 import { clearDashboardFilter } from "../../../redux/dashboardFilter/DashboardFilterActions";
 import * as models from "../../../models";
+import DashboardDetailTabsSelectionFilter from "./DashboardDetailTabsSelectionFilter";
 
 type DashboardDetailTabsProps = {
     disableAddButton?: boolean;
@@ -129,6 +130,7 @@ const DashboardDetailTabs: React.FC<DashboardDetailTabsProps> = ({
                     {["ALL", models.Role.COORDINATOR].includes(roleView) &&
                         addClearButton}
                 </Hidden>
+                <DashboardDetailTabsSelectionFilter />
                 <FormControl variant="outlined">
                     <Select
                         sx={{

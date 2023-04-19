@@ -93,9 +93,12 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
                 return;
             } else {
                 try {
-                    if (roleView === "ALL" && !dashboardFilteredUser) {
+                    if (roleView?.includes("ALL") && !dashboardFilteredUser) {
                         setState(await getTasksAll(taskKey));
-                    } else if (roleView === "ALL" && dashboardFilteredUser) {
+                    } else if (
+                        roleView?.includes("ALL") &&
+                        dashboardFilteredUser
+                    ) {
                         setState(
                             await getAllTasksByUser(
                                 taskKey,
@@ -104,7 +107,10 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
                                 taskAssigneesItems
                             )
                         );
-                    } else if (roleView !== "ALL" && !dashboardFilteredUser) {
+                    } else if (
+                        !roleView?.includes("ALL") &&
+                        !dashboardFilteredUser
+                    ) {
                         setState(
                             await getAllMyTasks(
                                 taskKey,
@@ -113,7 +119,10 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
                                 taskAssigneesItems
                             )
                         );
-                    } else if (roleView !== "ALL" && dashboardFilteredUser) {
+                    } else if (
+                        !roleView?.includes("ALL") &&
+                        dashboardFilteredUser
+                    ) {
                         setState(
                             await getAllMyTasksWithUser(
                                 taskKey,
