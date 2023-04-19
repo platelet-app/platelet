@@ -51,7 +51,6 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
     const locationsSubscription = React.useRef({
         unsubscribe: () => {},
     });
-    const animate = React.useRef(true);
     const whoami = useSelector(getWhoami);
     const taskAssignees = useSelector(taskAssigneesSelector);
     const prevTaskAssigneesRef = React.useRef<models.TaskAssignee[] | null>(
@@ -63,11 +62,9 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
     stateRef.current = state;
 
     function addTaskToState(newTask: models.Task) {
-        animate.current = true;
         setState((prevState) => {
             return { ...prevState, [newTask.id]: newTask };
         });
-        animate.current = false;
     }
 
     function removeTaskFromState(newTask: models.Task) {
@@ -128,7 +125,6 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
                         );
                     }
 
-                    animate.current = false;
                     prevTaskAssigneesRef.current = taskAssigneesItems;
                     setIsFetching(false);
                 } catch (error) {
@@ -235,10 +231,7 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
                             taskKey.includes(newTask.element.status) &&
                             !(newTask.element.id in stateRef.current)
                         ) {
-                            animate.current = true;
-                            getTasksRef
-                                .current()
-                                .then(() => (animate.current = false));
+                            getTasksRef.current();
                             return;
                         } else if (
                             newTask.element.status &&

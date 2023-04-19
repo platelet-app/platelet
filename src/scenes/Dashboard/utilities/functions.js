@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { DataStore } from "aws-amplify";
-import { tasksStatus, userRoles } from "../../../apiConsts";
+import { userRoles } from "../../../apiConsts";
 import * as models from "../../../models";
 import moment from "moment";
 import { convertListDataToObject } from "../../../utilities";
