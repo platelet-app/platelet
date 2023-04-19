@@ -1,33 +1,33 @@
 import { DataStore } from "aws-amplify";
+import * as models from "../../models";
+import { isCompletedTab } from "./isCompletedTab";
 import moment from "moment";
-import * as models from "../../../models";
-import { isCompletedTab } from "./functions";
-import { convertListDataToObject } from "../../../utilities";
 
-export default async function getAllMyTasks(
+export default async function getAllTasksByUser(
     keys: models.TaskStatus[],
     userId: string,
-    roleView: models.Role,
-    allAssignees: models.TaskAssignee[]
-) {
-    const roleViewAssignments = allAssignees.filter(
-        (assignee) => assignee.role === roleView
+    role: models.Role = models.Role.RIDER,
+    allAssignments: models.TaskAssignee[] = []
+): Promise<models.Task[]> {
+    const roleAssignments = allAssignments.filter(
+        (assignment) => assignment.role === role
     );
-    const myTasksIds = roleViewAssignments
-        .filter((a) => a.task && a?.assignee.id === userId)
-        .map((a2) => a2?.task?.id);
-    let filteredTasks = [];
-    if (!myTasksIds || myTasksIds.length === 0) {
-        return {};
+    let allTasks = [];
+    const riderTaskIds = roleAssignments
+        .filter((a) => a.task && userId === a.assignee.id)
+        .map((a) => a.task && a.task.id);
+    if (!riderTaskIds || riderTaskIds.length === 0) {
+        return [];
     }
+
     if (isCompletedTab(keys)) {
         const oneWeekAgo = moment.utc().subtract(7, "days").toISOString();
-        filteredTasks = await DataStore.query(
+        allTasks = await DataStore.query(
             models.Task,
             (task) =>
                 task
                     .or((task) =>
-                        myTasksIds.reduce(
+                        riderTaskIds.reduce(
                             (task, id) => task.id("eq", id || ""),
                             task
                         )
@@ -49,12 +49,12 @@ export default async function getAllMyTasks(
             }
         );
     } else {
-        filteredTasks = await DataStore.query(
+        allTasks = await DataStore.query(
             models.Task,
             (task) =>
                 task
                     .or((task) =>
-                        myTasksIds.reduce(
+                        riderTaskIds.reduce(
                             (task, id) => task.id("eq", id || ""),
                             task
                         )
@@ -67,8 +67,9 @@ export default async function getAllMyTasks(
                     ),
             {
                 sort: (s) => s.createdAt("DESCENDING"),
+                limit: 0,
             }
         );
     }
-    return convertListDataToObject(filteredTasks);
+    return allTasks;
 }

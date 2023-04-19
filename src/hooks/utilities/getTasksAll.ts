@@ -1,10 +1,13 @@
 import { DataStore } from "aws-amplify";
-import { isCompletedTab } from "./functions";
-import * as models from "../../../models";
+import { isCompletedTab } from "./isCompletedTab";
+import * as models from "../../models";
 import moment from "moment";
-import { convertListDataToObject } from "../../../utilities";
+import { convertListDataToObject } from "../../utilities";
+import { TaskStateType } from "../useTasksColumnTasks";
 
-export default async function getTasksAll(keys: models.TaskStatus[] = []) {
+export default async function getTasksAll(
+    keys: models.TaskStatus[] = []
+): Promise<TaskStateType> {
     let tasksResult = [];
     if (isCompletedTab(keys)) {
         const oneWeekAgo = moment.utc().subtract(7, "days").toISOString();

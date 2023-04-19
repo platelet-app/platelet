@@ -5,17 +5,6 @@ import * as models from "../../../models";
 import moment from "moment";
 import { convertListDataToObject } from "../../../utilities";
 
-export const isCompletedTab = (keys) =>
-    _.intersection(
-        [
-            tasksStatus.completed,
-            tasksStatus.cancelled,
-            tasksStatus.rejected,
-            tasksStatus.abandoned,
-        ],
-        keys
-    ).length > 0;
-
 export const filterTasksToOneWeek = (task) =>
     moment(task.createdAt).isAfter(moment().subtract(1, "week"));
 
