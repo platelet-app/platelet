@@ -1,8 +1,8 @@
 import { DataStore } from "aws-amplify";
 import moment from "moment";
-import * as models from "../../../models";
-import { convertListDataToObject } from "../../../utilities";
-import { isCompletedTab } from "./functions";
+import * as models from "../../models";
+import { convertTasksToStateType, TaskStateType } from "../useTasksColumnTasks";
+import { isCompletedTab } from "./isCompletedTab";
 
 export default async function getAllMyTasksWithUser(
     keys: models.TaskStatus[],
@@ -10,7 +10,7 @@ export default async function getAllMyTasksWithUser(
     roleView: models.Role,
     filteredUser: string,
     allAssignments: models.TaskAssignee[]
-) {
+): Promise<TaskStateType> {
     const myAssignments = allAssignments.filter(
         (a) => a.role === roleView && a.task && a.assignee.id === userId
     );
@@ -80,5 +80,5 @@ export default async function getAllMyTasksWithUser(
         );
     }
 
-    return convertListDataToObject(filteredTasks);
+    return convertTasksToStateType(filteredTasks);
 }

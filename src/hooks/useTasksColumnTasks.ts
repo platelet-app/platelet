@@ -15,16 +15,25 @@ import getAllMyTasksWithUser from "./utilities/getAllMyTasksWithUser";
 import getAllTasksByUser from "./utilities/getAllTasksByUser";
 import getTasksAll from "./utilities/getTasksAll";
 import { DataStore } from "aws-amplify";
+import _ from "lodash";
 
 type UseTasksColumnTasksProps = {
-    taskStatusKey: string[];
+    taskStatusKey: models.TaskStatus[];
 };
 
 export type TaskStateType = {
     [key: string]: models.Task;
 };
 
-const useTasksColumnTasks = ({ taskStatusKey }: UseTasksColumnTasksProps) => {
+export function convertTasksToStateType(tasks: models.Task[]): TaskStateType {
+    const state: TaskStateType = {};
+    tasks.forEach((task) => {
+        state[task.id] = task;
+    });
+    return state;
+}
+
+const useTasksColumnTasks = (taskStatusKey: UseTasksColumnTasksProps) => {
     const [state, setState] = React.useState<TaskStateType>({});
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const roleView = useSelector(getRoleView);
@@ -34,18 +43,24 @@ const useTasksColumnTasks = ({ taskStatusKey }: UseTasksColumnTasksProps) => {
     const selectionActionsPending = useSelector(
         selectionActionsPendingSelector
     );
-    const getTasksRef = React.useRef(() => {});
+    const getTasksRef = React.useRef<Function>(
+        async (): Promise<TaskStateType> => {
+            return {};
+        }
+    );
     const tasksSubscription = React.useRef({
         unsubscribe: () => {},
     });
-    const stateRef = useRef({});
+    const stateRef = React.useRef<TaskStateType>({});
     const locationsSubscription = React.useRef({
         unsubscribe: () => {},
     });
     const animate = React.useRef(true);
     const whoami = useSelector(getWhoami);
     const taskAssignees = useSelector(taskAssigneesSelector);
-    const prevTaskAssigneesRef = React.useRef<models.TaskAssignee | null>(null);
+    const prevTaskAssigneesRef = React.useRef<models.TaskAssignee[] | null>(
+        null
+    );
     const taskAssigneesReady = useSelector(taskAssigneesReadyStatusSelector);
     const [isFetching, setIsFetching] = React.useState(true);
     const [error, setError] = React.useState(false);
@@ -53,7 +68,9 @@ const useTasksColumnTasks = ({ taskStatusKey }: UseTasksColumnTasksProps) => {
 
     function addTaskToState(newTask: models.Task) {
         animate.current = true;
-        setState((prevState) => [...prevState, newTask]);
+        setState((prevState) => {
+            return { ...prevState, [newTask.id]: newTask };
+        });
         animate.current = false;
     }
 
@@ -74,7 +91,12 @@ const useTasksColumnTasks = ({ taskStatusKey }: UseTasksColumnTasksProps) => {
             taskAssigneesReady,
             whoamiId
         ) => {
-            if (!roleView || !taskAssigneesReady || selectionActionsPending) {
+            if (
+                !roleView ||
+                !taskAssigneesReady ||
+                selectionActionsPending ||
+                !taskKey
+            ) {
                 return;
             } else {
                 try {
@@ -234,10 +256,14 @@ const useTasksColumnTasks = ({ taskStatusKey }: UseTasksColumnTasksProps) => {
                                 // @ts-ignore
                                 newTask.element.pickUpLocationId !==
                                     stateRef.current[newTask.element.id]
+                                        // prettier-ignore
+                                        // @ts-ignore
                                         .pickUpLocationId ||
                                 // @ts-ignore
                                 newTask.element.dropOffLocationId !==
                                     stateRef.current[newTask.element.id]
+                                        // prettier-ignore
+                                        // @ts-ignore
                                         .dropOffLocationId
                             ) {
                                 getTasksRef.current();
@@ -294,47 +320,6 @@ const useTasksColumnTasks = ({ taskStatusKey }: UseTasksColumnTasksProps) => {
                 console.log(error);
             }
         });
-        // big block of commented code for old way of getting assignments
-        /* taskAssigneesObserver.current.unsubscribe();
-        taskAssigneesObserver.current = DataStore.observe(
-            models.TaskAssignee
-        ).subscribe((taskAssignee) => {
-            try {
-                if (taskAssignee.opType === "INSERT") {
-                    const element = taskAssignee.element;
-                    // if roleView is ALL let the task observer deal with it
-                    if (roleView === "ALL") return;
-                    if (
-                        element.assigneeId === whoami.id &&
-                        element.role === roleView
-                    ) {
-                        if (!element.taskId) return;
-                        DataStore.query(models.Task, element.taskId).then(
-                            (result) => {
-                                if (taskKey.includes(result.status)) {
-                                    animate.current = true;
-                                    getTasks();
-                                }
-                            }
-                        );
-                    }
-                } else if (taskAssignee.opType === "DELETE") {
-                    const element = taskAssignee.element;
-                    // if roleView is ALL do nothing
-                    if (roleView === "ALL") return;
-                    if (
-                        element.assignee &&
-                        element.assignee.id === whoami.id &&
-                        element.role === roleView
-                    ) {
-                        removeTaskFromState(element.task);
-                    }
-                }
-            } catch (e) {
-                console.log(e);
-            }
-        });
-        */
     }, []);
 
     React.useEffect(() => {

@@ -2,13 +2,14 @@ import { DataStore } from "aws-amplify";
 import * as models from "../../models";
 import { isCompletedTab } from "./isCompletedTab";
 import moment from "moment";
+import { convertTasksToStateType, TaskStateType } from "../useTasksColumnTasks";
 
 export default async function getAllTasksByUser(
     keys: models.TaskStatus[],
     userId: string,
     role: models.Role = models.Role.RIDER,
     allAssignments: models.TaskAssignee[] = []
-): Promise<models.Task[]> {
+): Promise<TaskStateType> {
     const roleAssignments = allAssignments.filter(
         (assignment) => assignment.role === role
     );
@@ -17,7 +18,7 @@ export default async function getAllTasksByUser(
         .filter((a) => a.task && userId === a.assignee.id)
         .map((a) => a.task && a.task.id);
     if (!riderTaskIds || riderTaskIds.length === 0) {
-        return [];
+        return {};
     }
 
     if (isCompletedTab(keys)) {
@@ -71,5 +72,5 @@ export default async function getAllTasksByUser(
             }
         );
     }
-    return allTasks;
+    return convertTasksToStateType(allTasks);
 }

@@ -1,6 +1,7 @@
 import { DataStore } from "aws-amplify";
 import moment from "moment";
 import * as models from "../../models";
+import { convertTasksToStateType, TaskStateType } from "../useTasksColumnTasks";
 import { isCompletedTab } from "./isCompletedTab";
 
 export default async function getAllMyTasks(
@@ -8,7 +9,7 @@ export default async function getAllMyTasks(
     userId: string,
     roleView: models.Role,
     allAssignees: models.TaskAssignee[]
-): Promise<models.Task[]> {
+): Promise<TaskStateType> {
     const roleViewAssignments = allAssignees.filter(
         (assignee) => assignee.role === roleView
     );
@@ -17,7 +18,7 @@ export default async function getAllMyTasks(
         .map((a2) => a2?.task?.id);
     let filteredTasks = [];
     if (!myTasksIds || myTasksIds.length === 0) {
-        return [];
+        return {};
     }
     if (isCompletedTab(keys)) {
         const oneWeekAgo = moment.utc().subtract(7, "days").toISOString();
@@ -69,5 +70,5 @@ export default async function getAllMyTasks(
             }
         );
     }
-    return filteredTasks;
+    return convertTasksToStateType(filteredTasks);
 }

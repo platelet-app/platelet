@@ -2,8 +2,7 @@ import { DataStore } from "aws-amplify";
 import { isCompletedTab } from "./isCompletedTab";
 import * as models from "../../models";
 import moment from "moment";
-import { convertListDataToObject } from "../../utilities";
-import { TaskStateType } from "../useTasksColumnTasks";
+import { convertTasksToStateType, TaskStateType } from "../useTasksColumnTasks";
 
 export default async function getTasksAll(
     keys: models.TaskStatus[] = []
@@ -47,5 +46,5 @@ export default async function getTasksAll(
             }
         );
     }
-    return convertListDataToObject(tasksResult);
+    return convertTasksToStateType(tasksResult);
 }

@@ -1,33 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import _ from "lodash";
-import * as models from "../../../models/index";
 import { useSelector } from "react-redux";
 import { Skeleton, Stack, useMediaQuery } from "@mui/material";
 import PropTypes from "prop-types";
 import { makeStyles } from "tss-react/mui";
-import {
-    dashboardFilteredUserSelector,
-    getRoleView,
-    getWhoami,
-    taskAssigneesReadyStatusSelector,
-    taskAssigneesSelector,
-    dataStoreModelSyncedStatusSelector,
-    dashboardFilterTermSelector,
-    selectionActionsPendingSelector,
-} from "../../../redux/Selectors";
-import { DataStore } from "aws-amplify";
+import { dashboardFilterTermSelector } from "../../../redux/Selectors";
 import { filterTasks } from "../utilities/functions";
 import GetError from "../../../ErrorComponents/GetError";
-import { userRoles } from "../../../apiConsts";
 import Box from "@mui/material/Box";
-import getTasksAll from "../utilities/getTasksAll";
-import getAllTasksByUser from "../utilities/getAllTasksByUser";
-import getAllMyTasks from "../utilities/getAllMyTasks";
-import getAllMyTasksWithUser from "../utilities/getAllMyTasksWithUser";
 import useWindowSize from "../../../hooks/useWindowSize";
 import { useTheme } from "@mui/styles";
 import TaskGridColumnHeader from "./TaskGridColumnHeader";
 import TaskGridTasksList from "./TaskGridTasksList";
+import useTasksColumnTasks from "../../../hooks/useTasksColumnTasks";
 
 const useStyles = makeStyles()((theme) => ({
     divider: {
@@ -59,7 +44,8 @@ const useStyles = makeStyles()((theme) => ({
 }));
 
 function TasksGridColumn(props) {
-    const [state, setState] = useState([]);
+    console.log("TasksGridColumn", props.taskKey);
+    const { state, isFetching, error } = useTasksColumnTasks(props.taskKey);
     const [filteredTasksIds, setFilteredTasksIds] = useState(null);
     const [width] = useWindowSize();
     const dashboardFilter = useSelector(dashboardFilterTermSelector);
@@ -75,9 +61,7 @@ function TasksGridColumn(props) {
     }
     useEffect(doSearch, [dashboardFilter, state]);
 
-    const animate = useRef(false);
-
-    if (errorState) {
+    if (error) {
         return <GetError />;
     } else if (isFetching) {
         return (
