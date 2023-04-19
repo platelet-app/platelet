@@ -1,75 +1,36 @@
-import React, { useEffect, useRef, useState } from "react";
-import _ from "lodash";
-import * as models from "../../../models/index";
+import React from "react";
+import * as models from "../models";
 import { useSelector } from "react-redux";
-import { Skeleton, Stack, useMediaQuery } from "@mui/material";
-import PropTypes from "prop-types";
-import { makeStyles } from "tss-react/mui";
 import {
-    dashboardFilteredUserSelector,
     getRoleView,
     getWhoami,
-    taskAssigneesReadyStatusSelector,
     taskAssigneesSelector,
+    dashboardFilteredUserSelector,
+    taskAssigneesReadyStatusSelector,
     dataStoreModelSyncedStatusSelector,
-    dashboardFilterTermSelector,
     selectionActionsPendingSelector,
-} from "../../../redux/Selectors";
+} from "../redux/Selectors";
+import getAllMyTasks from "./utilities/getAllMyTasks";
+import getAllMyTasksWithUser from "./utilities/getAllMyTasksWithUser";
+import getAllTasksByUser from "./utilities/getAllTasksByUser";
+import getTasksAll from "./utilities/getTasksAll";
 import { DataStore } from "aws-amplify";
-import { filterTasks } from "../utilities/functions";
-import GetError from "../../../ErrorComponents/GetError";
-import { userRoles } from "../../../apiConsts";
-import Box from "@mui/material/Box";
-import getTasksAll from "../utilities/getTasksAll";
-import getAllTasksByUser from "../utilities/getAllTasksByUser";
-import getAllMyTasks from "../utilities/getAllMyTasks";
-import getAllMyTasksWithUser from "../utilities/getAllMyTasksWithUser";
-import useWindowSize from "../../../hooks/useWindowSize";
-import { useTheme } from "@mui/styles";
-import TaskGridColumnHeader from "./TaskGridColumnHeader";
-import TaskGridTasksList from "./TaskGridTasksList";
+import _ from "lodash";
 
-const useStyles = makeStyles()((theme) => ({
-    divider: {
-        width: "95%",
-    },
-    spacer: {
-        height: 35,
-    },
-    column: {
-        padding: 5,
-        backgroundColor: "rgba(180, 180, 180, 0.1)",
-        borderRadius: 5,
-        border: 0,
-        boxShadow: "0 2px 3px 1px rgba(100, 100, 100, .3)",
-        height: "100%",
-        maxWidth: 360,
-        minWidth: 285,
-        [theme.breakpoints.down("lg")]: {
-            padding: 0,
-        },
-        [theme.breakpoints.down("sm")]: {
-            maxWidth: "100%",
-            width: "100%",
-        },
-    },
-    gridItem: {
-        width: "100%",
-    },
-}));
+export type TaskStateType = {
+    [key: string]: models.Task;
+};
 
-function TasksGridColumn(props) {
-    const [state, setState] = useState([]);
-    const stateRef = useRef({});
-    const taskAssignees = useSelector(taskAssigneesSelector);
-    const prevTaskAssigneesRef = useRef(null);
-    const taskAssigneesReady = useSelector(taskAssigneesReadyStatusSelector);
-    const [isFetching, setIsFetching] = useState(true);
-    const [errorState, setErrorState] = useState(false);
-    const [filteredTasksIds, setFilteredTasksIds] = useState(null);
-    const [width] = useWindowSize();
-    const whoami = useSelector(getWhoami);
-    const dashboardFilter = useSelector(dashboardFilterTermSelector);
+export function convertTasksToStateType(tasks: models.Task[]): TaskStateType {
+    const state: TaskStateType = {};
+    tasks.forEach((task) => {
+        state[task.id] = task;
+    });
+    return state;
+}
+
+const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
+    const [state, setState] = React.useState<TaskStateType>({});
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const roleView = useSelector(getRoleView);
     const dataStoreModelSynced = useSelector(
@@ -78,42 +39,40 @@ function TasksGridColumn(props) {
     const selectionActionsPending = useSelector(
         selectionActionsPendingSelector
     );
-    const getTasksRef = useRef(() => {});
-    const tasksSubscription = useRef({
+    const getTasksRef = React.useRef<Function>(
+        async (): Promise<TaskStateType> => {
+            return {};
+        }
+    );
+    const tasksSubscription = React.useRef({
         unsubscribe: () => {},
     });
-    const locationsSubscription = useRef({
+    const stateRef = React.useRef<TaskStateType>({});
+    const locationsSubscription = React.useRef({
         unsubscribe: () => {},
     });
-    const theme = useTheme();
-
-    const { classes } = useStyles();
-
-    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
-
+    const whoami = useSelector(getWhoami);
+    const taskAssignees = useSelector(taskAssigneesSelector);
+    const prevTaskAssigneesRef = React.useRef<models.TaskAssignee[] | null>(
+        null
+    );
+    const taskAssigneesReady = useSelector(taskAssigneesReadyStatusSelector);
+    const [isFetching, setIsFetching] = React.useState(true);
+    const [error, setError] = React.useState(false);
     stateRef.current = state;
 
-    function addTaskToState(newTask) {
-        animate.current = true;
-        setState((prevState) => ({
-            ...prevState,
-            [newTask.id]: newTask,
-        }));
-        animate.current = false;
+    function addTaskToState(newTask: models.Task) {
+        setState((prevState) => {
+            return { ...prevState, [newTask.id]: newTask };
+        });
     }
 
-    function removeTaskFromState(newTask) {
+    function removeTaskFromState(newTask: models.Task) {
         setState((prevState) => {
             if (prevState[newTask.id]) return _.omit(prevState, newTask.id);
             else return prevState;
         });
     }
-
-    function doSearch() {
-        const searchResult = filterTasks(state, dashboardFilter);
-        setFilteredTasksIds(searchResult);
-    }
-    useEffect(doSearch, [dashboardFilter, state]);
 
     const getTasks = React.useCallback(
         async (
@@ -125,7 +84,12 @@ function TasksGridColumn(props) {
             taskAssigneesReady,
             whoamiId
         ) => {
-            if (!roleView || !taskAssigneesReady || selectionActionsPending) {
+            if (
+                !roleView ||
+                !taskAssigneesReady ||
+                selectionActionsPending ||
+                !taskKey
+            ) {
                 return;
             } else {
                 try {
@@ -136,7 +100,7 @@ function TasksGridColumn(props) {
                             await getAllTasksByUser(
                                 taskKey,
                                 dashboardFilteredUser,
-                                userRoles.rider,
+                                models.Role.RIDER,
                                 taskAssigneesItems
                             )
                         );
@@ -161,11 +125,10 @@ function TasksGridColumn(props) {
                         );
                     }
 
-                    animate.current = false;
                     prevTaskAssigneesRef.current = taskAssigneesItems;
                     setIsFetching(false);
                 } catch (error) {
-                    setErrorState(true);
+                    setError(true);
                     setIsFetching(false);
                     console.log(error);
                 }
@@ -177,7 +140,7 @@ function TasksGridColumn(props) {
     const getTasksNoParams = React.useCallback(() => {
         return getTasks(
             dashboardFilteredUser,
-            props.taskKey,
+            taskStatusKey,
             roleView,
             selectionActionsPending,
             taskAssignees.items,
@@ -186,7 +149,7 @@ function TasksGridColumn(props) {
         );
     }, [
         dashboardFilteredUser,
-        props.taskKey,
+        taskStatusKey,
         roleView,
         selectionActionsPending,
         taskAssignees.items,
@@ -197,11 +160,11 @@ function TasksGridColumn(props) {
 
     getTasksRef.current = getTasksNoParams;
 
-    const tasksKeyJSON = JSON.stringify(props.taskKey);
-    useEffect(() => {
+    const tasksKeyJSON = JSON.stringify(taskStatusKey);
+    React.useEffect(() => {
         getTasks(
             dashboardFilteredUser,
-            props.taskKey,
+            taskStatusKey,
             roleView,
             selectionActionsPending,
             taskAssignees.items,
@@ -222,22 +185,24 @@ function TasksGridColumn(props) {
         taskAssignees.items,
     ]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         try {
             if (roleView === "ALL" || !prevTaskAssigneesRef.current) return;
             const newItems = taskAssignees.items;
             // get any items that are not in the previous list
-            const newItemsIds = newItems.map((item) => item.id);
+            const newItemsIds = newItems.map(
+                (item: models.TaskAssignee) => item.id
+            );
             const newItemsIdsSet = new Set(newItemsIds);
             const prevItemsIds = prevTaskAssigneesRef.current.map(
-                (item) => item.id
+                (item: models.TaskAssignee) => item.id
             );
             const prevItemsIdsSet = new Set(prevItemsIds);
             const addedItems = newItems.filter(
-                (item) => !prevItemsIdsSet.has(item.id)
+                (item: models.TaskAssignee) => !prevItemsIdsSet.has(item.id)
             );
             const removedItems = prevTaskAssigneesRef.current.filter(
-                (item) => !newItemsIdsSet.has(item.id)
+                (item: models.TaskAssignee) => !newItemsIdsSet.has(item.id)
             );
             if (
                 [...addedItems, ...removedItems].map(
@@ -251,7 +216,7 @@ function TasksGridColumn(props) {
         }
     }, [taskAssignees, roleView, whoami]);
 
-    const selectionActionsPendingRef = useRef(false);
+    const selectionActionsPendingRef = React.useRef(false);
     selectionActionsPendingRef.current = selectionActionsPending;
 
     const setUpObservers = React.useCallback((roleView, taskKey) => {
@@ -266,10 +231,7 @@ function TasksGridColumn(props) {
                             taskKey.includes(newTask.element.status) &&
                             !(newTask.element.id in stateRef.current)
                         ) {
-                            animate.current = true;
-                            getTasksRef
-                                .current()
-                                .then(() => (animate.current = false));
+                            getTasksRef.current();
                             return;
                         } else if (
                             newTask.element.status &&
@@ -279,11 +241,18 @@ function TasksGridColumn(props) {
                             return;
                         } else if (newTask.element.id in stateRef.current) {
                             if (
+                                // DataStore observer quirk
+                                // @ts-ignore
                                 newTask.element.pickUpLocationId !==
                                     stateRef.current[newTask.element.id]
+                                        // prettier-ignore
+                                        // @ts-ignore
                                         .pickUpLocationId ||
+                                // @ts-ignore
                                 newTask.element.dropOffLocationId !==
                                     stateRef.current[newTask.element.id]
+                                        // prettier-ignore
+                                        // @ts-ignore
                                         .dropOffLocationId
                             ) {
                                 getTasksRef.current();
@@ -340,121 +309,19 @@ function TasksGridColumn(props) {
                 console.log(error);
             }
         });
-        // big block of commented code for old way of getting assignments
-        /* taskAssigneesObserver.current.unsubscribe();
-        taskAssigneesObserver.current = DataStore.observe(
-            models.TaskAssignee
-        ).subscribe((taskAssignee) => {
-            try {
-                if (taskAssignee.opType === "INSERT") {
-                    const element = taskAssignee.element;
-                    // if roleView is ALL let the task observer deal with it
-                    if (roleView === "ALL") return;
-                    if (
-                        element.assigneeId === whoami.id &&
-                        element.role === roleView
-                    ) {
-                        if (!element.taskId) return;
-                        DataStore.query(models.Task, element.taskId).then(
-                            (result) => {
-                                if (taskKey.includes(result.status)) {
-                                    animate.current = true;
-                                    getTasks();
-                                }
-                            }
-                        );
-                    }
-                } else if (taskAssignee.opType === "DELETE") {
-                    const element = taskAssignee.element;
-                    // if roleView is ALL do nothing
-                    if (roleView === "ALL") return;
-                    if (
-                        element.assignee &&
-                        element.assignee.id === whoami.id &&
-                        element.role === roleView
-                    ) {
-                        removeTaskFromState(element.task);
-                    }
-                }
-            } catch (e) {
-                console.log(e);
-            }
-        });
-        */
     }, []);
 
-    useEffect(() => {
-        setUpObservers(roleView, props.taskKey);
-    }, [roleView, setUpObservers, props.taskKey]);
+    React.useEffect(() => {
+        setUpObservers(roleView, taskStatusKey);
+    }, [roleView, setUpObservers, taskStatusKey]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         return () => {
             tasksSubscription.current.unsubscribe();
             locationsSubscription.current.unsubscribe();
         };
     }, []);
-
-    const animate = useRef(false);
-
-    if (errorState) {
-        return <GetError />;
-    } else if (isFetching) {
-        return (
-            <Box
-                className={classes.column}
-                sx={{
-                    width: isSm ? "100%" : width / 4.2,
-                }}
-            >
-                <Stack direction="column" spacing={4}>
-                    <Skeleton
-                        variant="rectangular"
-                        width={"100%"}
-                        data-cy={`${props.title}-title-skeleton`}
-                        height={50}
-                    />
-                    {_.range(4).map((i) => (
-                        <Box key={i} className={classes.taskItem}>
-                            <Skeleton
-                                variant="rectangular"
-                                width={"100%"}
-                                height={200}
-                            />
-                        </Box>
-                    ))}
-                </Stack>
-            </Box>
-        );
-    } else {
-        return (
-            <Box
-                className={classes.column}
-                sx={{
-                    width: isSm ? "100%" : width / 4.2,
-                }}
-            >
-                <TaskGridColumnHeader tasks={state} title={props.title} />
-                <TaskGridTasksList
-                    datacy={`tasks-kanban-column-${props.taskKey}`}
-                    tasks={state}
-                    includeList={filteredTasksIds}
-                />
-            </Box>
-        );
-    }
-}
-
-TasksGridColumn.propTypes = {
-    title: PropTypes.string,
-    taskKey: PropTypes.array.isRequired,
-    showTasks: PropTypes.arrayOf(PropTypes.string),
-    hideRelayIcons: PropTypes.bool,
+    return { state, isFetching, error };
 };
 
-TasksGridColumn.defaultProps = {
-    showTasks: [],
-    title: "TASKS",
-    hideRelayIcons: false,
-};
-
-export default TasksGridColumn;
+export default useTasksColumnTasks;

@@ -144,7 +144,7 @@ Cypress.Commands.add("clearTasks", (status) => {
                 .then(() => {
                     if (
                         Cypress.$(
-                            `[data-cy=tasks-kanban-column-${status}]:empty`
+                            `[data-testid=tasks-kanban-column-${status}]:empty`
                         ).length === 1
                     )
                         return;
@@ -163,9 +163,9 @@ Cypress.Commands.add("clearTasks", (status) => {
                             }
                         }
                     );
-                    cy.get(`[data-cy=tasks-kanban-column-${status}]`).should(
-                        "be.empty"
-                    );
+                    cy.get(
+                        `[data-testid=tasks-kanban-column-${status}]`
+                    ).should("be.empty");
                     // wait for updateTask to be called for each task
                     cy.wait(`@gqlupdateTaskMutation`, { timeout: 10000 }).then(
                         (interception) => {

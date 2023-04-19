@@ -16,6 +16,7 @@ import DashboardDetailTabs from "./DashboardDetailTabs";
 import { createMatchMedia } from "../../../test-utils";
 import userEvent from "@testing-library/user-event";
 import * as dashboardUtils from "../utilities/functions";
+import { isCompletedTab } from "../../../hooks/utilities/isCompletedTab";
 import { convertListDataToObject } from "../../../utilities";
 import ActiveRidersChips from "./ActiveRidersChips";
 import moment from "moment";
@@ -163,9 +164,7 @@ describe("TasksGridColumn", () => {
                     models.Task,
                     expect.any(Function),
                     {
-                        limit: dashboardUtils.isCompletedTab([taskStatus])
-                            ? 100
-                            : 0,
+                        limit: isCompletedTab([taskStatus]) ? 100 : 0,
                         sort: expect.any(Function),
                     }
                 );
