@@ -17,10 +17,6 @@ import getTasksAll from "./utilities/getTasksAll";
 import { DataStore } from "aws-amplify";
 import _ from "lodash";
 
-type UseTasksColumnTasksProps = {
-    taskStatusKey: models.TaskStatus[];
-};
-
 export type TaskStateType = {
     [key: string]: models.Task;
 };
@@ -33,7 +29,7 @@ export function convertTasksToStateType(tasks: models.Task[]): TaskStateType {
     return state;
 }
 
-const useTasksColumnTasks = (taskStatusKey: UseTasksColumnTasksProps) => {
+const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
     const [state, setState] = React.useState<TaskStateType>({});
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
     const roleView = useSelector(getRoleView);

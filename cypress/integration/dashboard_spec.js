@@ -66,7 +66,7 @@ describe("create a new task and open it", () => {
         cy.get(".MuiPaper-root").should("be.visible");
         cy.get("[data-cy=create-task-button]").click();
         cy.get("[data-cy=save-to-dash-button]").click();
-        cy.get("[data-cy=tasks-kanban-column-NEW]")
+        cy.get("[data-testid=tasks-kanban-column-NEW]")
             .children()
             .its("length")
             .should("be.gt", 0);
@@ -76,7 +76,10 @@ describe("create a new task and open it", () => {
         cy.wait("@gqlcreateTaskAssigneeMutation")
             .its("response.body.data.createTaskAssignee")
             .should("not.be.null");
-        cy.get("[data-cy=tasks-kanban-column-NEW]").children().first().click();
+        cy.get("[data-testid=tasks-kanban-column-NEW]")
+            .children()
+            .first()
+            .click();
         cy.url().should("include", "/task/");
         cy.get("[data-cy=task-status-close]").click();
         cy.url().should("not.include", "/task/");
@@ -116,7 +119,7 @@ describe("change the role view of the dashboard", () => {
         // click the second menu option
         cy.get('[data-value="ALL"]').click();
         cy.get("[data-testid=role-menu]").should("contain", "ALL");
-        cy.get("[data-cy=tasks-kanban-column-NEW]").should("exist");
+        cy.get("[data-testid=tasks-kanban-column-NEW]").should("exist");
     });
 });
 
@@ -150,7 +153,7 @@ describe("filter tasks by various terms", () => {
         cy.get("[data-cy=tasks-filter-input]").click().type("LOW");
         // wait because of debounce
         cy.wait(1000);
-        cy.get(`[data-cy=tasks-kanban-column-NEW]`)
+        cy.get(`[data-testid=tasks-kanban-column-NEW]`)
             .children()
             .filter(":visible")
             .each(filterCheck);
