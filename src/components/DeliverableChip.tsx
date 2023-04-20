@@ -1,9 +1,10 @@
 import { Chip } from "@mui/material";
-import { Deliverable } from "../../../API";
-import { getDeliverableIconByEnum } from "../../../utilities";
+import { Deliverable } from "../API";
+import { getDeliverableIconByEnum } from "../utilities";
+import * as models from "../models";
 
 type DeliverableChipProps = {
-    deliverable: Deliverable | null;
+    deliverable: Deliverable | models.Deliverable | null;
 };
 
 const DeliverableChip: React.FC<DeliverableChipProps> = ({ deliverable }) => {

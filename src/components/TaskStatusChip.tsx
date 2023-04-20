@@ -1,6 +1,7 @@
 import { alpha, Chip } from "@mui/material";
 import { red, blue, yellow, orange, grey, green } from "@mui/material/colors";
-import * as models from "../../../models";
+import * as models from "../models";
+import { TaskStatus } from "../API";
 
 const colors = {
     NEW: yellow[700],
@@ -13,7 +14,7 @@ const colors = {
     REJECTED: grey[700],
 };
 
-const generateLabel = (status: models.TaskStatus) => {
+const generateLabel = (status: models.TaskStatus | TaskStatus) => {
     switch (status) {
         case models.TaskStatus.DROPPED_OFF:
             return "DELIVERED";
