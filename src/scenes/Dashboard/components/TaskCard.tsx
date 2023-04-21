@@ -1,36 +1,29 @@
-import { Task } from "../../../API";
+import * as models from "../../../models";
 import { Divider, Paper, Stack, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import TaskCardLocationDetail from "../../../components/TaskCardLocationDetail";
 import CommentsBadge from "../../../components/CommentsBadge";
 import TaskCardTimestamp from "../../../components/TaskCardTimestamp";
 import TaskCardChips from "../../../components/TaskCardChips";
+import useTaskAssigneesRedux from "../../../hooks/useTaskAssigneesRedux";
 
-type TaskHistoryCardProps = {
-    task: Task;
+type TaskCardProps = {
+    task: models.Task;
 };
 
-const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
+const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     const theme = useTheme();
-
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const isLg = useMediaQuery(theme.breakpoints.up("lg"));
+    const assignees = useTaskAssigneesRedux(task.id);
 
     let taskBadge = <div></div>;
 
-    if (task?.comments?.items) {
-        const filterDeleted = task.comments.items.filter(
-            (comment) => comment && !comment._deleted
-        );
-        if (filterDeleted?.length > 0) {
-            taskBadge = <CommentsBadge count={filterDeleted.length} />;
+    if (task?.comments) {
+        if (task?.comments.length > 0) {
+            taskBadge = <CommentsBadge count={task.comments.length} />;
         }
     }
-
-    const assignees = task?.assignees?.items.filter((a) => a && !a._deleted);
-    const deliverables = task?.deliverables?.items.filter(
-        (d) => d && !d._deleted
-    );
 
     let cutOff = 6;
     if (isSm) {
@@ -59,8 +52,7 @@ const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
                 <TaskCardChips
                     limit={cutOff}
                     assignees={assignees}
-                    deliverables={deliverables}
-                    status={task.status}
+                    deliverables={[]}
                     priority={task.priority}
                     riderResponsibility={task.riderResponsibility}
                 />
@@ -78,4 +70,4 @@ const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
     );
 };
 
-export default TaskHistoryCard;
+export default TaskCard;

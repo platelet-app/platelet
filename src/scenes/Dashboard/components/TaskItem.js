@@ -4,7 +4,7 @@ import { alpha } from "@mui/material";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import TaskCard from "./TaskCardsColoured";
+import TaskCard from "./TaskCard";
 import * as selectionActions from "../../../redux/selectionMode/selectionModeActions";
 import { encodeUUID } from "../../../utilities";
 import PropTypes from "prop-types";
@@ -293,20 +293,7 @@ const TaskItem = React.memo((props) => {
                     taskId={task.id}
                     handleSelectItem={handleSelectItem}
                 >
-                    <TaskCard
-                        title={"Task"}
-                        status={task.status}
-                        timeOfCall={task.timeOfCall}
-                        priority={task.priority}
-                        pickUpLocation={task.pickUpLocation}
-                        riderResponsibility={task.riderResponsibility || ""}
-                        dropOffLocation={task.dropOffLocation}
-                        assignees={assignees}
-                        assigneeDisplayString={assignees
-                            .map((a) => a.displayName)
-                            .join(", ")}
-                        commentCount={commentCount}
-                    />
+                    <TaskCard task={task} />
                 </ItemWrapper>
                 {!isSm && (
                     <>

@@ -14,7 +14,14 @@ type TaskCardChipsProps = {
         | (models.Deliverable | null)[]
         | (APITypes.Deliverable | null)[];
     riderResponsibility?: string | null;
-    priority?: models.Priority | APITypes.Priority | null;
+    // don't know why I need to write them out individually for TaskCard to not complain
+    priority?:
+        | models.Priority
+        | APITypes.Priority
+        | "HIGH"
+        | "MEDIUM"
+        | "LOW"
+        | null;
     limit?: number;
 };
 
