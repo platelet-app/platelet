@@ -73,6 +73,7 @@ const TasksGridColumn: React.FC<TasksGridColumnProps> = ({
     } else if (isFetching) {
         return (
             <Box
+                data-testid="tasks-kanban-column-skeleton"
                 className={classes.column}
                 sx={{
                     width: isSm ? "100%" : width / 4.2,

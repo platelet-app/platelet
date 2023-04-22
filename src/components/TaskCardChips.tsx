@@ -24,6 +24,7 @@ type TaskCardChipsProps = {
         | "LOW"
         | null;
     limit?: number;
+    showDeliverableIcons?: boolean;
 };
 
 const TaskCardChips: React.FC<TaskCardChipsProps> = ({
@@ -33,6 +34,7 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
     riderResponsibility,
     priority,
     limit,
+    showDeliverableIcons = false,
 }) => {
     let chips = [];
     if (status) {
@@ -58,7 +60,12 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
     if (deliverables) {
         deliverableChips = deliverables.map((deliverable) => {
             if (deliverable) {
-                return <DeliverableChip deliverable={deliverable} />;
+                return (
+                    <DeliverableChip
+                        showIcon={showDeliverableIcons}
+                        deliverable={deliverable}
+                    />
+                );
             } else {
                 return <></>;
             }

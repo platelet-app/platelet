@@ -18,7 +18,6 @@ function listener() {
                 LocalPredicates.unarchived,
                 { sort: (s) => s.createdAt("DESCENDING") }
             ).subscribe((result) => {
-                console.log(result);
                 emitter(result);
             });
         }
@@ -63,6 +62,7 @@ function* initializeTaskAssigneesObserver(): Generator<any, any, any> {
                 dataStoreNestedWorkAroundMapper,
                 result.items
             );
+            console.log(fixed);
             yield put(
                 actions.setTaskAssignees({
                     ...result,

@@ -57,6 +57,7 @@ const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
                 direction="column"
             >
                 <TaskCardChips
+                    showDeliverableIcons
                     limit={cutOff}
                     assignees={assignees}
                     deliverables={deliverables}

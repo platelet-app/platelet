@@ -325,7 +325,12 @@ const TaskItem = React.memo((props) => {
             </Box>
         </Grow>
     ) : (
-        <Skeleton variant="rectangle" width="100%" height={200} />
+        <Skeleton
+            data-testid="task-item-skeleton"
+            variant="rectangle"
+            width="100%"
+            height={200}
+        />
     );
     return <div ref={ref}>{contents}</div>;
 });

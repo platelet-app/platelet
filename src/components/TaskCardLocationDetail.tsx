@@ -14,6 +14,8 @@ const TaskHistoryCardLocationDetail: React.FC<
         const items = [
             location.ward,
             location.line1,
+            location.line2,
+            location.line3,
             location.town,
             location.postcode,
         ];
