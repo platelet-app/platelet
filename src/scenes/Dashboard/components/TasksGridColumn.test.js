@@ -20,7 +20,6 @@ import { convertListDataToObject } from "../../../utilities";
 import ActiveRidersChips from "./ActiveRidersChips";
 import moment from "moment";
 import { DataStore, Logger } from "aws-amplify";
-import { setTaskAssignees } from "../../../redux/taskAssignees/taskAssigneesActions";
 import { useDispatch } from "react-redux";
 import * as assActions from "../../../redux/taskAssignees/taskAssigneesActions";
 import * as commentActions from "../../../redux/comments/commentsActions";
@@ -118,7 +117,7 @@ describe("TasksGridColumn", () => {
                 displayName: "Someone Person",
             })
         );
-        const mockAssignments = await Promise.all(
+        await Promise.all(
             _.range(0, 10).map((i) =>
                 DataStore.save(
                     new models.TaskAssignee({

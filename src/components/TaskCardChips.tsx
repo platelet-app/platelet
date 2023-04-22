@@ -38,19 +38,43 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
 }) => {
     let chips = [];
     if (status) {
-        chips.push(<TaskStatusChip size="small" status={status} />);
+        chips.push(
+            <TaskStatusChip
+                sx={{ cursor: "pointer" }}
+                size="small"
+                status={status}
+            />
+        );
     }
     if (priority) {
-        chips.push(<PriorityChip size="small" priority={priority} />);
+        chips.push(
+            <PriorityChip
+                sx={{ cursor: "pointer" }}
+                size="small"
+                priority={priority}
+            />
+        );
     }
     if (riderResponsibility) {
-        chips.push(<Chip size="small" label={riderResponsibility} />);
+        chips.push(
+            <Chip
+                sx={{ cursor: "pointer" }}
+                size="small"
+                label={riderResponsibility}
+            />
+        );
     }
     let assigneeChips: React.ReactElement[] = [];
     if (assignees) {
         assigneeChips = assignees.map((assignment) => {
             if (assignment?.assignee) {
-                return <UserChip size="small" user={assignment?.assignee} />;
+                return (
+                    <UserChip
+                        sx={{ cursor: "pointer" }}
+                        size="small"
+                        user={assignment?.assignee}
+                    />
+                );
             } else {
                 return <></>;
             }
@@ -62,6 +86,7 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
             if (deliverable) {
                 return (
                     <DeliverableChip
+                        sx={{ cursor: "pointer" }}
                         showIcon={showDeliverableIcons}
                         deliverable={deliverable}
                     />

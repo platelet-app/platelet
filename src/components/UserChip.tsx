@@ -20,6 +20,7 @@ type UserChipProps = {
     showResponsibility?: boolean;
     disabled?: boolean;
     size?: "small" | "medium";
+    sx?: object;
 };
 
 const UserChip: React.FC<UserChipProps> = (props) => {
@@ -65,6 +66,7 @@ const UserChip: React.FC<UserChipProps> = (props) => {
     if (thumbnail) {
         return (
             <Chip
+                sx={props.sx}
                 size={props.size}
                 onClick={props.onClick}
                 variant={props.variant}
@@ -78,6 +80,7 @@ const UserChip: React.FC<UserChipProps> = (props) => {
     } else {
         return (
             <Chip
+                sx={props.sx}
                 size={props.size}
                 onDelete={props.onDelete}
                 variant={props.variant}
