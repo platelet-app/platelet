@@ -23,7 +23,7 @@ const useStyles = makeStyles()((theme) => ({
     },
     column: {
         padding: 5,
-        backgroundColor: "rgba(180, 180, 180, 0.1)",
+        //backgroundColor: "rgba(180, 180, 180, 0.1)",
         borderRadius: 5,
         border: 0,
         boxShadow: "0 2px 3px 1px rgba(100, 100, 100, .3)",
@@ -54,7 +54,6 @@ const TasksGridColumn: React.FC<TasksGridColumnProps> = ({
     title = "TASKS",
     taskKey,
 }) => {
-    console.log("TasksGridColumn", taskKey);
     const { state, isFetching, error } = useTasksColumnTasks(taskKey);
     const [filteredTasksIds, setFilteredTasksIds] = useState<string[] | null>(
         null

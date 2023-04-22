@@ -17,6 +17,8 @@ import {
     userRoles,
 } from "../../apiConsts";
 import { initTaskAssignees } from "../taskAssignees/taskAssigneesActions";
+import { initTaskDeliverables } from "../taskDeliverables/taskDeliverablesActions";
+import { initComments } from "../comments/commentsActions";
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -113,13 +115,17 @@ function* initialiseBroadcastAPI() {
     yield all([put(initialiseBroadcastAPIListener())]);
 }
 
-function* initialiseTaskAssigneesObserver() {
-    yield all([put(initTaskAssignees())]);
+function* initialiseObservers() {
+    yield all([
+        put(initTaskAssignees()),
+        put(initTaskDeliverables()),
+        put(initComments()),
+    ]);
 }
 
 export function* watchInitialWhoamiCompleted() {
     yield takeLatest(GET_WHOAMI_SUCCESS, initialiseBroadcastAPI);
-    yield takeLatest(GET_WHOAMI_SUCCESS, initialiseTaskAssigneesObserver);
+    yield takeLatest(GET_WHOAMI_SUCCESS, initialiseObservers);
 }
 
 async function populateFakeData() {

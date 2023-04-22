@@ -4,6 +4,7 @@ import { Chip, Grid, Tooltip } from "@mui/material";
 import TaskStatusChip from "./TaskStatusChip";
 import DeliverableChip from "./DeliverableChip";
 import UserChip from "./UserChip";
+import PriorityChip from "./PriorityChip";
 
 type TaskCardChipsProps = {
     assignees?:
@@ -38,7 +39,7 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
         chips.push(<TaskStatusChip size="small" status={status} />);
     }
     if (priority) {
-        chips.push(<Chip size="small" label={priority} />);
+        chips.push(<PriorityChip size="small" priority={priority} />);
     }
     if (riderResponsibility) {
         chips.push(<Chip size="small" label={riderResponsibility} />);

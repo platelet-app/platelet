@@ -1,49 +1,144 @@
 import * as models from "../../../models";
-import { Divider, Paper, Stack, useMediaQuery } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import {
+    AvatarGroup,
+    Box,
+    Divider,
+    Paper,
+    Stack,
+    Tooltip,
+} from "@mui/material";
 import TaskCardLocationDetail from "../../../components/TaskCardLocationDetail";
 import CommentsBadge from "../../../components/CommentsBadge";
 import TaskCardTimestamp from "../../../components/TaskCardTimestamp";
 import TaskCardChips from "../../../components/TaskCardChips";
 import useTaskAssigneesRedux from "../../../hooks/useTaskAssigneesRedux";
+import { makeStyles } from "tss-react/mui";
+import useTaskDeliverablesRedux from "../../../hooks/useTaskDeliverablesRedux";
+import useCommentsRedux from "../../../hooks/useCommentsRedux";
+import UserAvatar from "../../../components/UserAvatar";
+
+const colourBarPercent = "90%";
+
+const generateClass = (theme: any, status: string) => {
+    if (!theme || !status) {
+        return {};
+    }
+    const backgroundColor =
+        theme.palette.mode === "dark" ? "rgba(60, 60, 60, 1)" : "rgba(0,0,0,0)";
+
+    return {
+        background: `linear-gradient(0deg,
+        ${backgroundColor},
+        ${colourBarPercent},
+        ${backgroundColor},
+        ${colourBarPercent},
+        ${theme.palette.taskStatus[status]}
+        ${colourBarPercent},
+        ${theme.palette.taskStatus[status]} 100%)`,
+    };
+};
+
+const useStyles = makeStyles()((theme) => {
+    return {
+        cardContent: {
+            paddingTop: 5,
+            userSelect: "none",
+        },
+        NEW: generateClass(theme, "NEW"),
+        ACTIVE: generateClass(theme, "ACTIVE"),
+        PICKED_UP: generateClass(theme, "PICKED_UP"),
+        DROPPED_OFF: generateClass(theme, "DROPPED_OFF"),
+        COMPLETED: generateClass(theme, "COMPLETED"),
+        CANCELLED: generateClass(theme, "CANCELLED"),
+        REJECTED: generateClass(theme, "REJECTED"),
+        ABANDONED: generateClass(theme, "ABANDONED"),
+        divider: { width: "0%", margin: 4 },
+        typography: { fontSize: "14px" },
+        badgeCircle: {
+            "&::after": {
+                content: "''",
+                width: 10,
+            },
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: 35,
+            height: 35,
+            borderRadius: "50%",
+            backgroundColor:
+                theme.palette.mode === "dark"
+                    ? "rgba(0,0,0,0.4)"
+                    : "rgba(255,255,255,0.5)",
+        },
+    };
+});
 
 type TaskCardProps = {
     task: models.Task;
 };
 
 const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
-    const theme = useTheme();
-    const isSm = useMediaQuery(theme.breakpoints.down("md"));
-    const isLg = useMediaQuery(theme.breakpoints.up("lg"));
-    const assignees = useTaskAssigneesRedux(task.id);
+    const assignees = useTaskAssigneesRedux(task.id, true);
+    const deliverables = useTaskDeliverablesRedux(task.id);
+    const comments = useCommentsRedux(task.id);
+
+    const { classes } = useStyles();
 
     let taskBadge = <div></div>;
 
-    if (task?.comments) {
-        if (task?.comments.length > 0) {
-            taskBadge = <CommentsBadge count={task.comments.length} />;
+    if (comments) {
+        if (comments.length > 0) {
+            taskBadge = <CommentsBadge count={comments.length} />;
         }
     }
 
-    let cutOff = 6;
-    if (isSm) {
-        cutOff = 4;
-    } else if (isLg) {
-        cutOff = 8;
-    }
+    const cutOff = 4;
+
+    const className = classes[task.status as keyof typeof classes];
+    const assigneesDisplayString = assignees
+        .map((a: models.TaskAssignee) => a?.assignee?.displayName)
+        .join(", ");
 
     return (
         <Paper
+            className={className}
             sx={{
-                borderRadius: "1em",
+                borderRadius: "0.8em",
+                minHeight: 150,
+                userSelect: "none",
+                "&:hover": {
+                    backgroundColor: "rgba(0, 0, 0, 0.04)",
+                },
             }}
         >
+            <Box sx={{ right: 8, top: -8, position: "absolute" }}>
+                <Tooltip
+                    data-testid="assignee-names-tooltip"
+                    title={assigneesDisplayString}
+                >
+                    <AvatarGroup>
+                        {assignees.map((a: models.TaskAssignee) => (
+                            <UserAvatar
+                                key={a.id}
+                                size={3}
+                                userUUID={a.assignee?.id}
+                                displayName={a.assignee?.displayName}
+                                thumbnailKey={
+                                    a.assignee?.profilePicture
+                                        ? a.assignee?.profilePicture.key
+                                        : null
+                                }
+                            />
+                        ))}
+                    </AvatarGroup>
+                </Tooltip>
+            </Box>
             <Stack
                 sx={{
-                    padding: 1,
-                    "&:hover": {
-                        backgroundColor: "rgba(0, 0, 0, 0.04)",
-                    },
+                    paddingTop: 3,
+                    paddingBottom: 1,
+                    paddingLeft: 1,
+                    paddingRight: 1,
                 }}
                 spacing={0.5}
                 justifyContent="space-between"
@@ -51,17 +146,18 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
             >
                 <TaskCardChips
                     limit={cutOff}
-                    assignees={assignees}
-                    deliverables={[]}
+                    deliverables={deliverables}
                     priority={task.priority}
                     riderResponsibility={task.riderResponsibility}
                 />
                 <TaskCardLocationDetail location={task.pickUpLocation} />
-                <Divider sx={{ width: isSm ? "100%" : "50%" }} />
+                <Divider sx={{ width: "70%" }} />
                 <TaskCardLocationDetail location={task.dropOffLocation} />
                 <Stack direction="row" spacing={2}>
-                    {task?.createdAt && (
-                        <TaskCardTimestamp timestamp={task.createdAt} />
+                    {(task?.createdAt || task?.timeOfCall) && (
+                        <TaskCardTimestamp
+                            timestamp={task.createdAt || task.timeOfCall || ""}
+                        />
                     )}
                     {taskBadge}
                 </Stack>
