@@ -7,9 +7,45 @@ import IconButton from "@mui/material/IconButton";
 import { deleteButtonStyles } from "./contextMenuCSS";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models/index";
-import { displayInfoNotification } from "../../redux/notifications/NotificationsActions";
+import {
+    displayErrorNotification,
+    displayInfoNotification,
+} from "../../redux/notifications/NotificationsActions";
 import ConfirmationDialog from "../ConfirmationDialog";
 import Comment from "../../scenes/Comments/components/Comment";
+import { API } from "aws-amplify";
+import * as mutations from "../../graphql/mutations";
+
+const getComment = /* GraphQL */ `
+    query GetComment($id: ID!) {
+        getComment(id: $id) {
+            id
+            _version
+        }
+    }
+`;
+
+const deleteCommentMutation = /* GraphQL */ `
+    mutation DeleteComment(
+        $input: DeleteCommentInput!
+        $condition: ModelCommentConditionInput
+    ) {
+        deleteComment(input: $input, condition: $condition) {
+            id
+            _version
+        }
+    }
+`;
+const updateComment = /* GraphQL */ `
+    mutation UpdateComment(
+        $input: UpdateCommentInput!
+        $condition: ModelCommentConditionInput
+    ) {
+        updateComment(input: $input, condition: $condition) {
+            id
+        }
+    }
+`;
 
 const initialState = {
     mouseX: null,
@@ -31,20 +67,45 @@ export default function CommentContextMenu(props) {
     };
 
     async function deleteComment() {
-        const existingComment = await DataStore.query(
-            models.Comment,
-            props.commentUUID
-        );
-        await DataStore.save(
-            models.Comment.copyOf(existingComment, (updated) => {
-                updated.body = "";
-            })
-        );
-        const commentAgain = await DataStore.query(
-            models.Comment,
-            props.commentUUID
-        );
-        if (commentAgain) await DataStore.delete(commentAgain);
+        try {
+            // this uses graphql because DataStore refuses to delete something that's just been changed
+            // it also uses DataStore to delete it anyway, because for some reason
+            // it doesn't sync with the graphql delete
+            // (DataStore is driving me insane please help)
+            if (process.env.REACT_APP_OFFLINE_ONLY !== "true") {
+                const existing = await API.graphql({
+                    query: getComment,
+                    variables: { id: props.commentUUID },
+                });
+                const result = await API.graphql({
+                    query: deleteCommentMutation,
+                    variables: {
+                        input: {
+                            id: props.commentUUID,
+                            _version: existing.data.getComment._version,
+                        },
+                    },
+                });
+                await API.graphql({
+                    query: updateComment,
+                    variables: {
+                        input: {
+                            id: props.commentUUID,
+                            body: "",
+                            _version: result.data.deleteComment._version,
+                        },
+                    },
+                });
+            }
+            const existingComment = await DataStore.query(
+                models.Comment,
+                props.commentUUID
+            );
+            await DataStore.delete(existingComment);
+        } catch (error) {
+            console.log(error);
+            dispatch(displayErrorNotification("Sorry, something went wrong."));
+        }
     }
 
     async function handleDelete() {

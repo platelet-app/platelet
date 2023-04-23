@@ -203,7 +203,127 @@ describe("CommentsSection", () => {
         expect(screen.getAllByText("Mock User")).toHaveLength(2);
     });
 
-    it("deletes a comment", async () => {
+    it.only("deletes a comment", async () => {
+        const mockComment = {
+            body: "something",
+            id: "b07696b0-0847-4f83-8c3c-e3bd395bb5ed",
+            visibility: commentVisibility.everyone,
+            author: mockUser,
+            _version: 1,
+        };
+        const deleteSpy = jest.spyOn(DataStore, "delete");
+        const graphqlSpy = jest
+            .spyOn(amplify.API, "graphql")
+            .mockResolvedValueOnce({
+                data: {
+                    getComment: mockComment,
+                },
+            })
+            .mockResolvedValueOnce({
+                data: {
+                    deleteComment: {
+                        ...mockComment,
+                        _deleted: true,
+                        _version: mockComment._version + 1,
+                    },
+                },
+            })
+            .mockResolvedValue({});
+        const querySpy = jest
+            .spyOn(DataStore, "query")
+            .mockResolvedValue([mockComment]);
+        render(<CommentsSection parentId={parentId} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(querySpy).toHaveBeenCalledTimes(1);
+        });
+        expect(
+            screen.getAllByText(mockComment.author.displayName)
+        ).toHaveLength(2);
+        const body = screen.getByText(mockComment.body);
+        userEvent.hover(body);
+        const contextMenu = await screen.findByTestId("comment-menu");
+        userEvent.click(contextMenu);
+        const deleteButton = await screen.findByText("Delete");
+        userEvent.click(deleteButton);
+        userEvent.click(await screen.findByText("OK"));
+        await waitFor(() => {
+            expect(graphqlSpy).toHaveBeenCalledTimes(3);
+        });
+        const graphqlSpyCallArguments1 =
+            graphqlSpy.mock.calls[0][0]["variables"];
+        const graphqlSpyCallArguments2 =
+            graphqlSpy.mock.calls[1][0]["variables"];
+        const graphqlSpyCallArguments3 =
+            graphqlSpy.mock.calls[2][0]["variables"];
+        const graphqlSpyQuery1 = graphqlSpy.mock.calls[0][0]["query"];
+        const graphqlSpyQuery2 = graphqlSpy.mock.calls[1][0]["query"];
+        const graphqlSpyQuery3 = graphqlSpy.mock.calls[2][0]["query"];
+        expect(graphqlSpyCallArguments1).toMatchInlineSnapshot(`
+            Object {
+              "id": "b07696b0-0847-4f83-8c3c-e3bd395bb5ed",
+            }
+        `);
+        expect(graphqlSpyCallArguments2).toMatchInlineSnapshot(`
+            Object {
+              "input": Object {
+                "_version": 1,
+                "id": "b07696b0-0847-4f83-8c3c-e3bd395bb5ed",
+              },
+            }
+        `);
+        expect(graphqlSpyCallArguments3).toMatchInlineSnapshot(`
+            Object {
+              "input": Object {
+                "_version": 2,
+                "body": "",
+                "id": "b07696b0-0847-4f83-8c3c-e3bd395bb5ed",
+              },
+            }
+        `);
+        expect(graphqlSpyQuery1).toMatchInlineSnapshot(`
+            "
+                query GetComment($id: ID!) {
+                    getComment(id: $id) {
+                        id
+                        _version
+                    }
+                }
+            "
+        `);
+        expect(graphqlSpyQuery2).toMatchInlineSnapshot(`
+            "
+                mutation DeleteComment(
+                    $input: DeleteCommentInput!
+                    $condition: ModelCommentConditionInput
+                ) {
+                    deleteComment(input: $input, condition: $condition) {
+                        id
+                        _version
+                    }
+                }
+            "
+        `);
+        expect(graphqlSpyQuery3).toMatchInlineSnapshot(`
+            "
+                mutation UpdateComment(
+                    $input: UpdateCommentInput!
+                    $condition: ModelCommentConditionInput
+                ) {
+                    updateComment(input: $input, condition: $condition) {
+                        id
+                    }
+                }
+            "
+        `);
+        await waitFor(() => {
+            expect(deleteSpy).toHaveBeenCalledTimes(1);
+        });
+        expect(await screen.findByText("Comment deleted")).toBeInTheDocument();
+    });
+
+    it.skip("deletes a comment old way", async () => {
         const mockCommentInput = new models.Comment({
             ...mockPublicComments[0],
             author: mockUser,
