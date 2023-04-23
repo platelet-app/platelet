@@ -54,7 +54,6 @@ const TasksGridColumn: React.FC<TasksGridColumnProps> = ({
     title = "TASKS",
     taskKey,
 }) => {
-    console.log("TasksGridColumn", taskKey);
     const { state, isFetching, error } = useTasksColumnTasks(taskKey);
     const [filteredTasksIds, setFilteredTasksIds] = useState<string[] | null>(
         null
