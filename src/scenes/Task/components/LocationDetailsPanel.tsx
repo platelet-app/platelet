@@ -15,7 +15,12 @@ import * as mutations from "../../../graphql/mutations";
 import * as queries from "../../../graphql/queries";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
-import { GetTaskQuery } from "../../../API";
+import {
+    DeleteLocationMutation,
+    GetLocationQuery,
+    GetTaskQuery,
+    UpdateLocationMutation,
+} from "../../../API";
 
 export const protectedFields = [
     "id",
@@ -287,8 +292,9 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
                     }
                 } else {
                     // clear the fields for an unlisted location before deleting it
+                    // or not because of DataStore crappiness
                     if (currentLocation) {
-                        const cleared = await DataStore.save(
+                        /*const cleared = await DataStore.save(
                             models.Location.copyOf(
                                 currentLocation,
                                 (updated) => {
@@ -298,12 +304,7 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
                                     }
                                 }
                             )
-                        );
-                        await DataStore.save(
-                            models.Task.copyOf(result, (updated) => {
-                                updated[locationKey] = null;
-                            })
-                        );
+                        );*/
                         if (process.env.REACT_APP_OFFLINE_ONLY !== "true") {
                             const variables = {
                                 id: taskId,
@@ -326,9 +327,65 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
                                         },
                                     })
                                 );
+                                const getLocation = await API.graphql<
+                                    GraphQLQuery<GetLocationQuery>
+                                >({
+                                    query: queries.getLocation,
+                                    variables: {
+                                        id: currentLocation.id,
+                                    },
+                                });
+                                console.log("asfdsadf", getLocation?.data);
+                                const locationVersion =
+                                    getLocation?.data?.getLocation?._version;
+                                if (locationVersion) {
+                                    const updatedUnlistedLocation =
+                                        await API.graphql<
+                                            GraphQLQuery<UpdateLocationMutation>
+                                        >(
+                                            graphqlOperation(
+                                                mutations.updateLocation,
+                                                {
+                                                    input: {
+                                                        id: currentLocation.id,
+                                                        _version:
+                                                            locationVersion,
+                                                        ward: null,
+                                                        line1: null,
+                                                        line2: null,
+                                                        line3: null,
+                                                        town: null,
+                                                        county: null,
+                                                        state: null,
+                                                        country: null,
+                                                        postcode: null,
+                                                        what3words: null,
+                                                        contact: null,
+                                                    },
+                                                }
+                                            )
+                                        );
+                                    await API.graphql<
+                                        GraphQLQuery<DeleteLocationMutation>
+                                    >(
+                                        graphqlOperation(
+                                            mutations.deleteLocation,
+                                            {
+                                                input: {
+                                                    id: currentLocation.id,
+                                                    _version:
+                                                        updatedUnlistedLocation
+                                                            .data
+                                                            ?.updateLocation
+                                                            ?._version,
+                                                },
+                                            }
+                                        )
+                                    );
+                                }
                             }
                         }
-                        DataStore.delete(cleared);
+                        //DataStore.delete(currentLocation);
                     }
                 }
             }

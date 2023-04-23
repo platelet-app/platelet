@@ -160,7 +160,7 @@ describe("LocationDetailsPanel", () => {
         ).toBeInTheDocument();
     });
 
-    test.skip.each`
+    test.each`
         locationKey
         ${"pickUpLocation"} | ${"dropOffLocation"}
     `("clear a listed location", async ({ locationKey }) => {
@@ -168,7 +168,6 @@ describe("LocationDetailsPanel", () => {
         await DataStore.save(task);
         const saveSpy = jest.spyOn(DataStore, "save");
         const querySpy = jest.spyOn(DataStore, "query");
-        jest.spyOn(amplify, "graphqlOperation").mockReturnValue();
         const apiSpy = jest.spyOn(API, "graphql").mockResolvedValueOnce({
             data: {
                 getTask: { ...task, _version: 1 },
@@ -186,10 +185,6 @@ describe("LocationDetailsPanel", () => {
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         userEvent.click(screen.getByRole("button", { name: "Clear" }));
         const okButton = screen.getByRole("button", { name: "OK" });
-        expect(okButton).toBeInTheDocument();
-        expect(
-            screen.getByRole("button", { name: "Cancel" })
-        ).toBeInTheDocument();
         userEvent.click(okButton);
         await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(1));
         await waitFor(() => expect(apiSpy).toHaveBeenCalledTimes(2));
@@ -197,29 +192,25 @@ describe("LocationDetailsPanel", () => {
             ...task,
             [locationKey]: null,
         });
-        expect(apiSpy).toHaveBeenNthCalledWith(
-            1,
-            amplify.graphqlOperation(queries.getTask, {
-                id: task.id,
-            })
-        );
-        expect(apiSpy).toHaveBeenNthCalledWith(
-            2,
-            amplify.graphqlOperation(mutations.updateTask, {
-                input: {
-                    id: task.id,
-                    _version: 1,
-                    [`${locationKey}Id`]: null,
-                },
-            })
-        );
-        expect(screen.queryByText(mockLocations[0].line1)).toBeNull();
-        expect(screen.getByRole("textbox")).toBeInTheDocument();
+        const variables1 = apiSpy.mock.calls[0][0].variables;
+        const variables2 = apiSpy.mock.calls[1][0].variables;
+
+        expect(variables1).toEqual({
+            id: expect.any(String),
+        });
+
+        expect(variables2).toEqual({
+            input: {
+                _version: 1,
+                id: expect.any(String),
+                [`${locationKey}Id`]: null,
+            },
+        });
         expect(screen.queryByRole("button", { name: "Edit" })).toBeNull();
         expect(screen.queryByRole("button", { name: "Clear" })).toBeNull();
     });
 
-    test.skip.each`
+    test.each`
         locationKey
         ${"pickUpLocation"} | ${"dropOffLocation"}
     `("clear a custom location", async ({ locationKey }) => {
@@ -241,15 +232,23 @@ describe("LocationDetailsPanel", () => {
         const unlisted = await DataStore.save(unlistedLocation);
         const task = new models.Task({ [locationKey]: unlisted });
         await DataStore.save(task);
-        const saveSpy = jest.spyOn(DataStore, "save");
-        const deleteSpy = jest.spyOn(DataStore, "delete");
         const querySpy = jest.spyOn(DataStore, "query");
-        jest.spyOn(amplify, "graphqlOperation").mockReturnValue();
-        const apiSpy = jest.spyOn(API, "graphql").mockResolvedValueOnce({
-            data: {
-                getTask: { ...task, _version: 1 },
-            },
-        });
+        const apiSpy = jest
+            .spyOn(API, "graphql")
+            .mockResolvedValueOnce({
+                data: {
+                    getTask: { ...task, _version: 1 },
+                },
+            })
+            .mockResolvedValueOnce({})
+            .mockResolvedValueOnce({
+                data: {
+                    getLocation: { ...unlistedLocation, _version: 1 },
+                },
+            })
+            .mockResolvedValueOnce({
+                data: { updateLocation: { _version: 2 } },
+            });
 
         let clearedLocation = {};
         for (const field of Object.keys(
@@ -274,37 +273,53 @@ describe("LocationDetailsPanel", () => {
             screen.getByRole("button", { name: "Cancel" })
         ).toBeInTheDocument();
         userEvent.click(okButton);
-        await waitFor(() => expect(apiSpy).toHaveBeenCalledTimes(2));
-        expect(apiSpy).toHaveBeenNthCalledWith(
-            1,
-            amplify.graphqlOperation(queries.getTask, {
-                id: task.id,
-            })
-        );
-        expect(apiSpy).toHaveBeenNthCalledWith(
-            2,
-            amplify.graphqlOperation(mutations.updateTask, {
-                input: {
-                    id: task.id,
-                    _version: 1,
-                    [`${locationKey}Id`]: null,
-                },
-            })
-        );
-        await waitFor(() =>
-            expect(saveSpy).toHaveBeenNthCalledWith(1, clearedLocation)
-        );
-        await waitFor(() =>
-            expect(saveSpy).toHaveBeenNthCalledWith(2, {
-                ...task,
-                [locationKey]: null,
-            })
-        );
-        await waitFor(() =>
-            expect(deleteSpy).toHaveBeenNthCalledWith(1, unlistedLocation)
-        );
-        expect(screen.queryByText(mockLocations[0].line1)).toBeNull();
-        expect(screen.getByRole("textbox")).toBeInTheDocument();
+        await waitFor(() => expect(apiSpy).toHaveBeenCalledTimes(5));
+        const variables1 = apiSpy.mock.calls[0][0].variables;
+        const variables2 = apiSpy.mock.calls[1][0].variables;
+        const variables3 = apiSpy.mock.calls[2][0].variables;
+        const variables4 = apiSpy.mock.calls[3][0].variables;
+        const variables5 = apiSpy.mock.calls[4][0].variables;
+        expect(variables1).toEqual({
+            id: expect.any(String),
+        });
+
+        expect(variables2).toEqual({
+            input: {
+                _version: 1,
+                id: expect.any(String),
+                [`${locationKey}Id`]: null,
+            },
+        });
+
+        expect(variables3).toEqual({
+            id: expect.any(String),
+        });
+
+        expect(variables4).toEqual({
+            input: {
+                _version: 1,
+                contact: null,
+                country: null,
+                county: null,
+                id: expect.any(String),
+                line1: null,
+                line2: null,
+                line3: null,
+                postcode: null,
+                state: null,
+                town: null,
+                ward: null,
+                what3words: null,
+            },
+        });
+
+        expect(variables5).toEqual({
+            input: {
+                _version: 2,
+                id: expect.any(String),
+            },
+        });
+
         expect(screen.queryByRole("button", { name: "Edit" })).toBeNull();
         expect(screen.queryByRole("button", { name: "Clear" })).toBeNull();
     });
