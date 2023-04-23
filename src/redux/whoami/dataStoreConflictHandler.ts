@@ -40,6 +40,8 @@ const dataStoreConflictHandler = async (
         });
         const { createdAt, updatedAt, ...rest } = newModel;
         return rest;
+    } else if (modelConstructor === models.Comment) {
+        return remoteModel;
     }
     return DISCARD;
 };
