@@ -87,7 +87,9 @@ const TaskHistory: React.FC = () => {
                             </Box>
                         );
                         if (task.dateCreated) {
-                            const timeComparison = new Date(task.dateCreated);
+                            const timeComparison = new Date(
+                                task.createdAt || ""
+                            );
                             if (
                                 timeComparison.getDate() <=
                                 lastTime.getDate() - 1
