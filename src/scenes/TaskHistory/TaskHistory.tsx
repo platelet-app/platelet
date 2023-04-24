@@ -91,8 +91,7 @@ const TaskHistory: React.FC = () => {
                                 task.createdAt || ""
                             );
                             if (
-                                timeComparison.getDate() <=
-                                lastTime.getDate() - 1
+                                timeComparison.getDate() !== lastTime.getDate()
                             ) {
                                 lastTime = timeComparison;
                                 displayDate = true;
