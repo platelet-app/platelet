@@ -155,7 +155,6 @@ const useGetTasksGraphql = (
     const [error, setError] = React.useState<Error | null>(null);
     const whoami = useSelector(getWhoami);
     const tenantId = useSelector(tenantIdSelector);
-
     const nextToken = React.useRef<string | null | undefined>(null);
 
     const filterComments = React.useCallback(
@@ -174,6 +173,16 @@ const useGetTasksGraphql = (
 
     const getNext = React.useCallback(async () => {
         try {
+            const actualEndDate = endDate ? new Date(endDate) : null;
+            const actualStartDate = startDate ? new Date(startDate) : null;
+            if (actualStartDate) {
+                actualStartDate.setUTCHours(0, 0, 0, 0);
+            }
+            if (actualEndDate) {
+                actualEndDate.setDate(actualEndDate.getDate() + 1);
+                actualEndDate.setUTCHours(0, 0, 0, 0);
+            }
+
             if (!tenantId) return;
             if (nextToken.current) {
                 const variables = {
@@ -181,8 +190,8 @@ const useGetTasksGraphql = (
                     nextToken: nextToken.current,
                     tenantId,
                     sortDirection,
-                    startDate: startDate?.toISOString(),
-                    endDate: endDate?.toISOString(),
+                    startDate: actualStartDate?.toISOString(),
+                    endDate: actualEndDate?.toISOString(),
                 };
 
                 const result = await API.graphql<
@@ -235,6 +244,15 @@ const useGetTasksGraphql = (
     }, [limit, tenantId, sortDirection, startDate, endDate, filterComments]);
 
     const getTasks = React.useCallback(async () => {
+        const actualEndDate = endDate ? new Date(endDate) : null;
+        const actualStartDate = startDate ? new Date(startDate) : null;
+        if (actualStartDate) {
+            actualStartDate.setUTCHours(0, 0, 0, 0);
+        }
+        if (actualEndDate) {
+            actualEndDate.setDate(actualEndDate.getDate() + 1);
+            actualEndDate.setUTCHours(0, 0, 0, 0);
+        }
         try {
             if (!tenantId) return;
             setState({});
@@ -244,8 +262,8 @@ const useGetTasksGraphql = (
                 limit,
                 tenantId,
                 sortDirection,
-                startDate: startDate?.toISOString(),
-                endDate: endDate?.toISOString(),
+                startDate: actualStartDate?.toISOString(),
+                endDate: actualEndDate?.toISOString(),
             };
             const result = await API.graphql<
                 GraphQLQuery<ListTasksByTenantIdQuery>
