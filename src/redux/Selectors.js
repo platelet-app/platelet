@@ -28,6 +28,13 @@ export const dashboardFilteredUserSelector = (state) =>
 export const taskAssigneesSelector = (state) => state.taskAssigneesReducer;
 export const taskAssigneesReadyStatusSelector = (state) =>
     state.taskAssigneesReducer.ready;
+export const taskDeliverablesSelector = (state) =>
+    state.taskDeliverablesReducer;
+export const taskDeliverablesReadyStatusSelector = (state) =>
+    state.taskDeliverablesReducer.ready;
+export const commentsSelector = (state) => state.commentsReducer;
+export const commentsReadyStatusSelector = (state) =>
+    state.commentsReducer.ready;
 export const dataStoreModelSyncedStatusSelector = (state) =>
     state.awsHubDataStoreModelsSyncedStatusReducer;
 export const selectedItemsSelector = (state) => state.selectionModeReducer;

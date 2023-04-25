@@ -1,8 +1,9 @@
-import { Location } from "../../../API";
+import { Location } from "../API";
 import { Stack, Typography } from "@mui/material";
+import * as models from "../models";
 
 type TaskHistoryCardLocationDetailProps = {
-    location?: Location | null;
+    location?: Location | models.Location | null;
 };
 
 const TaskHistoryCardLocationDetail: React.FC<
@@ -13,6 +14,8 @@ const TaskHistoryCardLocationDetail: React.FC<
         const items = [
             location.ward,
             location.line1,
+            location.line2,
+            location.line3,
             location.town,
             location.postcode,
         ];

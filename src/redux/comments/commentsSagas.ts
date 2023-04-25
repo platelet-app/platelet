@@ -1,4 +1,4 @@
-import * as actions from "./taskAssigneesActions";
+import * as actions from "./commentsActions";
 import { takeLatest } from "@redux-saga/core/effects";
 import _ from "lodash";
 import { call, take, put } from "redux-saga/effects";
@@ -14,10 +14,11 @@ function listener() {
         function restartObserver() {
             observer.unsubscribe();
             observer = DataStore.observeQuery(
-                models.TaskAssignee,
+                models.Comment,
                 LocalPredicates.unarchived,
                 { sort: (s) => s.createdAt("DESCENDING") }
             ).subscribe((result) => {
+                console.log(result);
                 emitter(result);
             });
         }
@@ -33,26 +34,17 @@ function listener() {
                 }
             }
         );
-        const taskObserver = DataStore.observe(
-            models.Task,
-            LocalPredicates.unarchived
-        ).subscribe((result) => {
-            if (result.opType === "UPDATE") {
-                debouncedRestartObserver();
-            }
-        });
 
         restartObserver();
 
         return () => {
             observer.unsubscribe();
             userObserver.unsubscribe();
-            taskObserver.unsubscribe();
         };
     });
 }
 
-function* initializeTaskAssigneesObserver(): Generator<any, any, any> {
+function* initializeCommentsObserver(): Generator<any, any, any> {
     const channel = yield call(listener);
     try {
         while (true) {
@@ -62,9 +54,8 @@ function* initializeTaskAssigneesObserver(): Generator<any, any, any> {
                 dataStoreNestedWorkAroundMapper,
                 result.items
             );
-            console.log(fixed);
             yield put(
-                actions.setTaskAssignees({
+                actions.setComments({
                     ...result,
                     items: fixed,
                     ready: true,
@@ -72,14 +63,11 @@ function* initializeTaskAssigneesObserver(): Generator<any, any, any> {
             );
         }
     } finally {
-        console.log("stopping task assignees observer");
+        console.log("stopping comments observer");
         channel.close();
     }
 }
 
-export function* watchInitializeTaskAssigneesObserver() {
-    yield takeLatest(
-        actions.INIT_TASK_ASSIGNEES,
-        initializeTaskAssigneesObserver
-    );
+export function* watchInitializeCommentsObserver() {
+    yield takeLatest(actions.INIT_COMMENTS, initializeCommentsObserver);
 }

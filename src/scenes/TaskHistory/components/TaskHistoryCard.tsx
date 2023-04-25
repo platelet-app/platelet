@@ -1,20 +1,10 @@
 import { Task } from "../../../API";
-import {
-    Chip,
-    Divider,
-    Grid,
-    Paper,
-    Stack,
-    Tooltip,
-    useMediaQuery,
-    useTheme,
-} from "@mui/material";
-import TaskStatusChip from "./TaskStatusChip";
-import UserChip from "../../../components/UserChip";
-import TaskHistoryCardLocationDetail from "./TaskHistoryCardLocationDetail";
+import { Divider, Paper, Stack, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import TaskCardLocationDetail from "../../../components/TaskCardLocationDetail";
 import CommentsBadge from "../../../components/CommentsBadge";
-import DeliverableChip from "./DeliverableChip";
-import TaskHistoryTimestamp from "./TaskHistoryTimestamp";
+import TaskCardTimestamp from "../../../components/TaskCardTimestamp";
+import TaskCardChips from "../../../components/TaskCardChips";
 
 type TaskHistoryCardProps = {
     task: Task;
@@ -37,60 +27,16 @@ const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
         }
     }
 
-    let chips = [];
-    if (task.status) {
-        chips.push(<TaskStatusChip size="small" status={task.status} />);
-    }
-    if (task.priority) {
-        chips.push(<Chip size="small" label={task.priority} />);
-    }
-    if (task.riderResponsibility) {
-        chips.push(<Chip size="small" label={task.riderResponsibility} />);
-    }
-    let assigneeChips: React.ReactElement[] = [];
-    if (task.assignees?.items) {
-        const filterDeleted = task.assignees?.items?.filter(
-            (assignee) => assignee && !assignee._deleted
-        );
-        assigneeChips = filterDeleted.map((assignment) => {
-            if (assignment?.assignee) {
-                return <UserChip size="small" user={assignment?.assignee} />;
-            } else {
-                return <Chip size="small" label="" />;
-            }
-        });
-    }
-    let deliverableChips: React.ReactElement[] = [];
-    if (task.deliverables?.items) {
-        const filterDeleted = task.deliverables?.items?.filter(
-            (deliverable) => deliverable && !deliverable._deleted
-        );
-        deliverableChips = filterDeleted.map((deliverable) => {
-            if (deliverable) {
-                return <DeliverableChip deliverable={deliverable} />;
-            } else {
-                return <Chip size="small" label="" />;
-            }
-        });
-    }
-
-    chips = [...chips, ...assigneeChips, ...deliverableChips];
+    const assignees = task?.assignees?.items.filter((a) => a && !a._deleted);
+    const deliverables = task?.deliverables?.items.filter(
+        (d) => d && !d._deleted
+    );
 
     let cutOff = 6;
     if (isSm) {
         cutOff = 4;
     } else if (isLg) {
         cutOff = 8;
-    }
-
-    if (chips.length > cutOff) {
-        const moreChips = chips.length - cutOff;
-        chips = chips.slice(0, cutOff);
-        chips.push(
-            <Tooltip title={`${moreChips} more`} placement="top">
-                <Chip size="small" label="..." />
-            </Tooltip>
-        );
     }
 
     return (
@@ -110,21 +56,21 @@ const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
                 justifyContent="space-between"
                 direction="column"
             >
-                <Grid direction="row" container spacing={1}>
-                    {chips.map((chip, index) => (
-                        <Grid key={index} item>
-                            {chip}
-                        </Grid>
-                    ))}
-                </Grid>
-                <TaskHistoryCardLocationDetail location={task.pickUpLocation} />
-                <Divider sx={{ width: isSm ? "100%" : "50%" }} />
-                <TaskHistoryCardLocationDetail
-                    location={task.dropOffLocation}
+                <TaskCardChips
+                    showDeliverableIcons
+                    limit={cutOff}
+                    assignees={assignees}
+                    deliverables={deliverables}
+                    status={task.status}
+                    priority={task.priority}
+                    riderResponsibility={task.riderResponsibility}
                 />
+                <TaskCardLocationDetail location={task.pickUpLocation} />
+                <Divider sx={{ width: isSm ? "100%" : "50%" }} />
+                <TaskCardLocationDetail location={task.dropOffLocation} />
                 <Stack direction="row" spacing={2}>
                     {task?.createdAt && (
-                        <TaskHistoryTimestamp timestamp={task.createdAt} />
+                        <TaskCardTimestamp timestamp={task.createdAt} />
                     )}
                     {taskBadge}
                 </Stack>

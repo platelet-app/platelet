@@ -306,12 +306,9 @@ function TaskContextMenu(props) {
 TaskContextMenu.propTypes = {
     task: PropTypes.object,
     iconColor: PropTypes.string,
-    disableRelay: PropTypes.bool,
-    assignedRiders: PropTypes.arrayOf(PropTypes.object),
 };
 
 TaskContextMenu.defaultProps = {
-    assignedRiders: [],
     task: null,
 };
 
