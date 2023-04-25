@@ -1,3 +1,4 @@
+import React from "react";
 import { createMatchMedia, render } from "../../../test-utils";
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import TasksGridColumn from "./TasksGridColumn";
@@ -9,8 +10,22 @@ import { DataStore } from "aws-amplify";
 import MultipleSelectionActionsMenu from "./MultipleSelectionActionsMenu";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
 import ActiveRidersChips from "./ActiveRidersChips";
+import { useDispatch } from "react-redux";
+import * as assActions from "../../../redux/taskAssignees/taskAssigneesActions";
+import * as commentActions from "../../../redux/comments/commentsActions";
+import * as taskDeliverablesActions from "../../../redux/taskDeliverables/taskDeliverablesActions";
 
 const tenantId = "tenantId";
+
+const FakeDispatchComponent = () => {
+    const dispatch = useDispatch();
+    React.useEffect(() => {
+        dispatch(assActions.initTaskAssignees());
+        dispatch(commentActions.initComments());
+        dispatch(taskDeliverablesActions.initTaskDeliverables());
+    }, [dispatch]);
+    return null;
+};
 
 describe("MultipleSelectionActionsMenu", () => {
     const RealDate = Date;
@@ -25,6 +40,18 @@ describe("MultipleSelectionActionsMenu", () => {
             }
         };
     }
+
+    const finishLoading = async () => {
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId("tasks-kanban-column-skeleton")
+            ).toBeNull();
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(screen.queryByTestId("task-item-skeleton")).toBeNull();
+        });
+    };
 
     beforeEach(() => {
         // add window.matchMedia
@@ -80,15 +107,10 @@ describe("MultipleSelectionActionsMenu", () => {
             dashboardTabIndex: 1,
             whoami: { user: mockWhoami },
             tenantId,
-            taskAssigneesReducer: {
-                items: [],
-                ready: true,
-                isSynced: true,
-            },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         render(
             <>
+                <FakeDispatchComponent />
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn taskKey={[models.TaskStatus.NEW]} />
             </>,
@@ -96,13 +118,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 preloadedState,
             }
         );
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
-        mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(11);
-        });
+        await finishLoading();
         expect(
             await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
         ).toHaveLength(12);
@@ -136,15 +152,10 @@ describe("MultipleSelectionActionsMenu", () => {
                 dashboardTabIndex,
                 whoami: { user: mockWhoami },
                 tenantId,
-                taskAssigneesReducer: {
-                    items: [],
-                    ready: true,
-                    isSynced: true,
-                },
             };
-            const querySpy = jest.spyOn(DataStore, "query");
             render(
                 <>
+                    <FakeDispatchComponent />
                     <MultipleSelectionActionsMenu />
                     <TasksGridColumn
                         title={taskStatus}
@@ -155,13 +166,7 @@ describe("MultipleSelectionActionsMenu", () => {
                     preloadedState,
                 }
             );
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(1);
-            });
-            mockAllIsIntersecting(true);
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(2);
-            });
+            await finishLoading();
             userEvent.click(screen.getByRole("button", { name: "Select All" }));
             expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(
                 3
@@ -315,15 +320,11 @@ describe("MultipleSelectionActionsMenu", () => {
                 dashboardTabIndex,
                 tenantId,
                 whoami: { user: mockWhoami },
-                taskAssigneesReducer: {
-                    items: [],
-                    ready: true,
-                    isSynced: true,
-                },
             };
             const querySpy = jest.spyOn(DataStore, "query");
             render(
                 <>
+                    <FakeDispatchComponent />
                     <MultipleSelectionActionsMenu />
                     <TasksGridColumn
                         title={taskStatus}
@@ -334,13 +335,7 @@ describe("MultipleSelectionActionsMenu", () => {
                     preloadedState,
                 }
             );
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(1);
-            });
-            mockAllIsIntersecting(true);
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(2);
-            });
+            await finishLoading();
             userEvent.click(screen.getByRole("button", { name: "Select All" }));
             expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(
                 3
@@ -395,11 +390,6 @@ describe("MultipleSelectionActionsMenu", () => {
             dashboardTabIndex: 1,
             tenantId,
             whoami: { user: mockWhoami },
-            taskAssigneesReducer: {
-                items: [],
-                ready: true,
-                isSynced: true,
-            },
         };
         const mockAssignments = [mockTask, mockTask2].map(
             (t) =>
@@ -410,11 +400,11 @@ describe("MultipleSelectionActionsMenu", () => {
                     tenantId,
                 })
         );
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         const modelSpy = jest.spyOn(models.Task, "copyOf");
         render(
             <>
+                <FakeDispatchComponent />
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={models.TaskStatus.NEW}
@@ -425,13 +415,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 preloadedState,
             }
         );
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
-        mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(3);
-        });
+        await finishLoading();
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(4);
         userEvent.click(
@@ -439,18 +423,11 @@ describe("MultipleSelectionActionsMenu", () => {
         );
         if (role === models.Role.COORDINATOR) {
             userEvent.click(screen.getByText("COORDINATOR"));
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(5);
-            });
-        } else {
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(4);
-            });
         }
 
         const textBox = screen.getByRole("textbox");
         userEvent.type(textBox, assignee.displayName);
-        userEvent.click(screen.getByText(assignee.displayName));
+        userEvent.click(await screen.findByText(assignee.displayName));
         const okButton = screen.getByRole("button", { name: "OK" });
         expect(okButton).toBeEnabled();
         userEvent.click(okButton);
@@ -539,7 +516,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 displayName: "Rider",
             })
         );
-        const assignments = await Promise.all(
+        await Promise.all(
             [mockTask, mockTask2].map((t) =>
                 DataStore.save(
                     new models.TaskAssignee({
@@ -555,16 +532,11 @@ describe("MultipleSelectionActionsMenu", () => {
             dashboardTabIndex: 0,
             tenantId,
             whoami: { user: mockWhoami },
-            taskAssigneesReducer: {
-                items: assignments,
-                ready: true,
-                isSynced: true,
-            },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
             <>
+                <FakeDispatchComponent />
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={mockTask.status}
@@ -575,13 +547,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 preloadedState,
             }
         );
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
-        mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(3);
-        });
+        await finishLoading();
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(4);
         const buttonToClick = screen.getByRole("button", {
@@ -646,9 +612,6 @@ describe("MultipleSelectionActionsMenu", () => {
             });
         }
         expect(screen.queryByTestId("CheckBoxIcon")).toBeNull();
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(5);
-        });
         expect(
             await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
         ).toHaveLength(1);
@@ -687,7 +650,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 displayName: "Rider",
             })
         );
-        const assignments = await Promise.all(
+        await Promise.all(
             [mockTask, mockTask2].map((t) =>
                 DataStore.save(
                     new models.TaskAssignee({
@@ -703,16 +666,11 @@ describe("MultipleSelectionActionsMenu", () => {
             dashboardTabIndex: 0,
             tenantId,
             whoami: { user: mockWhoami },
-            taskAssigneesReducer: {
-                items: assignments,
-                ready: true,
-                isSynced: true,
-            },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
             <>
+                <FakeDispatchComponent />
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={mockTask.status}
@@ -723,13 +681,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 preloadedState,
             }
         );
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
-        mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(3);
-        });
+        await finishLoading();
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(4);
         const buttonToClick = screen.getByRole("button", {
@@ -783,9 +735,6 @@ describe("MultipleSelectionActionsMenu", () => {
             });
         }
         expect(screen.queryByTestId("CheckBoxIcon")).toBeNull();
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(5);
-        });
         expect(
             await screen.findAllByTestId("CheckBoxOutlineBlankIcon")
         ).toHaveLength(1);
@@ -813,15 +762,11 @@ describe("MultipleSelectionActionsMenu", () => {
             dashboardTabIndex: 1,
             tenantId,
             whoami: { user: mockWhoami },
-            taskAssigneesReducer: {
-                items: [],
-                ready: true,
-                isSynced: true,
-            },
         };
         const querySpy = jest.spyOn(DataStore, "query");
         render(
             <>
+                <FakeDispatchComponent />
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={models.TaskStatus.NEW}
@@ -832,13 +777,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 preloadedState,
             }
         );
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
-        mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(11);
-        });
+        await finishLoading();
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         if (action === "assignUser") {
             userEvent.click(
@@ -867,19 +806,14 @@ describe("MultipleSelectionActionsMenu", () => {
             dashboardTabIndex: 1,
             tenantId,
             whoami: { user: mockWhoami },
-            taskAssigneesReducer: {
-                items: [],
-                ready: true,
-                isSynced: true,
-            },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest
             .spyOn(DataStore, "save")
             .mockRejectedValue(new Error("Something went wrong"));
         const modelSpy = jest.spyOn(models.Task, "copyOf");
         render(
             <>
+                <FakeDispatchComponent />
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={models.TaskStatus.NEW}
@@ -890,13 +824,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 preloadedState,
             }
         );
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
-        mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(2);
-        });
+        await finishLoading();
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         userEvent.click(
             screen.getByRole("button", { name: "Selection Rejected" })
@@ -947,7 +875,7 @@ describe("MultipleSelectionActionsMenu", () => {
                     riderResponsibility: "test",
                 })
             );
-            const mockAssignments = [mockTask].map(
+            [mockTask].map(
                 (t) =>
                     new models.TaskAssignee({
                         task: t,
@@ -960,15 +888,10 @@ describe("MultipleSelectionActionsMenu", () => {
                 dashboardTabIndex: 1,
                 tenantId,
                 whoami: { user: mockWhoami },
-                taskAssigneesReducer: {
-                    items: [],
-                    ready: true,
-                    isSynced: true,
-                },
             };
-            const querySpy = jest.spyOn(DataStore, "query");
             render(
                 <>
+                    <FakeDispatchComponent />
                     <MultipleSelectionActionsMenu />
                     <TasksGridColumn
                         title={models.TaskStatus.NEW}
@@ -979,13 +902,7 @@ describe("MultipleSelectionActionsMenu", () => {
                     preloadedState,
                 }
             );
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(1);
-            });
-            mockAllIsIntersecting(true);
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(2);
-            });
+            await finishLoading();
             userEvent.click(screen.getByRole("button", { name: "Select All" }));
             expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(
                 3
@@ -995,20 +912,13 @@ describe("MultipleSelectionActionsMenu", () => {
             );
             if (role === models.Role.COORDINATOR) {
                 userEvent.click(screen.getByText("COORDINATOR"));
-                await waitFor(() => {
-                    expect(querySpy).toHaveBeenCalledTimes(4);
-                });
-            } else {
-                await waitFor(() => {
-                    expect(querySpy).toHaveBeenCalledTimes(3);
-                });
             }
 
             const okButton = screen.getByRole("button", { name: "OK" });
             expect(okButton).toBeDisabled();
             const textBox = screen.getByRole("textbox");
             userEvent.type(textBox, assignee.displayName);
-            userEvent.click(screen.getByText(assignee.displayName));
+            userEvent.click(await screen.findByText(assignee.displayName));
             expect(okButton).toBeEnabled();
             userEvent.click(screen.getByTestId("CancelIcon"));
             await waitFor(() => {
@@ -1041,11 +951,6 @@ describe("MultipleSelectionActionsMenu", () => {
                 dashboardTabIndex: 0,
                 tenantId,
                 whoami: { user: mockWhoami },
-                taskAssigneesReducer: {
-                    items: [],
-                    ready: true,
-                    isSynced: true,
-                },
             };
 
             const mockComment = new models.Comment({
@@ -1062,10 +967,10 @@ describe("MultipleSelectionActionsMenu", () => {
                 body: reason,
                 author: mockWhoami,
             });
-            const querySpy = jest.spyOn(DataStore, "query");
             const saveSpy = jest.spyOn(DataStore, "save");
             render(
                 <>
+                    <FakeDispatchComponent />
                     <MultipleSelectionActionsMenu />
                     <TasksGridColumn
                         title={models.TaskStatus.NEW}
@@ -1076,13 +981,7 @@ describe("MultipleSelectionActionsMenu", () => {
                     preloadedState,
                 }
             );
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(1);
-            });
-            mockAllIsIntersecting(true);
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(3);
-            });
+            await finishLoading();
             const label =
                 status === models.TaskStatus.REJECTED
                     ? "Rejected"
@@ -1115,14 +1014,16 @@ describe("MultipleSelectionActionsMenu", () => {
                 });
             });
             await waitFor(() => {
-                expect(saveSpy).toHaveBeenCalledWith(
-                    expect.objectContaining(_.omit(mockComment, "id"))
-                );
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockComment,
+                    id: expect.any(String),
+                });
             });
             await waitFor(() => {
-                expect(saveSpy).toHaveBeenCalledWith(
-                    expect.objectContaining(_.omit(mockComment2, "id"))
-                );
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockComment2,
+                    id: expect.any(String),
+                });
             });
         }
     );
@@ -1153,15 +1054,10 @@ describe("MultipleSelectionActionsMenu", () => {
             dashboardTabIndex: 0,
             tenantId,
             whoami: { user: mockWhoami },
-            taskAssigneesReducer: {
-                items: [],
-                ready: true,
-                isSynced: true,
-            },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         render(
             <>
+                <FakeDispatchComponent />
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={models.TaskStatus.PICKED_UP}
@@ -1175,9 +1071,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 preloadedState,
             }
         );
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
+        await finishLoading();
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         userEvent.click(
             screen.getByRole("button", { name: "Selection Duplicate" })
@@ -1211,7 +1105,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 tenantId,
             })
         );
-        const mockAssignments = await Promise.all(
+        await Promise.all(
             mockTasks.map((task) =>
                 DataStore.save(
                     new models.TaskAssignee({
@@ -1228,15 +1122,10 @@ describe("MultipleSelectionActionsMenu", () => {
             dashboardTabIndex: 0,
             tenantId,
             whoami: { user: mockWhoami },
-            taskAssigneesReducer: {
-                items: mockAssignments,
-                ready: true,
-                isSynced: true,
-            },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         render(
             <>
+                <FakeDispatchComponent />
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={models.TaskStatus.ACTIVE}
@@ -1249,9 +1138,7 @@ describe("MultipleSelectionActionsMenu", () => {
         );
         if (view === "mobile") window.matchMedia = createMatchMedia(128);
         else window.matchMedia = createMatchMedia(1280);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
+        await finishLoading();
         if (view === "desktop") {
             userEvent.click(screen.getByRole("button", { name: "Select All" }));
             expect(
@@ -1342,18 +1229,12 @@ describe("MultipleSelectionActionsMenu", () => {
                 dashboardTabIndex: 0,
                 tenantId,
                 whoami: { user: mockWhoami },
-                taskAssigneesReducer: {
-                    items: [],
-                    ready: true,
-                    isSynced: true,
-                },
             };
-            const querySpy = jest.spyOn(DataStore, "query");
             const saveSpy = jest.spyOn(DataStore, "save");
             render(
                 <>
+                    <FakeDispatchComponent />
                     <MultipleSelectionActionsMenu />
-
                     <TasksGridColumn
                         title={models.TaskStatus.NEW}
                         taskKey={[models.TaskStatus.NEW]}
@@ -1363,9 +1244,7 @@ describe("MultipleSelectionActionsMenu", () => {
                     preloadedState,
                 }
             );
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(1);
-            });
+            await finishLoading();
             userEvent.click(screen.getByRole("button", { name: "Select All" }));
             userEvent.click(
                 screen.getByRole("button", { name: "Selection Duplicate" })
@@ -1514,7 +1393,7 @@ describe("MultipleSelectionActionsMenu", () => {
             new models.User({ displayName: "eee", tenantId })
         );
 
-        const mockAssignments = await Promise.all(
+        await Promise.all(
             mockTasks.map((task) =>
                 DataStore.save(
                     new models.TaskAssignee({
@@ -1570,16 +1449,11 @@ describe("MultipleSelectionActionsMenu", () => {
             dashboardTabIndex: 0,
             tenantId,
             whoami: { user: mockWhoami },
-            taskAssigneesReducer: {
-                items: mockAssignments,
-                ready: true,
-                isSynced: true,
-            },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
             <>
+                <FakeDispatchComponent />
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={models.TaskStatus.ACTIVE}
@@ -1590,9 +1464,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 preloadedState,
             }
         );
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
+        await finishLoading();
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         userEvent.click(
             screen.getByRole("button", { name: "Selection Duplicate" })
@@ -1713,30 +1585,23 @@ describe("MultipleSelectionActionsMenu", () => {
                 displayName: "Test Rider",
             })
         );
-        const mockAssignments = [
-            await DataStore.save(
-                new models.TaskAssignee({
-                    task: mockTask,
-                    assignee: mockRider,
-                    role: models.Role.RIDER,
-                })
-            ),
-        ];
+        await DataStore.save(
+            new models.TaskAssignee({
+                task: mockTask,
+                assignee: mockRider,
+                role: models.Role.RIDER,
+            })
+        );
 
         const preloadedState = {
             roleView: "ALL",
             dashboardTabIndex: 0,
             tenantId,
             whoami: { user: mockWhoami },
-            taskAssigneesReducer: {
-                items: mockAssignments,
-                ready: true,
-                isSynced: true,
-            },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         render(
             <>
+                <FakeDispatchComponent />
                 <TaskFilterTextField />
                 <ActiveRidersChips />
                 <MultipleSelectionActionsMenu />
@@ -1749,13 +1614,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 preloadedState,
             }
         );
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
-        mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(2);
-        });
+        await finishLoading();
         const searchBox = screen.getByRole("textbox", { name: "Filter tasks" });
         const headerCheckbox = screen.getByTestId(
             `${mockTask.status}-select-all`
@@ -1811,15 +1670,10 @@ describe("MultipleSelectionActionsMenu", () => {
             dashboardTabIndex: 1,
             tenantId,
             whoami: { user: mockWhoami },
-            taskAssigneesReducer: {
-                items: [],
-                ready: true,
-                isSynced: true,
-            },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         render(
             <>
+                <FakeDispatchComponent />
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={mockTask.status}
@@ -1830,13 +1684,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 preloadedState,
             }
         );
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
-        mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(2);
-        });
+        await finishLoading();
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         expect(await screen.findAllByTestId("CheckBoxIcon")).toHaveLength(3);
         const buttonToClick = screen.getByRole("button", {
@@ -1854,7 +1702,7 @@ describe("MultipleSelectionActionsMenu", () => {
     });
 
     test("double confirm if affecting a lot of items", async () => {
-        const mockTasks = await Promise.all(
+        await Promise.all(
             _.range(10).map(() =>
                 DataStore.save(
                     new models.Task({ status: models.TaskStatus.NEW })
@@ -1879,16 +1727,11 @@ describe("MultipleSelectionActionsMenu", () => {
             dashboardTabIndex: 0,
             tenantId,
             whoami: { user: mockWhoami },
-            taskAssigneesReducer: {
-                items: [],
-                ready: true,
-                isSynced: true,
-            },
         };
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
             <>
+                <FakeDispatchComponent />
                 <MultipleSelectionActionsMenu />
                 <TasksGridColumn
                     title={models.TaskStatus.NEW}
@@ -1899,23 +1742,14 @@ describe("MultipleSelectionActionsMenu", () => {
                 preloadedState,
             }
         );
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
-        mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(11);
-        });
+        await finishLoading();
         userEvent.click(screen.getByRole("button", { name: "Select All" }));
         userEvent.click(
             screen.getByRole("button", { name: "Selection Assign User" })
         );
         const textBox = screen.getByRole("textbox");
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(12);
-        });
         userEvent.type(textBox, assignee.displayName);
-        userEvent.click(screen.getByText(assignee.displayName));
+        userEvent.click(await screen.findByText(assignee.displayName));
         const okButton = screen.getByRole("button", { name: "OK" });
         userEvent.click(okButton);
         expect(

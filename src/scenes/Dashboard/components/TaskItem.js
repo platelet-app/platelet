@@ -12,17 +12,10 @@ import { Box, Grow, Skeleton, ToggleButton } from "@mui/material";
 import { makeStyles } from "tss-react/mui";
 import { useTheme } from "@mui/styles";
 import TaskContextMenu from "../../../components/ContextMenus/TaskContextMenu";
-import { commentVisibility, userRoles } from "../../../apiConsts";
-import * as models from "../../../models/index";
-import { DataStore } from "aws-amplify";
 import { useDispatch, useSelector } from "react-redux";
 import {
     dashboardTabIndexSelector,
-    dataStoreModelSyncedStatusSelector,
-    getRoleView,
-    getWhoami,
     selectedItemsSelector,
-    taskAssigneesSelector,
 } from "../../../redux/Selectors";
 import { useInView } from "react-intersection-observer";
 import useLongPressEventContextMenu from "../../../hooks/useLongPressEventContextMenu";
@@ -142,19 +135,9 @@ function TaskItemWrapper(props) {
 }
 
 const TaskItem = React.memo((props) => {
-    const whoami = useSelector(getWhoami);
     const { task } = props;
-    const [assignees, setAssignees] = useState([]);
-    const [assignedRiders, setAssignedRiders] = useState([]);
     const [visibility, setVisibility] = useState(false);
-    const [commentCount, setCommentCount] = useState(0);
     const [isSelected, setIsSelected] = useState(false);
-    const commentObserver = useRef({ unsubscribe: () => {} });
-    const roleView = useSelector(getRoleView);
-    const allAssignees = useSelector(taskAssigneesSelector);
-    const commentModelSynced = useSelector(
-        dataStoreModelSyncedStatusSelector
-    ).Comment;
     const tabIndex = useSelector(dashboardTabIndexSelector);
     const selectedItems = useSelector(selectedItemsSelector);
     const dispatch = useDispatch();
@@ -206,84 +189,6 @@ const TaskItem = React.memo((props) => {
 
     useEffect(addItemToAvailableSelection, [task, addItemToAvailableSelection]);
 
-    const getAssignees = React.useCallback(
-        (visibility, roleView, task, allAssignees) => {
-            if (!visibility || !roleView || !task) return;
-            const taskAssignees =
-                allAssignees && allAssignees.items
-                    ? allAssignees.items.filter(
-                          (assignment) =>
-                              assignment.task && assignment.task.id === task.id
-                      )
-                    : [];
-            const assignmentsNotMe = allAssignees
-                ? Object.values(taskAssignees).filter((assignment) => {
-                      const actualRole =
-                          roleView === "ALL" ? userRoles.coordinator : roleView;
-                      if (
-                          assignment.role?.toLowerCase() !==
-                              actualRole.toLowerCase() ||
-                          assignment.assignee.id !== whoami.id
-                      ) {
-                          return true;
-                      }
-                      return false;
-                  })
-                : [];
-            const assignees = assignmentsNotMe.map((a) => a.assignee);
-            setAssignees(assignees);
-            const riders =
-                task && task.assignees
-                    ? Object.values(task.assignees)
-                          .filter((a) => a.role === userRoles.rider)
-                          .map((a) => a.assignee)
-                    : [];
-            setAssignedRiders(riders);
-        },
-        [whoami.id]
-    );
-
-    useEffect(
-        () => getAssignees(visibility, roleView, task, allAssignees),
-        [visibility, task, allAssignees, getAssignees, roleView]
-    );
-
-    const getCommentCount = React.useCallback(async () => {
-        if (!task || !task.id) return 0;
-        const commentsResult = (
-            await DataStore.query(models.Comment, (c) =>
-                c.parentId("eq", task.id)
-            )
-        ).filter(
-            (c) =>
-                c.visibility === commentVisibility.everyone ||
-                (c.visibility === commentVisibility.me &&
-                    c.author &&
-                    c.author.id === whoami.id)
-        );
-        return commentsResult.length;
-    }, [task, whoami.id]);
-
-    const calculateCommentCount = React.useCallback(async () => {
-        if (!visibility || !task) return;
-        const commentCount = await getCommentCount();
-        setCommentCount(commentCount);
-        // TODO: change this to observeQuery when the bug is fixed
-        commentObserver.current.unsubscribe();
-        commentObserver.current = DataStore.observe(models.Comment, (c) =>
-            c.parentId("eq", task.id)
-        ).subscribe(async () => {
-            getCommentCount().then((count) => {
-                setCommentCount(count);
-            });
-        });
-    }, [task, getCommentCount, visibility]);
-    useEffect(() => {
-        calculateCommentCount();
-    }, [visibility, task, commentModelSynced, calculateCommentCount]);
-
-    useEffect(() => () => commentObserver.current.unsubscribe(), []);
-
     const contents = visibility ? (
         <Grow in {...(!props.animate ? { timeout: 0 } : {})}>
             <Box data-testid="task-item-parent" className={classes.root}>
@@ -298,11 +203,7 @@ const TaskItem = React.memo((props) => {
                 {!isSm && (
                     <>
                         <div className={classes.dots}>
-                            <TaskContextMenu
-                                disableRelay={!!props.relayNext}
-                                assignedRiders={assignedRiders}
-                                task={task}
-                            />
+                            <TaskContextMenu task={task} />
                         </div>
                         <div className={classes.select}>
                             <ToggleButton

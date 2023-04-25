@@ -7,14 +7,40 @@ import { tasksStatus, userRoles } from "../../apiConsts";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import TasksGridColumn from "../../scenes/Dashboard/components/TasksGridColumn";
-import * as copyTaskDataToClipboard from "../../utilities/copyTaskDataToClipboard";
+import { useDispatch } from "react-redux";
+import React from "react";
+import * as assActions from "../../redux/taskAssignees/taskAssigneesActions";
+import * as commentActions from "../../redux/comments/commentsActions";
+import * as taskDeliverablesActions from "../../redux/taskDeliverables/taskDeliverablesActions";
 
 const tenantId = "tenantId";
+
+const FakeDispatchComponent = () => {
+    const dispatch = useDispatch();
+    React.useEffect(() => {
+        dispatch(assActions.initTaskAssignees());
+        dispatch(commentActions.initComments());
+        dispatch(taskDeliverablesActions.initTaskDeliverables());
+    }, [dispatch]);
+    return null;
+};
 
 describe("TaskContextMenu", () => {
     const RealDate = Date;
     const isoDate = "2021-11-29T23:24:58.987Z";
     const dateString = "2021-11-29";
+
+    const finishLoading = async () => {
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId("tasks-kanban-column-skeleton")
+            ).toBeNull();
+        });
+        mockAllIsIntersecting(true);
+        await waitFor(() => {
+            expect(screen.queryByTestId("task-item-skeleton")).toBeNull();
+        });
+    };
 
     function mockDate() {
         global.Date = class extends RealDate {
@@ -526,12 +552,14 @@ describe("TaskContextMenu", () => {
                 tenantId,
             })
         );
-        const mockTaskAssignee = new models.TaskAssignee({
-            task,
-            assignee: whoami,
-            role: userRoles.coordinator,
-            tenantId,
-        });
+        const mockTaskAssignee = await DataStore.save(
+            new models.TaskAssignee({
+                task,
+                assignee: whoami,
+                role: userRoles.coordinator,
+                tenantId,
+            })
+        );
         const deliverableTypes = await Promise.all(
             ["test deliverable", "another one"].map((d) =>
                 DataStore.save(new models.DeliverableType({ label: d }))
@@ -554,19 +582,14 @@ describe("TaskContextMenu", () => {
         const preloadedState = {
             whoami: { user: whoami },
             roleView: userRoles.coordinator,
-            taskAssigneesReducer: {
-                items: [mockTaskAssignee],
-                ready: true,
-                isSynced: true,
-            },
             tenantId,
         };
         //render(<TaskContextMenu task={task} assignedRiders={[]} />, {
         //    preloadedState,
         //});
-        const querySpy = jest.spyOn(DataStore, "query");
         render(
             <>
+                <FakeDispatchComponent />
                 <TaskContextMenu task={task} assignedRiders={[]} />
                 <TasksGridColumn taskKey={[tasksStatus.new]} />
             </>,
@@ -574,13 +597,7 @@ describe("TaskContextMenu", () => {
                 preloadedState,
             }
         );
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
-        mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(2);
-        });
+        await finishLoading();
         const button = screen.getByRole("button", { name: "task options" });
         userEvent.click(button);
         userEvent.click(screen.getByRole("menuitem", { name: "Duplicate" }));
@@ -618,11 +635,8 @@ describe("TaskContextMenu", () => {
                 id: expect.any(String),
             },
         });
-        mockAllIsIntersecting(true);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(13);
-        });
         expect(screen.getByText("Task duplicated to NEW")).toBeInTheDocument();
+        await finishLoading();
         expect(screen.queryAllByRole("link")).toHaveLength(2);
     });
 
