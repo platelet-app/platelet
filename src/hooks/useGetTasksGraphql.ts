@@ -143,6 +143,15 @@ const sortByCreatedAt = (a: any, b: any, direction: ModelSortDirection) => {
     }
 };
 
+const isDateValid = (date: Date): boolean => {
+    const newDate = new Date(date);
+    return !isNaN(newDate.getTime());
+};
+
+const isStartDateBeforeEndDate = (startDate: Date, endDate: Date): boolean => {
+    return startDate.getTime() <= endDate.getTime();
+};
+
 const useGetTasksGraphql = (
     limit: number = 10,
     sortDirection: ModelSortDirection = ModelSortDirection.DESC,
@@ -151,6 +160,7 @@ const useGetTasksGraphql = (
 ) => {
     const [state, setState] = React.useState<StateType>({});
     const [isFetching, setIsFetching] = React.useState(false);
+    const [isFetchingMore, setIsFetchingMore] = React.useState(false);
     const [isFinished, setIsFinished] = React.useState(false);
     const [error, setError] = React.useState<Error | null>(null);
     const whoami = useSelector(getWhoami);
@@ -173,6 +183,16 @@ const useGetTasksGraphql = (
 
     const getNext = React.useCallback(async () => {
         try {
+            if (isFetching || isFinished) return;
+            setIsFetchingMore(true);
+            if (endDate && !isDateValid(endDate)) {
+                console.log("end date is not valid");
+                return;
+            }
+            if (startDate && !isDateValid(startDate)) {
+                console.log("start date is not valid");
+                return;
+            }
             const actualEndDate = endDate ? new Date(endDate) : null;
             const actualStartDate = startDate ? new Date(startDate) : null;
             if (actualStartDate) {
@@ -181,6 +201,15 @@ const useGetTasksGraphql = (
             if (actualEndDate) {
                 actualEndDate.setDate(actualEndDate.getDate() + 1);
                 actualEndDate.setUTCHours(0, 0, 0, 0);
+            }
+            console.log("get tasks", actualStartDate, actualEndDate);
+            if (
+                actualStartDate &&
+                actualEndDate &&
+                !isStartDateBeforeEndDate(actualStartDate, actualEndDate)
+            ) {
+                console.log("start date is not before end date");
+                return;
             }
 
             if (!tenantId) return;
@@ -240,10 +269,33 @@ const useGetTasksGraphql = (
             setIsFinished(true);
             nextToken.current = null;
             console.log(e);
+        } finally {
+            // not ideal but prevents sending two requests at the same time
+            // it'll do for now
+            setTimeout(() => {
+                setIsFetchingMore(false);
+            }, 400);
         }
-    }, [limit, tenantId, sortDirection, startDate, endDate, filterComments]);
+    }, [
+        limit,
+        tenantId,
+        sortDirection,
+        isFetching,
+        isFinished,
+        startDate,
+        endDate,
+        filterComments,
+    ]);
 
     const getTasks = React.useCallback(async () => {
+        if (endDate && !isDateValid(endDate)) {
+            console.log("end date is not valid");
+            return;
+        }
+        if (startDate && !isDateValid(startDate)) {
+            console.log("start date is not valid");
+            return;
+        }
         const actualEndDate = endDate ? new Date(endDate) : null;
         const actualStartDate = startDate ? new Date(startDate) : null;
         if (actualStartDate) {
@@ -252,6 +304,14 @@ const useGetTasksGraphql = (
         if (actualEndDate) {
             actualEndDate.setDate(actualEndDate.getDate() + 1);
             actualEndDate.setUTCHours(0, 0, 0, 0);
+        }
+        if (
+            actualStartDate &&
+            actualEndDate &&
+            !isStartDateBeforeEndDate(actualStartDate, actualEndDate)
+        ) {
+            console.log("start date is not before end date");
+            return;
         }
         try {
             if (!tenantId) return;
@@ -323,6 +383,7 @@ const useGetTasksGraphql = (
         getNext,
         isFinished,
         isFetching,
+        isFetchingMore,
         error,
         refresh,
     };

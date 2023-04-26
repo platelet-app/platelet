@@ -65,9 +65,15 @@ const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
                     priority={task.priority}
                     riderResponsibility={task.riderResponsibility}
                 />
-                <TaskCardLocationDetail location={task.pickUpLocation} />
-                <Divider sx={{ width: isSm ? "100%" : "50%" }} />
-                <TaskCardLocationDetail location={task.dropOffLocation} />
+                <TaskCardLocationDetail
+                    nullLocationText="No pick up address"
+                    location={task.pickUpLocation}
+                />
+                <Divider sx={{ width: "70%" }} />
+                <TaskCardLocationDetail
+                    nullLocationText="No delivery address"
+                    location={task.dropOffLocation}
+                />
                 <Stack direction="row" spacing={2}>
                     {task?.createdAt && (
                         <TaskCardTimestamp timestamp={task.createdAt} />
