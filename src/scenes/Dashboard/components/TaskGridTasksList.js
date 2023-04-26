@@ -34,7 +34,7 @@ function TaskGridTasksList(props) {
     return (
         <Stack
             direction={"column"}
-            spacing={0}
+            spacing={1}
             data-cy={props.datacy}
             alignItems={"center"}
             justifyContent={"center"}
@@ -58,7 +58,7 @@ function TaskGridTasksList(props) {
                     }
                     return (
                         <Box
-                            sx={{ width: "100%", marginBottom: 1 }}
+                            sx={{ width: "100%" }}
                             className={
                                 props.includeList === null ||
                                 props.includeList.includes(task.id)

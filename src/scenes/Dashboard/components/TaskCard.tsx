@@ -104,7 +104,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
             className={className}
             sx={{
                 borderRadius: "0.8em",
-                minHeight: 150,
                 userSelect: "none",
                 "&:hover": {
                     backgroundColor: "rgba(0, 0, 0, 0.04)",
@@ -150,9 +149,15 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                     priority={task.priority}
                     riderResponsibility={task.riderResponsibility}
                 />
-                <TaskCardLocationDetail location={task.pickUpLocation} />
+                <TaskCardLocationDetail
+                    nullLocationText="No pick up address"
+                    location={task.pickUpLocation}
+                />
                 <Divider sx={{ width: "70%" }} />
-                <TaskCardLocationDetail location={task.dropOffLocation} />
+                <TaskCardLocationDetail
+                    nullLocationText="No delivery address"
+                    location={task.dropOffLocation}
+                />
                 <Stack direction="row" spacing={2}>
                     {(task?.createdAt || task?.timeOfCall) && (
                         <TaskCardTimestamp

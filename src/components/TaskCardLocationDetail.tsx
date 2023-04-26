@@ -1,14 +1,15 @@
 import { Location } from "../API";
-import { Stack, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import * as models from "../models";
 
 type TaskHistoryCardLocationDetailProps = {
     location?: Location | models.Location | null;
+    nullLocationText?: string;
 };
 
 const TaskHistoryCardLocationDetail: React.FC<
     TaskHistoryCardLocationDetailProps
-> = ({ location }) => {
+> = ({ location, nullLocationText = "No address" }) => {
     let addressString = "";
     if (location) {
         const items = [
@@ -24,14 +25,16 @@ const TaskHistoryCardLocationDetail: React.FC<
     }
     if (location) {
         return (
-            <Stack>
-                <Typography noWrap sx={{ fontSize: "0.9rem" }}>
-                    {addressString}
-                </Typography>
-            </Stack>
+            <Typography noWrap sx={{ fontWeight: "bold", fontSize: "0.9rem" }}>
+                {addressString}
+            </Typography>
         );
     } else {
-        return null;
+        return (
+            <Typography noWrap sx={{ fontStyle: "italic", fontSize: "0.9rem" }}>
+                {nullLocationText}
+            </Typography>
+        );
     }
 };
 
