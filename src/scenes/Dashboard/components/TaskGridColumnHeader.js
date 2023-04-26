@@ -14,9 +14,6 @@ import {
 } from "../../../redux/Selectors";
 
 const useStyles = makeStyles()({
-    header: {
-        fontWeight: "bold",
-    },
     headerParent: {
         "&:hover": {
             "& $select": {
@@ -89,7 +86,10 @@ function TaskGridColumnHeader(props) {
         >
             <Typography
                 data-cy={`${props.title}-header`}
-                className={classes.header}
+                sx={{
+                    fontWeight: "bold",
+                    marginBottom: 3,
+                }}
             >
                 {props.title}
             </Typography>
