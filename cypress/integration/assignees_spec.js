@@ -6,18 +6,21 @@ describe("assigning users to tasks", () => {
     it("assigns and unassigns a rider to a task", () => {
         cy.visit("/");
         cy.addSingleTask();
-        cy.get("[data-cy=tasks-kanban-column-NEW]").children().first().click();
+        cy.get("[data-testid=tasks-kanban-column-NEW]")
+            .children()
+            .first()
+            .click();
         cy.get("[data-cy=combo-box-riders]").click().type("Test Rider");
         cy.get('[id*="option-0"]').should("exist");
         cy.get('[id*="option-0"]').click();
         cy.get("[data-cy=task-status]").should("have.text", "ACTIVE");
         cy.get("[data-cy=task-RIDER-assignees]").contains("Test Rider");
         cy.get("[data-cy=task-status-close]").click();
-        cy.get("[data-cy=tasks-kanban-column-ACTIVE]")
+        cy.get("[data-testid=tasks-kanban-column-ACTIVE]")
             .children()
             .its("length")
             .should("eq", 1);
-        cy.get("[data-cy=tasks-kanban-column-ACTIVE]")
+        cy.get("[data-testid=tasks-kanban-column-ACTIVE]")
             .children()
             .first()
             .click();
@@ -34,7 +37,10 @@ describe("assigning users to tasks", () => {
     it("assigns and unassigns a coordinator to a task", () => {
         cy.visit("/");
         cy.addSingleTask();
-        cy.get("[data-cy=tasks-kanban-column-NEW]").children().first().click();
+        cy.get("[data-testid=tasks-kanban-column-NEW]")
+            .children()
+            .first()
+            .click();
         cy.findByText("COORDINATOR").click();
         cy.get("[data-cy=combo-box-coordinators]")
             .click()

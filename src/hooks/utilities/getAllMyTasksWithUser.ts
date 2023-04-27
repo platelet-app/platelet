@@ -1,23 +1,31 @@
 import { DataStore } from "aws-amplify";
 import moment from "moment";
-import * as models from "../../../models";
-import { isCompletedTab } from "./functions";
-import { convertListDataToObject } from "../../../utilities";
+import * as models from "../../models";
+import { convertTasksToStateType, TaskStateType } from "../useTasksColumnTasks";
+import { isCompletedTab } from "./isCompletedTab";
 
-export default async function getAllMyTasks(
+export default async function getAllMyTasksWithUser(
     keys: models.TaskStatus[],
     userId: string,
     roleView: models.Role,
-    allAssignees: models.TaskAssignee[]
-) {
-    const roleViewAssignments = allAssignees.filter(
-        (assignee) => assignee.role === roleView
+    filteredUser: string,
+    allAssignments: models.TaskAssignee[]
+): Promise<TaskStateType> {
+    const myAssignments = allAssignments.filter(
+        (a) => a.role === roleView && a.task && a.assignee.id === userId
     );
-    const myTasksIds = roleViewAssignments
-        .filter((a) => a.task && a?.assignee.id === userId)
-        .map((a2) => a2?.task?.id);
+    const theirAssignments = allAssignments.filter(
+        (a) =>
+            a.role === models.Role.RIDER &&
+            a.task &&
+            a.assignee?.id === filteredUser
+    );
+    const intersectingTasks = myAssignments.filter((a) =>
+        theirAssignments.some((b) => b.task?.id === a.task?.id)
+    );
+    const intersectingTasksIds = intersectingTasks.map((a) => a.task?.id);
     let filteredTasks = [];
-    if (!myTasksIds || myTasksIds.length === 0) {
+    if (!intersectingTasksIds || intersectingTasksIds.length === 0) {
         return {};
     }
     if (isCompletedTab(keys)) {
@@ -27,7 +35,7 @@ export default async function getAllMyTasks(
             (task) =>
                 task
                     .or((task) =>
-                        myTasksIds.reduce(
+                        intersectingTasksIds.reduce(
                             (task, id) => task.id("eq", id || ""),
                             task
                         )
@@ -54,7 +62,7 @@ export default async function getAllMyTasks(
             (task) =>
                 task
                     .or((task) =>
-                        myTasksIds.reduce(
+                        intersectingTasksIds.reduce(
                             (task, id) => task.id("eq", id || ""),
                             task
                         )
@@ -67,8 +75,10 @@ export default async function getAllMyTasks(
                     ),
             {
                 sort: (s) => s.createdAt("DESCENDING"),
+                limit: 0,
             }
         );
     }
-    return convertListDataToObject(filteredTasks);
+
+    return convertTasksToStateType(filteredTasks);
 }

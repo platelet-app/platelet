@@ -29,13 +29,20 @@ const TaskHistory: React.FC = () => {
         endDate: new Date(),
     });
     const location = useLocation();
-    const { state, getNext, isFinished, isFetching, error, refresh } =
-        useGetTasksGraphql(
-            limit,
-            sortDirection,
-            dateRange.startDate,
-            dateRange.endDate
-        );
+    const {
+        state,
+        getNext,
+        isFinished,
+        isFetching,
+        isFetchingMore,
+        error,
+        refresh,
+    } = useGetTasksGraphql(
+        limit,
+        sortDirection,
+        dateRange.startDate,
+        dateRange.endDate
+    );
     const { ref, inView } = useInView({
         threshold: 0,
     });
@@ -51,10 +58,10 @@ const TaskHistory: React.FC = () => {
     };
 
     React.useEffect(() => {
-        if (inView && !isFinished) {
+        if (inView && !isFinished && !isFetchingMore) {
             getNext();
         }
-    }, [inView, getNext, state, isFinished]);
+    }, [inView, getNext, state, isFinished, isFetchingMore]);
 
     const skeletonRange = state.length ? 1 : 20;
 
@@ -86,11 +93,10 @@ const TaskHistory: React.FC = () => {
                                 </Link>
                             </Box>
                         );
-                        if (task.dateCreated) {
-                            const timeComparison = new Date(task.dateCreated);
+                        if (task.createdAt) {
+                            const timeComparison = new Date(task.createdAt);
                             if (
-                                timeComparison.getDate() <=
-                                lastTime.getDate() - 1
+                                timeComparison.getDate() !== lastTime.getDate()
                             ) {
                                 lastTime = timeComparison;
                                 displayDate = true;
@@ -123,9 +129,12 @@ const TaskHistory: React.FC = () => {
                     {error && (
                         <Typography>Sorry, something went wrong.</Typography>
                     )}
-                    <div ref={ref} />
                     {!isFinished && (
-                        <Stack spacing={1} data-testid="task-history-skeleton">
+                        <Stack
+                            ref={ref}
+                            spacing={1}
+                            data-testid="task-history-skeleton"
+                        >
                             {_.range(0, skeletonRange).map((i) => (
                                 <Box key={i} sx={{ maxWidth: 800 }}>
                                     <Skeleton

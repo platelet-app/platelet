@@ -1,6 +1,8 @@
 import { combineReducers } from "redux";
 import { whoami } from "./whoami/whoamiReducers";
 import { modalTrackerReducer } from "./modalTracker/modalTrackerReducers";
+import { taskDeliverablesReducer } from "./taskDeliverables/taskDeliverablesReducers";
+import { commentsReducer } from "./comments/commentsReducers";
 import {
     CLEAR_LOADING,
     SET_VIEW_MODE,
@@ -244,6 +246,8 @@ const appReducer = combineReducers({
     selectionModeAvailableItemsReducer,
     selectionActionsPendingReducer,
     modalTrackerReducer,
+    taskDeliverablesReducer,
+    commentsReducer,
 });
 
 const rootReducer = (state, action) => {

@@ -1,41 +1,34 @@
 import { DataStore } from "aws-amplify";
+import * as models from "../../models";
+import { isCompletedTab } from "./isCompletedTab";
 import moment from "moment";
-import * as models from "../../../models";
-import { convertListDataToObject } from "../../../utilities";
-import { isCompletedTab } from "./functions";
+import { convertTasksToStateType, TaskStateType } from "../useTasksColumnTasks";
 
-export default async function getAllMyTasksWithUser(
+export default async function getAllTasksByUser(
     keys: models.TaskStatus[],
     userId: string,
-    roleView: models.Role,
-    filteredUser: string,
-    allAssignments: models.TaskAssignee[]
-) {
-    const myAssignments = allAssignments.filter(
-        (a) => a.role === roleView && a.task && a.assignee.id === userId
+    role: models.Role = models.Role.RIDER,
+    allAssignments: models.TaskAssignee[] = []
+): Promise<TaskStateType> {
+    const roleAssignments = allAssignments.filter(
+        (assignment) => assignment.role === role
     );
-    const theirAssignments = allAssignments.filter(
-        (a) =>
-            a.role === models.Role.RIDER &&
-            a.task &&
-            a.assignee?.id === filteredUser
-    );
-    const intersectingTasks = myAssignments.filter((a) =>
-        theirAssignments.some((b) => b.task?.id === a.task?.id)
-    );
-    const intersectingTasksIds = intersectingTasks.map((a) => a.task?.id);
-    let filteredTasks = [];
-    if (!intersectingTasksIds || intersectingTasksIds.length === 0) {
+    let allTasks = [];
+    const riderTaskIds = roleAssignments
+        .filter((a) => a.task && userId === a.assignee.id)
+        .map((a) => a.task && a.task.id);
+    if (!riderTaskIds || riderTaskIds.length === 0) {
         return {};
     }
+
     if (isCompletedTab(keys)) {
         const oneWeekAgo = moment.utc().subtract(7, "days").toISOString();
-        filteredTasks = await DataStore.query(
+        allTasks = await DataStore.query(
             models.Task,
             (task) =>
                 task
                     .or((task) =>
-                        intersectingTasksIds.reduce(
+                        riderTaskIds.reduce(
                             (task, id) => task.id("eq", id || ""),
                             task
                         )
@@ -57,12 +50,12 @@ export default async function getAllMyTasksWithUser(
             }
         );
     } else {
-        filteredTasks = await DataStore.query(
+        allTasks = await DataStore.query(
             models.Task,
             (task) =>
                 task
                     .or((task) =>
-                        intersectingTasksIds.reduce(
+                        riderTaskIds.reduce(
                             (task, id) => task.id("eq", id || ""),
                             task
                         )
@@ -79,6 +72,5 @@ export default async function getAllMyTasksWithUser(
             }
         );
     }
-
-    return convertListDataToObject(filteredTasks);
+    return convertTasksToStateType(allTasks);
 }

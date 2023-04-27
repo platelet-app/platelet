@@ -1,4 +1,4 @@
-import * as actions from "./taskAssigneesActions";
+import * as actions from "./taskDeliverablesActions";
 import { takeLatest } from "@redux-saga/core/effects";
 import _ from "lodash";
 import { call, take, put } from "redux-saga/effects";
@@ -14,10 +14,11 @@ function listener() {
         function restartObserver() {
             observer.unsubscribe();
             observer = DataStore.observeQuery(
-                models.TaskAssignee,
+                models.Deliverable,
                 LocalPredicates.unarchived,
                 { sort: (s) => s.createdAt("DESCENDING") }
             ).subscribe((result) => {
+                console.log(result);
                 emitter(result);
             });
         }
@@ -26,16 +27,8 @@ function listener() {
             trailing: true,
         });
 
-        const userObserver = DataStore.observe(models.User).subscribe(
-            (result) => {
-                if (result.opType === "UPDATE") {
-                    debouncedRestartObserver();
-                }
-            }
-        );
-        const taskObserver = DataStore.observe(
-            models.Task,
-            LocalPredicates.unarchived
+        const deliverableTypeObserver = DataStore.observe(
+            models.DeliverableType
         ).subscribe((result) => {
             if (result.opType === "UPDATE") {
                 debouncedRestartObserver();
@@ -46,13 +39,12 @@ function listener() {
 
         return () => {
             observer.unsubscribe();
-            userObserver.unsubscribe();
-            taskObserver.unsubscribe();
+            deliverableTypeObserver.unsubscribe();
         };
     });
 }
 
-function* initializeTaskAssigneesObserver(): Generator<any, any, any> {
+function* initializeTaskDeliverablesObserver(): Generator<any, any, any> {
     const channel = yield call(listener);
     try {
         while (true) {
@@ -62,9 +54,8 @@ function* initializeTaskAssigneesObserver(): Generator<any, any, any> {
                 dataStoreNestedWorkAroundMapper,
                 result.items
             );
-            console.log(fixed);
             yield put(
-                actions.setTaskAssignees({
+                actions.setTaskDeliverables({
                     ...result,
                     items: fixed,
                     ready: true,
@@ -72,14 +63,14 @@ function* initializeTaskAssigneesObserver(): Generator<any, any, any> {
             );
         }
     } finally {
-        console.log("stopping task assignees observer");
+        console.log("stopping task deliverables observer");
         channel.close();
     }
 }
 
-export function* watchInitializeTaskAssigneesObserver() {
+export function* watchInitializeTaskDeliverablesObserver() {
     yield takeLatest(
-        actions.INIT_TASK_ASSIGNEES,
-        initializeTaskAssigneesObserver
+        actions.INIT_TASK_DELIVERABLES,
+        initializeTaskDeliverablesObserver
     );
 }

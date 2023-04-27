@@ -18,6 +18,8 @@ import {
     watchSelectAllItems,
     watchFilterFromAvailableItems,
 } from "./selectionMode/selectionModeSagas";
+import { watchInitializeTaskDeliverablesObserver } from "./taskDeliverables/taskDeliverablesSagas";
+import { watchInitializeCommentsObserver } from "./comments/commentsSagas";
 
 export default function* rootSaga() {
     yield all([
@@ -35,5 +37,7 @@ export default function* rootSaga() {
         call(watchSelectAllItems),
         call(watchFilterFromAvailableItems),
         call(watchInitWhoamiObserver),
+        call(watchInitializeTaskDeliverablesObserver),
+        call(watchInitializeCommentsObserver),
     ]);
 }

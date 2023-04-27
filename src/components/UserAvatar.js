@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import seedrandom from "seedrandom";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
 import PropTypes from "prop-types";
 import { generateS3Link } from "../amplifyUtilities";
 
@@ -21,7 +21,7 @@ const generateColorFromString = (str) =>
         )}, 50%, 50%)`
     );
 
-const UserAvatar = React.memo((props) => {
+const UserAvatar = (props) => {
     const nameArray = props.displayName
         ? props.displayName.split(" ")
         : ["n", "a"];
@@ -67,7 +67,7 @@ const UserAvatar = React.memo((props) => {
             {initials}
         </Avatar>
     );
-});
+};
 
 UserAvatar.propTypes = {
     displayName: PropTypes.string,

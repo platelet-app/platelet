@@ -6,7 +6,10 @@ describe("task actions", () => {
     it("picked up, delivered, rider home", () => {
         cy.visit("/");
         cy.addSingleTask();
-        cy.get("[data-cy=tasks-kanban-column-NEW]").children().first().click();
+        cy.get("[data-testid=tasks-kanban-column-NEW]")
+            .children()
+            .first()
+            .click();
         cy.get("[data-cy=combo-box-riders]").click().type("Test Rider");
         cy.get('[id*="option-0"]').should("exist");
         cy.get('[id*="option-0"]').click();

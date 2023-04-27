@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import * as selectionActions from "../../../redux/selectionMode/selectionModeActions";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
@@ -14,9 +14,6 @@ import {
 } from "../../../redux/Selectors";
 
 const useStyles = makeStyles()({
-    header: {
-        fontWeight: "bold",
-    },
     headerParent: {
         "&:hover": {
             "& $select": {
@@ -89,7 +86,10 @@ function TaskGridColumnHeader(props) {
         >
             <Typography
                 data-cy={`${props.title}-header`}
-                className={classes.header}
+                sx={{
+                    fontWeight: "bold",
+                    marginBottom: 3,
+                }}
             >
                 {props.title}
             </Typography>
@@ -110,10 +110,12 @@ function TaskGridColumnHeader(props) {
 
 TaskGridColumnHeader.propTypes = {
     tasks: PropTypes.object,
+    title: PropTypes.string,
 };
 
 TaskGridColumnHeader.defaultProps = {
     tasks: {},
+    title: "",
 };
 
 export default TaskGridColumnHeader;

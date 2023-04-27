@@ -7,12 +7,6 @@ import TaskItem from "./TaskItem";
 import DateStampDivider from "../../../components/DateStampDivider";
 import { makeStyles } from "tss-react/mui";
 
-const useStyles = makeStyles()({
-    taskItem: {
-        width: "100%",
-    },
-});
-
 export function sortByCreatedTime(items, order = "newest") {
     if (!items || items.length === 0) return [];
     if (order !== "newest") {
@@ -36,12 +30,11 @@ function TaskGridTasksList(props) {
     const { show, hide } = showHide().classes;
     let displayDate = false;
     let lastTime = new Date();
-    const { classes, cx } = useStyles();
     const filteredTasksIdsList = props.includeList || [];
     return (
         <Stack
             direction={"column"}
-            spacing={0}
+            spacing={1}
             data-cy={props.datacy}
             alignItems={"center"}
             justifyContent={"center"}
@@ -65,29 +58,18 @@ function TaskGridTasksList(props) {
                     }
                     return (
                         <Box
-                            className={cx(
-                                classes.taskItem,
+                            sx={{ width: "100%" }}
+                            className={
                                 props.includeList === null ||
-                                    props.includeList.includes(task.id)
+                                props.includeList.includes(task.id)
                                     ? show
                                     : hide
-                            )}
+                            }
                             key={task.id}
                         >
-                            <Box
-                                display="flex"
-                                justifyContent="center"
-                                alignItems="center"
-                                height={35}
-                                sx={{ width: "100%" }}
-                            >
-                                {displayDate && (
-                                    <DateStampDivider
-                                        calendar
-                                        date={lastTime}
-                                    />
-                                )}
-                            </Box>
+                            {displayDate && (
+                                <DateStampDivider calendar date={lastTime} />
+                            )}
                             <TaskItem
                                 animate={props.animate}
                                 task={task}

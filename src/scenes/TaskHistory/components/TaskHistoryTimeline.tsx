@@ -13,7 +13,7 @@ import CommentCard from "../../Comments/components/CommentCard";
 import { Link } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 import UserChip from "../../../components/UserChip";
-import DeliverableChip from "./DeliverableChip";
+import DeliverableChip from "../../../components/DeliverableChip";
 import { encodeUUID } from "../../../utilities";
 import DateStampDivider from "../../../components/DateStampDivider";
 
