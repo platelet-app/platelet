@@ -899,6 +899,48 @@ export const schema = {
                         "associatedWith": "establishmentLocation"
                     }
                 },
+                "taskTemplatesAsPickUp": {
+                    "name": "taskTemplatesAsPickUp",
+                    "isArray": true,
+                    "type": {
+                        "model": "TaskTemplate"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "pickUpLocation"
+                    }
+                },
+                "taskTemplatesAsDropOff": {
+                    "name": "taskTemplatesAsDropOff",
+                    "isArray": true,
+                    "type": {
+                        "model": "TaskTemplate"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "dropOffLocation"
+                    }
+                },
+                "taskTemplatesAsEstablishment": {
+                    "name": "taskTemplatesAsEstablishment",
+                    "isArray": true,
+                    "type": {
+                        "model": "TaskTemplate"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "establishmentLocation"
+                    }
+                },
                 "comments": {
                     "name": "comments",
                     "isArray": true,
@@ -1471,6 +1513,292 @@ export const schema = {
                 }
             ]
         },
+        "TaskTemplate": {
+            "name": "TaskTemplate",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "pickUpLocation": {
+                    "name": "pickUpLocation",
+                    "isArray": false,
+                    "type": {
+                        "model": "Location"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "pickUpLocationId"
+                    }
+                },
+                "dropOffLocation": {
+                    "name": "dropOffLocation",
+                    "isArray": false,
+                    "type": {
+                        "model": "Location"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "dropOffLocationId"
+                    }
+                },
+                "establishmentLocation": {
+                    "name": "establishmentLocation",
+                    "isArray": false,
+                    "type": {
+                        "model": "Location"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "establishmentLocationId"
+                    }
+                },
+                "riderResponsibility": {
+                    "name": "riderResponsibility",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "priority": {
+                    "name": "priority",
+                    "isArray": false,
+                    "type": {
+                        "enum": "Priority"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "deliverables": {
+                    "name": "deliverables",
+                    "isArray": true,
+                    "type": {
+                        "model": "Deliverable"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "taskTemplateDeliverablesId"
+                    }
+                },
+                "scheduledTasks": {
+                    "name": "scheduledTasks",
+                    "isArray": true,
+                    "type": {
+                        "model": "ScheduledTask"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "taskTemplateScheduledTasksId"
+                    }
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "TaskTemplates",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "taskTemplatesByPickUpLocation",
+                        "fields": [
+                            "pickUpLocationId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "taskTemplatesByDropOffLocation",
+                        "fields": [
+                            "dropOffLocationId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "taskTemplatesByEstasblishmentLocation",
+                        "fields": [
+                            "establishmentLocationId"
+                        ]
+                    }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "read"
+                                ]
+                            },
+                            {
+                                "groupClaim": "cognito:groups",
+                                "provider": "userPools",
+                                "allow": "groups",
+                                "groups": [
+                                    "ADMIN"
+                                ],
+                                "operations": [
+                                    "create",
+                                    "read",
+                                    "delete",
+                                    "update"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "ScheduledTask": {
+            "name": "ScheduledTask",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "tenantId": {
+                    "name": "tenantId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "name": {
+                    "name": "name",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "cronRule": {
+                    "name": "cronRule",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "taskTemplate": {
+                    "name": "taskTemplate",
+                    "isArray": false,
+                    "type": {
+                        "model": "TaskTemplate"
+                    },
+                    "isRequired": true,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "taskTemplateScheduledTasksId"
+                    }
+                },
+                "disabled": {
+                    "name": "disabled",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "ScheduledTasks",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantId",
+                        "fields": [
+                            "tenantId"
+                        ]
+                    }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "read"
+                                ]
+                            },
+                            {
+                                "groupClaim": "cognito:groups",
+                                "provider": "userPools",
+                                "allow": "groups",
+                                "groups": [
+                                    "ADMIN"
+                                ],
+                                "operations": [
+                                    "create",
+                                    "read",
+                                    "delete",
+                                    "update"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "Comment": {
             "name": "Comment",
             "fields": {
@@ -1865,6 +2193,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
+                },
+                "taskTemplateDeliverablesId": {
+                    "name": "taskTemplateDeliverablesId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
                 }
             },
             "syncable": true,
@@ -1889,6 +2224,15 @@ export const schema = {
                         "name": "byArchived",
                         "fields": [
                             "archived"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "gsi-TaskTemplate.deliverables",
+                        "fields": [
+                            "taskTemplateDeliverablesId"
                         ]
                     }
                 },
@@ -2302,5 +2646,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.0",
-    "version": "29a25bac5837be13ad9f993c317e2c5d"
+    "version": "3d92d70dcd04baec31264567b3662e85"
 };

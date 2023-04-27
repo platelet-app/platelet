@@ -145,6 +145,9 @@ type Location
   tasksAsPickUp: [Task] @hasMany(indexName: "byPickUpLocation", fields: ["id"])
   tasksAsDropOff: [Task] @hasMany(indexName: "byDropOffLocation", fields: ["id"])
   taskAsEstablishment: [Task] @hasMany(indexName: "byEstasblishmentLocation", fields: ["id"])
+  taskTemplatesAsPickUp: [TaskTemplate] @hasMany(indexName: "taskTemplatesByPickUpLocation", fields: ["id"])
+  taskTemplatesAsDropOff: [TaskTemplate] @hasMany(indexName: "taskTemplatesByDropOffLocation", fields: ["id"])
+  taskTemplatesAsEstablishment: [TaskTemplate] @hasMany(indexName: "taskTemplatesByEstasblishmentLocation", fields: ["id"])
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
   disabled: Int @default(value: "0")
   googleMapsPlaceId: String
@@ -260,6 +263,39 @@ type TaskAssignee
       {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, delete]},
     ])
 }
+
+type TaskTemplate
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["ADMIN"], operations: [create, read, delete, update]},
+])
+@model {
+  pickUpLocationId: ID @index(name: "taskTemplatesByPickUpLocation")
+  dropOffLocationId: ID @index(name: "taskTemplatesByDropOffLocation")
+  establishmentLocationId: ID @index(name: "taskTemplatesByEstasblishmentLocation")
+  pickUpLocation: Location @belongsTo(fields: ["pickUpLocationId"])
+  dropOffLocation: Location @belongsTo(fields: ["dropOffLocationId"])
+  establishmentLocation: Location @belongsTo(fields: ["establishmentLocationId"])
+  riderResponsibility: String
+  priority: Priority
+  deliverables: [Deliverable] @hasMany
+  scheduledTasks: [ScheduledTask] @hasMany
+}
+
+type ScheduledTask
+@auth(rules: [
+  {allow: private, operations: [read]},
+  {allow: groups, groups: ["ADMIN"], operations: [create, read, delete, update]},
+])
+@model {
+  id: ID!
+  tenantId: ID! @index(name: "byTenantId")
+  name: String
+  cronRule: String!
+  taskTemplate: TaskTemplate! @belongsTo
+  disabled: Int @default(value: "0")
+}
+
 
 type Comment
 @auth(rules: [
