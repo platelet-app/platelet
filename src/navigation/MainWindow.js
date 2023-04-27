@@ -25,6 +25,7 @@ import Reports from "../scenes/Reports/Reports";
 import UserDetailRoute from "../scenes/UserDetail/UserDetailRoute";
 import TaskHistory from "../scenes/TaskHistory/TaskHistory";
 import TaskHistoryTaskRoute from "../scenes/TaskHistory/components/TaskHistoryTaskRoute";
+import ScheduledTasks from "../scenes/ScheduledTasks/ScheduledTasks";
 
 const useStyles = makeStyles()((theme, { navIndex, guidedSetupOpen }) => ({
     root: {
@@ -196,6 +197,14 @@ export default function MainWindow(_props) {
                         render={(props) => {
                             dispatch(setMenuIndex("history"));
                             return <TaskHistory {...props} />;
+                        }}
+                    />
+                    <Route
+                        exact
+                        path="/scheduled"
+                        render={(props) => {
+                            dispatch(setMenuIndex("scheduled"));
+                            return <ScheduledTasks {...props} />;
                         }}
                     />
                     <Route component={NotFound} />
