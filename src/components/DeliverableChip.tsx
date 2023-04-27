@@ -7,11 +7,13 @@ type DeliverableChipProps = {
     deliverable: Deliverable | models.Deliverable | null;
     showIcon?: boolean;
     sx?: object;
+    size?: "small" | "medium";
 };
 
 const DeliverableChip: React.FC<DeliverableChipProps> = ({
     deliverable,
     showIcon = false,
+    size = "small",
     sx = {},
 }) => {
     const label = deliverable
@@ -21,7 +23,7 @@ const DeliverableChip: React.FC<DeliverableChipProps> = ({
         ? getDeliverableIconByEnum(deliverable?.deliverableType?.icon, 3)
         : undefined;
     if (deliverable) {
-        return <Chip sx={sx} avatar={icon} size="small" label={label} />;
+        return <Chip sx={sx} avatar={icon} size={size} label={label} />;
     }
     return <div></div>;
 };

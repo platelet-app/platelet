@@ -241,7 +241,10 @@ const generateTimelineContent = (task: Task) => {
                         <Separator color={color} />
                         <TimelineContent>
                             Added item{" "}
-                            <DeliverableChip deliverable={deliverable} />
+                            <DeliverableChip
+                                showIcon
+                                deliverable={deliverable}
+                            />
                         </TimelineContent>
                     </TimelineItem>
                 </Box>
