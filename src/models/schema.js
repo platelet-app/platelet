@@ -1703,13 +1703,6 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "name": {
-                    "name": "name",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
                 "cronRule": {
                     "name": "cronRule",
                     "isArray": false,
@@ -2646,5 +2639,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.0",
-    "version": "3d92d70dcd04baec31264567b3662e85"
+    "version": "5eab605e329b5f21c7c5ee2d3830e6f0"
 };

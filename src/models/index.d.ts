@@ -561,7 +561,6 @@ export declare const TaskTemplate: (new (init: ModelInit<TaskTemplate, TaskTempl
 type EagerScheduledTask = {
   readonly id: string;
   readonly tenantId: string;
-  readonly name?: string | null;
   readonly cronRule: string;
   readonly taskTemplate: TaskTemplate;
   readonly disabled?: number | null;
@@ -572,7 +571,6 @@ type EagerScheduledTask = {
 type LazyScheduledTask = {
   readonly id: string;
   readonly tenantId: string;
-  readonly name?: string | null;
   readonly cronRule: string;
   readonly taskTemplate: AsyncItem<TaskTemplate>;
   readonly disabled?: number | null;

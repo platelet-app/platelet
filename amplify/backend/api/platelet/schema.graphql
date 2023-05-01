@@ -290,7 +290,6 @@ type ScheduledTask
 @model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
-  name: String
   cronRule: String!
   taskTemplate: TaskTemplate! @belongsTo
   disabled: Int @default(value: "0")
