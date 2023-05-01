@@ -5,7 +5,7 @@ import IncreaseDecreaseCounter from "../../../components/IncreaseDecreaseCounter
 import UnitSelector from "../../../components/UnitSelector";
 import _ from "lodash";
 import { IconButton, Stack, Tooltip } from "@mui/material";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
 import ArchitectureIcon from "@mui/icons-material/Architecture";
 
 const useStyles = makeStyles()((theme) => ({
@@ -79,12 +79,14 @@ function EditableDeliverable(props) {
 EditableDeliverable.propTypes = {
     deliverable: PropTypes.object,
     onChangeCount: PropTypes.func,
+    onChangeUnit: PropTypes.func,
     disabled: PropTypes.bool,
     onDelete: PropTypes.func,
 };
 
 EditableDeliverable.defaultProps = {
     onChangeCount: () => {},
+    onChangeUnit: () => {},
     disabled: false,
     deliverable: { id: "", label: "None", deliverableType: { icon: "" } },
     onDelete: () => {},

@@ -32,14 +32,16 @@ function AddableDeliverable(props) {
 
 AddableDeliverable.propTypes = {
     deliverableType: PropTypes.object,
-    onChange: PropTypes.func,
+    onAdd: PropTypes.func,
     isPosting: PropTypes.bool,
+    disabled: PropTypes.bool,
 };
 
 AddableDeliverable.defaultProps = {
-    onChange: () => {},
+    onAdd: () => {},
     isPosting: false,
     deliverableType: { id: "", label: "None" },
+    disabled: false,
 };
 
 export default AddableDeliverable;
