@@ -6,16 +6,6 @@ import _ from "lodash";
 
 const ScheduledTasks = () => {
     const { state, isFetching, error } = useScheduledTasks();
-    const [open, setOpen] = React.useState(false);
-
-    const handleAddScheduledTask = () => {
-        setOpen(true);
-    };
-
-    const handleCancelAddScheduledTask = () => {
-        setOpen(false);
-    };
-
     if (isFetching) {
         return (
             <Stack data-testid="scheduled-tasks-skeleton" spacing={1}>
@@ -34,14 +24,10 @@ const ScheduledTasks = () => {
                         <div key={task.id}>{task.id}</div>
                     ))}
                     <AddToListButton
+                        onClick={() => {}}
                         label="Add scheduled task"
-                        onClick={handleAddScheduledTask}
                     />
                 </Stack>
-                <AddScheduledTaskDialog
-                    open={open}
-                    onCancel={handleCancelAddScheduledTask}
-                />
             </>
         );
     }

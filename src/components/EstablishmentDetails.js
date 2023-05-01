@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import ClearButtonWithConfirmation from "../../../components/ClearButtonWithConfirmation";
-import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
+import ClearButtonWithConfirmation from "./ClearButtonWithConfirmation";
+import FavouriteLocationsSelect from "./FavouriteLocationsSelect";
 import {
     Button,
     FormControlLabel,
@@ -11,12 +11,12 @@ import {
     Typography,
     useMediaQuery,
 } from "@mui/material";
-import ConfirmationDialog from "../../../components/ConfirmationDialog";
-import * as models from "../../../models";
+import ConfirmationDialog from "./ConfirmationDialog";
+import * as models from "../models";
 import { useTheme } from "@mui/styles";
 import { useDispatch, useSelector } from "react-redux";
-import { tenantIdSelector } from "../../../redux/Selectors";
-import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import { tenantIdSelector } from "../redux/Selectors";
+import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
 
 function EstablishmentDetails({
     value,

@@ -1,12 +1,12 @@
 import { Stack, Typography } from "@mui/material";
 import React from "react";
 import { ContactForm } from "../../../components/ContactForm";
-import EstablishmentDetails from "../../GuidedSetup/components/EstablishmentDetails";
+import EstablishmentDetails from "../../../components/EstablishmentDetails";
 import * as models from "../../../models";
 
 type ScheduledTaskCallerDetailsProps = {
     contact: { name: string; telephoneNumber: string };
-    establishment: models.Location;
+    establishment: models.Location | null;
     onChangeContact: (value: { name: string; telephoneNumber: string }) => void;
     onChangeEstablishment: (value: models.Location) => void;
 };

@@ -7,33 +7,6 @@ type ScheduledTasksState = {
     [key: string]: models.ScheduledTask;
 };
 
-const dataStoreNestedWorkAroundMapper = async (
-    data: models.ScheduledTask[]
-) => {
-    return Promise.all(
-        data.map(async (item) => {
-            if (
-                // @ts-ignore
-                !item.taskTemplateScheduledTasksId
-            ) {
-                return item;
-            }
-            const {
-                // @ts-ignore
-                taskTemplateScheduledTasksId,
-                ...rest
-            } = item;
-            const taskTemplate = taskTemplateScheduledTasksId
-                ? await DataStore.query(
-                      models.TaskTemplate,
-                      taskTemplateScheduledTasksId
-                  )
-                : null;
-            return { ...rest, taskTemplate };
-        })
-    );
-};
-
 const useScheduledTasks = () => {
     const [state, setState] = React.useState<ScheduledTasksState>({});
     const [isFetching, setIsFetching] = React.useState(false);
@@ -51,11 +24,8 @@ const useScheduledTasks = () => {
             observer.current = DataStore.observeQuery(
                 models.ScheduledTask
             ).subscribe(async ({ items }) => {
-                const fixed = await dataStoreNestedWorkAroundMapper(items);
                 setState(
-                    convertModelListToTypedObject<models.ScheduledTask>(
-                        fixed as models.ScheduledTask[]
-                    )
+                    convertModelListToTypedObject<models.ScheduledTask>(items)
                 );
             });
         } catch (e: unknown) {

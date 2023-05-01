@@ -26,6 +26,7 @@ import UserDetailRoute from "../scenes/UserDetail/UserDetailRoute";
 import TaskHistory from "../scenes/TaskHistory/TaskHistory";
 import TaskHistoryTaskRoute from "../scenes/TaskHistory/components/TaskHistoryTaskRoute";
 import ScheduledTasks from "../scenes/ScheduledTasks/ScheduledTasks";
+import AdminAddScheduledTask from "../scenes/ScheduledTasks/components/AdminAddScheduledTask";
 
 const useStyles = makeStyles()((theme, { navIndex, guidedSetupOpen }) => ({
     root: {
@@ -201,10 +202,18 @@ export default function MainWindow(_props) {
                     />
                     <Route
                         exact
-                        path="/scheduled"
+                        path="/admin/scheduled"
                         render={(props) => {
                             dispatch(setMenuIndex("scheduled"));
                             return <ScheduledTasks {...props} />;
+                        }}
+                    />
+                    <Route
+                        exact
+                        path="/admin/add-scheduled"
+                        render={(props) => {
+                            dispatch(setMenuIndex("scheduled"));
+                            return <AdminAddScheduledTask {...props} />;
                         }}
                     />
                     <Route component={NotFound} />

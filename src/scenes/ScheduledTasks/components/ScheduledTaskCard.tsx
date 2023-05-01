@@ -1,11 +1,11 @@
 import * as models from "../../../models";
 
 type ScheduledTaskTemplateCardProps = {
-    taskTemplate: models.TaskTemplate;
+    scheduledTask: models.ScheduledTask;
 };
 
 const ScheduledTaskTemplateCard: React.FC<ScheduledTaskTemplateCardProps> = ({
-    taskTemplate,
+    scheduledTask,
 }) => {
     return null;
 };
