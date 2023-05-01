@@ -48,7 +48,7 @@ const CommentVisibility = {
   "ME": "ME"
 };
 
-const { Tenant, User, PossibleRiderResponsibilities, Vehicle, VehicleAssignment, Location, Task, TaskAssignee, TaskTemplate, ScheduledTask, Comment, DeliverableType, Deliverable, RiderResponsibility, S3Object, AddressAndContactDetails, SendFeedback, Statistics } = initSchema(schema);
+const { Tenant, User, PossibleRiderResponsibilities, Vehicle, VehicleAssignment, Location, Task, TaskAssignee, ScheduledTask, Comment, DeliverableType, Deliverable, RiderResponsibility, S3Object, AddressAndContactDetails, SendFeedback, Statistics } = initSchema(schema);
 
 export {
   Tenant,
@@ -59,7 +59,6 @@ export {
   Location,
   Task,
   TaskAssignee,
-  TaskTemplate,
   ScheduledTask,
   Comment,
   DeliverableType,

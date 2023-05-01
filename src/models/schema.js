@@ -899,11 +899,11 @@ export const schema = {
                         "associatedWith": "establishmentLocation"
                     }
                 },
-                "taskTemplatesAsPickUp": {
-                    "name": "taskTemplatesAsPickUp",
+                "scheduledTasksAsPickUp": {
+                    "name": "scheduledTasksAsPickUp",
                     "isArray": true,
                     "type": {
-                        "model": "TaskTemplate"
+                        "model": "ScheduledTask"
                     },
                     "isRequired": false,
                     "attributes": [],
@@ -913,11 +913,11 @@ export const schema = {
                         "associatedWith": "pickUpLocation"
                     }
                 },
-                "taskTemplatesAsDropOff": {
-                    "name": "taskTemplatesAsDropOff",
+                "scheduledTasksAsDropOff": {
+                    "name": "scheduledTasksAsDropOff",
                     "isArray": true,
                     "type": {
-                        "model": "TaskTemplate"
+                        "model": "ScheduledTask"
                     },
                     "isRequired": false,
                     "attributes": [],
@@ -927,11 +927,11 @@ export const schema = {
                         "associatedWith": "dropOffLocation"
                     }
                 },
-                "taskTemplatesAsEstablishment": {
-                    "name": "taskTemplatesAsEstablishment",
+                "scheduledTasksAsEstablishment": {
+                    "name": "scheduledTasksAsEstablishment",
                     "isArray": true,
                     "type": {
-                        "model": "TaskTemplate"
+                        "model": "ScheduledTask"
                     },
                     "isRequired": false,
                     "attributes": [],
@@ -1513,13 +1513,27 @@ export const schema = {
                 }
             ]
         },
-        "TaskTemplate": {
-            "name": "TaskTemplate",
+        "ScheduledTask": {
+            "name": "ScheduledTask",
             "fields": {
                 "id": {
                     "name": "id",
                     "isArray": false,
                     "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "tenantId": {
+                    "name": "tenantId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "cronRule": {
+                    "name": "cronRule",
+                    "isArray": false,
+                    "type": "String",
                     "isRequired": true,
                     "attributes": []
                 },
@@ -1589,138 +1603,7 @@ export const schema = {
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "taskTemplateDeliverablesId"
-                    }
-                },
-                "scheduledTasks": {
-                    "name": "scheduledTasks",
-                    "isArray": true,
-                    "type": {
-                        "model": "ScheduledTask"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "taskTemplateScheduledTasksId"
-                    }
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "TaskTemplates",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "taskTemplatesByPickUpLocation",
-                        "fields": [
-                            "pickUpLocationId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "taskTemplatesByDropOffLocation",
-                        "fields": [
-                            "dropOffLocationId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "taskTemplatesByEstasblishmentLocation",
-                        "fields": [
-                            "establishmentLocationId"
-                        ]
-                    }
-                },
-                {
-                    "type": "auth",
-                    "properties": {
-                        "rules": [
-                            {
-                                "allow": "private",
-                                "operations": [
-                                    "read"
-                                ]
-                            },
-                            {
-                                "groupClaim": "cognito:groups",
-                                "provider": "userPools",
-                                "allow": "groups",
-                                "groups": [
-                                    "ADMIN"
-                                ],
-                                "operations": [
-                                    "create",
-                                    "read",
-                                    "delete",
-                                    "update"
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "ScheduledTask": {
-            "name": "ScheduledTask",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "tenantId": {
-                    "name": "tenantId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "cronRule": {
-                    "name": "cronRule",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "taskTemplate": {
-                    "name": "taskTemplate",
-                    "isArray": false,
-                    "type": {
-                        "model": "TaskTemplate"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "taskTemplateScheduledTasksId"
+                        "associatedWith": "scheduledTaskDeliverablesId"
                     }
                 },
                 "disabled": {
@@ -1760,6 +1643,33 @@ export const schema = {
                         "name": "byTenantId",
                         "fields": [
                             "tenantId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "scheduledTasksByPickUpLocation",
+                        "fields": [
+                            "pickUpLocationId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "scheduledTasksByDropOffLocation",
+                        "fields": [
+                            "dropOffLocationId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "scheduledTasksByEstasblishmentLocation",
+                        "fields": [
+                            "establishmentLocationId"
                         ]
                     }
                 },
@@ -2187,8 +2097,8 @@ export const schema = {
                     "attributes": [],
                     "isReadOnly": true
                 },
-                "taskTemplateDeliverablesId": {
-                    "name": "taskTemplateDeliverablesId",
+                "scheduledTaskDeliverablesId": {
+                    "name": "scheduledTaskDeliverablesId",
                     "isArray": false,
                     "type": "ID",
                     "isRequired": false,
@@ -2223,9 +2133,9 @@ export const schema = {
                 {
                     "type": "key",
                     "properties": {
-                        "name": "gsi-TaskTemplate.deliverables",
+                        "name": "gsi-ScheduledTask.deliverables",
                         "fields": [
-                            "taskTemplateDeliverablesId"
+                            "scheduledTaskDeliverablesId"
                         ]
                     }
                 },
@@ -2639,5 +2549,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.0",
-    "version": "5eab605e329b5f21c7c5ee2d3830e6f0"
+    "version": "25dfdb71ed14d1d6a70933d97030f218"
 };
