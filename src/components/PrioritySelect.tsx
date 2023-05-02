@@ -23,7 +23,7 @@ const PrioritySelect: React.FC<PrioritySelectProps> = ({
 
     useEffect(() => setState(priority), [priority]);
     return (
-        <Stack direction="row-reverse" spacing={1}>
+        <Stack direction="row" spacing={1}>
             {Object.values(models.Priority).map((priority) => (
                 <Chip
                     key={priority}
