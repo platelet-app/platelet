@@ -7,9 +7,14 @@ import ScheduledTaskPickUpAndDropOffDetails from "./ScheduledTaskPickUpAndDropOf
 import _ from "lodash";
 import ScheduledTaskDeliverables from "./ScheduledTasksDeliverables";
 import ScheduledTaskPriority from "./ScheduledTaskPriority";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { tenantIdSelector } from "../../../redux/Selectors";
 import { DataStore } from "aws-amplify";
+import {
+    displayErrorNotification,
+    displayInfoNotification,
+} from "../../../redux/notifications/NotificationsActions";
+import { encodeUUID } from "../../../utilities";
 
 const initialState = {
     contact: {
@@ -39,11 +44,12 @@ const AdminAddScheduledTask: React.FC = () => {
     const [inputVerified, setInputVerified] = React.useState(false);
     const deliverables = React.useRef<Record<string, models.Deliverable>>({});
     const tenantId = useSelector(tenantIdSelector);
+    const dispatch = useDispatch();
 
     const onChangeContact = (value: StateType["contact"]) => {
         setState((prevState) => ({
             ...prevState,
-            contact: value,
+            contact: { ...prevState.contact, ...value },
         }));
     };
     const onChangeEstablishment = (value: StateType["establishment"]) => {
@@ -84,7 +90,6 @@ const AdminAddScheduledTask: React.FC = () => {
         key: "pickUpLocation" | "dropOffLocation",
         value: models.Location | null
     ) => {
-        console.log(key, value);
         setState((prevState) => ({
             ...prevState,
             [key]: value,
@@ -104,18 +109,43 @@ const AdminAddScheduledTask: React.FC = () => {
             const newScheduledTask = new models.ScheduledTask({
                 ...state,
                 tenantId,
-                cronExpression: "0 0 0 * * *",
+                cronExpression: "0 18 * * *",
             });
-            await DataStore.save(newScheduledTask);
+            const result = await DataStore.save(newScheduledTask);
+            console.log(deliverables.current);
+            const deliverableModels = await Promise.all(
+                Object.entries(deliverables.current).map(async ([id, d]) => {
+                    const deliverableType = await DataStore.query(
+                        models.DeliverableType,
+                        id
+                    );
+                    return new models.Deliverable({
+                        ...d,
+                        deliverableType,
+                        scheduledTask: result,
+                    });
+                })
+            );
+            await Promise.all(deliverableModels.map((d) => DataStore.save(d)));
+            const base32 = encodeUUID(result.id);
+            const viewLink = `/admin/scheduled-tasks/${base32}`;
+            dispatch(
+                displayInfoNotification(
+                    "Scheduled task added",
+                    undefined,
+                    viewLink
+                )
+            );
+            setState(initialState);
         } catch (e) {
             console.error(e);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
         } finally {
             setIsPosting(false);
         }
     };
 
     const verifyInput = () => {
-        console.log(state);
         if (state.pickUpLocation && state.dropOffLocation) {
             setInputVerified(true);
         } else {
