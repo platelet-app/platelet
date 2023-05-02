@@ -61,6 +61,7 @@ function PopOutLocationSelector(props) {
 
     function onClickClearButton() {
         setState(null);
+        props.onClear();
     }
 
     useEffect(() => {
