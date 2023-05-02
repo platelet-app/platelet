@@ -1,10 +1,12 @@
 import PopOutLocationSelector from "../../GuidedSetup/components/PopOutLocationSelector";
 import * as models from "../../../models";
-import { LocationsType } from "./AdminAddScheduledTask";
 import { Divider, Stack, Typography } from "@mui/material";
 
 type PickUpAndDeliverLocationProps = {
-    onChange: (key: keyof LocationsType, value: models.Location | null) => void;
+    onChange: (
+        key: "pickUpLocation" | "dropOffLocation",
+        value: models.Location | null
+    ) => void;
 };
 
 const ScheduledTaskPickUpAndDropOffDetails: React.FC<
@@ -14,13 +16,14 @@ const ScheduledTaskPickUpAndDropOffDetails: React.FC<
         onChange("pickUpLocation", location);
     };
     const onClearPickUpLocation = () => {
+        console.log("asdffads");
         onChange("pickUpLocation", null);
     };
     const onSetDropOffLocation = (location: models.Location) => {
-        onChange("pickUpLocation", location);
+        onChange("dropOffLocation", location);
     };
     const onClearDropOffLocation = () => {
-        onChange("pickUpLocation", null);
+        onChange("dropOffLocation", null);
     };
 
     return (
