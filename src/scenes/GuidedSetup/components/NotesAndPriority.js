@@ -4,7 +4,7 @@ import { Styles } from "../styles";
 import { Stack, TextField } from "@mui/material";
 import { commentVisibility } from "../../../apiConsts";
 import CommentVisibilitySelector from "../../../components/CommentVisibilitySelector";
-import PrioritySelect from "../../Task/components/PrioritySelect";
+import PrioritySelect from "../../../components/PrioritySelect";
 
 export const NotesAndPriority = ({
     onChange,

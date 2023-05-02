@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import TaskDetailsEstablishment from "./TaskDetailsEstablishment";
 import Typography from "@mui/material/Typography";
 import LabelItemPair from "../../../components/LabelItemPair";
-import PrioritySelect from "./PrioritySelect";
+import PrioritySelect from "../../../components/PrioritySelect";
 import PropTypes from "prop-types";
 import TimePicker from "./TimePicker";
 import { Divider, Paper, Skeleton, Stack } from "@mui/material";
