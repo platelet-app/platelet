@@ -625,6 +625,7 @@ type EagerDeliverable = {
   readonly tenantId: string;
   readonly deliverableType?: DeliverableType | null;
   readonly task?: Task | null;
+  readonly scheduledTask?: ScheduledTask | null;
   readonly count?: number | null;
   readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit | null;
   readonly orderInGrid?: number | null;
@@ -632,7 +633,6 @@ type EagerDeliverable = {
   readonly archived?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  readonly scheduledTaskDeliverablesId?: string | null;
 }
 
 type LazyDeliverable = {
@@ -640,6 +640,7 @@ type LazyDeliverable = {
   readonly tenantId: string;
   readonly deliverableType: AsyncItem<DeliverableType | undefined>;
   readonly task: AsyncItem<Task | undefined>;
+  readonly scheduledTask: AsyncItem<ScheduledTask | undefined>;
   readonly count?: number | null;
   readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit | null;
   readonly orderInGrid?: number | null;
@@ -647,7 +648,6 @@ type LazyDeliverable = {
   readonly archived?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  readonly scheduledTaskDeliverablesId?: string | null;
 }
 
 export declare type Deliverable = LazyLoading extends LazyLoadingDisabled ? EagerDeliverable : LazyDeliverable

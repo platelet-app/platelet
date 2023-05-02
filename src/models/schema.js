@@ -2030,6 +2030,19 @@ export const schema = {
                         "targetName": "taskDeliverablesId"
                     }
                 },
+                "scheduledTask": {
+                    "name": "scheduledTask",
+                    "isArray": false,
+                    "type": {
+                        "model": "ScheduledTask"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "scheduledTaskDeliverablesId"
+                    }
+                },
                 "count": {
                     "name": "count",
                     "isArray": false,
@@ -2089,13 +2102,6 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
-                },
-                "scheduledTaskDeliverablesId": {
-                    "name": "scheduledTaskDeliverablesId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
                 }
             },
             "syncable": true,
@@ -2120,15 +2126,6 @@ export const schema = {
                         "name": "byArchived",
                         "fields": [
                             "archived"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "gsi-ScheduledTask.deliverables",
-                        "fields": [
-                            "scheduledTaskDeliverablesId"
                         ]
                     }
                 },
@@ -2542,5 +2539,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.0",
-    "version": "07d4856da5ff84f16099863b89e9102e"
+    "version": "5ef8480190821a347472b71d103dd6a4"
 };

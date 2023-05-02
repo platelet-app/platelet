@@ -351,6 +351,7 @@ type Deliverable
     ])
   deliverableType: DeliverableType @belongsTo
   task: Task @belongsTo
+  scheduledTask: ScheduledTask @belongsTo
   count: Int
   unit: DeliverableUnit
   orderInGrid: Int
