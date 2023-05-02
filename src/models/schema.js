@@ -1530,8 +1530,8 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "cronRule": {
-                    "name": "cronRule",
+                "cronExpression": {
+                    "name": "cronExpression",
                     "isArray": false,
                     "type": "String",
                     "isRequired": true,
@@ -1575,13 +1575,6 @@ export const schema = {
                         "connectionType": "BELONGS_TO",
                         "targetName": "establishmentLocationId"
                     }
-                },
-                "riderResponsibility": {
-                    "name": "riderResponsibility",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
                 },
                 "priority": {
                     "name": "priority",
@@ -2549,5 +2542,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.0",
-    "version": "25dfdb71ed14d1d6a70933d97030f218"
+    "version": "07d4856da5ff84f16099863b89e9102e"
 };

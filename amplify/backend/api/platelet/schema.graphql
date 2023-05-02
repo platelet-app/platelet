@@ -272,14 +272,13 @@ type ScheduledTask
 @model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
-  cronRule: String!
+  cronExpression: String!
   pickUpLocationId: ID @index(name: "scheduledTasksByPickUpLocation")
   dropOffLocationId: ID @index(name: "scheduledTasksByDropOffLocation")
   establishmentLocationId: ID @index(name: "scheduledTasksByEstasblishmentLocation")
   pickUpLocation: Location @belongsTo(fields: ["pickUpLocationId"])
   dropOffLocation: Location @belongsTo(fields: ["dropOffLocationId"])
   establishmentLocation: Location @belongsTo(fields: ["establishmentLocationId"])
-  riderResponsibility: String
   priority: Priority
   deliverables: [Deliverable] @hasMany
   disabled: Int @default(value: "0")

@@ -525,11 +525,10 @@ export declare const TaskAssignee: (new (init: ModelInit<TaskAssignee, TaskAssig
 type EagerScheduledTask = {
   readonly id: string;
   readonly tenantId: string;
-  readonly cronRule: string;
+  readonly cronExpression: string;
   readonly pickUpLocation?: Location | null;
   readonly dropOffLocation?: Location | null;
   readonly establishmentLocation?: Location | null;
-  readonly riderResponsibility?: string | null;
   readonly priority?: Priority | keyof typeof Priority | null;
   readonly deliverables?: (Deliverable | null)[] | null;
   readonly disabled?: number | null;
@@ -540,11 +539,10 @@ type EagerScheduledTask = {
 type LazyScheduledTask = {
   readonly id: string;
   readonly tenantId: string;
-  readonly cronRule: string;
+  readonly cronExpression: string;
   readonly pickUpLocation: AsyncItem<Location | undefined>;
   readonly dropOffLocation: AsyncItem<Location | undefined>;
   readonly establishmentLocation: AsyncItem<Location | undefined>;
-  readonly riderResponsibility?: string | null;
   readonly priority?: Priority | keyof typeof Priority | null;
   readonly deliverables: AsyncCollection<Deliverable>;
   readonly disabled?: number | null;
