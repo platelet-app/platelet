@@ -9,110 +9,24 @@ Amplify Params - DO NOT EDIT */
  * @type {import('@types/aws-lambda').APIGatewayProxyHandler}
  */
 
-const { Sha256 } = require("@aws-crypto/sha256-js");
-const { defaultProvider } = require("@aws-sdk/credential-provider-node");
-const { SignatureV4 } = require("@aws-sdk/signature-v4");
-const { HttpRequest } = require("@aws-sdk/protocol-http");
-const { default: fetch, Request } = require("node-fetch");
+const { request } = require("/opt/appSyncRequest");
+const { createTask, createLocation } = require("/opt/graphql/mutations");
+const { scheduledTasksByDisabledStatus } = require("/opt/graphql/queries");
 
 const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
 
-const listScheduledTasks = /* GraphQL */ `
-    query ListScheduledTasks(
-        $filter: ModelScheduledTaskFilterInput
-        $limit: Int
-        $nextToken: String
-    ) {
-        listScheduledTasks(
-            filter: $filter
-            limit: $limit
-            nextToken: $nextToken
-        ) {
-            items {
-                id
-                tenantId
-                cronExpression
-                pickUpLocation {
-                    id
-                    listed
-                    tenantId
-                }
-                dropOffLocation {
-                    id
-                    listed
-                    tenantId
-                }
-                establishmentLocation {
-                    id
-                    listed
-                    tenantId
-                }
-                priority
-                disabled
-            }
-            nextToken
-            startedAt
-        }
-    }
-`;
-
-const createTask = /* GraphQL */ `
-    mutation CreateTask(
-        $input: CreateTaskInput!
-        $condition: ModelTaskConditionInput
-    ) {
-        createTask(input: $input, condition: $condition) {
-            id
-        }
-    }
-`;
-
-const createLocation = /* GraphQL */ `
-    mutation CreateLocation(
-        $input: CreateLocationInput!
-        $condition: ModelLocationConditionInput
-    ) {
-        createLocation(input: $input, condition: $condition) {
-            id
-        }
-    }
-`;
-
-let makeNewRequest = async (query, variables) => {
-    const endpoint = new URL(GRAPHQL_ENDPOINT);
-    const signer = new SignatureV4({
-        credentials: defaultProvider(),
-        region: process.env.REGION,
-        service: "appsync",
-        sha256: Sha256,
-    });
-
-    const requestToBeSigned = new HttpRequest({
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            host: endpoint.host,
-        },
-        hostname: endpoint.host,
-        body: JSON.stringify({
-            query,
-            variables,
-        }),
-        path: endpoint.pathname,
-    });
-
-    const signed = await signer.sign(requestToBeSigned);
-    return new Request(endpoint, signed);
-};
 const getScheduledTasks = async () => {
     const items = [];
     let nextToken = null;
     do {
         const variables = {
             nextToken,
+            disabled: 0,
         };
-        const request = await makeNewRequest(listScheduledTasks, variables);
-        const response = await fetch(request);
+        const response = await request(
+            { query: scheduledTasksByDisabledStatus, variables },
+            GRAPHQL_ENDPOINT
+        );
         const body = await response.json();
         if (body.data.listScheduledTasks) {
             items.push(...body.data.listScheduledTasks.items);
@@ -142,8 +56,10 @@ const createUnlistedLocation = async (location) => {
             listed: 0,
         },
     };
-    const request = await makeNewRequest(createLocation, variables);
-    const response = await fetch(request);
+    const response = await request(
+        { query: createLocation, variables },
+        GRAPHQL_ENDPOINT
+    );
     const body = await response.json();
     return body.data.createLocation.id;
 };
@@ -190,8 +106,10 @@ const createNewTask = async (scheduledTask) => {
             archived: 0,
         },
     };
-    const request = await makeNewRequest(createTask, variables);
-    const response = await fetch(request);
+    const response = await request(
+        { query: createTask, variables },
+        GRAPHQL_ENDPOINT
+    );
     const body = await response.json();
     console.log(`BODY: ${JSON.stringify(body)}`);
     return body.data.createTask.id;

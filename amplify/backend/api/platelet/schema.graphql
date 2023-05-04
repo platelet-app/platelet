@@ -281,7 +281,7 @@ type ScheduledTask
   establishmentLocation: Location @belongsTo(fields: ["establishmentLocationId"])
   priority: Priority
   deliverables: [Deliverable] @hasMany
-  disabled: Int @default(value: "0")
+  disabled: Int @default(value: "0") @index(queryField: "listScheduledTasksByDisabledStatus")
 }
 
 
@@ -434,6 +434,7 @@ type Mutation {
   registerUser(name: String, email: String, tenantId: ID, roles: [Role]): User @function(name: "plateletAdminAddNewUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   registerTenant(name: String, emailAddress: String, tenantName: String): Tenant @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: groups, groups: ["SUPER"]}])
   updateUserRoles(userId: ID, roles: [Role]): User @function(name: "plateletAdminChangeUserRoles-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
+  createScheduledTasks: String @function(name: "plateletCreateScheduledTasks-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
 }
 
 type Statistics {

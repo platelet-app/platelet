@@ -638,6 +638,18 @@ export const getLocation = /* GraphQL */ `
         nextToken
         startedAt
       }
+      scheduledTasksAsPickUp {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsDropOff {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsEstablishment {
+        nextToken
+        startedAt
+      }
       comments {
         nextToken
         startedAt
@@ -1233,6 +1245,199 @@ export const syncTaskAssignees = /* GraphQL */ `
     }
   }
 `;
+export const getScheduledTask = /* GraphQL */ `
+  query GetScheduledTask($id: ID!) {
+    getScheduledTask(id: $id) {
+      id
+      tenantId
+      cronExpression
+      pickUpLocationId
+      dropOffLocationId
+      establishmentLocationId
+      pickUpLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      dropOffLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      establishmentLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      priority
+      deliverables {
+        nextToken
+        startedAt
+      }
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const listScheduledTasks = /* GraphQL */ `
+  query ListScheduledTasks(
+    $filter: ModelScheduledTaskFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listScheduledTasks(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        tenantId
+        cronExpression
+        pickUpLocationId
+        dropOffLocationId
+        establishmentLocationId
+        priority
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+export const syncScheduledTasks = /* GraphQL */ `
+  query SyncScheduledTasks(
+    $filter: ModelScheduledTaskFilterInput
+    $limit: Int
+    $nextToken: String
+    $lastSync: AWSTimestamp
+  ) {
+    syncScheduledTasks(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      lastSync: $lastSync
+    ) {
+      items {
+        id
+        tenantId
+        cronExpression
+        pickUpLocationId
+        dropOffLocationId
+        establishmentLocationId
+        priority
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+export const listScheduledTasksByDisabledStatus = /* GraphQL */ `
+  query ListScheduledTasksByDisabledStatus(
+    $disabled: Int!
+    $sortDirection: ModelSortDirection
+    $filter: ModelScheduledTaskFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listScheduledTasksByDisabledStatus(
+      disabled: $disabled
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        tenantId
+        cronExpression
+        pickUpLocationId
+        dropOffLocationId
+        establishmentLocationId
+        priority
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
 export const getComment = /* GraphQL */ `
   query GetComment($id: ID!) {
     getComment(id: $id) {
@@ -1460,6 +1665,21 @@ export const getDeliverable = /* GraphQL */ `
         _lastChangedAt
         userCreatedTasksId
       }
+      scheduledTask {
+        id
+        tenantId
+        cronExpression
+        pickUpLocationId
+        dropOffLocationId
+        establishmentLocationId
+        priority
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
       count
       unit
       orderInGrid
@@ -1474,6 +1694,7 @@ export const getDeliverable = /* GraphQL */ `
       _deleted
       _lastChangedAt
       taskDeliverablesId
+      scheduledTaskDeliverablesId
       deliverableTypeDeliverablesId
     }
   }
@@ -1498,6 +1719,7 @@ export const listDeliverables = /* GraphQL */ `
         _deleted
         _lastChangedAt
         taskDeliverablesId
+        scheduledTaskDeliverablesId
         deliverableTypeDeliverablesId
       }
       nextToken
@@ -1531,6 +1753,7 @@ export const syncDeliverables = /* GraphQL */ `
         _deleted
         _lastChangedAt
         taskDeliverablesId
+        scheduledTaskDeliverablesId
         deliverableTypeDeliverablesId
       }
       nextToken

@@ -842,6 +842,18 @@ export const createLocation = /* GraphQL */ `
         nextToken
         startedAt
       }
+      scheduledTasksAsPickUp {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsDropOff {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsEstablishment {
+        nextToken
+        startedAt
+      }
       comments {
         nextToken
         startedAt
@@ -924,6 +936,18 @@ export const updateLocation = /* GraphQL */ `
         nextToken
         startedAt
       }
+      scheduledTasksAsPickUp {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsDropOff {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsEstablishment {
+        nextToken
+        startedAt
+      }
       comments {
         nextToken
         startedAt
@@ -1003,6 +1027,18 @@ export const deleteLocation = /* GraphQL */ `
         startedAt
       }
       taskAsEstablishment {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsPickUp {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsDropOff {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsEstablishment {
         nextToken
         startedAt
       }
@@ -1682,6 +1718,309 @@ export const deleteTaskAssignee = /* GraphQL */ `
     }
   }
 `;
+export const createScheduledTask = /* GraphQL */ `
+  mutation CreateScheduledTask(
+    $input: CreateScheduledTaskInput!
+    $condition: ModelScheduledTaskConditionInput
+  ) {
+    createScheduledTask(input: $input, condition: $condition) {
+      id
+      tenantId
+      cronExpression
+      pickUpLocationId
+      dropOffLocationId
+      establishmentLocationId
+      pickUpLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      dropOffLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      establishmentLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      priority
+      deliverables {
+        nextToken
+        startedAt
+      }
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const updateScheduledTask = /* GraphQL */ `
+  mutation UpdateScheduledTask(
+    $input: UpdateScheduledTaskInput!
+    $condition: ModelScheduledTaskConditionInput
+  ) {
+    updateScheduledTask(input: $input, condition: $condition) {
+      id
+      tenantId
+      cronExpression
+      pickUpLocationId
+      dropOffLocationId
+      establishmentLocationId
+      pickUpLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      dropOffLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      establishmentLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      priority
+      deliverables {
+        nextToken
+        startedAt
+      }
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+export const deleteScheduledTask = /* GraphQL */ `
+  mutation DeleteScheduledTask(
+    $input: DeleteScheduledTaskInput!
+    $condition: ModelScheduledTaskConditionInput
+  ) {
+    deleteScheduledTask(input: $input, condition: $condition) {
+      id
+      tenantId
+      cronExpression
+      pickUpLocationId
+      dropOffLocationId
+      establishmentLocationId
+      pickUpLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      dropOffLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      establishmentLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      priority
+      deliverables {
+        nextToken
+        startedAt
+      }
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
 export const createComment = /* GraphQL */ `
   mutation CreateComment(
     $input: CreateCommentInput!
@@ -1926,6 +2265,21 @@ export const createDeliverable = /* GraphQL */ `
         _lastChangedAt
         userCreatedTasksId
       }
+      scheduledTask {
+        id
+        tenantId
+        cronExpression
+        pickUpLocationId
+        dropOffLocationId
+        establishmentLocationId
+        priority
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
       count
       unit
       orderInGrid
@@ -1940,6 +2294,7 @@ export const createDeliverable = /* GraphQL */ `
       _deleted
       _lastChangedAt
       taskDeliverablesId
+      scheduledTaskDeliverablesId
       deliverableTypeDeliverablesId
     }
   }
@@ -1993,6 +2348,21 @@ export const updateDeliverable = /* GraphQL */ `
         _lastChangedAt
         userCreatedTasksId
       }
+      scheduledTask {
+        id
+        tenantId
+        cronExpression
+        pickUpLocationId
+        dropOffLocationId
+        establishmentLocationId
+        priority
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
       count
       unit
       orderInGrid
@@ -2007,6 +2377,7 @@ export const updateDeliverable = /* GraphQL */ `
       _deleted
       _lastChangedAt
       taskDeliverablesId
+      scheduledTaskDeliverablesId
       deliverableTypeDeliverablesId
     }
   }
@@ -2060,6 +2431,21 @@ export const deleteDeliverable = /* GraphQL */ `
         _lastChangedAt
         userCreatedTasksId
       }
+      scheduledTask {
+        id
+        tenantId
+        cronExpression
+        pickUpLocationId
+        dropOffLocationId
+        establishmentLocationId
+        priority
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
       count
       unit
       orderInGrid
@@ -2074,6 +2460,7 @@ export const deleteDeliverable = /* GraphQL */ `
       _deleted
       _lastChangedAt
       taskDeliverablesId
+      scheduledTaskDeliverablesId
       deliverableTypeDeliverablesId
     }
   }
@@ -2335,5 +2722,10 @@ export const updateUserRoles = /* GraphQL */ `
       _deleted
       _lastChangedAt
     }
+  }
+`;
+export const createScheduledTasks = /* GraphQL */ `
+  mutation CreateScheduledTasks {
+    createScheduledTasks
   }
 `;

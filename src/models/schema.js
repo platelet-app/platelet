@@ -1667,6 +1667,15 @@ export const schema = {
                     }
                 },
                 {
+                    "type": "key",
+                    "properties": {
+                        "queryField": "listScheduledTasksByDisabledStatus",
+                        "fields": [
+                            "disabled"
+                        ]
+                    }
+                },
+                {
                     "type": "auth",
                     "properties": {
                         "rules": [
