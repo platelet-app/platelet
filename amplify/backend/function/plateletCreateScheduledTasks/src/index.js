@@ -10,8 +10,57 @@ Amplify Params - DO NOT EDIT */
  */
 
 const { request } = require("/opt/appSyncRequest");
-const { createTask, createLocation } = require("/opt/graphql/mutations");
-const { scheduledTasksByDisabledStatus } = require("/opt/graphql/queries");
+const {
+    createTask,
+    createLocation,
+    createDeliverable,
+} = require("/opt/graphql/mutations");
+
+const listScheduledTasks = /* GraphQL */ `
+    query ListScheduledTasks(
+        $filter: ModelScheduledTaskFilterInput
+        $limit: Int
+        $nextToken: String
+    ) {
+        listScheduledTasks(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                tenantId
+                cronExpression
+                pickUpLocation {
+                    id
+                    listed
+                    tenantId
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    tenantId
+                }
+                establishmentLocation {
+                    id
+                    listed
+                    tenantId
+                }
+                deliverables {
+                    items {
+                        count
+                        deliverableTypeDeliverablesId
+                        unit
+                    }
+                }
+                priority
+                disabled
+            }
+            nextToken
+            startedAt
+        }
+    }
+`;
 
 const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
 
@@ -21,10 +70,9 @@ const getScheduledTasks = async () => {
     do {
         const variables = {
             nextToken,
-            disabled: 0,
         };
         const response = await request(
-            { query: scheduledTasksByDisabledStatus, variables },
+            { query: listScheduledTasks, variables },
             GRAPHQL_ENDPOINT
         );
         const body = await response.json();
@@ -70,6 +118,7 @@ const createNewTask = async (scheduledTask) => {
         pickUpLocation,
         dropOffLocation,
         establishmentLocation,
+        deliverables,
         tenantId,
     } = scheduledTask;
     let pickUpLocationId = null;
@@ -92,6 +141,7 @@ const createNewTask = async (scheduledTask) => {
             establishmentLocation
         );
     }
+
     const currentDate = new Date();
     const dateCreated = currentDate.toISOString().split("T")[0];
     const variables = {
@@ -112,15 +162,42 @@ const createNewTask = async (scheduledTask) => {
     );
     const body = await response.json();
     console.log(`BODY: ${JSON.stringify(body)}`);
-    return body.data.createTask.id;
+    const taskId = body.data.createTask.id;
+
+    const deliverableItems = deliverables.items;
+    if (deliverableItems.length > 0) {
+        await Promise.all(
+            deliverableItems.map(async (deliverable) => {
+                const variables = {
+                    input: {
+                        taskDeliverablesId: taskId,
+                        tenantId,
+                        count: deliverable.count,
+                        deliverableTypeDeliverablesId:
+                            deliverable.deliverableTypeDeliverablesId,
+                        archived: 0,
+                        unit: deliverable.unit,
+                    },
+                };
+                const response = await request(
+                    { query: createDeliverable, variables },
+                    GRAPHQL_ENDPOINT
+                );
+            })
+        );
+    }
+    return taskId;
 };
 
 exports.handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
     const scheduledTasks = await getScheduledTasks();
-    console.log(`SCHEDULED TASKS: ${JSON.stringify(scheduledTasks)}`);
+    const filtered = scheduledTasks.filter(
+        (scheduledTask) => scheduledTask.disabled !== 1
+    );
+    console.log(`SCHEDULED TASKS: ${JSON.stringify(filtered)}`);
     const tasks = await Promise.all(
-        scheduledTasks.map((scheduledTask) => createNewTask(scheduledTask))
+        filtered.map((scheduledTask) => createNewTask(scheduledTask))
     );
     console.log(`TASKS: ${JSON.stringify(tasks)}`);
 };
