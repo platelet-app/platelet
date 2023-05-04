@@ -5992,38 +5992,6 @@ export type SyncScheduledTasksQuery = {
   } | null,
 };
 
-export type ListScheduledTasksByDisabledStatusQueryVariables = {
-  disabled: number,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelScheduledTaskFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ListScheduledTasksByDisabledStatusQuery = {
-  listScheduledTasksByDisabledStatus?:  {
-    __typename: "ModelScheduledTaskConnection",
-    items:  Array< {
-      __typename: "ScheduledTask",
-      id: string,
-      tenantId: string,
-      cronExpression: string,
-      pickUpLocationId?: string | null,
-      dropOffLocationId?: string | null,
-      establishmentLocationId?: string | null,
-      priority?: Priority | null,
-      disabled?: number | null,
-      createdAt: string,
-      updatedAt: string,
-      _version: number,
-      _deleted?: boolean | null,
-      _lastChangedAt: number,
-    } | null >,
-    nextToken?: string | null,
-    startedAt?: number | null,
-  } | null,
-};
-
 export type GetCommentQueryVariables = {
   id: string,
 };

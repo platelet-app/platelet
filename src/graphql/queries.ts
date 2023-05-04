@@ -1403,41 +1403,6 @@ export const syncScheduledTasks = /* GraphQL */ `
     }
   }
 `;
-export const listScheduledTasksByDisabledStatus = /* GraphQL */ `
-  query ListScheduledTasksByDisabledStatus(
-    $disabled: Int!
-    $sortDirection: ModelSortDirection
-    $filter: ModelScheduledTaskFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listScheduledTasksByDisabledStatus(
-      disabled: $disabled
-      sortDirection: $sortDirection
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        tenantId
-        cronExpression
-        pickUpLocationId
-        dropOffLocationId
-        establishmentLocationId
-        priority
-        disabled
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-      }
-      nextToken
-      startedAt
-    }
-  }
-`;
 export const getComment = /* GraphQL */ `
   query GetComment($id: ID!) {
     getComment(id: $id) {

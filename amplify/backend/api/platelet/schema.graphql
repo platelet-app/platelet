@@ -281,7 +281,7 @@ type ScheduledTask
   establishmentLocation: Location @belongsTo(fields: ["establishmentLocationId"])
   priority: Priority
   deliverables: [Deliverable] @hasMany
-  disabled: Int @default(value: "0") @index(queryField: "listScheduledTasksByDisabledStatus")
+  disabled: Int @default(value: "0")
 }
 
 
