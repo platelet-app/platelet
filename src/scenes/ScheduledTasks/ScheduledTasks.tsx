@@ -7,6 +7,7 @@ import ScheduledTaskCard from "./components/ScheduledTaskCard";
 
 const ScheduledTasks = () => {
     const { state, isFetching, error } = useScheduledTasks();
+
     if (isFetching) {
         return (
             <Stack
@@ -25,7 +26,7 @@ const ScheduledTasks = () => {
         return (
             <Stack spacing={1} sx={{ maxWidth: 800 }}>
                 <AddToListButton
-                    onClick={() => {}}
+                    link="/admin/add-scheduled"
                     label="Add scheduled task"
                 />
                 {state.map((task) => (
