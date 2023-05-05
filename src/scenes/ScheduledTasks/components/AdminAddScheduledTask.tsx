@@ -45,6 +45,7 @@ const AdminAddScheduledTask: React.FC = () => {
     const deliverables = React.useRef<Record<string, models.Deliverable>>({});
     const tenantId = useSelector(tenantIdSelector);
     const dispatch = useDispatch();
+    const [resetForms, setResetForms] = React.useState(false);
 
     const onChangeContact = (value: StateType["contact"]) => {
         setState((prevState) => ({
@@ -112,7 +113,6 @@ const AdminAddScheduledTask: React.FC = () => {
                 cronExpression: "0 18 * * *",
             });
             const result = await DataStore.save(newScheduledTask);
-            console.log(deliverables.current);
             const deliverableModels = await Promise.all(
                 Object.entries(deliverables.current).map(async ([id, d]) => {
                     const deliverableType = await DataStore.query(
@@ -137,6 +137,8 @@ const AdminAddScheduledTask: React.FC = () => {
                 )
             );
             setState(initialState);
+            setResetForms((prevState) => !prevState);
+            deliverables.current = {};
         } catch (e) {
             console.error(e);
             dispatch(displayErrorNotification("Sorry, something went wrong"));
@@ -164,9 +166,11 @@ const AdminAddScheduledTask: React.FC = () => {
                     establishment={state.establishment}
                 />
                 <ScheduledTaskPickUpAndDropOffDetails
+                    reset={resetForms}
                     onChange={handleLocationChange}
                 />
                 <ScheduledTaskDeliverables
+                    key={`${resetForms}deliverables`}
                     onChange={handleDeliverablesChange}
                     onDelete={handleDeliverablesDelete}
                 />

@@ -38,7 +38,7 @@ export const CallerDetails: React.FC<CallerDetailType> = ({
         establishment: null,
     });
 
-    const handleSelectLocation = (location: models.Location) => {
+    const handleSelectLocation = (location: models.Location | null) => {
         onChangeLocation(location);
         if (
             !state.telephoneNumber &&

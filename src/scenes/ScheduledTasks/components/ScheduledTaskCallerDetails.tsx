@@ -8,7 +8,7 @@ type ScheduledTaskCallerDetailsProps = {
     contact: { name: string; telephoneNumber: string };
     establishment: models.Location | null;
     onChangeContact: (value: { name: string; telephoneNumber: string }) => void;
-    onChangeEstablishment: (value: models.Location) => void;
+    onChangeEstablishment: (value: models.Location | null) => void;
 };
 
 const ScheduledTaskCallerDetails: React.FC<ScheduledTaskCallerDetailsProps> = ({
