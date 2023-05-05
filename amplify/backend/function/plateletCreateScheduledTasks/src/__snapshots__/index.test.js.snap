@@ -1,0 +1,140 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`plateletCreateScheduledTasks create some scheduled tasks 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      {
+        "query": "
+    query ListScheduledTasks(
+        $filter: ModelScheduledTaskFilterInput
+        $limit: Int
+        $nextToken: String
+    ) {
+        listScheduledTasks(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                tenantId
+                cronExpression
+                pickUpLocation {
+                    id
+                    listed
+                    tenantId
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    tenantId
+                }
+                establishmentLocation {
+                    id
+                    listed
+                    tenantId
+                }
+                deliverables {
+                    items {
+                        count
+                        deliverableTypeDeliverablesId
+                        unit
+                    }
+                }
+                priority
+                disabled
+            }
+            nextToken
+            startedAt
+        }
+    }
+",
+        "variables": {
+          "nextToken": null,
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "createLocationQuery",
+        "variables": {
+          "input": {
+            "archived": 0,
+            "contact": {
+              "name": "name",
+              "telephoneNumber": "phone",
+            },
+            "country": "country",
+            "county": "county",
+            "line1": "line1",
+            "line2": "line2",
+            "line3": "line3",
+            "listed": 0,
+            "postcode": "postcode",
+            "state": undefined,
+            "tenantId": "tenantId",
+            "town": "town",
+            "ward": undefined,
+            "what3words": "what3words",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "createTaskQuery",
+        "variables": {
+          "input": {
+            "archived": 0,
+            "dateCreated": "2021-05-01",
+            "dropOffLocationId": "newLocationId",
+            "establishmentLocationId": "establishmentLocationId",
+            "pickUpLocationId": "pickUpLocationId",
+            "priority": undefined,
+            "status": "NEW",
+            "tenantId": "tenantId",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "createDeliverableQuery",
+        "variables": {
+          "input": {
+            "archived": 0,
+            "count": 1,
+            "deliverableTypeDeliverablesId": "deliverableTypeDeliverablesId",
+            "taskDeliverablesId": "newTaskId",
+            "tenantId": "tenantId",
+            "unit": "unit",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;

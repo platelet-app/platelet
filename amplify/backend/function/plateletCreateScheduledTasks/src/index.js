@@ -102,6 +102,7 @@ const createUnlistedLocation = async (location) => {
             what3words: location.what3words,
             tenantId: location.tenantId,
             listed: 0,
+            archived: 0,
         },
     };
     const response = await request(
@@ -109,6 +110,7 @@ const createUnlistedLocation = async (location) => {
         GRAPHQL_ENDPOINT
     );
     const body = await response.json();
+    console.log("Created unlisted location", body.data.createLocation);
     return body.data.createLocation.id;
 };
 
@@ -161,7 +163,6 @@ const createNewTask = async (scheduledTask) => {
         GRAPHQL_ENDPOINT
     );
     const body = await response.json();
-    console.log(`BODY: ${JSON.stringify(body)}`);
     const taskId = body.data.createTask.id;
 
     const deliverableItems = deliverables.items;
@@ -179,14 +180,17 @@ const createNewTask = async (scheduledTask) => {
                         unit: deliverable.unit,
                     },
                 };
-                const response = await request(
+                const deliverableResult = await request(
                     { query: createDeliverable, variables },
                     GRAPHQL_ENDPOINT
                 );
+                const body = await deliverableResult.json();
+                console.log("Created deliverable", body.data.createDeliverable);
             })
         );
     }
-    return taskId;
+    console.log("Created task", body.data.createTask);
+    return body.data.createTask;
 };
 
 exports.handler = async (event) => {
@@ -200,4 +204,5 @@ exports.handler = async (event) => {
         filtered.map((scheduledTask) => createNewTask(scheduledTask))
     );
     console.log(`TASKS: ${JSON.stringify(tasks)}`);
+    return tasks;
 };
