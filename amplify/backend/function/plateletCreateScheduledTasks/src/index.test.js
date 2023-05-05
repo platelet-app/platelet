@@ -4,6 +4,7 @@ const mockScheduledTasks = [
     {
         id: "taskId",
         tenantId: "tenantId",
+        priority: "MEDIUM",
         establishmentLocation: {
             id: "establishmentLocationId",
             listed: 1,

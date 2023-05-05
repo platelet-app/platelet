@@ -93,7 +93,7 @@ exports[`plateletCreateScheduledTasks create some scheduled tasks 1`] = `
             "dropOffLocationId": "newLocationId",
             "establishmentLocationId": "establishmentLocationId",
             "pickUpLocationId": "pickUpLocationId",
-            "priority": undefined,
+            "priority": "MEDIUM",
             "status": "NEW",
             "tenantId": "tenantId",
           },
