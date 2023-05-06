@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Divider, Paper, Stack } from "@mui/material";
+import { Button, Divider, Stack } from "@mui/material";
 import ScheduledTaskCallerDetails from "./ScheduledTaskCallerDetails";
 import * as models from "../../../models";
 import { PaddedPaper } from "../../../styles/common";
@@ -8,7 +8,7 @@ import _ from "lodash";
 import ScheduledTaskDeliverables from "./ScheduledTasksDeliverables";
 import ScheduledTaskPriority from "./ScheduledTaskPriority";
 import { useDispatch, useSelector } from "react-redux";
-import { tenantIdSelector } from "../../../redux/Selectors";
+import { getWhoami, tenantIdSelector } from "../../../redux/Selectors";
 import { DataStore } from "aws-amplify";
 import {
     displayErrorNotification,
@@ -17,22 +17,22 @@ import {
 import { encodeUUID } from "../../../utilities";
 
 const initialState = {
-    contact: {
+    requesterContact: {
         name: "",
         telephoneNumber: "",
     },
-    establishment: null,
+    establishmentLocation: null,
     priority: null,
     pickUpLocation: null,
     dropOffLocation: null,
 };
 
 type StateType = {
-    contact: {
+    requesterContact: {
         name: string;
         telephoneNumber: string;
     };
-    establishment: models.Location | null;
+    establishmentLocation: models.Location | null;
     priority: models.Priority | null;
     pickUpLocation: models.Location | null;
     dropOffLocation: models.Location | null;
@@ -46,17 +46,20 @@ const AdminAddScheduledTask: React.FC = () => {
     const tenantId = useSelector(tenantIdSelector);
     const dispatch = useDispatch();
     const [resetForms, setResetForms] = React.useState(false);
+    const whoami = useSelector(getWhoami);
 
-    const onChangeContact = (value: StateType["contact"]) => {
+    const onChangeContact = (value: StateType["requesterContact"]) => {
         setState((prevState) => ({
             ...prevState,
-            contact: { ...prevState.contact, ...value },
+            requesterContact: { ...prevState.requesterContact, ...value },
         }));
     };
-    const onChangeEstablishment = (value: StateType["establishment"]) => {
+    const onChangeEstablishment = (
+        value: StateType["establishmentLocation"]
+    ) => {
         setState((prevState) => ({
             ...prevState,
-            establishment: value,
+            establishmentLocation: value,
         }));
     };
 
@@ -107,9 +110,44 @@ const AdminAddScheduledTask: React.FC = () => {
     const addScheduledTask = async () => {
         try {
             setIsPosting(true);
+            const createdBy = await DataStore.query(models.User, whoami.id);
+            let {
+                pickUpLocation,
+                dropOffLocation,
+                establishmentLocation,
+                ...rest
+            } = state;
+            if (pickUpLocation?.listed === 0) {
+                pickUpLocation = await DataStore.save(
+                    new models.Location({
+                        ...pickUpLocation,
+                        tenantId,
+                    })
+                );
+            }
+            if (dropOffLocation?.listed === 0) {
+                dropOffLocation = await DataStore.save(
+                    new models.Location({
+                        ...dropOffLocation,
+                        tenantId,
+                    })
+                );
+            }
+            if (establishmentLocation?.listed === 0) {
+                establishmentLocation = await DataStore.save(
+                    new models.Location({
+                        ...establishmentLocation,
+                        tenantId,
+                    })
+                );
+            }
             const newScheduledTask = new models.ScheduledTask({
-                ...state,
+                ...rest,
+                pickUpLocation,
+                dropOffLocation,
+                establishmentLocation,
                 tenantId,
+                createdBy,
                 cronExpression: "0 18 * * *",
             });
             const result = await DataStore.save(newScheduledTask);
@@ -119,6 +157,7 @@ const AdminAddScheduledTask: React.FC = () => {
                         models.DeliverableType,
                         id
                     );
+                    d = _.omit(d, "label");
                     return new models.Deliverable({
                         ...d,
                         deliverableType,
@@ -140,7 +179,7 @@ const AdminAddScheduledTask: React.FC = () => {
             setResetForms((prevState) => !prevState);
             deliverables.current = {};
         } catch (e) {
-            console.error(e);
+            console.log(e);
             dispatch(displayErrorNotification("Sorry, something went wrong"));
         } finally {
             setIsPosting(false);
@@ -162,8 +201,8 @@ const AdminAddScheduledTask: React.FC = () => {
                 <ScheduledTaskCallerDetails
                     onChangeContact={onChangeContact}
                     onChangeEstablishment={onChangeEstablishment}
-                    contact={state.contact}
-                    establishment={state.establishment}
+                    contact={state.requesterContact}
+                    establishment={state.establishmentLocation}
                 />
                 <ScheduledTaskPickUpAndDropOffDetails
                     reset={resetForms}
