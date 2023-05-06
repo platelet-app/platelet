@@ -166,6 +166,10 @@ export const onCreateUser = /* GraphQL */ `
         nextToken
         startedAt
       }
+      createdScheduledTasks {
+        nextToken
+        startedAt
+      }
       disabled
       createdAt
       updatedAt
@@ -240,6 +244,10 @@ export const onUpdateUser = /* GraphQL */ `
         nextToken
         startedAt
       }
+      createdScheduledTasks {
+        nextToken
+        startedAt
+      }
       disabled
       createdAt
       updatedAt
@@ -311,6 +319,10 @@ export const onDeleteUser = /* GraphQL */ `
         startedAt
       }
       createdVehicles {
+        nextToken
+        startedAt
+      }
+      createdScheduledTasks {
         nextToken
         startedAt
       }
@@ -1680,6 +1692,40 @@ export const onCreateScheduledTask = /* GraphQL */ `
     onCreateScheduledTask(filter: $filter) {
       id
       tenantId
+      createdBy {
+        id
+        username
+        cognitoId
+        tenantId
+        isPrimaryAdmin
+        displayName
+        name
+        roles
+        dateOfBirth
+        riderResponsibility
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      requesterContact {
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+      }
       cronExpression
       pickUpLocationId
       dropOffLocationId
@@ -1770,6 +1816,7 @@ export const onCreateScheduledTask = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      userCreatedScheduledTasksId
     }
   }
 `;
@@ -1780,6 +1827,40 @@ export const onUpdateScheduledTask = /* GraphQL */ `
     onUpdateScheduledTask(filter: $filter) {
       id
       tenantId
+      createdBy {
+        id
+        username
+        cognitoId
+        tenantId
+        isPrimaryAdmin
+        displayName
+        name
+        roles
+        dateOfBirth
+        riderResponsibility
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      requesterContact {
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+      }
       cronExpression
       pickUpLocationId
       dropOffLocationId
@@ -1870,6 +1951,7 @@ export const onUpdateScheduledTask = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      userCreatedScheduledTasksId
     }
   }
 `;
@@ -1880,6 +1962,40 @@ export const onDeleteScheduledTask = /* GraphQL */ `
     onDeleteScheduledTask(filter: $filter) {
       id
       tenantId
+      createdBy {
+        id
+        username
+        cognitoId
+        tenantId
+        isPrimaryAdmin
+        displayName
+        name
+        roles
+        dateOfBirth
+        riderResponsibility
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      requesterContact {
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+      }
       cronExpression
       pickUpLocationId
       dropOffLocationId
@@ -1970,6 +2086,7 @@ export const onDeleteScheduledTask = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      userCreatedScheduledTasksId
     }
   }
 `;
@@ -2227,6 +2344,7 @@ export const onCreateDeliverable = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        userCreatedScheduledTasksId
       }
       count
       unit
@@ -2309,6 +2427,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        userCreatedScheduledTasksId
       }
       count
       unit
@@ -2391,6 +2510,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        userCreatedScheduledTasksId
       }
       count
       unit

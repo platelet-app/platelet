@@ -276,6 +276,20 @@ export const schema = {
                         "associatedWith": "userCreatedVehiclesId"
                     }
                 },
+                "createdScheduledTasks": {
+                    "name": "createdScheduledTasks",
+                    "isArray": true,
+                    "type": {
+                        "model": "ScheduledTask"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "userCreatedScheduledTasksId"
+                    }
+                },
                 "disabled": {
                     "name": "disabled",
                     "isArray": false,
@@ -1530,6 +1544,28 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "createdBy": {
+                    "name": "createdBy",
+                    "isArray": false,
+                    "type": {
+                        "model": "User"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "userCreatedScheduledTasksId"
+                    }
+                },
+                "requesterContact": {
+                    "name": "requesterContact",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "AddressAndContactDetails"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "cronExpression": {
                     "name": "cronExpression",
                     "isArray": false,
@@ -2539,5 +2575,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.0",
-    "version": "5ef8480190821a347472b71d103dd6a4"
+    "version": "3a570d5d03205d7c0e430a090a4ca29b"
 };

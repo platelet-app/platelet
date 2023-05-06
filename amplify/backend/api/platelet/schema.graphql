@@ -43,6 +43,7 @@ type User
   createdTasks: [Task] @hasMany
   createdLocations: [Location] @hasMany
   createdVehicles: [Vehicle] @hasMany
+  createdScheduledTasks: [ScheduledTask] @hasMany
   disabled: Int @default(value: "0") @auth(rules: [{allow: private, operations: [read]}])
 }
 
@@ -179,7 +180,7 @@ type Task
       {allow: private, operations: [read]},
       {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
     ])
-timePickedUpSenderName: String
+  timePickedUpSenderName: String
     @auth(rules: [
       {allow: private, operations: [read]},
       {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
@@ -272,6 +273,8 @@ type ScheduledTask
 @model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
+  createdBy: User @belongsTo
+  requesterContact: AddressAndContactDetails
   cronExpression: String!
   pickUpLocationId: ID @index(name: "scheduledTasksByPickUpLocation")
   dropOffLocationId: ID @index(name: "scheduledTasksByDropOffLocation")

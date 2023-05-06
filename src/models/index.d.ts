@@ -240,6 +240,7 @@ type EagerUser = {
   readonly createdTasks?: (Task | null)[] | null;
   readonly createdLocations?: (Location | null)[] | null;
   readonly createdVehicles?: (Vehicle | null)[] | null;
+  readonly createdScheduledTasks?: (ScheduledTask | null)[] | null;
   readonly disabled?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -265,6 +266,7 @@ type LazyUser = {
   readonly createdTasks: AsyncCollection<Task>;
   readonly createdLocations: AsyncCollection<Location>;
   readonly createdVehicles: AsyncCollection<Vehicle>;
+  readonly createdScheduledTasks: AsyncCollection<ScheduledTask>;
   readonly disabled?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -525,6 +527,8 @@ export declare const TaskAssignee: (new (init: ModelInit<TaskAssignee, TaskAssig
 type EagerScheduledTask = {
   readonly id: string;
   readonly tenantId: string;
+  readonly createdBy?: User | null;
+  readonly requesterContact?: AddressAndContactDetails | null;
   readonly cronExpression: string;
   readonly pickUpLocation?: Location | null;
   readonly dropOffLocation?: Location | null;
@@ -539,6 +543,8 @@ type EagerScheduledTask = {
 type LazyScheduledTask = {
   readonly id: string;
   readonly tenantId: string;
+  readonly createdBy: AsyncItem<User | undefined>;
+  readonly requesterContact?: AddressAndContactDetails | null;
   readonly cronExpression: string;
   readonly pickUpLocation: AsyncItem<Location | undefined>;
   readonly dropOffLocation: AsyncItem<Location | undefined>;

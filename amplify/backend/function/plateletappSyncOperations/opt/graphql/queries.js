@@ -158,6 +158,10 @@ const getUser = /* GraphQL */`
         nextToken
         startedAt
       }
+      createdScheduledTasks {
+        nextToken
+        startedAt
+      }
       disabled
       createdAt
       updatedAt
@@ -1284,6 +1288,40 @@ const getScheduledTask = /* GraphQL */`
     getScheduledTask(id: $id) {
       id
       tenantId
+      createdBy {
+        id
+        username
+        cognitoId
+        tenantId
+        isPrimaryAdmin
+        displayName
+        name
+        roles
+        dateOfBirth
+        riderResponsibility
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      requesterContact {
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+      }
       cronExpression
       pickUpLocationId
       dropOffLocationId
@@ -1374,6 +1412,7 @@ const getScheduledTask = /* GraphQL */`
       _version
       _deleted
       _lastChangedAt
+      userCreatedScheduledTasksId
     }
   }
 `;
@@ -1399,6 +1438,7 @@ const listScheduledTasks = /* GraphQL */`
         _version
         _deleted
         _lastChangedAt
+        userCreatedScheduledTasksId
       }
       nextToken
       startedAt
@@ -1433,6 +1473,7 @@ const syncScheduledTasks = /* GraphQL */`
         _version
         _deleted
         _lastChangedAt
+        userCreatedScheduledTasksId
       }
       nextToken
       startedAt
@@ -1687,6 +1728,7 @@ const getDeliverable = /* GraphQL */`
         _version
         _deleted
         _lastChangedAt
+        userCreatedScheduledTasksId
       }
       count
       unit
