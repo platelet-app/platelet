@@ -206,9 +206,8 @@ const DeliverableGridSelect: React.FC<DeliverableGridSelectProps> = ({
     ) {
         let orderInGrid = 0;
         for (const d of Object.values(state)) {
-            if (d.orderInGrid > orderInGrid) orderInGrid = d.orderInGrid + 1;
+            if (d.orderInGrid >= orderInGrid) orderInGrid = d.orderInGrid + 1;
         }
-        console.log(deliverable);
         setState((prevState) => ({
             ...prevState,
             [deliverable.id]: {
