@@ -38,7 +38,7 @@ const contactFields = {
     telephoneNumber: "Telephone",
 };
 
-const collapsedShowFields = ["line1", "town", "postcode"];
+const collapsedShowFields = ["ward", "line1", "town", "postcode"];
 const collapsedShowContactFields = ["name", "telephoneNumber"];
 
 function PopOutLocationSelectorForm(props) {
