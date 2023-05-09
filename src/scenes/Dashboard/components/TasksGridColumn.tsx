@@ -24,9 +24,6 @@ const useStyles = makeStyles()((theme) => ({
     column: {
         padding: 5,
         //backgroundColor: "rgba(180, 180, 180, 0.1)",
-        borderRadius: 5,
-        border: 0,
-        boxShadow: "0 2px 3px 1px rgba(100, 100, 100, .3)",
         height: "100%",
         maxWidth: 360,
         minWidth: 285,
