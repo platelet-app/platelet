@@ -229,8 +229,9 @@ const TaskItem = React.memo((props) => {
         <Skeleton
             data-testid="task-item-skeleton"
             variant="rectangle"
+            sx={{ borderRadius: "1em" }}
             width="100%"
-            height={200}
+            height={140}
         />
     );
     return <div ref={ref}>{contents}</div>;
