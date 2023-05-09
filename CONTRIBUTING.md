@@ -40,10 +40,6 @@ When set to `true` the app will clear saved data on each page reload. Good for a
 
 Set this to `true` if Redux should throw errors instead of handling them and showing a notification. This can be helpful when developing.
 
-###### REACT_APP_RESIZE_BUCKET_NAME
-
-This is the name of the bucket that should receive profile picture files to be resized with a lambda trigger to function `plateletImageResize`.
-
 ###### REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_NAME
 
 The name of the bucket that should contain profile pictures for demo mode.
