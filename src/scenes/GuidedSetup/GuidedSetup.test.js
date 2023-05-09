@@ -405,7 +405,7 @@ describe("GuidedSetup", () => {
 
         const contactFields = ["Name", "Telephone"];
 
-        const collapsedShowFields = ["Line one", "Town", "Postcode"];
+        const collapsedShowFields = ["Ward", "Line one", "Town", "Postcode"];
         const collapsedShowContactFields = ["Name", "Telephone"];
 
         const querySpy = jest.spyOn(DataStore, "query");

@@ -9,6 +9,7 @@
 
 # testing
 /coverage
+aws-exports-es5.js
 
 # production
 /build

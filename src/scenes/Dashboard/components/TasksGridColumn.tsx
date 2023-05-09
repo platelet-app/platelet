@@ -24,9 +24,6 @@ const useStyles = makeStyles()((theme) => ({
     column: {
         padding: 5,
         //backgroundColor: "rgba(180, 180, 180, 0.1)",
-        borderRadius: 5,
-        border: 0,
-        boxShadow: "0 2px 3px 1px rgba(100, 100, 100, .3)",
         height: "100%",
         maxWidth: 360,
         minWidth: 285,
@@ -79,8 +76,9 @@ const TasksGridColumn: React.FC<TasksGridColumnProps> = ({
                     width: isSm ? "100%" : width / 4.2,
                 }}
             >
-                <Stack direction="column" spacing={4}>
+                <Stack direction="column" spacing={2}>
                     <Skeleton
+                        sx={{ borderRadius: "1em" }}
                         variant="rectangular"
                         width={"100%"}
                         data-cy={`${title}-title-skeleton`}
@@ -89,9 +87,10 @@ const TasksGridColumn: React.FC<TasksGridColumnProps> = ({
                     {_.range(4).map((i) => (
                         <Box key={i}>
                             <Skeleton
+                                sx={{ borderRadius: "1em" }}
                                 variant="rectangular"
                                 width={"100%"}
-                                height={200}
+                                height={140}
                             />
                         </Box>
                     ))}
