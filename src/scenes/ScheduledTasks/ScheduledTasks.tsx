@@ -4,9 +4,13 @@ import useScheduledTasks from "../../hooks/useScheduledTasks";
 import AddToListButton from "../../components/AddToListButton";
 import _ from "lodash";
 import ScheduledTaskCard from "./components/ScheduledTaskCard";
+import { useSelector } from "react-redux";
+import { getWhoami } from "../../redux/Selectors";
+import * as models from "../../models";
 
 const ScheduledTasks = () => {
     const { state, isFetching, error } = useScheduledTasks();
+    const whoami = useSelector(getWhoami);
 
     if (isFetching) {
         return (
@@ -25,10 +29,12 @@ const ScheduledTasks = () => {
     } else {
         return (
             <Stack spacing={1} sx={{ maxWidth: 800 }}>
-                <AddToListButton
-                    link="/admin/add-scheduled"
-                    label="Add scheduled task"
-                />
+                {whoami.roles.includes(models.Role.ADMIN) && (
+                    <AddToListButton
+                        link="/admin/add-scheduled"
+                        label="Add scheduled task"
+                    />
+                )}
                 {state.map((task) => (
                     <ScheduledTaskCard key={task.id} task={task} />
                 ))}

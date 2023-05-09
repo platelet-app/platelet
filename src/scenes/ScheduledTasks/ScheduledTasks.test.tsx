@@ -26,13 +26,26 @@ describe("ScheduledTasks", () => {
         jest.restoreAllMocks();
         const scheduledTasks = await DataStore.query(models.ScheduledTask);
         const locations = await DataStore.query(models.Location);
+        const users = await DataStore.query(models.User);
         await Promise.all(
-            [...scheduledTasks, ...locations].map((item) =>
+            [...scheduledTasks, ...locations, ...users].map((item) =>
                 DataStore.delete(item)
             )
         );
     });
     test("show scheduled tasks", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                displayName: "name",
+                roles: [models.Role.USER],
+                username: "username",
+                cognitoId: "cognitoId",
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+        };
         const mockLocation = await DataStore.save(
             new models.Location({
                 name: "location",
@@ -123,6 +136,10 @@ describe("ScheduledTasks", () => {
         await waitFor(() => {
             expect(screen.queryByTestId("scheduled-tasks-skeleton")).toBeNull();
         });
+        // not an admin so don't show add button
+        expect(
+            screen.queryByRole("button", { name: "Add scheduled task" })
+        ).toBeNull();
         expect(screen.getByText("HIGH")).toBeInTheDocument();
         expect(screen.getByText("LOW")).toBeInTheDocument();
         expect(await screen.findByText("label x 4")).toBeInTheDocument();
@@ -144,5 +161,31 @@ describe("ScheduledTasks", () => {
                 screen.getByText(new RegExp(`\\b${location.postcode}\\b`))
             ).toBeInTheDocument();
         });
+    });
+    test("don't show add button unless an admin", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                displayName: "name",
+                roles: [models.Role.ADMIN],
+                username: "username",
+                cognitoId: "cognitoId",
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+        };
+        render(
+            <>
+                <ScheduledTasks />
+            </>,
+            { preloadedState }
+        );
+        await waitFor(() => {
+            expect(screen.queryByTestId("scheduled-tasks-skeleton")).toBeNull();
+        });
+        expect(
+            screen.getByRole("button", { name: "Add scheduled task" })
+        ).toBeInTheDocument();
     });
 });

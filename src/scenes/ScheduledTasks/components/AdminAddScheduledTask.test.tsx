@@ -412,7 +412,7 @@ describe("AdminAddScheduledTask", () => {
                 archived: 0,
             })
         );
-        const mockScheduledTask = new models.ScheduledTask({
+        new models.ScheduledTask({
             tenantId,
             requesterContact: {
                 name: "",
@@ -429,9 +429,9 @@ describe("AdminAddScheduledTask", () => {
             whoami: { user: whoami },
         };
 
-        const saveSpy = jest
-            .spyOn(DataStore, "save")
-            .mockRejectedValue(new Error("test error"));
+        jest.spyOn(DataStore, "save").mockRejectedValue(
+            new Error("test error")
+        );
 
         render(<AdminAddScheduledTask />, { preloadedState });
         userEvent.type(
@@ -465,5 +465,24 @@ describe("AdminAddScheduledTask", () => {
         });
         expect(screen.getByText("Another Location")).toBeInTheDocument();
         expect(screen.getByText("Third Location")).toBeInTheDocument();
+    });
+    test("don't show if not an admin", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                displayName: "Test User",
+                roles: [models.Role.USER],
+                username: "testuser",
+                cognitoId: "testuserid",
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+        };
+
+        render(<AdminAddScheduledTask />, { preloadedState });
+        expect(
+            screen.getByText("You don't have permission to view this page.")
+        ).toBeInTheDocument();
     });
 });

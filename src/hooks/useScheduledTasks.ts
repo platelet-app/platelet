@@ -23,7 +23,6 @@ const useScheduledTasks = () => {
                 observer.current = DataStore.observeQuery(
                     models.ScheduledTask
                 ).subscribe(async ({ items }) => {
-                    console.log(items);
                     setState(
                         convertModelListToTypedObject<models.ScheduledTask>(
                             items

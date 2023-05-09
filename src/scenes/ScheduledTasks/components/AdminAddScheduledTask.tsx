@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Divider, Stack } from "@mui/material";
+import { Button, Divider, Stack, Typography } from "@mui/material";
 import ScheduledTaskCallerDetails from "./ScheduledTaskCallerDetails";
 import * as models from "../../../models";
 import { PaddedPaper } from "../../../styles/common";
@@ -15,6 +15,7 @@ import {
     displayInfoNotification,
 } from "../../../redux/notifications/NotificationsActions";
 import { encodeUUID } from "../../../utilities";
+import Forbidden from "../../../ErrorComponents/Forbidden";
 
 const initialState = {
     requesterContact: {
@@ -194,6 +195,10 @@ const AdminAddScheduledTask: React.FC = () => {
         }
     };
     React.useEffect(verifyInput, [state.pickUpLocation, state.dropOffLocation]);
+
+    if (!whoami.roles.includes(models.Role.ADMIN)) {
+        return <Forbidden />;
+    }
 
     return (
         <PaddedPaper maxWidth={800}>
