@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import * as models from "../models";
 import {
     useMediaQuery,
     Stack,
@@ -9,12 +10,10 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import ClickableTextField from "./ClickableTextField";
 import LabelItemPair from "./LabelItemPair";
-import PropTypes from "prop-types";
 import { makeStyles } from "tss-react/mui";
-import { useTheme } from "@mui/styles";
+import { useTheme } from "@mui/material/styles";
 import ConfirmationDialog from "./ConfirmationDialog";
 import { TextFieldControlled } from "./TextFields";
-
 const useStyles = makeStyles()({
     inset: {
         marginLeft: 20,
@@ -26,32 +25,39 @@ const fields = {
     telephoneNumber: "Telephone",
 };
 
-function RequesterContact(props) {
+type RequesterContactProps = {
+    contact: models.AddressAndContactDetails | null;
+    onChange: (value: models.AddressAndContactDetails) => void;
+    hideEditIcon?: boolean;
+};
+
+const initialState = new models.AddressAndContactDetails({
+    name: "",
+    telephoneNumber: "",
+});
+
+const RequesterContact: React.FC<RequesterContactProps> = ({
+    contact,
+    onChange,
+    hideEditIcon = false,
+}) => {
     const [editMode, setEditMode] = React.useState(false);
-    const [state, setState] = useState({
-        name: props.name,
-        telephoneNumber: props.telephoneNumber,
-    });
+    const [state, setState] = React.useState<models.AddressAndContactDetails>(
+        new models.AddressAndContactDetails(initialState)
+    );
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
 
     useEffect(() => {
-        setState({
-            name: props.name,
-            telephoneNumber: props.telephoneNumber,
-        });
-    }, [props]);
+        if (contact) setState(contact);
+    }, [contact]);
 
     const onCancelDialog = () => {
         setEditMode(false);
-        setState({
-            name: props.name,
-            telephoneNumber: props.telephoneNumber,
-        });
+        setState(contact || initialState);
     };
 
     const { classes } = useStyles();
-
     return (
         <Stack>
             <Stack
@@ -60,7 +66,7 @@ function RequesterContact(props) {
                 justifyContent="space-between"
             >
                 <Typography>Caller details</Typography>
-                {!props.hideEditIcon && (
+                {!hideEditIcon && (
                     <Tooltip title={editMode && !isSm ? "Finish" : "Edit"}>
                         <IconButton
                             onClick={() =>
@@ -84,13 +90,18 @@ function RequesterContact(props) {
                         <ClickableTextField
                             tel={key === "telephoneNumber"}
                             disabled={isSm || !editMode}
-                            onFinished={(value) =>
-                                props.onChange({
-                                    [key]: value,
-                                })
-                            }
+                            onFinished={(value) => {
+                                const result = { ...state, [key]: value };
+                                onChange(result);
+                            }}
                             label={label}
-                            value={props[key]}
+                            value={
+                                contact
+                                    ? contact[
+                                          key as keyof models.AddressAndContactDetails
+                                      ]
+                                    : ""
+                            }
                         />
                     </LabelItemPair>
                 </div>
@@ -99,7 +110,7 @@ function RequesterContact(props) {
                 <ConfirmationDialog
                     onCancel={onCancelDialog}
                     onConfirmation={() => {
-                        props.onChange(state);
+                        onChange(state);
                         setEditMode(false);
                     }}
                     fullScreen={isSm}
@@ -112,7 +123,11 @@ function RequesterContact(props) {
                                 key={key}
                                 label={label}
                                 aria-label={label}
-                                value={state[key]}
+                                value={
+                                    state[
+                                        key as keyof models.AddressAndContactDetails
+                                    ]
+                                }
                                 onChange={(event) =>
                                     setState({
                                         ...state,
@@ -126,20 +141,6 @@ function RequesterContact(props) {
             )}
         </Stack>
     );
-}
-
-RequesterContact.propTypes = {
-    name: PropTypes.string,
-    telephoneNumber: PropTypes.string,
-    onChange: PropTypes.func,
-    hideEditIcon: PropTypes.bool,
-};
-
-RequesterContact.defaultProps = {
-    name: "",
-    telephoneNumber: "",
-    onChange: () => {},
-    hideEditIcon: false,
 };
 
 export default RequesterContact;

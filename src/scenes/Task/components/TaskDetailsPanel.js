@@ -150,23 +150,11 @@ function TaskDetailsPanel(props) {
         try {
             const result = await DataStore.query(models.Task, props.taskId);
             if (!result) throw new Error("Task doesn't exist");
-            if (!result.requesterContact) {
-                await DataStore.save(
-                    models.Task.copyOf(result, (updated) => {
-                        updated.requesterContact = requesterValue;
-                    })
-                );
-            } else {
-                await DataStore.save(
-                    models.Task.copyOf(result, (updated) => {
-                        for (const [key, value] of Object.entries(
-                            requesterValue
-                        )) {
-                            updated.requesterContact[key] = value;
-                        }
-                    })
-                );
-            }
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.requesterContact = requesterValue;
+                })
+            );
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
@@ -216,17 +204,8 @@ function TaskDetailsPanel(props) {
                                 onChange={(value) =>
                                     updateRequesterContact(value)
                                 }
-                                telephoneNumber={
-                                    state.requesterContact
-                                        ? state.requesterContact.telephoneNumber
-                                        : null
-                                }
+                                contact={state.requesterContact}
                                 hideEditIcon={!hasFullPermissions}
-                                name={
-                                    state.requesterContact
-                                        ? state.requesterContact.name
-                                        : null
-                                }
                             />
                             <Divider />
                         </>

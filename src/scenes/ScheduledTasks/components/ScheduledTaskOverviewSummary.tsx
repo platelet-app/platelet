@@ -29,10 +29,9 @@ const ScheduledTaskOverviewSummary: React.FC<ScheduledTaskOverviewProps> = ({
                 scheduledTask.id
             );
             if (existing) {
-                const valueToSave = { ...existing.requesterContact, ...value };
                 await DataStore.save(
                     models.ScheduledTask.copyOf(existing, (updated) => {
-                        updated.requesterContact = valueToSave;
+                        updated.requesterContact = value;
                     })
                 );
             }
@@ -68,16 +67,7 @@ const ScheduledTaskOverviewSummary: React.FC<ScheduledTaskOverviewProps> = ({
                 />
                 <RequesterContact
                     onChange={handleRequesterContactChange}
-                    telephoneNumber={
-                        scheduledTask.requesterContact
-                            ? scheduledTask.requesterContact.telephoneNumber
-                            : null
-                    }
-                    name={
-                        scheduledTask.requesterContact
-                            ? scheduledTask.requesterContact.name
-                            : null
-                    }
+                    contact={scheduledTask.requesterContact || null}
                 />
                 <Box>
                     <Typography>Priority:</Typography>
