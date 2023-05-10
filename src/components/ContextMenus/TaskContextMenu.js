@@ -176,6 +176,7 @@ function TaskContextMenu(props) {
     }
 
     async function onDuplicate(e) {
+        handleClose(e);
         try {
             const { assignment } = await duplicateTask(
                 task,
@@ -190,7 +191,6 @@ function TaskContextMenu(props) {
             console.log(error);
             dispatch(displayErrorNotification("Sorry, something went wrong"));
         }
-        handleClose(e);
     }
 
     const handleClose = (e) => {
