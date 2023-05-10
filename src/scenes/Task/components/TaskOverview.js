@@ -3,13 +3,14 @@ import { PropTypes } from "prop-types";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import TaskDetailsPanel from "./TaskDetailsPanel";
+import * as models from "../../../models";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { makeStyles } from "tss-react/mui";
 import DeliverableDetails from "./DeliverableDetails";
 import TaskActions from "./TaskActions";
 import { Hidden, Stack } from "@mui/material";
-import LocationDetailsPanel from "./LocationDetailsPanel";
+import LocationDetailsPanel from "../../../components/LocationDetailsPanel";
 import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
 import CommentsSection from "../../Comments/CommentsSection";
 
@@ -60,11 +61,13 @@ function TaskOverview({ taskId, isFetching }) {
                 <Grid item className={classes.item}>
                     <Stack direction={"column"} spacing={isSm ? 1 : 3}>
                         <LocationDetailsPanel
+                            taskModel={models.Task}
                             taskId={taskId}
                             locationKey={"pickUpLocation"}
                         />
 
                         <LocationDetailsPanel
+                            taskModel={models.Task}
                             taskId={taskId}
                             locationKey={"dropOffLocation"}
                         />

@@ -6,6 +6,7 @@ import NotFound from "../../../ErrorComponents/NotFound";
 import GetError from "../../../ErrorComponents/GetError";
 import ScheduledTaskOverviewSummary from "./ScheduledTaskOverviewSummary";
 import useModelSubscription from "../../../hooks/useModelSubscription";
+import ScheduledTaskOverviewLocations from "./ScheduledTaskOverviewLocations";
 
 type ScheduledTaskOverviewProps = {
     scheduledTaskId: string;
@@ -27,8 +28,13 @@ const ScheduledTaskOverview: React.FC<ScheduledTaskOverviewProps> = ({
         return <NotFound />;
     } else if (state) {
         return (
-            <Grid>
-                <ScheduledTaskOverviewSummary scheduledTask={state} />
+            <Grid container direction="column" spacing={1}>
+                <Grid item>
+                    <ScheduledTaskOverviewSummary scheduledTask={state} />
+                </Grid>
+                <Grid item>
+                    <ScheduledTaskOverviewLocations scheduledTask={state} />
+                </Grid>
             </Grid>
         );
     } else {

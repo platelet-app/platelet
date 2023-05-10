@@ -2,25 +2,30 @@ import LocationDetailAndSelector from "./LocationDetailAndSelector";
 import { GraphQLQuery } from "@aws-amplify/api";
 import React, { useEffect, useRef, useState } from "react";
 import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
-import { dialogCardStyles } from "../styles/DialogCompactStyles";
+import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
-import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
-import * as models from "../../../models";
+import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
+import * as models from "../models";
 import { API, DataStore, graphqlOperation } from "aws-amplify";
+import {
+    PersistentModel,
+    PersistentModelConstructor,
+} from "@aws-amplify/datastore";
 import _ from "lodash";
-import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
-import GetError from "../../../ErrorComponents/GetError";
-import EditModeToggleButton from "../../../components/EditModeToggleButton";
-import * as mutations from "../../../graphql/mutations";
-import * as queries from "../../../graphql/queries";
-import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
-import ConfirmationDialog from "../../../components/ConfirmationDialog";
+import { dataStoreModelSyncedStatusSelector } from "../redux/Selectors";
+import GetError from "../ErrorComponents/GetError";
+import EditModeToggleButton from "./EditModeToggleButton";
+import * as mutations from "../graphql/mutations";
+import * as queries from "../graphql/queries";
+import { useAssignmentRole } from "../hooks/useAssignmentRole";
+import ConfirmationDialog from "./ConfirmationDialog";
 import {
     DeleteLocationMutation,
     GetLocationQuery,
     GetTaskQuery,
+    ScheduledTask,
     UpdateLocationMutation,
-} from "../../../API";
+} from "../API";
 
 export const protectedFields = [
     "id",
@@ -63,19 +68,22 @@ type LocationType = {
     what3words?: string | null;
 };
 
-type LocationDetailsPanelProps = {
-    locationId?: string | null;
+type LocationDetailsPanelProps<T extends models.Task | models.ScheduledTask> = {
     locationKey: "pickUpLocation" | "dropOffLocation";
-    taskId?: string | null;
+    taskId: string;
+    taskModel: PersistentModelConstructor<T>;
+    hasFullPermissionsOverride?: boolean;
 };
 
 type LocationKeyId = "pickUpLocationId" | "dropOffLocationId";
 
-const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
+function LocationDetailsPanel<T extends models.Task | models.ScheduledTask>({
     locationKey,
     taskId,
-}) => {
-    const { classes } = dialogCardStyles();
+    taskModel,
+    hasFullPermissionsOverride,
+}: LocationDetailsPanelProps<T>) {
+    const theme = useTheme();
     const dispatch = useDispatch();
     // I have no idea why the imported selector is undefined here
     // @ts-ignore
@@ -95,7 +103,9 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
         dataStoreModelSyncedStatusSelector
     ).Task;
     const currentUserRole = useAssignmentRole(taskId);
-    const hasFullPermissions = currentUserRole === models.Role.COORDINATOR;
+    const hasFullPermissions =
+        hasFullPermissionsOverride ??
+        currentUserRole === models.Role.COORDINATOR;
     const taskObserver = useRef({ unsubscribe: () => {} });
     const locationObserver = useRef({ unsubscribe: () => {} });
     const initialSetEdit = useRef(false);
@@ -105,14 +115,14 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
         if (!loadedOnce.current) setIsFetching(true);
         if (!taskId) return;
         try {
-            const task = await DataStore.query(models.Task, taskId);
-            if (!task) {
+            const existingTask = await DataStore.query(taskModel, taskId);
+            if (!existingTask) {
                 throw new Error("Task not found");
             }
             taskObserver.current.unsubscribe();
             taskObserver.current = DataStore.observe(
-                models.Task,
-                task.id
+                taskModel,
+                existingTask.id
             ).subscribe(async ({ opType, element }) => {
                 if (opType === "UPDATE") {
                     // datastore weirdness
@@ -147,7 +157,7 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
                     });
                 }
             });
-            const location = task[locationKey] || null;
+            const location = existingTask[locationKey] || null;
             locationObserver.current.unsubscribe();
             if (location) {
                 locationObserver.current = DataStore.observe(
@@ -166,10 +176,12 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
             console.log(err);
             setErrorState(true);
         }
-    }, [locationKey, taskId, locationModelSynced, taskModelsSynced]);
+    }, [locationKey, taskId, taskModel]);
+
     useEffect(() => {
         getLocation();
-    }, [getLocation]);
+    }, [getLocation, locationModelSynced, taskModelsSynced]);
+
     useEffect(
         () => () => {
             taskObserver.current.unsubscribe();
@@ -177,6 +189,7 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
         },
         []
     );
+
     useEffect(() => {
         if (isFetching || !hasFullPermissions) return;
         if (!initialSetEdit.current) {
@@ -191,7 +204,7 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
     async function editPreset(additionalValues?: LocationType) {
         try {
             if (!taskId) throw new Error("No task id");
-            const result = await DataStore.query(models.Task, taskId);
+            const result = await DataStore.query(taskModel, taskId);
             if (!result) throw new Error("Task doesn't exist");
             if (!state) {
                 throw new Error("No location to edit");
@@ -210,8 +223,9 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
                 })
             );
             await DataStore.save(
-                models.Task.copyOf(result, (updated) => {
-                    updated[locationKey] = newLocation;
+                taskModel.copyOf(result, (updated) => {
+                    // @ts-ignore
+                    updated[locationKey as keyof taskModel] = newLocation;
                 })
             );
             return newLocation;
@@ -223,7 +237,7 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
     async function selectPreset(location: models.Location) {
         try {
             if (!taskId) throw new Error("No task id");
-            const result = await DataStore.query(models.Task, taskId);
+            const result = await DataStore.query(taskModel, taskId);
             if (!result) throw new Error("Task doesn't exist");
             if (!location) return;
             if (state && !confirmReplaceSelection) {
@@ -232,7 +246,8 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
             } else {
                 if (result && location) {
                     await DataStore.save(
-                        models.Task.copyOf(result, (updated) => {
+                        taskModel.copyOf(result, (updated) => {
+                            // @ts-ignore
                             updated[locationKey] = location;
                         })
                     );
@@ -252,7 +267,7 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
     async function clearLocation() {
         try {
             if (!taskId) throw new Error("No task id");
-            const result = await DataStore.query(models.Task, taskId);
+            const result = await DataStore.query(taskModel, taskId);
             if (!result) throw new Error("Task doesn't exist");
             const existingLocation = result[locationKey];
             if (existingLocation) {
@@ -262,7 +277,8 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
                 );
                 if (currentLocation?.listed === 1) {
                     await DataStore.save(
-                        models.Task.copyOf(result, (updated) => {
+                        taskModel.copyOf(result, (updated) => {
+                            // @ts-ignore
                             updated[locationKey] = null;
                         })
                     );
@@ -335,7 +351,6 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
                                         id: currentLocation.id,
                                     },
                                 });
-                                console.log("asfdsadf", getLocation?.data);
                                 const locationVersion =
                                     getLocation?.data?.getLocation?._version;
                                 if (locationVersion) {
@@ -438,11 +453,12 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
             );
             // find the existing task
             if (taskId) {
-                const existingTask = await DataStore.query(models.Task, taskId);
+                const existingTask = await DataStore.query(taskModel, taskId);
                 if (!existingTask) throw new Error("Task doesn't exist");
                 // link to new location
                 await DataStore.save(
-                    models.Task.copyOf(existingTask, (updated) => {
+                    taskModel.copyOf(existingTask, (updated) => {
+                        // @ts-ignore
                         updated[key] = locationResult;
                     })
                 );
@@ -515,13 +531,14 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
                     // find the existing task
                     if (!taskId) throw new Error("No task id");
                     const existingTask = await DataStore.query(
-                        models.Task,
+                        taskModel,
                         taskId
                     );
                     if (!existingTask) throw new Error("Task doesn't exist");
                     // link to new location
                     await DataStore.save(
-                        models.Task.copyOf(existingTask, (updated) => {
+                        taskModel.copyOf(existingTask, (updated) => {
+                            // @ts-ignore
                             updated[key] = locationResult;
                         })
                     );
@@ -561,7 +578,17 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
     } else {
         return (
             <>
-                <Paper className={classes.root}>
+                <Paper
+                    sx={{
+                        padding: "15px",
+                        width: "100%",
+                        maxWidth: 400,
+                        borderRadius: "1em",
+                        [theme.breakpoints.down("sm")]: {
+                            maxWidth: "100%",
+                        },
+                    }}
+                >
                     <Stack
                         direction={"column"}
                         justifyContent={"space-between"}
@@ -613,6 +640,6 @@ const LocationDetailsPanel: React.FC<LocationDetailsPanelProps> = ({
             </>
         );
     }
-};
+}
 
 export default LocationDetailsPanel;
