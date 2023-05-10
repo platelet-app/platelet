@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import TaskDetailsEstablishment from "./TaskDetailsEstablishment";
+import TaskDetailsEstablishment from "../../../components/TaskDetailsEstablishment";
 import Typography from "@mui/material/Typography";
 import LabelItemPair from "../../../components/LabelItemPair";
 import PrioritySelect from "../../../components/PrioritySelect";
@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
-import RequesterContact from "./RequesterContact";
+import RequesterContact from "../../../components/RequesterContact";
 import { userRoles } from "../../../apiConsts";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 import RiderResponsibilityDetail from "./RiderResponsibilityDetail";

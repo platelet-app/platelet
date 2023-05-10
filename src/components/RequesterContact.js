@@ -7,13 +7,13 @@ import {
     Tooltip,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import ClickableTextField from "../../../components/ClickableTextField";
-import LabelItemPair from "../../../components/LabelItemPair";
+import ClickableTextField from "./ClickableTextField";
+import LabelItemPair from "./LabelItemPair";
 import PropTypes from "prop-types";
-import { makeStyles } from 'tss-react/mui';
-import { useTheme } from '@mui/styles';
-import ConfirmationDialog from "../../../components/ConfirmationDialog";
-import { TextFieldControlled } from "../../../components/TextFields";
+import { makeStyles } from "tss-react/mui";
+import { useTheme } from "@mui/styles";
+import ConfirmationDialog from "./ConfirmationDialog";
+import { TextFieldControlled } from "./TextFields";
 
 const useStyles = makeStyles()({
     inset: {

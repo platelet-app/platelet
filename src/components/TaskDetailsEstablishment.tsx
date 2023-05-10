@@ -1,5 +1,5 @@
 import React from "react";
-import LabelItemPair from "../../../components/LabelItemPair";
+import LabelItemPair from "./LabelItemPair";
 import {
     Stack,
     IconButton,
@@ -10,16 +10,16 @@ import {
     useMediaQuery,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import ConfirmationDialog from "../../../components/ConfirmationDialog";
-import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
-import * as models from "../../../models";
+import ConfirmationDialog from "./ConfirmationDialog";
+import FavouriteLocationsSelect from "./FavouriteLocationsSelect";
+import * as models from "../models";
 import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
-import { tenantIdSelector } from "../../../redux/Selectors";
-import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import { tenantIdSelector } from "../redux/Selectors";
+import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
 
 type TaskDetailsEstablishmentProps = {
-    value: models.Location | null;
+    value?: models.Location | null;
     onChange: (location: models.Location) => void;
 };
 

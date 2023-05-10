@@ -7,6 +7,8 @@ import ScheduledTaskCard from "./components/ScheduledTaskCard";
 import { useSelector } from "react-redux";
 import { getWhoami } from "../../redux/Selectors";
 import * as models from "../../models";
+import { Link } from "react-router-dom";
+import { encodeUUID } from "../../utilities";
 
 const ScheduledTasks = () => {
     const { state, isFetching, error } = useScheduledTasks();
@@ -35,9 +37,20 @@ const ScheduledTasks = () => {
                         label="Add scheduled task"
                     />
                 )}
-                {state.map((task) => (
-                    <ScheduledTaskCard key={task.id} task={task} />
-                ))}
+                {state.map((task) => {
+                    const linkEncodedId = encodeUUID(task.id);
+                    return (
+                        <Link
+                            style={{
+                                textDecoration: "inherit",
+                                color: "inherit",
+                            }}
+                            to={`/scheduled/${linkEncodedId}`}
+                        >
+                            <ScheduledTaskCard key={task.id} task={task} />
+                        </Link>
+                    );
+                })}
             </Stack>
         );
     }
