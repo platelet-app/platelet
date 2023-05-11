@@ -110,7 +110,7 @@ describe("DeliverableDetails", () => {
     it("renders", async () => {
         await saveMockAvailableDeliverables();
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<DeliverableDetails />, { preloadedState });
+        render(<DeliverableDetails taskModelType="Task" />, { preloadedState });
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
@@ -120,7 +120,10 @@ describe("DeliverableDetails", () => {
         await saveMockAvailableDeliverables();
         await DataStore.save(fakeTask);
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<DeliverableDetails taskId={fakeTask.id} />, { preloadedState });
+        render(
+            <DeliverableDetails taskModelType="Task" taskId={fakeTask.id} />,
+            { preloadedState }
+        );
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
@@ -145,7 +148,10 @@ describe("DeliverableDetails", () => {
         await DataStore.save(fakeTask);
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
-        render(<DeliverableDetails taskId={fakeTask.id} />, { preloadedState });
+        render(
+            <DeliverableDetails taskModelType="Task" taskId={fakeTask.id} />,
+            { preloadedState }
+        );
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(2);
@@ -195,7 +201,10 @@ describe("DeliverableDetails", () => {
         );
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
-        render(<DeliverableDetails taskId={fakeTask.id} />, { preloadedState });
+        render(
+            <DeliverableDetails taskModelType="Task" taskId={fakeTask.id} />,
+            { preloadedState }
+        );
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
@@ -241,7 +250,10 @@ describe("DeliverableDetails", () => {
         );
         const querySpy = jest.spyOn(DataStore, "query");
         const deleteSpy = jest.spyOn(DataStore, "delete");
-        render(<DeliverableDetails taskId={fakeTask.id} />, { preloadedState });
+        render(
+            <DeliverableDetails taskModelType="Task" taskId={fakeTask.id} />,
+            { preloadedState }
+        );
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(2);
@@ -267,7 +279,9 @@ describe("DeliverableDetails", () => {
         await saveMockAvailableDeliverables();
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
-        render(<DeliverableDetails taskId={task.id} />, { preloadedState });
+        render(<DeliverableDetails taskModelType="Task" taskId={task.id} />, {
+            preloadedState,
+        });
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
@@ -323,7 +337,10 @@ describe("DeliverableDetails", () => {
             (deliverableType) => deliverableType.tags
         );
         const tagsUnique = existingTags.reduce(tagsReducer, []);
-        render(<DeliverableDetails taskId={fakeTask.id} />, { preloadedState });
+        render(
+            <DeliverableDetails taskModelType="Task" taskId={fakeTask.id} />,
+            { preloadedState }
+        );
         await waitFor(() => {
             expect(querySpy).toHaveBeenNthCalledWith(1, models.Deliverable);
         });
@@ -386,7 +403,10 @@ describe("DeliverableDetails", () => {
         await saveMockAvailableDeliverables();
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
-        render(<DeliverableDetails taskId={fakeTask.id} />, { preloadedState });
+        render(
+            <DeliverableDetails taskModelType="Task" taskId={fakeTask.id} />,
+            { preloadedState }
+        );
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(2);
@@ -414,9 +434,12 @@ describe("DeliverableDetails", () => {
         const task = await DataStore.save(fakeTask);
         await saveMockAvailableDeliverables();
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<DeliverableDetails taskId={fakeTask.id} />, {
-            preloadedState,
-        });
+        render(
+            <DeliverableDetails taskModelType="Task" taskId={fakeTask.id} />,
+            {
+                preloadedState,
+            }
+        );
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
@@ -455,9 +478,12 @@ describe("DeliverableDetails", () => {
             })
         );
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<DeliverableDetails taskId={fakeTask.id} />, {
-            preloadedState,
-        });
+        render(
+            <DeliverableDetails taskModelType="Task" taskId={fakeTask.id} />,
+            {
+                preloadedState,
+            }
+        );
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
@@ -497,9 +523,12 @@ describe("DeliverableDetails", () => {
             })
         );
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<DeliverableDetails taskId={fakeTask.id} />, {
-            preloadedState,
-        });
+        render(
+            <DeliverableDetails taskModelType="Task" taskId={fakeTask.id} />,
+            {
+                preloadedState,
+            }
+        );
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
@@ -560,9 +589,12 @@ describe("DeliverableDetails", () => {
                 items: [mockAssignment],
             },
         };
-        render(<DeliverableDetails taskId={fakeTask.id} />, {
-            preloadedState,
-        });
+        render(
+            <DeliverableDetails taskModelType="Task" taskId={fakeTask.id} />,
+            {
+                preloadedState,
+            }
+        );
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });

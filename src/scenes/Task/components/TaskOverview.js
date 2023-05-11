@@ -71,7 +71,10 @@ function TaskOverview({ taskId, isFetching }) {
                             taskId={taskId}
                             locationKey={"dropOffLocation"}
                         />
-                        <DeliverableDetails taskId={taskId} />
+                        <DeliverableDetails
+                            taskModelType="Task"
+                            taskId={taskId}
+                        />
                         <Hidden mdUp>
                             <TaskAssignmentsPanel taskId={taskId} />
                         </Hidden>
