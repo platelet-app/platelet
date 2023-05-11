@@ -29,8 +29,8 @@ import TaskHistoryTaskRoute from "../scenes/TaskHistory/components/TaskHistoryTa
 const useStyles = makeStyles()((theme, { navIndex, guidedSetupOpen }) => ({
     root: {
         marginRight: guidedSetupOpen && navIndex === "dashboard" ? 0 : "auto",
-        marginLeft: navIndex === "dashboard" ? 0 : 200,
-        paddingTop: 10,
+        marginLeft: navIndex === "dashboard" ? 0 : 20,
+        paddingTop: 20,
         paddingBottom: 10,
         [theme.breakpoints.down("md")]: {
             paddingTop: 5,
