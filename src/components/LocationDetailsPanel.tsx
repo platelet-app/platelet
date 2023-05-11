@@ -7,10 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
 import * as models from "../models";
 import { API, DataStore, graphqlOperation } from "aws-amplify";
-import {
-    PersistentModel,
-    PersistentModelConstructor,
-} from "@aws-amplify/datastore";
+import { PersistentModelConstructor } from "@aws-amplify/datastore";
 import _ from "lodash";
 import { dataStoreModelSyncedStatusSelector } from "../redux/Selectors";
 import GetError from "../ErrorComponents/GetError";
@@ -23,7 +20,6 @@ import {
     DeleteLocationMutation,
     GetLocationQuery,
     GetTaskQuery,
-    ScheduledTask,
     UpdateLocationMutation,
 } from "../API";
 
@@ -36,20 +32,6 @@ export const protectedFields = [
     "createdAt",
     "tenantId",
     "archived",
-];
-
-const locationClearFields = [
-    "ward",
-    "line1",
-    "line2",
-    "line3",
-    "town",
-    "county",
-    "state",
-    "country",
-    "postcode",
-    "what3words",
-    "contact",
 ];
 
 type LocationType = {
@@ -77,12 +59,12 @@ type LocationDetailsPanelProps<T extends models.Task | models.ScheduledTask> = {
 
 type LocationKeyId = "pickUpLocationId" | "dropOffLocationId";
 
-function LocationDetailsPanel<T extends models.Task | models.ScheduledTask>({
+const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     locationKey,
     taskId,
     taskModel,
     hasFullPermissionsOverride,
-}: LocationDetailsPanelProps<T>) {
+}: LocationDetailsPanelProps<T>) => {
     const theme = useTheme();
     const dispatch = useDispatch();
     // I have no idea why the imported selector is undefined here
@@ -640,6 +622,6 @@ function LocationDetailsPanel<T extends models.Task | models.ScheduledTask>({
             </>
         );
     }
-}
+};
 
 export default LocationDetailsPanel;
