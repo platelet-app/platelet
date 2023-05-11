@@ -168,7 +168,7 @@ const AdminAddScheduledTask: React.FC = () => {
             );
             await Promise.all(deliverableModels.map((d) => DataStore.save(d)));
             const base32 = encodeUUID(result.id);
-            const viewLink = `/admin/scheduled-tasks/${base32}`;
+            const viewLink = `/scheduled/${base32}`;
             dispatch(
                 displayInfoNotification(
                     "Scheduled task added",

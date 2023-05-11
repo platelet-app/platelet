@@ -1,12 +1,12 @@
 import React from "react";
 import * as models from "../../../models";
-import { Grid, Skeleton, Stack, Typography } from "@mui/material";
-import useModelQuery from "../../../hooks/useModelQuery";
+import { Grid, Skeleton } from "@mui/material";
 import NotFound from "../../../ErrorComponents/NotFound";
 import GetError from "../../../ErrorComponents/GetError";
-import ScheduledTaskOverviewSummary from "./ScheduledTaskOverviewSummary";
 import useModelSubscription from "../../../hooks/useModelSubscription";
 import ScheduledTaskOverviewLocations from "./ScheduledTaskOverviewLocations";
+import { useTheme } from "@mui/material/styles";
+import ScheduledTaskOverviewSummaryAndItems from "./ScheduledTaskOverviewSummaryAndItems";
 
 type ScheduledTaskOverviewProps = {
     scheduledTaskId: string;
@@ -19,6 +19,7 @@ const ScheduledTaskOverview: React.FC<ScheduledTaskOverviewProps> = ({
         models.ScheduledTask,
         scheduledTaskId
     );
+    const theme = useTheme();
 
     if (isFetching) {
         return <Skeleton variant="rectangular" height={118} />;
@@ -28,11 +29,31 @@ const ScheduledTaskOverview: React.FC<ScheduledTaskOverviewProps> = ({
         return <NotFound />;
     } else if (state) {
         return (
-            <Grid container direction="column" spacing={1}>
-                <Grid item>
-                    <ScheduledTaskOverviewSummary scheduledTask={state} />
+            <Grid container direction="row" spacing={1}>
+                <Grid
+                    sx={{
+                        width: "100%",
+                        [theme.breakpoints.up("sm")]: {
+                            width: 0,
+                            minWidth: 425,
+                        },
+                    }}
+                    item
+                >
+                    <ScheduledTaskOverviewSummaryAndItems
+                        scheduledTask={state}
+                    />
                 </Grid>
-                <Grid item>
+                <Grid
+                    sx={{
+                        width: "100%",
+                        [theme.breakpoints.up("sm")]: {
+                            width: 0,
+                            minWidth: 425,
+                        },
+                    }}
+                    item
+                >
                     <ScheduledTaskOverviewLocations scheduledTask={state} />
                 </Grid>
             </Grid>

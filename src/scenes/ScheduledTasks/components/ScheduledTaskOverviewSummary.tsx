@@ -1,6 +1,7 @@
 import React from "react";
+import { useTheme } from "@mui/material/styles";
 import * as models from "../../../models";
-import { Box, Divider, Stack, Typography } from "@mui/material";
+import { Box, Divider, Paper, Stack, Typography } from "@mui/material";
 import { PaddedPaper } from "../../../styles/common";
 import TaskDetailsEstablishment from "../../../components/TaskDetailsEstablishment";
 import RequesterContact from "../../../components/RequesterContact";
@@ -58,8 +59,19 @@ const ScheduledTaskOverviewSummary: React.FC<ScheduledTaskOverviewProps> = ({
             console.log(error);
         }
     };
+    const theme = useTheme();
     return (
-        <PaddedPaper maxWidth={500}>
+        <Paper
+            sx={{
+                padding: "15px",
+                width: "100%",
+                maxWidth: 400,
+                borderRadius: "1em",
+                [theme.breakpoints.down("sm")]: {
+                    maxWidth: "100%",
+                },
+            }}
+        >
             <Stack spacing={1} divider={<Divider />}>
                 <TaskDetailsEstablishment
                     value={scheduledTask.establishmentLocation}
@@ -77,7 +89,7 @@ const ScheduledTaskOverviewSummary: React.FC<ScheduledTaskOverviewProps> = ({
                     />
                 </Box>
             </Stack>
-        </PaddedPaper>
+        </Paper>
     );
 };
 

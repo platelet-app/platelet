@@ -11,7 +11,7 @@ const ScheduledTaskOverviewLocations: React.FC<
     ScheduledTaskOverviewLocationsProps
 > = ({ scheduledTask }) => {
     return (
-        <Stack spacing={1}>
+        <Stack spacing={2}>
             <LocationDetailsPanel
                 hasFullPermissionsOverride
                 locationKey="pickUpLocation"
