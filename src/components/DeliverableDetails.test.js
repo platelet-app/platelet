@@ -1,17 +1,15 @@
-import React from "react";
 import { screen, waitFor } from "@testing-library/react";
 import _ from "lodash";
-import { render } from "../../../test-utils";
+import { render } from "../test-utils";
 import DeliverableDetails from "./DeliverableDetails";
 import userEvent from "@testing-library/user-event";
-import { userRoles } from "../../../apiConsts";
-import * as models from "../../../models";
+import * as models from "../models";
 import { DataStore, Predicates } from "aws-amplify";
 
 const preloadedState = {
     tenantId: "tenant-id",
     whoami: {
-        user: { displayName: "Test User", roles: [userRoles.coordinator] },
+        user: { displayName: "Test User", roles: [models.Role.COORDINATOR] },
     },
 };
 
@@ -531,14 +529,14 @@ describe("DeliverableDetails", () => {
         const mockAssignee = await DataStore.save(
             new models.User({
                 name: "John Doe",
-                roles: [userRoles.rider],
+                roles: [models.Role.RIDER],
             })
         );
         const mockAssignment = await DataStore.save(
             new models.TaskAssignee({
                 task,
                 assignee: mockAssignee,
-                role: userRoles.rider,
+                role: models.Role.RIDER,
             })
         );
         await saveMockAvailableDeliverables();
@@ -554,7 +552,7 @@ describe("DeliverableDetails", () => {
         );
         const querySpy = jest.spyOn(DataStore, "query");
         const preloadedState = {
-            roleView: userRoles.rider,
+            roleView: models.Role.RIDER,
             whoami: { user: mockAssignee },
             taskAssigneesReducer: {
                 ready: true,

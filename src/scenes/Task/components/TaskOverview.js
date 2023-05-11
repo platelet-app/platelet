@@ -7,7 +7,7 @@ import * as models from "../../../models";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { makeStyles } from "tss-react/mui";
-import DeliverableDetails from "./DeliverableDetails";
+import DeliverableDetails from "../../../components/DeliverableDetails";
 import TaskActions from "./TaskActions";
 import { Hidden, Stack } from "@mui/material";
 import LocationDetailsPanel from "../../../components/LocationDetailsPanel";
