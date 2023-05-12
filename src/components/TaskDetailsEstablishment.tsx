@@ -42,6 +42,7 @@ const TaskDetailsEstablishment: React.FC<TaskDetailsEstablishmentProps> = ({
         if (!tenantId) {
             console.log("tenantId is required");
             dispatch(displayErrorNotification("Sorry, something went wrong"));
+            return;
         }
         if (notListedMode && notListedName) {
             const newEstablishment = new models.Location({

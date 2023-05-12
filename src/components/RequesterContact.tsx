@@ -92,15 +92,14 @@ const RequesterContact: React.FC<RequesterContactProps> = ({
                             disabled={isSm || !editMode}
                             onFinished={(value) => {
                                 const result = { ...state, [key]: value };
+                                setState(result);
                                 onChange(result);
                             }}
                             label={label}
                             value={
-                                contact
-                                    ? contact[
-                                          key as keyof models.AddressAndContactDetails
-                                      ]
-                                    : ""
+                                state[
+                                    key as keyof models.AddressAndContactDetails
+                                ]
                             }
                         />
                     </LabelItemPair>
