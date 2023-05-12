@@ -2,7 +2,6 @@ import React from "react";
 import { useTheme } from "@mui/material/styles";
 import * as models from "../../../models";
 import { Box, Divider, Paper, Stack, Typography } from "@mui/material";
-import { PaddedPaper } from "../../../styles/common";
 import TaskDetailsEstablishment from "../../../components/TaskDetailsEstablishment";
 import RequesterContact from "../../../components/RequesterContact";
 import PrioritySelect from "../../../components/PrioritySelect";
@@ -14,12 +13,28 @@ type ScheduledTaskOverviewProps = {
     scheduledTask: models.ScheduledTask;
 };
 
+const errorMessage = "Sorry, something went wrong";
+
 const ScheduledTaskOverviewSummary: React.FC<ScheduledTaskOverviewProps> = ({
     scheduledTask,
 }) => {
     const dispatch = useDispatch();
-    const handleEstablishmentChange = (location: models.Location) => {
-        console.log(location);
+    const handleEstablishmentChange = async (location: models.Location) => {
+        try {
+            const result = await DataStore.query(
+                models.ScheduledTask,
+                scheduledTask.id
+            );
+            if (!result) throw new Error("ScheduledTask doesn't exist");
+            await DataStore.save(
+                models.ScheduledTask.copyOf(result, (updated) => {
+                    updated.establishmentLocation = location;
+                })
+            );
+        } catch (error) {
+            console.log(error);
+            dispatch(displayErrorNotification(errorMessage));
+        }
     };
     const handleRequesterContactChange = async (
         value: models.AddressAndContactDetails
@@ -37,7 +52,7 @@ const ScheduledTaskOverviewSummary: React.FC<ScheduledTaskOverviewProps> = ({
                 );
             }
         } catch (error) {
-            dispatch(displayErrorNotification("Sorry, something went wrong"));
+            dispatch(displayErrorNotification(errorMessage));
             console.log(error);
         }
     };
@@ -55,7 +70,7 @@ const ScheduledTaskOverviewSummary: React.FC<ScheduledTaskOverviewProps> = ({
                 );
             }
         } catch (error) {
-            dispatch(displayErrorNotification("Sorry, something went wrong"));
+            dispatch(displayErrorNotification(errorMessage));
             console.log(error);
         }
     };
