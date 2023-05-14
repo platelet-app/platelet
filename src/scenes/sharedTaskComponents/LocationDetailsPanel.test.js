@@ -1,13 +1,13 @@
 import React from "react";
 import LocationDetailsPanel from "./LocationDetailsPanel";
 import { DataStore, API } from "aws-amplify";
-import { render } from "../test-utils";
-import { act, screen, waitFor } from "@testing-library/react";
+import { render } from "../../test-utils";
+import { screen, waitFor } from "@testing-library/react";
 import * as amplify from "aws-amplify";
 import userEvent from "@testing-library/user-event";
-import * as models from "../models";
+import * as models from "../../models";
 import _ from "lodash";
-import { protectedFields, userRoles } from "../apiConsts";
+import { protectedFields, userRoles } from "../../apiConsts";
 import { v4 as uuidv4 } from "uuid";
 
 const errorMessage = "Sorry, something went wrong";

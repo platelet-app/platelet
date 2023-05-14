@@ -1,7 +1,7 @@
 import { Stack } from "@mui/material";
 import React from "react";
 import * as models from "../../../models";
-import DeliverableDetails from "../../../components/DeliverableDetails";
+import DeliverableDetails from "../../sharedTaskComponents/DeliverableDetails";
 import ScheduledTaskOverviewSummary from "./ScheduledTaskOverviewSummary";
 
 type ScheduledTaskOverviewSummaryAndItemsProps = {

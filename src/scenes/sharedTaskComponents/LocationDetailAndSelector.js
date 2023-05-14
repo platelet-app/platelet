@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
-import LabelItemPair from "./LabelItemPair";
-import ClickableTextField from "./ClickableTextField";
-import FavouriteLocationsSelect from "./FavouriteLocationsSelect";
+import LabelItemPair from "../../components/LabelItemPair";
+import ClickableTextField from "../../components/ClickableTextField";
+import FavouriteLocationsSelect from "../../components/FavouriteLocationsSelect";
 import { makeStyles } from "tss-react/mui";
 import Divider from "@mui/material/Divider";
 import { Box, Stack, Tooltip } from "@mui/material";
-import { ThemedLink } from "../styles/common";
-import { encodeUUID } from "../utilities";
-import ClearButtonWithConfirmation from "./ClearButtonWithConfirmation";
-import CollapsibleToggle from "./CollapsibleToggle";
+import { ThemedLink } from "../../styles/common";
+import { encodeUUID } from "../../utilities";
+import ClearButtonWithConfirmation from "../../components/ClearButtonWithConfirmation";
+import CollapsibleToggle from "../../components/CollapsibleToggle";
 
 const useStyles = makeStyles()((theme) => ({
     root: {},

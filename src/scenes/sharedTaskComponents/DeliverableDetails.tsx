@@ -1,16 +1,16 @@
 import React, { useRef, useState } from "react";
 import { useTheme } from "@mui/material/styles";
-import DeliverableGridSelect from "../scenes/Deliverables/DeliverableGridSelect";
+import DeliverableGridSelect from "../Deliverables/DeliverableGridSelect";
 import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
-import EditModeToggleButton from "./EditModeToggleButton";
+import EditModeToggleButton from "../../components/EditModeToggleButton";
 import { DataStore } from "aws-amplify";
-import * as models from "../models";
-import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
+import * as models from "../../models";
+import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { useDispatch } from "react-redux";
 import _ from "lodash";
-import GetError from "../ErrorComponents/GetError";
-import { useAssignmentRole } from "../hooks/useAssignmentRole";
-import useTaskDeliverables from "../hooks/useTaskDeliverables";
+import GetError from "../../ErrorComponents/GetError";
+import { useAssignmentRole } from "../../hooks/useAssignmentRole";
+import useTaskDeliverables from "../../hooks/useTaskDeliverables";
 
 type DeliverableDetailsProps = {
     taskId: string;

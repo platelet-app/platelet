@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import ClearButtonWithConfirmation from "./ClearButtonWithConfirmation";
-import FavouriteLocationsSelect from "./FavouriteLocationsSelect";
+import ClearButtonWithConfirmation from "../../components/ClearButtonWithConfirmation";
+import FavouriteLocationsSelect from "../../components/FavouriteLocationsSelect";
 import {
     Button,
     FormControlLabel,
@@ -10,12 +10,12 @@ import {
     Typography,
     useMediaQuery,
 } from "@mui/material";
-import ConfirmationDialog from "./ConfirmationDialog";
-import * as models from "../models";
+import ConfirmationDialog from "../../components/ConfirmationDialog";
+import * as models from "../../models";
 import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
-import { tenantIdSelector } from "../redux/Selectors";
-import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
+import { tenantIdSelector } from "../../redux/Selectors";
+import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 
 type EstablishmentDetailsProps = {
     value: models.Location | null;

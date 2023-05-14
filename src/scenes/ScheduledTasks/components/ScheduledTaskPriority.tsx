@@ -1,6 +1,6 @@
 import React from "react";
 import * as models from "../../../models";
-import PrioritySelect from "../../../components/PrioritySelect";
+import PrioritySelect from "../../sharedTaskComponents/PrioritySelect";
 import { Stack, Typography } from "@mui/material";
 
 type ScheduledTaskPriorityProps = {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Chip, Stack } from "@mui/material";
-import * as models from "../models";
+import * as models from "../../models";
 
 type PrioritySelectProps = {
     priority?: models.Priority | null;

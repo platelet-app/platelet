@@ -1,7 +1,7 @@
 import { Stack, Typography } from "@mui/material";
 import React from "react";
 import { ContactForm } from "../../../components/ContactForm";
-import EstablishmentDetails from "../../../components/EstablishmentDetails";
+import EstablishmentDetails from "../../sharedTaskComponents/EstablishmentDetails";
 import * as models from "../../../models";
 
 type ScheduledTaskCallerDetailsProps = {

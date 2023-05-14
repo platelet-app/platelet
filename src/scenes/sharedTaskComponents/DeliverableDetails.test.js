@@ -1,9 +1,8 @@
 import { screen, waitFor } from "@testing-library/react";
-import _ from "lodash";
-import { render } from "../test-utils";
+import { render } from "../../test-utils";
 import DeliverableDetails from "./DeliverableDetails";
 import userEvent from "@testing-library/user-event";
-import * as models from "../models";
+import * as models from "../../models";
 import { DataStore, Predicates } from "aws-amplify";
 
 const preloadedState = {

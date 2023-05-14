@@ -4,24 +4,24 @@ import React, { useEffect, useRef, useState } from "react";
 import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
-import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
-import * as models from "../models";
+import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
+import * as models from "../../models";
 import { API, DataStore, graphqlOperation } from "aws-amplify";
 import { PersistentModelConstructor } from "@aws-amplify/datastore";
 import _ from "lodash";
-import { dataStoreModelSyncedStatusSelector } from "../redux/Selectors";
-import GetError from "../ErrorComponents/GetError";
-import EditModeToggleButton from "./EditModeToggleButton";
-import * as mutations from "../graphql/mutations";
-import * as queries from "../graphql/queries";
-import { useAssignmentRole } from "../hooks/useAssignmentRole";
-import ConfirmationDialog from "./ConfirmationDialog";
+import { dataStoreModelSyncedStatusSelector } from "../../redux/Selectors";
+import GetError from "../../ErrorComponents/GetError";
+import EditModeToggleButton from "../../components/EditModeToggleButton";
+import * as mutations from "../../graphql/mutations";
+import * as queries from "../../graphql/queries";
+import { useAssignmentRole } from "../../hooks/useAssignmentRole";
+import ConfirmationDialog from "../../components/ConfirmationDialog";
 import {
     DeleteLocationMutation,
     GetLocationQuery,
     GetTaskQuery,
     UpdateLocationMutation,
-} from "../API";
+} from "../../API";
 
 export const protectedFields = [
     "id",

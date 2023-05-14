@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import * as models from "../models";
+import React, { useEffect } from "react";
+import * as models from "../../models";
 import {
     useMediaQuery,
     Stack,
@@ -8,12 +8,12 @@ import {
     Tooltip,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import ClickableTextField from "./ClickableTextField";
-import LabelItemPair from "./LabelItemPair";
+import ClickableTextField from "../../components/ClickableTextField";
+import LabelItemPair from "../../components/LabelItemPair";
 import { makeStyles } from "tss-react/mui";
 import { useTheme } from "@mui/material/styles";
-import ConfirmationDialog from "./ConfirmationDialog";
-import { TextFieldControlled } from "./TextFields";
+import ConfirmationDialog from "../../components/ConfirmationDialog";
+import { TextFieldControlled } from "../../components/TextFields";
 const useStyles = makeStyles()({
     inset: {
         marginLeft: 20,

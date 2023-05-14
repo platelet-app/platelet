@@ -1,6 +1,6 @@
 import { Stack } from "@mui/material";
 import React from "react";
-import LocationDetailsPanel from "../../../components/LocationDetailsPanel";
+import LocationDetailsPanel from "../../sharedTaskComponents/LocationDetailsPanel";
 import * as models from "../../../models";
 
 type ScheduledTaskOverviewLocationsProps = {
