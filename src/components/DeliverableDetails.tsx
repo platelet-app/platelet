@@ -54,7 +54,7 @@ const DeliverableDetails: React.FC<DeliverableDetailsProps> = ({
                     existing.id
                 );
                 if (existingDeliverable) {
-                    const { id, updatedAt, createdAt, ...rest } = value;
+                    const { id, updatedAt, createdAt, label, ...rest } = value;
                     const updateDeliverable = await DataStore.save(
                         models.Deliverable.copyOf(
                             existingDeliverable,
@@ -72,7 +72,7 @@ const DeliverableDetails: React.FC<DeliverableDetailsProps> = ({
                 }
             } else {
                 setIsPosting(true);
-                const { id, ...rest } = value;
+                const { id, updatedAt, createdAt, label, ...rest } = value;
                 const deliverableType = await DataStore.query(
                     models.DeliverableType,
                     id
