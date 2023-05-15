@@ -400,6 +400,7 @@ enum TaskStatus {
   REJECTED
   ABANDONED
   COMPLETED
+  PENDING
 }
 
 enum Priority {

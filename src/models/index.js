@@ -18,7 +18,8 @@ const TaskStatus = {
   "CANCELLED": "CANCELLED",
   "REJECTED": "REJECTED",
   "ABANDONED": "ABANDONED",
-  "COMPLETED": "COMPLETED"
+  "COMPLETED": "COMPLETED",
+  "PENDING": "PENDING"
 };
 
 const Priority = {

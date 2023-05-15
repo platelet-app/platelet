@@ -2324,7 +2324,8 @@ export const schema = {
                 "CANCELLED",
                 "REJECTED",
                 "ABANDONED",
-                "COMPLETED"
+                "COMPLETED",
+                "PENDING"
             ]
         },
         "Priority": {

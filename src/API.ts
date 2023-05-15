@@ -435,6 +435,7 @@ export enum TaskStatus {
   REJECTED = "REJECTED",
   ABANDONED = "ABANDONED",
   COMPLETED = "COMPLETED",
+  PENDING = "PENDING",
 }
 
 

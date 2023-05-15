@@ -18,7 +18,8 @@ export enum TaskStatus {
   CANCELLED = "CANCELLED",
   REJECTED = "REJECTED",
   ABANDONED = "ABANDONED",
-  COMPLETED = "COMPLETED"
+  COMPLETED = "COMPLETED",
+  PENDING = "PENDING"
 }
 
 export enum Priority {
