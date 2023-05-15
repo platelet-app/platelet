@@ -154,7 +154,7 @@ const createNewTask = async (scheduledTask) => {
             dropOffLocationId,
             establishmentLocationId,
             dateCreated,
-            status: "NEW",
+            status: "PENDING",
             archived: 0,
         },
     };
