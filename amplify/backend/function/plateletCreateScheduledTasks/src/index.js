@@ -108,6 +108,22 @@ const listScheduledTasks = /* GraphQL */ `
                         unit
                     }
                 }
+                requesterContact {
+                    name
+                    telephoneNumber
+                    mobileNumber
+                    emailAddress
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                }
                 priority
                 disabled
             }
@@ -176,6 +192,7 @@ const createNewTask = async (scheduledTask) => {
         pickUpLocation,
         dropOffLocation,
         establishmentLocation,
+        requesterContact,
         deliverables,
         tenantId,
     } = scheduledTask;
@@ -195,6 +212,7 @@ const createNewTask = async (scheduledTask) => {
         dropOffLocationId = await createUnlistedLocation(dropOffLocation);
     }
     if (establishmentLocation?.listed === 1) {
+        console.log("ESTABLISHMENT LOCATION", dropOffLocation);
         establishmentLocationId = establishmentLocation.id;
     } else if (establishmentLocation) {
         establishmentLocationId = await createUnlistedLocation(
@@ -208,6 +226,7 @@ const createNewTask = async (scheduledTask) => {
         input: {
             priority,
             tenantId,
+            requesterContact,
             pickUpLocationId,
             dropOffLocationId,
             establishmentLocationId,

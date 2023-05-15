@@ -97,6 +97,22 @@ exports[`plateletCreateScheduledTasks create some scheduled tasks 1`] = `
                         unit
                     }
                 }
+                requesterContact {
+                    name
+                    telephoneNumber
+                    mobileNumber
+                    emailAddress
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                }
                 priority
                 disabled
             }
@@ -150,6 +166,7 @@ exports[`plateletCreateScheduledTasks create some scheduled tasks 1`] = `
             "establishmentLocationId": "establishmentLocationId",
             "pickUpLocationId": "pickUpLocationId",
             "priority": "MEDIUM",
+            "requesterContact": undefined,
             "status": "PENDING",
             "tenantId": "tenantId",
           },
