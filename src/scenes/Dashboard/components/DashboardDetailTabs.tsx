@@ -12,7 +12,15 @@ import {
     setRoleView,
 } from "../../../redux/Actions";
 import TaskFilterTextField from "../../../components/TaskFilterTextfield";
-import { Chip, Fab, FormControl, Hidden, Select, Stack } from "@mui/material";
+import {
+    Badge,
+    Chip,
+    Fab,
+    FormControl,
+    Hidden,
+    Select,
+    Stack,
+} from "@mui/material";
 import { useTheme, useMediaQuery } from "@mui/material";
 import {
     dashboardFilteredUserSelector,
@@ -24,6 +32,7 @@ import {
 } from "../../../redux/Selectors";
 import { clearDashboardFilter } from "../../../redux/dashboardFilter/DashboardFilterActions";
 import * as models from "../../../models";
+import useTaskObserveQueryByStatus from "../../../hooks/useTaskObserveQueryByStatus";
 
 type DashboardDetailTabsProps = {
     disableAddButton?: boolean;
@@ -43,17 +52,19 @@ const DashboardDetailTabs: React.FC<DashboardDetailTabsProps> = ({
     const isMd = useMediaQuery(theme.breakpoints.down("md"));
     const dashboardTabIndex = useSelector(dashboardTabIndexSelector);
 
+    const pendingTasks = useTaskObserveQueryByStatus(models.TaskStatus.PENDING);
+    const pendingLength = pendingTasks?.state?.length || 0;
+
     const handleChange = (newValue: number) => {
         dispatch(setDashboardTabIndex(newValue));
     };
 
     const tabs = (
-        <Stack sx={{ padding: 0.5 }} spacing={isSm ? 1 : 2} direction="row">
+        <Stack spacing={isSm ? 0.5 : 1} direction="row">
             <Chip
                 key="dashboard-tab-0"
                 data-testid="dashboard-tab-inprogress"
                 aria-label="Dashboard in Progress"
-                sx={{ padding: 1 }}
                 label="IN PROGRESS"
                 color={dashboardTabIndex === 0 ? "primary" : "default"}
                 onClick={() => handleChange(0)}
@@ -62,11 +73,26 @@ const DashboardDetailTabs: React.FC<DashboardDetailTabsProps> = ({
                 key="dashboard-tab-1"
                 data-testid="dashboard-tab-completed"
                 aria-label="Dashboard Completed"
-                sx={{ padding: 1 }}
                 onClick={() => handleChange(1)}
                 color={dashboardTabIndex === 1 ? "primary" : "default"}
                 label="COMPLETED"
             />
+            {roleView !== "RIDER" && (
+                <Badge
+                    invisible={pendingLength === 0}
+                    badgeContent={pendingLength}
+                    color="error"
+                >
+                    <Chip
+                        key="dashboard-tab-2"
+                        data-testid="dashboard-tab-pending"
+                        aria-label="Dashboard Pending"
+                        onClick={() => handleChange(2)}
+                        color={dashboardTabIndex === 2 ? "primary" : "default"}
+                        label="PENDING"
+                    />
+                </Badge>
+            )}
         </Stack>
     );
     const clearAllSelectedItems = () => {
@@ -129,78 +155,85 @@ const DashboardDetailTabs: React.FC<DashboardDetailTabsProps> = ({
                     {["ALL", models.Role.COORDINATOR].includes(roleView) &&
                         addClearButton}
                 </Hidden>
-                <FormControl variant="outlined">
-                    <Select
-                        sx={{
-                            right: 5,
-                            borderRadius: 2,
-                            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "orange",
-                            },
-                            "&:hover .MuiOutlinedInput-notchedOutline": {
-                                borderColor: "orange",
-                            },
-                        }}
-                        disabled={guidedSetupOpen}
-                        size="small"
-                        data-testId="role-menu"
-                        value={roleView}
-                    >
-                        {whoami.roles.includes(models.Role.COORDINATOR) && (
-                            <MenuItem
-                                value="ALL"
-                                onClick={() => {
-                                    if (roleView !== "ALL") {
-                                        dispatch(setRoleView("ALL"));
-                                        saveDashboardRoleMode("ALL");
-                                        clearAllSelectedItems();
-                                    }
-                                }}
-                            >
-                                ALL
-                            </MenuItem>
-                        )}
-                        {whoami.roles.includes(models.Role.COORDINATOR) && (
-                            <MenuItem
-                                value={models.Role.COORDINATOR}
-                                onClick={() => {
-                                    if (roleView !== models.Role.COORDINATOR) {
-                                        dispatch(
-                                            setRoleView(models.Role.COORDINATOR)
-                                        );
-                                        saveDashboardRoleMode(
-                                            models.Role.COORDINATOR
-                                        );
-                                        clearAllSelectedItems();
-                                    }
-                                }}
-                            >
-                                {isMd ? "COORD" : "COORDINATOR"}
-                            </MenuItem>
-                        )}
-                        {whoami.roles.includes(models.Role.RIDER) && (
-                            <MenuItem
-                                value={models.Role.RIDER}
-                                onClick={() => {
-                                    if (roleView !== models.Role.RIDER) {
-                                        dispatch(
-                                            setRoleView(models.Role.RIDER)
-                                        );
-                                        dispatch(
-                                            setDashboardFilteredUser(null)
-                                        );
-                                        saveDashboardRoleMode(
-                                            models.Role.RIDER
-                                        );
-                                        clearAllSelectedItems();
-                                    }
-                                }}
-                            >
-                                RIDER
-                            </MenuItem>
-                        )}
-                    </Select>
-                </FormControl>
+                {dashboardTabIndex !== 2 && (
+                    <FormControl variant="outlined">
+                        <Select
+                            sx={{
+                                right: 5,
+                                borderRadius: 2,
+                                "&.Mui-focused .MuiOutlinedInput-notchedOutline":
+                                    {
+                                        borderColor: "orange",
+                                    },
+                                "&:hover .MuiOutlinedInput-notchedOutline": {
+                                    borderColor: "orange",
+                                },
+                            }}
+                            disabled={guidedSetupOpen}
+                            size="small"
+                            data-testId="role-menu"
+                            value={roleView}
+                        >
+                            {whoami.roles.includes(models.Role.COORDINATOR) && (
+                                <MenuItem
+                                    value="ALL"
+                                    onClick={() => {
+                                        if (roleView !== "ALL") {
+                                            dispatch(setRoleView("ALL"));
+                                            saveDashboardRoleMode("ALL");
+                                            clearAllSelectedItems();
+                                        }
+                                    }}
+                                >
+                                    ALL
+                                </MenuItem>
+                            )}
+                            {whoami.roles.includes(models.Role.COORDINATOR) && (
+                                <MenuItem
+                                    value={models.Role.COORDINATOR}
+                                    onClick={() => {
+                                        if (
+                                            roleView !== models.Role.COORDINATOR
+                                        ) {
+                                            dispatch(
+                                                setRoleView(
+                                                    models.Role.COORDINATOR
+                                                )
+                                            );
+                                            saveDashboardRoleMode(
+                                                models.Role.COORDINATOR
+                                            );
+                                            clearAllSelectedItems();
+                                        }
+                                    }}
+                                >
+                                    {isMd ? "COORD" : "COORDINATOR"}
+                                </MenuItem>
+                            )}
+                            {whoami.roles.includes(models.Role.RIDER) && (
+                                <MenuItem
+                                    value={models.Role.RIDER}
+                                    onClick={() => {
+                                        if (roleView !== models.Role.RIDER) {
+                                            dispatch(
+                                                setRoleView(models.Role.RIDER)
+                                            );
+                                            dispatch(
+                                                setDashboardFilteredUser(null)
+                                            );
+                                            saveDashboardRoleMode(
+                                                models.Role.RIDER
+                                            );
+                                            clearAllSelectedItems();
+                                        }
+                                    }}
+                                >
+                                    RIDER
+                                </MenuItem>
+                            )}
+                        </Select>
+                    </FormControl>
+                )}
             </Stack>
         </Stack>
     );

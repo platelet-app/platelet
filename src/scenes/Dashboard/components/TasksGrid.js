@@ -60,6 +60,20 @@ function TasksGrid(props) {
         ? [...props.excludeColumnList, models.TaskStatus.NEW]
         : props.excludeColumnList;
 
+    const columnCount = [
+        [models.TaskStatus.NEW],
+        [models.TaskStatus.ACTIVE],
+        [models.TaskStatus.PICKED_UP],
+        [models.TaskStatus.DROPPED_OFF],
+        [models.TaskStatus.COMPLETED],
+        [models.TaskStatus.CANCELLED],
+        [models.TaskStatus.ABANDONED],
+        [models.TaskStatus.REJECTED],
+        [models.TaskStatus.PENDING],
+    ].filter(
+        (column) => _.intersection(excludeList, column).length === 0
+    ).length;
+
     return (
         <Grid
             container
@@ -89,6 +103,7 @@ function TasksGrid(props) {
                             <Grid item key={title} className={classes.column}>
                                 <TasksGridColumn
                                     title={title}
+                                    columnCount={columnCount}
                                     onAddTaskClick={props.onAddTaskClick}
                                     taskKey={taskKey}
                                     showTasks={props.showTaskIds}

@@ -96,6 +96,35 @@ function Dashboard() {
     }, [dispatch, whoami.id, whoami.roles]);
     useEffect(setInitialRoleView, [whoami, setInitialRoleView]);
 
+    let excludeColumnList = [
+        roleView === userRoles.rider ? tasksStatus.new : "",
+        tasksStatus.completed,
+        tasksStatus.cancelled,
+        tasksStatus.abandoned,
+        tasksStatus.rejected,
+        tasksStatus.pending,
+    ];
+    if (dashboardTabIndex === 1) {
+        excludeColumnList = [
+            tasksStatus.new,
+            tasksStatus.active,
+            tasksStatus.pickedUp,
+            tasksStatus.droppedOff,
+            tasksStatus.pending,
+        ];
+    } else if (dashboardTabIndex === 2) {
+        excludeColumnList = [
+            tasksStatus.new,
+            tasksStatus.active,
+            tasksStatus.pickedUp,
+            tasksStatus.droppedOff,
+            tasksStatus.completed,
+            tasksStatus.cancelled,
+            tasksStatus.abandoned,
+            tasksStatus.rejected,
+        ];
+    }
+
     return (
         <Stack>
             <Hidden mdUp>
@@ -118,24 +147,7 @@ function Dashboard() {
                 <TasksGrid
                     modalView={"edit"}
                     hideRelayIcons={roleView === userRoles.rider}
-                    excludeColumnList={
-                        dashboardTabIndex === 1
-                            ? [
-                                  tasksStatus.new,
-                                  tasksStatus.active,
-                                  tasksStatus.pickedUp,
-                                  tasksStatus.droppedOff,
-                              ]
-                            : [
-                                  roleView === userRoles.rider
-                                      ? tasksStatus.new
-                                      : "",
-                                  tasksStatus.completed,
-                                  tasksStatus.cancelled,
-                                  tasksStatus.abandoned,
-                                  tasksStatus.rejected,
-                              ]
-                    }
+                    excludeColumnList={excludeColumnList}
                 />
             </Paper>
             <Hidden smUp>

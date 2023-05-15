@@ -178,19 +178,21 @@ function TaskDetailsPanel(props) {
                             <Typography>{state.reference}</Typography>
                         </LabelItemPair>
                     )}
-                    <LabelItemPair label={"Time of call"}>
-                        <TimePicker
-                            key={editTimeOfCall}
-                            onChange={setTimeOfCall}
-                            editMode={editTimeOfCall}
-                            label="Time of call"
-                            onClickEdit={() => setEditTimeOfCall(true)}
-                            onCancelEdit={() => setEditTimeOfCall(false)}
-                            disableClear
-                            time={state.timeOfCall}
-                            hideEditIcon={!hasFullPermissions}
-                        />
-                    </LabelItemPair>
+                    {state.timeOfCall && (
+                        <LabelItemPair label={"Time of call"}>
+                            <TimePicker
+                                key={editTimeOfCall}
+                                onChange={setTimeOfCall}
+                                editMode={editTimeOfCall}
+                                label="Time of call"
+                                onClickEdit={() => setEditTimeOfCall(true)}
+                                onCancelEdit={() => setEditTimeOfCall(false)}
+                                disableClear
+                                time={state.timeOfCall}
+                                hideEditIcon={!hasFullPermissions}
+                            />
+                        </LabelItemPair>
+                    )}
                     {hasFullPermissions && (
                         <TaskDetailsEstablishment
                             value={state.establishmentLocation}
