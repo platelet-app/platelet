@@ -35,15 +35,70 @@ const listScheduledTasks = /* GraphQL */ `
                     id
                     listed
                     tenantId
+                    name
+                    contact {
+                        name
+                        telephoneNumber
+                        mobileNumber
+                        emailAddress
+                        ward
+                        line1
+                        line2
+                        line3
+                        town
+                        county
+                        state
+                        country
+                        postcode
+                        what3words
+                    }
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
                 }
                 dropOffLocation {
                     id
                     listed
                     tenantId
+                    name
+                    contact {
+                        name
+                        telephoneNumber
+                        mobileNumber
+                        emailAddress
+                        ward
+                        line1
+                        line2
+                        line3
+                        town
+                        county
+                        state
+                        country
+                        postcode
+                        what3words
+                    }
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
                 }
                 establishmentLocation {
                     id
                     listed
+                    name
                     tenantId
                 }
                 deliverables {
@@ -89,6 +144,7 @@ const getScheduledTasks = async () => {
 const createUnlistedLocation = async (location) => {
     const variables = {
         input: {
+            name: location.name,
             contact: location.contact,
             ward: location.ward,
             line1: location.line1,
@@ -129,11 +185,13 @@ const createNewTask = async (scheduledTask) => {
     if (pickUpLocation?.listed === 1) {
         pickUpLocationId = pickUpLocation.id;
     } else if (pickUpLocation) {
+        console.log("PICK UP LOCATION", dropOffLocation);
         pickUpLocationId = await createUnlistedLocation(pickUpLocation);
     }
     if (dropOffLocation?.listed === 1) {
         dropOffLocationId = dropOffLocation.id;
     } else if (dropOffLocation) {
+        console.log("DROP OFF LOCATION", dropOffLocation);
         dropOffLocationId = await createUnlistedLocation(dropOffLocation);
     }
     if (establishmentLocation?.listed === 1) {
