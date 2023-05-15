@@ -6,8 +6,6 @@ const { HttpRequest } = require("@aws-sdk/protocol-http");
 const { default: fetch, Request } = require("node-fetch");
 
 exports.request = async (queryDetails, appsyncUrl) => {
-    console.log("queryDetails", queryDetails);
-    console.log("appsyncUrl", appsyncUrl);
     const endpoint = new URL(appsyncUrl);
     const signer = new SignatureV4({
         credentials: defaultProvider(),
