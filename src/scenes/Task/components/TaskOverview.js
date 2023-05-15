@@ -13,6 +13,7 @@ import { Hidden, Stack } from "@mui/material";
 import LocationDetailsPanel from "../../sharedTaskComponents/LocationDetailsPanel";
 import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
 import CommentsSection from "../../Comments/CommentsSection";
+import PendingTaskAcceptReject from "./PendingTaskAcceptReject";
 
 const useStyles = makeStyles()((theme) => ({
     root: {
@@ -48,6 +49,7 @@ function TaskOverview({ taskId, isFetching }) {
 
     return (
         <Container className={classes.root}>
+            <PendingTaskAcceptReject taskId={taskId} />
             <Grid container direction="row" spacing={isSm ? 1 : 3}>
                 <Grid item className={classes.item}>
                     <Stack direction={"column"} spacing={isSm ? 1 : 3}>
