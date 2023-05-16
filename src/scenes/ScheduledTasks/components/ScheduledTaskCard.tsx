@@ -48,9 +48,31 @@ const ScheduledTaskCard: React.FC<ScheduledTaskCardProps> = ({ task }) => {
         cutOff = 8;
     }
 
+    const sxDisabled = {
+        position: "relative",
+        "&::before": {
+            content: "''",
+            borderRadius: "1em",
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.2)",
+            zIndex: 1,
+        },
+        "&::after": {
+            content: "'disabled'",
+            color: "red",
+            fontStyle: "italic",
+            position: "absolute",
+            top: 10,
+            right: 20,
+        },
+    };
+
     return (
         <Paper
             sx={{
+                ...(task.disabled === 1 ? sxDisabled : {}),
                 borderRadius: "1em",
             }}
         >

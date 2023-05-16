@@ -14,6 +14,9 @@ const ScheduledTasks = () => {
     const { state, isFetching, error } = useScheduledTasks();
     const whoami = useSelector(getWhoami);
 
+    const enabled = state.filter((task) => task.disabled !== 1);
+    const disabled = state.filter((task) => task.disabled === 1);
+
     if (isFetching) {
         return (
             <Stack
@@ -37,7 +40,22 @@ const ScheduledTasks = () => {
                         label="Add scheduled task"
                     />
                 )}
-                {state.map((task) => {
+                {enabled.map((task) => {
+                    const linkEncodedId = encodeUUID(task.id);
+                    return (
+                        <Link
+                            style={{
+                                textDecoration: "inherit",
+                                color: "inherit",
+                            }}
+                            to={`/scheduled/${linkEncodedId}`}
+                        >
+                            <ScheduledTaskCard key={task.id} task={task} />
+                        </Link>
+                    );
+                })}
+                <div style={{ height: 20 }} />
+                {disabled.map((task) => {
                     const linkEncodedId = encodeUUID(task.id);
                     return (
                         <Link
