@@ -1,4 +1,4 @@
-import { Button, Stack, Typography } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import * as models from "../../../models";
 import useModelSubscription from "../../../hooks/useModelSubscription";
 import { DataStore } from "aws-amplify";
@@ -60,7 +60,6 @@ const PendingTaskAcceptReject: React.FC<PendingTaskAcceptRejectProps> = ({
     if (state?.status === models.TaskStatus.PENDING) {
         return (
             <Stack sx={{ padding: 1 }} direction="row" spacing={1}>
-                <Typography variant="h5">This task is pending</Typography>
                 <Button
                     onClick={handleAccept}
                     variant="contained"
