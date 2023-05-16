@@ -44,6 +44,11 @@ export enum dotActions {
     duplicate = "Duplicate",
 }
 
+export enum pendingActions {
+    accept = "Accept",
+    reject = "Reject",
+}
+
 type mouseStateType = {
     mouseX: null | number;
     mouseY: null | number;
@@ -62,7 +67,7 @@ function MultipleSelectionActionsMenu() {
     const [state, setState] = useState<mouseStateType>(mouseState);
     const selectedItems = selectedItemsAll[tabIndex] || {};
     const [currentAction, setCurrentAction] = useState<
-        actions | dotActions | null
+        actions | dotActions | pendingActions | null
     >(null);
     const [saveProgress, setSaveProgress] = useState<null | number>(null);
     const theme = useTheme();
@@ -101,6 +106,11 @@ function MultipleSelectionActionsMenu() {
             availableItemsWithoutFilterRef.current = availableSelectionItems;
         }
     }, [dashboardFilteredUser, availableSelectionItems]);
+
+    const pendingValues: models.Task[] = Object.values(selectedItems);
+    const isPendingActions = pendingValues.some((item) => {
+        return item.status === models.TaskStatus.PENDING;
+    });
 
     function checkButtonDisabled(action: actions | dotActions) {
         if (!selectedItems) return true;
@@ -271,33 +281,38 @@ function MultipleSelectionActionsMenu() {
                     direction="row"
                 >
                     {!isSm && <MultipleSelectionCheckbox />}
-                    {selectedItems && Object.values(selectedItems).length > 0 && (
-                        <Stack
-                            sx={{ width: { xs: "100%", sm: "auto" } }}
-                            justifyContent={
-                                isSm ? "space-between" : "flex-start"
-                            }
-                            alignItems="center"
-                            spacing={isSm ? 0 : 1}
-                            direction="row"
-                        >
-                            {Object.values(buttonActions).map((action) => (
-                                <Button
-                                    data-testid="select-action-button"
-                                    aria-label={`Selection ${action}`}
-                                    key={action}
-                                    size="small"
-                                    onClick={() => {
-                                        handleActionClick(action);
-                                    }}
-                                    disabled={checkButtonDisabled(action)}
-                                >
-                                    {action}
-                                </Button>
-                            ))}
-                            {isMd && dotsMenu}
-                        </Stack>
-                    )}
+                    {selectedItems &&
+                        Object.values(selectedItems).length > 0 && (
+                            <Stack
+                                sx={{ width: { xs: "100%", sm: "auto" } }}
+                                justifyContent={
+                                    isSm ? "space-between" : "flex-start"
+                                }
+                                alignItems="center"
+                                spacing={isSm ? 0 : 1}
+                                direction="row"
+                            >
+                                {Object.values(
+                                    isPendingActions
+                                        ? pendingActions
+                                        : buttonActions
+                                ).map((action) => (
+                                    <Button
+                                        data-testid="select-action-button"
+                                        aria-label={`Selection ${action}`}
+                                        key={action}
+                                        size="small"
+                                        onClick={() => {
+                                            handleActionClick(action);
+                                        }}
+                                        disabled={checkButtonDisabled(action)}
+                                    >
+                                        {action}
+                                    </Button>
+                                ))}
+                                {isMd && dotsMenu}
+                            </Stack>
+                        )}
                     {!isSm && <Divider orientation="vertical" flexItem />}
                     {!isSm && Object.keys(selectedItems).length !== 0 && (
                         <Typography fontWeight="bold">
