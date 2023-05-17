@@ -15,6 +15,7 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import DescriptionIcon from "@mui/icons-material/Description";
 import { getWhoami } from "../redux/Selectors";
 import HistoryIcon from "@mui/icons-material/History";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 
 function NavDrawerItems(props) {
     const whoami = useSelector(getWhoami);
@@ -23,6 +24,7 @@ function NavDrawerItems(props) {
     let adminLink = <></>;
     let historyLink = <></>;
     let statisticsLink = <></>;
+    let scheduledTasksLink = <></>;
 
     if (whoami.roles) {
         if (whoami.roles.includes("ADMIN")) {
@@ -71,6 +73,20 @@ function NavDrawerItems(props) {
                         <BarChartIcon />
                     </ListItemIcon>
                     <ListItemText primary={"Statistics"} />
+                </ListItem>
+            );
+            scheduledTasksLink = (
+                <ListItem
+                    onClick={onSelect}
+                    selected={menuIndex === "scheduled"}
+                    component={Link}
+                    to={"/scheduled"}
+                    button
+                >
+                    <ListItemIcon>
+                        <CalendarMonthIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Scheduled"} />
                 </ListItem>
             );
         }
@@ -140,6 +156,7 @@ function NavDrawerItems(props) {
                     </ListItemIcon>
                     <ListItemText primary={"Reports"} />
                 </ListItem>
+                {scheduledTasksLink}
                 {statisticsLink}
                 {historyLink}
                 {adminLink}
