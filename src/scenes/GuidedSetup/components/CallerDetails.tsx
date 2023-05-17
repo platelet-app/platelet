@@ -90,6 +90,7 @@ export const CallerDetails: React.FC<CallerDetailType> = ({
             </Typography>
             <DateTimePicker
                 label="Time of call"
+                inputFormat={"dd/MM/yyyy HH:mm"}
                 ampm={false}
                 renderInput={(params) => {
                     const { inputProps } = params;

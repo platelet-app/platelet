@@ -961,11 +961,11 @@ describe("GuidedSetup", () => {
         const textBox = screen.getByRole("textbox", {
             name: "Time of call",
         });
-        expect(textBox).toHaveValue("11/29/2021 23:24");
+        expect(textBox).toHaveValue("29/11/2021 23:24");
         userEvent.type(textBox, "{backspace}");
         userEvent.type(textBox, "{backspace}");
         userEvent.type(textBox, "00");
-        expect(textBox).toHaveValue("11/29/2021 23:00");
+        expect(textBox).toHaveValue("29/11/2021 23:00");
         userEvent.click(
             screen.getByRole("button", { name: "Save to dashboard" })
         );
