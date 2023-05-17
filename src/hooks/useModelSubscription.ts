@@ -32,6 +32,7 @@ const useModelSubscription = <T extends PersistentModel>(
         try {
             const result = await DataStore.query(model, id);
             if (result) {
+                setNotFound(false);
                 setState(result);
                 setIsFetching(false);
                 observer.current = DataStore.observe(model, id).subscribe(
