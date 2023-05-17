@@ -23,7 +23,6 @@ import duplicateTask from "../../utilities/duplicateTask";
 import generateClipboardTextFromTask from "../../utilities/generateClipboardTextFromTask";
 import { copyStringToClipboard } from "../../utilities/copyStringToClipboard";
 import CopyFailedDialog from "../CopyFailedDialog";
-import updatePendingTask from "../../utilities/updatePendingTask";
 
 const initialState = {
     mouseX: null,
@@ -201,160 +200,10 @@ const TaskContextMenu: React.FC<TaskContextMenuProps> = ({
             dispatch(displayErrorNotification("Sorry, something went wrong"));
         }
     }
-
-    async function undoUpdatePending(
-        task: models.Task,
-        assignment: models.TaskAssignee
-    ) {
-        try {
-            const existingTask = await DataStore.query(models.Task, task.id);
-            if (existingTask) {
-                await DataStore.save(
-                    models.Task.copyOf(existingTask, (t) => {
-                        t.status = models.TaskStatus.PENDING;
-                        t.timeRejected = null;
-                    })
-                );
-            }
-            const existingAssignment = await DataStore.query(
-                models.TaskAssignee,
-                assignment.id
-            );
-            if (existingAssignment) {
-                await DataStore.delete(existingAssignment);
-            }
-        } catch (error) {
-            console.log(error);
-            dispatch(displayErrorNotification("Sorry, something went wrong"));
-        }
-    }
-
-    async function onUpdatePending(
-        e: React.MouseEvent,
-        action: "accept" | "reject"
-    ) {
-        handleClose(e);
-        try {
-            if (task) {
-                const result = await updatePendingTask(
-                    task,
-                    whoami.id,
-                    tenantId,
-                    action
-                );
-                const message = action === "accept" ? "accepted" : "rejected";
-                dispatch(
-                    displayInfoNotification(`Task ${message}`, () => {
-                        undoUpdatePending(result.task, result.assignment);
-                    })
-                );
-            }
-        } catch (error) {
-            console.log(error);
-            dispatch(displayErrorNotification("Sorry, something went wrong"));
-        }
-    }
-
     const handleClose = (e: React.MouseEvent) => {
         e.preventDefault();
         setState(initialState);
     };
-
-    let menuItems: JSX.Element[] = [];
-    if (task?.status === models.TaskStatus.PENDING) {
-        menuItems = [
-            <MenuItem onClick={(e) => onUpdatePending(e, "accept")}>
-                Accept
-            </MenuItem>,
-            <MenuItem onClick={(e) => onUpdatePending(e, "reject")}>
-                Reject
-            </MenuItem>,
-            <MenuItem disabled={task === null} onClick={copyToClipboard}>
-                Copy to clipboard
-            </MenuItem>,
-        ];
-    } else if (task) {
-        menuItems = [
-            <MenuItem
-                disabled={
-                    task === null || task.status !== models.TaskStatus.ACTIVE
-                }
-                onClick={onSelectPickedUp}
-            >
-                Mark picked up
-            </MenuItem>,
-            <MenuItem
-                disabled={
-                    task === null || task.status !== models.TaskStatus.PICKED_UP
-                }
-                onClick={onSelectDroppedOff}
-            >
-                Mark delivered
-            </MenuItem>,
-            <MenuItem
-                disabled={
-                    task === null ||
-                    task.status !== models.TaskStatus.DROPPED_OFF
-                }
-                onClick={onSelectRiderHome}
-            >
-                Mark rider home
-            </MenuItem>,
-            <MenuItem
-                disabled={
-                    task === null ||
-                    [
-                        models.TaskStatus.CANCELLED,
-                        models.TaskStatus.ABANDONED,
-                        models.TaskStatus.REJECTED,
-                        models.TaskStatus.DROPPED_OFF,
-                        models.TaskStatus.COMPLETED,
-                    ].some((s) => s === task.status)
-                }
-                onClick={onSelectRejected}
-            >
-                Mark rejected
-            </MenuItem>,
-            <MenuItem
-                disabled={
-                    task === null ||
-                    [
-                        models.TaskStatus.CANCELLED,
-                        models.TaskStatus.ABANDONED,
-                        models.TaskStatus.REJECTED,
-                        models.TaskStatus.DROPPED_OFF,
-                        models.TaskStatus.COMPLETED,
-                    ].some((s) => s === task.status)
-                }
-                onClick={onSelectCancelled}
-            >
-                Mark cancelled
-            </MenuItem>,
-        ];
-        if (actualRole === models.Role.COORDINATOR) {
-            menuItems.push(
-                <MenuItem
-                    disabled={
-                        task === null ||
-                        [
-                            models.TaskStatus.CANCELLED,
-                            models.TaskStatus.ABANDONED,
-                            models.TaskStatus.REJECTED,
-                            models.TaskStatus.COMPLETED,
-                        ].some((s) => s === task.status)
-                    }
-                    onClick={onDuplicate}
-                >
-                    Duplicate
-                </MenuItem>
-            );
-        }
-        menuItems.push(
-            <MenuItem disabled={task === null} onClick={copyToClipboard}>
-                Copy to clipboard
-            </MenuItem>
-        );
-    }
 
     if (!task) {
         return null;
@@ -382,7 +231,85 @@ const TaskContextMenu: React.FC<TaskContextMenuProps> = ({
                             : undefined
                     }
                 >
-                    {menuItems}
+                    <MenuItem
+                        disabled={
+                            task === null ||
+                            task.status !== models.TaskStatus.ACTIVE
+                        }
+                        onClick={onSelectPickedUp}
+                    >
+                        Mark picked up
+                    </MenuItem>
+                    <MenuItem
+                        disabled={
+                            task === null ||
+                            task.status !== models.TaskStatus.PICKED_UP
+                        }
+                        onClick={onSelectDroppedOff}
+                    >
+                        Mark delivered
+                    </MenuItem>
+                    <MenuItem
+                        disabled={
+                            task === null ||
+                            task.status !== models.TaskStatus.DROPPED_OFF
+                        }
+                        onClick={onSelectRiderHome}
+                    >
+                        Mark rider home
+                    </MenuItem>
+                    <MenuItem
+                        disabled={
+                            task === null ||
+                            [
+                                models.TaskStatus.CANCELLED,
+                                models.TaskStatus.ABANDONED,
+                                models.TaskStatus.REJECTED,
+                                models.TaskStatus.DROPPED_OFF,
+                                models.TaskStatus.COMPLETED,
+                            ].some((s) => s === task.status)
+                        }
+                        onClick={onSelectRejected}
+                    >
+                        Mark rejected
+                    </MenuItem>
+                    <MenuItem
+                        disabled={
+                            task === null ||
+                            [
+                                models.TaskStatus.CANCELLED,
+                                models.TaskStatus.ABANDONED,
+                                models.TaskStatus.REJECTED,
+                                models.TaskStatus.DROPPED_OFF,
+                                models.TaskStatus.COMPLETED,
+                            ].some((s) => s === task.status)
+                        }
+                        onClick={onSelectCancelled}
+                    >
+                        Mark cancelled
+                    </MenuItem>
+                    {actualRole === models.Role.COORDINATOR && (
+                        <MenuItem
+                            disabled={
+                                task === null ||
+                                [
+                                    models.TaskStatus.CANCELLED,
+                                    models.TaskStatus.ABANDONED,
+                                    models.TaskStatus.REJECTED,
+                                    models.TaskStatus.COMPLETED,
+                                ].some((s) => s === task.status)
+                            }
+                            onClick={onDuplicate}
+                        >
+                            Duplicate
+                        </MenuItem>
+                    )}
+                    <MenuItem
+                        disabled={task === null}
+                        onClick={copyToClipboard}
+                    >
+                        Copy to clipboard
+                    </MenuItem>
                 </Menu>
                 <CopyFailedDialog
                     text={copyText || ""}
