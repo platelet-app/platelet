@@ -2852,8 +2852,3 @@ export const updateUserRoles = /* GraphQL */ `
     }
   }
 `;
-export const createScheduledTasks = /* GraphQL */ `
-  mutation CreateScheduledTasks {
-    createScheduledTasks
-  }
-`;

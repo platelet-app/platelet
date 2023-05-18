@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateVehicleAssignment = exports.updateVehicle = exports.updateUserRoles = exports.updateUser = exports.updateTenant = exports.updateTaskAssignee = exports.updateTask = exports.updateScheduledTask = exports.updateRiderResponsibility = exports.updatePossibleRiderResponsibilities = exports.updateLocation = exports.updateDeliverableType = exports.updateDeliverable = exports.updateComment = exports.registerUser = exports.registerTenant = exports.deleteVehicleAssignment = exports.deleteVehicle = exports.deleteUser = exports.deleteTenant = exports.deleteTaskAssignee = exports.deleteTask = exports.deleteScheduledTask = exports.deleteRiderResponsibility = exports.deletePossibleRiderResponsibilities = exports.deleteLocation = exports.deleteDeliverableType = exports.deleteDeliverable = exports.deleteComment = exports.createVehicleAssignment = exports.createVehicle = exports.createUser = exports.createTenant = exports.createTaskAssignee = exports.createTask = exports.createScheduledTasks = exports.createScheduledTask = exports.createRiderResponsibility = exports.createPossibleRiderResponsibilities = exports.createLocation = exports.createDeliverableType = exports.createDeliverable = exports.createComment = void 0;
+exports.updateVehicleAssignment = exports.updateVehicle = exports.updateUserRoles = exports.updateUser = exports.updateTenant = exports.updateTaskAssignee = exports.updateTask = exports.updateScheduledTask = exports.updateRiderResponsibility = exports.updatePossibleRiderResponsibilities = exports.updateLocation = exports.updateDeliverableType = exports.updateDeliverable = exports.updateComment = exports.registerUser = exports.registerTenant = exports.deleteVehicleAssignment = exports.deleteVehicle = exports.deleteUser = exports.deleteTenant = exports.deleteTaskAssignee = exports.deleteTask = exports.deleteScheduledTask = exports.deleteRiderResponsibility = exports.deletePossibleRiderResponsibilities = exports.deleteLocation = exports.deleteDeliverableType = exports.deleteDeliverable = exports.deleteComment = exports.createVehicleAssignment = exports.createVehicle = exports.createUser = exports.createTenant = exports.createTaskAssignee = exports.createTask = exports.createScheduledTask = exports.createRiderResponsibility = exports.createPossibleRiderResponsibilities = exports.createLocation = exports.createDeliverableType = exports.createDeliverable = exports.createComment = void 0;
 /* tslint:disable */
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
@@ -2900,9 +2900,3 @@ const updateUserRoles = /* GraphQL */`
   }
 `;
 exports.updateUserRoles = updateUserRoles;
-const createScheduledTasks = /* GraphQL */`
-  mutation CreateScheduledTasks {
-    createScheduledTasks
-  }
-`;
-exports.createScheduledTasks = createScheduledTasks;

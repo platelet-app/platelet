@@ -4674,10 +4674,6 @@ export type UpdateUserRolesMutation = {
   } | null,
 };
 
-export type CreateScheduledTasksMutation = {
-  createScheduledTasks?: string | null,
-};
-
 export type GetTenantQueryVariables = {
   id: string,
 };
