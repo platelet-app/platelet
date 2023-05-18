@@ -9,6 +9,7 @@ import { getWhoami } from "../../redux/Selectors";
 import * as models from "../../models";
 import { Link } from "react-router-dom";
 import { encodeUUID } from "../../utilities";
+import ScheduledTasksEnableDisableAllButtons from "./components/ScheduledTasksEnableDisableAllButtons";
 
 const ScheduledTasks = () => {
     const { state, isFetching, error } = useScheduledTasks();
@@ -35,10 +36,13 @@ const ScheduledTasks = () => {
         return (
             <Stack spacing={1} sx={{ maxWidth: 800 }}>
                 {whoami.roles.includes(models.Role.ADMIN) && (
-                    <AddToListButton
-                        link="/admin/add-scheduled"
-                        label="Add scheduled task"
-                    />
+                    <>
+                        <AddToListButton
+                            link="/admin/add-scheduled"
+                            label="Add scheduled task"
+                        />
+                        <ScheduledTasksEnableDisableAllButtons />
+                    </>
                 )}
                 {enabled.map((task) => {
                     const linkEncodedId = encodeUUID(task.id);

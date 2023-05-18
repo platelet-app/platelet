@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import * as assActions from "../../redux/taskAssignees/taskAssigneesActions";
 import * as commentActions from "../../redux/comments/commentsActions";
 import * as taskDeliverablesActions from "../../redux/taskDeliverables/taskDeliverablesActions";
+import userEvent from "@testing-library/user-event";
 
 const tenantId = "tenantId";
 
@@ -38,7 +39,7 @@ describe("ScheduledTasks", () => {
             new models.User({
                 tenantId,
                 displayName: "name",
-                roles: [models.Role.USER],
+                roles: [models.Role.COORDINATOR],
                 username: "username",
                 cognitoId: "cognitoId",
             })
@@ -130,7 +131,8 @@ describe("ScheduledTasks", () => {
             <>
                 <FakeDispatchComponent />
                 <ScheduledTasks />
-            </>
+            </>,
+            { preloadedState }
         );
         expect(
             screen.getByTestId("scheduled-tasks-skeleton")
@@ -191,5 +193,73 @@ describe("ScheduledTasks", () => {
         expect(
             screen.getByRole("button", { name: "Add scheduled task" })
         ).toBeInTheDocument();
+    });
+    test.only("enable and disable all scheduled tasks", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                displayName: "name",
+                roles: [models.Role.ADMIN],
+                username: "username",
+                cognitoId: "cognitoId",
+            })
+        );
+        const mockTask = await DataStore.save(
+            new models.ScheduledTask({
+                priority: models.Priority.HIGH,
+                cronExpression: "0 18 * * *",
+                disabled: 0,
+                tenantId,
+            })
+        );
+        const mockTask2 = await DataStore.save(
+            new models.ScheduledTask({
+                priority: models.Priority.HIGH,
+                cronExpression: "0 18 * * *",
+                disabled: 0,
+                tenantId,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+        };
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(
+            <>
+                <ScheduledTasks />
+            </>,
+            { preloadedState }
+        );
+        await waitFor(() => {
+            expect(screen.queryByTestId("scheduled-tasks-skeleton")).toBeNull();
+        });
+        const disableButton = screen.getByRole("button", {
+            name: "Disable All",
+        });
+        const enableButton = screen.getByRole("button", {
+            name: "Enable All",
+        });
+        expect(enableButton).toBeDisabled();
+        userEvent.click(disableButton);
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(2);
+        });
+        expect(saveSpy).toHaveBeenCalledWith({ ...mockTask, disabled: 1 });
+        expect(saveSpy).toHaveBeenCalledWith({ ...mockTask2, disabled: 1 });
+        await waitFor(
+            () => {
+                expect(enableButton).toBeEnabled();
+            },
+            { timeout: 6000 }
+        );
+        expect(disableButton).toBeDisabled();
+        userEvent.click(enableButton);
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(4);
+        });
+        expect(saveSpy).toHaveBeenCalledWith({ ...mockTask, disabled: 0 });
+        expect(saveSpy).toHaveBeenCalledWith({ ...mockTask2, disabled: 0 });
     });
 });

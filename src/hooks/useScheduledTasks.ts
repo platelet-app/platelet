@@ -8,6 +8,43 @@ type ScheduledTasksState = {
     [key: string]: models.ScheduledTask;
 };
 
+async function dataStoreNestedWorkAroundMapper(
+    data: models.ScheduledTask[] = []
+) {
+    return Promise.all(
+        data.map(async (item) => {
+            // @ts-ignore
+            const {
+                // @ts-ignore
+                pickUpLocationId,
+                // @ts-ignore
+                dropOffLocationId,
+                // @ts-ignore
+                establishmentLocationId,
+                ...rest
+            } = item;
+            const pickUpLocation = pickUpLocationId
+                ? await DataStore.query(models.Location, pickUpLocationId)
+                : rest.pickUpLocation;
+            const dropOffLocation = dropOffLocationId
+                ? await DataStore.query(models.Location, dropOffLocationId)
+                : rest.dropOffLocation;
+            const establishmentLocation = establishmentLocationId
+                ? await DataStore.query(
+                      models.Location,
+                      establishmentLocationId
+                  )
+                : rest.establishmentLocation;
+            return {
+                ...rest,
+                pickUpLocation,
+                dropOffLocation,
+                establishmentLocation,
+            };
+        })
+    );
+}
+
 const useScheduledTasks = () => {
     const [state, setState] = React.useState<ScheduledTasksState>({});
     const [isFetching, setIsFetching] = React.useState(true);
@@ -23,9 +60,11 @@ const useScheduledTasks = () => {
                 observer.current = DataStore.observeQuery(
                     models.ScheduledTask
                 ).subscribe(async ({ items }) => {
+                    const itemsWithNestedData =
+                        await dataStoreNestedWorkAroundMapper(items);
                     setState(
                         convertModelListToTypedObject<models.ScheduledTask>(
-                            items
+                            itemsWithNestedData
                         )
                     );
                     setIsFetching(false);
