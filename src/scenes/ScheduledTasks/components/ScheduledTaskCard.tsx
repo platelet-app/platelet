@@ -8,38 +8,20 @@ import * as models from "../../../models";
 import { DataStore } from "aws-amplify";
 import { useSelector } from "react-redux";
 import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
+import useTaskAssigneesRedux from "../../../hooks/useTaskAssigneesRedux";
+import useTaskDeliverablesRedux from "../../../hooks/useTaskDeliverablesRedux";
 
 type ScheduledTaskCardProps = {
     task: models.ScheduledTask;
 };
 
 const ScheduledTaskCard: React.FC<ScheduledTaskCardProps> = ({ task }) => {
-    const [deliverables, setDeliverables] = React.useState<
-        models.Deliverable[]
-    >([]);
     const theme = useTheme();
 
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const isLg = useMediaQuery(theme.breakpoints.up("lg"));
-    const deliverableModelSynced = useSelector(
-        dataStoreModelSyncedStatusSelector
-    ).deliverables;
 
-    const getDeliverables = React.useCallback(async () => {
-        try {
-            const result = await DataStore.query(models.Deliverable);
-            const filtered = result.filter(
-                (d) => d.scheduledTask && d.scheduledTask.id === task.id
-            );
-            setDeliverables(filtered);
-        } catch (error) {
-            console.log(error);
-        }
-    }, [task.id]);
-
-    React.useEffect(() => {
-        getDeliverables();
-    }, [getDeliverables, deliverableModelSynced]);
+    const deliverables = useTaskDeliverablesRedux(task.id, "ScheduledTask");
 
     let cutOff = 6;
     if (isSm) {
