@@ -5,10 +5,6 @@ import TaskCardLocationDetail from "../../../components/TaskCardLocationDetail";
 import TaskCardChips from "../../../components/TaskCardChips";
 
 import * as models from "../../../models";
-import { DataStore } from "aws-amplify";
-import { useSelector } from "react-redux";
-import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
-import useTaskAssigneesRedux from "../../../hooks/useTaskAssigneesRedux";
 import useTaskDeliverablesRedux from "../../../hooks/useTaskDeliverablesRedux";
 
 type ScheduledTaskCardProps = {
