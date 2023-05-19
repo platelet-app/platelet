@@ -2,9 +2,9 @@
 
 exports[`plateletCreateScheduledTasks create some scheduled tasks 1`] = `
 [MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
+  "calls": [
+    [
+      {
         "query": "
     query ListScheduledTasks(
         $filter: ModelScheduledTaskFilterInput
@@ -121,19 +121,19 @@ exports[`plateletCreateScheduledTasks create some scheduled tasks 1`] = `
         }
     }
 ",
-        "variables": Object {
+        "variables": {
           "nextToken": null,
         },
       },
       "https://api.example.com/graphql",
     ],
-    Array [
-      Object {
+    [
+      {
         "query": "createLocationQuery",
-        "variables": Object {
-          "input": Object {
+        "variables": {
+          "input": {
             "archived": 0,
-            "contact": Object {
+            "contact": {
               "name": "name",
               "telephoneNumber": "phone",
             },
@@ -155,18 +155,21 @@ exports[`plateletCreateScheduledTasks create some scheduled tasks 1`] = `
       },
       "https://api.example.com/graphql",
     ],
-    Array [
-      Object {
+    [
+      {
         "query": "createTaskQuery",
-        "variables": Object {
-          "input": Object {
+        "variables": {
+          "input": {
             "archived": 0,
             "dateCreated": "2021-05-01",
             "dropOffLocationId": "newLocationId",
             "establishmentLocationId": "establishmentLocationId",
             "pickUpLocationId": "pickUpLocationId",
             "priority": "MEDIUM",
-            "requesterContact": undefined,
+            "requesterContact": {
+              "name": "name",
+              "telephoneNumber": "phone",
+            },
             "status": "PENDING",
             "tenantId": "tenantId",
           },
@@ -174,11 +177,11 @@ exports[`plateletCreateScheduledTasks create some scheduled tasks 1`] = `
       },
       "https://api.example.com/graphql",
     ],
-    Array [
-      Object {
+    [
+      {
         "query": "createDeliverableQuery",
-        "variables": Object {
-          "input": Object {
+        "variables": {
+          "input": {
             "archived": 0,
             "count": 1,
             "deliverableTypeDeliverablesId": "deliverableTypeDeliverablesId",
@@ -191,20 +194,20 @@ exports[`plateletCreateScheduledTasks create some scheduled tasks 1`] = `
       "https://api.example.com/graphql",
     ],
   ],
-  "results": Array [
-    Object {
+  "results": [
+    {
       "type": "return",
       "value": Promise {},
     },
-    Object {
+    {
       "type": "return",
       "value": Promise {},
     },
-    Object {
+    {
       "type": "return",
       "value": Promise {},
     },
-    Object {
+    {
       "type": "return",
       "value": Promise {},
     },

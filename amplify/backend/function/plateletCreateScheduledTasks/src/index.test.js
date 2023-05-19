@@ -5,6 +5,10 @@ const mockScheduledTasks = [
         id: "taskId",
         tenantId: "tenantId",
         priority: "MEDIUM",
+        requesterContact: {
+            name: "name",
+            telephoneNumber: "phone",
+        },
         establishmentLocation: {
             id: "establishmentLocationId",
             listed: 1,
@@ -17,7 +21,10 @@ const mockScheduledTasks = [
         },
         dropOffLocation: {
             id: "dropOffLocationId",
-            contact: { name: "name", telephoneNumber: "phone" },
+            contact: {
+                name: "name",
+                telephoneNumber: "phone",
+            },
             line1: "line1",
             line2: "line2",
             line3: "line3",

@@ -175,14 +175,8 @@
       "service": "Lambda"
     },
     "plateletCreateScheduledTasks": {
+      "build": true,
       "dependsOn": [
-        {
-          "attributes": [
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "plateletappSyncOperations"
-        },
         {
           "attributes": [
             "GraphQLAPIIdOutput",
@@ -190,8 +184,17 @@
           ],
           "category": "api",
           "resourceName": "platelet"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
         }
-      ]
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     },
     "plateletGetStatistics": {
       "build": true,
@@ -406,22 +409,6 @@
         {
           "category": "function",
           "resourceName": "plateletArchiver"
-        }
-      ]
-    },
-    "AMPLIFY_function_plateletCreateScheduledTasks_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "plateletCreateScheduledTasks"
-        }
-      ]
-    },
-    "AMPLIFY_function_plateletCreateScheduledTasks_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "plateletCreateScheduledTasks"
         }
       ]
     },
