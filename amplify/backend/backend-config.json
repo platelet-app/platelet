@@ -412,6 +412,22 @@
         }
       ]
     },
+    "AMPLIFY_function_plateletCreateScheduledTasks_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletCreateScheduledTasks"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletCreateScheduledTasks_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletCreateScheduledTasks"
+        }
+      ]
+    },
     "AMPLIFY_function_plateletGetStatistics_deploymentBucketName": {
       "usedBy": [
         {
