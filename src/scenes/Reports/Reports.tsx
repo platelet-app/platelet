@@ -1,16 +1,6 @@
 import React, { useEffect, useState } from "react";
 import * as models from "../../models";
-import {
-    Button,
-    Stack,
-    Switch,
-    FormControlLabel,
-    Typography,
-    Box,
-    Fade,
-    CircularProgress,
-} from "@mui/material";
-import DaysSelection from "../../components/DaysSelection";
+import { Button, Stack, Typography } from "@mui/material";
 import { PaddedPaper } from "../../styles/common";
 import generateReportBasic from "./utilities/generateReportBasic";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,19 +8,26 @@ import {
     dataStoreReadyStatusSelector,
     getWhoami,
     networkStatusSelector,
+    tenantIdSelector,
 } from "../../redux/Selectors";
-import UserRoleSelect from "../../components/UserRoleSelect";
 import moment from "moment";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
-import CoordinatorPicker from "../../components/CoordinatorPicker";
-import UserChip from "../../components/UserChip";
-import RiderPicker from "../../components/RiderPicker";
+import ReportsControls from "./components/ReportsControls";
+import { Days } from "../../components/DaysSelection";
 
 function Reports() {
-    const [days, setDays] = useState(3);
-    const [role, setRole] = useState<models.Role>(models.Role.COORDINATOR);
-    const [includeStats, setIncludeStats] = useState(false);
+    const [role, setRole] = useState<models.Role | "ALL">(
+        models.Role.COORDINATOR
+    );
+    const dateRange = React.useRef<{
+        startDate: Date | null;
+        endDate: Date | null;
+    }>({
+        startDate: new Date(),
+        endDate: new Date(),
+    });
+    const [days, setDays] = React.useState<Days | null>(Days.THREE_DAYS);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const networkStatus = useSelector(networkStatusSelector);
     const whoami = useSelector(getWhoami);
@@ -39,8 +36,13 @@ function Reports() {
     const [adminSelectedUser, setAdminSelectedUser] =
         useState<models.User | null>(null);
     const dispatch = useDispatch();
+    const tenantId = useSelector(tenantIdSelector);
 
-    const isAdmin = whoami?.roles?.includes(models.Role.ADMIN);
+    React.useEffect(() => {
+        if (whoami?.roles?.includes(models.Role.ADMIN)) {
+            setRole("ALL");
+        }
+    }, [whoami]);
 
     const handleExport = React.useCallback(async () => {
         try {
@@ -49,21 +51,42 @@ function Reports() {
                 throw new Error("No user selected");
             }
             setIsPosting(true);
-            const timeStamp = moment().subtract(days, "days");
-            const fileName = `${
-                finalUser.name
-            }_${role}_${timeStamp}_to_${moment()}.csv`;
-            const result = await generateReportBasic(finalUser.id, role, days);
-            downloadCSVFile(result, fileName);
+            let fromDate;
+            let toDate;
+            if (days === Days.CUSTOM) {
+                fromDate = dateRange.current.startDate;
+                toDate = dateRange.current.endDate;
+            } else if (days) {
+                fromDate = new Date();
+                fromDate.setDate(fromDate.getDate() - days);
+                toDate = new Date();
+            } else {
+                throw new Error("No days selected");
+            }
+            console.log("ROLE", role);
+            const fromTimeStamp = moment(fromDate).format("YYYY-MM-DD");
+            const toTimeStamp = moment(toDate).format("YYYY-MM-DD");
+            const fileName = `${finalUser.name}_${role}_${fromTimeStamp}_to_${toTimeStamp}.csv`;
+            const result = await generateReportBasic(
+                finalUser.id,
+                role,
+                tenantId,
+                fromDate,
+                toDate
+            );
+            if (result) {
+                downloadCSVFile(result, fileName);
+            }
             setIsPosting(false);
         } catch (err) {
             console.log(err);
             dispatch(displayErrorNotification("Sorry, something went wrong."));
         }
-    }, [adminSelectedUser, whoami, days, dispatch, role]);
+    }, [adminSelectedUser, whoami, dispatch, days, role, tenantId]);
 
-    const handleClick = () => {
-        if (!dataStoreReadyStatus && networkStatus) {
+    const handleClick = async () => {
+        debugger;
+        if (role !== "ALL" && !dataStoreReadyStatus && networkStatus) {
             setConfirmation(true);
         } else {
             handleExport();
@@ -95,89 +118,47 @@ function Reports() {
         handleExport();
     };
 
-    // exclude roles the user does not have
-    const exclude = Object.values(models.Role).filter(
-        (role) => !whoami.roles.includes(role)
-    );
+    const handleChangeDateRange = (startDate: Date, endDate: Date) => {
+        dateRange.current = { startDate, endDate };
+    };
+
+    const handleChangeRole = (newRole: models.Role | "ALL") => {
+        setRole(newRole);
+        if (
+            newRole !== "ALL" &&
+            days !== null &&
+            [Days.CUSTOM, Days.TWO_WEEKS].includes(days)
+        ) {
+            setDays(Days.THREE_DAYS);
+            dateRange.current = {
+                startDate: null,
+                endDate: null,
+            };
+        }
+    };
 
     return (
-        <PaddedPaper maxWidth={550}>
+        <PaddedPaper maxWidth={600}>
             <Stack sx={{ maxWidth: 400 }} direction="column" spacing={2}>
                 <Typography variant="h5">Export to CSV</Typography>
-                <div>
-                    <DaysSelection
-                        value={days}
-                        onChange={(v) => {
-                            setDays(v);
-                        }}
-                    />
-                </div>
-                <UserRoleSelect
-                    all={whoami.roles.includes(models.Role.ADMIN)}
-                    disabled={!!adminSelectedUser}
-                    value={[role]}
-                    onSelect={(v) => setRole(v)}
-                    exclude={[models.Role.USER, models.Role.ADMIN, ...exclude]}
+                <ReportsControls
+                    isFetching={isPosting}
+                    days={days}
+                    onChangeDays={setDays}
+                    adminSelectedUser={adminSelectedUser}
+                    onChangeAdminSelectedUser={setAdminSelectedUser}
+                    onChangeDateRange={handleChangeDateRange}
+                    role={role}
+                    onChangeRole={handleChangeRole}
                 />
-                {isAdmin &&
-                    role === models.Role.COORDINATOR &&
-                    !adminSelectedUser && (
-                        <CoordinatorPicker
-                            onSelect={(v) => setAdminSelectedUser(v)}
-                        />
-                    )}
-                {isAdmin &&
-                    role === models.Role.RIDER &&
-                    !adminSelectedUser && (
-                        <RiderPicker
-                            onSelect={(v) => setAdminSelectedUser(v)}
-                        />
-                    )}
-                {adminSelectedUser && (
-                    <Box>
-                        <UserChip
-                            user={adminSelectedUser}
-                            onDelete={() => setAdminSelectedUser(null)}
-                        />
-                    </Box>
-                )}
-
-                {
-                    // TODO: add stats
-                    false && (
-                        <FormControlLabel
-                            sx={{ maxWidth: 180 }}
-                            control={
-                                <Switch
-                                    onChange={(e) =>
-                                        setIncludeStats(e.target.checked)
-                                    }
-                                    checked={includeStats}
-                                />
-                            }
-                            label="Include stats"
-                        />
-                    )
-                }
-                <Box display="flex" justifyContent="flex-end">
-                    <Fade
-                        in={isPosting}
-                        style={{
-                            transitionDelay: isPosting ? "800ms" : "0ms",
-                        }}
-                        unmountOnExit
-                    >
-                        <CircularProgress />
-                    </Fade>
-                    <Button
-                        disabled={isPosting}
-                        aria-label="Export"
-                        onClick={handleClick}
-                        sx={{ marginLeft: "auto", maxWidth: 100 }}
-                    >
-                        Export
-                    </Button>
-                </Box>
+                <Button
+                    disabled={isPosting}
+                    aria-label="Export"
+                    onClick={handleClick}
+                    sx={{ marginLeft: "auto", maxWidth: 100 }}
+                >
+                    Export
+                </Button>
             </Stack>
             <ConfirmationDialog
                 open={confirmation}
