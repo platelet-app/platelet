@@ -63,7 +63,6 @@ function Reports() {
             } else {
                 throw new Error("No days selected");
             }
-            console.log("ROLE", role);
             const fromTimeStamp = moment(fromDate).format("YYYY-MM-DD");
             const toTimeStamp = moment(toDate).format("YYYY-MM-DD");
             const fileName = `${finalUser.name}_${role}_${fromTimeStamp}_to_${toTimeStamp}.csv`;
@@ -85,7 +84,6 @@ function Reports() {
     }, [adminSelectedUser, whoami, dispatch, days, role, tenantId]);
 
     const handleClick = async () => {
-        debugger;
         if (role !== "ALL" && !dataStoreReadyStatus && networkStatus) {
             setConfirmation(true);
         } else {

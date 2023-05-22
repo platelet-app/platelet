@@ -49,6 +49,8 @@ export const listTasksByTenantId = /* GraphQL */ `
         $nextToken: String
         $tenantId: ID!
         $sortDirection: ModelSortDirection
+        $startDate: String
+        $endDate: String
     ) {
         listTasksByTenantId(
             filter: $filter
@@ -56,6 +58,7 @@ export const listTasksByTenantId = /* GraphQL */ `
             nextToken: $nextToken
             tenantId: $tenantId
             sortDirection: $sortDirection
+            createdAt: { between: [$startDate, $endDate] }
         ) {
             items {
                 id
@@ -132,13 +135,21 @@ export const listTasksByTenantId = /* GraphQL */ `
     }
 `;
 
-const getTasksByTenantId = async (tenantId: string) => {
+const getTasksByTenantId = async (
+    tenantId: string,
+    startDate?: Date,
+    endDate?: Date
+) => {
     const items = [];
     let nextToken: string | null = null;
+    const startDateString = startDate?.toISOString();
+    const endDateString = endDate?.toISOString();
     do {
         const variables: any = {
             tenantId,
             nextToken,
+            startDate: startDateString,
+            endDate: endDateString,
         };
         const result = await API.graphql<
             GraphQLQuery<ListTasksByTenantIdQuery>
@@ -151,7 +162,6 @@ const getTasksByTenantId = async (tenantId: string) => {
             nextToken = result.data.listTasksByTenantId.nextToken || null;
         }
     } while (nextToken);
-    console.log("items", items);
     return items.flat();
 };
 

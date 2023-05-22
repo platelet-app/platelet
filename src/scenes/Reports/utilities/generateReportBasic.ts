@@ -17,6 +17,7 @@ const isStartDateBeforeEndDate = (startDate: Date, endDate: Date): boolean => {
 };
 
 const taskFields = {
+    createdAt: "",
     timeOfCall: "",
     riderResponsibility: "",
     isRiderUsingOwnVehicle: "",
@@ -376,8 +377,6 @@ async function generateCSV(data: (Task | null)[]) {
                 c && !c._deleted && c?.visibility === CommentVisibility.EVERYONE
         );
 
-        console.log(filteredComments);
-
         if (filteredComments && filteredComments.length > 0) {
             if (row.length !== commentsOffsetCount) {
                 _.range(commentsOffsetCount - row.length).forEach(() => {
@@ -409,7 +408,6 @@ export default async function generateReportBasic(
     startDate: Date | null = null,
     endDate: Date | null = null
 ) {
-    debugger;
     if (endDate && !isDateValid(endDate)) {
         console.log("end date is not valid");
         return;
@@ -500,7 +498,14 @@ export default async function generateReportBasic(
             return generateCSVDataStore(finalTasks);
         }
     } else if (role === "ALL") {
-        const tasks = await getTasksByTenantId(tenantId);
+        if (!actualEndDate || !actualStartDate) {
+            throw new Error("start date or end date is null");
+        }
+        const tasks = await getTasksByTenantId(
+            tenantId,
+            actualStartDate,
+            actualEndDate
+        );
         return generateCSV(tasks);
     }
 }
