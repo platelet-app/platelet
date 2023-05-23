@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../index.css";
 import { useTheme } from "@mui/material/styles";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
 import AppBar from "@mui/material/AppBar";
 import IconButton from "@mui/material/IconButton";
 import MainWindow from "./MainWindow";
@@ -17,8 +17,10 @@ import DashboardDetailTabs from "../scenes/Dashboard/components/DashboardDetailT
 import MobileNavigationDrawer from "./MobileNavigationDrawer";
 import {
     dashboardFilterTermSelector,
+    dashboardTabIndexSelector,
     menuIndexSelector,
 } from "../redux/Selectors";
+import RoleViewSelect from "../scenes/Dashboard/components/RoleViewSelect";
 
 const useStyles = makeStyles()((theme) => {
     return {
@@ -40,13 +42,9 @@ const useStyles = makeStyles()((theme) => {
 export function MenuMainContainer() {
     const { classes } = useStyles();
     const [searchMode, setSearchMode] = useState(false);
+    const dashboardTabIndex = useSelector(dashboardTabIndexSelector);
     const menuIndex = useSelector(menuIndexSelector);
     const currentFilter = useSelector(dashboardFilterTermSelector);
-    const lightToggleProfileMenu = searchMode ? (
-        <></>
-    ) : (
-        <LightToggleProfileMenu />
-    );
     const toggleIcon = searchMode ? <ArrowBackIcon /> : <SearchIcon />;
     const dispatch = useDispatch();
 
@@ -57,6 +55,7 @@ export function MenuMainContainer() {
 
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
+    const isXs = useMediaQuery(theme.breakpoints.down("sm"));
 
     const updateSearchMode = React.useCallback(
         (currentFilter, menuIndex, isSm) => {
@@ -111,7 +110,7 @@ export function MenuMainContainer() {
                         </Stack>
                     ) : (
                         <>
-                            <Box sx={{ width: 140 }}>
+                            <Box sx={{ paddingRight: 1 }}>
                                 <MobileNavigationDrawer />
                             </Box>
                             {menuIndex === "dashboard" && (
@@ -137,7 +136,10 @@ export function MenuMainContainer() {
                                     </Hidden>
                                 </>
                             )}
-                            {lightToggleProfileMenu}
+                            {isXs &&
+                                dashboardTabIndex !== 2 &&
+                                menuIndex === "dashboard" && <RoleViewSelect />}
+                            <LightToggleProfileMenu />
                         </>
                     )}
                 </Stack>

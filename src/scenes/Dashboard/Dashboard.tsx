@@ -21,11 +21,12 @@ import {
 } from "../../redux/Selectors";
 import { tasksStatus, userRoles } from "../../apiConsts";
 import { clearDashboardFilter } from "../../redux/dashboardFilter/DashboardFilterActions";
-import { Divider, Fab, Hidden, Stack } from "@mui/material";
+import { Box, Divider, Fab, Hidden, Stack } from "@mui/material";
 import ActiveRidersChips from "./components/ActiveRidersChips";
 import GuidedSetupDrawer from "./components/GuidedSetupDrawer";
 import MultipleSelectionActionsMenu from "./components/MultipleSelectionActionsMenu";
 import _ from "lodash";
+import RoleViewSelect from "./components/RoleViewSelect";
 
 function AddClearFab() {
     const dispatch = useDispatch();
