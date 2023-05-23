@@ -88,6 +88,9 @@ const MultipleSelectionActionsInformation: React.FC<
                         <Typography>
                             Accept these pending tasks and move them to NEW?
                         </Typography>
+                        <Typography>
+                            You will be assigned as coordinator.
+                        </Typography>
                     </>
                 );
             } else if (action === pendingActions.reject) {
