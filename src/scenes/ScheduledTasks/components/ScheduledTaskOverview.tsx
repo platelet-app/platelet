@@ -54,7 +54,13 @@ const ScheduledTaskOverview: React.FC<ScheduledTaskOverviewProps> = ({
     };
 
     if (isFetching) {
-        return <Skeleton variant="rectangular" height={118} />;
+        return (
+            <Skeleton
+                data-testId="scheduled-task-overview-skeleton"
+                variant="rectangular"
+                height={118}
+            />
+        );
     } else if (error) {
         return <GetError />;
     } else if (notFound) {

@@ -21,11 +21,13 @@ import { displayErrorNotification } from "../../redux/notifications/Notification
 type TaskDetailsEstablishmentProps = {
     value?: models.Location | null;
     onChange: (location: models.Location) => void;
+    hideEditIcon?: boolean;
 };
 
 const TaskDetailsEstablishment: React.FC<TaskDetailsEstablishmentProps> = ({
     value = null,
     onChange = () => {},
+    hideEditIcon = false,
 }) => {
     const [editMode, setEditMode] = React.useState(false);
     const [notListedName, setNotListedName] = React.useState("");
@@ -87,15 +89,17 @@ const TaskDetailsEstablishment: React.FC<TaskDetailsEstablishmentProps> = ({
                     {value && value.name ? value.name : "Unset"}
                 </Typography>
             </LabelItemPair>
-            <Tooltip title={"Edit"}>
-                <IconButton
-                    onClick={() => setEditMode((prevState) => !prevState)}
-                    aria-label="edit establishment"
-                    size={"small"}
-                >
-                    <EditIcon />
-                </IconButton>
-            </Tooltip>
+            {!hideEditIcon && (
+                <Tooltip title={"Edit"}>
+                    <IconButton
+                        onClick={() => setEditMode((prevState) => !prevState)}
+                        aria-label="edit establishment"
+                        size={"small"}
+                    >
+                        <EditIcon />
+                    </IconButton>
+                </Tooltip>
+            )}
             <ConfirmationDialog
                 onCancel={handleCancel}
                 fullScreen={isSm}

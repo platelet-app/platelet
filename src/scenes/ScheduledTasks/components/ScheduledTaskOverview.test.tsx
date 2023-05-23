@@ -82,7 +82,43 @@ describe("ScheduledTaskOverview", () => {
         render(<ScheduledTaskOverview scheduledTaskId={scheduledTask.id} />, {
             preloadedState,
         });
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId("scheduled-task-overview-skeleton")
+            ).toBeNull();
+        });
         expect(screen.queryByRole("button", { name: "Disable" })).toBeNull();
         expect(screen.queryByRole("button", { name: "Enable" })).toBeNull();
+    });
+    test("hide edit icons if not an admin", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                displayName: "name",
+                roles: [models.Role.USER],
+                username: "username",
+                cognitoId: "cognitoId",
+            })
+        );
+        const scheduledTask = await DataStore.save(
+            new models.ScheduledTask({
+                tenantId,
+                cronExpression: "0 18 * * *",
+                disabled: 0,
+            })
+        );
+        const preloadedState = {
+            tenantId,
+            whoami: { user: whoami },
+        };
+        render(<ScheduledTaskOverview scheduledTaskId={scheduledTask.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId("scheduled-task-overview-skeleton")
+            ).toBeNull();
+        });
+        expect(screen.queryByRole("button")).toBeNull();
     });
 });

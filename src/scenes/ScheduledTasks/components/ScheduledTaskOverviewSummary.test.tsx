@@ -54,6 +54,15 @@ describe("ScheduledTaskOverviewSummary", () => {
         expect(screen.getByText("mock establishment")).toBeInTheDocument();
     });
     test("change the establishment", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                displayName: "name",
+                roles: [models.Role.ADMIN],
+                username: "username",
+                cognitoId: "cognitoId",
+            })
+        );
         const mockEstablishment = await DataStore.save(
             new models.Location({
                 tenantId,
@@ -73,6 +82,7 @@ describe("ScheduledTaskOverviewSummary", () => {
             })
         );
         const saveSpy = jest.spyOn(DataStore, "save");
+        const preloadedState = { tenantId, whoami: { user: whoami } };
         render(
             <ScheduledTaskOverviewSummary scheduledTask={mockScheduledTask} />,
             { preloadedState }
@@ -108,6 +118,15 @@ describe("ScheduledTaskOverviewSummary", () => {
         });
     });
     test("change the requester contact details", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                displayName: "name",
+                roles: [models.Role.ADMIN],
+                username: "username",
+                cognitoId: "cognitoId",
+            })
+        );
         const mockScheduledTask = await DataStore.save(
             new models.ScheduledTask({
                 tenantId,
@@ -119,6 +138,7 @@ describe("ScheduledTaskOverviewSummary", () => {
             })
         );
         const saveSpy = jest.spyOn(DataStore, "save");
+        const preloadedState = { tenantId, whoami: { user: whoami } };
         render(
             <ScheduledTaskOverviewSummary scheduledTask={mockScheduledTask} />,
             { preloadedState }
@@ -158,6 +178,15 @@ describe("ScheduledTaskOverviewSummary", () => {
         });
     });
     test("change the priority", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                displayName: "name",
+                roles: [models.Role.ADMIN],
+                username: "username",
+                cognitoId: "cognitoId",
+            })
+        );
         const mockScheduledTask = await DataStore.save(
             new models.ScheduledTask({
                 tenantId,
@@ -169,6 +198,7 @@ describe("ScheduledTaskOverviewSummary", () => {
             })
         );
         const saveSpy = jest.spyOn(DataStore, "save");
+        const preloadedState = { tenantId, whoami: { user: whoami } };
         render(
             <ScheduledTaskOverviewSummary scheduledTask={mockScheduledTask} />,
             { preloadedState }

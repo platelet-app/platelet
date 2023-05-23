@@ -7,7 +7,8 @@ import RequesterContact from "../../sharedTaskComponents/RequesterContact";
 import PrioritySelect from "../../sharedTaskComponents/PrioritySelect";
 import { DataStore } from "aws-amplify";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { getWhoami } from "../../../redux/Selectors";
 
 type ScheduledTaskOverviewProps = {
     scheduledTask: models.ScheduledTask;
@@ -18,6 +19,8 @@ const errorMessage = "Sorry, something went wrong";
 const ScheduledTaskOverviewSummary: React.FC<ScheduledTaskOverviewProps> = ({
     scheduledTask,
 }) => {
+    const whoami = useSelector(getWhoami);
+    const isAdmin = whoami?.roles.includes(models.Role.ADMIN);
     const dispatch = useDispatch();
     const handleEstablishmentChange = async (location: models.Location) => {
         try {
@@ -89,19 +92,37 @@ const ScheduledTaskOverviewSummary: React.FC<ScheduledTaskOverviewProps> = ({
         >
             <Stack spacing={1} divider={<Divider />}>
                 <TaskDetailsEstablishment
+                    hideEditIcon={!isAdmin}
                     value={scheduledTask.establishmentLocation}
                     onChange={handleEstablishmentChange}
                 />
                 <RequesterContact
+                    hideEditIcon={!isAdmin}
                     onChange={handleRequesterContactChange}
                     contact={scheduledTask.requesterContact || null}
                 />
                 <Box>
-                    <Typography>Priority:</Typography>
-                    <PrioritySelect
-                        onSelect={handleSelectPriority}
-                        priority={scheduledTask.priority as models.Priority}
-                    />
+                    {isAdmin && (
+                        <>
+                            <Typography>Priority:</Typography>
+                            <PrioritySelect
+                                onSelect={handleSelectPriority}
+                                priority={
+                                    scheduledTask.priority as models.Priority
+                                }
+                            />
+                        </>
+                    )}
+                    {!isAdmin && (
+                        <Stack
+                            direction="row"
+                            justifyContent="space-between"
+                            spacing={1}
+                        >
+                            <Typography>Priority:</Typography>
+                            <Typography>{scheduledTask.priority}</Typography>
+                        </Stack>
+                    )}
                 </Box>
             </Stack>
         </Paper>
