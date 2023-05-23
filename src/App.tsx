@@ -39,6 +39,7 @@ declare module "@mui/material/styles" {
             CANCELLED: React.CSSProperties["color"];
             ABANDONED: React.CSSProperties["color"];
             REJECTED: React.CSSProperties["color"];
+            PENDING: React.CSSProperties["color"];
         };
     }
 
@@ -52,6 +53,7 @@ declare module "@mui/material/styles" {
             CANCELLED: React.CSSProperties["color"];
             ABANDONED: React.CSSProperties["color"];
             REJECTED: React.CSSProperties["color"];
+            PENDING: React.CSSProperties["color"];
         };
     }
 }
@@ -132,6 +134,7 @@ const taskStatus = {
     CANCELLED: "blue",
     ABANDONED: "red",
     REJECTED: "grey",
+    PENDING: "lightblue",
 };
 
 function AppDefault(props: any) {

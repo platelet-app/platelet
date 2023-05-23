@@ -174,6 +174,28 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "plateletCreateScheduledTasks": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "plateletGetStatistics": {
       "build": true,
       "providerPlugin": "awscloudformation",
@@ -228,6 +250,11 @@
       "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    },
+    "plateletappSyncOperations": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "LambdaLayer"
     }
   },
   "geo": {
@@ -385,6 +412,22 @@
         }
       ]
     },
+    "AMPLIFY_function_plateletCreateScheduledTasks_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletCreateScheduledTasks"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletCreateScheduledTasks_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletCreateScheduledTasks"
+        }
+      ]
+    },
     "AMPLIFY_function_plateletGetStatistics_deploymentBucketName": {
       "usedBy": [
         {
@@ -462,6 +505,22 @@
         {
           "category": "function",
           "resourceName": "plateletSendUserFeedback"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletappSyncOperations_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletappSyncOperations_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
         }
       ]
     },

@@ -58,7 +58,6 @@ function LeftArrow() {
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const { isFirstItemVisible, isLastItemVisible, scrollPrev } =
         React.useContext(VisibilityContext);
-    console.log("isFirstItemVisible", isFirstItemVisible);
     if (isFirstItemVisible && isLastItemVisible) {
         return null;
     } else if (isSm && isFirstItemVisible) {
@@ -290,22 +289,29 @@ const ActiveRidersChips: React.FC = () => {
         ...riderChipElements,
     ];
 
-    if (errorState) {
+    if (dashboardTabIndex === 2) {
+        return null;
+    } else if (errorState) {
         return <Typography>Sorry, something went wrong.</Typography>;
+    } else {
+        return (
+            <Box sx={{ background: theme.palette.background.paper }}>
+                <ScrollMenu
+                    LeftArrow={
+                        !activeRiders || _.isEmpty(activeRiders)
+                            ? null
+                            : LeftArrow
+                    }
+                    RightArrow={
+                        !activeRiders || _.isEmpty(activeRiders)
+                            ? null
+                            : RightArrow
+                    }
+                >
+                    {allChipElements}
+                </ScrollMenu>
+            </Box>
+        );
     }
-    return (
-        <Box sx={{ background: theme.palette.background.paper }}>
-            <ScrollMenu
-                LeftArrow={
-                    !activeRiders || _.isEmpty(activeRiders) ? null : LeftArrow
-                }
-                RightArrow={
-                    !activeRiders || _.isEmpty(activeRiders) ? null : RightArrow
-                }
-            >
-                {allChipElements}
-            </ScrollMenu>
-        </Box>
-    );
 };
 export default ActiveRidersChips;

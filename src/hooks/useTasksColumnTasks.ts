@@ -93,7 +93,10 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
                 return;
             } else {
                 try {
-                    if (roleView === "ALL" && !dashboardFilteredUser) {
+                    if (
+                        taskKey.includes(models.TaskStatus.PENDING) ||
+                        (roleView === "ALL" && !dashboardFilteredUser)
+                    ) {
                         setState(await getTasksAll(taskKey));
                     } else if (roleView === "ALL" && dashboardFilteredUser) {
                         setState(
@@ -262,7 +265,11 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
                         }
                     } else {
                         // if roleView is rider or coordinator, let the assignments observer deal with it
-                        if (roleView !== "ALL") return;
+                        if (
+                            roleView !== "ALL" &&
+                            !taskKey.includes(models.TaskStatus.PENDING)
+                        )
+                            return;
                         if (taskKey.includes(newTask.element.status)) {
                             getTasksRef.current();
                         }

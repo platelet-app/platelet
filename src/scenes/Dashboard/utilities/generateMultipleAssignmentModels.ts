@@ -15,7 +15,7 @@ async function generateMultipleAssignmentModels(
         _.isEmpty(selectedItems) ||
         (_.isEmpty(coordinators) && _.isEmpty(riders))
     ) {
-        return;
+        return [];
     }
     if (!tenantId) throw new Error("Tenant ID is required");
     const ridersMapped = Object.values(selectedItems).map((task) => {

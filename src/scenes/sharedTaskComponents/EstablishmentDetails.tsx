@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
-import ClearButtonWithConfirmation from "../../../components/ClearButtonWithConfirmation";
-import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
+import ClearButtonWithConfirmation from "../../components/ClearButtonWithConfirmation";
+import FavouriteLocationsSelect from "../../components/FavouriteLocationsSelect";
 import {
     Button,
     FormControlLabel,
@@ -11,34 +10,40 @@ import {
     Typography,
     useMediaQuery,
 } from "@mui/material";
-import ConfirmationDialog from "../../../components/ConfirmationDialog";
-import * as models from "../../../models";
-import { useTheme } from "@mui/styles";
+import ConfirmationDialog from "../../components/ConfirmationDialog";
+import * as models from "../../models";
+import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
-import { tenantIdSelector } from "../../../redux/Selectors";
-import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import { tenantIdSelector } from "../../redux/Selectors";
+import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 
-function EstablishmentDetails({
+type EstablishmentDetailsProps = {
+    value: models.Location | null;
+    onChangeEstablishmentSameAsPickUp?: (value: boolean) => void;
+    sameAsPickUp?: boolean;
+    onSelect: (value: models.Location | null) => void;
+};
+
+const EstablishmentDetails: React.FC<EstablishmentDetailsProps> = ({
     value,
     onChangeEstablishmentSameAsPickUp,
-    sameAsPickUp,
+    sameAsPickUp = false,
     onSelect,
-}) {
+}) => {
     const [notListedWindow, setNotListedWindow] = useState(false);
     const [notListedName, setNotListedName] = useState("");
     const dispatch = useDispatch();
     const tenantId = useSelector(tenantIdSelector);
-
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
-
     const handleNotListedConfirmation = () => {
         if (!tenantId) {
             console.log("tenantId is required");
             dispatch(displayErrorNotification("Sorry, something went wrong"));
         }
         setNotListedWindow(false);
-        onChangeEstablishmentSameAsPickUp(false);
+        if (onChangeEstablishmentSameAsPickUp)
+            onChangeEstablishmentSameAsPickUp(false);
         const newEstablishment = new models.Location({
             name: notListedName,
             listed: 0,
@@ -61,12 +66,14 @@ function EstablishmentDetails({
                         </Typography>
                     </ClearButtonWithConfirmation>
                 </Stack>
-                {value.listed === 1 && (
+                {onChangeEstablishmentSameAsPickUp && value.listed === 1 && (
                     <FormControlLabel
                         labelPlacement="start"
                         checked={sameAsPickUp}
                         color="secondary"
-                        onChange={onChangeEstablishmentSameAsPickUp}
+                        onChange={() =>
+                            onChangeEstablishmentSameAsPickUp(!sameAsPickUp)
+                        }
                         control={<Switch color="warning" defaultChecked />}
                         label="Same as pick-up?"
                         aria-label="toggle same as pick-up"
@@ -113,20 +120,6 @@ function EstablishmentDetails({
             </Stack>
         );
     }
-}
-
-EstablishmentDetails.propTypes = {
-    value: PropTypes.object,
-    onChangeEstablishmentSameAsPickUp: PropTypes.func,
-    sameAsPickUp: PropTypes.bool,
-    onSelect: PropTypes.func,
-};
-
-EstablishmentDetails.defaultProps = {
-    value: null,
-    onChangeEstablishmentSameAsPickUp: () => {},
-    sameAsPickUp: false,
-    onSelect: () => {},
 };
 
 export default EstablishmentDetails;

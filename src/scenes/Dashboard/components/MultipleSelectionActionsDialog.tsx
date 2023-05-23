@@ -12,6 +12,7 @@ import { useTheme } from "@mui/material/styles";
 import {
     actions,
     dotActions,
+    pendingActions,
 } from "../components/MultipleSelectionActionsMenu";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import MultipleSelectionActionsInformation from "./MultipleSelectionActionsInformation";
@@ -32,8 +33,9 @@ import generateMultipleTaskComments from "../utilities/generateMultipleTaskComme
 import { DataStore } from "aws-amplify";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import generateMultipleDuplicatedTaskModels from "../utilities/generateMultipleDuplicatedTaskModels";
+import generateMultipleAcceptedTasks from "../utilities/generateMultipleAcceptedTasks";
 
-const getKey = (action: actions | dotActions) => {
+const getKey = (action: actions | dotActions | pendingActions) => {
     switch (action) {
         case actions.markPickedUp:
             return "timePickedUp";
@@ -44,6 +46,8 @@ const getKey = (action: actions | dotActions) => {
         case dotActions.markCancelled:
             return "timeCancelled";
         case dotActions.markRejected:
+            return "timeRejected";
+        case pendingActions.reject:
             return "timeRejected";
         default:
             return null;
@@ -66,64 +70,192 @@ export type DuplicateStateType = typeof duplicateInitialState;
 
 type MultipleSelectionActionsDialogProps = {
     items: models.Task[];
-    action: dotActions | actions | null;
+    action: dotActions | actions | pendingActions | null;
     onCancel: (...args: any[]) => any;
     open: boolean;
     onConfirmation: (...args: any[]) => any;
 };
 
-const MultipleSelectionActionsDialog: React.FC<MultipleSelectionActionsDialogProps> =
-    ({ items = [], action = null, onCancel, open = false, onConfirmation }) => {
-        const [isDisabled, setIsDisabled] = useState(true);
-        const [reasonBody, setReasonBody] = useState("");
-        const [nameInput, setNameInput] = React.useState("");
-        const [duplicateState, setDuplicateState] =
-            useState<DuplicateStateType>(duplicateInitialState);
-        const [largeCountConfirm, setLargeCountConfirm] = useState(false);
-        const roleView = useSelector(getRoleView);
-        const dispatch = useDispatch();
-        const tenantId = useSelector(tenantIdSelector);
-        const whoami = useSelector(getWhoami);
-        const saveData = useRef(null);
-        const assignees = useSelector(taskAssigneesSelector);
-        const isSm = useMediaQuery(useTheme().breakpoints.down("sm"));
+const MultipleSelectionActionsDialog: React.FC<
+    MultipleSelectionActionsDialogProps
+> = ({ items = [], action = null, onCancel, open = false, onConfirmation }) => {
+    const [isDisabled, setIsDisabled] = useState(true);
+    const [reasonBody, setReasonBody] = useState("");
+    const [nameInput, setNameInput] = React.useState("");
+    const [duplicateState, setDuplicateState] = useState<DuplicateStateType>(
+        duplicateInitialState
+    );
+    const [largeCountConfirm, setLargeCountConfirm] = useState(false);
+    const roleView = useSelector(getRoleView);
+    const dispatch = useDispatch();
+    const tenantId = useSelector(tenantIdSelector);
+    const whoami = useSelector(getWhoami);
+    const saveData = useRef(null);
+    const assignees = useSelector(taskAssigneesSelector);
+    const isSm = useMediaQuery(useTheme().breakpoints.down("sm"));
 
-        const sx = {
-            padding: 1,
-            minWidth: { xs: 0, sm: 500 },
-            minHeight: 300,
-        };
+    const sx = {
+        padding: 1,
+        minWidth: { xs: 0, sm: 500 },
+        minHeight: 300,
+    };
 
-        const timeAction = [
-            actions.markPickedUp,
-            actions.markDelivered,
-            actions.markRiderHome,
-            dotActions.markCancelled,
-            dotActions.markRejected,
-        ].some((a) => action === a);
+    const timeAction = [
+        actions.markPickedUp,
+        actions.markDelivered,
+        actions.markRiderHome,
+        dotActions.markCancelled,
+        dotActions.markRejected,
+        pendingActions.reject,
+    ].some((a) => action === a);
 
-        const handleDuplicateConfirmation = async () => {
+    const handleDuplicateConfirmation = async () => {
+        try {
+            setIsDisabled(true);
+            const assigneeId = duplicateState.assignMe ? whoami.id : null;
+            const commentsId = duplicateState.copyComments ? whoami.id : null;
+            const assigneeRole = [models.Role.COORDINATOR, "ALL"].includes(
+                roleView
+            )
+                ? models.Role.COORDINATOR
+                : models.Role.RIDER;
+            const newModels = await generateMultipleDuplicatedTaskModels(
+                items,
+                tenantId,
+                whoami.id,
+                duplicateState.copyAssignees,
+                assigneeId,
+                assigneeRole,
+                commentsId
+            );
+            onConfirmation(newModels);
+            setIsDisabled(false);
+        } catch (error) {
+            console.log(error);
+            setIsDisabled(false);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+        }
+    };
+
+    const handleConfirmation = () => {
+        if (Object.values(items).length > 5) {
+            setLargeCountConfirm(true);
+        } else {
+            finalConfirmation();
+        }
+    };
+
+    const finalConfirmation = async () => {
+        if (action === dotActions.duplicate) {
+            handleDuplicateConfirmation();
+        } else {
             try {
                 setIsDisabled(true);
-                const assigneeId = duplicateState.assignMe ? whoami.id : null;
-                const commentsId = duplicateState.copyComments
-                    ? whoami.id
-                    : null;
-                const assigneeRole = [models.Role.COORDINATOR, "ALL"].includes(
-                    roleView
-                )
-                    ? models.Role.COORDINATOR
-                    : models.Role.RIDER;
-                const newModels = await generateMultipleDuplicatedTaskModels(
-                    items,
-                    tenantId,
-                    whoami.id,
-                    duplicateState.copyAssignees,
-                    assigneeId,
-                    assigneeRole,
-                    commentsId
-                );
-                onConfirmation(newModels);
+                let generatedCoordinatorAssignments: (
+                    | models.TaskAssignee
+                    | models.Task
+                )[] = [];
+                // if we are accepting or rejecting a task
+                // we should assign it to ourselves as coordinator
+                if (
+                    [pendingActions.reject, pendingActions.accept].some(
+                        (a) => action === a
+                    )
+                ) {
+                    const existingUser = await DataStore.query(
+                        models.User,
+                        whoami.id
+                    );
+                    if (existingUser) {
+                        if (
+                            !existingUser.roles.includes(
+                                models.Role.COORDINATOR
+                            )
+                        ) {
+                            throw new Error(
+                                "You must be a coordinator to accept or reject a task"
+                            );
+                        }
+                        generatedCoordinatorAssignments =
+                            await generateMultipleAssignmentModels(
+                                items,
+                                [whoami],
+                                [],
+                                assignees.items,
+                                tenantId
+                            );
+                    } else {
+                        throw new Error("User not found");
+                    }
+                }
+
+                if (action === pendingActions.accept) {
+                    const generatedTasks = generateMultipleAcceptedTasks(items);
+                    onConfirmation([
+                        ...generatedTasks,
+                        ...generatedCoordinatorAssignments,
+                    ]);
+                }
+
+                if (saveData.current && action === actions.assignUser) {
+                    const generatedModels =
+                        await generateMultipleAssignmentModels(
+                            items,
+                            saveData.current[models.Role.COORDINATOR] || [],
+                            saveData.current[models.Role.RIDER] || [],
+                            assignees.items,
+                            tenantId
+                        );
+                    onConfirmation(generatedModels);
+                } else if (saveData.current && timeAction) {
+                    let nameKey: TaskTimeKey = null;
+                    if (action === actions.markPickedUp) {
+                        nameKey = "timePickedUpSenderName";
+                    } else if (action === actions.markDelivered) {
+                        nameKey = "timeDroppedOffRecipientName";
+                    }
+                    const finalName = nameInput || null;
+                    const assigneesForFunction = assignees.items
+                        ? assignees.items.filter(
+                              (a: models.TaskAssignee) =>
+                                  a.role === models.Role.RIDER
+                          )
+                        : [];
+
+                    if (!action) return;
+                    const generatedModels =
+                        await generateMultipleTaskTimeModels(
+                            items,
+                            getKey(action),
+                            saveData.current,
+                            assigneesForFunction,
+                            nameKey,
+                            finalName
+                        );
+
+                    let generatedComments: models.Comment[] = [];
+                    if (reasonBody) {
+                        const whoamiResult = await DataStore.query(
+                            models.User,
+                            whoami.id
+                        );
+                        if (whoamiResult) {
+                            generatedComments =
+                                await generateMultipleTaskComments(
+                                    items,
+                                    reasonBody,
+                                    whoamiResult,
+                                    tenantId
+                                );
+                        }
+                    }
+                    onConfirmation([
+                        ...generatedModels,
+                        ...generatedComments,
+                        ...generatedCoordinatorAssignments,
+                    ]);
+                }
+                setReasonBody("");
                 setIsDisabled(false);
             } catch (error) {
                 console.log(error);
@@ -132,261 +264,209 @@ const MultipleSelectionActionsDialog: React.FC<MultipleSelectionActionsDialogPro
                     displayErrorNotification("Sorry, something went wrong")
                 );
             }
-        };
-
-        const handleConfirmation = () => {
-            if (Object.values(items).length > 5) {
-                setLargeCountConfirm(true);
-            } else {
-                finalConfirmation();
-            }
-        };
-
-        const finalConfirmation = async () => {
-            if (action === dotActions.duplicate) {
-                handleDuplicateConfirmation();
-            } else {
-                if (!saveData.current) return;
-                try {
-                    setIsDisabled(true);
-                    if (action === actions.assignUser) {
-                        const generatedModels =
-                            await generateMultipleAssignmentModels(
-                                items,
-                                saveData.current[models.Role.COORDINATOR] || [],
-                                saveData.current[models.Role.RIDER] || [],
-                                assignees.items,
-                                tenantId
-                            );
-                        onConfirmation(generatedModels);
-                    } else if (timeAction) {
-                        let nameKey: TaskTimeKey = null;
-                        if (action === actions.markPickedUp) {
-                            nameKey = "timePickedUpSenderName";
-                        } else if (action === actions.markDelivered) {
-                            nameKey = "timeDroppedOffRecipientName";
-                        }
-                        const finalName = nameInput || null;
-                        const assigneesForFunction = assignees.items
-                            ? assignees.items.filter(
-                                  (a: models.TaskAssignee) =>
-                                      a.role === models.Role.RIDER
-                              )
-                            : [];
-
-                        if (!action) return;
-                        const generatedModels =
-                            await generateMultipleTaskTimeModels(
-                                items,
-                                getKey(action),
-                                saveData.current,
-                                assigneesForFunction,
-                                nameKey,
-                                finalName
-                            );
-
-                        let generatedComments: models.Comment[] = [];
-                        if (reasonBody) {
-                            const whoamiResult = await DataStore.query(
-                                models.User,
-                                whoami.id
-                            );
-                            if (whoamiResult) {
-                                generatedComments =
-                                    await generateMultipleTaskComments(
-                                        items,
-                                        reasonBody,
-                                        whoamiResult,
-                                        tenantId
-                                    );
-                            }
-                        }
-                        onConfirmation([
-                            ...generatedModels,
-                            ...generatedComments,
-                        ]);
-                    }
-                    setReasonBody("");
-                    setIsDisabled(false);
-                } catch (error) {
-                    console.log(error);
-                    setIsDisabled(false);
-                    dispatch(
-                        displayErrorNotification("Sorry, something went wrong")
-                    );
-                }
-            }
-        };
-
-        const onChangeDuplicateState = (key: keyof DuplicateStateType) => {
-            setDuplicateState((prevState) => ({
-                ...prevState,
-                [key]: !prevState[key],
-            }));
-        };
-
-        React.useEffect(() => {
-            if (action === dotActions.duplicate) {
-                setIsDisabled(false);
-            }
-        }, [action]);
-
-        const handleChange = React.useCallback((value) => {
-            if (value) {
-                saveData.current = value;
-                setIsDisabled(false);
-            } else {
-                saveData.current = null;
-                setIsDisabled(true);
-            }
-        }, []);
-
-        const largeItemDialog = (
-            <ConfirmationDialog
-                open={largeCountConfirm}
-                onConfirmation={finalConfirmation}
-                onCancel={() => setLargeCountConfirm(false)}
-            >
-                <Typography>
-                    {`You have ${Object.values(items).length} items selected.`}
-                </Typography>
-                <Typography>Are you sure?</Typography>
-            </ConfirmationDialog>
-        );
-
-        if (action === actions.assignUser) {
-            return (
-                <>
-                    <ConfirmationDialog
-                        onCancel={onCancel}
-                        disabled={isDisabled}
-                        open={open}
-                        fullScreen={isSm}
-                        onConfirmation={handleConfirmation}
-                    >
-                        <Box sx={sx}>
-                            <Stack
-                                divider={<Divider />}
-                                direction="column"
-                                spacing={2}
-                            >
-                                <MultipleSelectionActionsInformation
-                                    selectedItems={items}
-                                    action={action}
-                                />
-                                <MultipleSelectionActionsAssignUser
-                                    onChange={handleChange}
-                                />
-                            </Stack>
-                        </Box>
-                    </ConfirmationDialog>
-                    {largeItemDialog}
-                </>
-            );
-        } else if (action === dotActions.duplicate) {
-            const showHint = Object.values(items).some((t) =>
-                [
-                    models.TaskStatus.PICKED_UP,
-                    models.TaskStatus.DROPPED_OFF,
-                ].some((ts) => t.status === ts)
-            );
-            return (
-                <>
-                    <ConfirmationDialog
-                        onCancel={onCancel}
-                        disabled={isDisabled}
-                        open={open}
-                        fullScreen={isSm}
-                        onConfirmation={handleConfirmation}
-                    >
-                        <Box sx={sx}>
-                            <Stack
-                                divider={<Divider />}
-                                direction="column"
-                                spacing={2}
-                            >
-                                <MultipleSelectionActionsInformation
-                                    selectedItems={items}
-                                    action={action}
-                                />
-                                <MultipleSelectionActionsDuplicateTask
-                                    options={duplicateState}
-                                    onChange={onChangeDuplicateState}
-                                    showHint={showHint}
-                                />
-                            </Stack>
-                        </Box>
-                    </ConfirmationDialog>
-                    {largeItemDialog}
-                </>
-            );
-        } else if (timeAction) {
-            const nameLabel =
-                action === actions.markPickedUp
-                    ? "Sender name"
-                    : "Recipient name";
-            return (
-                <>
-                    <ConfirmationDialog
-                        onCancel={onCancel}
-                        disabled={isDisabled}
-                        open={open}
-                        fullScreen={isSm}
-                        onConfirmation={handleConfirmation}
-                    >
-                        <Box sx={sx}>
-                            <Stack
-                                divider={<Divider />}
-                                direction="column"
-                                spacing={2}
-                            >
-                                <MultipleSelectionActionsInformation
-                                    selectedItems={items}
-                                    action={action}
-                                />
-                                <MultipleSelectionActionsSetTime
-                                    onChange={handleChange}
-                                />
-                                {[
-                                    dotActions.markRejected,
-                                    dotActions.markCancelled,
-                                ].some((a) => action === a) && (
-                                    <TextField
-                                        inputProps={{
-                                            "aria-label": "Enter a reason",
-                                        }}
-                                        multiline
-                                        placeholder="Enter a reason"
-                                        value={reasonBody}
-                                        onChange={(e) =>
-                                            setReasonBody(e.target.value)
-                                        }
-                                    />
-                                )}
-                                {[
-                                    actions.markPickedUp,
-                                    actions.markDelivered,
-                                ].some((a) => action === a) && (
-                                    <TextField
-                                        label={nameLabel}
-                                        inputProps={{
-                                            "aria-label": nameLabel,
-                                        }}
-                                        fullWidth
-                                        value={nameInput}
-                                        onChange={(e) =>
-                                            setNameInput(e.target.value)
-                                        }
-                                    />
-                                )}
-                            </Stack>
-                        </Box>
-                    </ConfirmationDialog>
-                    {largeItemDialog}
-                </>
-            );
         }
-        return null;
     };
+
+    const onChangeDuplicateState = (key: keyof DuplicateStateType) => {
+        setDuplicateState((prevState) => ({
+            ...prevState,
+            [key]: !prevState[key],
+        }));
+    };
+
+    React.useEffect(() => {
+        if (action) {
+            if (
+                [
+                    dotActions.duplicate,
+                    pendingActions.accept,
+                    pendingActions.reject,
+                ].some((a) => action === a)
+            ) {
+                setIsDisabled(false);
+            }
+        }
+    }, [action]);
+
+    const handleChange = React.useCallback((value) => {
+        if (value) {
+            saveData.current = value;
+            setIsDisabled(false);
+        } else {
+            saveData.current = null;
+            setIsDisabled(true);
+        }
+    }, []);
+
+    const largeItemDialog = (
+        <ConfirmationDialog
+            open={largeCountConfirm}
+            onConfirmation={finalConfirmation}
+            onCancel={() => setLargeCountConfirm(false)}
+        >
+            <Typography>
+                {`You have ${Object.values(items).length} items selected.`}
+            </Typography>
+            <Typography>Are you sure?</Typography>
+        </ConfirmationDialog>
+    );
+
+    if (action === pendingActions.accept) {
+        return (
+            <>
+                <ConfirmationDialog
+                    onCancel={onCancel}
+                    disabled={isDisabled}
+                    open={open}
+                    fullScreen={isSm}
+                    onConfirmation={handleConfirmation}
+                >
+                    <Box sx={sx}>
+                        <Stack
+                            divider={<Divider />}
+                            direction="column"
+                            spacing={2}
+                        >
+                            <MultipleSelectionActionsInformation
+                                selectedItems={items}
+                                action={action}
+                            />
+                        </Stack>
+                    </Box>
+                </ConfirmationDialog>
+                {largeItemDialog}
+            </>
+        );
+    } else if (action === actions.assignUser) {
+        return (
+            <>
+                <ConfirmationDialog
+                    onCancel={onCancel}
+                    disabled={isDisabled}
+                    open={open}
+                    fullScreen={isSm}
+                    onConfirmation={handleConfirmation}
+                >
+                    <Box sx={sx}>
+                        <Stack
+                            divider={<Divider />}
+                            direction="column"
+                            spacing={2}
+                        >
+                            <MultipleSelectionActionsInformation
+                                selectedItems={items}
+                                action={action}
+                            />
+                            <MultipleSelectionActionsAssignUser
+                                onChange={handleChange}
+                            />
+                        </Stack>
+                    </Box>
+                </ConfirmationDialog>
+                {largeItemDialog}
+            </>
+        );
+    } else if (action === dotActions.duplicate) {
+        const showHint = Object.values(items).some((t) =>
+            [models.TaskStatus.PICKED_UP, models.TaskStatus.DROPPED_OFF].some(
+                (ts) => t.status === ts
+            )
+        );
+        return (
+            <>
+                <ConfirmationDialog
+                    onCancel={onCancel}
+                    disabled={isDisabled}
+                    open={open}
+                    fullScreen={isSm}
+                    onConfirmation={handleConfirmation}
+                >
+                    <Box sx={sx}>
+                        <Stack
+                            divider={<Divider />}
+                            direction="column"
+                            spacing={2}
+                        >
+                            <MultipleSelectionActionsInformation
+                                selectedItems={items}
+                                action={action}
+                            />
+                            <MultipleSelectionActionsDuplicateTask
+                                options={duplicateState}
+                                onChange={onChangeDuplicateState}
+                                showHint={showHint}
+                            />
+                        </Stack>
+                    </Box>
+                </ConfirmationDialog>
+                {largeItemDialog}
+            </>
+        );
+    } else if (timeAction) {
+        const nameLabel =
+            action === actions.markPickedUp ? "Sender name" : "Recipient name";
+        return (
+            <>
+                <ConfirmationDialog
+                    onCancel={onCancel}
+                    disabled={isDisabled}
+                    open={open}
+                    fullScreen={isSm}
+                    onConfirmation={handleConfirmation}
+                >
+                    <Box sx={sx}>
+                        <Stack
+                            divider={<Divider />}
+                            direction="column"
+                            spacing={2}
+                        >
+                            <MultipleSelectionActionsInformation
+                                selectedItems={items}
+                                action={action}
+                            />
+                            <MultipleSelectionActionsSetTime
+                                onChange={handleChange}
+                            />
+                            {[
+                                dotActions.markRejected,
+                                dotActions.markCancelled,
+                                pendingActions.reject,
+                            ].some((a) => action === a) && (
+                                <TextField
+                                    inputProps={{
+                                        "aria-label": "Enter a reason",
+                                    }}
+                                    multiline
+                                    placeholder="Enter a reason"
+                                    value={reasonBody}
+                                    onChange={(e) =>
+                                        setReasonBody(e.target.value)
+                                    }
+                                />
+                            )}
+                            {[actions.markPickedUp, actions.markDelivered].some(
+                                (a) => action === a
+                            ) && (
+                                <TextField
+                                    label={nameLabel}
+                                    inputProps={{
+                                        "aria-label": nameLabel,
+                                    }}
+                                    fullWidth
+                                    value={nameInput}
+                                    onChange={(e) =>
+                                        setNameInput(e.target.value)
+                                    }
+                                />
+                            )}
+                        </Stack>
+                    </Box>
+                </ConfirmationDialog>
+                {largeItemDialog}
+            </>
+        );
+    }
+    return null;
+};
 
 export default MultipleSelectionActionsDialog;

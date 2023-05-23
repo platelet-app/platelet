@@ -4,6 +4,8 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import * as models from "../../../models";
 import GuidedSetupDrawer from "./GuidedSetupDrawer";
+import _ from "lodash";
+import { DataStore } from "aws-amplify";
 
 describe("DashboardDetailTabs", () => {
     test("in progress and completed tabs", () => {
@@ -153,5 +155,41 @@ describe("DashboardDetailTabs", () => {
         expect(
             await screen.findByRole("button", { name: "Save to dashboard" })
         ).toBeInTheDocument();
+    });
+
+    test("show the pending items badge", async () => {
+        const mockTasks = _.range(0, 10).map((i) =>
+            DataStore.save(
+                new models.Task({ status: models.TaskStatus.PENDING })
+            )
+        );
+        await Promise.all(mockTasks);
+        render(<DashboardDetailTabs />);
+        await waitFor(
+            () => {
+                expect(screen.getByText("10")).toBeInTheDocument();
+            },
+            { timeout: 6000 }
+        );
+        const task = await DataStore.save(
+            new models.Task({ status: models.TaskStatus.PENDING })
+        );
+        await waitFor(
+            () => {
+                expect(screen.getByText("11")).toBeInTheDocument();
+            },
+            { timeout: 6000 }
+        );
+        await DataStore.save(
+            models.Task.copyOf(task, (updated) => {
+                updated.status = models.TaskStatus.COMPLETED;
+            })
+        );
+        await waitFor(
+            () => {
+                expect(screen.getByText("10")).toBeInTheDocument();
+            },
+            { timeout: 6000 }
+        );
     });
 });
