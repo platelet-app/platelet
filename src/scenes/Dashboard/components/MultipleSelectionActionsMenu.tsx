@@ -166,7 +166,9 @@ function MultipleSelectionActionsMenu() {
         }
     }
 
-    const dotsMenu = (
+    const dotsMenu = isPendingActions ? (
+        <></>
+    ) : (
         <>
             <IconButton
                 aria-label="More Selection Actions"
@@ -286,7 +288,9 @@ function MultipleSelectionActionsMenu() {
                             <Stack
                                 sx={{ width: { xs: "100%", sm: "auto" } }}
                                 justifyContent={
-                                    isSm ? "space-between" : "flex-start"
+                                    isSm && !isPendingActions
+                                        ? "space-between"
+                                        : "flex-start"
                                 }
                                 alignItems="center"
                                 spacing={isSm ? 0 : 1}
