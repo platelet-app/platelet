@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import * as models from "../../models";
-import { Button, Stack, Typography } from "@mui/material";
+import {
+    Box,
+    Button,
+    CircularProgress,
+    Stack,
+    Typography,
+} from "@mui/material";
 import { PaddedPaper } from "../../styles/common";
 import generateReportBasic from "./utilities/generateReportBasic";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,6 +34,7 @@ function Reports() {
         endDate: new Date(),
     });
     const [days, setDays] = React.useState<Days | null>(Days.THREE_DAYS);
+    const [disableExport, setDisableExport] = React.useState(false);
     const dataStoreReadyStatus = useSelector(dataStoreReadyStatusSelector);
     const networkStatus = useSelector(networkStatusSelector);
     const whoami = useSelector(getWhoami);
@@ -37,6 +44,19 @@ function Reports() {
         useState<models.User | null>(null);
     const dispatch = useDispatch();
     const tenantId = useSelector(tenantIdSelector);
+    const [showLoading, setShowLoading] = useState(false);
+    const loadingTimeout = React.useRef<any>(null);
+
+    React.useEffect(() => {
+        if (isPosting) {
+            loadingTimeout.current = setTimeout(() => {
+                setShowLoading(true);
+            }, 800);
+        } else {
+            clearTimeout(loadingTimeout.current);
+            setShowLoading(false);
+        }
+    }, [isPosting]);
 
     React.useEffect(() => {
         if (whoami?.roles?.includes(models.Role.ADMIN)) {
@@ -137,7 +157,7 @@ function Reports() {
 
     return (
         <PaddedPaper maxWidth={600}>
-            <Stack sx={{ maxWidth: 400 }} direction="column" spacing={2}>
+            <Stack direction="column" spacing={2}>
                 <Typography variant="h5">Export to CSV</Typography>
                 <ReportsControls
                     isFetching={isPosting}
@@ -148,15 +168,19 @@ function Reports() {
                     onChangeDateRange={handleChangeDateRange}
                     role={role}
                     onChangeRole={handleChangeRole}
+                    onErrorState={setDisableExport}
                 />
-                <Button
-                    disabled={isPosting}
-                    aria-label="Export"
-                    onClick={handleClick}
-                    sx={{ marginLeft: "auto", maxWidth: 100 }}
-                >
-                    Export
-                </Button>
+                <Stack direction="row" justifyContent="space-between">
+                    <Button
+                        disabled={isPosting || disableExport}
+                        aria-label="Export"
+                        onClick={handleClick}
+                        sx={{ marginBottom: 1 }}
+                    >
+                        Export
+                    </Button>
+                    {showLoading && <CircularProgress />}
+                </Stack>
             </Stack>
             <ConfirmationDialog
                 open={confirmation}

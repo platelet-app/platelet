@@ -1,6 +1,5 @@
 import { DataStore } from "aws-amplify";
 import _ from "lodash";
-import moment from "moment";
 import { commentVisibility } from "../../../apiConsts";
 import * as models from "../../../models";
 import { writeToString } from "@fast-csv/format";
