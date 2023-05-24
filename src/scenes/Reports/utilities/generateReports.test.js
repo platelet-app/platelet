@@ -37,6 +37,8 @@ const dropOffLocationData = {
     country: "dropoff country",
 };
 
+const tenantId = "tenantId";
+
 const locReducer = (acc, [key, value]) => {
     if (key === "listed") return acc;
     acc[key] = value + " 2";
@@ -86,6 +88,10 @@ describe("generateReports", () => {
             name: "Whoami name",
             roles: [userRoles.coordinator],
         });
+
+        const date = new Date(isoDate);
+        const threeDaysAgo = new Date(date);
+        threeDaysAgo.setDate(date.getDate() - 3);
 
         const pickUpLocation1 = await DataStore.save(
             new models.Location(pickUpLocationData)
@@ -227,11 +233,14 @@ describe("generateReports", () => {
             userRoles.coordinator,
             3
         );
+
         expect(result).toMatchSnapshot();
         const resultBasic = await generateReportBasic(
             whoami.id,
             userRoles.coordinator,
-            3
+            tenantId,
+            date,
+            threeDaysAgo
         );
         expect(resultBasic).toMatchSnapshot();
     });

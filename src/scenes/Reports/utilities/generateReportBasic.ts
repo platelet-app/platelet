@@ -430,8 +430,7 @@ export default async function generateReportBasic(
         actualEndDate &&
         !isStartDateBeforeEndDate(actualStartDate, actualEndDate)
     ) {
-        console.log("start date is not before end date");
-        return;
+        throw new Error("start date is not before end date");
     }
     const assignments = await DataStore.query(models.TaskAssignee);
     if (role !== "ALL") {
@@ -455,26 +454,14 @@ export default async function generateReportBasic(
             );
             const tasks = await DataStore.query(models.Task, (task) =>
                 task
-                    .or((task) =>
-                        task
-                            .createdAt(
-                                "gt",
-                                actualStartDate?.toISOString() || ""
-                            )
-                            .createdAt("lt", actualEndDate?.toISOString() || "")
-                    )
+                    .createdAt("gt", actualStartDate?.toISOString() || "")
+                    .createdAt("lt", actualEndDate?.toISOString() || "")
                     .or((task) =>
                         taskIds.reduce((task, id) => task.id("eq", id), task)
                     )
             );
             const finalTasks = await Promise.all(
                 tasks.map(async (t) => {
-                    const isRiderUsingOwnVehicleBool =
-                        !!t.isRiderUsingOwnVehicle;
-                    const isRiderUsingOwnVehicle = isRiderUsingOwnVehicleBool
-                        ? "TRUE"
-                        : "FALSE";
-
                     const comments = commentsAll.filter(
                         (c) => c.parentId === t.id
                     );
@@ -490,7 +477,6 @@ export default async function generateReportBasic(
                         comments,
                         items,
                         assignees,
-                        isRiderUsingOwnVehicle,
                     };
                 })
             );

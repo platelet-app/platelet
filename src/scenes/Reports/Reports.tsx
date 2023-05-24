@@ -100,6 +100,8 @@ function Reports() {
         } catch (err) {
             console.log(err);
             dispatch(displayErrorNotification("Sorry, something went wrong."));
+        } finally {
+            setIsPosting(false);
         }
     }, [adminSelectedUser, whoami, dispatch, days, role, tenantId]);
 

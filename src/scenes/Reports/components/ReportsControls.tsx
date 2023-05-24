@@ -79,14 +79,15 @@ const ReportsControls: React.FC<ReportsControlsProps> = ({
     };
 
     const theme = useTheme();
-    const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
     const customRange = days === Days.CUSTOM;
 
     // exclude roles the user does not have
-    const exclude = Object.values(models.Role).filter(
-        (role) => !whoami.roles.includes(role)
-    );
+    const exclude = isAdmin
+        ? []
+        : Object.values(models.Role).filter(
+              (role) => !whoami.roles.includes(role)
+          );
     const errorMessage = (error: string | null | undefined) => {
         switch (error) {
             case "maxDate":
