@@ -32,6 +32,7 @@ const locationFields = {
     line1: "",
     town: "",
     postcode: "",
+    listed: "",
 };
 
 const itemFields = {
@@ -72,6 +73,14 @@ function generateCountedHeader(count: number, fields: any, prefix: string) {
 }
 
 async function generateCSVDataStore(data: any[]) {
+    data = data.map((t) => {
+        const isRiderUsingOwnVehicleBool = !!t?.isRiderUsingOwnVehicle;
+        const isRiderUsingOwnVehicle = isRiderUsingOwnVehicleBool
+            ? "TRUE"
+            : "FALSE";
+
+        return { ...t, isRiderUsingOwnVehicle };
+    });
     const rows = [];
     const headers = [];
     const assigneesCount = data.reduce((acc, task) => {
@@ -147,10 +156,14 @@ async function generateCSVDataStore(data: any[]) {
             });
         if (pickUpLocation)
             Object.keys(locationFields).forEach((key) => {
-                row.push(
-                    pickUpLocation[key] ||
-                        locationFields[key as keyof typeof locationFields]
-                );
+                if (key === "listed") {
+                    row.push(pickUpLocation[key] === 1 ? "TRUE" : "FALSE");
+                } else {
+                    row.push(
+                        pickUpLocation[key] ||
+                            locationFields[key as keyof typeof locationFields]
+                    );
+                }
             });
         else
             Object.values(locationFields).forEach((value) => {
@@ -159,10 +172,14 @@ async function generateCSVDataStore(data: any[]) {
 
         if (dropOffLocation)
             Object.keys(locationFields).forEach((key) => {
-                row.push(
-                    dropOffLocation[key] ||
-                        locationFields[key as keyof typeof locationFields]
-                );
+                if (key === "listed") {
+                    row.push(dropOffLocation[key] === 1 ? "TRUE" : "FALSE");
+                } else {
+                    row.push(
+                        dropOffLocation[key] ||
+                            locationFields[key as keyof typeof locationFields]
+                    );
+                }
             });
         else
             Object.values(locationFields).forEach((value) => {
@@ -420,8 +437,10 @@ export default async function generateReportBasic(
     if (actualStartDate) {
         actualStartDate.setUTCHours(0, 0, 0, 0);
     }
+    // if we use ALL we are using graphql and createdAt, so we add a day to the end date
+    // and set the time to 00
     if (actualEndDate) {
-        actualEndDate.setDate(actualEndDate.getDate() + 1);
+        if (role === "ALL") actualEndDate.setDate(actualEndDate.getDate() + 1);
         actualEndDate.setUTCHours(0, 0, 0, 0);
     }
     console.log("get tasks", actualStartDate, actualEndDate);
@@ -434,6 +453,7 @@ export default async function generateReportBasic(
     }
     const assignments = await DataStore.query(models.TaskAssignee);
     if (role !== "ALL") {
+        debugger;
         const filteredAssignments = assignments.filter(
             (assignment) =>
                 assignment.task &&
@@ -452,10 +472,14 @@ export default async function generateReportBasic(
             const commentsAll = await DataStore.query(models.Comment, (c) =>
                 c.visibility("eq", commentVisibility.everyone)
             );
+            const startDateString =
+                actualStartDate?.toISOString().split("T")[0] || "";
+            const endDateString =
+                actualEndDate?.toISOString().split("T")[0] || "";
             const tasks = await DataStore.query(models.Task, (task) =>
                 task
-                    .createdAt("gt", actualStartDate?.toISOString() || "")
-                    .createdAt("lt", actualEndDate?.toISOString() || "")
+                    .dateCreated("ge", startDateString)
+                    .dateCreated("le", endDateString)
                     .or((task) =>
                         taskIds.reduce((task, id) => task.id("eq", id), task)
                     )

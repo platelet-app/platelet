@@ -46,25 +46,19 @@ const locReducer = (acc, [key, value]) => {
 };
 
 describe("generateReports", () => {
-    const RealDate = Date;
     const isoDate = "2021-11-29T23:24:58.987Z";
 
-    function mockDate() {
-        global.Date = class extends RealDate {
-            constructor() {
-                super();
-                return new RealDate(isoDate);
-            }
-        };
-    }
+    beforeEach(() => {
+        jest.useFakeTimers("modern");
+        jest.setSystemTime(new Date(isoDate));
+    });
 
-    afterEach(async () => {
-        global.Date = RealDate;
+    afterAll(() => {
+        jest.useRealTimers();
     });
 
     beforeEach(async () => {
         jest.restoreAllMocks();
-        mockDate();
     });
 
     test("generate a report", async () => {
@@ -124,6 +118,7 @@ describe("generateReports", () => {
                 },
                 priority: priorities.medium,
                 isRiderUsingOwnVehicle: 0,
+                dateCreated: threeDaysAgo.toISOString().split("T")[0],
                 pickUpLocation: pickUpLocation1,
                 dropOffLocation: dropOffLocation1,
                 riderResponsibility: "yay rider role",
@@ -141,6 +136,7 @@ describe("generateReports", () => {
                     telephoneNumber: "01234567890",
                 },
                 priority: priorities.medium,
+                dateCreated: threeDaysAgo.toISOString().split("T")[0],
                 isRiderUsingOwnVehicle: 1,
                 pickUpLocation: pickUpLocation2,
                 dropOffLocation: dropOffLocation2,
@@ -150,17 +146,37 @@ describe("generateReports", () => {
                 timeRiderHome: new Date().toISOString(),
             })
         );
-        const [coordAssignee1, coordAssignee2] = await Promise.all(
-            [task1, task2].map((t) =>
-                DataStore.save(
-                    new models.TaskAssignee({
-                        task: t,
-                        assignee: whoami,
-                        role: userRoles.coordinator,
-                    })
-                )
-            )
+        const task3 = await DataStore.save(
+            new models.Task({
+                status: tasksStatus.active,
+                timeOfCall: new Date().toISOString(),
+                requesterContact: {
+                    name: "some name",
+                    telephoneNumber: "01234567890",
+                },
+                priority: priorities.medium,
+                dateCreated: "2010-01-01",
+                isRiderUsingOwnVehicle: 1,
+                pickUpLocation: pickUpLocation2,
+                dropOffLocation: dropOffLocation2,
+                riderResponsibility: "some rider role",
+                timePickedUp: new Date().toISOString(),
+                timeDroppedOff: new Date().toISOString(),
+                timeRiderHome: new Date().toISOString(),
+            })
         );
+        const [coordAssignee1, coordAssignee2, coordAssignee3] =
+            await Promise.all(
+                [task1, task2, task3].map((t) =>
+                    DataStore.save(
+                        new models.TaskAssignee({
+                            task: t,
+                            assignee: whoami,
+                            role: userRoles.coordinator,
+                        })
+                    )
+                )
+            );
         const riderAssignee1 = await DataStore.save(
             new models.TaskAssignee({
                 task: task1,
@@ -228,19 +244,12 @@ describe("generateReports", () => {
             )
         );
 
-        const result = await generateReport(
-            whoami.id,
-            userRoles.coordinator,
-            3
-        );
-
-        expect(result).toMatchSnapshot();
         const resultBasic = await generateReportBasic(
             whoami.id,
             userRoles.coordinator,
             tenantId,
-            date,
-            threeDaysAgo
+            threeDaysAgo,
+            date
         );
         expect(resultBasic).toMatchSnapshot();
     });

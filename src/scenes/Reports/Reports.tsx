@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
 import * as models from "../../models";
-import {
-    Box,
-    Button,
-    CircularProgress,
-    Stack,
-    Typography,
-} from "@mui/material";
+import { Button, CircularProgress, Stack, Typography } from "@mui/material";
 import { PaddedPaper } from "../../styles/common";
 import generateReportBasic from "./utilities/generateReportBasic";
 import { useDispatch, useSelector } from "react-redux";
