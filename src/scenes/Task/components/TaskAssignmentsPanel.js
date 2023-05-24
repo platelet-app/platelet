@@ -37,6 +37,7 @@ import GetError from "../../../ErrorComponents/GetError";
 import UserChip from "../../../components/UserChip";
 import RecentlyAssignedUsers from "../../../components/RecentlyAssignedUsers";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
+import useModelSubscription from "../../../hooks/useModelSubscription";
 
 const sortByUserRole = (a, b) => {
     // coordinators first and riders second
@@ -66,7 +67,6 @@ function TaskAssignmentsPanel(props) {
     const [errorState, setErrorState] = useState(false);
     const [state, setState] = useState({});
     const [usingOwnVehicle, setUsingOwnVehicle] = useState(false);
-    const taskObserver = React.useRef({ unsubscribe: () => {} });
 
     const currentUserRole = useAssignmentRole(props.taskId);
     const hasFullPermissions = currentUserRole === userRoles.coordinator;
@@ -78,23 +78,13 @@ function TaskAssignmentsPanel(props) {
         if (value) addAssignee(value, role);
     }
 
-    const getTask = React.useCallback(async () => {
-        taskObserver.current.unsubscribe();
-        const result = await DataStore.query(models.Task, props.taskId);
-        if (result) setUsingOwnVehicle(!!result.isRiderUsingOwnVehicle);
-        taskObserver.current = DataStore.observe(
-            models.Task,
-            props.taskId
-        ).subscribe(({ element }) => {
-            setUsingOwnVehicle(!!element.isRiderUsingOwnVehicle);
-        });
-    }, [props.taskId]);
-    useEffect(() => {
-        getTask();
-        return () => {
-            taskObserver.current.unsubscribe();
-        };
-    }, [getTask]);
+    const task = useModelSubscription(models.Task, props.taskId).state;
+
+    React.useEffect(() => {
+        if (task?.isRiderUsingOwnVehicle) {
+            setUsingOwnVehicle(task?.isRiderUsingOwnVehicle);
+        }
+    }, [task?.isRiderUsingOwnVehicle]);
 
     const getAssignees = React.useCallback(
         (taskId, taskAssignees) => {
@@ -270,7 +260,9 @@ function TaskAssignmentsPanel(props) {
         isFetching,
     ]);
 
-    if (errorState) {
+    if (task?.status === models.TaskStatus.PENDING) {
+        return null;
+    } else if (errorState) {
         return <GetError />;
     } else if (isFetching) {
         return <Skeleton variant={"rectangular"} width={"100%"} height={40} />;

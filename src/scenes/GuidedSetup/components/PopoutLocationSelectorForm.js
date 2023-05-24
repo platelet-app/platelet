@@ -20,6 +20,7 @@ const initialState = {
         emailAddress: "",
         name: "",
     },
+    listed: 0,
 };
 
 const addressFields = {

@@ -166,6 +166,10 @@ export const onCreateUser = /* GraphQL */ `
         nextToken
         startedAt
       }
+      createdScheduledTasks {
+        nextToken
+        startedAt
+      }
       disabled
       createdAt
       updatedAt
@@ -240,6 +244,10 @@ export const onUpdateUser = /* GraphQL */ `
         nextToken
         startedAt
       }
+      createdScheduledTasks {
+        nextToken
+        startedAt
+      }
       disabled
       createdAt
       updatedAt
@@ -311,6 +319,10 @@ export const onDeleteUser = /* GraphQL */ `
         startedAt
       }
       createdVehicles {
+        nextToken
+        startedAt
+      }
+      createdScheduledTasks {
         nextToken
         startedAt
       }
@@ -815,6 +827,18 @@ export const onCreateLocation = /* GraphQL */ `
         nextToken
         startedAt
       }
+      scheduledTasksAsPickUp {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsDropOff {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsEstablishment {
+        nextToken
+        startedAt
+      }
       comments {
         nextToken
         startedAt
@@ -894,6 +918,18 @@ export const onUpdateLocation = /* GraphQL */ `
         nextToken
         startedAt
       }
+      scheduledTasksAsPickUp {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsDropOff {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsEstablishment {
+        nextToken
+        startedAt
+      }
       comments {
         nextToken
         startedAt
@@ -970,6 +1006,18 @@ export const onDeleteLocation = /* GraphQL */ `
         startedAt
       }
       taskAsEstablishment {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsPickUp {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsDropOff {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsEstablishment {
         nextToken
         startedAt
       }
@@ -1637,6 +1685,411 @@ export const onDeleteTaskAssignee = /* GraphQL */ `
     }
   }
 `;
+export const onCreateScheduledTask = /* GraphQL */ `
+  subscription OnCreateScheduledTask(
+    $filter: ModelSubscriptionScheduledTaskFilterInput
+  ) {
+    onCreateScheduledTask(filter: $filter) {
+      id
+      tenantId
+      createdBy {
+        id
+        username
+        cognitoId
+        tenantId
+        isPrimaryAdmin
+        displayName
+        name
+        roles
+        dateOfBirth
+        riderResponsibility
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      requesterContact {
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+      }
+      cronExpression
+      pickUpLocationId
+      dropOffLocationId
+      establishmentLocationId
+      pickUpLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      dropOffLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      establishmentLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      priority
+      deliverables {
+        nextToken
+        startedAt
+      }
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedScheduledTasksId
+    }
+  }
+`;
+export const onUpdateScheduledTask = /* GraphQL */ `
+  subscription OnUpdateScheduledTask(
+    $filter: ModelSubscriptionScheduledTaskFilterInput
+  ) {
+    onUpdateScheduledTask(filter: $filter) {
+      id
+      tenantId
+      createdBy {
+        id
+        username
+        cognitoId
+        tenantId
+        isPrimaryAdmin
+        displayName
+        name
+        roles
+        dateOfBirth
+        riderResponsibility
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      requesterContact {
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+      }
+      cronExpression
+      pickUpLocationId
+      dropOffLocationId
+      establishmentLocationId
+      pickUpLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      dropOffLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      establishmentLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      priority
+      deliverables {
+        nextToken
+        startedAt
+      }
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedScheduledTasksId
+    }
+  }
+`;
+export const onDeleteScheduledTask = /* GraphQL */ `
+  subscription OnDeleteScheduledTask(
+    $filter: ModelSubscriptionScheduledTaskFilterInput
+  ) {
+    onDeleteScheduledTask(filter: $filter) {
+      id
+      tenantId
+      createdBy {
+        id
+        username
+        cognitoId
+        tenantId
+        isPrimaryAdmin
+        displayName
+        name
+        roles
+        dateOfBirth
+        riderResponsibility
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      requesterContact {
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+      }
+      cronExpression
+      pickUpLocationId
+      dropOffLocationId
+      establishmentLocationId
+      pickUpLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      dropOffLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      establishmentLocation {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      priority
+      deliverables {
+        nextToken
+        startedAt
+      }
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedScheduledTasksId
+    }
+  }
+`;
 export const onCreateComment = /* GraphQL */ `
   subscription OnCreateComment(
     $filter: ModelSubscriptionCommentFilterInput
@@ -1877,6 +2330,22 @@ export const onCreateDeliverable = /* GraphQL */ `
         _lastChangedAt
         userCreatedTasksId
       }
+      scheduledTask {
+        id
+        tenantId
+        cronExpression
+        pickUpLocationId
+        dropOffLocationId
+        establishmentLocationId
+        priority
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedScheduledTasksId
+      }
       count
       unit
       orderInGrid
@@ -1891,6 +2360,7 @@ export const onCreateDeliverable = /* GraphQL */ `
       _deleted
       _lastChangedAt
       taskDeliverablesId
+      scheduledTaskDeliverablesId
       deliverableTypeDeliverablesId
     }
   }
@@ -1943,6 +2413,22 @@ export const onUpdateDeliverable = /* GraphQL */ `
         _lastChangedAt
         userCreatedTasksId
       }
+      scheduledTask {
+        id
+        tenantId
+        cronExpression
+        pickUpLocationId
+        dropOffLocationId
+        establishmentLocationId
+        priority
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedScheduledTasksId
+      }
       count
       unit
       orderInGrid
@@ -1957,6 +2443,7 @@ export const onUpdateDeliverable = /* GraphQL */ `
       _deleted
       _lastChangedAt
       taskDeliverablesId
+      scheduledTaskDeliverablesId
       deliverableTypeDeliverablesId
     }
   }
@@ -2009,6 +2496,22 @@ export const onDeleteDeliverable = /* GraphQL */ `
         _lastChangedAt
         userCreatedTasksId
       }
+      scheduledTask {
+        id
+        tenantId
+        cronExpression
+        pickUpLocationId
+        dropOffLocationId
+        establishmentLocationId
+        priority
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedScheduledTasksId
+      }
       count
       unit
       orderInGrid
@@ -2023,6 +2526,7 @@ export const onDeleteDeliverable = /* GraphQL */ `
       _deleted
       _lastChangedAt
       taskDeliverablesId
+      scheduledTaskDeliverablesId
       deliverableTypeDeliverablesId
     }
   }
