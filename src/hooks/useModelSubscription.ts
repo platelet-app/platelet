@@ -18,7 +18,7 @@ const useModelSubscription = <T extends PersistentModel>(
 
     const observer = React.useRef({ unsubscribe: () => {} });
 
-    const userModelSynced = useSelector(dataStoreModelSyncedStatusSelector)[
+    const modelSynced = useSelector(dataStoreModelSyncedStatusSelector)[
         model.name
     ];
 
@@ -32,11 +32,22 @@ const useModelSubscription = <T extends PersistentModel>(
         try {
             const result = await DataStore.query(model, id);
             if (result) {
+                setNotFound(false);
                 setState(result);
                 setIsFetching(false);
                 observer.current = DataStore.observe(model, id).subscribe(
-                    ({ element }) => {
-                        setState(element);
+                    async ({ opType }) => {
+                        if (opType === "DELETE") {
+                            setNotFound(true);
+                            return;
+                        } else {
+                            const result = await DataStore.query(model, id);
+                            if (!result) {
+                                setNotFound(true);
+                            } else {
+                                setState(result);
+                            }
+                        }
                     }
                 );
             } else {
@@ -56,7 +67,7 @@ const useModelSubscription = <T extends PersistentModel>(
         return () => {
             observer.current.unsubscribe();
         };
-    }, [getData, userModelSynced]);
+    }, [getData, modelSynced]);
 
     return { state, isFetching, error, setState, notFound };
 };

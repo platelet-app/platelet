@@ -276,6 +276,20 @@ export const schema = {
                         "associatedWith": "userCreatedVehiclesId"
                     }
                 },
+                "createdScheduledTasks": {
+                    "name": "createdScheduledTasks",
+                    "isArray": true,
+                    "type": {
+                        "model": "ScheduledTask"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "userCreatedScheduledTasksId"
+                    }
+                },
                 "disabled": {
                     "name": "disabled",
                     "isArray": false,
@@ -899,6 +913,48 @@ export const schema = {
                         "associatedWith": "establishmentLocation"
                     }
                 },
+                "scheduledTasksAsPickUp": {
+                    "name": "scheduledTasksAsPickUp",
+                    "isArray": true,
+                    "type": {
+                        "model": "ScheduledTask"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "pickUpLocation"
+                    }
+                },
+                "scheduledTasksAsDropOff": {
+                    "name": "scheduledTasksAsDropOff",
+                    "isArray": true,
+                    "type": {
+                        "model": "ScheduledTask"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "dropOffLocation"
+                    }
+                },
+                "scheduledTasksAsEstablishment": {
+                    "name": "scheduledTasksAsEstablishment",
+                    "isArray": true,
+                    "type": {
+                        "model": "ScheduledTask"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "establishmentLocation"
+                    }
+                },
                 "comments": {
                     "name": "comments",
                     "isArray": true,
@@ -1471,6 +1527,210 @@ export const schema = {
                 }
             ]
         },
+        "ScheduledTask": {
+            "name": "ScheduledTask",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "tenantId": {
+                    "name": "tenantId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "createdBy": {
+                    "name": "createdBy",
+                    "isArray": false,
+                    "type": {
+                        "model": "User"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "userCreatedScheduledTasksId"
+                    }
+                },
+                "requesterContact": {
+                    "name": "requesterContact",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "AddressAndContactDetails"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "cronExpression": {
+                    "name": "cronExpression",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "pickUpLocation": {
+                    "name": "pickUpLocation",
+                    "isArray": false,
+                    "type": {
+                        "model": "Location"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "pickUpLocationId"
+                    }
+                },
+                "dropOffLocation": {
+                    "name": "dropOffLocation",
+                    "isArray": false,
+                    "type": {
+                        "model": "Location"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "dropOffLocationId"
+                    }
+                },
+                "establishmentLocation": {
+                    "name": "establishmentLocation",
+                    "isArray": false,
+                    "type": {
+                        "model": "Location"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "establishmentLocationId"
+                    }
+                },
+                "priority": {
+                    "name": "priority",
+                    "isArray": false,
+                    "type": {
+                        "enum": "Priority"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "deliverables": {
+                    "name": "deliverables",
+                    "isArray": true,
+                    "type": {
+                        "model": "Deliverable"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "scheduledTaskDeliverablesId"
+                    }
+                },
+                "disabled": {
+                    "name": "disabled",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "ScheduledTasks",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantId",
+                        "fields": [
+                            "tenantId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "scheduledTasksByPickUpLocation",
+                        "fields": [
+                            "pickUpLocationId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "scheduledTasksByDropOffLocation",
+                        "fields": [
+                            "dropOffLocationId"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "scheduledTasksByEstasblishmentLocation",
+                        "fields": [
+                            "establishmentLocationId"
+                        ]
+                    }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "private",
+                                "operations": [
+                                    "read"
+                                ]
+                            },
+                            {
+                                "groupClaim": "cognito:groups",
+                                "provider": "userPools",
+                                "allow": "groups",
+                                "groups": [
+                                    "ADMIN"
+                                ],
+                                "operations": [
+                                    "create",
+                                    "read",
+                                    "delete",
+                                    "update"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
         "Comment": {
             "name": "Comment",
             "fields": {
@@ -1806,6 +2066,19 @@ export const schema = {
                         "targetName": "taskDeliverablesId"
                     }
                 },
+                "scheduledTask": {
+                    "name": "scheduledTask",
+                    "isArray": false,
+                    "type": {
+                        "model": "ScheduledTask"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "association": {
+                        "connectionType": "BELONGS_TO",
+                        "targetName": "scheduledTaskDeliverablesId"
+                    }
+                },
                 "count": {
                     "name": "count",
                     "isArray": false,
@@ -2051,7 +2324,8 @@ export const schema = {
                 "CANCELLED",
                 "REJECTED",
                 "ABANDONED",
-                "COMPLETED"
+                "COMPLETED",
+                "PENDING"
             ]
         },
         "Priority": {
@@ -2302,5 +2576,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.0",
-    "version": "29a25bac5837be13ad9f993c317e2c5d"
+    "version": "3a570d5d03205d7c0e430a090a4ca29b"
 };

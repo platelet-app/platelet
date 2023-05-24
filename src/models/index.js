@@ -18,7 +18,8 @@ const TaskStatus = {
   "CANCELLED": "CANCELLED",
   "REJECTED": "REJECTED",
   "ABANDONED": "ABANDONED",
-  "COMPLETED": "COMPLETED"
+  "COMPLETED": "COMPLETED",
+  "PENDING": "PENDING"
 };
 
 const Priority = {
@@ -48,7 +49,7 @@ const CommentVisibility = {
   "ME": "ME"
 };
 
-const { Tenant, User, PossibleRiderResponsibilities, Vehicle, VehicleAssignment, Location, Task, TaskAssignee, Comment, DeliverableType, Deliverable, RiderResponsibility, S3Object, AddressAndContactDetails, SendFeedback, Statistics } = initSchema(schema);
+const { Tenant, User, PossibleRiderResponsibilities, Vehicle, VehicleAssignment, Location, Task, TaskAssignee, ScheduledTask, Comment, DeliverableType, Deliverable, RiderResponsibility, S3Object, AddressAndContactDetails, SendFeedback, Statistics } = initSchema(schema);
 
 export {
   Tenant,
@@ -59,6 +60,7 @@ export {
   Location,
   Task,
   TaskAssignee,
+  ScheduledTask,
   Comment,
   DeliverableType,
   Deliverable,

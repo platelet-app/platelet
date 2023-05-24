@@ -95,6 +95,7 @@ TextFieldControlled.propTypes = {
     toUpperCase: PropTypes.bool,
     onChange: PropTypes.func,
     onPressEnter: PropTypes.func,
+    label: PropTypes.string,
 };
 
 TextFieldControlled.defaultProps = {
@@ -103,6 +104,7 @@ TextFieldControlled.defaultProps = {
     toUpperCase: false,
     onChange: () => {},
     onPressEnter: () => {},
+    label: "",
 };
 
 export function TextFieldUncontrolled(props) {

@@ -1,16 +1,14 @@
 import React from "react";
 import LocationDetailsPanel from "./LocationDetailsPanel";
 import { DataStore, API } from "aws-amplify";
-import { render } from "../../../test-utils";
-import { act, screen, waitFor } from "@testing-library/react";
+import { render } from "../../test-utils";
+import { screen, waitFor } from "@testing-library/react";
 import * as amplify from "aws-amplify";
 import userEvent from "@testing-library/user-event";
-import * as models from "../../../models/index";
+import * as models from "../../models";
 import _ from "lodash";
-import { protectedFields, userRoles } from "../../../apiConsts";
+import { protectedFields, userRoles } from "../../apiConsts";
 import { v4 as uuidv4 } from "uuid";
-import * as mutations from "../../../graphql/mutations";
-import * as queries from "../../../graphql/queries";
 
 const errorMessage = "Sorry, something went wrong";
 
@@ -67,9 +65,15 @@ describe("LocationDetailsPanel", () => {
         locationKey
         ${"pickUpLocation"} | ${"dropOffLocation"}
     `("renders the correct title", async ({ locationKey }) => {
-        render(<LocationDetailsPanel locationKey={locationKey} />, {
-            preloadedState,
-        });
+        render(
+            <LocationDetailsPanel
+                taskModel={models.Task}
+                locationKey={locationKey}
+            />,
+            {
+                preloadedState,
+            }
+        );
         expect(
             screen.getByText(
                 locationKey === "pickUpLocation" ? "Collect from" : "Deliver to"
@@ -84,6 +88,7 @@ describe("LocationDetailsPanel", () => {
         const mockLocation = mockLocations[1];
         render(
             <LocationDetailsPanel
+                taskModel={models.Task}
                 taskId={mockTask.id}
                 locationKey={"pickUpLocation"}
             />,
@@ -104,7 +109,11 @@ describe("LocationDetailsPanel", () => {
         await DataStore.save(task);
         const querySpy = jest.spyOn(DataStore, "query");
         render(
-            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />,
+            <LocationDetailsPanel
+                taskModel={models.Task}
+                taskId={task.id}
+                locationKey={locationKey}
+            />,
             { preloadedState }
         );
 
@@ -136,7 +145,11 @@ describe("LocationDetailsPanel", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
-            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />,
+            <LocationDetailsPanel
+                taskModel={models.Task}
+                taskId={task.id}
+                locationKey={locationKey}
+            />,
             {
                 preloadedState,
             }
@@ -175,7 +188,11 @@ describe("LocationDetailsPanel", () => {
         });
 
         render(
-            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />,
+            <LocationDetailsPanel
+                taskModel={models.Task}
+                taskId={task.id}
+                locationKey={locationKey}
+            />,
             { preloadedState }
         );
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
@@ -258,7 +275,11 @@ describe("LocationDetailsPanel", () => {
         }
         clearedLocation = { ...unlistedLocation, ...clearedLocation };
         render(
-            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />,
+            <LocationDetailsPanel
+                taskModel={models.Task}
+                taskId={task.id}
+                locationKey={locationKey}
+            />,
             { preloadedState }
         );
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
@@ -339,7 +360,11 @@ describe("LocationDetailsPanel", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
-            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />,
+            <LocationDetailsPanel
+                taskModel={models.Task}
+                taskId={task.id}
+                locationKey={locationKey}
+            />,
             { preloadedState }
         );
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
@@ -390,6 +415,7 @@ describe("LocationDetailsPanel", () => {
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
             <LocationDetailsPanel
+                taskModel={models.Task}
                 taskId={mockTask.id}
                 locationKey={locationKey}
             />,
@@ -427,6 +453,7 @@ describe("LocationDetailsPanel", () => {
             await DataStore.save(fakeTaskModel);
             render(
                 <LocationDetailsPanel
+                    taskModel={models.Task}
                     taskId={fakeTaskModel.id}
                     locationKey={locationKey}
                 />,
@@ -474,6 +501,7 @@ describe("LocationDetailsPanel", () => {
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
             <LocationDetailsPanel
+                taskModel={models.Task}
                 taskId={mockTask.id}
                 locationKey={locationKey}
             />,
@@ -517,6 +545,7 @@ describe("LocationDetailsPanel", () => {
             const saveSpy = jest.spyOn(DataStore, "save");
             render(
                 <LocationDetailsPanel
+                    taskModel={models.Task}
                     taskId={fakeTask.id}
                     locationKey={locationKey}
                 />,
@@ -568,6 +597,7 @@ describe("LocationDetailsPanel", () => {
             const saveSpy = jest.spyOn(DataStore, "save");
             render(
                 <LocationDetailsPanel
+                    taskModel={models.Task}
                     taskId={fakeTask.id}
                     locationKey={locationKey}
                 />,
@@ -626,7 +656,11 @@ describe("LocationDetailsPanel", () => {
         const task = await DataStore.save(new models.Task({}));
         const querySpy = jest.spyOn(DataStore, "query");
         render(
-            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />
+            <LocationDetailsPanel
+                taskModel={models.Task}
+                taskId={task.id}
+                locationKey={locationKey}
+            />
         );
 
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
@@ -653,7 +687,11 @@ describe("LocationDetailsPanel", () => {
         );
         const querySpy = jest.spyOn(DataStore, "query");
         render(
-            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />
+            <LocationDetailsPanel
+                taskModel={models.Task}
+                taskId={task.id}
+                locationKey={locationKey}
+            />
         );
 
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
@@ -683,7 +721,11 @@ describe("LocationDetailsPanel", () => {
         );
         const querySpy = jest.spyOn(DataStore, "query");
         render(
-            <LocationDetailsPanel taskId={task.id} locationKey={locationKey} />
+            <LocationDetailsPanel
+                taskModel={models.Task}
+                taskId={task.id}
+                locationKey={locationKey}
+            />
         );
 
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
@@ -719,6 +761,7 @@ describe("LocationDetailsPanel", () => {
             const saveSpy = jest.spyOn(DataStore, "save");
             render(
                 <LocationDetailsPanel
+                    taskModel={models.Task}
                     task={fakeTask}
                     taskId={fakeTask.id}
                     locationKey={locationKey}
@@ -782,6 +825,7 @@ describe("LocationDetailsPanel", () => {
         });
         render(
             <LocationDetailsPanel
+                taskModel={models.Task}
                 taskId={"fakeId"}
                 locationKey={"pickUpLocation"}
             />,
@@ -815,6 +859,7 @@ describe("LocationDetailsPanel", () => {
         );
         const { component } = render(
             <LocationDetailsPanel
+                taskModel={models.Task}
                 locationKey={"pickUpLocation"}
                 taskId={task.id}
             />
@@ -862,6 +907,7 @@ describe("LocationDetailsPanel", () => {
 
         render(
             <LocationDetailsPanel
+                taskModel={models.Task}
                 locationKey={"pickUpLocation"}
                 taskId={task.id}
             />,
@@ -896,6 +942,7 @@ describe("LocationDetailsPanel", () => {
 
         render(
             <LocationDetailsPanel
+                taskModel={models.Task}
                 locationKey={"pickUpLocation"}
                 taskId={task.id}
             />,
@@ -941,6 +988,7 @@ describe("LocationDetailsPanel", () => {
 
             render(
                 <LocationDetailsPanel
+                    taskModel={models.Task}
                     locationKey={locationKey}
                     taskId={task.id}
                 />,

@@ -176,7 +176,8 @@ function TaskActions(props) {
     useEffect(() => () => taskObserver.current.unsubscribe(), []);
 
     function checkDisabled(key) {
-        if (!hasFullPermissions) return true;
+        if (!hasFullPermissions || task.status === tasksStatus.pending)
+            return true;
         const stopped =
             state.includes("timeCancelled") || state.includes("timeRejected");
         if (key === "timeDroppedOff")

@@ -106,7 +106,7 @@ describe("TaskDetailsPanel", () => {
         await waitFor(() => {
             expect(
                 screen.getByRole("button", { name: priorities.high })
-            ).toHaveClass("MuiChip-default");
+            ).toHaveClass("MuiChip-filled");
         });
         expect(screen.getByText(/Today at/)).toBeInTheDocument();
         expect(
@@ -640,7 +640,7 @@ describe("TaskDetailsPanel", () => {
         await waitFor(() => {
             expect(
                 screen.getByRole("button", { name: priorities.low })
-            ).toHaveClass("MuiChip-default");
+            ).toHaveClass("MuiChip-filled");
         });
         await DataStore.save(
             models.Task.copyOf(mockTask, (upd) => {
@@ -815,7 +815,7 @@ describe("TaskDetailsPanel", () => {
         await waitFor(() => {
             expect(
                 screen.getByRole("button", { name: priorities.high })
-            ).toHaveClass("MuiChip-default");
+            ).toHaveClass("MuiChip-filled");
         });
         expect(screen.getByText(/Today at/)).toBeInTheDocument();
         expect(
@@ -957,7 +957,7 @@ describe("TaskDetailsPanel", () => {
             await waitFor(() => {
                 expect(
                     screen.getByRole("button", { name: priorities.high })
-                ).toHaveClass("MuiChip-default");
+                ).toHaveClass("MuiChip-filled");
             });
             expect(screen.getByText(/Today at/)).toBeInTheDocument();
             expect(

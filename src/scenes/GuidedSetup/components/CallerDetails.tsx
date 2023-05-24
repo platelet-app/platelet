@@ -3,7 +3,7 @@ import * as models from "../../../models";
 import { Stack, TextField, Typography } from "@mui/material";
 import React from "react";
 import { ContactForm } from "../../../components/ContactForm";
-import EstablishmentDetails from "./EstablishmentDetails";
+import EstablishmentDetails from "../../sharedTaskComponents/EstablishmentDetails";
 
 type CallerDetailType = {
     onChangeContact: (contact: any) => void;
@@ -38,7 +38,7 @@ export const CallerDetails: React.FC<CallerDetailType> = ({
         establishment: null,
     });
 
-    const handleSelectLocation = (location: models.Location) => {
+    const handleSelectLocation = (location: models.Location | null) => {
         onChangeLocation(location);
         if (
             !state.telephoneNumber &&

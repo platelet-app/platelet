@@ -1,27 +1,35 @@
 import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
-import { priorities } from "../../../apiConsts";
 import { Chip, Stack } from "@mui/material";
+import * as models from "../../models";
 
-function PrioritySelect(props) {
-    const [state, setState] = useState(null);
+type PrioritySelectProps = {
+    priority?: models.Priority | null;
+    onSelect: (value: models.Priority | null) => void;
+    disabled?: boolean;
+};
 
-    const handleChange = (value) => {
+const PrioritySelect: React.FC<PrioritySelectProps> = ({
+    priority = null,
+    onSelect,
+    disabled = false,
+}) => {
+    const [state, setState] = useState<models.Priority | null>(null);
+
+    const handleChange = (value: models.Priority | null) => {
         const result = value === state ? null : value;
         setState(result);
-        props.onSelect(result);
+        onSelect(result);
     };
 
-    useEffect(() => setState(props.priority), [props.priority]);
-
+    useEffect(() => setState(priority), [priority]);
     return (
         <Stack direction="row-reverse" spacing={1}>
-            {Object.values(priorities).map((priority) => (
+            {Object.values(models.Priority).map((priority) => (
                 <Chip
                     key={priority}
-                    disabled={props.disabled}
+                    disabled={disabled}
                     data-cy={`new-task-priority-${priority}`}
-                    variant={state === priority ? "default" : "outlined"}
+                    variant={state === priority ? "filled" : "outlined"}
                     label={priority}
                     onClick={() => handleChange(priority)}
                     color={state === priority ? "primary" : "default"}
@@ -29,18 +37,10 @@ function PrioritySelect(props) {
             ))}
         </Stack>
     );
-}
-
-PrioritySelect.propTypes = {
-    priority: PropTypes.string,
-    onSelect: PropTypes.func,
-    disabled: PropTypes.bool,
 };
-
 PrioritySelect.defaultProps = {
     priority: null,
     onSelect: () => {},
     disabled: false,
 };
-
 export default PrioritySelect;

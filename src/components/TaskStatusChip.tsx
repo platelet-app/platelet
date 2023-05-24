@@ -12,6 +12,7 @@ const colors = {
     CANCELLED: blue[700],
     ABANDONED: red[700],
     REJECTED: grey[700],
+    PENDING: blue[200],
 };
 
 const generateLabel = (status: models.TaskStatus | TaskStatus) => {

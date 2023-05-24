@@ -1,11 +1,10 @@
+import React from "react";
 import { Stack } from "@mui/material";
 import { Box } from "@mui/system";
 import PropTypes from "prop-types";
-import React from "react";
 import { showHide } from "../../../styles/common";
 import TaskItem from "./TaskItem";
 import DateStampDivider from "../../../components/DateStampDivider";
-import { makeStyles } from "tss-react/mui";
 
 export function sortByCreatedTime(items, order = "newest") {
     if (!items || items.length === 0) return [];
