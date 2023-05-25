@@ -25,6 +25,8 @@ const taskFields = {
     timePickedUp: "",
     timeDroppedOff: "",
     timeRiderHome: "",
+    timeRejected: "",
+    timeCancelled: "",
 };
 
 const locationFields = {
@@ -242,7 +244,7 @@ async function generateCSVDataStore(data: any[]) {
 }
 
 async function generateCSV(data: (Task | null)[]) {
-    const filteredNulls = data.filter((t) => !!t);
+    const filteredNulls = data.filter((t) => !!t && !t?._deleted);
     const newData = filteredNulls.map((t) => {
         const isRiderUsingOwnVehicleBool = !!t?.isRiderUsingOwnVehicle;
         const isRiderUsingOwnVehicle = isRiderUsingOwnVehicleBool
@@ -254,8 +256,8 @@ async function generateCSV(data: (Task | null)[]) {
     const rows = [];
     const headers = [];
     const assigneesCount = newData.reduce((acc, task) => {
-        if (task?.assignees?.items && task?.assignees?.items.length > acc)
-            return task.assignees.items.length;
+        const filtered = task?.assignees?.items?.filter((a) => !a?._deleted);
+        if (filtered && filtered.length > acc) return filtered.length;
         else return acc;
     }, 0);
     const itemOffsetCount =
@@ -268,8 +270,8 @@ async function generateCSV(data: (Task | null)[]) {
         assigneesCount * Object.keys(assigneeFields).length;
 
     const itemsCount = newData.reduce((acc, task) => {
-        if (task?.deliverables?.items && task?.deliverables?.items.length > acc)
-            return task?.deliverables?.items.length;
+        const filtered = task?.deliverables?.items?.filter((d) => !d?._deleted);
+        if (filtered && filtered.length > acc) return filtered.length;
         else return acc;
     }, 0);
 
@@ -357,8 +359,10 @@ async function generateCSV(data: (Task | null)[]) {
                 row.push(value);
             });
 
-        if (assignees?.items && assignees?.items.length > 0) {
-            assignees?.items.forEach((item) => {
+        const filteredAssignees = assignees?.items?.filter((a) => !a?._deleted);
+
+        if (filteredAssignees && filteredAssignees.length > 0) {
+            filteredAssignees.forEach((item) => {
                 Object.keys(assigneeFields).forEach((key) => {
                     if (key === "name") {
                         row.push(item?.assignee.name || assigneeFields.name);
@@ -369,13 +373,17 @@ async function generateCSV(data: (Task | null)[]) {
             });
         }
 
-        if (deliverables?.items && deliverables?.items.length > 0) {
+        const filteredDeliverables = deliverables?.items?.filter(
+            (d) => !d?._deleted
+        );
+
+        if (filteredDeliverables && filteredDeliverables.length > 0) {
             if (row.length !== itemOffsetCount) {
                 _.range(itemOffsetCount - row.length).forEach(() => {
                     row.push("");
                 });
             }
-            deliverables?.items.forEach((item) => {
+            filteredDeliverables.forEach((item) => {
                 Object.keys(itemFields).forEach((key) => {
                     if (key === "label") {
                         row.push(
@@ -451,9 +459,8 @@ export default async function generateReportBasic(
     ) {
         throw new Error("start date is not before end date");
     }
-    const assignments = await DataStore.query(models.TaskAssignee);
     if (role !== "ALL") {
-        debugger;
+        const assignments = await DataStore.query(models.TaskAssignee);
         const filteredAssignments = assignments.filter(
             (assignment) =>
                 assignment.task &&

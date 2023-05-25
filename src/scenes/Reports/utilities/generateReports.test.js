@@ -1,4 +1,5 @@
-import { DataStore } from "aws-amplify";
+import { API, DataStore } from "aws-amplify";
+import _ from "lodash";
 import {
     commentVisibility,
     deliverableUnits,
@@ -61,7 +62,307 @@ describe("generateReports", () => {
         jest.restoreAllMocks();
     });
 
-    test("generate a report", async () => {
+    test("generate a report with ALL tasks", async () => {
+        const rider1 = {
+            displayName: "Rider 1",
+            name: "Rider 1 name",
+            roles: [userRoles.rider],
+            _deleted: false,
+        };
+        const rider2 = {
+            displayName: "Rider 2",
+            name: "Rider 2 name",
+            roles: [userRoles.rider],
+            _deleted: false,
+        };
+        const coord = {
+            displayName: "Coordinator",
+            name: "Coordinator name",
+            roles: [userRoles.coordinator],
+            _deleted: false,
+        };
+        const whoami = {
+            displayName: "Whoami",
+            name: "Whoami name",
+            roles: [userRoles.coordinator],
+            _deleted: false,
+        };
+        const [coordAssignee1, coordAssignee2] = [_.range(2)].map((t) => {
+            return {
+                assignee: whoami,
+                role: userRoles.coordinator,
+                _deleted: false,
+            };
+        });
+        const riderAssignee1 = {
+            assignee: rider1,
+            role: userRoles.rider,
+            _deleted: false,
+        };
+        const riderAssignee2 = {
+            assignee: rider2,
+            role: userRoles.rider,
+            _deleted: false,
+        };
+        const coordAssignee = {
+            assignee: coord,
+            role: userRoles.coordinator,
+            _deleted: false,
+        };
+        const deletedAssignee = {
+            assignee: coord,
+            role: userRoles.coordinator,
+            _deleted: true,
+        };
+        const deli1 = { label: "deliverable 1" };
+        const deli2 = { label: "deliverable 2" };
+        const deli3 = { label: "deliverable 3" };
+        const item1 = {
+            deliverableType: deli1,
+            unit: deliverableUnits.box,
+            count: 5,
+            _deleted: false,
+        };
+        const item2 = {
+            deliverableType: deli2,
+            unit: deliverableUnits.item,
+            count: 6,
+            _deleted: false,
+        };
+        const item3 = {
+            deliverableType: deli3,
+            unit: deliverableUnits.liter,
+            count: 7,
+            _deleted: false,
+        };
+        const deletedItem = {
+            deliverableType: deli3,
+            unit: deliverableUnits.liter,
+            count: 7,
+            _deleted: true,
+        };
+        const [comment1, comment2] = ["body 1", "body 2"].map((body) => {
+            return {
+                _deleted: false,
+                body,
+                author: rider1,
+                visibility: commentVisibility.everyone,
+            };
+        });
+        const commentDeleted = {
+            body: "body 3",
+            author: rider1,
+            visibility: commentVisibility.everyone,
+            _deleted: true,
+        };
+        const commentPrivate = {
+            _deleted: false,
+            body: "body 4",
+            author: rider1,
+            visibility: commentVisibility.me,
+        };
+        const task1 = {
+            _deleted: false,
+            createdAt: new Date().toISOString(),
+            status: tasksStatus.new,
+            timeOfCall: new Date().toISOString(),
+            requesterContact: {
+                name: "some person",
+                telephoneNumber: "0121212121",
+            },
+            assignees: {
+                items: [coordAssignee, coordAssignee1, riderAssignee1],
+            },
+            deliverables: { items: [item1, item2, deletedItem] },
+            comments: { items: [comment1, comment2, commentDeleted] },
+            priority: priorities.medium,
+            dateCreated: new Date().toISOString().split("T")[0],
+            isRiderUsingOwnVehicle: 0,
+            pickUpLocation: pickUpLocationData,
+            dropOffLocation: dropOffLocationData,
+            riderResponsibility: "yay rider role",
+            timePickedUp: new Date().toISOString(),
+            timeDroppedOff: new Date().toISOString(),
+            timeRiderHome: new Date().toISOString(),
+            timeCancelled: new Date().toISOString(),
+        };
+        const task2 = {
+            _deleted: false,
+            createdAt: new Date().toISOString(),
+            status: tasksStatus.active,
+            timeOfCall: new Date().toISOString(),
+            requesterContact: {
+                name: "some name",
+                telephoneNumber: "01234567890",
+            },
+            assignees: {
+                items: [coordAssignee2, riderAssignee2, deletedAssignee],
+            },
+            deliverables: { items: [item3] },
+            comments: { items: [commentPrivate] },
+            priority: priorities.medium,
+            dateCreated: new Date().toISOString().split("T")[0],
+            isRiderUsingOwnVehicle: 0,
+            pickUpLocation: pickUpLocationData,
+            dropOffLocation: dropOffLocationData,
+            riderResponsibility: "yay rider role",
+            timePickedUp: new Date().toISOString(),
+            timeDroppedOff: new Date().toISOString(),
+            timeRiderHome: new Date().toISOString(),
+            timeRejected: new Date().toISOString(),
+        };
+        const taskDeleted = {
+            _deleted: true,
+            createdAt: new Date().toISOString(),
+            status: tasksStatus.active,
+            timeOfCall: new Date().toISOString(),
+            requesterContact: {
+                name: "some name",
+                telephoneNumber: "01234567890",
+            },
+            assignees: {
+                items: [coordAssignee2, riderAssignee2, deletedAssignee],
+            },
+            deliverables: { items: [item3] },
+            comments: { items: [commentPrivate] },
+            priority: priorities.medium,
+            dateCreated: new Date().toISOString().split("T")[0],
+            isRiderUsingOwnVehicle: 0,
+            pickUpLocation: pickUpLocationData,
+            dropOffLocation: dropOffLocationData,
+            riderResponsibility: "yay rider role",
+            timePickedUp: new Date().toISOString(),
+            timeDroppedOff: new Date().toISOString(),
+            timeRiderHome: new Date().toISOString(),
+            timeRejected: new Date().toISOString(),
+        };
+        const graphqlSpy = jest.spyOn(API, "graphql").mockResolvedValueOnce({
+            data: {
+                listTasksByTenantId: {
+                    items: [task1, task2, taskDeleted],
+                    nextToken: null,
+                    startedAt: 1620000000000,
+                },
+            },
+        });
+        const date = new Date(isoDate);
+        const threeDaysAgo = new Date(date);
+        threeDaysAgo.setDate(date.getDate() - 3);
+        const resultBasic = await generateReportBasic(
+            whoami.id,
+            "ALL",
+            tenantId,
+            threeDaysAgo,
+            date
+        );
+        expect(graphqlSpy).toHaveBeenCalledTimes(1);
+        const vars = graphqlSpy.mock.calls[0][0];
+        expect(vars).toMatchInlineSnapshot(`
+            Object {
+              "query": "
+                query ListTasksByTenantId(
+                    $filter: ModelTaskFilterInput
+                    $limit: Int
+                    $nextToken: String
+                    $tenantId: ID!
+                    $sortDirection: ModelSortDirection
+                    $startDate: String
+                    $endDate: String
+                ) {
+                    listTasksByTenantId(
+                        filter: $filter
+                        limit: $limit
+                        nextToken: $nextToken
+                        tenantId: $tenantId
+                        sortDirection: $sortDirection
+                        createdAt: { between: [$startDate, $endDate] }
+                    ) {
+                        items {
+                            id
+                            timeOfCall
+                            dateCreated
+                            riderResponsibility
+                            priority
+                            status
+                            createdAt
+                            assignees {
+                                items {
+                                    assignee {
+                                        id
+                                        _deleted
+                                        displayName
+                                        name
+                                    }
+                                    role
+                                }
+                            }
+                            pickUpLocation {
+                                ward
+                                line1
+                                line2
+                                line3
+                                town
+                                county
+                                state
+                                country
+                                postcode
+                                what3words
+                            }
+                            dropOffLocation {
+                                ward
+                                line1
+                                line2
+                                line3
+                                town
+                                county
+                                state
+                                country
+                                postcode
+                                what3words
+                            }
+                            deliverables {
+                                items {
+                                    count
+                                    _deleted
+                                    deliverableType {
+                                        label
+                                        icon
+                                    }
+                                }
+                            }
+                            comments {
+                                items {
+                                    id
+                                    _deleted
+                                    visibility
+                                    author {
+                                        displayName
+                                        name
+                                        id
+                                    }
+                                }
+                            }
+                            _version
+                            _deleted
+                            _lastChangedAt
+                        }
+                        nextToken
+                        startedAt
+                    }
+                }
+            ",
+              "variables": Object {
+                "endDate": "2021-11-30T00:00:00.000Z",
+                "nextToken": null,
+                "startDate": "2021-11-26T00:00:00.000Z",
+                "tenantId": "tenantId",
+              },
+            }
+        `);
+        expect(resultBasic).toMatchSnapshot();
+    });
+
+    test("generate a report with a role", async () => {
         const rider1 = new models.User({
             displayName: "Rider 1",
             name: "Rider 1 name",
@@ -125,6 +426,7 @@ describe("generateReports", () => {
                 timePickedUp: new Date().toISOString(),
                 timeDroppedOff: new Date().toISOString(),
                 timeRiderHome: new Date().toISOString(),
+                timeCancelled: new Date().toISOString(),
             })
         );
         const task2 = await DataStore.save(
@@ -144,6 +446,7 @@ describe("generateReports", () => {
                 timePickedUp: new Date().toISOString(),
                 timeDroppedOff: new Date().toISOString(),
                 timeRiderHome: new Date().toISOString(),
+                timeRejected: new Date().toISOString(),
             })
         );
         const task3 = await DataStore.save(
