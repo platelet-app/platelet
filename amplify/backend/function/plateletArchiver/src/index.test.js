@@ -275,4 +275,36 @@ describe("plateletArchiver", () => {
             })
         );
     });
+    test("graphql failure to archive an assignee", async () => {
+        const unArchivedFakeAssigneeReturnError = {
+            updateTaskAssignee: null,
+            errors: [
+                {
+                    message: "some error",
+                },
+            ],
+        };
+        const requestSpy = jest.spyOn(indexModule, "makeNewRequest");
+        jest.spyOn(fetch, "default")
+            .mockImplementationOnce(setupFetchStub(fakeData))
+            .mockImplementationOnce(setupFetchStub(fakeDataSecond))
+            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
+            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
+            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
+            .mockImplementationOnce(setupFetchStub({}))
+            .mockImplementationOnce(setupFetchStub(fakeAssigneeDataSecond))
+            .mockImplementationOnce(
+                setupFetchStub(unArchivedFakeAssigneeReturnError)
+            );
+        await indexModule.handler({}, indexModule.makeNewRequest);
+        expect(requestSpy).toMatchSnapshot();
+        expect(requestSpy).not.toHaveBeenCalledWith(
+            expect.stringMatching(/updateTask\(/),
+            expect.objectContaining({
+                input: expect.objectContaining({
+                    id: "someTaskId",
+                }),
+            })
+        );
+    });
 });

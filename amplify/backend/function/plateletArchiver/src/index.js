@@ -177,6 +177,14 @@ let makeNewRequest = async (query, variables) => {
 
 exports.makeNewRequest = makeNewRequest;
 
+const errorCheck = (body) => {
+    console.log("BODY", body);
+    if (body?.data?.errors) {
+        console.error(body?.data?.errors);
+        throw new Error(body?.data?.errors[0].message);
+    }
+};
+
 const getTaskAssignees = async (task) => {
     const items = [];
     let nextToken = null;
@@ -188,6 +196,7 @@ const getTaskAssignees = async (task) => {
         const request = await makeNewRequest(getTaskAssigneesQuery, variables);
         const response = await fetch(request);
         const body = await response.json();
+        errorCheck(body);
         if (body.data.getTask) {
             items.push(...body.data.getTask.assignees.items);
             nextToken = body.data.getTask.assignees.nextToken;
@@ -212,6 +221,7 @@ const getDeliverables = async (task) => {
         );
         const response = await fetch(request);
         const body = await response.json();
+        errorCheck(body);
         if (body.data.getTask) {
             items.push(...body.data.getTask.deliverables.items);
             nextToken = body.data.getTask.deliverables.nextToken;
@@ -233,6 +243,7 @@ const getComments = async (task) => {
         const request = await makeNewRequest(getTaskCommentsQuery, variables);
         const response = await fetch(request);
         const body = await response.json();
+        errorCheck(body);
         if (body.data.getTask) {
             items.push(...body.data.getTask.comments.items);
             nextToken = body.data.getTask.comments.nextToken;
@@ -256,6 +267,7 @@ const getUnArchivedTasksByStatus = async (status) => {
         const request = await makeNewRequest(query, variables);
         const response = await fetch(request);
         const body = await response.json();
+        errorCheck(body);
         if (body.data.tasksByArchivedStatus) {
             items.push(...body.data.tasksByArchivedStatus.items);
             nextToken = body.data.tasksByArchivedStatus.nextToken;
@@ -278,6 +290,7 @@ const updateTaskAssignees = async (assignment) => {
     const request = await makeNewRequest(updateTaskAssigneeMutation, variables);
     const response = await fetch(request);
     const body = await response.json();
+    errorCheck(body);
     return body.data.updateTaskAssignee;
 };
 
@@ -292,6 +305,7 @@ const updateDeliverable = async (deliverable) => {
     const request = await makeNewRequest(updateDeliverableMutation, variables);
     const response = await fetch(request);
     const body = await response.json();
+    errorCheck(body);
     return body.data.updateDeliverable;
 };
 
@@ -306,6 +320,7 @@ const updateComment = async (comment) => {
     const request = await makeNewRequest(updateCommentMutation, variables);
     const response = await fetch(request);
     const body = await response.json();
+    errorCheck(body);
     return body.data.updateComment;
 };
 
@@ -320,6 +335,7 @@ const updateLocation = async (location) => {
     const request = await makeNewRequest(updateLocationMutation, variables);
     const response = await fetch(request);
     const body = await response.json();
+    errorCheck(body);
     return body.data.updateLocation;
 };
 
@@ -334,6 +350,7 @@ const updateTask = async (task) => {
     const request = await makeNewRequest(updateTaskMutation, variables);
     const response = await fetch(request);
     const body = await response.json();
+    errorCheck(body);
     return body.data.updateTask;
 };
 
@@ -404,7 +421,7 @@ exports.handler = async (event, makeNewRequestTest) => {
                     );
                     console.log("updateAssigneesResult", updateAssigneesResult);
 
-                    if (updateAssigneesResult.some((a) => a.archived !== 1)) {
+                    if (updateAssigneesResult.some((a) => a?.archived !== 1)) {
                         throw new Error("Failed to archive task assignees");
                     }
                     const deliverables = await getDeliverables(task);
