@@ -15,6 +15,7 @@ const { SignatureV4 } = require("@aws-sdk/signature-v4");
 const { HttpRequest } = require("@aws-sdk/protocol-http");
 const { default: fetch, Request } = require("node-fetch");
 const moment = require("moment");
+const _ = require("lodash");
 
 const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
 
@@ -354,83 +355,99 @@ exports.handler = async (event, makeNewRequestTest) => {
     const filtered = tasksFlattened.filter(
         (task) => task.createdAt && task.createdAt < oneWeekAgo
     );
-    await Promise.all(
-        filtered.map(async (task) => {
-            try {
-                console.log("Updating task: ", task);
-                const {
-                    establishmentLocation,
-                    pickUpLocation,
-                    dropOffLocation,
-                } = task;
+    // split into 10 item lists
+    const chunked = _.chunk(filtered, 10);
+    console.log("Chunked into: ", chunked.length, " chunks");
+    const results = [];
+    for (const chunk of chunked) {
+        await Promise.all(
+            chunk.map(async (task) => {
+                try {
+                    console.log("Updating task: ", task);
+                    const {
+                        establishmentLocation,
+                        pickUpLocation,
+                        dropOffLocation,
+                    } = task;
 
-                if (
-                    establishmentLocation &&
-                    establishmentLocation.listed === 0
-                ) {
-                    updateLocation(establishmentLocation);
-                    console.log(
-                        "Archived establishment location",
-                        establishmentLocation.id
+                    if (
+                        establishmentLocation &&
+                        establishmentLocation.listed === 0
+                    ) {
+                        updateLocation(establishmentLocation);
+                        console.log(
+                            "Archived establishment location",
+                            establishmentLocation.id
+                        );
+                    }
+                    if (pickUpLocation && pickUpLocation.listed === 0) {
+                        updateLocation(pickUpLocation);
+                        console.log(
+                            "Archived pick up location",
+                            pickUpLocation.id
+                        );
+                    }
+                    if (dropOffLocation && dropOffLocation.listed === 0) {
+                        updateLocation(dropOffLocation);
+                        console.log(
+                            "Archived drop off location",
+                            dropOffLocation.id
+                        );
+                    }
+
+                    const assignees = await getTaskAssignees(task);
+                    console.log("Found assignees: ", assignees);
+                    const updateAssigneesResult = await Promise.all(
+                        assignees.map((assignment) =>
+                            updateTaskAssignees(assignment)
+                        )
                     );
-                }
-                if (pickUpLocation && pickUpLocation.listed === 0) {
-                    updateLocation(pickUpLocation);
-                    console.log("Archived pick up location", pickUpLocation.id);
-                }
-                if (dropOffLocation && dropOffLocation.listed === 0) {
-                    updateLocation(dropOffLocation);
-                    console.log(
-                        "Archived drop off location",
-                        dropOffLocation.id
+                    console.log("updateAssigneesResult", updateAssigneesResult);
+
+                    if (updateAssigneesResult.some((a) => a.archived !== 1)) {
+                        throw new Error("Failed to archive task assignees");
+                    }
+                    const deliverables = await getDeliverables(task);
+                    console.log("Found deliverables: ", deliverables);
+                    const updateDeliverablesResult = await Promise.all(
+                        deliverables.map((deliverable) =>
+                            updateDeliverable(deliverable)
+                        )
                     );
-                }
+                    console.log(
+                        "updateDeliverablesResult",
+                        updateDeliverablesResult
+                    );
+                    if (
+                        updateDeliverablesResult.some((a) => a.archived !== 1)
+                    ) {
+                        throw new Error("Failed to archive task deliverables");
+                    }
+                    const comments = await getComments(task);
+                    console.log("Found comments: ", comments);
+                    const updateCommentsResult = await Promise.all(
+                        comments.map((comment) => updateComment(comment))
+                    );
+                    console.log("updateCommentsResult", updateCommentsResult);
+                    if (updateCommentsResult.some((a) => a.archived !== 1)) {
+                        throw new Error("Failed to archive task comments");
+                    }
+                    const updateTaskResult = await updateTask(task);
+                    console.log("updateTaskResult", updateTaskResult);
+                    if (updateTaskResult.archived !== 1) {
+                        throw new Error("Failed to archive task");
+                    }
 
-                const assignees = await getTaskAssignees(task);
-                console.log("Found assignees: ", assignees);
-                const updateAssigneesResult = await Promise.all(
-                    assignees.map((assignment) =>
-                        updateTaskAssignees(assignment)
-                    )
-                );
-                console.log("updateAssigneesResult", updateAssigneesResult);
-
-                if (updateAssigneesResult.some((a) => a.archived !== 1)) {
-                    throw new Error("Failed to archive task assignees");
+                    results.push(updateTaskResult);
+                } catch (e) {
+                    console.log(
+                        "Task archive process failed and has not been archived for: ",
+                        task
+                    );
+                    console.error("Error: ", e);
                 }
-                const deliverables = await getDeliverables(task);
-                console.log("Found deliverables: ", deliverables);
-                const updateDeliverablesResult = await Promise.all(
-                    deliverables.map((deliverable) =>
-                        updateDeliverable(deliverable)
-                    )
-                );
-                console.log(
-                    "updateDeliverablesResult",
-                    updateDeliverablesResult
-                );
-                if (updateDeliverablesResult.some((a) => a.archived !== 1)) {
-                    throw new Error("Failed to archive task deliverables");
-                }
-                const comments = await getComments(task);
-                console.log("Found comments: ", comments);
-                const updateCommentsResult = await Promise.all(
-                    comments.map((comment) => updateComment(comment))
-                );
-                console.log("updateCommentsResult", updateCommentsResult);
-                if (updateCommentsResult.some((a) => a.archived !== 1)) {
-                    throw new Error("Failed to archive task comments");
-                }
-                const updateTaskResult = await updateTask(task);
-                console.log("updateTaskResult", updateTaskResult);
-            } catch (e) {
-                console.log(
-                    "Task archive process failed and has not been archived for: ",
-                    task
-                );
-                console.error("Error: ", e);
-            }
-        })
-    );
-    return filtered;
+            })
+        );
+    }
+    return results;
 };
