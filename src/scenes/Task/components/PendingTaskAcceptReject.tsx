@@ -50,61 +50,71 @@ const PendingTaskAcceptReject: React.FC<PendingTaskAcceptRejectProps> = ({
     }
 
     const handleReject = async () => {
-        const existing = await DataStore.query(models.Task, taskId);
-        const assignee = await DataStore.query(models.User, whoami.id);
-        const timeRejected = new Date().toISOString();
-        if (existing && assignee) {
-            const assignment = await DataStore.save(
-                new models.TaskAssignee({
-                    assignee,
-                    tenantId,
-                    task: existing,
-                    role: models.Role.COORDINATOR,
-                })
-            );
-            const task = await DataStore.save(
-                models.Task.copyOf(existing, (updated) => {
-                    updated.status = models.TaskStatus.REJECTED;
-                    updated.timeRejected = timeRejected;
-                })
-            );
-            dispatch(
-                displayInfoNotification(
-                    "Task rejected",
-                    () => {
-                        undoUpdatePending(task, assignment);
-                    },
-                    undefined
-                )
-            );
+        try {
+            const existing = await DataStore.query(models.Task, taskId);
+            const assignee = await DataStore.query(models.User, whoami.id);
+            const timeRejected = new Date().toISOString();
+            if (existing && assignee) {
+                const assignment = await DataStore.save(
+                    new models.TaskAssignee({
+                        assignee,
+                        tenantId,
+                        task: existing,
+                        role: models.Role.COORDINATOR,
+                    })
+                );
+                const task = await DataStore.save(
+                    models.Task.copyOf(existing, (updated) => {
+                        updated.status = models.TaskStatus.REJECTED;
+                        updated.timeRejected = timeRejected;
+                    })
+                );
+                dispatch(
+                    displayInfoNotification(
+                        "Task rejected",
+                        () => {
+                            undoUpdatePending(task, assignment);
+                        },
+                        undefined
+                    )
+                );
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
         }
     };
     const handleAccept = async () => {
-        const existing = await DataStore.query(models.Task, taskId);
-        const assignee = await DataStore.query(models.User, whoami.id);
-        if (existing && assignee) {
-            const assignment = await DataStore.save(
-                new models.TaskAssignee({
-                    assignee,
-                    tenantId,
-                    task: existing,
-                    role: models.Role.COORDINATOR,
-                })
-            );
-            const task = await DataStore.save(
-                models.Task.copyOf(existing, (updated) => {
-                    updated.status = models.TaskStatus.NEW;
-                })
-            );
-            dispatch(
-                displayInfoNotification(
-                    "Task accepted",
-                    () => {
-                        undoUpdatePending(task, assignment);
-                    },
-                    undefined
-                )
-            );
+        try {
+            const existing = await DataStore.query(models.Task, taskId);
+            const assignee = await DataStore.query(models.User, whoami.id);
+            if (existing && assignee) {
+                const assignment = await DataStore.save(
+                    new models.TaskAssignee({
+                        assignee,
+                        tenantId,
+                        task: existing,
+                        role: models.Role.COORDINATOR,
+                    })
+                );
+                const task = await DataStore.save(
+                    models.Task.copyOf(existing, (updated) => {
+                        updated.status = models.TaskStatus.NEW;
+                    })
+                );
+                dispatch(
+                    displayInfoNotification(
+                        "Task accepted",
+                        () => {
+                            undoUpdatePending(task, assignment);
+                        },
+                        undefined
+                    )
+                );
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
         }
     };
 

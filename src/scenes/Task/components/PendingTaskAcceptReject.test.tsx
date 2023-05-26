@@ -114,4 +114,45 @@ describe("PendingTaskAcceptReject", () => {
             id: expect.any(String),
         });
     });
+    test.each`
+        action
+        ${"Accept"} | ${"Reject"}
+    `("accept/reject task failure", async ({ action }) => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                displayName: "whoami",
+                username: "whoami",
+                cognitoId: "someid",
+                roles: [models.Role.COORDINATOR],
+            })
+        );
+        const preloadedState = {
+            tenantId,
+            whoami: { user: whoami },
+        };
+        const mockTask = await DataStore.save(
+            new models.Task({
+                status: "PENDING",
+                tenantId,
+                dateCreated,
+            })
+        );
+        const saveSpy = jest.spyOn(DataStore, "save").mockRejectedValue({});
+
+        render(<PendingTaskAcceptReject taskId={mockTask.id} />, {
+            preloadedState,
+        });
+        userEvent.click(
+            await screen.findByRole("button", {
+                name: action,
+            })
+        );
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(1);
+        });
+        expect(
+            screen.getByText("Sorry, something went wrong")
+        ).toBeInTheDocument();
+    });
 });
