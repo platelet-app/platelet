@@ -8,7 +8,6 @@ import {
     userRoles,
 } from "../../../apiConsts";
 import * as models from "../../../models";
-import generateReport from "./generateReport";
 import generateReportBasic from "./generateReportBasic";
 
 const pickUpLocationData = {
@@ -555,5 +554,31 @@ describe("generateReports", () => {
             date
         );
         expect(resultBasic).toMatchSnapshot();
+    });
+    test.only("generate report network failure", async () => {
+        jest.spyOn(API, "graphql").mockRejectedValue("some error");
+        await expect(
+            generateReportBasic(
+                "someid",
+                "ALL",
+                tenantId,
+                new Date(),
+                new Date()
+            )
+        ).rejects.toEqual("some error");
+    });
+    test.only("generate report graphql failure", async () => {
+        jest.spyOn(API, "graphql").mockRejectedValue({
+            errors: [{ message: "some error" }],
+        });
+        await expect(
+            generateReportBasic(
+                "someid",
+                "ALL",
+                tenantId,
+                new Date(),
+                new Date()
+            )
+        ).rejects.toEqual({ errors: [{ message: "some error" }] });
     });
 });

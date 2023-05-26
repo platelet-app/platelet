@@ -1,15 +1,6 @@
 import React from "react";
-import { useTheme } from "@mui/material/styles";
-import {
-    Box,
-    Grid,
-    IconButton,
-    Stack,
-    TextField,
-    useMediaQuery,
-} from "@mui/material";
+import { Box, Grid, IconButton, Stack, TextField } from "@mui/material";
 import DaysSelection, { Days } from "../../../components/DaysSelection";
-import LoadingSpinner from "../../../components/LoadingSpinner";
 import { DateRangePicker, DateRange } from "@mui/lab";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import UserRoleSelect from "../../../components/UserRoleSelect";
@@ -22,7 +13,6 @@ import { getWhoami } from "../../../redux/Selectors";
 import { DateRangeValidationError } from "@mui/lab/internal/pickers/date-utils";
 
 type ReportsControlsProps = {
-    isFetching: boolean;
     adminSelectedUser: models.User | null;
     role: models.Role | "ALL";
     days: Days | null;
@@ -34,7 +24,6 @@ type ReportsControlsProps = {
 };
 
 const ReportsControls: React.FC<ReportsControlsProps> = ({
-    isFetching,
     adminSelectedUser,
     role,
     days,
@@ -77,8 +66,6 @@ const ReportsControls: React.FC<ReportsControlsProps> = ({
             onChangeDateRange(newDateRange[0], newDateRange[1]);
         }
     };
-
-    const theme = useTheme();
 
     const customRange = days === Days.CUSTOM;
 

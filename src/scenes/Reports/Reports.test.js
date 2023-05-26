@@ -20,7 +20,7 @@ const preloadedHub = {
     },
 };
 
-describe.skip("Reports", () => {
+describe("Reports", () => {
     const isoDate = "2021-11-29T23:00:00.000Z";
 
     const RealDate = Date;

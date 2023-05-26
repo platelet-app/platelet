@@ -120,6 +120,8 @@ const getTasksByTenantId = async (
         if (result.data?.listTasksByTenantId) {
             items.push(...result.data.listTasksByTenantId.items);
             nextToken = result.data.listTasksByTenantId.nextToken || null;
+        } else {
+            nextToken = null;
         }
     } while (nextToken);
     return items.flat();

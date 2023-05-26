@@ -156,7 +156,6 @@ function Reports() {
             <Stack direction="column" spacing={2}>
                 <Typography variant="h5">Export to CSV</Typography>
                 <ReportsControls
-                    isFetching={isPosting}
                     days={days}
                     onChangeDays={setDays}
                     adminSelectedUser={adminSelectedUser}
