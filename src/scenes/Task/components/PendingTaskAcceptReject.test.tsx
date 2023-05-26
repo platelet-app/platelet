@@ -40,7 +40,7 @@ describe("PendingTaskAcceptReject", () => {
     test.each`
         action
         ${"Accept"} | ${"Reject"}
-    `("accept task", async ({ action }) => {
+    `("accept/reject task and undo", async ({ action }) => {
         const whoami = await DataStore.save(
             new models.User({
                 tenantId,
@@ -68,6 +68,7 @@ describe("PendingTaskAcceptReject", () => {
             tenantId,
         });
         const saveSpy = jest.spyOn(DataStore, "save");
+        const deleteSpy = jest.spyOn(DataStore, "delete");
 
         render(<PendingTaskAcceptReject taskId={mockTask.id} />, {
             preloadedState,
@@ -94,6 +95,22 @@ describe("PendingTaskAcceptReject", () => {
         }
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockAssignment,
+            id: expect.any(String),
+        });
+        expect(screen.queryByRole("button", { name: "Accept" })).toBeNull();
+        expect(screen.queryByRole("button", { name: "Reject" })).toBeNull();
+        userEvent.click(screen.getByRole("button", { name: "UNDO" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(3);
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockTask,
+            status: models.TaskStatus.PENDING,
+            timeRejected: null,
+        });
+        expect(deleteSpy).toHaveBeenCalledWith({
+            ...mockAssignment,
+            task: { ...mockTask, timeRejected: null, id: expect.any(String) },
             id: expect.any(String),
         });
     });
