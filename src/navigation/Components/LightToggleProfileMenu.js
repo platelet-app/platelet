@@ -89,6 +89,16 @@ function LightToggleProfileMenu() {
                     <MenuItem
                         onClick={() => {
                             setAnchorElProfileMenu(null);
+                        }}
+                        component={Link}
+                        target="_blank"
+                        to={{ pathname: "https://docs.platelet.app" }}
+                    >
+                        Help
+                    </MenuItem>
+                    <MenuItem
+                        onClick={() => {
+                            setAnchorElProfileMenu(null);
                             dispatch(logoutUser());
                         }}
                     >
