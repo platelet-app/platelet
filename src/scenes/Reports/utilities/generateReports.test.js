@@ -555,7 +555,7 @@ describe("generateReports", () => {
         );
         expect(resultBasic).toMatchSnapshot();
     });
-    test.only("generate report network failure", async () => {
+    test("generate report network failure", async () => {
         jest.spyOn(API, "graphql").mockRejectedValue("some error");
         await expect(
             generateReportBasic(
@@ -567,8 +567,8 @@ describe("generateReports", () => {
             )
         ).rejects.toEqual("some error");
     });
-    test.only("generate report graphql failure", async () => {
-        jest.spyOn(API, "graphql").mockRejectedValue({
+    test("generate report graphql failure", async () => {
+        jest.spyOn(API, "graphql").mockResolvedValue({
             errors: [{ message: "some error" }],
         });
         await expect(
@@ -579,6 +579,6 @@ describe("generateReports", () => {
                 new Date(),
                 new Date()
             )
-        ).rejects.toEqual({ errors: [{ message: "some error" }] });
+        ).rejects.toThrow("some error");
     });
 });

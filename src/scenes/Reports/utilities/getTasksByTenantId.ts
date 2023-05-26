@@ -117,6 +117,13 @@ const getTasksByTenantId = async (
             query: listTasksByTenantId,
             variables,
         });
+        if (result.errors) {
+            console.log(
+                "something went wrong while getting tasks",
+                result.errors
+            );
+            throw new Error(result.errors[0].message);
+        }
         if (result.data?.listTasksByTenantId) {
             items.push(...result.data.listTasksByTenantId.items);
             nextToken = result.data.listTasksByTenantId.nextToken || null;
