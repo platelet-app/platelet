@@ -29,3 +29,10 @@ exports.request = async (queryDetails, appsyncUrl) => {
     const request = new Request(endpoint, signed);
     return await fetch(request);
 };
+
+exports.errorCheck = (body) => {
+    if (body?.data?.errors) {
+        console.error(body?.data?.errors);
+        throw new Error(body?.data?.errors[0].message);
+    }
+};

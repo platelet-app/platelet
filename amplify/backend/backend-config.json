@@ -127,6 +127,14 @@
       "dependsOn": [
         {
           "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        },
+        {
+          "attributes": [
             "UserPoolId"
           ],
           "category": "auth",
@@ -134,11 +142,10 @@
         },
         {
           "attributes": [
-            "GraphQLAPIIdOutput",
-            "GraphQLAPIEndpointOutput"
+            "Arn"
           ],
-          "category": "api",
-          "resourceName": "platelet"
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
         }
       ],
       "providerPlugin": "awscloudformation",
