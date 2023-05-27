@@ -1,0 +1,312 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`index.js changing a user's roles 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "query": "getUserQuery",
+        "variables": Object {
+          "id": "userId",
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    Array [
+      Object {
+        "query": "updateUserMutation",
+        "variables": Object {
+          "input": Object {
+            "_version": 1,
+            "id": "userId",
+            "roles": Array [],
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    Array [
+      Object {
+        "query": "updateUserMutation",
+        "variables": Object {
+          "input": Object {
+            "_version": 2,
+            "id": "userId",
+            "roles": Array [
+              "ADMIN",
+              "RIDER",
+              "USER",
+            ],
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Promise {},
+    },
+    Object {
+      "type": "return",
+      "value": Promise {},
+    },
+    Object {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;
+
+exports[`index.js changing a user's roles cognito failure and clean up 2`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "query": "getUserQuery",
+        "variables": Object {
+          "id": "userId",
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    Array [
+      Object {
+        "query": "updateUserMutation",
+        "variables": Object {
+          "input": Object {
+            "_version": 1,
+            "id": "userId",
+            "roles": Array [],
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    Array [
+      Object {
+        "query": "updateUserMutation",
+        "variables": Object {
+          "input": Object {
+            "_version": 2,
+            "id": "userId",
+            "roles": Array [
+              "ADMIN",
+              "RIDER",
+              "USER",
+            ],
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    Array [
+      Object {
+        "query": "updateUserMutation",
+        "variables": Object {
+          "input": Object {
+            "_version": 1,
+            "id": "userId",
+            "roles": Array [],
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    Array [
+      Object {
+        "query": "updateUserMutation",
+        "variables": Object {
+          "input": Object {
+            "_version": 2,
+            "id": "userId",
+            "roles": Array [
+              "USER",
+            ],
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Promise {},
+    },
+    Object {
+      "type": "return",
+      "value": Promise {},
+    },
+    Object {
+      "type": "return",
+      "value": Promise {},
+    },
+    Object {
+      "type": "return",
+      "value": Promise {},
+    },
+    Object {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;
+
+exports[`index.js changing a user's roles cognito failure and clean up 3`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "GroupName": "ADMIN",
+        "UserPoolId": "somePoolId",
+        "Username": "username",
+      },
+    ],
+    Array [
+      Object {
+        "GroupName": "RIDER",
+        "UserPoolId": "somePoolId",
+        "Username": "username",
+      },
+    ],
+    Array [
+      Object {
+        "GroupName": "USER",
+        "UserPoolId": "somePoolId",
+        "Username": "username",
+      },
+    ],
+    Array [
+      Object {
+        "GroupName": "USER",
+        "UserPoolId": "somePoolId",
+        "Username": "username",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "promise": [Function],
+      },
+    },
+    Object {
+      "type": "return",
+      "value": Object {
+        "promise": [Function],
+      },
+    },
+    Object {
+      "type": "return",
+      "value": Object {
+        "promise": [Function],
+      },
+    },
+    Object {
+      "type": "return",
+      "value": Object {
+        "promise": [Function],
+      },
+    },
+  ],
+}
+`;
+
+exports[`index.js changing a user's roles cognito failure and clean up 4`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "GroupName": "COORDINATOR",
+        "UserPoolId": "somePoolId",
+        "Username": "username",
+      },
+    ],
+    Array [
+      Object {
+        "GroupName": "ADMIN",
+        "UserPoolId": "somePoolId",
+        "Username": "username",
+      },
+    ],
+    Array [
+      Object {
+        "GroupName": "COORDINATOR",
+        "UserPoolId": "somePoolId",
+        "Username": "username",
+      },
+    ],
+    Array [
+      Object {
+        "GroupName": "RIDER",
+        "UserPoolId": "somePoolId",
+        "Username": "username",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "promise": [Function],
+      },
+    },
+    Object {
+      "type": "return",
+      "value": Object {
+        "promise": [Function],
+      },
+    },
+    Object {
+      "type": "return",
+      "value": Object {
+        "promise": [Function],
+      },
+    },
+    Object {
+      "type": "return",
+      "value": Object {
+        "promise": [Function],
+      },
+    },
+  ],
+}
+`;
+
+exports[`index.js changing a user's roles cognito failure and clean up 5`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "UserPoolId": "somePoolId",
+        "Username": "username",
+      },
+    ],
+    Array [
+      Object {
+        "UserPoolId": "somePoolId",
+        "Username": "username",
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "promise": [Function],
+      },
+    },
+    Object {
+      "type": "return",
+      "value": Object {
+        "promise": [Function],
+      },
+    },
+  ],
+}
+`;
