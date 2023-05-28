@@ -6,15 +6,14 @@
 	REGION
 Amplify Params - DO NOT EDIT */
 
-require("isomorphic-fetch");
 const aws = require("aws-sdk");
-const AWS = require("aws-sdk/global");
-const AUTH_TYPE = require("aws-appsync").AUTH_TYPE;
-const AWSAppSyncClient = require("aws-appsync").default;
 const uuid = require("uuid");
-const createUser = require("./createUser").createUser;
-const deleteUser = require("./deleteUser").deleteUser;
-const listUsers = require("./listUsers").listUsers;
+
+const { createUser, deleteUser } = require("/opt/graphql/mutations");
+const { listUsers } = require("/opt/graphql/queries");
+const { request, errorCheck } = require("/opt/appSyncRequest");
+
+const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
 
 async function sendWelcomeEmail(emailAddress, recipientName, password) {
     const ses = new aws.SES({
@@ -43,6 +42,9 @@ async function sendWelcomeEmail(emailAddress, recipientName, password) {
                         <b>Password:</b> ${password}
                     </p>
                     <p>
+                        <b>This temporary password will expire in one week.</b>
+                    </p>
+                    <p>
                         Thank you.
                     </p>
                     `,
@@ -69,19 +71,79 @@ async function sendWelcomeEmail(emailAddress, recipientName, password) {
     return await ses.sendEmail(params).promise();
 }
 
-async function inviteNewUserToTeam(newUser, tenantId) {
-    const config = {
-        url: process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT,
-        region: process.env.REGION,
-        auth: {
-            type: AUTH_TYPE.AWS_IAM,
-            credentials: AWS.config.credentials,
-        },
-        disableOffline: true,
-    };
-    const userPoolId = process.env.AUTH_PLATELET61A0AC07_USERPOOLID;
+const getAllUsers = async (tenantId) => {
+    const items = [];
+    let nextToken = null;
+    do {
+        const variables = {
+            nextToken,
+            filter: { tenantId: { eq: tenantId } },
+        };
+        const response = await request(
+            { query: listUsers, variables },
+            GRAPHQL_ENDPOINT
+        );
+        const body = await response.json();
+        if (body.data.listUsers) {
+            items.push(...body.data.listUsers.items);
+            nextToken = body.data.listUsers.nextToken;
+        } else {
+            nextToken = null;
+        }
+    } while (nextToken);
+    return items.flat();
+};
 
-    const appSyncClient = new AWSAppSyncClient(config);
+async function addNewUser(newUser, tenantId, cognitoId) {
+    let displayName = newUser.name;
+    const userCheck = await getAllUsers(tenantId);
+    let counter = 0;
+    while (true) {
+        const current =
+            counter === 0 ? newUser.name : `${newUser.name}-${counter}`;
+        if (userCheck.map((u) => u.displayName).includes(current)) {
+            if (counter > 100) {
+                throw new Error(
+                    "Unable to generate unique display name for new user. Limit reached."
+                );
+            }
+            counter++;
+        } else {
+            displayName = current;
+            break;
+        }
+    }
+    console.log(`Final display name: ${displayName}`);
+    const createUserInput = {
+        tenantId: tenantId,
+        cognitoId,
+        name: newUser.name,
+        disabled: 0,
+        username: newUser.username,
+        displayName,
+        roles:
+            newUser.roles && newUser.roles.includes("USER")
+                ? newUser.roles
+                : ["USER"],
+        contact: { emailAddress: newUser.email },
+    };
+
+    console.log(`Creating user ${createUserInput.username}`);
+
+    const createdUserResponse = await request(
+        {
+            query: createUser,
+            variables: { input: createUserInput },
+        },
+        GRAPHQL_ENDPOINT
+    );
+    const result = await createdUserResponse.json();
+    errorCheck(result);
+    return result.data.createUser;
+}
+
+async function createNewCognitoUser(newUser, tenantId) {
+    const userPoolId = process.env.AUTH_PLATELET61A0AC07_USERPOOLID;
     const CognitoIdentityServiceProvider = aws.CognitoIdentityServiceProvider;
     const cognitoClient = new CognitoIdentityServiceProvider({
         apiVersion: "2016-04-19",
@@ -113,103 +175,53 @@ async function inviteNewUserToTeam(newUser, tenantId) {
         })
         .promise();
 
-    const roles =
-        newUser.roles && newUser.roles.includes("USER")
-            ? newUser.roles
-            : ["USER"];
-
-    for (const role of roles) {
-        await cognitoClient
-            .adminAddUserToGroup({
-                GroupName: role,
-                UserPoolId: userPoolId,
-                Username: newUser.username,
-            })
-            .promise();
-    }
-
-    if (!cognitoResp.User) {
-        throw new Error(
-            `Failure to create new user with email ${newUser.email}`
-        );
-    }
-    let displayName = newUser.name;
-    const listUsersResp = await appSyncClient.query({
-        query: listUsers,
-        variables: { tenantId },
-    });
-    const userCheck = listUsersResp.data.listUsers.items;
-    let counter = 0;
-    while (true) {
-        const current =
-            counter === 0 ? newUser.name : `${newUser.name}-${counter}`;
-        if (userCheck.map((u) => u.displayName).includes(current)) {
-            counter++;
-        } else {
-            displayName = current;
-            break;
-        }
-    }
-    console.log(`Final display name: ${displayName}`);
-    const subFind = cognitoResp.User.Attributes.find(
-        (attr) => attr.Name === "sub"
-    );
-    if (!subFind) {
-        throw new Error(`missing sub attribute for newly created user`);
-    }
-    const cognitoId = subFind.Value;
-    if (!cognitoId) {
-        throw new Error(`missing cognitoId attribute for newly created user`);
-    }
-    const createUserInput = {
-        tenantId: tenantId,
-        cognitoId,
-        name: newUser.name,
-        disabled: 0,
-        username: newUser.username,
-        displayName,
-        roles:
+    try {
+        const roles =
             newUser.roles && newUser.roles.includes("USER")
                 ? newUser.roles
-                : ["USER"],
-        contact: { emailAddress: newUser.email },
-    };
+                : ["USER"];
 
-    console.log(`Creating user ${createUserInput.username}`);
+        for (const role of roles) {
+            await cognitoClient
+                .adminAddUserToGroup({
+                    GroupName: role,
+                    UserPoolId: userPoolId,
+                    Username: newUser.username,
+                })
+                .promise();
+        }
 
-    const createdUser = await appSyncClient.mutate({
-        mutation: createUser,
-        variables: { input: createUserInput },
-    });
-
-    return {
-        newUser: createdUser.data.createUser,
-        password: generatedPassword,
-    };
+        if (!cognitoResp.User) {
+            throw new Error(
+                `Failure to create new user with email ${newUser.email}`
+            );
+        }
+        const subFind = cognitoResp.User.Attributes.find(
+            (attr) => attr.Name === "sub"
+        );
+        if (!subFind) {
+            throw new Error(`missing sub attribute for newly created user`);
+        }
+        const cognitoId = subFind.Value;
+        if (!cognitoId) {
+            throw new Error(
+                `missing cognitoId attribute for newly created user`
+            );
+        }
+        return {
+            response: cognitoResp,
+            cognitoId,
+            password: generatedPassword,
+        };
+    } catch (e) {
+        console.log(`Error adding user to group:`, e);
+        await cleanUpCognito(newUser.username);
+        throw e;
+    }
 }
 
-async function cleanUp(user) {
-    if (user) {
-        console.log(`Cleaning up user`, user);
-        const config = {
-            url: process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT,
-            region: process.env.REGION,
-            auth: {
-                type: AUTH_TYPE.AWS_IAM,
-                credentials: AWS.config.credentials,
-            },
-            disableOffline: true,
-        };
-        const appSyncClient = new AWSAppSyncClient(config);
-        await appSyncClient.mutate({
-            mutation: deleteUser,
-            variables: {
-                input: {
-                    id: user.id,
-                    _version: user._version || 1,
-                },
-            },
-        });
+async function cleanUpCognito(username) {
+    if (username) {
         console.log(`Cleaning up from cognito`);
         const CognitoIdentityServiceProvider =
             aws.CognitoIdentityServiceProvider;
@@ -219,15 +231,33 @@ async function cleanUp(user) {
         await cognitoClient
             .adminDisableUser({
                 UserPoolId: process.env.AUTH_PLATELET61A0AC07_USERPOOLID,
-                Username: user.username,
+                Username: username,
             })
             .promise();
         return cognitoClient
             .adminDeleteUser({
                 UserPoolId: process.env.AUTH_PLATELET61A0AC07_USERPOOLID,
-                Username: user.username,
+                Username: username,
             })
             .promise();
+    }
+}
+
+async function cleanUpGraphQL(user) {
+    if (user) {
+        console.log(`Cleaning up user`, user);
+        return await request(
+            {
+                query: deleteUser,
+                variables: {
+                    input: {
+                        id: user.id,
+                        _version: user._version || 1,
+                    },
+                },
+            },
+            GRAPHQL_ENDPOINT
+        );
     }
 }
 
@@ -240,23 +270,25 @@ exports.handler = async (event) => {
         email: event.arguments.email,
         roles: event.arguments.roles || ["USER"],
     };
-    let newUser = null;
-    let password = null;
+    let newUser;
+    let password;
+    let cognitoId;
+    const newCognitoUser = await createNewCognitoUser(user, tenantId);
+    password = newCognitoUser.password;
+    cognitoId = newCognitoUser.cognitoId;
     try {
-        const result = await inviteNewUserToTeam(user, tenantId);
-        newUser = result.newUser;
-        password = result.password;
+        newUser = await addNewUser(user, tenantId, cognitoId);
         console.log("User result:", newUser);
         await sendWelcomeEmail(
             event.arguments.email,
             event.arguments.name,
             password
         );
-        console.log("Successfully sent welcome email");
-        return newUser;
     } catch (e) {
-        console.log(e);
-        await cleanUp(newUser);
+        await cleanUpCognito(user.username);
+        await cleanUpGraphQL(newUser);
         throw e;
     }
+    console.log("Successfully sent welcome email");
+    return newUser;
 };

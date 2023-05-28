@@ -28,6 +28,10 @@
       "Type": "String",
       "Default": "apiplateletGraphQLAPIEndpointOutput"
     },
+    "functionplateletappSyncOperationsArn": {
+      "Type": "String",
+      "Default": "functionplateletappSyncOperationsArn"
+    },
     "plateletWelcomeEmail": {
       "Type": "String"
     },
@@ -112,7 +116,11 @@
           ]
         },
         "Runtime": "nodejs14.x",
-        "Layers": [],
+        "Layers": [
+          {
+            "Ref": "functionplateletappSyncOperationsArn"
+          }
+        ],
         "Timeout": 25
       }
     },
