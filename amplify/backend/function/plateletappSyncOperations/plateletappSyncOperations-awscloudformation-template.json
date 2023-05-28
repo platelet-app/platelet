@@ -20,7 +20,7 @@
     }
   },
   "Resources": {
-    "LambdaLayerVersion96fed00c": {
+    "LambdaLayerVersion03328a74": {
       "Type": "AWS::Lambda::LayerVersion",
       "Properties": {
         "CompatibleRuntimes": {
@@ -51,13 +51,50 @@
       "DeletionPolicy": "Delete",
       "UpdateReplacePolicy": "Retain"
     },
-    "LambdaLayerPermissionPrivate96fed00c": {
+    "LambdaLayerPermissionPrivate03328a74": {
       "Type": "AWS::Lambda::LayerVersionPermission",
       "Properties": {
         "Action": "lambda:GetLayerVersion",
         "LayerVersionArn": {
-          "Ref": "LambdaLayerVersion96fed00c"
+          "Ref": "LambdaLayerVersion03328a74"
         },
+        "Principal": {
+          "Ref": "AWS::AccountId"
+        }
+      }
+    },
+    "LambdaLayerVersion96fed00c": {
+      "Type": "AWS::Lambda::LayerVersion",
+      "Properties": {
+        "CompatibleRuntimes": [
+          "nodejs16.x"
+        ],
+        "Content": {
+          "S3Bucket": {
+            "Ref": "deploymentBucketName"
+          },
+          "S3Key": "amplify-builds/plateletappSyncOperations-LambdaLayerVersion96fed00c-build.zip"
+        },
+        "Description": "Updated layer version 2023-05-27T14:03:14.783Z",
+        "LayerName": {
+          "Fn::Sub": [
+            "plateletappSyncOperations-${env}",
+            {
+              "env": {
+                "Ref": "env"
+              }
+            }
+          ]
+        }
+      },
+      "DeletionPolicy": "Delete",
+      "UpdateReplacePolicy": "Retain"
+    },
+    "LambdaLayerPermissionPrivate96fed00c": {
+      "Type": "AWS::Lambda::LayerVersionPermission",
+      "Properties": {
+        "Action": "lambda:GetLayerVersion",
+        "LayerVersionArn": "arn:aws:lambda:eu-west-1:130063560692:layer:plateletappSyncOperations-platold:13",
         "Principal": {
           "Ref": "AWS::AccountId"
         }
@@ -511,7 +548,7 @@
   "Outputs": {
     "Arn": {
       "Value": {
-        "Ref": "LambdaLayerVersion96fed00c"
+        "Ref": "LambdaLayerVersion03328a74"
       }
     }
   }

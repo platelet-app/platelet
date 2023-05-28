@@ -23,6 +23,10 @@
     "apiplateletGraphQLAPIEndpointOutput": {
       "Type": "String",
       "Default": "apiplateletGraphQLAPIEndpointOutput"
+    },
+    "functionplateletappSyncOperationsArn": {
+      "Type": "String",
+      "Default": "functionplateletappSyncOperationsArn"
     }
   },
   "Conditions": {
@@ -93,7 +97,11 @@
           ]
         },
         "Runtime": "nodejs14.x",
-        "Layers": [],
+        "Layers": [
+          {
+            "Ref": "functionplateletappSyncOperationsArn"
+          }
+        ],
         "Timeout": 900
       }
     },

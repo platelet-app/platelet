@@ -178,6 +178,13 @@
       "dependsOn": [
         {
           "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
+        },
+        {
+          "attributes": [
             "GraphQLAPIIdOutput",
             "GraphQLAPIEndpointOutput"
           ],
