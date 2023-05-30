@@ -179,9 +179,9 @@ exports.makeNewRequest = makeNewRequest;
 
 const errorCheck = (body) => {
     console.log("BODY", body);
-    if (body?.data?.errors) {
-        console.error(body?.data?.errors);
-        throw new Error(body?.data?.errors[0].message);
+    if (body?.errors) {
+        console.error(body?.errors);
+        throw new Error(body?.errors[0].message);
     }
 };
 
