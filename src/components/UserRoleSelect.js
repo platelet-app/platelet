@@ -45,8 +45,12 @@ function UserRoleSelect(props) {
 }
 
 UserRoleSelect.propTypes = {
-    value: PropTypes.arrayOf(PropTypes.oneOf(Object.values(models.Role))),
-    exclude: PropTypes.arrayOf(PropTypes.oneOf(Object.values(models.Role))),
+    value: PropTypes.arrayOf(
+        PropTypes.oneOf(["ALL", ...Object.values(models.Role)])
+    ),
+    exclude: PropTypes.arrayOf(
+        PropTypes.oneOf(["ALL", ...Object.values(models.Role)])
+    ),
     onSelect: PropTypes.func,
     all: PropTypes.bool,
     disabled: PropTypes.bool,

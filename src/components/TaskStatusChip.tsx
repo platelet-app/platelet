@@ -42,7 +42,7 @@ const TaskStatusChip: React.FC<TaskStatusChipProps> = ({
             <Chip
                 sx={{
                     ...sx,
-                    backgroundColor: alpha(colors[status], 0.2),
+                    backgroundColor: alpha(colors[status] || "#000", 0.2),
                 }}
                 size={size}
                 label={generateLabel(status)}
