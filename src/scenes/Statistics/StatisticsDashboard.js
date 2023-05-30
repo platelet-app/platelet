@@ -9,7 +9,7 @@ import { getWhoami } from "../../redux/Selectors";
 import getStats from "./utilities/getStats";
 import moment from "moment";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
-import DaysSelection from "../../components/DaysSelection";
+import DaysSelection, { Days } from "../../components/DaysSelection";
 import CoordinatorPicker from "../../components/CoordinatorPicker";
 import UserChip from "../../components/UserChip";
 
@@ -85,7 +85,11 @@ function StatisticsDashboard() {
                     alignItems="center"
                     justifyContent="space-between"
                 >
-                    <DaysSelection value={days} onChange={handleDaysChange} />
+                    <DaysSelection
+                        exclude={[Days.TWO_WEEKS]}
+                        value={days}
+                        onChange={handleDaysChange}
+                    />
                     <Fade
                         in={isFetching}
                         style={{
