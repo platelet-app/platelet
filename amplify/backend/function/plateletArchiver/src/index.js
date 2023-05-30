@@ -366,9 +366,7 @@ exports.handler = async (event, makeNewRequestTest) => {
         )
     );
     const tasksFlattened = tasks.flat();
-    // TODO: make this one week once we aren't reliant
-    // on two weeks of data for CSV exports
-    const oneWeekAgo = moment.utc().subtract(14, "days").toISOString();
+    const oneWeekAgo = moment.utc().subtract(7, "days").toISOString();
     const filtered = tasksFlattened.filter(
         (task) => task.createdAt && task.createdAt < oneWeekAgo
     );
