@@ -736,6 +736,146 @@ describe("TasksGridColumn", () => {
             expect(screen.getAllByText(/second line1/)).toHaveLength(10);
         }
     );
+    test.each`
+        roleView
+        ${userRoles.coordinator} | ${userRoles.rider}
+    `("location responds to changes on role views", async ({ roleView }) => {
+        const mockLocation = await DataStore.save(
+            new models.Location({
+                line1: "first line1",
+                ward: "first ward",
+            })
+        );
+        const mockLocation2 = await DataStore.save(
+            new models.Location({
+                line1: "second line1",
+                ward: "second ward",
+            })
+        );
+        const mockLocation3 = await DataStore.save(
+            new models.Location({
+                line1: "third line1",
+                ward: "third ward",
+            })
+        );
+        const mockTask = await DataStore.save(
+            new models.Task({
+                status: tasksStatus.new,
+                priority: priorities.medium,
+                pickUpLocation: mockLocation,
+                dropOffLocation: mockLocation2,
+            })
+        );
+        const assignee = await DataStore.save(
+            new models.TaskAssignee({
+                task: mockTask,
+                assignee: testUser,
+                role: roleView,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: testUser },
+            roleView,
+            taskAssigneesReducer: {
+                items: [assignee],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+            preloadedState,
+        });
+        await finishLoading();
+        expect(screen.getByText(/first ward/)).toBeInTheDocument();
+        expect(screen.getByText(/first line1/)).toBeInTheDocument();
+        expect(screen.getByText(/second ward/)).toBeInTheDocument();
+        expect(screen.getByText(/second line1/)).toBeInTheDocument();
+        await DataStore.save(
+            models.Location.copyOf(mockLocation, (updated) => {
+                updated.line1 = "updated line1";
+            })
+        );
+        expect(await screen.findByText(/updated line1/)).toBeInTheDocument();
+        await DataStore.save(
+            models.Location.copyOf(mockLocation2, (updated) => {
+                updated.line1 = "updated second line1";
+            })
+        );
+        expect(screen.getByText(/updated second line1/)).toBeInTheDocument();
+        await DataStore.save(
+            models.Task.copyOf(mockTask, (upd) => {
+                upd.pickUpLocation = mockLocation3;
+            })
+        );
+        expect(await screen.findByText(/third line1/)).toBeInTheDocument();
+        expect(screen.queryByText(/updated line1/)).toBeNull();
+    });
+
+    it("location responds to changes", async () => {
+        const roleView = "ALL";
+        const mockLocation = await DataStore.save(
+            new models.Location({
+                line1: "first line1",
+                ward: "first ward",
+            })
+        );
+        const mockLocation2 = await DataStore.save(
+            new models.Location({
+                line1: "second line1",
+                ward: "second ward",
+            })
+        );
+        const mockLocation3 = await DataStore.save(
+            new models.Location({
+                line1: "third line1",
+                ward: "third ward",
+            })
+        );
+        const mockTask = await DataStore.save(
+            new models.Task({
+                status: tasksStatus.new,
+                priority: priorities.medium,
+                pickUpLocation: mockLocation,
+                dropOffLocation: mockLocation2,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: testUser },
+            roleView,
+            taskAssigneesReducer: {
+                items: [],
+                ready: true,
+                isSynced: true,
+            },
+        };
+        render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
+            preloadedState,
+        });
+        await finishLoading();
+        expect(screen.getByText(/first ward/)).toBeInTheDocument();
+        expect(screen.getByText(/first line1/)).toBeInTheDocument();
+        expect(screen.getByText(/second ward/)).toBeInTheDocument();
+        expect(screen.getByText(/second line1/)).toBeInTheDocument();
+        await DataStore.save(
+            models.Location.copyOf(mockLocation, (updated) => {
+                updated.line1 = "updated line1";
+            })
+        );
+        expect(await screen.findByText(/updated line1/)).toBeInTheDocument();
+        await DataStore.save(
+            models.Location.copyOf(mockLocation2, (updated) => {
+                updated.line1 = "updated second line1";
+            })
+        );
+        expect(screen.getByText(/updated second line1/)).toBeInTheDocument();
+        await DataStore.save(
+            models.Task.copyOf(mockTask, (upd) => {
+                upd.pickUpLocation = mockLocation3;
+            })
+        );
+        expect(await screen.findByText(/third line1/)).toBeInTheDocument();
+        expect(screen.queryByText(/updated line1/)).toBeNull();
+    });
 
     it.each`
         roleView
