@@ -26,7 +26,7 @@ export default function GuidedSetupDrawer() {
                 anchor="right"
                 open={guidedSetupOpen}
             >
-                <GuidedSetup />
+                {guidedSetupOpen && <GuidedSetup />}
             </Drawer>
         </Box>
     );

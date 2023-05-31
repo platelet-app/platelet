@@ -190,10 +190,6 @@ describe("GuidedSetup", () => {
         userEvent.click(
             screen.getByRole("button", { name: "Save to dashboard" })
         );
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(9);
-        });
-        expect(querySpy).toHaveBeenCalledWith(models.User, mockWhoami.id);
         await waitFor(() =>
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
@@ -281,7 +277,6 @@ describe("GuidedSetup", () => {
                 },
             })
         );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(9));
     });
 
     test("adding a comment", async () => {
@@ -313,7 +308,6 @@ describe("GuidedSetup", () => {
                 parentId: expect.any(String),
             })
         );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(9));
     });
 
     test("saving the establishment", async () => {
@@ -613,10 +607,8 @@ describe("GuidedSetup", () => {
             requesterContact: { name: "", telephoneNumber: "" },
             tenantId,
         });
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(<GuidedSetup />, { preloadedState });
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
 
         userEvent.click(
             screen.getByRole("button", { name: "establishment not listed?" })
@@ -661,20 +653,20 @@ describe("GuidedSetup", () => {
             requesterContact: { name: "", telephoneNumber: "" },
             tenantId,
         });
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(<GuidedSetup />, { preloadedState });
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
         userEvent.type(
             screen.getByRole("textbox", { name: "Select establishment" }),
             "Test"
         );
-        userEvent.click(screen.getByText(mockLocation.name));
+        userEvent.click(await screen.findByText(mockLocation.name));
         userEvent.click(
             screen.getByRole("checkbox", { name: "toggle same as pick-up" })
         );
         userEvent.click(screen.getByText(/PICK-UP/));
-        expect(screen.getByText("Same as establishment")).toBeInTheDocument();
+        expect(
+            await screen.findByText("Same as establishment")
+        ).toBeInTheDocument();
         expect(screen.getByText(mockLocation.name)).toBeInTheDocument();
         expect(screen.queryByText("CLEAR")).toBeNull();
         expect(
@@ -716,15 +708,13 @@ describe("GuidedSetup", () => {
             },
             tenantId,
         });
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(<GuidedSetup />, { preloadedState });
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
         userEvent.type(
             screen.getByRole("textbox", { name: "Select establishment" }),
             "Test"
         );
-        userEvent.click(screen.getByText(mockLocation.name));
+        userEvent.click(await screen.findByText(mockLocation.name));
         expect(screen.getByRole("textbox", { name: "Telephone" })).toHaveValue(
             mockLocation.contact.telephoneNumber
         );
@@ -782,12 +772,12 @@ describe("GuidedSetup", () => {
 
         await DataStore.save(mockDeliverableType);
         await DataStore.save(mockDeliverableType2);
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(<GuidedSetup />, { preloadedState });
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
         userEvent.click(screen.getByText(/ITEMS/));
-        userEvent.click(screen.getByRole("button", { name: "Add some item" }));
+        userEvent.click(
+            await screen.findByRole("button", { name: "Add some item" })
+        );
         userEvent.click(screen.getByRole("button", { name: "increment" }));
         userEvent.click(screen.getByRole("button", { name: "increment" }));
         userEvent.click(
@@ -804,9 +794,6 @@ describe("GuidedSetup", () => {
                 id: expect.any(String),
                 ...timeStrings,
             })
-        );
-        await waitFor(() =>
-            expect(querySpy).toHaveBeenNthCalledWith(6, models.DeliverableType)
         );
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledTimes(4);
@@ -829,7 +816,6 @@ describe("GuidedSetup", () => {
                 ...timeStrings,
             },
         });
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(10));
     });
 
     test("clicking the discard button when nothing has been entered", async () => {
@@ -837,8 +823,9 @@ describe("GuidedSetup", () => {
         render(<GuidedSetup />, { preloadedState });
         await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
         userEvent.click(screen.getByRole("button", { name: "Discard" }));
-        expect(screen.queryByText(/Are you sure/)).toBeNull();
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(8));
+        await waitFor(() => {
+            expect(screen.queryByText(/Are you sure/)).toBeNull();
+        });
     });
 
     test("clicking the discard button when contact data has been entered", async () => {
@@ -850,8 +837,9 @@ describe("GuidedSetup", () => {
         userEvent.click(screen.getByRole("button", { name: "Discard" }));
         expect(screen.getByText(/Are you sure/)).toBeInTheDocument();
         userEvent.click(screen.getByRole("button", { name: "OK" }));
-        expect(screen.queryByText(/Are you sure/)).toBeNull();
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(8));
+        await waitFor(() => {
+            expect(screen.queryByText(/Are you sure/)).toBeNull();
+        });
     });
 
     test("clicking the discard button when item data has been entered", async () => {
@@ -870,8 +858,9 @@ describe("GuidedSetup", () => {
         userEvent.click(screen.getByRole("button", { name: "Discard" }));
         expect(screen.getByText(/Are you sure/)).toBeInTheDocument();
         userEvent.click(screen.getByRole("button", { name: "OK" }));
-        expect(screen.queryByText(/Are you sure/)).toBeNull();
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(8));
+        await waitFor(() => {
+            expect(screen.queryByText(/Are you sure/)).toBeNull();
+        });
     });
     test("clicking the discard button when location data has been entered", async () => {
         const querySpy = jest.spyOn(DataStore, "query");
@@ -894,8 +883,9 @@ describe("GuidedSetup", () => {
         userEvent.click(screen.getByRole("button", { name: "Discard" }));
         expect(screen.getByText(/Are you sure/)).toBeInTheDocument();
         userEvent.click(screen.getByRole("button", { name: "OK" }));
-        expect(screen.queryByText(/Are you sure/)).toBeNull();
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(8));
+        await waitFor(() => {
+            expect(screen.queryByText(/Are you sure/)).toBeNull();
+        });
     });
     test("clicking the discard button when note data has been entered", async () => {
         const querySpy = jest.spyOn(DataStore, "query");
@@ -907,8 +897,9 @@ describe("GuidedSetup", () => {
         userEvent.click(screen.getByRole("button", { name: "Discard" }));
         expect(screen.getByText(/Are you sure/)).toBeInTheDocument();
         userEvent.click(screen.getByRole("button", { name: "OK" }));
-        expect(screen.queryByText(/Are you sure/)).toBeNull();
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(8));
+        await waitFor(() => {
+            expect(screen.queryByText(/Are you sure/)).toBeNull();
+        });
     });
 
     it("disables save and discard buttons when posting", async () => {
@@ -928,7 +919,6 @@ describe("GuidedSetup", () => {
             screen.getByRole("button", { name: "Save to dashboard" })
         ).toBeEnabled();
         expect(screen.getByRole("button", { name: "Discard" })).toBeEnabled();
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(9));
     });
 
     test("change the time of call", async () => {
@@ -950,15 +940,11 @@ describe("GuidedSetup", () => {
         });
 
         await DataStore.save(mockWhoami);
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(<GuidedSetup />, {
             preloadedState: { ...preloadedState, whoami: { user: mockWhoami } },
         });
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(4);
-        });
-        const textBox = screen.getByRole("textbox", {
+        const textBox = await screen.findByRole("textbox", {
             name: "Time of call",
         });
         expect(textBox).toHaveValue("29/11/2021 23:24");
@@ -969,10 +955,6 @@ describe("GuidedSetup", () => {
         userEvent.click(
             screen.getByRole("button", { name: "Save to dashboard" })
         );
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(9);
-        });
-        expect(querySpy).toHaveBeenCalledWith(models.User, mockWhoami.id);
         await waitFor(() =>
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,

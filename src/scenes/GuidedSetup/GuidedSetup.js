@@ -142,14 +142,13 @@ export const GuidedSetup = () => {
     );
     const tenantId = useSelector(tenantIdSelector);
     const [isPosting, setIsPosting] = useState(false);
-    const [reset, setReset] = useState(false);
     const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
     const deliverables = useRef({});
     const requesterContact = useRef(defaultContact);
     const comment = useRef(defaultComment);
     const [timeOfCall, setTimeOfCall] = useState(new Date());
     const [timeOfCallInvalid, setTimeOfCallInvalid] = useState(false);
-    const originalTimeOfCall = useRef(null);
+    const originalTimeOfCall = useRef(timeOfCall);
     const dispatch = useDispatch();
     const locations = useRef({ pickUpLocation: null, dropOffLocation: null });
     const [pickUpOverride, setPickUpOverride] = useState(null);
@@ -315,13 +314,11 @@ export const GuidedSetup = () => {
             requesterContact.current = defaultContact;
             comment.current = defaultComment;
             locations.current = { pickUpLocation: null, dropOffLocation: null };
-            // force rerender so that all the tabs are reset
-            setReset((prevState) => !prevState);
         }
     }, [guidedSetupOpen]);
 
     return (
-        <Paper key={reset} className={classes.wrapper}>
+        <Paper className={classes.wrapper}>
             <div className={classes.tabContent}>
                 <AppBar position="static" className={classes.appBar}>
                     <Tabs
