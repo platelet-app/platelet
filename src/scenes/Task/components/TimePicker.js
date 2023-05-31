@@ -36,17 +36,6 @@ function TimePicker(props) {
         props.onClickEdit();
     }
 
-    // check if props.time is today
-    function isToday() {
-        const today = new Date();
-        const date = new Date(props.time);
-        return (
-            today.getDate() === date.getDate() &&
-            today.getMonth() === date.getMonth() &&
-            today.getFullYear() === date.getFullYear()
-        );
-    }
-
     if (props.time) {
         return (
             <>
@@ -66,18 +55,7 @@ function TimePicker(props) {
                         }
                     >
                         <Typography>
-                            {isToday() ? (
-                                <>
-                                    Today at{" "}
-                                    <Moment format={"HH:mm"}>
-                                        {props.time}
-                                    </Moment>
-                                </>
-                            ) : (
-                                <Moment format={"DD/MM/YYYY, HH:mm"}>
-                                    {props.time}
-                                </Moment>
-                            )}
+                            <Moment format={"HH:mm"}>{props.time}</Moment>
                         </Typography>
                     </Tooltip>
                     {!props.hideEditIcon && (

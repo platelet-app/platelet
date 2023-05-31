@@ -6,7 +6,7 @@ import Moment from "react-moment";
 import IconButton from "@mui/material/IconButton";
 import { Stack, Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
 import moment from "moment";
 import TimeAndNamePickerDialog from "./TimeAndNamePickerDialog";
 
@@ -21,18 +21,6 @@ const useStyles = makeStyles()({
 
 function TimeAndNamePicker(props) {
     const { classes } = useStyles();
-
-    // check if props.time is today
-    function isToday() {
-        const today = new Date();
-        const date = new Date(props.time);
-        return (
-            today.getDate() === date.getDate() &&
-            today.getMonth() === date.getMonth() &&
-            today.getFullYear() === date.getFullYear()
-        );
-    }
-
     const { onChange } = props;
 
     const onConfirmation = React.useCallback(
@@ -61,18 +49,7 @@ function TimeAndNamePicker(props) {
                         }
                     >
                         <Typography>
-                            {isToday() ? (
-                                <>
-                                    Today at{" "}
-                                    <Moment format={"HH:mm"}>
-                                        {props.time}
-                                    </Moment>
-                                </>
-                            ) : (
-                                <Moment format={"DD/MM/YYYY, HH:mm"}>
-                                    {props.time}
-                                </Moment>
-                            )}
+                            <Moment format={"HH:mm"}>{props.time}</Moment>
                         </Typography>
                     </Tooltip>
                     {props.name && (
