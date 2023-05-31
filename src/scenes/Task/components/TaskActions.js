@@ -103,7 +103,6 @@ function TaskActions(props) {
     async function saveValues(values) {
         setIsPosting(true);
         setConfirmationKey(null);
-        setEditKey(null);
         try {
             const existingTask = await DataStore.query(
                 models.Task,
@@ -125,11 +124,12 @@ function TaskActions(props) {
                 })
             );
             setTask(updatedTask);
-            setIsPosting(false);
         } catch (e) {
             console.log(e);
             dispatch(displayErrorNotification("Sorry, something went wrong"));
+        } finally {
             setIsPosting(false);
+            setEditKey(null);
         }
     }
 
@@ -349,7 +349,7 @@ function TaskActions(props) {
                                     }
                                     return (
                                         <Stack
-                                            key={key}
+                                            key={`${key}-text-entry`}
                                             justifyContent="space-between"
                                             alignItems="center"
                                             direction="row"
