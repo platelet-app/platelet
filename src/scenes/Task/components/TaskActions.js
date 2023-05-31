@@ -292,6 +292,7 @@ function TaskActions(props) {
 
                                     let picker = (
                                         <TimePicker
+                                            basicTime
                                             key={editKey}
                                             onChange={(newValue) =>
                                                 setTimeWithKey(key, newValue)
@@ -314,6 +315,7 @@ function TaskActions(props) {
                                     ) {
                                         picker = (
                                             <TimeAndNamePicker
+                                                basicTime
                                                 onChange={(newValue) => {
                                                     const { name, time } =
                                                         newValue;
