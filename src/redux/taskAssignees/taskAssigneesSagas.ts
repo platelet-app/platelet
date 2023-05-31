@@ -33,21 +33,12 @@ function listener() {
                 }
             }
         );
-        const taskObserver = DataStore.observe(
-            models.Task,
-            LocalPredicates.unarchived
-        ).subscribe((result) => {
-            if (result.opType === "UPDATE") {
-                debouncedRestartObserver();
-            }
-        });
 
         restartObserver();
 
         return () => {
             observer.unsubscribe();
             userObserver.unsubscribe();
-            taskObserver.unsubscribe();
         };
     });
 }
