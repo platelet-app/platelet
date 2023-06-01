@@ -60,6 +60,13 @@ export type AmplifyDependentResourcesAttributes = {
       "Name": "string",
       "Region": "string"
     },
+    "plateletAdminEnableUser": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
     "plateletArchiveNullTasks": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
