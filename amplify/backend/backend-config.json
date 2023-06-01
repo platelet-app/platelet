@@ -158,6 +158,35 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "plateletAdminDisableUser": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        },
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "platelet61a0ac07"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "plateletArchiveNullTasks": {
       "build": true,
       "dependsOn": [
@@ -398,6 +427,22 @@
         {
           "category": "function",
           "resourceName": "plateletAdminChangeUserRoles"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminDisableUser_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminDisableUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminDisableUser_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminDisableUser"
         }
       ]
     },
