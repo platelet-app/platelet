@@ -13,6 +13,7 @@ import { useTheme } from "@mui/styles";
 import CurrentRiderResponsibilitySelector from "./CurrentRiderResponsibilitySelector";
 import Skeleton from "@mui/material/Skeleton";
 import usePossibleRiderResponsibilities from "../../../hooks/usePossibleRiderResponsibilities";
+import EnableDisableUser from "./EnableDisableUser";
 
 const initialUserState = {
     id: "",
@@ -194,6 +195,7 @@ export default function UserDetail({ userId }) {
                                 setUser({ ...user, roles })
                             }
                         />
+                        <EnableDisableUser user={user} />
                     </Stack>
                 </PaddedPaper>
                 <ProfilePicture

@@ -700,4 +700,108 @@ describe("UserDetail", () => {
         component.unmount();
         expect(unsubscribe).toHaveBeenCalledTimes(3);
     });
+    test("no enable to disable buttons if user is not admin", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+                username: "username",
+                displayName: "displayName",
+            })
+        );
+        const user = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+                username: "username",
+                displayName: "displayName",
+                disabled: 1,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+            tenantId,
+        };
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        await screen.findByText("displayName");
+        expect(screen.queryByRole("button")).toBeNull();
+    });
+    test("enable a user", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER, models.Role.ADMIN],
+                username: "username",
+                displayName: "displayName",
+            })
+        );
+        const user = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+                username: "username",
+                displayName: "displayName",
+                disabled: 1,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+            tenantId,
+        };
+        const apiSpy = jest.spyOn(API, "graphql").mockResolvedValue({});
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        userEvent.click(await screen.findByRole("button", { name: "Enable" }));
+        await waitFor(() => {
+            expect(apiSpy).toHaveBeenCalledWith({
+                query: mutations.enableUser,
+                variables: {
+                    input: {
+                        userId: user.id,
+                    },
+                },
+            });
+        });
+    });
+    test("disable a user", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER, models.Role.ADMIN],
+                username: "username",
+                displayName: "displayName",
+            })
+        );
+        const user = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+                username: "username",
+                displayName: "displayName",
+                disabled: 0,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+            tenantId,
+        };
+        const apiSpy = jest.spyOn(API, "graphql").mockResolvedValue({});
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        userEvent.click(await screen.findByRole("button", { name: "Disable" }));
+        await waitFor(() => {
+            expect(apiSpy).toHaveBeenCalledWith({
+                query: mutations.disableUser,
+                variables: {
+                    input: {
+                        userId: user.id,
+                    },
+                },
+            });
+        });
+    });
 });
