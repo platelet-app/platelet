@@ -754,14 +754,15 @@ describe("UserDetail", () => {
         };
         const apiSpy = jest.spyOn(API, "graphql").mockResolvedValue({});
         render(<UserDetail userId={user.id} />, { preloadedState });
-        userEvent.click(await screen.findByRole("button", { name: "Enable" }));
+        userEvent.click(
+            await screen.findByRole("button", { name: "Enable this user" })
+        );
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
         await waitFor(() => {
             expect(apiSpy).toHaveBeenCalledWith({
                 query: mutations.enableUser,
                 variables: {
-                    input: {
-                        userId: user.id,
-                    },
+                    userId: user.id,
                 },
             });
         });
@@ -792,14 +793,15 @@ describe("UserDetail", () => {
         };
         const apiSpy = jest.spyOn(API, "graphql").mockResolvedValue({});
         render(<UserDetail userId={user.id} />, { preloadedState });
-        userEvent.click(await screen.findByRole("button", { name: "Disable" }));
+        userEvent.click(
+            await screen.findByRole("button", { name: "Disable this user" })
+        );
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
         await waitFor(() => {
             expect(apiSpy).toHaveBeenCalledWith({
                 query: mutations.disableUser,
                 variables: {
-                    input: {
-                        userId: user.id,
-                    },
+                    userId: user.id,
                 },
             });
         });
