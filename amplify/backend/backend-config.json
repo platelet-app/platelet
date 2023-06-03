@@ -245,6 +245,27 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "plateletAdminResetUserPassword": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
+        },
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "platelet61a0ac07"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "plateletArchiveNullTasks": {
       "build": true,
       "dependsOn": [
