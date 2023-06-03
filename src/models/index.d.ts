@@ -18,7 +18,8 @@ export enum TaskStatus {
   CANCELLED = "CANCELLED",
   REJECTED = "REJECTED",
   ABANDONED = "ABANDONED",
-  COMPLETED = "COMPLETED"
+  COMPLETED = "COMPLETED",
+  PENDING = "PENDING"
 }
 
 export enum Priority {
@@ -174,6 +175,10 @@ type TaskAssigneeMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
+type ScheduledTaskMetaData = {
+  readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
 type CommentMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
@@ -236,6 +241,7 @@ type EagerUser = {
   readonly createdTasks?: (Task | null)[] | null;
   readonly createdLocations?: (Location | null)[] | null;
   readonly createdVehicles?: (Vehicle | null)[] | null;
+  readonly createdScheduledTasks?: (ScheduledTask | null)[] | null;
   readonly disabled?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -261,6 +267,7 @@ type LazyUser = {
   readonly createdTasks: AsyncCollection<Task>;
   readonly createdLocations: AsyncCollection<Location>;
   readonly createdVehicles: AsyncCollection<Vehicle>;
+  readonly createdScheduledTasks: AsyncCollection<ScheduledTask>;
   readonly disabled?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -378,6 +385,9 @@ type EagerLocation = {
   readonly tasksAsPickUp?: (Task | null)[] | null;
   readonly tasksAsDropOff?: (Task | null)[] | null;
   readonly taskAsEstablishment?: (Task | null)[] | null;
+  readonly scheduledTasksAsPickUp?: (ScheduledTask | null)[] | null;
+  readonly scheduledTasksAsDropOff?: (ScheduledTask | null)[] | null;
+  readonly scheduledTasksAsEstablishment?: (ScheduledTask | null)[] | null;
   readonly comments?: (Comment | null)[] | null;
   readonly disabled?: number | null;
   readonly googleMapsPlaceId?: string | null;
@@ -406,6 +416,9 @@ type LazyLocation = {
   readonly tasksAsPickUp: AsyncCollection<Task>;
   readonly tasksAsDropOff: AsyncCollection<Task>;
   readonly taskAsEstablishment: AsyncCollection<Task>;
+  readonly scheduledTasksAsPickUp: AsyncCollection<ScheduledTask>;
+  readonly scheduledTasksAsDropOff: AsyncCollection<ScheduledTask>;
+  readonly scheduledTasksAsEstablishment: AsyncCollection<ScheduledTask>;
   readonly comments: AsyncCollection<Comment>;
   readonly disabled?: number | null;
   readonly googleMapsPlaceId?: string | null;
@@ -512,6 +525,44 @@ export declare const TaskAssignee: (new (init: ModelInit<TaskAssignee, TaskAssig
   copyOf(source: TaskAssignee, mutator: (draft: MutableModel<TaskAssignee, TaskAssigneeMetaData>) => MutableModel<TaskAssignee, TaskAssigneeMetaData> | void): TaskAssignee;
 }
 
+type EagerScheduledTask = {
+  readonly id: string;
+  readonly tenantId: string;
+  readonly createdBy?: User | null;
+  readonly requesterContact?: AddressAndContactDetails | null;
+  readonly cronExpression: string;
+  readonly pickUpLocation?: Location | null;
+  readonly dropOffLocation?: Location | null;
+  readonly establishmentLocation?: Location | null;
+  readonly priority?: Priority | keyof typeof Priority | null;
+  readonly deliverables?: (Deliverable | null)[] | null;
+  readonly disabled?: number | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyScheduledTask = {
+  readonly id: string;
+  readonly tenantId: string;
+  readonly createdBy: AsyncItem<User | undefined>;
+  readonly requesterContact?: AddressAndContactDetails | null;
+  readonly cronExpression: string;
+  readonly pickUpLocation: AsyncItem<Location | undefined>;
+  readonly dropOffLocation: AsyncItem<Location | undefined>;
+  readonly establishmentLocation: AsyncItem<Location | undefined>;
+  readonly priority?: Priority | keyof typeof Priority | null;
+  readonly deliverables: AsyncCollection<Deliverable>;
+  readonly disabled?: number | null;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type ScheduledTask = LazyLoading extends LazyLoadingDisabled ? EagerScheduledTask : LazyScheduledTask
+
+export declare const ScheduledTask: (new (init: ModelInit<ScheduledTask, ScheduledTaskMetaData>) => ScheduledTask) & {
+  copyOf(source: ScheduledTask, mutator: (draft: MutableModel<ScheduledTask, ScheduledTaskMetaData>) => MutableModel<ScheduledTask, ScheduledTaskMetaData> | void): ScheduledTask;
+}
+
 type EagerComment = {
   readonly id: string;
   readonly parentId?: string | null;
@@ -581,6 +632,7 @@ type EagerDeliverable = {
   readonly tenantId: string;
   readonly deliverableType?: DeliverableType | null;
   readonly task?: Task | null;
+  readonly scheduledTask?: ScheduledTask | null;
   readonly count?: number | null;
   readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit | null;
   readonly orderInGrid?: number | null;
@@ -595,6 +647,7 @@ type LazyDeliverable = {
   readonly tenantId: string;
   readonly deliverableType: AsyncItem<DeliverableType | undefined>;
   readonly task: AsyncItem<Task | undefined>;
+  readonly scheduledTask: AsyncItem<ScheduledTask | undefined>;
   readonly count?: number | null;
   readonly unit?: DeliverableUnit | keyof typeof DeliverableUnit | null;
   readonly orderInGrid?: number | null;

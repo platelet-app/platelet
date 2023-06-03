@@ -85,9 +85,35 @@ describe("TaskActions", () => {
             screen.getByRole("button", { name: "Cancelled" })
         ).toBeDisabled();
         expect(screen.getByRole("button", { name: "Rejected" })).toBeDisabled();
+        expect(
+            screen.getByRole("button", { name: "Rider home" })
+        ).toBeDisabled();
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledTimes(1);
         });
+    });
+
+    test("all buttons are disabled if the task is PENDING", async () => {
+        const mockTask = new models.Task({ status: models.TaskStatus.PENDING });
+        await DataStore.save(mockTask);
+        const spy = jest.spyOn(DataStore, "query");
+        render(<TaskActions taskId={mockTask.id} />);
+        await waitFor(() => {
+            expect(spy).toHaveBeenCalledTimes(1);
+        });
+        expect(
+            screen.getByRole("button", { name: "Picked up" })
+        ).toBeDisabled();
+        expect(
+            screen.getByRole("button", { name: "Delivered" })
+        ).toBeDisabled();
+        expect(
+            screen.getByRole("button", { name: "Cancelled" })
+        ).toBeDisabled();
+        expect(screen.getByRole("button", { name: "Rejected" })).toBeDisabled();
+        expect(
+            screen.getByRole("button", { name: "Rider home" })
+        ).toBeDisabled();
     });
 
     test("picked up is disabled when there are no assignees", async () => {
@@ -1103,7 +1129,8 @@ describe("TaskActions", () => {
         expect(
             screen.getByText("Sorry, something went wrong")
         ).toBeInTheDocument();
-        expect(dateField).toBeInTheDocument();
+        // closes the dialog on failure now
+        //expect(dateField).toBeInTheDocument();
     });
 
     test.each`
@@ -1286,6 +1313,7 @@ describe("TaskActions", () => {
         expect(
             screen.getByText("Sorry, something went wrong")
         ).toBeInTheDocument();
-        expect(nameField).toBeInTheDocument();
+        // closes the dialog on failure now
+        //expect(nameField).toBeInTheDocument();
     });
 });

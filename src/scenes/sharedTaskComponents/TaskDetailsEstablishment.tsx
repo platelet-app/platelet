@@ -1,5 +1,5 @@
 import React from "react";
-import LabelItemPair from "../../../components/LabelItemPair";
+import LabelItemPair from "../../components/LabelItemPair";
 import {
     Stack,
     IconButton,
@@ -10,22 +10,24 @@ import {
     useMediaQuery,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import ConfirmationDialog from "../../../components/ConfirmationDialog";
-import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
-import * as models from "../../../models";
+import ConfirmationDialog from "../../components/ConfirmationDialog";
+import FavouriteLocationsSelect from "../../components/FavouriteLocationsSelect";
+import * as models from "../../models";
 import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
-import { tenantIdSelector } from "../../../redux/Selectors";
-import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import { tenantIdSelector } from "../../redux/Selectors";
+import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 
 type TaskDetailsEstablishmentProps = {
-    value: models.Location | null;
+    value?: models.Location | null;
     onChange: (location: models.Location) => void;
+    hideEditIcon?: boolean;
 };
 
 const TaskDetailsEstablishment: React.FC<TaskDetailsEstablishmentProps> = ({
     value = null,
     onChange = () => {},
+    hideEditIcon = false,
 }) => {
     const [editMode, setEditMode] = React.useState(false);
     const [notListedName, setNotListedName] = React.useState("");
@@ -42,6 +44,7 @@ const TaskDetailsEstablishment: React.FC<TaskDetailsEstablishmentProps> = ({
         if (!tenantId) {
             console.log("tenantId is required");
             dispatch(displayErrorNotification("Sorry, something went wrong"));
+            return;
         }
         if (notListedMode && notListedName) {
             const newEstablishment = new models.Location({
@@ -86,15 +89,17 @@ const TaskDetailsEstablishment: React.FC<TaskDetailsEstablishmentProps> = ({
                     {value && value.name ? value.name : "Unset"}
                 </Typography>
             </LabelItemPair>
-            <Tooltip title={"Edit"}>
-                <IconButton
-                    onClick={() => setEditMode((prevState) => !prevState)}
-                    aria-label="edit establishment"
-                    size={"small"}
-                >
-                    <EditIcon />
-                </IconButton>
-            </Tooltip>
+            {!hideEditIcon && (
+                <Tooltip title={"Edit"}>
+                    <IconButton
+                        onClick={() => setEditMode((prevState) => !prevState)}
+                        aria-label="edit establishment"
+                        size={"small"}
+                    >
+                        <EditIcon />
+                    </IconButton>
+                </Tooltip>
+            )}
             <ConfirmationDialog
                 onCancel={handleCancel}
                 fullScreen={isSm}

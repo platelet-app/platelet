@@ -149,11 +149,11 @@ describe("TasksGridColumn", () => {
     it.each`
         taskStatus
         ${tasksStatus.completed} | ${tasksStatus.droppedOff} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
-        ${tasksStatus.active}    | ${tasksStatus.pickedUp}
+        ${tasksStatus.active}    | ${tasksStatus.pickedUp}   | ${tasksStatus.pending}
     `(
         "renders the tasks in ALL view for each status",
         async ({ taskStatus }) => {
-            const mockTasks = await Promise.all(
+            await Promise.all(
                 _.range(0, 10).map((i) =>
                     DataStore.save(
                         new models.Task({

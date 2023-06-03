@@ -1,5 +1,6 @@
 const indexModule = require("./index");
 const { default: fetch } = require("node-fetch");
+const _ = require("lodash");
 
 const mockTaskNewer = {
     id: "anotherTaskId",
@@ -49,6 +50,24 @@ const fakeDataSecond = {
     tasksByArchivedStatus: {
         items: [mockTaskNewer],
         nextToken: null,
+    },
+};
+
+const manyTasks = _.range(0, 30).map((i) => ({
+    id: `someTaskId${i}`,
+    status: "COMPLETED",
+    archived: 0,
+    createdAt: "2021-04-01T00:00:00.000Z",
+    _version: 1,
+    _deleted: null,
+    _lastChangedAt: 1620000000000,
+    status: "COMPLETED",
+}));
+
+const fakeDataMany = {
+    tasksByArchivedStatus: {
+        items: manyTasks,
+        nextToken: "tasktoken",
     },
 };
 const fakeEmptyData = {
@@ -205,6 +224,27 @@ describe("plateletArchiver", () => {
             expect.objectContaining({ id: "anotherTaskId" })
         );
     });
+
+    test("chunk the tasks into 10s", async () => {
+        const requestSpy = jest.spyOn(indexModule, "makeNewRequest");
+        jest.spyOn(fetch, "default")
+            .mockImplementationOnce(setupFetchStub(fakeDataMany))
+            .mockImplementation(setupFetchStub(fakeTaskReturn));
+        await indexModule.handler({}, indexModule.makeNewRequest);
+        for (const task of manyTasks) {
+            expect(requestSpy).toHaveBeenCalledWith(
+                expect.stringMatching(/updateTask\(/),
+                expect.objectContaining({
+                    input: {
+                        _version: 1,
+                        archived: 1,
+                        id: task.id,
+                    },
+                })
+            );
+        }
+    });
+
     test("failure to archive an assignee", async () => {
         const unArchivedFakeAssigneeReturn = {
             updateTaskAssignee: {
@@ -228,7 +268,43 @@ describe("plateletArchiver", () => {
         expect(requestSpy).toMatchSnapshot();
         expect(requestSpy).not.toHaveBeenCalledWith(
             expect.stringMatching(/updateTask\(/),
-            expect.objectContaining({ id: "someTaskId" })
+            expect.objectContaining({
+                input: expect.objectContaining({
+                    id: "someTaskId",
+                }),
+            })
+        );
+    });
+    test("graphql failure to archive an assignee", async () => {
+        const unArchivedFakeAssigneeReturnError = {
+            updateTaskAssignee: null,
+            errors: [
+                {
+                    message: "some error",
+                },
+            ],
+        };
+        const requestSpy = jest.spyOn(indexModule, "makeNewRequest");
+        jest.spyOn(fetch, "default")
+            .mockImplementationOnce(setupFetchStub(fakeData))
+            .mockImplementationOnce(setupFetchStub(fakeDataSecond))
+            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
+            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
+            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
+            .mockImplementationOnce(setupFetchStub({}))
+            .mockImplementationOnce(setupFetchStub(fakeAssigneeDataSecond))
+            .mockImplementationOnce(
+                setupFetchStub(unArchivedFakeAssigneeReturnError)
+            );
+        await indexModule.handler({}, indexModule.makeNewRequest);
+        expect(requestSpy).toMatchSnapshot();
+        expect(requestSpy).not.toHaveBeenCalledWith(
+            expect.stringMatching(/updateTask\(/),
+            expect.objectContaining({
+                input: expect.objectContaining({
+                    id: "someTaskId",
+                }),
+            })
         );
     });
 });

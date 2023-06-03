@@ -12,6 +12,7 @@ const colors = {
     CANCELLED: blue[700],
     ABANDONED: red[700],
     REJECTED: grey[700],
+    PENDING: blue[200],
 };
 
 const generateLabel = (status: models.TaskStatus | TaskStatus) => {
@@ -41,7 +42,7 @@ const TaskStatusChip: React.FC<TaskStatusChipProps> = ({
             <Chip
                 sx={{
                     ...sx,
-                    backgroundColor: alpha(colors[status], 0.2),
+                    backgroundColor: alpha(colors[status] || "#000", 0.2),
                 }}
                 size={size}
                 label={generateLabel(status)}

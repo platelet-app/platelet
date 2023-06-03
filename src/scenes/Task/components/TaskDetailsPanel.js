@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import TaskDetailsEstablishment from "./TaskDetailsEstablishment";
+import TaskDetailsEstablishment from "../../sharedTaskComponents/TaskDetailsEstablishment";
 import Typography from "@mui/material/Typography";
 import LabelItemPair from "../../../components/LabelItemPair";
-import PrioritySelect from "./PrioritySelect";
+import PrioritySelect from "../../sharedTaskComponents/PrioritySelect";
 import PropTypes from "prop-types";
 import TimePicker from "./TimePicker";
 import { Divider, Paper, Skeleton, Stack } from "@mui/material";
@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
 import GetError from "../../../ErrorComponents/GetError";
-import RequesterContact from "./RequesterContact";
+import RequesterContact from "../../sharedTaskComponents/RequesterContact";
 import { userRoles } from "../../../apiConsts";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 import RiderResponsibilityDetail from "./RiderResponsibilityDetail";
@@ -150,23 +150,11 @@ function TaskDetailsPanel(props) {
         try {
             const result = await DataStore.query(models.Task, props.taskId);
             if (!result) throw new Error("Task doesn't exist");
-            if (!result.requesterContact) {
-                await DataStore.save(
-                    models.Task.copyOf(result, (updated) => {
-                        updated.requesterContact = requesterValue;
-                    })
-                );
-            } else {
-                await DataStore.save(
-                    models.Task.copyOf(result, (updated) => {
-                        for (const [key, value] of Object.entries(
-                            requesterValue
-                        )) {
-                            updated.requesterContact[key] = value;
-                        }
-                    })
-                );
-            }
+            await DataStore.save(
+                models.Task.copyOf(result, (updated) => {
+                    updated.requesterContact = requesterValue;
+                })
+            );
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
@@ -190,19 +178,21 @@ function TaskDetailsPanel(props) {
                             <Typography>{state.reference}</Typography>
                         </LabelItemPair>
                     )}
-                    <LabelItemPair label={"Time of call"}>
-                        <TimePicker
-                            key={editTimeOfCall}
-                            onChange={setTimeOfCall}
-                            editMode={editTimeOfCall}
-                            label="Time of call"
-                            onClickEdit={() => setEditTimeOfCall(true)}
-                            onCancelEdit={() => setEditTimeOfCall(false)}
-                            disableClear
-                            time={state.timeOfCall}
-                            hideEditIcon={!hasFullPermissions}
-                        />
-                    </LabelItemPair>
+                    {state.timeOfCall && (
+                        <LabelItemPair label={"Time of call"}>
+                            <TimePicker
+                                key={editTimeOfCall}
+                                onChange={setTimeOfCall}
+                                editMode={editTimeOfCall}
+                                label="Time of call"
+                                onClickEdit={() => setEditTimeOfCall(true)}
+                                onCancelEdit={() => setEditTimeOfCall(false)}
+                                disableClear
+                                time={state.timeOfCall}
+                                hideEditIcon={!hasFullPermissions}
+                            />
+                        </LabelItemPair>
+                    )}
                     {hasFullPermissions && (
                         <TaskDetailsEstablishment
                             value={state.establishmentLocation}
@@ -216,17 +206,8 @@ function TaskDetailsPanel(props) {
                                 onChange={(value) =>
                                     updateRequesterContact(value)
                                 }
-                                telephoneNumber={
-                                    state.requesterContact
-                                        ? state.requesterContact.telephoneNumber
-                                        : null
-                                }
+                                contact={state.requesterContact}
                                 hideEditIcon={!hasFullPermissions}
-                                name={
-                                    state.requesterContact
-                                        ? state.requesterContact.name
-                                        : null
-                                }
                             />
                             <Divider />
                         </>

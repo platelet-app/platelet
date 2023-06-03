@@ -31,7 +31,6 @@ function CommentsSection(props) {
 
     const getComments = React.useCallback(async () => {
         //TODO: see if a more secure way to restrict private comment access
-        console.log("comm", commentsSynced);
         try {
             const commentsGet = await DataStore.query(models.Comment, (c) =>
                 c.parentId("eq", props.parentId)
@@ -51,11 +50,9 @@ function CommentsSection(props) {
             setErrorState(error);
             console.error("Request failed", error);
         }
-    }, [commentsSynced, props.parentId, whoami.id]);
-    useEffect(
-        () => getComments(),
-        [props.parentId, commentsSynced, getComments]
-    );
+    }, [props.parentId, whoami.id]);
+
+    useEffect(() => getComments(), [commentsSynced, getComments]);
     getCommentsRef.current = getComments;
 
     useEffect(() => {

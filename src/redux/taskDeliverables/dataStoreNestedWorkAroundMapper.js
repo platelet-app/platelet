@@ -6,17 +6,25 @@ export default async function dataStoreNestedWorkAroundMapper(data = []) {
         data.map(async (item) => {
             if (
                 !item.deliverableTypeDeliverablesId &&
-                !item.taskDeliverablesId
+                !item.taskDeliverablesId &&
+                !item.scheduledTaskDeliverablesId
             ) {
                 return item;
             }
             const {
                 deliverableTypeDeliverablesId,
                 taskDeliverablesId,
+                scheduledTaskDeliverablesId,
                 ...rest
             } = item;
             const task = taskDeliverablesId
                 ? await DataStore.query(models.Task, taskDeliverablesId)
+                : null;
+            const scheduledTask = scheduledTaskDeliverablesId
+                ? await DataStore.query(
+                      models.ScheduledTask,
+                      scheduledTaskDeliverablesId
+                  )
                 : null;
             const deliverableType = deliverableTypeDeliverablesId
                 ? await DataStore.query(
@@ -24,7 +32,7 @@ export default async function dataStoreNestedWorkAroundMapper(data = []) {
                       deliverableTypeDeliverablesId
                   )
                 : null;
-            return { ...rest, task, deliverableType };
+            return { ...rest, task, deliverableType, scheduledTask };
         })
     );
 }

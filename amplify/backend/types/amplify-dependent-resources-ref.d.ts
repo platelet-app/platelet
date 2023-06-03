@@ -68,6 +68,14 @@ export type AmplifyDependentResourcesAttributes = {
       "Name": "string",
       "Region": "string"
     },
+    "plateletCreateScheduledTasks": {
+      "Arn": "string",
+      "CloudWatchEventRule": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
     "plateletGetStatistics": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
@@ -95,6 +103,9 @@ export type AmplifyDependentResourcesAttributes = {
       "LambdaExecutionRoleArn": "string",
       "Name": "string",
       "Region": "string"
+    },
+    "plateletappSyncOperations": {
+      "Arn": "string"
     }
   },
   "geo": {

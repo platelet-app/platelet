@@ -43,13 +43,13 @@ const useStyles = makeStyles()((theme) => ({
 type TasksGridColumnProps = {
     title?: string;
     taskKey: models.TaskStatus[];
-    showTasks?: string[];
-    hideRelayIcons?: boolean;
+    columnCount: number;
 };
 
 const TasksGridColumn: React.FC<TasksGridColumnProps> = ({
     title = "TASKS",
     taskKey,
+    columnCount,
 }) => {
     const { state, isFetching, error } = useTasksColumnTasks(taskKey);
     const [filteredTasksIds, setFilteredTasksIds] = useState<string[] | null>(
@@ -102,7 +102,7 @@ const TasksGridColumn: React.FC<TasksGridColumnProps> = ({
             <Box
                 className={classes.column}
                 sx={{
-                    width: isSm ? "100%" : width / 4.2,
+                    width: isSm ? "100%" : width / (columnCount + 0.2),
                 }}
             >
                 <TaskGridColumnHeader tasks={state} title={title} />
@@ -115,9 +115,5 @@ const TasksGridColumn: React.FC<TasksGridColumnProps> = ({
         );
     }
 };
-TasksGridColumn.defaultProps = {
-    showTasks: [],
-    title: "TASKS",
-    hideRelayIcons: false,
-};
+
 export default TasksGridColumn;

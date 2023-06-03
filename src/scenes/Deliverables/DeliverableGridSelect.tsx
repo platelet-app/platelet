@@ -6,28 +6,29 @@ import Link from "@mui/material/Link";
 import { DataStore, Predicates, SortDirection } from "aws-amplify";
 import * as models from "../../models/index";
 import { dataStoreModelSyncedStatusSelector } from "../../redux/Selectors";
-import { convertListDataToObject } from "../../utilities";
-import PropTypes from "prop-types";
 import EditableDeliverable from "./components/EditableDeliverable";
 import AddableDeliverable from "./components/AddableDeliverable";
 import _ from "lodash";
 import GetError from "../../ErrorComponents/GetError";
 import DeliverableTags from "./DeliverableTags";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
+import convertModelsToObject from "../../utilities/convertModelsToObject";
 
 const initialDeliverablesSortedState = {
     deliverables: [],
     defaults: [],
 };
 
-const tagsReducer = (previousValue, currentValue = []) => {
+const tagsReducer = (
+    previousValue: (string | null)[],
+    currentValue: (string | null)[] = []
+) => {
     if (!currentValue) {
         return previousValue;
     }
     const filtered = currentValue.filter((t) => !previousValue.includes(t));
     return [...previousValue, ...filtered];
 };
-
 const useStyles = makeStyles()((theme) => ({
     hint: {
         fontStyle: "italic",
@@ -39,59 +40,105 @@ const useStyles = makeStyles()((theme) => ({
     },
 }));
 
-function DeliverableGridSelect(props) {
-    const [deliverablesSorted, setDeliverablesSorted] = useState(
-        initialDeliverablesSortedState
-    );
-    const [state, setState] = useState({});
-    const [tags, setTags] = useState([]);
-    const [currentTag, setCurrentTag] = useState(null);
-    const [errorState, setErrorState] = useState(null);
+type DeliverableGridSelectProps = {
+    deliverables?: models.Deliverable[];
+    onChange: (...args: any[]) => any;
+    onDelete: (id: string) => any;
+    disabled?: boolean;
+};
+
+type BasicDeliverableType = {
+    count: number;
+    id: string;
+    label: string;
+    unit: models.DeliverableUnit;
+    orderInGrid: number;
+    icon: models.DeliverableTypeIcon;
+};
+
+type DeliverablesSortedStateType = {
+    deliverables: BasicDeliverableType[];
+    defaults: models.DeliverableType[];
+};
+
+type StateType = {
+    [key: string]: BasicDeliverableType;
+};
+
+type AvailableDeliverablesType = {
+    [key: string]: models.DeliverableType;
+};
+
+const DeliverableGridSelect: React.FC<DeliverableGridSelectProps> = ({
+    deliverables = [],
+    onChange,
+    onDelete,
+    disabled,
+}) => {
+    const [deliverablesSorted, setDeliverablesSorted] =
+        useState<DeliverablesSortedStateType>(initialDeliverablesSortedState);
+    const [state, setState] = useState<StateType>({});
+    const [tags, setTags] = useState<(string | null)[]>([]);
+    const [currentTag, setCurrentTag] = useState<string | null>(null);
+    const [errorState, setErrorState] = useState<Error | null>(null);
     const [truncated, setTruncated] = useState(true);
-    const [availableDeliverables, setAvailableDeliverables] = useState({});
-    const [suggestedDeliverables, setSuggestedDeliverables] = useState([]);
+    const [availableDeliverables, setAvailableDeliverables] =
+        useState<AvailableDeliverablesType>({});
+    const [suggestedDeliverables, setSuggestedDeliverables] = useState<
+        string[]
+    >([]);
     const availableDeliverableModelSynced = useSelector(
         dataStoreModelSyncedStatusSelector
     ).DeliverableType;
     const [isFetching, setIsFetching] = useState(false);
     const { classes } = useStyles();
 
-    const calculateTags = React.useCallback((currentTag, defaults) => {
-        const existingTags = Object.values(defaults).map(
-            (deliverableType) => deliverableType.tags
+    const calculateTags = React.useCallback(() => {
+        const existingTags = Object.values(deliverablesSorted.defaults).map(
+            (deliverableType) => deliverableType.tags || []
         );
         const suggestions = existingTags.reduce(tagsReducer, []);
         if (!suggestions.includes(currentTag)) setCurrentTag(null);
-        setTags(suggestions);
-    }, []);
+        const filtered = suggestions.filter((t) => t !== null);
+        setTags(filtered);
+    }, [currentTag, deliverablesSorted.defaults]);
 
     useEffect(() => {
-        calculateTags(currentTag, deliverablesSorted.defaults);
-    }, [deliverablesSorted.defaults, calculateTags, currentTag]);
+        calculateTags();
+    }, [calculateTags]);
 
     function convertExistingDeliverablesToState() {
-        const result = {};
-        for (const d of props.deliverables) {
-            const deliverableType = availableDeliverables[d.deliverableType.id];
-            result[d.deliverableType.id] = {
-                count: d.count,
-                id: d.deliverableType.id,
+        const result: StateType = {};
+        for (const d of deliverables) {
+            const deliverableType =
+                availableDeliverables[
+                    d.deliverableType?.id as keyof models.DeliverableType
+                ];
+            result[d.deliverableType?.id as keyof models.DeliverableType] = {
+                count: d.count || 0,
+                id: d.deliverableType?.id || "",
                 label: deliverableType ? deliverableType.label : "",
-                createdAt: d.createdAt,
-                unit: d.unit,
-                orderInGrid: d.orderInGrid,
-                icon: deliverableType ? deliverableType.icon : "",
+                unit:
+                    (d.unit as models.DeliverableUnit) ||
+                    (models.DeliverableUnit.NONE as models.DeliverableUnit),
+                orderInGrid: d.orderInGrid || 0,
+                icon: deliverableType
+                    ? (deliverableType.icon as models.DeliverableTypeIcon)
+                    : models.DeliverableTypeIcon.OTHER,
             };
         }
         setState(result);
     }
+
+    // prevent infinite loop
+    const deliverablesJSON = JSON.stringify(deliverables);
     useEffect(convertExistingDeliverablesToState, [
-        props.deliverables,
         availableDeliverables,
+        deliverablesJSON,
     ]);
 
     function sortDeliverables() {
-        const result = {
+        const result: DeliverablesSortedStateType = {
             deliverables: [],
             defaults: [],
         };
@@ -104,10 +151,11 @@ function DeliverableGridSelect(props) {
             }
         }
         result.deliverables = result.deliverables.sort(
-            (a, b) => parseInt(a.orderInGrid) - parseInt(b.orderInGrid)
+            (a, b) => a.orderInGrid - b.orderInGrid
         );
         setDeliverablesSorted(result);
     }
+
     useEffect(sortDeliverables, [availableDeliverables, state]);
 
     async function getAvailableDeliverables() {
@@ -120,19 +168,21 @@ function DeliverableGridSelect(props) {
                 }
             );
             setAvailableDeliverables(
-                convertListDataToObject(availableDeliverablesResult)
+                convertModelsToObject<models.DeliverableType>(
+                    availableDeliverablesResult
+                )
             );
             setIsFetching(false);
-        } catch (e) {
-            setErrorState(e);
-            console.log(e);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setErrorState(error);
+            }
+            console.log(error);
         }
     }
-
-    useEffect(
-        () => getAvailableDeliverables(),
-        [availableDeliverableModelSynced]
-    );
+    useEffect(() => {
+        getAvailableDeliverables();
+    }, [availableDeliverableModelSynced]);
 
     function tagFilterAvailableDeliverables() {
         let result = [];
@@ -151,33 +201,28 @@ function DeliverableGridSelect(props) {
         currentTag,
         availableDeliverables,
     ]);
-
-    function onAddNewDeliverable(deliverable) {
+    function onAddNewDeliverable(
+        deliverable: models.Deliverable & models.DeliverableType
+    ) {
         let orderInGrid = 0;
         for (const d of Object.values(state)) {
-            if (d.orderInGrid > orderInGrid);
-            orderInGrid = parseInt(d.orderInGrid) + 1;
+            if (d.orderInGrid >= orderInGrid) orderInGrid = d.orderInGrid + 1;
         }
         setState((prevState) => ({
             ...prevState,
             [deliverable.id]: {
-                ...deliverable,
+                id: deliverable.id,
+                count: 1,
+                label: deliverable.label,
+                unit: deliverable.unit as models.DeliverableUnit,
+                icon: deliverable.icon as models.DeliverableTypeIcon,
                 orderInGrid,
             },
         }));
-        const {
-            createdAt,
-            updatedAt,
-            icon,
-            _lastChangedAt,
-            _deleted,
-            _version,
-            ...rest
-        } = deliverable;
-        props.onChange({ ...rest, orderInGrid });
+        const { createdAt, updatedAt, icon, ...rest } = deliverable;
+        onChange({ ...rest, orderInGrid });
     }
-
-    function onChangeUnit(deliverableId, unit) {
+    function onChangeUnit(deliverableId: string, unit: models.DeliverableUnit) {
         const existing = state[deliverableId];
         if (existing) {
             setState((prevState) => ({
@@ -185,10 +230,9 @@ function DeliverableGridSelect(props) {
                 [deliverableId]: { ...prevState[deliverableId], unit },
             }));
         }
-        props.onChange({ id: deliverableId, unit });
+        onChange({ id: deliverableId, unit });
     }
-
-    function onChangeCount(deliverableId, count) {
+    function onChangeCount(deliverableId: string, count: number) {
         const existing = state[deliverableId];
         if (existing) {
             setState((prevState) => ({
@@ -196,19 +240,16 @@ function DeliverableGridSelect(props) {
                 [deliverableId]: { ...prevState[deliverableId], count },
             }));
         }
-        props.onChange({ id: deliverableId, count });
+        onChange({ id: deliverableId, count });
     }
-
-    function onDelete(deliverableId) {
+    function onDeleteDeliverable(deliverableId: string) {
         setState((prevState) => _.omit(prevState, deliverableId));
-        props.onDelete(deliverableId);
+        onDelete(deliverableId);
     }
-
     useEffect(
         () => setTruncated(Object.values(availableDeliverables).length > 5),
         [availableDeliverables]
     );
-
     if (!!errorState) {
         return <GetError />;
     } else if (isFetching) {
@@ -249,10 +290,10 @@ function DeliverableGridSelect(props) {
                                 return (
                                     <EditableDeliverable
                                         key={deliverable.id}
-                                        disabled={props.disabled}
+                                        disabled={disabled}
                                         onChangeCount={onChangeCount}
                                         onChangeUnit={onChangeUnit}
-                                        onDelete={onDelete}
+                                        onDelete={onDeleteDeliverable}
                                         deliverable={deliverable}
                                     />
                                 );
@@ -276,7 +317,7 @@ function DeliverableGridSelect(props) {
                                 } else {
                                     return (
                                         <AddableDeliverable
-                                            disabled={props.disabled}
+                                            disabled={disabled}
                                             key={deliverableType.id}
                                             onAdd={onAddNewDeliverable}
                                             deliverableType={deliverableType}
@@ -308,17 +349,6 @@ function DeliverableGridSelect(props) {
             </Box>
         );
     }
-}
-
-DeliverableGridSelect.propTypes = {
-    deliverables: PropTypes.arrayOf(PropTypes.object),
-    onChange: PropTypes.func,
-    onDelete: PropTypes.func,
-};
-DeliverableGridSelect.defaultProps = {
-    deliverables: [],
-    onChange: () => {},
-    onDelete: () => {},
 };
 
 export default DeliverableGridSelect;

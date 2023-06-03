@@ -39,6 +39,7 @@ export enum tasksStatus {
     cancelled = "CANCELLED",
     abandoned = "ABANDONED",
     completed = "COMPLETED",
+    pending = "PENDING",
 }
 
 export type TaskTimeName =

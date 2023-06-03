@@ -6,7 +6,7 @@ import Moment from "react-moment";
 import IconButton from "@mui/material/IconButton";
 import { Stack, Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
 import moment from "moment";
 import TimeAndNamePickerDialog from "./TimeAndNamePickerDialog";
 
@@ -34,6 +34,7 @@ function TimeAndNamePicker(props) {
     }
 
     const { onChange } = props;
+    const momentFormat = props.basicTime ? "HH:mm" : "DD/MM/YYYY, HH:mm";
 
     const onConfirmation = React.useCallback(
         (values) => {
@@ -61,7 +62,7 @@ function TimeAndNamePicker(props) {
                         }
                     >
                         <Typography>
-                            {isToday() ? (
+                            {!props.basicTime && isToday() ? (
                                 <>
                                     Today at{" "}
                                     <Moment format={"HH:mm"}>
@@ -69,7 +70,7 @@ function TimeAndNamePicker(props) {
                                     </Moment>
                                 </>
                             ) : (
-                                <Moment format={"DD/MM/YYYY, HH:mm"}>
+                                <Moment format={momentFormat}>
                                     {props.time}
                                 </Moment>
                             )}
@@ -148,6 +149,7 @@ TimeAndNamePicker.propTypes = {
     disabled: PropTypes.bool,
     disableUnsetMessage: PropTypes.bool,
     editMode: PropTypes.bool,
+    basicTime: PropTypes.bool,
 };
 TimeAndNamePicker.defaultProps = {
     time: "",
@@ -160,6 +162,7 @@ TimeAndNamePicker.defaultProps = {
     disabled: false,
     disableUnsetMessage: false,
     editMode: false,
+    basicTime: false,
 };
 
 export default TimeAndNamePicker;

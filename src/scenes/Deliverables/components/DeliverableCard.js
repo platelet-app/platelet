@@ -9,6 +9,7 @@ import { getDeliverableIconByEnum } from "../../../utilities";
 const useStyles = makeStyles()(({ compact }) => ({
     root: {
         width: "100%",
+        borderRadius: 4,
         backgroundColor: "rgba(180, 180, 180, 0.1)",
     },
     label: {
@@ -23,9 +24,6 @@ function DeliverableCard(props) {
         <Stack
             className={classes.root}
             sx={{
-                paddingTop: 1,
-                paddingBottom: 1,
-                paddingLeft: 0.4,
                 paddingRight: 0.4,
             }}
             direction="row"
@@ -39,7 +37,7 @@ function DeliverableCard(props) {
                 alignItems={"center"}
                 direction={"row"}
             >
-                {getDeliverableIconByEnum(props.icon, 4)}
+                {getDeliverableIconByEnum(props.icon, 4.5)}
                 <Tooltip
                     title={
                         props.label && props.label.length > maxTextLength
