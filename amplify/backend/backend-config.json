@@ -129,6 +129,35 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "plateletAdminChangeUserEmail": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        },
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "platelet61a0ac07"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "plateletAdminChangeUserRoles": {
       "build": true,
       "dependsOn": [
@@ -440,6 +469,22 @@
         {
           "category": "function",
           "resourceName": "plateletAdminAddNewUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminChangeUserEmail_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminChangeUserEmail"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminChangeUserEmail_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminChangeUserEmail"
         }
       ]
     },

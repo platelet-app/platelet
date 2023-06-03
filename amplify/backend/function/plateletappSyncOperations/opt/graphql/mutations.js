@@ -3053,8 +3053,8 @@ const enableUser = /* GraphQL */`
 `;
 exports.enableUser = enableUser;
 const updateUserEmail = /* GraphQL */`
-  mutation UpdateUserEmail($userId: ID, $emailAddres: AWSEmail) {
-    updateUserEmail(userId: $userId, emailAddres: $emailAddres) {
+  mutation UpdateUserEmail($userId: ID, $emailAddress: AWSEmail) {
+    updateUserEmail(userId: $userId, emailAddress: $emailAddress) {
       id
       username
       cognitoId
