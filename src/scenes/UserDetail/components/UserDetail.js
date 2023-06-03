@@ -195,7 +195,7 @@ export default function UserDetail({ userId }) {
                                 setUser({ ...user, roles })
                             }
                         />
-                        <EnableDisableUser user={user} />
+                        {user && <EnableDisableUser user={user} />}
                     </Stack>
                 </PaddedPaper>
                 <ProfilePicture
