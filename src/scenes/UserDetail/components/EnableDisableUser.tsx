@@ -79,6 +79,7 @@ const EnableDisableUser: React.FC<EnableDisableUserProps> = ({ user }) => {
                 <Box>
                     <Tooltip title="Enable this user">
                         <Button
+                            variant="outlined"
                             disabled={isPosting}
                             onClick={handleEnable}
                             color="success"
@@ -96,6 +97,7 @@ const EnableDisableUser: React.FC<EnableDisableUserProps> = ({ user }) => {
                 <Box>
                     <Tooltip title="Disable this user">
                         <Button
+                            variant="outlined"
                             disabled={isPosting}
                             onClick={handleDisable}
                             color="error"
