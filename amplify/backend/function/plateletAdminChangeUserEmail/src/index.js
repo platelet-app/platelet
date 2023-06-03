@@ -72,13 +72,22 @@ exports.handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
     const { userId, emailAddress } = event.arguments;
     const user = await getUserDetails(userId);
+    const originalEmailAddress = user.contact.emailAddress;
     const { username } = user;
     const cognitoResponse = await changeEmailAddressCognito(
         username,
         emailAddress
     );
     console.log(`COGNITO RESPONSE: ${JSON.stringify(cognitoResponse)}`);
-    const appsyncResponse = await changeEmailAddressAppsync(user, emailAddress);
-    console.log(`APPSYNC RESPONSE: ${JSON.stringify(appsyncResponse)}`);
-    return appsyncResponse;
+    try {
+        const appsyncResponse = await changeEmailAddressAppsync(
+            user,
+            emailAddress
+        );
+        console.log(`APPSYNC RESPONSE: ${JSON.stringify(appsyncResponse)}`);
+        return appsyncResponse;
+    } catch (error) {
+        await changeEmailAddressCognito(username, originalEmailAddress);
+        throw error;
+    }
 };

@@ -1,0 +1,167 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`plateletAdminChangeUserEmail change the user's email 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      {
+        "query": "getUserQuery",
+        "variables": {
+          "id": "userId",
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "updateUserMutation",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "contact": {
+              "emailAddress": "some@email.com",
+            },
+            "id": "userId",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;
+
+exports[`plateletAdminChangeUserEmail change the user's email 2`] = `
+[MockFunction] {
+  "calls": [
+    [
+      {
+        "UserAttributes": [
+          {
+            "Name": "email",
+            "Value": "some@email.com",
+          },
+          {
+            "Name": "email_verified",
+            "Value": "true",
+          },
+        ],
+        "UserPoolId": "somePoolId",
+        "Username": "username",
+      },
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": {
+        "promise": [Function],
+      },
+    },
+  ],
+}
+`;
+
+exports[`plateletAdminChangeUserEmail change the user's email appsync failure 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      {
+        "query": "getUserQuery",
+        "variables": {
+          "id": "userId",
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "updateUserMutation",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "contact": {
+              "emailAddress": "some@email.com",
+            },
+            "id": "userId",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;
+
+exports[`plateletAdminChangeUserEmail change the user's email appsync failure 2`] = `
+[MockFunction] {
+  "calls": [
+    [
+      {
+        "UserAttributes": [
+          {
+            "Name": "email",
+            "Value": "some@email.com",
+          },
+          {
+            "Name": "email_verified",
+            "Value": "true",
+          },
+        ],
+        "UserPoolId": "somePoolId",
+        "Username": "username",
+      },
+    ],
+    [
+      {
+        "UserAttributes": [
+          {
+            "Name": "email",
+            "Value": "originalEmail@example.com",
+          },
+          {
+            "Name": "email_verified",
+            "Value": "true",
+          },
+        ],
+        "UserPoolId": "somePoolId",
+        "Username": "username",
+      },
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": {
+        "promise": [Function],
+      },
+    },
+    {
+      "type": "return",
+      "value": {
+        "promise": [Function],
+      },
+    },
+  ],
+}
+`;
