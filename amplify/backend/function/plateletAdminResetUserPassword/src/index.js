@@ -51,4 +51,5 @@ exports.handler = async (event) => {
     const password = Math.random().toString(36).substr(2, 8);
     await cognitoSetUserPassword(user.username, password);
     await sendWelcomeEmail(user.contact.emailAddress, user.name, password);
+    return true;
 };

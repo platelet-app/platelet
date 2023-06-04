@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`plateletAdminResetUserPassword reset the user's password 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "query": "getUser",
+        "variables": Object {
+          "id": "user-id",
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Object {
+        "json": [Function],
+      },
+    },
+  ],
+}
+`;
+
+exports[`plateletAdminResetUserPassword reset the user's password 2`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      "some@example.com",
+      "Some name",
+      "i",
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": undefined,
+    },
+  ],
+}
+`;
