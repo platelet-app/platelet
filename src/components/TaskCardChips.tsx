@@ -82,7 +82,12 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
     }
     let deliverableChips: React.ReactElement[] = [];
     if (deliverables) {
-        deliverableChips = deliverables.map((deliverable) => {
+        const sorted = deliverables.sort((a, b) => {
+            return `${a?.deliverableType?.label} x ${b?.count}`.localeCompare(
+                `${b?.deliverableType?.label} x ${a?.count}`
+            );
+        });
+        deliverableChips = sorted.map((deliverable) => {
             if (deliverable) {
                 return (
                     <DeliverableChip

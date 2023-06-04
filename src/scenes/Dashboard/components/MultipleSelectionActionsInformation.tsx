@@ -49,16 +49,7 @@ const MultipleSelectionActionsInformation: React.FC<
     const generateLink = React.useCallback((selectedItems) => {
         const items = Object.values(selectedItems);
         const plural = items.length > 1 ? "items" : "item";
-        return (
-            <Link
-                sx={{
-                    cursor: "pointer",
-                }}
-                onClick={() => setDialogOpen(true)}
-            >
-                {items.length} {plural}
-            </Link>
-        );
+        return `${items.length} ${plural}`;
     }, []);
     const generateMessage = React.useCallback(
         (action, selectedItems) => {

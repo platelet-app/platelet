@@ -47,6 +47,8 @@ function TimePicker(props) {
         );
     }
 
+    const momentFormat = props.basicTime ? "HH:mm" : "DD/MM/YYYY, HH:mm";
+
     if (props.time) {
         return (
             <>
@@ -66,7 +68,7 @@ function TimePicker(props) {
                         }
                     >
                         <Typography>
-                            {isToday() ? (
+                            {!props.basicTime && isToday() ? (
                                 <>
                                     Today at{" "}
                                     <Moment format={"HH:mm"}>
@@ -74,7 +76,7 @@ function TimePicker(props) {
                                     </Moment>
                                 </>
                             ) : (
-                                <Moment format={"DD/MM/YYYY, HH:mm"}>
+                                <Moment format={momentFormat}>
                                     {props.time}
                                 </Moment>
                             )}
@@ -146,6 +148,7 @@ TimePicker.propTypes = {
     disableClear: PropTypes.bool,
     disableUnsetMessage: PropTypes.bool,
     hideEditIcon: PropTypes.bool,
+    basicTime: PropTypes.bool,
 };
 TimePicker.defaultProps = {
     time: "",
@@ -155,6 +158,7 @@ TimePicker.defaultProps = {
     disableClear: false,
     disableUnsetMessage: false,
     hideEditIcon: false,
+    basicTime: false,
 };
 
 export default TimePicker;

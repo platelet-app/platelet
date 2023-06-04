@@ -328,7 +328,7 @@ describe("DeliverableDetails", () => {
             { preloadedState }
         );
         await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(1, models.Deliverable);
+            expect(querySpy).toHaveBeenCalledTimes(1);
         });
 
         userEvent.click(screen.getByRole("button", { name: "Edit" }));

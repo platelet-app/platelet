@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { dataStoreModelSyncedStatusSelector } from "../redux/Selectors";
 import convertModelListToTypedObject from "./utilities/convertModelListToTypedObject";
 import _ from "lodash";
+import LocalPredicates from "../utilities/predicates";
 
 type StateType = {
     [key: string]: models.Deliverable;
@@ -30,7 +31,10 @@ const useTaskDeliverables = (
     const getDeliverables = React.useCallback(async () => {
         if (!loadedOnce.current) setIsFetching(true);
         try {
-            const result = await DataStore.query(models.Deliverable);
+            const result = await DataStore.query(
+                models.Deliverable,
+                LocalPredicates.unarchived
+            );
             let filtered = [];
             if (taskModelType === "Task") {
                 filtered = result.filter((d) => d.task && d.task.id === taskId);

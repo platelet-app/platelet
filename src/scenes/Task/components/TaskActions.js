@@ -83,6 +83,7 @@ function TaskActions(props) {
 
     async function setTimeWithKey(key, value) {
         setIsPosting(true);
+        setEditKey(null);
         try {
             const updatedTask = await saveTaskTimeWithKey(
                 key,
@@ -92,7 +93,6 @@ function TaskActions(props) {
             );
             setTask(updatedTask);
             setIsPosting(false);
-            setEditKey(null);
         } catch (error) {
             console.log(error);
             setIsPosting(false);
@@ -102,6 +102,7 @@ function TaskActions(props) {
 
     async function saveValues(values) {
         setIsPosting(true);
+        setConfirmationKey(null);
         try {
             const existingTask = await DataStore.query(
                 models.Task,
@@ -122,14 +123,13 @@ function TaskActions(props) {
                     }
                 })
             );
-            setConfirmationKey(null);
-            setEditKey(null);
             setTask(updatedTask);
-            setIsPosting(false);
         } catch (e) {
             console.log(e);
             dispatch(displayErrorNotification("Sorry, something went wrong"));
+        } finally {
             setIsPosting(false);
+            setEditKey(null);
         }
     }
 
@@ -292,6 +292,7 @@ function TaskActions(props) {
 
                                     let picker = (
                                         <TimePicker
+                                            basicTime
                                             key={editKey}
                                             onChange={(newValue) =>
                                                 setTimeWithKey(key, newValue)
@@ -314,6 +315,7 @@ function TaskActions(props) {
                                     ) {
                                         picker = (
                                             <TimeAndNamePicker
+                                                basicTime
                                                 onChange={(newValue) => {
                                                     const { name, time } =
                                                         newValue;
@@ -349,7 +351,7 @@ function TaskActions(props) {
                                     }
                                     return (
                                         <Stack
-                                            key={key}
+                                            key={`${key}-text-entry`}
                                             justifyContent="space-between"
                                             alignItems="center"
                                             direction="row"
