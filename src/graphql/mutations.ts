@@ -3077,3 +3077,78 @@ export const updateUserEmail = /* GraphQL */ `
     }
   }
 `;
+export const resetUserPassword = /* GraphQL */ `
+  mutation ResetUserPassword($userId: ID) {
+    resetUserPassword(userId: $userId) {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      contact {
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+      }
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      possibleRiderResponsibilities {
+        nextToken
+        startedAt
+      }
+      profilePicture {
+        bucket
+        key
+        region
+      }
+      comments {
+        nextToken
+        startedAt
+      }
+      assignments {
+        nextToken
+        startedAt
+      }
+      vehicleAssignments {
+        nextToken
+        startedAt
+      }
+      createdTasks {
+        nextToken
+        startedAt
+      }
+      createdLocations {
+        nextToken
+        startedAt
+      }
+      createdVehicles {
+        nextToken
+        startedAt
+      }
+      createdScheduledTasks {
+        nextToken
+        startedAt
+      }
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
