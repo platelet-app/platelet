@@ -137,9 +137,6 @@ export type AmplifyDependentResourcesAttributes = {
     },
     "plateletappSyncOperations": {
       "Arn": "string"
-    },
-    "plateletplateletSendEmail": {
-      "Arn": "string"
     }
   },
   "geo": {

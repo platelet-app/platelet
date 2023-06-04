@@ -112,6 +112,13 @@
         },
         {
           "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletSendEmail"
+        },
+        {
+          "attributes": [
             "UserPoolId"
           ],
           "category": "auth",

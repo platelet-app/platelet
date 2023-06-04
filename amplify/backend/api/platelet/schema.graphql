@@ -441,7 +441,7 @@ type Mutation {
   disableUser(userId: ID): User @function(name: "plateletAdminDisableUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   enableUser(userId: ID): User @function(name: "plateletAdminEnableUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   updateUserEmail(userId: ID, emailAddress: AWSEmail): User @function(name: "plateletAdminChangeUserEmail-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
-  resetUserPassword(userId: ID): User @function(name: "plateletAdminResetUserPassword-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
+  resetUserPassword(userId: ID): SendFeedback @function(name: "plateletAdminResetUserPassword-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
 }
 
 type Statistics {
