@@ -278,12 +278,22 @@ describe("generateReports", () => {
                     ) {
                         items {
                             id
+                            createdAt
                             timeOfCall
-                            dateCreated
                             riderResponsibility
+                            isRiderUsingOwnVehicle
                             priority
                             status
-                            createdAt
+                            timePickedUp
+                            timeDroppedOff
+                            timeRiderHome
+                            timeRejected
+                            timeCancelled
+                            dateCreated
+                            requesterContact {
+                                name
+                                telephoneNumber
+                            }
                             assignees {
                                 items {
                                     assignee {
@@ -306,6 +316,7 @@ describe("generateReports", () => {
                                 country
                                 postcode
                                 what3words
+                                listed
                             }
                             dropOffLocation {
                                 ward
@@ -318,6 +329,7 @@ describe("generateReports", () => {
                                 country
                                 postcode
                                 what3words
+                                listed
                             }
                             deliverables {
                                 items {
@@ -339,6 +351,7 @@ describe("generateReports", () => {
                                         name
                                         id
                                     }
+                                    body
                                 }
                             }
                             _version

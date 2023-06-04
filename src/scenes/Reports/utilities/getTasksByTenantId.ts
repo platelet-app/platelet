@@ -22,12 +22,22 @@ export const listTasksByTenantId = /* GraphQL */ `
         ) {
             items {
                 id
+                createdAt
                 timeOfCall
-                dateCreated
                 riderResponsibility
+                isRiderUsingOwnVehicle
                 priority
                 status
-                createdAt
+                timePickedUp
+                timeDroppedOff
+                timeRiderHome
+                timeRejected
+                timeCancelled
+                dateCreated
+                requesterContact {
+                    name
+                    telephoneNumber
+                }
                 assignees {
                     items {
                         assignee {
@@ -50,6 +60,7 @@ export const listTasksByTenantId = /* GraphQL */ `
                     country
                     postcode
                     what3words
+                    listed
                 }
                 dropOffLocation {
                     ward
@@ -62,6 +73,7 @@ export const listTasksByTenantId = /* GraphQL */ `
                     country
                     postcode
                     what3words
+                    listed
                 }
                 deliverables {
                     items {
@@ -83,6 +95,7 @@ export const listTasksByTenantId = /* GraphQL */ `
                             name
                             id
                         }
+                        body
                     }
                 }
                 _version

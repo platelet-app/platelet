@@ -159,7 +159,7 @@ async function generateCSVDataStore(data: any[]) {
         if (pickUpLocation)
             Object.keys(locationFields).forEach((key) => {
                 if (key === "listed") {
-                    row.push(pickUpLocation[key] === 1 ? "TRUE" : "FALSE");
+                    row.push(pickUpLocation.listed === 1 ? "TRUE" : "FALSE");
                 } else {
                     row.push(
                         pickUpLocation[key] ||
@@ -175,7 +175,7 @@ async function generateCSVDataStore(data: any[]) {
         if (dropOffLocation)
             Object.keys(locationFields).forEach((key) => {
                 if (key === "listed") {
-                    row.push(dropOffLocation[key] === 1 ? "TRUE" : "FALSE");
+                    row.push(dropOffLocation.listed === 1 ? "TRUE" : "FALSE");
                 } else {
                     row.push(
                         dropOffLocation[key] ||
@@ -337,10 +337,14 @@ async function generateCSV(data: (Task | null)[]) {
             });
         if (pickUpLocation)
             Object.keys(locationFields).forEach((key) => {
-                row.push(
-                    pickUpLocation[key as keyof typeof locationFields] ||
-                        locationFields[key as keyof typeof locationFields]
-                );
+                if (key === "listed") {
+                    row.push(pickUpLocation.listed === 1 ? "TRUE" : "FALSE");
+                } else {
+                    row.push(
+                        pickUpLocation[key as keyof typeof locationFields] ||
+                            locationFields[key as keyof typeof locationFields]
+                    );
+                }
             });
         else
             Object.values(locationFields).forEach((value) => {
@@ -349,10 +353,14 @@ async function generateCSV(data: (Task | null)[]) {
 
         if (dropOffLocation)
             Object.keys(locationFields).forEach((key) => {
-                row.push(
-                    dropOffLocation[key as keyof typeof locationFields] ||
-                        locationFields[key as keyof typeof locationFields]
-                );
+                if (key === "listed") {
+                    row.push(dropOffLocation.listed === 1 ? "TRUE" : "FALSE");
+                } else {
+                    row.push(
+                        dropOffLocation[key as keyof typeof locationFields] ||
+                            locationFields[key as keyof typeof locationFields]
+                    );
+                }
             });
         else
             Object.values(locationFields).forEach((value) => {
