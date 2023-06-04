@@ -32,6 +32,10 @@
       "Type": "String",
       "Default": "functionplateletappSyncOperationsArn"
     },
+    "functionplateletSendEmailArn": {
+      "Type": "String",
+      "Default": "functionplateletSendEmailArn"
+    },
     "plateletWelcomeEmail": {
       "Type": "String"
     },
@@ -119,6 +123,9 @@
         "Layers": [
           {
             "Ref": "functionplateletappSyncOperationsArn"
+          },
+          {
+            "Ref": "functionplateletSendEmailArn"
           }
         ],
         "Timeout": 25

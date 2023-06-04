@@ -19,9 +19,16 @@
     {
       "type": "ProjectLayer",
       "resourceName": "plateletappSyncOperations",
+      "env": "platd",
       "version": "Always choose latest version",
-      "isLatestVersionSelected": true,
-      "env": "platd"
+      "isLatestVersionSelected": true
+    },
+    {
+      "type": "ProjectLayer",
+      "resourceName": "plateletSendEmail",
+      "env": "platd",
+      "version": "Always choose latest version",
+      "isLatestVersionSelected": true
     }
   ],
   "environmentVariableList": [
