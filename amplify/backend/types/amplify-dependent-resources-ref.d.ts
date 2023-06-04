@@ -74,6 +74,13 @@ export type AmplifyDependentResourcesAttributes = {
       "Name": "string",
       "Region": "string"
     },
+    "plateletAdminResetUserPassword": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
     "plateletArchiveNullTasks": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
@@ -118,6 +125,9 @@ export type AmplifyDependentResourcesAttributes = {
       "Name": "string",
       "Region": "string"
     },
+    "plateletSendEmail": {
+      "Arn": "string"
+    },
     "plateletSendUserFeedback": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
@@ -126,6 +136,9 @@ export type AmplifyDependentResourcesAttributes = {
       "Region": "string"
     },
     "plateletappSyncOperations": {
+      "Arn": "string"
+    },
+    "plateletplateletSendEmail": {
       "Arn": "string"
     }
   },

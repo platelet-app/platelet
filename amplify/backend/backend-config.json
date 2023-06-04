@@ -257,6 +257,21 @@
         },
         {
           "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletSendEmail"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        },
+        {
+          "attributes": [
             "UserPoolId"
           ],
           "category": "auth",
@@ -373,6 +388,11 @@
       ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    },
+    "plateletSendEmail": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "LambdaLayer"
     },
     "plateletSendUserFeedback": {
       "build": true,
@@ -557,6 +577,38 @@
         }
       ]
     },
+    "AMPLIFY_function_plateletAdminResetUserPassword_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminResetUserPassword"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminResetUserPassword_plateletDomainName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminResetUserPassword"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminResetUserPassword_plateletWelcomeEmail": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminResetUserPassword"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminResetUserPassword_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminResetUserPassword"
+        }
+      ]
+    },
     "AMPLIFY_function_plateletArchiveNullTasks_deploymentBucketName": {
       "usedBy": [
         {
@@ -650,6 +702,22 @@
         {
           "category": "function",
           "resourceName": "plateletProfilePictureUploadURLResolver"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletSendEmail_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletSendEmail"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletSendEmail_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletSendEmail"
         }
       ]
     },

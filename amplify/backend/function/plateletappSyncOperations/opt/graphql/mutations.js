@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateVehicleAssignment = exports.updateVehicle = exports.updateUserRoles = exports.updateUserEmail = exports.updateUser = exports.updateTenant = exports.updateTaskAssignee = exports.updateTask = exports.updateScheduledTask = exports.updateRiderResponsibility = exports.updatePossibleRiderResponsibilities = exports.updateLocation = exports.updateDeliverableType = exports.updateDeliverable = exports.updateComment = exports.registerUser = exports.registerTenant = exports.enableUser = exports.disableUser = exports.deleteVehicleAssignment = exports.deleteVehicle = exports.deleteUser = exports.deleteTenant = exports.deleteTaskAssignee = exports.deleteTask = exports.deleteScheduledTask = exports.deleteRiderResponsibility = exports.deletePossibleRiderResponsibilities = exports.deleteLocation = exports.deleteDeliverableType = exports.deleteDeliverable = exports.deleteComment = exports.createVehicleAssignment = exports.createVehicle = exports.createUser = exports.createTenant = exports.createTaskAssignee = exports.createTask = exports.createScheduledTask = exports.createRiderResponsibility = exports.createPossibleRiderResponsibilities = exports.createLocation = exports.createDeliverableType = exports.createDeliverable = exports.createComment = void 0;
+exports.updateVehicleAssignment = exports.updateVehicle = exports.updateUserRoles = exports.updateUserEmail = exports.updateUser = exports.updateTenant = exports.updateTaskAssignee = exports.updateTask = exports.updateScheduledTask = exports.updateRiderResponsibility = exports.updatePossibleRiderResponsibilities = exports.updateLocation = exports.updateDeliverableType = exports.updateDeliverable = exports.updateComment = exports.resetUserPassword = exports.registerUser = exports.registerTenant = exports.enableUser = exports.disableUser = exports.deleteVehicleAssignment = exports.deleteVehicle = exports.deleteUser = exports.deleteTenant = exports.deleteTaskAssignee = exports.deleteTask = exports.deleteScheduledTask = exports.deleteRiderResponsibility = exports.deletePossibleRiderResponsibilities = exports.deleteLocation = exports.deleteDeliverableType = exports.deleteDeliverable = exports.deleteComment = exports.createVehicleAssignment = exports.createVehicle = exports.createUser = exports.createTenant = exports.createTaskAssignee = exports.createTask = exports.createScheduledTask = exports.createRiderResponsibility = exports.createPossibleRiderResponsibilities = exports.createLocation = exports.createDeliverableType = exports.createDeliverable = exports.createComment = void 0;
 /* tslint:disable */
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
@@ -3128,3 +3128,79 @@ const updateUserEmail = /* GraphQL */`
   }
 `;
 exports.updateUserEmail = updateUserEmail;
+const resetUserPassword = /* GraphQL */`
+  mutation ResetUserPassword($userId: ID) {
+    resetUserPassword(userId: $userId) {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      contact {
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+      }
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      possibleRiderResponsibilities {
+        nextToken
+        startedAt
+      }
+      profilePicture {
+        bucket
+        key
+        region
+      }
+      comments {
+        nextToken
+        startedAt
+      }
+      assignments {
+        nextToken
+        startedAt
+      }
+      vehicleAssignments {
+        nextToken
+        startedAt
+      }
+      createdTasks {
+        nextToken
+        startedAt
+      }
+      createdLocations {
+        nextToken
+        startedAt
+      }
+      createdVehicles {
+        nextToken
+        startedAt
+      }
+      createdScheduledTasks {
+        nextToken
+        startedAt
+      }
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+    }
+  }
+`;
+exports.resetUserPassword = resetUserPassword;
