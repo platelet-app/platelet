@@ -4,8 +4,7 @@ import * as models from "../../../models";
 import { Box, Button, Tooltip } from "@mui/material";
 import * as mutations from "../../../graphql/mutations";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
-import { useDispatch, useSelector } from "react-redux";
-import { getWhoami } from "../../../redux/Selectors";
+import { useDispatch } from "react-redux";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 
 type EnableDisableUserProps = {
@@ -21,8 +20,6 @@ const EnableDisableUser: React.FC<EnableDisableUserProps> = ({ user }) => {
     const dispatch = useDispatch();
     const [isPosting, setIsPosting] = React.useState(false);
     const [action, setAction] = React.useState<Action | null>(null);
-    const whoami = useSelector(getWhoami);
-    const isAdmin = whoami?.roles.includes(models.Role.ADMIN);
     const errorMessage = "Sorry, something went wrong";
 
     const handleConfirm = React.useCallback(async () => {
@@ -59,7 +56,8 @@ const EnableDisableUser: React.FC<EnableDisableUserProps> = ({ user }) => {
             onConfirmation={handleConfirm}
         >
             Are you sure you want to{" "}
-            {action === Action.ENABLE ? "enable" : "disable"} this user?
+            {action === Action.ENABLE ? "enable" : "disable"} user{" "}
+            {user.displayName}?
         </ConfirmationDialog>
     );
 
@@ -71,9 +69,7 @@ const EnableDisableUser: React.FC<EnableDisableUserProps> = ({ user }) => {
         setAction(Action.DISABLE);
     };
 
-    if (!isAdmin) {
-        return null;
-    } else if (user.disabled === 1) {
+    if (user.disabled === 1) {
         return (
             <>
                 <Box>
