@@ -27,7 +27,7 @@ function CoordinatorPicker(props) {
     async function getCoordinators() {
         try {
             const coords = await DataStore.query(models.User, (u) =>
-                u.roles("contains", userRoles.coordinator)
+                u.roles("contains", userRoles.coordinator).disabled("ne", 1)
             );
             setAvailableUsers(coords);
         } catch (e) {

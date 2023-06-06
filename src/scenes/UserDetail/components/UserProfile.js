@@ -21,6 +21,7 @@ import UserAddressInformationDialog from "./UserAddressInformationDialog";
 import UserDisplayNameDialog from "./UserDisplayNameDialog";
 import PropTypes from "prop-types";
 import usePossibleRiderResponsibilities from "../../../hooks/usePossibleRiderResponsibilities";
+import UserEmailDialog from "./UserEmailDialog";
 
 const userFields = {
     name: "Name",
@@ -28,7 +29,6 @@ const userFields = {
 };
 
 export const userContactFields = {
-    emailAddress: "Email Address",
     telephoneNumber: "Telephone",
     mobileNumber: "Mobile",
 };
@@ -47,6 +47,7 @@ const dialogStates = {
     contact: "contact",
     address: "address",
     displayName: "displayName",
+    emailAddress: "emailAddress",
 };
 
 function UserProfile(props) {
@@ -57,7 +58,9 @@ function UserProfile(props) {
     const [isPostingRiderResponsibilities, setIsPostingRiderResponsibilities] =
         useState(false);
     const [dialogState, setDialogState] = useState(null);
+    const [dialogDisabled, setDialogDisabled] = useState(false);
     const updateValues = useRef(null);
+    const editEmailValue = useRef(null);
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
     const tenantId = useSelector(tenantIdSelector);
@@ -71,14 +74,9 @@ function UserProfile(props) {
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
-    let header = (
-        <Typography variant="h5" noWrap align={"right"}>
-            {props.user.displayName}
-        </Typography>
-    );
-
     let editNameToggle = <></>;
     let editContactToggle = <></>;
+    let editEmailAddressToggle = <></>;
     let editAddressToggle = <></>;
     let editRoleToggle = <></>;
     let editPossibleResponsibilitiesToggle = <></>;
@@ -91,6 +89,15 @@ function UserProfile(props) {
                     aria-label="Edit Roles"
                     onChange={(v) => {
                         setEditRoleMode(v);
+                    }}
+                />
+            );
+            editEmailAddressToggle = (
+                <EditModeToggleButton
+                    value={dialogState === dialogStates.emailAddress}
+                    aria-label="Edit Email Address"
+                    onChange={(v) => {
+                        if (v) setDialogState(dialogStates.emailAddress);
                     }}
                 />
             );
@@ -145,6 +152,10 @@ function UserProfile(props) {
         updateValues.current = v;
     };
 
+    const onChangeEmail = (v) => {
+        editEmailValue.current = v;
+    };
+
     let dialogContents = null;
     if (dialogState === dialogStates.contact) {
         dialogContents = (
@@ -168,6 +179,14 @@ function UserProfile(props) {
             <UserDisplayNameDialog
                 values={{ displayName: props.user.displayName }}
                 onChange={onChangeUpdateValues}
+            />
+        );
+    } else if (dialogState === dialogStates.emailAddress) {
+        dialogContents = (
+            <UserEmailDialog
+                onDisable={(v) => setDialogDisabled(v)}
+                user={props.user}
+                onChange={onChangeEmail}
             />
         );
     }
@@ -345,17 +364,42 @@ function UserProfile(props) {
         }
     }
 
+    const onUpdateEmail = async () => {
+        if (editEmailValue.current) {
+            const email = editEmailValue.current;
+            editEmailValue.current = null;
+            try {
+                await API.graphql(
+                    graphqlOperation(mutations.updateUserEmail, {
+                        userId: props.user.id,
+                        emailAddress: email,
+                    })
+                );
+            } catch (e) {
+                console.log(e);
+                dispatch(
+                    displayErrorNotification("Sorry, something went wrong")
+                );
+            }
+        }
+    };
+
     const onCancelDialog = () => {
         setDialogState(null);
         updateValues.current = null;
     };
 
     const onConfirmation = () => {
-        verifyUpdate(updateValues.current).then((verify) => {
-            if (verify) {
-                onUpdate();
-            }
-        });
+        if (dialogState === dialogStates.emailAddress) {
+            onUpdateEmail();
+            setDialogState(null);
+        } else {
+            verifyUpdate(updateValues.current).then((verify) => {
+                if (verify) {
+                    onUpdate();
+                }
+            });
+        }
     };
 
     let dialogTitle = null;
@@ -369,6 +413,7 @@ function UserProfile(props) {
 
     const dialog = (
         <ConfirmationDialog
+            disabled={dialogDisabled}
             fullScreen={isSm}
             dialogTitle={dialogTitle}
             open={dialogState !== null}
@@ -387,8 +432,21 @@ function UserProfile(props) {
                 alignItems={"center"}
                 spacing={3}
             >
-                {header}
+                <Typography variant="h5" noWrap align={"right"}>
+                    {props.user.displayName}
+                </Typography>
                 {editNameToggle}
+            </Stack>
+            <Stack
+                direction={"row"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+                spacing={3}
+            >
+                <Typography variant="h6" noWrap align={"right"}>
+                    {props.user?.contact?.emailAddress}
+                </Typography>
+                {editEmailAddressToggle}
             </Stack>
             <Divider />
             {props.user.contact && (

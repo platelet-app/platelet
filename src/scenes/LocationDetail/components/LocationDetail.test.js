@@ -230,4 +230,35 @@ describe("LocationDetail", () => {
             expect(unsubscribe).toHaveBeenCalledTimes(1);
         });
     });
+    test("enable and disable a location", async () => {
+        const location = await DataStore.save(
+            new models.Location(mockLocation)
+        );
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<LocationDetail locationId={location.id} />, { preloadedState });
+        const button = await screen.findByRole("button", {
+            name: "Disable this location",
+        });
+        userEvent.click(button);
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        expect(button).toBeDisabled();
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...location,
+                disabled: 1,
+            });
+        });
+        const button2 = await screen.findByRole("button", {
+            name: "Enable this location",
+        });
+        userEvent.click(button2);
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        expect(button2).toBeDisabled();
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...location,
+                disabled: 0,
+            });
+        });
+    });
 });

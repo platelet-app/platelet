@@ -13,7 +13,7 @@ import { userRoles } from "../apiConsts";
 import { TextFieldControlled } from "../components/TextFields";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment } from "@mui/material";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
 import { matchSorter } from "match-sorter";
 
 const useStyles = makeStyles()((theme) => {
@@ -105,9 +105,7 @@ export default function UsersList() {
                         return (
                             <UserCard
                                 key={user.id}
-                                displayName={user.displayName}
-                                riderResponsibility={user.riderResponsibility}
-                                userUUID={user.id}
+                                user={user}
                                 thumbnailKey={
                                     user.profilePicture
                                         ? user.profilePicture.key

@@ -1,16 +1,25 @@
 {
   "permissions": {
-    "auth": {
-      "platelet61a0ac07": [
-        "update"
-      ]
-    },
     "api": {
       "platelet": [
         "Query",
         "Mutation"
       ]
+    },
+    "auth": {
+      "platelet61a0ac07": [
+        "read",
+        "update"
+      ]
     }
   },
-  "lambdaLayers": []
+  "lambdaLayers": [
+    {
+      "type": "ProjectLayer",
+      "resourceName": "plateletappSyncOperations",
+      "version": "Always choose latest version",
+      "isLatestVersionSelected": true,
+      "env": "platd"
+    }
+  ]
 }

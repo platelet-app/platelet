@@ -105,6 +105,20 @@
       "dependsOn": [
         {
           "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletSendEmail"
+        },
+        {
+          "attributes": [
             "UserPoolId"
           ],
           "category": "auth",
@@ -122,9 +136,17 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
-    "plateletAdminChangeUserRoles": {
+    "plateletAdminChangeUserEmail": {
       "build": true,
       "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        },
         {
           "attributes": [
             "UserPoolId"
@@ -134,11 +156,133 @@
         },
         {
           "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "plateletAdminChangeUserRoles": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
             "GraphQLAPIIdOutput",
             "GraphQLAPIEndpointOutput"
           ],
           "category": "api",
           "resourceName": "platelet"
+        },
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "platelet61a0ac07"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "plateletAdminDisableUser": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        },
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "platelet61a0ac07"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "plateletAdminEnableUser": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        },
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "platelet61a0ac07"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "plateletAdminResetUserPassword": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletSendEmail"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        },
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "platelet61a0ac07"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -162,6 +306,13 @@
     "plateletArchiver": {
       "build": true,
       "dependsOn": [
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
+        },
         {
           "attributes": [
             "GraphQLAPIIdOutput",
@@ -244,6 +395,11 @@
       ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    },
+    "plateletSendEmail": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "LambdaLayer"
     },
     "plateletSendUserFeedback": {
       "build": true,
@@ -364,6 +520,22 @@
         }
       ]
     },
+    "AMPLIFY_function_plateletAdminChangeUserEmail_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminChangeUserEmail"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminChangeUserEmail_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminChangeUserEmail"
+        }
+      ]
+    },
     "AMPLIFY_function_plateletAdminChangeUserRoles_deploymentBucketName": {
       "usedBy": [
         {
@@ -377,6 +549,70 @@
         {
           "category": "function",
           "resourceName": "plateletAdminChangeUserRoles"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminDisableUser_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminDisableUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminDisableUser_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminDisableUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminEnableUser_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminEnableUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminEnableUser_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminEnableUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminResetUserPassword_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminResetUserPassword"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminResetUserPassword_plateletDomainName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminResetUserPassword"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminResetUserPassword_plateletWelcomeEmail": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminResetUserPassword"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminResetUserPassword_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminResetUserPassword"
         }
       ]
     },
@@ -473,6 +709,22 @@
         {
           "category": "function",
           "resourceName": "plateletProfilePictureUploadURLResolver"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletSendEmail_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletSendEmail"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletSendEmail_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletSendEmail"
         }
       ]
     },

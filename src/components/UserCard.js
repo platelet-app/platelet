@@ -2,60 +2,51 @@ import React from "react";
 import { encodeUUID } from "../utilities";
 import Typography from "@mui/material/Typography";
 import UserAvatar from "./UserAvatar";
-import IconButton from "@mui/material/IconButton";
-import ClearIcon from "@mui/icons-material/Clear";
-import { Box, Stack, styled } from "@mui/material";
-import { makeStyles } from 'tss-react/mui';
+import { Box, Stack } from "@mui/material";
 import { ThemedLink } from "../styles/common";
 
-const UserBox = styled(Box)({
-    backgroundColor: "rgba(180, 180, 180, 0.1)",
-    paddingLeft: 10,
-    width: "100%",
-    maxWidth: 500,
-});
+const sxDisabled = {
+    position: "relative",
+    "&::before": {
+        content: "''",
+        position: "absolute",
+        width: "100%",
+        height: "100%",
+        backgroundColor: "rgba(0, 0, 0, 0.2)",
+        zIndex: 1,
+    },
+    "&::after": {
+        content: "'disabled'",
+        color: "red",
+        fontStyle: "italic",
+        position: "absolute",
+        top: 10,
+        right: 20,
+    },
+};
 
-const useStyles = makeStyles()((theme) => ({
-    button: {
-        width: theme.spacing(4),
-        height: theme.spacing(4),
-    },
-    iconButton: {
-        width: theme.spacing(4),
-        height: theme.spacing(4),
-    },
-    root: {
-        minWidth: 250,
-        minHeight: 50,
-    },
-}));
-
-export default function UserCard(props) {
-    const { classes } = useStyles();
-    const deleteButton = props.onDelete ? (
-        <IconButton
-            aria-label="delete"
-            className={classes.iconButton}
-            color={"inherit"}
-            onClick={(event) => {
-                event.preventDefault();
-                props.onDelete();
-            }}
-            size="large"
-        >
-            <ClearIcon className={classes.button} />
-        </IconButton>
-    ) : (
-        <></>
-    );
+export default function UserCard({ user, compact, thumbnailKey }) {
     return (
         <ThemedLink
-            to={"/user/" + encodeUUID(props.userUUID)}
+            to={"/user/" + encodeUUID(user.id)}
             style={{ width: "100%", textDecoration: "none" }}
         >
-            <UserBox>
+            <Box
+                sx={{
+                    "&:hover": {
+                        backgroundColor: "rgba(0, 0, 0, 0.2)",
+                    },
+                    borderRadius: 1,
+                    width: "100%",
+                    maxWidth: 500,
+                    ...(user.disabled === 1 ? sxDisabled : {}),
+                }}
+            >
                 <Stack
-                    className={classes.root}
+                    sx={{
+                        minWidth: 250,
+                        minHeight: 50,
+                    }}
                     spacing={1}
                     justifyContent={"space-between"}
                     alignItems={"center"}
@@ -68,29 +59,28 @@ export default function UserCard(props) {
                         alignItems={"center"}
                     >
                         <UserAvatar
-                            size={props.compact ? 3 : 6}
-                            userUUID={props.userUUID}
-                            displayName={props.displayName}
-                            thumbnailKey={props.thumbnailKey}
+                            size={compact ? 3 : 6}
+                            userUUID={user.id}
+                            displayName={user.displayName}
+                            thumbnailKey={thumbnailKey}
                         />
                         <Stack
                             spacing={1}
                             alignItems={"flex-start"}
                             direction={"column"}
                         >
-                            <Typography>{props.displayName}</Typography>
-                            {props.riderResponsibility ? (
+                            <Typography>{user.displayName}</Typography>
+                            {user.riderResponsibility ? (
                                 <Typography>
-                                    {props.riderResponsibility}
+                                    {user.riderResponsibility}
                                 </Typography>
                             ) : (
                                 <></>
                             )}
                         </Stack>
                     </Stack>
-                    {deleteButton}
                 </Stack>
-            </UserBox>
+            </Box>
         </ThemedLink>
     );
 }
