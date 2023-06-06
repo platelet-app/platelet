@@ -668,12 +668,8 @@ describe("UserDetail", () => {
 
     test("show upload picture if owner", async () => {
         const user = await DataStore.save(whoami);
-        const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />, { preloadedState });
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(2);
-        });
-        expect(screen.getByText("Upload Picture")).toBeInTheDocument();
+        expect(await screen.findByText("Upload Picture")).toBeInTheDocument();
     });
 
     test("unsubscribe observers on unmount", async () => {
@@ -887,5 +883,89 @@ describe("UserDetail", () => {
                 screen.getByText("Sorry, something went wrong")
             ).toBeInTheDocument();
         });
+    });
+    test("resend user invite email", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER, models.Role.ADMIN],
+                username: "username",
+                displayName: "displayName",
+            })
+        );
+        const user = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+                username: "username",
+                displayName: "displayName",
+                disabled: 0,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+            tenantId,
+        };
+        const apiSpy = jest.spyOn(API, "graphql").mockResolvedValue({});
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        userEvent.click(
+            await screen.findByRole("button", { name: "Reset Password" })
+        );
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(apiSpy).toHaveBeenCalledWith({
+                query: mutations.resetUserPassword,
+                variables: {
+                    userId: user.id,
+                },
+            });
+        });
+        expect(screen.getByText("Message sent")).toBeInTheDocument();
+    });
+    test("resend user invite failure", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER, models.Role.ADMIN],
+                username: "username",
+                displayName: "displayName",
+            })
+        );
+        const user = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+                username: "username",
+                displayName: "displayName",
+                disabled: 0,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+            tenantId,
+        };
+        const apiSpy = jest
+            .spyOn(API, "graphql")
+            .mockRejectedValue(new Error("some error"));
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        userEvent.click(
+            await screen.findByRole("button", { name: "Reset Password" })
+        );
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(apiSpy).toHaveBeenCalledWith({
+                query: mutations.resetUserPassword,
+                variables: {
+                    userId: user.id,
+                },
+            });
+        });
+        expect(
+            screen.getByText("Sorry, something went wrong")
+        ).toBeInTheDocument();
     });
 });

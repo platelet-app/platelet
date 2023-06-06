@@ -5,7 +5,10 @@ import { useDispatch } from "react-redux";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import { API } from "aws-amplify";
 import * as mutations from "../../../graphql/mutations";
-import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
+import {
+    displayErrorNotification,
+    displayInfoNotification,
+} from "../../../redux/notifications/NotificationsActions";
 
 type ResetUserPasswordProps = {
     user: models.User;
@@ -33,6 +36,7 @@ const ResetUserPassword: React.FC<ResetUserPasswordProps> = ({ user }) => {
             });
             setIsPosting(false);
             setConfirmation(false);
+            dispatch(displayInfoNotification("Message sent"));
         } catch (error) {
             console.log(error);
             dispatch(displayErrorNotification(errorMessage));
