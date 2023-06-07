@@ -377,9 +377,7 @@ function UserProfile(props) {
                 );
             } catch (e) {
                 console.log(e);
-                dispatch(
-                    displayErrorNotification("Sorry, something went wrong")
-                );
+                dispatch(displayErrorNotification(e.errors[0]?.message));
             }
         }
     };
