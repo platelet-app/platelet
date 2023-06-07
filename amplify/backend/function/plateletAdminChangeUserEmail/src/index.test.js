@@ -67,6 +67,11 @@ describe("plateletAdminChangeUserEmail", () => {
             .mockReturnValue({
                 promise: () => Promise.resolve(),
             });
+        const cognitoListUsersSpy = jest
+            .spyOn(cognitoIdentityServiceProvider, "listUsers")
+            .mockReturnValue({
+                promise: () => Promise.resolve({ Users: [] }),
+            });
         appsyncModule.request
             .mockResolvedValueOnce({
                 json: () => ({
@@ -95,6 +100,7 @@ describe("plateletAdminChangeUserEmail", () => {
         expect(result).toEqual(appsyncResponse);
         expect(appsyncModule.request).toMatchSnapshot();
         expect(cognitoSpy).toMatchSnapshot();
+        expect(cognitoListUsersSpy).toMatchSnapshot();
     });
     test("change the user's email appsync failure", async () => {
         const user = {
@@ -111,6 +117,11 @@ describe("plateletAdminChangeUserEmail", () => {
             .mockReturnValue({
                 promise: () => Promise.resolve(),
             });
+        jest.spyOn(cognitoIdentityServiceProvider, "listUsers").mockReturnValue(
+            {
+                promise: () => Promise.resolve({ Users: [] }),
+            }
+        );
         appsyncModule.request
             .mockResolvedValueOnce({
                 json: () => ({
@@ -127,5 +138,20 @@ describe("plateletAdminChangeUserEmail", () => {
         ).rejects.toThrow("appsync failure");
         expect(appsyncModule.request).toMatchSnapshot();
         expect(cognitoSpy).toMatchSnapshot();
+    });
+    test("fail changing the user's email to an existing email", async () => {
+        const emailAddress = "some@email.com";
+        const cognitoListUsersSpy = jest
+            .spyOn(cognitoIdentityServiceProvider, "listUsers")
+            .mockReturnValue({
+                promise: () =>
+                    Promise.resolve({ Users: [{ Username: "username" }] }),
+            });
+        await expect(
+            indexModule.handler({
+                arguments: { userId, emailAddress },
+            })
+        ).rejects.toThrow("Email address already in use");
+        expect(cognitoListUsersSpy).toMatchSnapshot();
     });
 });

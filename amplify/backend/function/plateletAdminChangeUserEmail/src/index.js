@@ -33,6 +33,16 @@ const getUserDetails = async (userId) => {
     return data.data.getUser;
 };
 
+const isEmailOnCognito = async (emailAddress) => {
+    const params = {
+        UserPoolId: process.env.AUTH_PLATELET61A0AC07_USERPOOLID,
+        Filter: `email = "${emailAddress}"`,
+        Limit: 1,
+    };
+    const response = await cognitoClient.listUsers(params).promise();
+    return response.Users.length > 0;
+};
+
 const changeEmailAddressCognito = async (username, emailAddress) => {
     const params = {
         UserPoolId: process.env.AUTH_PLATELET61A0AC07_USERPOOLID,
@@ -72,7 +82,14 @@ exports.handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
     const { userId, emailAddress } = event.arguments;
     const user = await getUserDetails(userId);
-    const originalEmailAddress = user.contact.emailAddress;
+    const originalEmailAddress = user?.contact?.emailAddress;
+    if (originalEmailAddress === emailAddress) {
+        return user;
+    }
+    if (await isEmailOnCognito(emailAddress)) {
+        throw new Error("Email address already in use");
+    }
+
     const { username } = user;
     const cognitoResponse = await changeEmailAddressCognito(
         username,
