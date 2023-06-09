@@ -613,7 +613,6 @@ describe("TaskAssignmentsPanel", () => {
         });
         await DataStore.save(mockTask);
 
-        const querySpy = jest.spyOn(amplify.DataStore, "query");
         const mockWhoami = await DataStore.save(
             new models.User({
                 displayName: "test",
@@ -652,10 +651,7 @@ describe("TaskAssignmentsPanel", () => {
         render(<TaskAssignmentsPanel taskId={mockTask.id} />, {
             preloadedState,
         });
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(2);
-        });
-
+        await screen.findByText("test");
         if (role === userRoles.rider) {
             expect(
                 screen.queryByRole("button", { name: "Edit Assignees" })

@@ -622,7 +622,6 @@ describe("UserDetail", () => {
 
     it("updates the current responsibility on remote change", async () => {
         const user = await DataStore.save(new models.User(testUser));
-        const querySpy = jest.spyOn(DataStore, "query");
         const riderResponsibility = await DataStore.save(
             new models.RiderResponsibility({ label: "testResp" })
         );
@@ -633,10 +632,9 @@ describe("UserDetail", () => {
             })
         );
         render(<UserDetail userId={user.id} />, { preloadedState });
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(2);
+        const respButton = await screen.findByRole("button", {
+            name: "testResp",
         });
-        const respButton = screen.getByRole("button", { name: "testResp" });
         expect(respButton).toHaveClass("MuiChip-outlinedDefault");
         await DataStore.save(
             models.User.copyOf(

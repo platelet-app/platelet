@@ -801,7 +801,9 @@ describe("TasksGridColumn", () => {
                 updated.line1 = "updated second line1";
             })
         );
-        expect(screen.getByText(/updated second line1/)).toBeInTheDocument();
+        expect(
+            await screen.findByText(/updated second line1/)
+        ).toBeInTheDocument();
         await DataStore.save(
             models.Task.copyOf(mockTask, (upd) => {
                 upd.pickUpLocation = mockLocation3;
@@ -867,7 +869,9 @@ describe("TasksGridColumn", () => {
                 updated.line1 = "updated second line1";
             })
         );
-        expect(screen.getByText(/updated second line1/)).toBeInTheDocument();
+        expect(
+            await screen.findByText(/updated second line1/)
+        ).toBeInTheDocument();
         await DataStore.save(
             models.Task.copyOf(mockTask, (upd) => {
                 upd.pickUpLocation = mockLocation3;

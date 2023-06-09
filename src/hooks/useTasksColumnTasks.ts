@@ -174,13 +174,7 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
                             removeTaskFromState(newTask.element);
                             return;
                         } else if (newTask.element.id in stateRef.current) {
-                            if (true) {
-                                getTasks();
-                            } else {
-                                // once DataStore is updated and relations work
-                                // just do this
-                                addTaskToState(newTask.element);
-                            }
+                            addTaskToState(newTask.element);
                         }
                     } else {
                         // if roleView is rider or coordinator, let the assignments observer deal with it
@@ -201,6 +195,7 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
             locationsSubscription.current = DataStore.observe(
                 models.Location
             ).subscribe(async (location) => {
+                debugger;
                 try {
                     if (location.opType === "UPDATE") {
                         for (const task of Object.values(stateRef.current)) {
