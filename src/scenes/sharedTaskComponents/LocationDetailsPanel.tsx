@@ -57,8 +57,6 @@ type LocationDetailsPanelProps<T extends models.Task | models.ScheduledTask> = {
     hasFullPermissionsOverride?: boolean;
 };
 
-type LocationKeyId = "pickUpLocationId" | "dropOffLocationId";
-
 const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     locationKey,
     taskId,
