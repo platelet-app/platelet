@@ -1,5 +1,9 @@
 import { DISCARD } from "@aws-amplify/datastore";
-import { SyncConflict, PersistentModel } from "@aws-amplify/datastore";
+import {
+    SyncConflict,
+    PersistentModel,
+    PersistentModelConstructor,
+} from "@aws-amplify/datastore";
 import * as models from "../../models";
 import determineTaskStatus from "../../utilities/determineTaskStatus";
 
@@ -13,34 +17,36 @@ const dataStoreConflictHandler = async (
         remoteModel,
         localModel
     );
-    if (modelConstructor === models.Task) {
-        let newModel = modelConstructor.copyOf(remoteModel, (task) => {
-            task.timePickedUp =
-                remoteModel.timePickedUp || localModel.timePickedUp;
-            task.timeDroppedOff =
-                remoteModel.timeDroppedOff || localModel.timeDroppedOff;
-            task.timeRiderHome =
-                remoteModel.timeRiderHome || localModel.timeRiderHome;
-            task.timeCancelled =
-                remoteModel.timeCancelled || localModel.timeCancelled;
-            task.timeRejected =
-                remoteModel.timeRejected || localModel.timeRejected;
+    if (
+        modelConstructor ===
+        (models.Task as PersistentModelConstructor<models.Task>)
+    ) {
+        const remote = remoteModel as models.Task;
+        const local = localModel as models.Task;
+        let newModel = models.Task.copyOf(remote, (task) => {
+            task.timePickedUp = remote.timePickedUp || local.timePickedUp;
+            task.timeDroppedOff = remote.timeDroppedOff || local.timeDroppedOff;
+            task.timeRiderHome = remote.timeRiderHome || local.timeRiderHome;
+            task.timeCancelled = remote.timeCancelled || local.timeCancelled;
+            task.timeRejected = remote.timeRejected || local.timeRejected;
             task.timePickedUpSenderName =
-                remoteModel.timePickedUpSenderName ||
-                localModel.timePickedUpSenderName;
+                remote.timePickedUpSenderName || local.timePickedUpSenderName;
             task.timeDroppedOffRecipientName =
-                remoteModel.timeDroppedOffRecipientName ||
-                localModel.timeDroppedOffRecipientName;
+                remote.timeDroppedOffRecipientName ||
+                local.timeDroppedOffRecipientName;
         });
         console.log("Resolved task conflict result:", newModel);
         const status = await determineTaskStatus(newModel);
         console.log("Updating task status to", status);
-        newModel = modelConstructor.copyOf(newModel, (task) => {
+        newModel = models.Task.copyOf(newModel, (task) => {
             task.status = status;
         });
         const { createdAt, updatedAt, ...rest } = newModel;
         return rest;
-    } else if (modelConstructor === models.Comment) {
+    } else if (
+        modelConstructor ===
+        (models.Comment as PersistentModelConstructor<models.Comment>)
+    ) {
         return remoteModel;
     }
     return DISCARD;
