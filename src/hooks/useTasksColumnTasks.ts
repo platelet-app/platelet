@@ -195,7 +195,6 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
             locationsSubscription.current = DataStore.observe(
                 models.Location
             ).subscribe(async (location) => {
-                debugger;
                 try {
                     if (location.opType === "UPDATE") {
                         for (const task of Object.values(stateRef.current)) {

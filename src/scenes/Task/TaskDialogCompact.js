@@ -4,7 +4,7 @@ import Dialog from "@mui/material/Dialog";
 import { useDispatch, useSelector } from "react-redux";
 import { decodeUUID } from "../../utilities";
 import { useTheme } from "@mui/material/styles";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import NotFound from "../../ErrorComponents/NotFound";
 import GetError from "../../ErrorComponents/GetError";
@@ -71,7 +71,7 @@ const DialogWrapper = (props) => {
     );
 };
 
-function TaskDialogCompact(props) {
+function TaskDialogCompact() {
     const [notFound, setNotFound] = useState(false);
     const { classes } = useStyles();
     const theme = useTheme();
