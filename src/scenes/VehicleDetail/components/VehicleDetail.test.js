@@ -177,6 +177,40 @@ describe("VehicleDetail", () => {
         });
     });
 
+    test("respond to a remote assignment", async () => {
+        const vehicle = await DataStore.save(new models.Vehicle(testVehicle));
+        const assignee = await DataStore.save(
+            new models.User({
+                displayName: "some rider",
+                roles: [userRoles.rider],
+            })
+        );
+        render(<VehicleDetail vehicleId={vehicle.id} />, {
+            preloadedState,
+        });
+        await screen.findByText(vehicle.name);
+
+        const vehicleAssignment = new models.VehicleAssignment({
+            tenantId,
+            vehicle,
+            assignee,
+        });
+        await DataStore.save(vehicleAssignment);
+        await waitFor(
+            () => {
+                screen.getByText(assignee.displayName);
+            },
+            { timeout: 6000 }
+        );
+        await DataStore.delete(vehicleAssignment);
+        await waitFor(
+            () => {
+                expect(screen.queryByText(assignee.displayName)).toBeNull();
+            },
+            { timeout: 6000 }
+        );
+    });
+
     it("stops the observers on unmount", async () => {
         const vehicle = await DataStore.save(new models.Vehicle(testVehicle));
         const querySpy = jest.spyOn(DataStore, "query");

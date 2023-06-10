@@ -57,12 +57,8 @@ export default function VehicleDetail({ vehicleId }) {
                 assignmentObserver.current = DataStore.observeQuery(
                     models.VehicleAssignment
                 ).subscribe(({ items }) => {
-                    // TODO: simplify this workaround when DataStore is updated
                     const assignedUser = items.find(
-                        (item) =>
-                            (item.vehicle &&
-                                item.vehicle.id === newVehicle.id) ||
-                            item.vehicleAssignmentsId === newVehicle.id
+                        (item) => item.vehicle && item.vehicle.id === vehicleId
                     );
                     if (assignedUser) {
                         DataStore.query(
