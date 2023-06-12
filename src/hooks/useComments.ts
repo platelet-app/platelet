@@ -9,7 +9,7 @@ export type CommentsState = {
     [key: string]: models.Comment;
 };
 
-const useGetComments = (parentId: string) => {
+const useComments = (parentId: string) => {
     const [state, setState] = React.useState<CommentsState>({});
     const [isFetching, setIsFetching] = React.useState(false);
     const [error, setError] = React.useState<Error | null>(null);
@@ -39,13 +39,10 @@ const useGetComments = (parentId: string) => {
             const filtered = filterHidden(comments);
             setState(convertModelListToTypedObject<models.Comment>(filtered));
             observer.current.unsubscribe();
-            observer.current = DataStore.observe(models.Comment, (c) =>
+            observer.current = DataStore.observeQuery(models.Comment, (c) =>
                 c.parentId("eq", parentId)
-            ).subscribe(async () => {
-                const comments = await DataStore.query(models.Comment, (c) =>
-                    c.parentId("eq", parentId)
-                );
-                const filtered = filterHidden(comments);
+            ).subscribe(async ({ items }) => {
+                const filtered = filterHidden(items);
                 setState(
                     convertModelListToTypedObject<models.Comment>(filtered)
                 );
@@ -65,7 +62,7 @@ const useGetComments = (parentId: string) => {
         return () => observer.current.unsubscribe();
     }, [getComments]);
 
-    return { state, isFetching, error };
+    return { state, setState, isFetching, error };
 };
 
-export default useGetComments;
+export default useComments;

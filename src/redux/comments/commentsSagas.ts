@@ -3,7 +3,7 @@ import { takeLatest } from "@redux-saga/core/effects";
 import _ from "lodash";
 import { call, take, put } from "redux-saga/effects";
 import { eventChannel } from "redux-saga";
-import { DataStore } from "aws-amplify";
+import { DataStore, Predicates } from "aws-amplify";
 import * as models from "../../models";
 import LocalPredicates from "../../utilities/predicates";
 
@@ -12,11 +12,9 @@ function listener() {
         let observer = { unsubscribe: () => {} };
         function restartObserver() {
             observer.unsubscribe();
-            observer = DataStore.observeQuery(
-                models.Comment,
-                LocalPredicates.unarchived,
-                { sort: (s) => s.createdAt("DESCENDING") }
-            ).subscribe((result) => {
+            observer = DataStore.observeQuery(models.Comment, Predicates.ALL, {
+                sort: (s) => s.createdAt("DESCENDING"),
+            }).subscribe((result) => {
                 console.log(result);
                 emitter(result);
             });

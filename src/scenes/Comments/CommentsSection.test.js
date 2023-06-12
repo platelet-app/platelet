@@ -10,12 +10,6 @@ import * as models from "../../models";
 import { v4 as uuidv4 } from "uuid";
 import { DataStore } from "aws-amplify";
 
-const fakeUsers = _.range(0, 3).map((i) => {
-    return new models.User({
-        displayName: `User ${i}`,
-    });
-});
-
 const parentId = uuidv4();
 
 const mockPublicComments = _.range(0, 3).map((i) => {
@@ -59,6 +53,11 @@ async function savePrivateComments() {
 }
 
 describe("CommentsSection", () => {
+    const finishLoading = async () => {
+        await waitFor(() => {
+            expect(screen.queryByTestId("comments-skeleton")).toBeNull();
+        });
+    };
     afterEach(async () => {
         jest.restoreAllMocks();
         const comments = await DataStore.query(models.Comment);
@@ -68,22 +67,17 @@ describe("CommentsSection", () => {
         await DataStore.save(mockUser);
     });
     it("should render correctly", async () => {
-        const querySpy = jest.spyOn(DataStore, "query");
-        render(<CommentsSection />);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
+        const mockTask = await DataStore.save(new models.Task({}));
+        render(<CommentsSection parentId={mockTask.id} />);
+        await finishLoading();
     });
 
     it("should render with comments", async () => {
         await savePublicComments();
-        const querySpy = jest.spyOn(DataStore, "query");
         render(<CommentsSection parentId={parentId} />, {
             preloadedState,
         });
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
+        await finishLoading();
         for (const comment of mockPublicComments) {
             expect(screen.getByText(comment.body)).toBeInTheDocument();
         }
@@ -96,13 +90,10 @@ describe("CommentsSection", () => {
 
     it("should hide the private comment when the whoami id doesn't match", async () => {
         await savePrivateComments();
-        const querySpy = jest.spyOn(DataStore, "query");
         render(<CommentsSection parentId={parentId} />, {
             preloadedState,
         });
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
+        await finishLoading();
         for (const comment of mockPrivateComments) {
             expect(screen.queryByText(comment.body)).toBeNull();
         }
@@ -121,13 +112,10 @@ describe("CommentsSection", () => {
         await Promise.all(
             mockPrivateCommentsForMe.map((comment) => DataStore.save(comment))
         );
-        const querySpy = jest.spyOn(DataStore, "query");
         render(<CommentsSection parentId={parentId} />, {
             preloadedState,
         });
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
+        await finishLoading();
         for (const comment of mockPrivateCommentsForMe) {
             expect(screen.getByText(comment.body)).toBeInTheDocument();
         }
@@ -138,19 +126,19 @@ describe("CommentsSection", () => {
 
     it("posts a new comment", async () => {
         const author = mockUser;
+        const mockTask = await DataStore.save(new models.Task({}));
         const mockComment = new models.Comment({
             body: "This is a comment",
             visibility: commentVisibility.everyone,
+            parentId: mockTask.id,
+            tenantId: preloadedState.tenantId,
             author,
         });
         const saveSpy = jest.spyOn(DataStore, "save");
-        const querySpy = jest.spyOn(DataStore, "query");
-        render(<CommentsSection parentId={parentId} />, {
+        render(<CommentsSection parentId={mockTask.id} />, {
             preloadedState,
         });
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
+        await finishLoading();
         const commentTextBox = screen.getByRole("textbox");
         userEvent.type(commentTextBox, "This is a comment");
         expect(commentTextBox).toHaveValue("This is a comment");
@@ -158,32 +146,39 @@ describe("CommentsSection", () => {
         expect(postButton).toBeEnabled();
         userEvent.click(postButton);
         await waitFor(() => {
-            expect(saveSpy).toHaveBeenNthCalledWith(
-                1,
-                expect.objectContaining(_.omit(mockComment, "id"))
-            );
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockComment,
+                id: expect.any(String),
+            });
         });
         expect(commentTextBox).toHaveValue("");
         expect(postButton).toBeDisabled();
-        expect(screen.getByText("This is a comment")).toBeInTheDocument();
+        await waitFor(
+            () => {
+                expect(
+                    screen.getByText("This is a comment")
+                ).toBeInTheDocument();
+            },
+            { timeout: 10000 }
+        );
         expect(screen.getAllByText("Mock User")).toHaveLength(2);
     });
 
     it("posts a private comment", async () => {
+        const mockTask = await DataStore.save(new models.Task({}));
         const author = mockUser;
         const mockComment = new models.Comment({
             body: "This is a comment",
             visibility: commentVisibility.me,
+            tenantId: "tenant-id",
+            parentId: mockTask.id,
             author,
         });
         const saveSpy = jest.spyOn(DataStore, "save");
-        const querySpy = jest.spyOn(DataStore, "query");
-        render(<CommentsSection parentId={parentId} />, {
+        render(<CommentsSection parentId={mockTask.id} />, {
             preloadedState,
         });
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
+        await finishLoading();
         userEvent.click(screen.getByText("ONLY ME"));
         const commentTextBox = screen.getByRole("textbox");
         userEvent.type(commentTextBox, "This is a comment");
@@ -192,14 +187,21 @@ describe("CommentsSection", () => {
         expect(postButton).toBeEnabled();
         userEvent.click(postButton);
         await waitFor(() => {
-            expect(saveSpy).toHaveBeenNthCalledWith(
-                1,
-                expect.objectContaining(_.omit(mockComment, "id"))
-            );
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockComment,
+                id: expect.any(String),
+            });
         });
         expect(commentTextBox).toHaveValue("");
         expect(postButton).toBeDisabled();
-        expect(screen.getByText("This is a comment")).toBeInTheDocument();
+        await waitFor(
+            () => {
+                expect(
+                    screen.getByText("This is a comment")
+                ).toBeInTheDocument();
+            },
+            { timeout: 10000 }
+        );
         expect(screen.getAllByText("Mock User")).toHaveLength(2);
     });
 
@@ -210,14 +212,11 @@ describe("CommentsSection", () => {
         });
         const mockComment = await DataStore.save(mockCommentInput);
         const deleteSpy = jest.spyOn(DataStore, "delete");
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(<CommentsSection parentId={parentId} />, {
             preloadedState,
         });
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
+        await finishLoading();
         expect(
             screen.getAllByText(mockComment.author.displayName)
         ).toHaveLength(2);
@@ -227,14 +226,7 @@ describe("CommentsSection", () => {
         userEvent.click(contextMenu);
         const deleteButton = await screen.findByText("Delete");
         userEvent.click(deleteButton);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(
-                2,
-                models.Comment,
-                mockComment.id
-            );
-        });
-        userEvent.click(screen.getByText("OK"));
+        userEvent.click(await screen.findByText("OK"));
         const mockCommentCleared = { ...mockComment, body: "" };
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledWith(mockCommentCleared);
@@ -242,9 +234,12 @@ describe("CommentsSection", () => {
         await waitFor(() => {
             expect(deleteSpy).toHaveBeenCalledWith(mockCommentCleared);
         });
-        await waitFor(() => {
-            expect(screen.queryByText(mockComment.body)).toBeNull();
-        });
+        await waitFor(
+            () => {
+                expect(screen.queryByText(mockComment.body)).toBeNull();
+            },
+            { timeout: 10000 }
+        );
         expect(await screen.findByText("Comment deleted")).toBeInTheDocument();
     });
 
@@ -255,13 +250,10 @@ describe("CommentsSection", () => {
         });
         const mockComment = await DataStore.save(mockCommentInput);
         const deleteSpy = jest.spyOn(DataStore, "delete");
-        const querySpy = jest.spyOn(DataStore, "query");
         render(<CommentsSection parentId={parentId} />, {
             preloadedState,
         });
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
+        await finishLoading();
         expect(
             screen.getAllByText(mockComment.author.displayName)
         ).toHaveLength(2);
@@ -271,14 +263,7 @@ describe("CommentsSection", () => {
         userEvent.click(contextMenu);
         const deleteButton = await screen.findByText("Delete");
         userEvent.click(deleteButton);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(
-                2,
-                models.Comment,
-                mockComment.id
-            );
-        });
-        userEvent.click(screen.getByText("Cancel"));
+        userEvent.click(await screen.findByText("Cancel"));
         await waitFor(() => {
             expect(deleteSpy).toHaveBeenCalledTimes(0);
         });
@@ -289,11 +274,8 @@ describe("CommentsSection", () => {
 
     it("discard an in progress comment", async () => {
         const mockTask = await DataStore.save(new models.Task({}));
-        const querySpy = jest.spyOn(DataStore, "query");
         render(<CommentsSection parentId={mockTask.id} />);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
+        await finishLoading();
         const textBox = screen.getByRole("textbox");
         userEvent.type(textBox, "This is a comment");
         userEvent.click(screen.getByRole("button", { name: "Discard" }));
@@ -311,44 +293,18 @@ describe("CommentsSection", () => {
             body: "This is a comment",
             author: mockAuthor,
             visibility: commentVisibility.everyone,
+            parentId: mockTask.id,
         });
-        const mockObservedResult = {
-            element: mockComment,
-            opType: "INSERT",
-        };
-        const observeSpy = jest
-            .spyOn(DataStore, "observe")
-            .mockImplementation(() => {
-                return {
-                    subscribe: jest.fn().mockImplementation((callback) => {
-                        callback(mockObservedResult);
-                        return { unsubscribe: jest.fn() };
-                    }),
-                };
-            });
-        const querySpy = jest
-            .spyOn(DataStore, "query")
-            .mockResolvedValueOnce([])
-            .mockResolvedValue([mockComment]);
         render(<CommentsSection parentId={mockTask.id} />);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(
-                1,
-                models.Comment,
-                expect.any(Function)
-            );
-        });
-        await waitFor(() => {
-            expect(observeSpy).toHaveBeenCalledTimes(1);
-        });
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(
-                2,
-                models.Comment,
-                expect.any(Function)
-            );
-        });
-        expect(screen.getByText(mockComment.body)).toBeInTheDocument();
+        await finishLoading();
+        expect(screen.queryByText(mockComment.body)).toBeNull();
+        await DataStore.save(mockComment);
+        await waitFor(
+            () => {
+                expect(screen.getByText(mockComment.body)).toBeInTheDocument();
+            },
+            { timeout: 10000 }
+        );
     });
 
     test("observing editing a comment", async () => {
@@ -356,50 +312,30 @@ describe("CommentsSection", () => {
             displayName: "Mock User",
         });
         const mockTask = new models.Task({});
-        const mockComment = new models.Comment({
-            body: "This is a comment",
-            author: mockAuthor,
-            visibility: commentVisibility.everyone,
-        });
-        const mockObservedResult = {
-            element: { ...mockComment, body: "something else" },
-            opType: "UPDATE",
-        };
-        const querySpy = jest
-            .spyOn(DataStore, "query")
-            .mockResolvedValueOnce([mockComment])
-            .mockResolvedValue([mockObservedResult.element]);
-        const observeSpy = jest
-            .spyOn(DataStore, "observe")
-            .mockImplementation(() => {
-                return {
-                    subscribe: jest.fn().mockImplementation((callback) => {
-                        callback(mockObservedResult);
-                        return { unsubscribe: jest.fn() };
-                    }),
-                };
-            });
+        const mockComment = await DataStore.save(
+            new models.Comment({
+                body: "This is a comment",
+                author: mockAuthor,
+                visibility: commentVisibility.everyone,
+                parentId: mockTask.id,
+            })
+        );
         render(<CommentsSection parentId={mockTask.id} />);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(
-                1,
-                models.Comment,
-                expect.any(Function)
-            );
-        });
-        await waitFor(() => {
-            expect(observeSpy).toHaveBeenCalledTimes(1);
-        });
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(
-                2,
-                models.Comment,
-                expect.any(Function)
-            );
-        });
-        expect(
-            screen.getByText(mockObservedResult.element.body)
-        ).toBeInTheDocument();
+        await finishLoading();
+        expect(screen.getByText(mockComment.body)).toBeInTheDocument();
+        await DataStore.save(
+            models.Comment.copyOf(mockComment, (updated) => {
+                updated.body = "This is an updated comment";
+            })
+        );
+        await waitFor(
+            () => {
+                expect(
+                    screen.getByText("This is an updated comment")
+                ).toBeInTheDocument();
+            },
+            { timeout: 10000 }
+        );
     });
 
     test("observing deleting a comment", async () => {
@@ -407,51 +343,28 @@ describe("CommentsSection", () => {
             displayName: "Mock User",
         });
         const mockTask = new models.Task({});
-        const mockComment = new models.Comment({
-            body: "This is a comment",
-            author: mockAuthor,
-            visibility: commentVisibility.everyone,
-        });
-        const mockObservedResult = {
-            element: { id: mockComment.id },
-            opType: "DELETE",
-        };
-        const querySpy = jest
-            .spyOn(DataStore, "query")
-            .mockResolvedValueOnce([mockComment])
-            .mockResolvedValue([]);
-        const observeSpy = jest
-            .spyOn(DataStore, "observe")
-            .mockImplementation(() => {
-                return {
-                    subscribe: jest.fn().mockImplementation((callback) => {
-                        callback(mockObservedResult);
-                        return { unsubscribe: jest.fn() };
-                    }),
-                };
-            });
+        const mockComment = await DataStore.save(
+            new models.Comment({
+                body: "This is a comment",
+                author: mockAuthor,
+                visibility: commentVisibility.everyone,
+                parentId: mockTask.id,
+            })
+        );
         render(<CommentsSection parentId={mockTask.id} />);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(
-                1,
-                models.Comment,
-                expect.any(Function)
-            );
-        });
-        await waitFor(() => {
-            expect(observeSpy).toHaveBeenCalledTimes(1);
-        });
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenNthCalledWith(
-                2,
-                models.Comment,
-                expect.any(Function)
-            );
-        });
-        expect(screen.queryByText(mockComment.body)).toBeNull();
+        await finishLoading();
+        expect(screen.getByText(mockComment.body)).toBeInTheDocument();
+        await DataStore.delete(mockComment);
+        await waitFor(
+            () => {
+                expect(screen.queryByText(mockComment.body)).toBeNull();
+            },
+            { timeout: 10000 }
+        );
     });
 
     it("unsubscribes on unmount", async () => {
+        const mockTask = await DataStore.save(new models.Task({}));
         const unsubscribe = jest.fn();
         const observeSpy = jest
             .spyOn(amplify.DataStore, "observe")
@@ -460,13 +373,14 @@ describe("CommentsSection", () => {
                     subscribe: () => ({ unsubscribe }),
                 };
             });
-        const querySpy = jest.spyOn(DataStore, "query");
         amplify.DataStore.observe.mockReturnValue({
             subscribe: () => ({ unsubscribe }),
         });
-        const { component } = render(<CommentsSection />);
+        const { component } = render(
+            <CommentsSection parentId={mockTask.id} />
+        );
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
+            expect(screen.queryByTestId("comments-skeleton")).toBeNull();
         });
         await waitFor(() => {
             expect(observeSpy).toHaveBeenCalledTimes(1);
@@ -486,12 +400,9 @@ describe("CommentsSection", () => {
                 parentId: mockTask.id,
             })
         );
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(<CommentsSection parentId={mockTask.id} />, { preloadedState });
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
-        });
+        await finishLoading();
         expect(screen.getAllByText("Mock User")).toHaveLength(2);
         const body = screen.getByText(mockComment.body);
         userEvent.hover(body);
