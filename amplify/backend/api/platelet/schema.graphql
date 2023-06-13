@@ -290,7 +290,7 @@ type ScheduledTask
 
 type Comment
 @auth(rules: [
-  {allow: private, operations: [create, read]},
+  {allow: groups, groups: ["USER"], operations: [read]},
   {allow: owner, operations: [create, read, delete, update]},
   {allow: groups, groups: ["ADMIN"], operations: [create, read, delete, update]},
 ])
@@ -299,13 +299,13 @@ type Comment
   parentId: ID @index(name: "byParent")
   owner: String
     @auth(rules: [
-      {allow: private, operations: [read]},
+      {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
       {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
     ])
   tenantId: ID! @index(name: "byTenantId")
     @auth(rules: [
-      {allow: private, operations: [read]},
+      {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
       {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
     ])
@@ -314,7 +314,7 @@ type Comment
   visibility: CommentVisibility
   archived: Int @default(value: "0") @index(name: "byArchived")
     @auth(rules: [
-      {allow: private, operations: [read]},
+      {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
       {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
     ])
