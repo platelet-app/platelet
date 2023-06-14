@@ -1,0 +1,142 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`plateletAdminDisableUser disable a user 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      {
+        "query": "getUserQuery",
+        "variables": {
+          "id": "userId",
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "updateUserMutation",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "disabled": 1,
+            "id": "userId",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;
+
+exports[`plateletAdminDisableUser disable a user 2`] = `
+[MockFunction] {
+  "calls": [
+    [
+      {
+        "UserPoolId": "somePoolId",
+        "Username": "username",
+      },
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": {
+        "promise": [Function],
+      },
+    },
+  ],
+}
+`;
+
+exports[`plateletAdminDisableUser disable a user appsync failure 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      {
+        "query": "getUserQuery",
+        "variables": {
+          "id": "userId",
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "updateUserMutation",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "disabled": 1,
+            "id": "userId",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;
+
+exports[`plateletAdminDisableUser disable a user appsync failure 2`] = `
+[MockFunction] {
+  "calls": [
+    [
+      {
+        "UserPoolId": "somePoolId",
+        "Username": "username",
+      },
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": {
+        "promise": [Function],
+      },
+    },
+  ],
+}
+`;
+
+exports[`plateletAdminDisableUser disable a user appsync failure 3`] = `
+[MockFunction] {
+  "calls": [
+    [
+      {
+        "UserPoolId": "somePoolId",
+        "Username": "username",
+      },
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": {
+        "promise": [Function],
+      },
+    },
+  ],
+}
+`;

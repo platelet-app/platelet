@@ -11,6 +11,7 @@ import { displayErrorNotification } from "../../../redux/notifications/Notificat
 import LocationProfile from "./LocationProfile";
 import { protectedFields } from "../../../apiConsts";
 import { Divider, Stack } from "@mui/material";
+import EnableDisableLocation from "./EnableDisableLocation";
 
 const initialLocationState = {
     name: null,
@@ -169,7 +170,15 @@ export default function LocationDetail({ locationId }) {
         return (
             <React.Fragment>
                 <PaddedPaper maxWidth={700}>
-                    <LocationProfile onUpdate={onUpdate} location={location} />
+                    <Stack direction="column" spacing={3}>
+                        <LocationProfile
+                            onUpdate={onUpdate}
+                            location={location}
+                        />
+                        {location && (
+                            <EnableDisableLocation location={location} />
+                        )}
+                    </Stack>
                 </PaddedPaper>
                 <CommentsSection parentId={locationId} />
             </React.Fragment>

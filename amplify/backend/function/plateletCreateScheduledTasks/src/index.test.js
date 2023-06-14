@@ -40,7 +40,17 @@ const mockScheduledTasks = [
         deliverables: {
             items: [
                 {
+                    _deleted: null,
                     id: "deliverableId",
+                    deliverableType: { id: "deliverableType", label: "bloods" },
+                    deliverableTypeDeliverablesId:
+                        "deliverableTypeDeliverablesId",
+                    count: 1,
+                    unit: "unit",
+                },
+                {
+                    _deleted: true,
+                    id: "deletedDeliverableId",
                     deliverableType: { id: "deliverableType", label: "bloods" },
                     deliverableTypeDeliverablesId:
                         "deliverableTypeDeliverablesId",
@@ -53,6 +63,21 @@ const mockScheduledTasks = [
         _deleted: null,
         _lastChangedAt: 1620000000000,
     },
+    {
+        id: "deletedTaskId",
+        tenantId: "tenantId",
+        priority: "MEDIUM",
+        requesterContact: {
+            name: "name",
+            telephoneNumber: "phone",
+        },
+        establishmentLocation: null,
+        pickUpLocation: null,
+        dropOffLocation: null,
+        _version: 1,
+        _deleted: true,
+        _lastChangedAt: 1620000000000,
+    },
 ];
 
 jest.mock(
@@ -60,6 +85,7 @@ jest.mock(
     () => {
         return {
             request: jest.fn(),
+            errorCheck: jest.fn(),
         };
     },
     { virtual: true }

@@ -141,39 +141,23 @@ exports.handler = async (event) => {
         };
         const profilePicture = await getUserProfilePicture(userId);
         const imageKey = profilePicture ? profilePicture.key || null : null;
-        const bucket = profilePicture ? profilePicture.bucket || null : null;
         if (!imageKey) return null;
         if (!width || !height) {
             return generatePresignedUrl(imageKey);
         }
-
-        let cachedImageKey = null;
-        if (bucket) {
-            cachedImageKey = await getCachedImageKey(
-                imageKey,
-                bucket,
-                width,
-                height
-            );
-        }
-
-        if (cachedImageKey) {
-            return generatePresignedUrl(cachedImageKey);
-        } else {
-            console.log("making image");
-            const image = await downloadImageFromBucket(imageKey);
-            const resized = await resizeImage(image, width, height);
-            const key = imageKey.split(".")[0];
-            const newKey = `${key}-${width}-${height}.jpg`;
-            const putObjectParams = {
-                Bucket: process.env.STORAGE_PLATELETSTORAGE_BUCKETNAME,
-                Key: newKey,
-                Body: resized,
-            };
-            const command = new PutObjectCommand(putObjectParams);
-            await client.send(command);
-            return generatePresignedUrl(newKey);
-        }
+        console.log("making image");
+        const image = await downloadImageFromBucket(imageKey);
+        const resized = await resizeImage(image, width, height);
+        const key = imageKey.split(".")[0];
+        const newKey = `${key}-${width}-${height}.jpg`;
+        const putObjectParams = {
+            Bucket: process.env.STORAGE_PLATELETSTORAGE_BUCKETNAME,
+            Key: newKey,
+            Body: resized,
+        };
+        const command = new PutObjectCommand(putObjectParams);
+        await client.send(command);
+        return generatePresignedUrl(newKey);
     } catch (error) {
         console.error(error);
         return null;

@@ -290,7 +290,7 @@ type ScheduledTask
 
 type Comment
 @auth(rules: [
-  {allow: private, operations: [create, read]},
+  {allow: groups, groups: ["USER"], operations: [read]},
   {allow: owner, operations: [create, read, delete, update]},
   {allow: groups, groups: ["ADMIN"], operations: [create, read, delete, update]},
 ])
@@ -299,13 +299,13 @@ type Comment
   parentId: ID @index(name: "byParent")
   owner: String
     @auth(rules: [
-      {allow: private, operations: [read]},
+      {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
       {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
     ])
   tenantId: ID! @index(name: "byTenantId")
     @auth(rules: [
-      {allow: private, operations: [read]},
+      {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
       {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
     ])
@@ -314,7 +314,7 @@ type Comment
   visibility: CommentVisibility
   archived: Int @default(value: "0") @index(name: "byArchived")
     @auth(rules: [
-      {allow: private, operations: [read]},
+      {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
       {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
     ])
@@ -438,6 +438,10 @@ type Mutation {
   registerUser(name: String, email: String, tenantId: ID, roles: [Role]): User @function(name: "plateletAdminAddNewUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   registerTenant(name: String, emailAddress: String, tenantName: String): Tenant @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: groups, groups: ["SUPER"]}])
   updateUserRoles(userId: ID, roles: [Role]): User @function(name: "plateletAdminChangeUserRoles-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
+  disableUser(userId: ID): User @function(name: "plateletAdminDisableUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
+  enableUser(userId: ID): User @function(name: "plateletAdminEnableUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
+  updateUserEmail(userId: ID, emailAddress: AWSEmail): User @function(name: "plateletAdminChangeUserEmail-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
+  resetUserPassword(userId: ID): SendFeedback @function(name: "plateletAdminResetUserPassword-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
 }
 
 type Statistics {

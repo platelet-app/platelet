@@ -1,0 +1,20 @@
+name: Notify Slack on merged pull requests
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - 'production/app.bloodbikes.org.uk'
+
+jobs:
+  notify_merged_pull_request:
+    name: Notify Slack on merged pull requests
+    runs-on: ubuntu-latest
+    if: ${{ github.base_ref == 'production/app.bloodbikes.org.uk' && github.event.pull_request.merged == true }}
+    steps:
+      - uses: abinoda/slack-action@master
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        with:
+          args: '{\"channel\":\"${{ secrets.SLACK_CHANNEL_ID }}\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*bloodbikes.cloud has been updated:* ${{ github.event.pull_request.title }}\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Pull Request by :* ${{ github.event.pull_request.user.login }}\n*Merged at:* ${{ github.event.pull_request.merged_at }}\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<${{ github.event.pull_request.html_url }}|View Merged Pull Request>\"}}]}'
+        if: success()

@@ -92,6 +92,7 @@ exports[`plateletCreateScheduledTasks create some scheduled tasks 1`] = `
                 }
                 deliverables {
                     items {
+                        _deleted
                         count
                         deliverableTypeDeliverablesId
                         unit
