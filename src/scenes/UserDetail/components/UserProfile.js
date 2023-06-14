@@ -101,6 +101,15 @@ function UserProfile(props) {
                     }}
                 />
             );
+            editPossibleResponsibilitiesToggle = (
+                <EditModeToggleButton
+                    value={editResponsibilitiesMode}
+                    aria-label="Edit Rider Roles"
+                    onChange={() =>
+                        setEditResponsibilitiesMode((prevState) => !prevState)
+                    }
+                />
+            );
         }
         if (
             whoami.roles.includes(userRoles.admin) ||
@@ -133,16 +142,6 @@ function UserProfile(props) {
                     onChange={(v) => {
                         if (v) setDialogState(dialogStates.address);
                     }}
-                />
-            );
-
-            editPossibleResponsibilitiesToggle = (
-                <EditModeToggleButton
-                    value={editResponsibilitiesMode}
-                    aria-label="Edit Rider Roles"
-                    onChange={() =>
-                        setEditResponsibilitiesMode((prevState) => !prevState)
-                    }
                 />
             );
         }

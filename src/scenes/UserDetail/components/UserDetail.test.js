@@ -512,6 +512,9 @@ describe("UserDetail", () => {
         expect(
             screen.queryByRole("button", { name: "Edit Address Information" })
         ).toBeNull();
+        expect(
+            screen.queryByRole("button", { name: "Edit Rider Roles" })
+        ).toBeNull();
     });
 
     test("change the user's roles", async () => {
