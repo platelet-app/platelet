@@ -12,7 +12,19 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.base_ref == 'production/app.bloodbikes.org.uk' && github.event.pull_request.merged == true }}
     steps:
-      - uses: abinoda/slack-action@master
+      - name: Wait for Amplify to finish remote build
+        uses: duckbytes/amplify-build-status@master
+        with:
+          app-id: ${{ secrets.AMPLIFY_APP_ID }}
+          branch-name: ${{ github.ref_name }}
+          commit-id: ${{ github.sha }}
+          wait: true
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+      - name: Post to the slack announcements channel
+        uses: abinoda/slack-action@master
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         with:
