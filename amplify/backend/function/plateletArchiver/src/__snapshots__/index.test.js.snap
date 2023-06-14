@@ -4,7 +4,8 @@ exports[`plateletArchiver archive some tasks, ignore the newer task 1`] = `
 [MockFunction] {
   "calls": [
     [
-      "
+      {
+        "query": "
     query LIST_TASKS_BY_ARCHIVE_STATUS(
         $archived: Int!
         $status: ModelStringKeyConditionInput
@@ -39,16 +40,19 @@ exports[`plateletArchiver archive some tasks, ignore the newer task 1`] = `
         }
     }
 ",
-      {
-        "archived": 0,
-        "nextToken": null,
-        "status": {
-          "eq": "COMPLETED",
+        "variables": {
+          "archived": 0,
+          "nextToken": null,
+          "status": {
+            "eq": "COMPLETED",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
+      {
+        "query": "
     query LIST_TASKS_BY_ARCHIVE_STATUS(
         $archived: Int!
         $status: ModelStringKeyConditionInput
@@ -83,16 +87,19 @@ exports[`plateletArchiver archive some tasks, ignore the newer task 1`] = `
         }
     }
 ",
-      {
-        "archived": 0,
-        "nextToken": null,
-        "status": {
-          "eq": "REJECTED",
+        "variables": {
+          "archived": 0,
+          "nextToken": null,
+          "status": {
+            "eq": "REJECTED",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
+      {
+        "query": "
     query LIST_TASKS_BY_ARCHIVE_STATUS(
         $archived: Int!
         $status: ModelStringKeyConditionInput
@@ -127,16 +134,19 @@ exports[`plateletArchiver archive some tasks, ignore the newer task 1`] = `
         }
     }
 ",
-      {
-        "archived": 0,
-        "nextToken": null,
-        "status": {
-          "eq": "ABANDONED",
+        "variables": {
+          "archived": 0,
+          "nextToken": null,
+          "status": {
+            "eq": "ABANDONED",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
+      {
+        "query": "
     query LIST_TASKS_BY_ARCHIVE_STATUS(
         $archived: Int!
         $status: ModelStringKeyConditionInput
@@ -171,16 +181,19 @@ exports[`plateletArchiver archive some tasks, ignore the newer task 1`] = `
         }
     }
 ",
-      {
-        "archived": 0,
-        "nextToken": null,
-        "status": {
-          "eq": "CANCELLED",
+        "variables": {
+          "archived": 0,
+          "nextToken": null,
+          "status": {
+            "eq": "CANCELLED",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
+      {
+        "query": "
     query LIST_TASKS_BY_ARCHIVE_STATUS(
         $archived: Int!
         $status: ModelStringKeyConditionInput
@@ -215,33 +228,32 @@ exports[`plateletArchiver archive some tasks, ignore the newer task 1`] = `
         }
     }
 ",
-      {
-        "archived": 0,
-        "nextToken": "tasktoken",
-        "status": {
-          "eq": "COMPLETED",
+        "variables": {
+          "archived": 0,
+          "nextToken": "tasktoken",
+          "status": {
+            "eq": "COMPLETED",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
-    mutation UpdateLocation($input: UpdateLocationInput!) {
-        updateLocation(input: $input) {
-            id
-            archived
-        };
-    };
-",
       {
-        "input": {
-          "_version": 1,
-          "archived": 1,
-          "id": "someLocationIdUnlisted",
+        "query": "updateLocationMutation",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "archived": 1,
+            "id": "someLocationIdUnlisted",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
+      {
+        "query": "
     query GetTaskAssignees(
         $id: ID!,
         $nextToken: String
@@ -258,232 +270,221 @@ exports[`plateletArchiver archive some tasks, ignore the newer task 1`] = `
         };
     };
 ",
-      {
-        "id": "someTaskId",
-        "nextToken": null,
-      },
-    ],
-    [
-      "
-    query GetTaskAssignees(
-        $id: ID!,
-        $nextToken: String
-    ) {
-        getTask(id: $id) {
-            id
-            assignees(nextToken: $nextToken) {
-                items {
-                    id
-                    _version
-                }
-                nextToken
-            };
-        };
-    };
-",
-      {
-        "id": "someTaskId",
-        "nextToken": "asstoken",
-      },
-    ],
-    [
-      "
-    mutation UpdateTaskAssignee($input: UpdateTaskAssigneeInput!) {
-        updateTaskAssignee(input: $input) {
-            id
-            archived
-        };
-    };
-",
-      {
-        "input": {
-          "_version": 1,
-          "archived": 1,
-          "id": "someAssignmentId",
-        },
-      },
-    ],
-    [
-      "
-    mutation UpdateTaskAssignee($input: UpdateTaskAssigneeInput!) {
-        updateTaskAssignee(input: $input) {
-            id
-            archived
-        };
-    };
-",
-      {
-        "input": {
-          "_version": 1,
-          "archived": 1,
-          "id": "someAssignmentId",
-        },
-      },
-    ],
-    [
-      "
-    query GetTaskDeliverables($id: ID!, $nextToken: String) {
-        getTask(id: $id) {
-            id
-            deliverables(nextToken: $nextToken) {
-                items {
-                    id
-                    _version
-                }
-                nextToken
-            };
-        };
-    };
-",
-      {
-        "id": "someTaskId",
-        "nextToken": null,
-      },
-    ],
-    [
-      "
-    query GetTaskDeliverables($id: ID!, $nextToken: String) {
-        getTask(id: $id) {
-            id
-            deliverables(nextToken: $nextToken) {
-                items {
-                    id
-                    _version
-                }
-                nextToken
-            };
-        };
-    };
-",
-      {
-        "id": "someTaskId",
-        "nextToken": "deltoken",
-      },
-    ],
-    [
-      "
-    mutation UpdateDeliverable($input: UpdateDeliverableInput!) {
-        updateDeliverable(input: $input) {
-            id
-            archived
-        };
-    };
-",
-      {
-        "input": {
-          "_version": 1,
-          "archived": 1,
-          "id": "someDeliverableId",
-        },
-      },
-    ],
-    [
-      "
-    mutation UpdateDeliverable($input: UpdateDeliverableInput!) {
-        updateDeliverable(input: $input) {
-            id
-            archived
-        };
-    };
-",
-      {
-        "input": {
-          "_version": 1,
-          "archived": 1,
-          "id": "someDeliverableId",
-        },
-      },
-    ],
-    [
-      "
-    query GetTaskComments($id: ID!, $nextToken: String) {
-        getTask(id: $id) {
-            id
-            comments(nextToken: $nextToken) {
-                items {
-                    id
-                    _version
-                }
-                nextToken
-            };
-        };
-    };
-",
-      {
-        "id": "someTaskId",
-        "nextToken": null,
-      },
-    ],
-    [
-      "
-    query GetTaskComments($id: ID!, $nextToken: String) {
-        getTask(id: $id) {
-            id
-            comments(nextToken: $nextToken) {
-                items {
-                    id
-                    _version
-                }
-                nextToken
-            };
-        };
-    };
-",
-      {
-        "id": "someTaskId",
-        "nextToken": "comtoken",
-      },
-    ],
-    [
-      "
-    mutation UpdateComment($input: UpdateCommentInput!) {
-        updateComment(input: $input) {
-            id
-            archived
-        };
-    };
-",
-      {
-        "input": {
-          "_version": 1,
-          "archived": 1,
-          "id": "someCommentId",
-        },
-      },
-    ],
-    [
-      "
-    mutation UpdateComment($input: UpdateCommentInput!) {
-        updateComment(input: $input) {
-            id
-            archived
-        };
-    };
-",
-      {
-        "input": {
-          "_version": 1,
-          "archived": 1,
-          "id": "someCommentId",
-        },
-      },
-    ],
-    [
-      "
-    mutation UpdateTask($input: UpdateTaskInput!) {
-        updateTask(input: $input) {
-            id
-            archived
-        }
-    }
-",
-      {
-        "input": {
-          "_version": 1,
-          "archived": 1,
+        "variables": {
           "id": "someTaskId",
+          "nextToken": null,
         },
       },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "
+    query GetTaskAssignees(
+        $id: ID!,
+        $nextToken: String
+    ) {
+        getTask(id: $id) {
+            id
+            assignees(nextToken: $nextToken) {
+                items {
+                    id
+                    _version
+                }
+                nextToken
+            };
+        };
+    };
+",
+        "variables": {
+          "id": "someTaskId",
+          "nextToken": "asstoken",
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "updateTaskAssigneeMutation",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "archived": 1,
+            "id": "someAssignmentId",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "updateTaskAssigneeMutation",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "archived": 1,
+            "id": "someAssignmentId",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "
+    query GetTaskDeliverables($id: ID!, $nextToken: String) {
+        getTask(id: $id) {
+            id
+            deliverables(nextToken: $nextToken) {
+                items {
+                    id
+                    _version
+                }
+                nextToken
+            };
+        };
+    };
+",
+        "variables": {
+          "id": "someTaskId",
+          "nextToken": null,
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "
+    query GetTaskDeliverables($id: ID!, $nextToken: String) {
+        getTask(id: $id) {
+            id
+            deliverables(nextToken: $nextToken) {
+                items {
+                    id
+                    _version
+                }
+                nextToken
+            };
+        };
+    };
+",
+        "variables": {
+          "id": "someTaskId",
+          "nextToken": "deltoken",
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "updateDeliverableMutation",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "archived": 1,
+            "id": "someDeliverableId",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "updateDeliverableMutation",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "archived": 1,
+            "id": "someDeliverableId",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "
+    query GetTaskComments($id: ID!, $nextToken: String) {
+        getTask(id: $id) {
+            id
+            comments(nextToken: $nextToken) {
+                items {
+                    id
+                    _version
+                }
+                nextToken
+            };
+        };
+    };
+",
+        "variables": {
+          "id": "someTaskId",
+          "nextToken": null,
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "
+    query GetTaskComments($id: ID!, $nextToken: String) {
+        getTask(id: $id) {
+            id
+            comments(nextToken: $nextToken) {
+                items {
+                    id
+                    _version
+                }
+                nextToken
+            };
+        };
+    };
+",
+        "variables": {
+          "id": "someTaskId",
+          "nextToken": "comtoken",
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "updateCommentMutation",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "archived": 1,
+            "id": "someCommentId",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "updateCommentMutation",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "archived": 1,
+            "id": "someCommentId",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "updateTaskMutation",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "archived": 1,
+            "id": "someTaskId",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
     ],
   ],
   "results": [
@@ -571,7 +572,8 @@ exports[`plateletArchiver failure to archive an assignee 1`] = `
 [MockFunction] {
   "calls": [
     [
-      "
+      {
+        "query": "
     query LIST_TASKS_BY_ARCHIVE_STATUS(
         $archived: Int!
         $status: ModelStringKeyConditionInput
@@ -606,16 +608,19 @@ exports[`plateletArchiver failure to archive an assignee 1`] = `
         }
     }
 ",
-      {
-        "archived": 0,
-        "nextToken": null,
-        "status": {
-          "eq": "COMPLETED",
+        "variables": {
+          "archived": 0,
+          "nextToken": null,
+          "status": {
+            "eq": "COMPLETED",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
+      {
+        "query": "
     query LIST_TASKS_BY_ARCHIVE_STATUS(
         $archived: Int!
         $status: ModelStringKeyConditionInput
@@ -650,16 +655,19 @@ exports[`plateletArchiver failure to archive an assignee 1`] = `
         }
     }
 ",
-      {
-        "archived": 0,
-        "nextToken": null,
-        "status": {
-          "eq": "REJECTED",
+        "variables": {
+          "archived": 0,
+          "nextToken": null,
+          "status": {
+            "eq": "REJECTED",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
+      {
+        "query": "
     query LIST_TASKS_BY_ARCHIVE_STATUS(
         $archived: Int!
         $status: ModelStringKeyConditionInput
@@ -694,16 +702,19 @@ exports[`plateletArchiver failure to archive an assignee 1`] = `
         }
     }
 ",
-      {
-        "archived": 0,
-        "nextToken": null,
-        "status": {
-          "eq": "ABANDONED",
+        "variables": {
+          "archived": 0,
+          "nextToken": null,
+          "status": {
+            "eq": "ABANDONED",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
+      {
+        "query": "
     query LIST_TASKS_BY_ARCHIVE_STATUS(
         $archived: Int!
         $status: ModelStringKeyConditionInput
@@ -738,16 +749,19 @@ exports[`plateletArchiver failure to archive an assignee 1`] = `
         }
     }
 ",
-      {
-        "archived": 0,
-        "nextToken": null,
-        "status": {
-          "eq": "CANCELLED",
+        "variables": {
+          "archived": 0,
+          "nextToken": null,
+          "status": {
+            "eq": "CANCELLED",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
+      {
+        "query": "
     query LIST_TASKS_BY_ARCHIVE_STATUS(
         $archived: Int!
         $status: ModelStringKeyConditionInput
@@ -782,33 +796,32 @@ exports[`plateletArchiver failure to archive an assignee 1`] = `
         }
     }
 ",
-      {
-        "archived": 0,
-        "nextToken": "tasktoken",
-        "status": {
-          "eq": "COMPLETED",
+        "variables": {
+          "archived": 0,
+          "nextToken": "tasktoken",
+          "status": {
+            "eq": "COMPLETED",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
-    mutation UpdateLocation($input: UpdateLocationInput!) {
-        updateLocation(input: $input) {
-            id
-            archived
-        };
-    };
-",
       {
-        "input": {
-          "_version": 1,
-          "archived": 1,
-          "id": "someLocationIdUnlisted",
+        "query": "updateLocationMutation",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "archived": 1,
+            "id": "someLocationIdUnlisted",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
+      {
+        "query": "
     query GetTaskAssignees(
         $id: ID!,
         $nextToken: String
@@ -825,27 +838,25 @@ exports[`plateletArchiver failure to archive an assignee 1`] = `
         };
     };
 ",
-      {
-        "id": "someTaskId",
-        "nextToken": null,
-      },
-    ],
-    [
-      "
-    mutation UpdateTaskAssignee($input: UpdateTaskAssigneeInput!) {
-        updateTaskAssignee(input: $input) {
-            id
-            archived
-        };
-    };
-",
-      {
-        "input": {
-          "_version": 1,
-          "archived": 1,
-          "id": "someAssignmentId",
+        "variables": {
+          "id": "someTaskId",
+          "nextToken": null,
         },
       },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "updateTaskAssigneeMutation",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "archived": 1,
+            "id": "someAssignmentId",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
     ],
   ],
   "results": [
@@ -889,7 +900,8 @@ exports[`plateletArchiver graphql failure to archive an assignee 1`] = `
 [MockFunction] {
   "calls": [
     [
-      "
+      {
+        "query": "
     query LIST_TASKS_BY_ARCHIVE_STATUS(
         $archived: Int!
         $status: ModelStringKeyConditionInput
@@ -924,16 +936,19 @@ exports[`plateletArchiver graphql failure to archive an assignee 1`] = `
         }
     }
 ",
-      {
-        "archived": 0,
-        "nextToken": null,
-        "status": {
-          "eq": "COMPLETED",
+        "variables": {
+          "archived": 0,
+          "nextToken": null,
+          "status": {
+            "eq": "COMPLETED",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
+      {
+        "query": "
     query LIST_TASKS_BY_ARCHIVE_STATUS(
         $archived: Int!
         $status: ModelStringKeyConditionInput
@@ -968,16 +983,19 @@ exports[`plateletArchiver graphql failure to archive an assignee 1`] = `
         }
     }
 ",
-      {
-        "archived": 0,
-        "nextToken": null,
-        "status": {
-          "eq": "REJECTED",
+        "variables": {
+          "archived": 0,
+          "nextToken": null,
+          "status": {
+            "eq": "REJECTED",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
+      {
+        "query": "
     query LIST_TASKS_BY_ARCHIVE_STATUS(
         $archived: Int!
         $status: ModelStringKeyConditionInput
@@ -1012,16 +1030,19 @@ exports[`plateletArchiver graphql failure to archive an assignee 1`] = `
         }
     }
 ",
-      {
-        "archived": 0,
-        "nextToken": null,
-        "status": {
-          "eq": "ABANDONED",
+        "variables": {
+          "archived": 0,
+          "nextToken": null,
+          "status": {
+            "eq": "ABANDONED",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
+      {
+        "query": "
     query LIST_TASKS_BY_ARCHIVE_STATUS(
         $archived: Int!
         $status: ModelStringKeyConditionInput
@@ -1056,16 +1077,19 @@ exports[`plateletArchiver graphql failure to archive an assignee 1`] = `
         }
     }
 ",
-      {
-        "archived": 0,
-        "nextToken": null,
-        "status": {
-          "eq": "CANCELLED",
+        "variables": {
+          "archived": 0,
+          "nextToken": null,
+          "status": {
+            "eq": "CANCELLED",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
+      {
+        "query": "
     query LIST_TASKS_BY_ARCHIVE_STATUS(
         $archived: Int!
         $status: ModelStringKeyConditionInput
@@ -1100,33 +1124,32 @@ exports[`plateletArchiver graphql failure to archive an assignee 1`] = `
         }
     }
 ",
-      {
-        "archived": 0,
-        "nextToken": "tasktoken",
-        "status": {
-          "eq": "COMPLETED",
+        "variables": {
+          "archived": 0,
+          "nextToken": "tasktoken",
+          "status": {
+            "eq": "COMPLETED",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
-    mutation UpdateLocation($input: UpdateLocationInput!) {
-        updateLocation(input: $input) {
-            id
-            archived
-        };
-    };
-",
       {
-        "input": {
-          "_version": 1,
-          "archived": 1,
-          "id": "someLocationIdUnlisted",
+        "query": "updateLocationMutation",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "archived": 1,
+            "id": "someLocationIdUnlisted",
+          },
         },
       },
+      "https://api.example.com/graphql",
     ],
     [
-      "
+      {
+        "query": "
     query GetTaskAssignees(
         $id: ID!,
         $nextToken: String
@@ -1143,27 +1166,25 @@ exports[`plateletArchiver graphql failure to archive an assignee 1`] = `
         };
     };
 ",
-      {
-        "id": "someTaskId",
-        "nextToken": null,
-      },
-    ],
-    [
-      "
-    mutation UpdateTaskAssignee($input: UpdateTaskAssigneeInput!) {
-        updateTaskAssignee(input: $input) {
-            id
-            archived
-        };
-    };
-",
-      {
-        "input": {
-          "_version": 1,
-          "archived": 1,
-          "id": "someAssignmentId",
+        "variables": {
+          "id": "someTaskId",
+          "nextToken": null,
         },
       },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "updateTaskAssigneeMutation",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "archived": 1,
+            "id": "someAssignmentId",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
     ],
   ],
   "results": [

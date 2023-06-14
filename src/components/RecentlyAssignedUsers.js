@@ -33,9 +33,19 @@ function RecentlyAssignedUsers(props) {
                 (a) => a.role === props.role
             );
             // filter out those who no longer have the role
+            // or are disabled
+            console.log(
+                "assignments",
+                assignments.map((a) => a.assignee)
+            );
             activeRidersResult = assignments
                 .map((a) => a.assignee)
-                .filter((u) => u.roles && u.roles.includes(props.role));
+                .filter(
+                    (u) =>
+                        u.disabled !== 1 &&
+                        u.roles &&
+                        u.roles.includes(props.role)
+                );
         } else if (whoami) {
             const myAssignments = allAssignees.filter(
                 (a) =>
@@ -57,7 +67,12 @@ function RecentlyAssignedUsers(props) {
             // filter out those who no longer have the role
             activeRidersResult = assignedToMeUsers
                 .map((a) => a.assignee)
-                .filter((u) => u.roles && u.roles.includes(props.role));
+                .filter(
+                    (u) =>
+                        u.disabled !== 1 &&
+                        u.roles &&
+                        u.roles.includes(props.role)
+                );
         }
         // remove duplicates and truncate to limit
         activeRidersResult = _.uniqBy(activeRidersResult, (u) => u.id);

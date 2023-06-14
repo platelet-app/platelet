@@ -232,18 +232,13 @@ describe("UserDetail", () => {
         userEvent.click(
             screen.getByRole("button", { name: "Edit Contact Information" })
         );
-        const extra = "more stuff";
         const extraNumbers = "12345";
-        const emailField = screen.getByRole("textbox", {
-            name: userContactFields.emailAddress,
-        });
         const telephoneField = screen.getByRole("textbox", {
             name: userContactFields.telephoneNumber,
         });
         const mobileField = screen.getByRole("textbox", {
             name: userContactFields.mobileNumber,
         });
-        userEvent.type(emailField, extra);
         userEvent.type(telephoneField, extraNumbers);
         userEvent.type(mobileField, extraNumbers);
         userEvent.click(screen.getByRole("button", { name: "OK" }));
@@ -252,7 +247,6 @@ describe("UserDetail", () => {
                 ...user,
                 contact: {
                     ...user.contact,
-                    emailAddress: `${user.contact.emailAddress}${extra}`,
                     telephoneNumber: `${user.contact.telephoneNumber}${extraNumbers}`,
                     mobileNumber: `${user.contact.mobileNumber}${extraNumbers}`,
                 },
@@ -674,12 +668,8 @@ describe("UserDetail", () => {
 
     test("show upload picture if owner", async () => {
         const user = await DataStore.save(whoami);
-        const querySpy = jest.spyOn(DataStore, "query");
         render(<UserDetail userId={user.id} />, { preloadedState });
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(2);
-        });
-        expect(screen.getByText("Upload Picture")).toBeInTheDocument();
+        expect(await screen.findByText("Upload Picture")).toBeInTheDocument();
     });
 
     test("unsubscribe observers on unmount", async () => {
@@ -699,5 +689,283 @@ describe("UserDetail", () => {
         });
         component.unmount();
         expect(unsubscribe).toHaveBeenCalledTimes(3);
+    });
+    test("no enable to disable buttons if user is not admin", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+                username: "username",
+                displayName: "displayName",
+            })
+        );
+        const user = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+                username: "username",
+                displayName: "displayName",
+                disabled: 1,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+            tenantId,
+        };
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        await screen.findByText("displayName");
+        expect(screen.queryByRole("button")).toBeNull();
+    });
+    test("enable a user", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER, models.Role.ADMIN],
+                username: "username",
+                displayName: "displayName",
+            })
+        );
+        const user = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+                username: "username",
+                displayName: "displayName",
+                disabled: 1,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+            tenantId,
+        };
+        const apiSpy = jest.spyOn(API, "graphql").mockResolvedValue({});
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        userEvent.click(
+            await screen.findByRole("button", { name: "Enable this user" })
+        );
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(apiSpy).toHaveBeenCalledWith({
+                query: mutations.enableUser,
+                variables: {
+                    userId: user.id,
+                },
+            });
+        });
+    });
+    test("disable a user", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER, models.Role.ADMIN],
+                username: "username",
+                displayName: "displayName",
+            })
+        );
+        const user = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+                username: "username",
+                displayName: "displayName",
+                disabled: 0,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+            tenantId,
+        };
+        const apiSpy = jest.spyOn(API, "graphql").mockResolvedValue({});
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        userEvent.click(
+            await screen.findByRole("button", { name: "Disable this user" })
+        );
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(apiSpy).toHaveBeenCalledWith({
+                query: mutations.disableUser,
+                variables: {
+                    userId: user.id,
+                },
+            });
+        });
+    });
+    test("change a user email", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER, models.Role.ADMIN],
+                username: "username",
+                displayName: "displayName",
+            })
+        );
+        const user = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+                username: "username",
+                displayName: "displayName",
+                contact: {
+                    emailAddress: "some@email.com",
+                },
+                disabled: 0,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+            tenantId,
+        };
+        const apiSpy = jest.spyOn(API, "graphql").mockResolvedValue({});
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        userEvent.click(
+            await screen.findByRole("button", { name: "Edit Email Address" })
+        );
+        const textBox = screen.getByRole("textbox");
+        userEvent.clear(textBox);
+        userEvent.type(textBox, "another@email.com");
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(apiSpy).toHaveBeenCalledWith({
+                query: mutations.updateUserEmail,
+                variables: {
+                    userId: user.id,
+                    emailAddress: "another@email.com",
+                },
+            });
+        });
+    });
+    test("change a user email failure", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER, models.Role.ADMIN],
+                username: "username",
+                displayName: "displayName",
+            })
+        );
+        const user = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+                username: "username",
+                displayName: "displayName",
+                contact: {
+                    emailAddress: "some@email.com",
+                },
+                disabled: 0,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+            tenantId,
+        };
+        jest.spyOn(API, "graphql").mockRejectedValue(new Error("error"));
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        userEvent.click(
+            await screen.findByRole("button", { name: "Edit Email Address" })
+        );
+        const textBox = screen.getByRole("textbox");
+        userEvent.clear(textBox);
+        userEvent.type(textBox, "another@email.com");
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(
+                screen.getByText("Sorry, something went wrong")
+            ).toBeInTheDocument();
+        });
+    });
+    test("resend user invite email", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER, models.Role.ADMIN],
+                username: "username",
+                displayName: "displayName",
+            })
+        );
+        const user = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+                username: "username",
+                displayName: "displayName",
+                disabled: 0,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+            tenantId,
+        };
+        const apiSpy = jest.spyOn(API, "graphql").mockResolvedValue({});
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        userEvent.click(
+            await screen.findByRole("button", { name: "Reset Password" })
+        );
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(apiSpy).toHaveBeenCalledWith({
+                query: mutations.resetUserPassword,
+                variables: {
+                    userId: user.id,
+                },
+            });
+        });
+        expect(screen.getByText("Message sent")).toBeInTheDocument();
+    });
+    test("resend user invite failure", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER, models.Role.ADMIN],
+                username: "username",
+                displayName: "displayName",
+            })
+        );
+        const user = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+                username: "username",
+                displayName: "displayName",
+                disabled: 0,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+            tenantId,
+        };
+        const apiSpy = jest
+            .spyOn(API, "graphql")
+            .mockRejectedValue(new Error("some error"));
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        userEvent.click(
+            await screen.findByRole("button", { name: "Reset Password" })
+        );
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(apiSpy).toHaveBeenCalledWith({
+                query: mutations.resetUserPassword,
+                variables: {
+                    userId: user.id,
+                },
+            });
+        });
+        expect(
+            screen.getByText("Sorry, something went wrong")
+        ).toBeInTheDocument();
     });
 });

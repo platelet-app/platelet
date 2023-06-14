@@ -1130,6 +1130,11 @@ export type DeleteRiderResponsibilityInput = {
   _version?: number | null,
 };
 
+export type SendFeedback = {
+  __typename: "SendFeedback",
+  successState?: boolean | null,
+};
+
 export type ModelTenantFilterInput = {
   id?: ModelIDInput | null,
   name?: ModelStringInput | null,
@@ -1364,11 +1369,6 @@ export type ModelRiderResponsibilityConnection = {
   items:  Array<RiderResponsibility | null >,
   nextToken?: string | null,
   startedAt?: number | null,
-};
-
-export type SendFeedback = {
-  __typename: "SendFeedback",
-  successState?: boolean | null,
 };
 
 export type ModelSubscriptionTenantFilterInput = {
@@ -4671,6 +4671,285 @@ export type UpdateUserRolesMutation = {
     _version: number,
     _deleted?: boolean | null,
     _lastChangedAt: number,
+  } | null,
+};
+
+export type DisableUserMutationVariables = {
+  userId?: string | null,
+};
+
+export type DisableUserMutation = {
+  disableUser?:  {
+    __typename: "User",
+    id: string,
+    username: string,
+    cognitoId: string,
+    tenantId: string,
+    isPrimaryAdmin?: number | null,
+    contact?:  {
+      __typename: "AddressAndContactDetails",
+      name?: string | null,
+      telephoneNumber?: string | null,
+      mobileNumber?: string | null,
+      emailAddress?: string | null,
+      ward?: string | null,
+      line1?: string | null,
+      line2?: string | null,
+      line3?: string | null,
+      town?: string | null,
+      county?: string | null,
+      state?: string | null,
+      country?: string | null,
+      postcode?: string | null,
+      what3words?: string | null,
+    } | null,
+    displayName: string,
+    name?: string | null,
+    roles: Array< Role >,
+    dateOfBirth?: string | null,
+    riderResponsibility?: string | null,
+    possibleRiderResponsibilities?:  {
+      __typename: "ModelPossibleRiderResponsibilitiesConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    profilePicture?:  {
+      __typename: "S3Object",
+      bucket: string,
+      key: string,
+      region: string,
+    } | null,
+    comments?:  {
+      __typename: "ModelCommentConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    assignments?:  {
+      __typename: "ModelTaskAssigneeConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    vehicleAssignments?:  {
+      __typename: "ModelVehicleAssignmentConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    createdTasks?:  {
+      __typename: "ModelTaskConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    createdLocations?:  {
+      __typename: "ModelLocationConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    createdVehicles?:  {
+      __typename: "ModelVehicleConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    createdScheduledTasks?:  {
+      __typename: "ModelScheduledTaskConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    disabled?: number | null,
+    createdAt: string,
+    updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
+  } | null,
+};
+
+export type EnableUserMutationVariables = {
+  userId?: string | null,
+};
+
+export type EnableUserMutation = {
+  enableUser?:  {
+    __typename: "User",
+    id: string,
+    username: string,
+    cognitoId: string,
+    tenantId: string,
+    isPrimaryAdmin?: number | null,
+    contact?:  {
+      __typename: "AddressAndContactDetails",
+      name?: string | null,
+      telephoneNumber?: string | null,
+      mobileNumber?: string | null,
+      emailAddress?: string | null,
+      ward?: string | null,
+      line1?: string | null,
+      line2?: string | null,
+      line3?: string | null,
+      town?: string | null,
+      county?: string | null,
+      state?: string | null,
+      country?: string | null,
+      postcode?: string | null,
+      what3words?: string | null,
+    } | null,
+    displayName: string,
+    name?: string | null,
+    roles: Array< Role >,
+    dateOfBirth?: string | null,
+    riderResponsibility?: string | null,
+    possibleRiderResponsibilities?:  {
+      __typename: "ModelPossibleRiderResponsibilitiesConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    profilePicture?:  {
+      __typename: "S3Object",
+      bucket: string,
+      key: string,
+      region: string,
+    } | null,
+    comments?:  {
+      __typename: "ModelCommentConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    assignments?:  {
+      __typename: "ModelTaskAssigneeConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    vehicleAssignments?:  {
+      __typename: "ModelVehicleAssignmentConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    createdTasks?:  {
+      __typename: "ModelTaskConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    createdLocations?:  {
+      __typename: "ModelLocationConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    createdVehicles?:  {
+      __typename: "ModelVehicleConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    createdScheduledTasks?:  {
+      __typename: "ModelScheduledTaskConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    disabled?: number | null,
+    createdAt: string,
+    updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
+  } | null,
+};
+
+export type UpdateUserEmailMutationVariables = {
+  userId?: string | null,
+  emailAddress?: string | null,
+};
+
+export type UpdateUserEmailMutation = {
+  updateUserEmail?:  {
+    __typename: "User",
+    id: string,
+    username: string,
+    cognitoId: string,
+    tenantId: string,
+    isPrimaryAdmin?: number | null,
+    contact?:  {
+      __typename: "AddressAndContactDetails",
+      name?: string | null,
+      telephoneNumber?: string | null,
+      mobileNumber?: string | null,
+      emailAddress?: string | null,
+      ward?: string | null,
+      line1?: string | null,
+      line2?: string | null,
+      line3?: string | null,
+      town?: string | null,
+      county?: string | null,
+      state?: string | null,
+      country?: string | null,
+      postcode?: string | null,
+      what3words?: string | null,
+    } | null,
+    displayName: string,
+    name?: string | null,
+    roles: Array< Role >,
+    dateOfBirth?: string | null,
+    riderResponsibility?: string | null,
+    possibleRiderResponsibilities?:  {
+      __typename: "ModelPossibleRiderResponsibilitiesConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    profilePicture?:  {
+      __typename: "S3Object",
+      bucket: string,
+      key: string,
+      region: string,
+    } | null,
+    comments?:  {
+      __typename: "ModelCommentConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    assignments?:  {
+      __typename: "ModelTaskAssigneeConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    vehicleAssignments?:  {
+      __typename: "ModelVehicleAssignmentConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    createdTasks?:  {
+      __typename: "ModelTaskConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    createdLocations?:  {
+      __typename: "ModelLocationConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    createdVehicles?:  {
+      __typename: "ModelVehicleConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    createdScheduledTasks?:  {
+      __typename: "ModelScheduledTaskConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    disabled?: number | null,
+    createdAt: string,
+    updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
+  } | null,
+};
+
+export type ResetUserPasswordMutationVariables = {
+  userId?: string | null,
+};
+
+export type ResetUserPasswordMutation = {
+  resetUserPassword?:  {
+    __typename: "SendFeedback",
+    successState?: boolean | null,
   } | null,
 };
 

@@ -1,0 +1,177 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`plateletAdminAddNewUser add a new user 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      {
+        "query": "listUsersQuery",
+        "variables": {
+          "filter": {
+            "tenantId": {
+              "eq": "testTenantId",
+            },
+          },
+          "nextToken": null,
+        },
+      },
+      "testEndpoint",
+    ],
+    [
+      {
+        "query": "createUserMutation",
+        "variables": {
+          "input": {
+            "cognitoId": "testSubId",
+            "contact": {
+              "emailAddress": "test@test.com",
+            },
+            "disabled": 0,
+            "displayName": "test user",
+            "name": "test user",
+            "roles": [
+              "USER",
+              "COORDINATOR",
+            ],
+            "tenantId": "testTenantId",
+            "username": "aa154086-8a21-4ff2-920e-c1c28052c8b8",
+          },
+        },
+      },
+      "testEndpoint",
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;
+
+exports[`plateletAdminAddNewUser add a new user with non-unique name 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      {
+        "query": "listUsersQuery",
+        "variables": {
+          "filter": {
+            "tenantId": {
+              "eq": "testTenantId",
+            },
+          },
+          "nextToken": null,
+        },
+      },
+      "testEndpoint",
+    ],
+    [
+      {
+        "query": "createUserMutation",
+        "variables": {
+          "input": {
+            "cognitoId": "testSubId",
+            "contact": {
+              "emailAddress": "test@test.com",
+            },
+            "disabled": 0,
+            "displayName": "Another Individual-1",
+            "name": "Another Individual",
+            "roles": [
+              "USER",
+            ],
+            "tenantId": "testTenantId",
+            "username": "aa154086-8a21-4ff2-920e-c1c28052c8b8",
+          },
+        },
+      },
+      "testEndpoint",
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;
+
+exports[`plateletAdminAddNewUser clean up on email failure 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      {
+        "query": "listUsersQuery",
+        "variables": {
+          "filter": {
+            "tenantId": {
+              "eq": "testTenantId",
+            },
+          },
+          "nextToken": null,
+        },
+      },
+      "testEndpoint",
+    ],
+    [
+      {
+        "query": "createUserMutation",
+        "variables": {
+          "input": {
+            "cognitoId": "testSubId",
+            "contact": {
+              "emailAddress": "test@test.com",
+            },
+            "disabled": 0,
+            "displayName": "Another Individual",
+            "name": "Another Individual",
+            "roles": [
+              "USER",
+            ],
+            "tenantId": "testTenantId",
+            "username": "aa154086-8a21-4ff2-920e-c1c28052c8b8",
+          },
+        },
+      },
+      "testEndpoint",
+    ],
+    [
+      {
+        "query": undefined,
+        "variables": {
+          "input": {
+            "_version": 1,
+            "id": "testUserId",
+          },
+        },
+      },
+      "testEndpoint",
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;

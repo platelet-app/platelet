@@ -4,7 +4,10 @@ import UserProfile from "./UserProfile";
 import { PaddedPaper } from "../../../styles/common";
 import ProfilePicture from "./ProfilePicture";
 import NotFound from "../../../ErrorComponents/NotFound";
-import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
+import {
+    dataStoreModelSyncedStatusSelector,
+    getWhoami,
+} from "../../../redux/Selectors";
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
@@ -13,6 +16,8 @@ import { useTheme } from "@mui/styles";
 import CurrentRiderResponsibilitySelector from "./CurrentRiderResponsibilitySelector";
 import Skeleton from "@mui/material/Skeleton";
 import usePossibleRiderResponsibilities from "../../../hooks/usePossibleRiderResponsibilities";
+import EnableDisableUser from "./EnableDisableUser";
+import ResetUserPassword from "./ResetUserPassword";
 
 const initialUserState = {
     id: "",
@@ -39,6 +44,8 @@ export default function UserDetail({ userId }) {
     const observer = useRef({
         unsubscribe: () => {},
     });
+    const whoami = useSelector(getWhoami);
+    const isAdmin = whoami?.roles.includes(models.Role.ADMIN);
 
     const possibleRiderResponsibilities =
         usePossibleRiderResponsibilities(userId).state;
@@ -194,6 +201,13 @@ export default function UserDetail({ userId }) {
                                 setUser({ ...user, roles })
                             }
                         />
+                        {user && isAdmin && <Divider />}
+                        {user && isAdmin && (
+                            <Stack spacing={2} direction="row">
+                                <EnableDisableUser user={user} />
+                                <ResetUserPassword user={user} />
+                            </Stack>
+                        )}
                     </Stack>
                 </PaddedPaper>
                 <ProfilePicture

@@ -25,7 +25,7 @@ function FavouriteLocationsSelect(props) {
     async function getLocations() {
         try {
             const locations = await DataStore.query(models.Location, (l) =>
-                l.listed("eq", 1)
+                l.listed("eq", 1).disabled("ne", 1)
             );
             setAvailableLocations(locations);
         } catch (error) {
