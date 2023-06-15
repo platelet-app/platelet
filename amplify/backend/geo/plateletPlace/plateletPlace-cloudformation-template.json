@@ -326,5 +326,5 @@
       }
     }
   },
-  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"Amplify\",\"createdWith\":\"10.8.1\",\"stackType\":\"geo-PlaceIndex\",\"metadata\":{}}"
+  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"Amplify\",\"createdWith\":\"11.0.3\",\"stackType\":\"geo-PlaceIndex\",\"metadata\":{}}"
 }

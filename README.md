@@ -10,11 +10,11 @@ Platelet is an offline first, cloud backed, dispatch software project for courie
 
 ## Screenshots
 
-![dashboard-dark](https://user-images.githubusercontent.com/32309223/200189562-b859fe2f-5345-4d49-8ebc-de48c04ff43d.png)
+![dashboard-light](https://github.com/platelet-app/platelet/assets/32309223/c82ff979-723e-4df9-bb3e-729607d07a2d)
 
-![dialog-dark-new](https://user-images.githubusercontent.com/32309223/200189567-5ad321ea-a422-4517-8e77-9477a8c3a68e.png)
+![dialog-light](https://github.com/platelet-app/platelet/assets/32309223/d2fd8ac3-08c0-4fff-80af-e914a67f6780)
 
-![mobile-dark](https://user-images.githubusercontent.com/32309223/200189570-9002e4c0-2133-4d9d-8ae7-d92c260b328d.png)
+![mobile-light](https://github.com/platelet-app/platelet/assets/32309223/dfdb0eec-7095-49b5-8339-a47e9ab5b8d0)
 
 Some of Platelet's goals are:
 

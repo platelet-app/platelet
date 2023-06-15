@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"Amplify\",\"createdWith\":\"10.8.1\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
+  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"Amplify\",\"createdWith\":\"11.0.3\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
   "Parameters": {
     "CloudWatchRule": {
       "Type": "String",
@@ -27,6 +27,14 @@
     "apiplateletGraphQLAPIEndpointOutput": {
       "Type": "String",
       "Default": "apiplateletGraphQLAPIEndpointOutput"
+    },
+    "functionplateletappSyncOperationsArn": {
+      "Type": "String",
+      "Default": "functionplateletappSyncOperationsArn"
+    },
+    "functionplateletSendEmailArn": {
+      "Type": "String",
+      "Default": "functionplateletSendEmailArn"
     },
     "plateletWelcomeEmail": {
       "Type": "String"
@@ -112,7 +120,14 @@
           ]
         },
         "Runtime": "nodejs14.x",
-        "Layers": [],
+        "Layers": [
+          {
+            "Ref": "functionplateletappSyncOperationsArn"
+          },
+          {
+            "Ref": "functionplateletSendEmailArn"
+          }
+        ],
         "Timeout": 25
       }
     },

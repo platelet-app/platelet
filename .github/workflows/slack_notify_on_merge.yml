@@ -1,0 +1,32 @@
+name: Notify Slack on merged pull requests
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - 'production/app.bloodbikes.org.uk'
+
+jobs:
+  notify_merged_pull_request:
+    name: Notify Slack on merged pull requests
+    runs-on: ubuntu-latest
+    if: ${{ github.base_ref == 'production/app.bloodbikes.org.uk' && github.event.pull_request.merged == true }}
+    steps:
+      - name: Wait for Amplify to finish remote build
+        uses: duckbytes/amplify-build-status@master
+        with:
+          app-id: ${{ secrets.AMPLIFY_APP_ID }}
+          branch-name: ${{ github.ref_name }}
+          commit-id: ${{ github.sha }}
+          wait: true
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+      - name: Post to the slack announcements channel
+        uses: abinoda/slack-action@master
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        with:
+          args: '{\"channel\":\"${{ secrets.SLACK_CHANNEL_ID }}\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*bloodbikes.cloud has been updated:* ${{ github.event.pull_request.title }}\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Pull Request by :* ${{ github.event.pull_request.user.login }}\n*Merged at:* ${{ github.event.pull_request.merged_at }}\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<${{ github.event.pull_request.html_url }}|View Merged Pull Request>\"}}]}'
+        if: success()

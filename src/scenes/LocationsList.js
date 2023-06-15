@@ -9,7 +9,7 @@ import { displayErrorNotification } from "../redux/notifications/NotificationsAc
 import { Button, Stack, TextField } from "@mui/material";
 import { Link } from "react-router-dom";
 import { matchSorter } from "match-sorter";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputAdornment } from "@mui/material";
 
@@ -97,15 +97,9 @@ export default function LocationsList() {
                 }}
             />
             <PaddedPaper maxWidth={"800px"}>
-                <Stack direction={"column"} spacing={1}>
+                <Stack direction={"column"} spacing={0}>
                     {Object.values(filteredLocations).map((loc) => {
-                        return (
-                            <LocationCard
-                                key={loc.id}
-                                uuid={loc.id}
-                                name={loc.name}
-                            />
-                        );
+                        return <LocationCard key={loc.id} location={loc} />;
                     })}
                 </Stack>
             </PaddedPaper>

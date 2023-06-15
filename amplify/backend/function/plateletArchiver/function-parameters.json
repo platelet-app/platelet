@@ -7,5 +7,13 @@
       ]
     }
   },
-  "lambdaLayers": []
+  "lambdaLayers": [
+    {
+      "type": "ProjectLayer",
+      "resourceName": "plateletappSyncOperations",
+      "version": "Always choose latest version",
+      "isLatestVersionSelected": true,
+      "env": "platd"
+    }
+  ]
 }

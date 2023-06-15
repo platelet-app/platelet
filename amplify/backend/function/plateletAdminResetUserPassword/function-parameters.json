@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "api": {
+      "platelet": [
+        "Query"
+      ]
+    },
+    "auth": {
+      "platelet61a0ac07": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    }
+  },
+  "lambdaLayers": [
+    {
+      "type": "ProjectLayer",
+      "resourceName": "plateletappSyncOperations",
+      "env": "platd",
+      "version": "Always choose latest version",
+      "isLatestVersionSelected": true
+    },
+    {
+      "type": "ProjectLayer",
+      "resourceName": "plateletSendEmail",
+      "env": "platd",
+      "version": "Always choose latest version",
+      "isLatestVersionSelected": true
+    }
+  ],
+  "environmentVariableList": [
+    {
+      "cloudFormationParameterName": "plateletWelcomeEmail",
+      "environmentVariableName": "PLATELET_WELCOME_EMAIL"
+    },
+    {
+      "cloudFormationParameterName": "plateletDomainName",
+      "environmentVariableName": "PLATELET_DOMAIN_NAME"
+    }
+  ]
+}

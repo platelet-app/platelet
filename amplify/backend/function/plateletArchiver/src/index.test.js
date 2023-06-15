@@ -183,8 +183,41 @@ function setupFetchStub(data) {
     };
 }
 
+const errorCheck = (body) => {
+    if (body?.errors) {
+        console.error(body?.errors);
+        throw new Error(body?.errors[0].message);
+    }
+};
+
+jest.mock(
+    "/opt/appSyncRequest",
+    () => {
+        return {
+            request: jest.fn(),
+            errorCheck,
+        };
+    },
+    { virtual: true }
+);
+jest.mock(
+    "/opt/graphql/mutations",
+    () => {
+        return {
+            updateTask: "updateTaskMutation",
+            updateLocation: "updateLocationMutation",
+            updateDeliverable: "updateDeliverableMutation",
+            updateComment: "updateCommentMutation",
+            updateTaskAssignee: "updateTaskAssigneeMutation",
+        };
+    },
+    { virtual: true }
+);
+
+const appsyncModule = require("/opt/appSyncRequest");
+
 describe("plateletArchiver", () => {
-    afterEach(() => jest.restoreAllMocks());
+    afterEach(() => jest.resetAllMocks());
 
     beforeAll(() => {
         jest.useFakeTimers("modern");
@@ -196,8 +229,7 @@ describe("plateletArchiver", () => {
     });
 
     test("archive some tasks, ignore the newer task", async () => {
-        const requestSpy = jest.spyOn(indexModule, "makeNewRequest");
-        jest.spyOn(fetch, "default")
+        appsyncModule.request
             .mockImplementationOnce(setupFetchStub(fakeData))
             .mockImplementationOnce(setupFetchStub(fakeDataSecond))
             .mockImplementationOnce(setupFetchStub(fakeEmptyData))
@@ -218,29 +250,36 @@ describe("plateletArchiver", () => {
             .mockImplementationOnce(setupFetchStub(fakeCommentReturn))
             .mockImplementationOnce(setupFetchStub(fakeTaskReturn));
         await indexModule.handler({}, indexModule.makeNewRequest);
-        expect(requestSpy).toMatchSnapshot();
-        expect(requestSpy).not.toHaveBeenCalledWith(
-            expect.anything(),
-            expect.objectContaining({ id: "anotherTaskId" })
+        expect(appsyncModule.request).toMatchSnapshot();
+        expect(appsyncModule.request).not.toHaveBeenCalledWith(
+            {
+                query: "updateTaskMutation",
+                variables: {
+                    input: expect.objectContaining({ id: "anotherTaskId" }),
+                },
+            },
+            expect.anything()
         );
     });
 
     test("chunk the tasks into 10s", async () => {
-        const requestSpy = jest.spyOn(indexModule, "makeNewRequest");
-        jest.spyOn(fetch, "default")
+        appsyncModule.request
             .mockImplementationOnce(setupFetchStub(fakeDataMany))
             .mockImplementation(setupFetchStub(fakeTaskReturn));
         await indexModule.handler({}, indexModule.makeNewRequest);
         for (const task of manyTasks) {
-            expect(requestSpy).toHaveBeenCalledWith(
-                expect.stringMatching(/updateTask\(/),
-                expect.objectContaining({
-                    input: {
-                        _version: 1,
-                        archived: 1,
-                        id: task.id,
+            expect(appsyncModule.request).toHaveBeenCalledWith(
+                {
+                    query: "updateTaskMutation",
+                    variables: {
+                        input: {
+                            _version: 1,
+                            archived: 1,
+                            id: task.id,
+                        },
                     },
-                })
+                },
+                "https://api.example.com/graphql"
             );
         }
     });
@@ -252,8 +291,7 @@ describe("plateletArchiver", () => {
                 archived: 0,
             },
         };
-        const requestSpy = jest.spyOn(indexModule, "makeNewRequest");
-        jest.spyOn(fetch, "default")
+        appsyncModule.request
             .mockImplementationOnce(setupFetchStub(fakeData))
             .mockImplementationOnce(setupFetchStub(fakeDataSecond))
             .mockImplementationOnce(setupFetchStub(fakeEmptyData))
@@ -265,14 +303,15 @@ describe("plateletArchiver", () => {
                 setupFetchStub(unArchivedFakeAssigneeReturn)
             );
         await indexModule.handler({}, indexModule.makeNewRequest);
-        expect(requestSpy).toMatchSnapshot();
-        expect(requestSpy).not.toHaveBeenCalledWith(
-            expect.stringMatching(/updateTask\(/),
-            expect.objectContaining({
-                input: expect.objectContaining({
-                    id: "someTaskId",
-                }),
-            })
+        expect(appsyncModule.request).toMatchSnapshot();
+        expect(appsyncModule.request).not.toHaveBeenCalledWith(
+            {
+                query: "updateTaskMutation",
+                variables: {
+                    input: expect.objectContaining({ id: "someTaskId" }),
+                },
+            },
+            expect.anything()
         );
     });
     test("graphql failure to archive an assignee", async () => {
@@ -284,8 +323,7 @@ describe("plateletArchiver", () => {
                 },
             ],
         };
-        const requestSpy = jest.spyOn(indexModule, "makeNewRequest");
-        jest.spyOn(fetch, "default")
+        appsyncModule.request
             .mockImplementationOnce(setupFetchStub(fakeData))
             .mockImplementationOnce(setupFetchStub(fakeDataSecond))
             .mockImplementationOnce(setupFetchStub(fakeEmptyData))
@@ -297,14 +335,14 @@ describe("plateletArchiver", () => {
                 setupFetchStub(unArchivedFakeAssigneeReturnError)
             );
         await indexModule.handler({}, indexModule.makeNewRequest);
-        expect(requestSpy).toMatchSnapshot();
-        expect(requestSpy).not.toHaveBeenCalledWith(
-            expect.stringMatching(/updateTask\(/),
-            expect.objectContaining({
+        expect(appsyncModule.request).toMatchSnapshot();
+        expect(appsyncModule.request).not.toHaveBeenCalledWith({
+            query: "updateTaskMutation",
+            variables: expect.objectContaining({
                 input: expect.objectContaining({
                     id: "someTaskId",
                 }),
-            })
-        );
+            }),
+        });
     });
 });

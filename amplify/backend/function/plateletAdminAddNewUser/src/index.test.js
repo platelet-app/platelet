@@ -1,9 +1,5 @@
 const handler = require("./index").handler;
-const appSyncClient = require("aws-appsync");
 const awssdk = require("aws-sdk");
-const createUser = require("./createUser").createUser;
-const deleteUser = require("./deleteUser").deleteUser;
-const listUsers = require("./listUsers").listUsers;
 
 const mockCognitoResponse = {
     User: {
@@ -68,6 +64,48 @@ const mockEmailParams = {
     ReturnPath: "welcome@test.com",
 };
 
+const errorCheck = (body) => {
+    if (body?.errors) {
+        console.error(body?.errors);
+        throw new Error(body?.errors[0].message);
+    }
+};
+
+jest.mock(
+    "/opt/appSyncRequest",
+    () => {
+        return {
+            request: jest.fn(),
+            errorCheck,
+        };
+    },
+    { virtual: true }
+);
+jest.mock(
+    "/opt/graphql/mutations",
+    () => {
+        return {
+            createUser: "createUserMutation",
+        };
+    },
+    { virtual: true }
+);
+jest.mock(
+    "/opt/graphql/queries",
+    () => {
+        return {
+            listUsers: "listUsersQuery",
+        };
+    },
+    { virtual: true }
+);
+
+const username = "aa154086-8a21-4ff2-920e-c1c28052c8b8";
+
+jest.mock("uuid", () => ({ v4: () => username }));
+
+const appsyncModule = require("/opt/appSyncRequest");
+
 jest.mock("aws-sdk", () => {
     return {
         CognitoIdentityServiceProvider: class {
@@ -75,6 +113,9 @@ jest.mock("aws-sdk", () => {
                 return this;
             }
             adminAddUserToGroup() {
+                return this;
+            }
+            adminDisableUser() {
                 return this;
             }
             adminDeleteUser() {
@@ -110,24 +151,17 @@ jest.mock("aws-appsync", () => {
 });
 
 describe("plateletAdminAddNewUser", () => {
-    const OLD_ENV = process.env;
     beforeEach(() => {
         jest.resetModules();
-        process.env = { ...OLD_ENV }; // Make a copy
     });
 
-    afterEach(() => jest.clearAllMocks());
+    afterEach(() => jest.resetAllMocks());
 
     it("should return a function", () => {
         expect(typeof handler).toBe("function");
     });
 
     test("add a new user", async () => {
-        process.env.NODE_ENV = "dev";
-        process.env.AUTH_PLATELET61A0AC07_USERPOOLID = "testPoolId";
-        process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT = "testEndpoint";
-        process.env.PLATELET_WELCOME_EMAIL = "welcome@test.com";
-        process.env.PLATELET_DOMAIN_NAME = "test.com";
         const cognitoSpy = jest.spyOn(
             awssdk.CognitoIdentityServiceProvider.prototype,
             "adminCreateUser"
@@ -135,14 +169,6 @@ describe("plateletAdminAddNewUser", () => {
         const cognitoGroupsSpy = jest.spyOn(
             awssdk.CognitoIdentityServiceProvider.prototype,
             "adminAddUserToGroup"
-        );
-        const appSyncMutateSpy = jest.spyOn(
-            appSyncClient.default.prototype,
-            "mutate"
-        );
-        const appSyncQuerySpy = jest.spyOn(
-            appSyncClient.default.prototype,
-            "query"
         );
         const SESSpy = jest.spyOn(awssdk.SES.prototype, "sendEmail");
         const mockEvent = {
@@ -153,6 +179,28 @@ describe("plateletAdminAddNewUser", () => {
                 tenantId: "testTenantId",
             },
         };
+
+        appsyncModule.request
+            .mockResolvedValueOnce({
+                json: () => ({
+                    data: {
+                        listUsers: { items: [] },
+                    },
+                }),
+            })
+            .mockResolvedValueOnce({
+                json: () => ({
+                    data: {
+                        createUser: {
+                            id: "testUserId",
+                            username,
+                            _version: 1,
+                            roles: [],
+                        },
+                    },
+                }),
+            });
+
         await handler(mockEvent);
         expect(cognitoSpy).toHaveBeenCalledWith({
             ForceAliasCreation: false,
@@ -173,54 +221,25 @@ describe("plateletAdminAddNewUser", () => {
             UserPoolId: "testPoolId",
             TemporaryPassword: expect.stringMatching(/^[\w+]{8}$/),
             MessageAction: "SUPPRESS",
-            Username: expect.any(String),
-        });
-        const createUserInput = {
-            tenantId: mockEvent.arguments.tenantId,
-            cognitoId: "testSubId",
-            name: mockEvent.arguments.name,
-            displayName: mockEvent.arguments.name,
-            roles: ["USER", "COORDINATOR"],
-            contact: { emailAddress: mockEvent.arguments.email },
-            username: expect.any(String),
-        };
-        expect(appSyncMutateSpy).toHaveBeenCalledWith({
-            mutation: createUser,
-            variables: { input: createUserInput },
-        });
-        expect(appSyncQuerySpy).toHaveBeenCalledWith({
-            query: listUsers,
-            variables: { tenantId: mockEvent.arguments.tenantId },
+            Username: username,
         });
         expect(cognitoGroupsSpy).toHaveBeenCalledWith({
             UserPoolId: "testPoolId",
-            Username: expect.any(String),
+            Username: username,
             GroupName: "USER",
         });
         expect(cognitoGroupsSpy).toHaveBeenCalledWith({
             UserPoolId: "testPoolId",
-            Username: expect.any(String),
+            Username: username,
             GroupName: "COORDINATOR",
         });
         expect(SESSpy).toHaveBeenCalledWith(mockEmailParams);
+        expect(appsyncModule.request).toMatchSnapshot();
     });
     test("add a new user with non-unique name", async () => {
-        process.env.NODE_ENV = "dev";
-        process.env.AUTH_PLATELET61A0AC07_USERPOOLID = "testPoolId";
-        process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT = "testEndpoint";
-        process.env.PLATELET_WELCOME_EMAIL = "welcome@test.com";
-        process.env.PLATELET_DOMAIN_NAME = "test.com";
         const cognitoSpy = jest.spyOn(
             awssdk.CognitoIdentityServiceProvider.prototype,
             "adminCreateUser"
-        );
-        const appSyncMutateSpy = jest.spyOn(
-            appSyncClient.default.prototype,
-            "mutate"
-        );
-        const appSyncQuerySpy = jest.spyOn(
-            appSyncClient.default.prototype,
-            "query"
         );
         const SESSpy = jest.spyOn(awssdk.SES.prototype, "sendEmail");
         const mockEvent = {
@@ -231,6 +250,33 @@ describe("plateletAdminAddNewUser", () => {
                 tenantId: "testTenantId",
             },
         };
+        appsyncModule.request
+            .mockResolvedValueOnce({
+                json: () => ({
+                    data: {
+                        listUsers: {
+                            items: [
+                                {
+                                    id: "someAlreadyId",
+                                    displayName: "Another Individual",
+                                },
+                            ],
+                        },
+                    },
+                }),
+            })
+            .mockResolvedValueOnce({
+                json: () => ({
+                    data: {
+                        createUser: {
+                            id: "testUserId",
+                            username,
+                            _version: 1,
+                            roles: [],
+                        },
+                    },
+                }),
+            });
         await handler(mockEvent);
         expect(cognitoSpy).toHaveBeenCalledWith({
             ForceAliasCreation: false,
@@ -251,51 +297,25 @@ describe("plateletAdminAddNewUser", () => {
             TemporaryPassword: expect.stringMatching(/^[\w+]{8}$/),
             MessageAction: "SUPPRESS",
             UserPoolId: "testPoolId",
-            Username: expect.any(String),
-        });
-        const createUserInput = {
-            tenantId: mockEvent.arguments.tenantId,
-            cognitoId: "testSubId",
-            name: mockEvent.arguments.name,
-            displayName: `${mockEvent.arguments.name}-2`,
-            roles: ["USER"],
-            contact: { emailAddress: mockEvent.arguments.email },
-            username: expect.any(String),
-        };
-        expect(appSyncMutateSpy).toHaveBeenCalledWith({
-            mutation: createUser,
-            variables: { input: createUserInput },
-        });
-        expect(appSyncQuerySpy).toHaveBeenCalledWith({
-            query: listUsers,
-            variables: { tenantId: mockEvent.arguments.tenantId },
+            Username: username,
         });
         expect(SESSpy).toHaveBeenCalledWith(mockEmailParams);
-        expect(appSyncMutateSpy).toHaveBeenCalledTimes(1);
-        expect(appSyncQuerySpy).toHaveBeenCalledTimes(1);
         expect(SESSpy).toHaveBeenCalledTimes(1);
+        expect(appsyncModule.request).toMatchSnapshot();
     });
 
-    // throw an error in index.js in the send email function
-    // and remove throw e from the catch block
-    // can't get this to automate properly, but it verifies it works
-    test.skip("clean up on failure", async () => {
-        process.env.NODE_ENV = "dev";
-        process.env.AUTH_PLATELET61A0AC07_USERPOOLID = "testPoolId";
-        process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT = "testEndpoint";
-        process.env.PLATELET_WELCOME_EMAIL = "welcome@test.com";
-        process.env.PLATELET_DOMAIN_NAME = "test.com";
+    test("clean up on appsync network failure", async () => {
         const cognitoSpy = jest.spyOn(
             awssdk.CognitoIdentityServiceProvider.prototype,
             "adminCreateUser"
         );
+        const cognitoDisableSpy = jest.spyOn(
+            awssdk.CognitoIdentityServiceProvider.prototype,
+            "adminDisableUser"
+        );
         const cognitoDeleteSpy = jest.spyOn(
             awssdk.CognitoIdentityServiceProvider.prototype,
             "adminDeleteUser"
-        );
-        const appSyncMutateSpy = jest.spyOn(
-            appSyncClient.default.prototype,
-            "mutate"
         );
         const mockEvent = {
             arguments: {
@@ -305,18 +325,154 @@ describe("plateletAdminAddNewUser", () => {
                 tenantId: "testTenantId",
             },
         };
-        await handler(mockEvent);
-        expect(appSyncMutateSpy).toHaveBeenCalledTimes(2);
-        expect(appSyncMutateSpy).toHaveBeenCalledWith({
-            mutation: deleteUser,
-            variables: {
-                input: {
-                    id: expect.any(String),
-                    _version: 1,
-                },
-            },
-        });
+        appsyncModule.request
+            .mockResolvedValueOnce({
+                json: () => ({
+                    data: {
+                        listUsers: {
+                            items: [],
+                        },
+                    },
+                }),
+            })
+            .mockRejectedValue("Some error");
+        await expect(handler(mockEvent)).rejects.toEqual("Some error");
         expect(cognitoSpy).toHaveBeenCalledTimes(1);
-        expect(cognitoDeleteSpy).toHaveBeenCalledTimes(1);
+        expect(cognitoDeleteSpy).toHaveBeenCalledWith({
+            UserPoolId: "testPoolId",
+            Username: username,
+        });
+        expect(cognitoDisableSpy).toHaveBeenCalledWith({
+            UserPoolId: "testPoolId",
+            Username: username,
+        });
+    });
+    test("clean up on appsync failure", async () => {
+        const cognitoSpy = jest.spyOn(
+            awssdk.CognitoIdentityServiceProvider.prototype,
+            "adminCreateUser"
+        );
+        const cognitoDisableSpy = jest.spyOn(
+            awssdk.CognitoIdentityServiceProvider.prototype,
+            "adminDisableUser"
+        );
+        const cognitoDeleteSpy = jest.spyOn(
+            awssdk.CognitoIdentityServiceProvider.prototype,
+            "adminDeleteUser"
+        );
+        const mockEvent = {
+            arguments: {
+                name: "Another Individual",
+                email: "test@test.com",
+                roles: ["USER"],
+                tenantId: "testTenantId",
+            },
+        };
+        appsyncModule.request
+            .mockResolvedValueOnce({
+                json: () => ({
+                    data: {
+                        listUsers: {
+                            items: [],
+                        },
+                    },
+                }),
+            })
+            .mockResolvedValue({
+                json: () => ({
+                    data: null,
+                    errors: [
+                        {
+                            errorType: "Unauthorized",
+                            message: "Not Authorized",
+                        },
+                    ],
+                }),
+            });
+
+        await expect(handler(mockEvent)).rejects.toEqual(
+            new Error("Not Authorized")
+        );
+        expect(cognitoSpy).toHaveBeenCalledTimes(1);
+        expect(cognitoDeleteSpy).toHaveBeenCalledWith({
+            UserPoolId: "testPoolId",
+            Username: username,
+        });
+        expect(cognitoDisableSpy).toHaveBeenCalledWith({
+            UserPoolId: "testPoolId",
+            Username: username,
+        });
+    });
+    test("clean up on email failure", async () => {
+        const cognitoSpy = jest.spyOn(
+            awssdk.CognitoIdentityServiceProvider.prototype,
+            "adminCreateUser"
+        );
+        const cognitoDisableSpy = jest.spyOn(
+            awssdk.CognitoIdentityServiceProvider.prototype,
+            "adminDisableUser"
+        );
+        const cognitoDeleteSpy = jest.spyOn(
+            awssdk.CognitoIdentityServiceProvider.prototype,
+            "adminDeleteUser"
+        );
+        jest.spyOn(awssdk.SES.prototype, "sendEmail").mockImplementation(() => {
+            throw new Error("Some error");
+        });
+        const mockEvent = {
+            arguments: {
+                name: "Another Individual",
+                email: "test@test.com",
+                roles: ["USER"],
+                tenantId: "testTenantId",
+            },
+        };
+        appsyncModule.request
+            .mockResolvedValueOnce({
+                json: () => ({
+                    data: {
+                        listUsers: {
+                            items: [],
+                        },
+                    },
+                }),
+            })
+            .mockResolvedValueOnce({
+                json: () => ({
+                    data: {
+                        createUser: {
+                            id: "testUserId",
+                            username,
+                            _version: 1,
+                            roles: [],
+                        },
+                    },
+                }),
+            })
+            .mockResolvedValueOnce({
+                json: () => ({
+                    data: {
+                        deleteUser: {
+                            id: "testUserId",
+                            username,
+                            _version: 1,
+                            roles: [],
+                        },
+                    },
+                }),
+            });
+        await expect(handler(mockEvent)).rejects.toEqual(
+            new Error("Some error")
+        );
+        expect(cognitoSpy).toHaveBeenCalledTimes(1);
+        expect(cognitoDeleteSpy).toHaveBeenCalledWith({
+            UserPoolId: "testPoolId",
+            Username: username,
+        });
+        expect(cognitoDisableSpy).toHaveBeenCalledWith({
+            UserPoolId: "testPoolId",
+            Username: username,
+        });
+        expect(appsyncModule.request).toMatchSnapshot();
     });
 });
