@@ -76,7 +76,6 @@ function PopOutLocationSelector(props) {
     }, [props.override]);
 
     function handleConfirmation(value) {
-        debugger;
         if (_.isEqual(state, value)) {
             setEditMode(false);
             return;

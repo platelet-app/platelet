@@ -627,6 +627,12 @@ describe("TaskDetailsPanel", () => {
             },
         });
         await DataStore.save(mockTask);
+        const establishment = await DataStore.save(
+            new models.Location({
+                name: "some establishment",
+            })
+        );
+        await DataStore.save(establishment);
         const querySpy = jest.spyOn(amplify.DataStore, "query");
         render(<TaskDetailsPanel taskId={mockTask.id} />, { preloadedState });
         await waitFor(() => {
@@ -669,6 +675,13 @@ describe("TaskDetailsPanel", () => {
                 screen.getByText(moment(toc).format("HH:mm"))
             ).toBeInTheDocument();
         });
+        const latest = await DataStore.query(models.Task, mockTask.id);
+        await DataStore.save(
+            models.Task.copyOf(latest, (upd) => {
+                upd.establishmentLocation = establishment;
+            })
+        );
+        await screen.findByText(establishment.name);
     });
 
     it("unsubscribes to task observer on unmount", async () => {

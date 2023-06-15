@@ -61,15 +61,7 @@ function TaskDetailsPanel(props) {
             ).subscribe(async (observeResult) => {
                 const taskData = observeResult.element;
                 if (["INSERT", "UPDATE"].includes(observeResult.opType)) {
-                    if (taskData.establishmentLocationId) {
-                        const establishmentLocation = await DataStore.query(
-                            models.Location,
-                            taskData.establishmentLocationId
-                        );
-                        setState({ ...taskData, establishmentLocation });
-                    } else {
-                        setState(taskData);
-                    }
+                    setState(taskData);
                 } else if (observeResult.opType === "DELETE") {
                     setErrorState(new Error("Task was deleted"));
                 }

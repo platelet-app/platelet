@@ -13,7 +13,7 @@
       "resourceName": "plateletappSyncOperations",
       "version": "Always choose latest version",
       "isLatestVersionSelected": true,
-      "env": "platd"
+      "env": "platdd"
     }
   ]
 }

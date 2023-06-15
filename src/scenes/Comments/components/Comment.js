@@ -122,7 +122,6 @@ function Comment(props) {
                         commentUUID={comment.id}
                         onSetEditMode={() => setEditMode(true)}
                         onDelete={props.onDelete}
-                        onRestore={() => props.onRestore(state)}
                     />
                 </div>
                 <EditCommentDialog
@@ -143,14 +142,12 @@ Comment.propTypes = {
     comment: PropTypes.object,
     showAuthor: PropTypes.bool,
     onDelete: PropTypes.func,
-    onRestore: PropTypes.func,
 };
 
 Comment.defaultProps = {
     showContextMenu: false,
     showAuthor: true,
     onDelete: () => {},
-    onRestore: () => {},
 };
 
 export default Comment;

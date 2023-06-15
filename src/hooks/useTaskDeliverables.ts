@@ -60,12 +60,9 @@ const useTaskDeliverables = (
                             );
                             return;
                         }
-                        // DataStore quirk
                         if (
-                            // @ts-ignore
-                            element.taskDeliverablesId !== taskId &&
-                            // @ts-ignore
-                            element.scheduledTaskDeliverablesId !== taskId
+                            element.task?.id !== taskId &&
+                            element.scheduledTask?.id !== taskId
                         )
                             return;
                         if (result) {

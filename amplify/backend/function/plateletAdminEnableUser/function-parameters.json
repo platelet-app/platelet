@@ -19,9 +19,9 @@
     {
       "type": "ProjectLayer",
       "resourceName": "plateletappSyncOperations",
-      "env": "platd",
       "version": "Always choose latest version",
-      "isLatestVersionSelected": true
+      "isLatestVersionSelected": true,
+      "env": "platdd"
     }
   ]
 }

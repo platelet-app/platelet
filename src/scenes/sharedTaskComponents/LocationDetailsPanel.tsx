@@ -57,8 +57,6 @@ type LocationDetailsPanelProps<T extends models.Task | models.ScheduledTask> = {
     hasFullPermissionsOverride?: boolean;
 };
 
-type LocationKeyId = "pickUpLocationId" | "dropOffLocationId";
-
 const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     locationKey,
     taskId,
@@ -97,6 +95,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
         if (!loadedOnce.current) setIsFetching(true);
         if (!taskId) return;
         try {
+            // @ts-ignore
             const existingTask = await DataStore.query(taskModel, taskId);
             if (!existingTask) {
                 throw new Error("Task not found");
@@ -107,36 +106,33 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                 existingTask.id
             ).subscribe(async ({ opType, element }) => {
                 if (opType === "UPDATE") {
-                    // datastore weirdness
-                    // when using an observer the location id is returned and not
-                    // the location record
-                    const locId =
-                        // @ts-ignore
-                        element[`${locationKey}Id` as LocationKeyId];
-                    const existingLocation = await DataStore.query(
-                        models.Location,
-                        locId
-                    );
-                    setState((prevState) => {
-                        if (
-                            (!prevState && locId) ||
-                            (prevState && locId !== prevState.id)
-                        ) {
-                            locationObserver.current.unsubscribe();
-                            locationObserver.current = DataStore.observe(
-                                models.Location,
-                                locId
-                            ).subscribe(({ opType, element }) => {
-                                if (opType === "UPDATE") {
-                                    setState(element);
-                                }
-                            });
-                            return existingLocation || null;
-                        } else if (!locId) {
-                            setState(null);
-                        }
-                        return prevState;
-                    });
+                    const locId = element[locationKey]?.id;
+                    if (locId) {
+                        const existingLocation = await DataStore.query(
+                            models.Location,
+                            locId
+                        );
+                        setState((prevState) => {
+                            if (
+                                (!prevState && locId) ||
+                                (prevState && locId !== prevState.id)
+                            ) {
+                                locationObserver.current.unsubscribe();
+                                locationObserver.current = DataStore.observe(
+                                    models.Location,
+                                    locId
+                                ).subscribe(({ opType, element }) => {
+                                    if (opType === "UPDATE") {
+                                        setState(element);
+                                    }
+                                });
+                                return existingLocation || null;
+                            }
+                            return prevState;
+                        });
+                    } else {
+                        setState(null);
+                    }
                 }
             });
             const location = existingTask[locationKey] || null;
@@ -186,6 +182,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     async function editPreset(additionalValues?: LocationType) {
         try {
             if (!taskId) throw new Error("No task id");
+            // @ts-ignore
             const result = await DataStore.query(taskModel, taskId);
             if (!result) throw new Error("Task doesn't exist");
             if (!state) {
@@ -219,6 +216,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     async function selectPreset(location: models.Location) {
         try {
             if (!taskId) throw new Error("No task id");
+            // @ts-ignore
             const result = await DataStore.query(taskModel, taskId);
             if (!result) throw new Error("Task doesn't exist");
             if (!location) return;
@@ -249,6 +247,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     async function clearLocation() {
         try {
             if (!taskId) throw new Error("No task id");
+            // @ts-ignore
             const result = await DataStore.query(taskModel, taskId);
             if (!result) throw new Error("Task doesn't exist");
             const existingLocation = result[locationKey];
@@ -435,6 +434,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
             );
             // find the existing task
             if (taskId) {
+                // @ts-ignore
                 const existingTask = await DataStore.query(taskModel, taskId);
                 if (!existingTask) throw new Error("Task doesn't exist");
                 // link to new location
@@ -514,6 +514,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                     if (!taskId) throw new Error("No task id");
                     const existingTask = await DataStore.query(
                         taskModel,
+                        // @ts-ignore
                         taskId
                     );
                     if (!existingTask) throw new Error("Task doesn't exist");

@@ -30,7 +30,9 @@ const useModelSubscription = <T extends PersistentModel>(
         observer.current.unsubscribe();
         setIsFetching(true);
         try {
+            // @ts-ignore
             const result = await DataStore.query(model, id);
+
             if (result) {
                 setNotFound(false);
                 setState(result);
@@ -41,6 +43,7 @@ const useModelSubscription = <T extends PersistentModel>(
                             setNotFound(true);
                             return;
                         } else {
+                            // @ts-ignore
                             const result = await DataStore.query(model, id);
                             if (!result) {
                                 setNotFound(true);

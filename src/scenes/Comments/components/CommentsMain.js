@@ -2,7 +2,7 @@ import Grid from "@mui/material/Grid";
 import React from "react";
 import NewCommentCard from "./NewCommentCard";
 import { useSelector } from "react-redux";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
 import PropTypes from "prop-types";
 import { getWhoami } from "../../../redux/Selectors";
 import Comment from "./Comment";
@@ -62,7 +62,6 @@ function CommentsMain(props) {
                                     }
                                     comment={comment}
                                     onDelete={props.onDelete}
-                                    onRestore={props.onRestore}
                                 />
                             </Grid>
                         </React.Fragment>
@@ -86,7 +85,6 @@ CommentsMain.propTypes = {
     parentUUID: PropTypes.string,
     comments: PropTypes.arrayOf(PropTypes.object),
     onDelete: PropTypes.func,
-    onRestore: PropTypes.func,
     onNewComment: PropTypes.func,
 };
 
@@ -94,7 +92,6 @@ CommentsMain.defaultProps = {
     parentUUID: "",
     comments: [],
     onDelete: () => {},
-    onRestore: () => {},
     onNewComment: () => {},
 };
 

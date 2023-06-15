@@ -194,7 +194,7 @@ describe("ScheduledTasks", () => {
             screen.getByRole("button", { name: "Add scheduled task" })
         ).toBeInTheDocument();
     });
-    test.only("enable and disable all scheduled tasks", async () => {
+    test("enable and disable all scheduled tasks", async () => {
         const whoami = await DataStore.save(
             new models.User({
                 tenantId,

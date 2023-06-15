@@ -6,16 +6,8 @@ import { isCompletedTab } from "./isCompletedTab";
 
 export default async function getAllMyTasks(
     keys: models.TaskStatus[],
-    userId: string,
-    roleView: models.Role,
-    allAssignees: models.TaskAssignee[]
+    myTasksIds: string[]
 ): Promise<TaskStateType> {
-    const roleViewAssignments = allAssignees.filter(
-        (assignee) => assignee.role === roleView
-    );
-    const myTasksIds = roleViewAssignments
-        .filter((a) => a.task && a?.assignee.id === userId)
-        .map((a2) => a2?.task?.id);
     let filteredTasks = [];
     if (!myTasksIds || myTasksIds.length === 0) {
         return {};
@@ -49,25 +41,21 @@ export default async function getAllMyTasks(
             }
         );
     } else {
-        filteredTasks = await DataStore.query(
+        const tasks = await DataStore.query(
             models.Task,
             (task) =>
-                task
-                    .or((task) =>
-                        myTasksIds.reduce(
-                            (task, id) => task.id("eq", id || ""),
-                            task
-                        )
+                task.or((task) =>
+                    keys.reduce(
+                        (task, status) => task.status("eq", status),
+                        task
                     )
-                    .or((task) =>
-                        keys.reduce(
-                            (task, status) => task.status("eq", status),
-                            task
-                        )
-                    ),
+                ),
             {
                 sort: (s) => s.createdAt("DESCENDING"),
             }
+        );
+        filteredTasks = tasks.filter((task) =>
+            myTasksIds.includes(task.id || "")
         );
     }
     return convertTasksToStateType(filteredTasks);

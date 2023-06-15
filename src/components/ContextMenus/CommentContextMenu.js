@@ -100,7 +100,6 @@ export default function CommentContextMenu(props) {
                         showAuthor={false}
                         comment={comment}
                         onDelete={props.onDelete}
-                        onRestore={props.onRestore}
                     />
                 )}
             </ConfirmationDialog>

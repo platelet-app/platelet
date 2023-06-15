@@ -27,6 +27,7 @@ const useModelQuery = <T extends PersistentModel>(
         }
         setIsFetching(true);
         try {
+            // @ts-ignore
             const result = await DataStore.query(model, id);
             if (result) {
                 setState(result);

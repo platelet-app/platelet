@@ -5,7 +5,6 @@ import { call, take, put } from "redux-saga/effects";
 import { eventChannel } from "redux-saga";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models";
-import dataStoreNestedWorkAroundMapper from "./dataStoreNestedWorkAroundMapper";
 import LocalPredicates from "../../utilities/predicates";
 
 function listener() {
@@ -57,16 +56,9 @@ function* initializeTaskAssigneesObserver(): Generator<any, any, any> {
     try {
         while (true) {
             const result = yield take(channel);
-            // DataStore bug workaround for issue #9682 on github
-            const fixed = yield call(
-                dataStoreNestedWorkAroundMapper,
-                result.items
-            );
-            console.log(fixed);
             yield put(
                 actions.setTaskAssignees({
                     ...result,
-                    items: fixed,
                     ready: true,
                 })
             );

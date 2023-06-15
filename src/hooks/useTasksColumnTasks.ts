@@ -11,7 +11,6 @@ import {
     selectionActionsPendingSelector,
 } from "../redux/Selectors";
 import getAllMyTasks from "./utilities/getAllMyTasks";
-import getAllMyTasksWithUser from "./utilities/getAllMyTasksWithUser";
 import getAllTasksByUser from "./utilities/getAllTasksByUser";
 import getTasksAll from "./utilities/getTasksAll";
 import { DataStore } from "aws-amplify";
@@ -35,14 +34,9 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
     const roleView = useSelector(getRoleView);
     const dataStoreModelSynced = useSelector(
         dataStoreModelSyncedStatusSelector
-    );
+    ).Task;
     const selectionActionsPending = useSelector(
         selectionActionsPendingSelector
-    );
-    const getTasksRef = React.useRef<Function>(
-        async (): Promise<TaskStateType> => {
-            return {};
-        }
     );
     const tasksSubscription = React.useRef({
         unsubscribe: () => {},
@@ -53,13 +47,18 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
     });
     const whoami = useSelector(getWhoami);
     const taskAssignees = useSelector(taskAssigneesSelector);
-    const prevTaskAssigneesRef = React.useRef<models.TaskAssignee[] | null>(
-        null
-    );
     const taskAssigneesReady = useSelector(taskAssigneesReadyStatusSelector);
     const [isFetching, setIsFetching] = React.useState(true);
     const [error, setError] = React.useState(false);
     stateRef.current = state;
+    const tasksKeyJSON = JSON.stringify(taskStatusKey);
+
+    let myTaskAssigneeIds = taskAssignees.items
+        .filter(
+            (a: models.TaskAssignee) =>
+                a?.assignee?.id === whoami?.id && a?.role === roleView
+        )
+        .map((a2: models.TaskAssignee) => a2?.task?.id);
 
     function addTaskToState(newTask: models.Task) {
         setState((prevState) => {
@@ -74,158 +73,90 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
         });
     }
 
-    const getTasks = React.useCallback(
-        async (
-            dashboardFilteredUser,
-            taskKey,
-            roleView,
-            selectionActionsPending,
-            taskAssigneesItems,
-            taskAssigneesReady,
-            whoamiId
-        ) => {
-            if (
-                !roleView ||
-                !taskAssigneesReady ||
-                selectionActionsPending ||
-                !taskKey
-            ) {
-                return;
-            } else {
-                try {
-                    if (
-                        taskKey.includes(models.TaskStatus.PENDING) ||
-                        (roleView === "ALL" && !dashboardFilteredUser)
-                    ) {
-                        setState(await getTasksAll(taskKey));
-                    } else if (roleView === "ALL" && dashboardFilteredUser) {
-                        setState(
-                            await getAllTasksByUser(
-                                taskKey,
-                                dashboardFilteredUser,
-                                models.Role.RIDER,
-                                taskAssigneesItems
-                            )
-                        );
-                    } else if (roleView !== "ALL" && !dashboardFilteredUser) {
-                        setState(
-                            await getAllMyTasks(
-                                taskKey,
-                                whoamiId,
-                                roleView,
-                                taskAssigneesItems
-                            )
-                        );
-                    } else if (roleView !== "ALL" && dashboardFilteredUser) {
-                        setState(
-                            await getAllMyTasksWithUser(
-                                taskKey,
-                                whoamiId,
-                                roleView,
-                                dashboardFilteredUser,
-                                taskAssigneesItems
-                            )
-                        );
-                    }
-
-                    prevTaskAssigneesRef.current = taskAssigneesItems;
-                    setIsFetching(false);
-                } catch (error) {
-                    setError(true);
-                    setIsFetching(false);
-                    console.log(error);
-                }
-            }
-        },
-        []
-    );
-
-    const getTasksNoParams = React.useCallback(() => {
-        return getTasks(
-            dashboardFilteredUser,
-            taskStatusKey,
-            roleView,
-            selectionActionsPending,
-            taskAssignees.items,
-            taskAssigneesReady,
-            whoami.id
+    if (dashboardFilteredUser && roleView === models.Role.COORDINATOR) {
+        const theirAssignments = taskAssignees.items.filter(
+            (a: models.TaskAssignee) =>
+                a.role === models.Role.RIDER &&
+                a.task &&
+                a.assignee?.id === dashboardFilteredUser
         );
-    }, [
-        dashboardFilteredUser,
-        taskStatusKey,
-        roleView,
-        selectionActionsPending,
-        taskAssignees.items,
-        taskAssigneesReady,
-        whoami.id,
-        getTasks,
-    ]);
-
-    getTasksRef.current = getTasksNoParams;
-
-    const tasksKeyJSON = JSON.stringify(taskStatusKey);
-    React.useEffect(() => {
-        getTasks(
-            dashboardFilteredUser,
-            taskStatusKey,
-            roleView,
-            selectionActionsPending,
-            taskAssignees.items,
-            taskAssigneesReady,
-            whoami.id
+        const theirTaskIds = theirAssignments.map(
+            (a: models.TaskAssignee) => a.task?.id
         );
-    }, [
-        dataStoreModelSynced.Task,
-        dataStoreModelSynced.Location,
-        selectionActionsPending,
-        dashboardFilteredUser,
-        taskAssigneesReady,
-        roleView,
-        // JSON.stringify prevents component remount from an array prop
-        tasksKeyJSON,
-        getTasks,
-        whoami.id,
-        taskAssignees.items,
-    ]);
+        const intersectingTasksIds = _.intersection(
+            myTaskAssigneeIds,
+            theirTaskIds
+        );
+        myTaskAssigneeIds = intersectingTasksIds;
+    }
 
-    React.useEffect(() => {
-        try {
-            if (roleView === "ALL" || !prevTaskAssigneesRef.current) return;
-            const newItems = taskAssignees.items;
-            // get any items that are not in the previous list
-            const newItemsIds = newItems.map(
-                (item: models.TaskAssignee) => item.id
-            );
-            const newItemsIdsSet = new Set(newItemsIds);
-            const prevItemsIds = prevTaskAssigneesRef.current.map(
-                (item: models.TaskAssignee) => item.id
-            );
-            const prevItemsIdsSet = new Set(prevItemsIds);
-            const addedItems = newItems.filter(
-                (item: models.TaskAssignee) => !prevItemsIdsSet.has(item.id)
-            );
-            const removedItems = prevTaskAssigneesRef.current.filter(
-                (item: models.TaskAssignee) => !newItemsIdsSet.has(item.id)
-            );
-            if (
-                [...addedItems, ...removedItems].map(
-                    (item) => item.assignee && item.assignee.id === whoami.id
-                ).length > 0
-            ) {
-                getTasksRef.current();
-            }
-        } catch (error) {
-            console.log(error);
+    const sortedMyTaskAssigneeIds = myTaskAssigneeIds.sort(
+        (a: string, b: string) => {
+            return a.localeCompare(b);
         }
-    }, [taskAssignees, roleView, whoami]);
+    );
+    const taskIdsJson = JSON.stringify(sortedMyTaskAssigneeIds);
+
+    const getTasks = React.useCallback(async () => {
+        if (
+            !roleView ||
+            !taskAssigneesReady ||
+            selectionActionsPending ||
+            !taskStatusKey
+        ) {
+            return;
+        } else {
+            try {
+                if (
+                    taskStatusKey.includes(models.TaskStatus.PENDING) ||
+                    (roleView === "ALL" && !dashboardFilteredUser)
+                ) {
+                    setState(await getTasksAll(taskStatusKey));
+                } else if (roleView === "ALL" && dashboardFilteredUser) {
+                    setState(
+                        await getAllTasksByUser(
+                            taskStatusKey,
+                            dashboardFilteredUser,
+                            models.Role.RIDER,
+                            taskAssignees.items
+                        )
+                    );
+                } else if (roleView !== "ALL") {
+                    setState(
+                        await getAllMyTasks(taskStatusKey, myTaskAssigneeIds)
+                    );
+                }
+
+                setIsFetching(false);
+            } catch (error) {
+                setError(true);
+                setIsFetching(false);
+                console.log(error);
+            }
+        }
+    }, [
+        dashboardFilteredUser,
+        tasksKeyJSON,
+        roleView,
+        selectionActionsPending,
+        taskIdsJson,
+        taskAssigneesReady,
+        whoami.id,
+    ]);
+
+    React.useEffect(() => {
+        getTasks();
+    }, [getTasks, dataStoreModelSynced]);
 
     const selectionActionsPendingRef = React.useRef(false);
     selectionActionsPendingRef.current = selectionActionsPending;
 
-    const setUpObservers = React.useCallback((roleView, taskKey) => {
-        tasksSubscription.current.unsubscribe();
-        tasksSubscription.current = DataStore.observe(models.Task).subscribe(
-            (newTask) => {
+    const setUpObservers = React.useCallback(
+        (roleView, taskKey) => {
+            tasksSubscription.current.unsubscribe();
+            tasksSubscription.current = DataStore.observe(
+                models.Task
+            ).subscribe((newTask) => {
                 if (selectionActionsPendingRef.current) return;
                 try {
                     if (newTask.opType === "UPDATE") {
@@ -234,7 +165,7 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
                             taskKey.includes(newTask.element.status) &&
                             !(newTask.element.id in stateRef.current)
                         ) {
-                            getTasksRef.current();
+                            getTasks();
                             return;
                         } else if (
                             newTask.element.status &&
@@ -243,25 +174,7 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
                             removeTaskFromState(newTask.element);
                             return;
                         } else if (newTask.element.id in stateRef.current) {
-                            if (
-                                // DataStore observer quirk
-                                // @ts-ignore
-                                newTask.element.pickUpLocationId !==
-                                    stateRef.current[newTask.element.id]
-                                        // prettier-ignore
-                                        // @ts-ignore
-                                        .pickUpLocationId ||
-                                // @ts-ignore
-                                newTask.element.dropOffLocationId !==
-                                    stateRef.current[newTask.element.id]
-                                        // prettier-ignore
-                                        // @ts-ignore
-                                        .dropOffLocationId
-                            ) {
-                                getTasksRef.current();
-                            } else {
-                                addTaskToState(newTask.element);
-                            }
+                            addTaskToState(newTask.element);
                         }
                     } else {
                         // if roleView is rider or coordinator, let the assignments observer deal with it
@@ -271,52 +184,53 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
                         )
                             return;
                         if (taskKey.includes(newTask.element.status)) {
-                            getTasksRef.current();
+                            getTasks();
                         }
                     }
                 } catch (error) {
                     console.log(error);
                 }
-            }
-        );
-        locationsSubscription.current.unsubscribe();
-        locationsSubscription.current = DataStore.observe(
-            models.Location
-        ).subscribe(async (location) => {
-            try {
-                if (location.opType === "UPDATE") {
-                    for (const task of Object.values(stateRef.current)) {
-                        if (
-                            task.pickUpLocation &&
-                            task.pickUpLocation.id === location.element.id
-                        ) {
-                            setState((prevState) => ({
-                                ...prevState,
-                                [task.id]: {
-                                    ...prevState[task.id],
-                                    pickUpLocation: location.element,
-                                },
-                            }));
-                        }
-                        if (
-                            task.dropOffLocation &&
-                            task.dropOffLocation.id === location.element.id
-                        ) {
-                            setState((prevState) => ({
-                                ...prevState,
-                                [task.id]: {
-                                    ...prevState[task.id],
-                                    dropOffLocation: location.element,
-                                },
-                            }));
+            });
+            locationsSubscription.current.unsubscribe();
+            locationsSubscription.current = DataStore.observe(
+                models.Location
+            ).subscribe(async (location) => {
+                try {
+                    if (location.opType === "UPDATE") {
+                        for (const task of Object.values(stateRef.current)) {
+                            if (
+                                task.pickUpLocation &&
+                                task.pickUpLocation.id === location.element.id
+                            ) {
+                                setState((prevState) => ({
+                                    ...prevState,
+                                    [task.id]: {
+                                        ...prevState[task.id],
+                                        pickUpLocation: location.element,
+                                    },
+                                }));
+                            }
+                            if (
+                                task.dropOffLocation &&
+                                task.dropOffLocation.id === location.element.id
+                            ) {
+                                setState((prevState) => ({
+                                    ...prevState,
+                                    [task.id]: {
+                                        ...prevState[task.id],
+                                        dropOffLocation: location.element,
+                                    },
+                                }));
+                            }
                         }
                     }
+                } catch (error) {
+                    console.log(error);
                 }
-            } catch (error) {
-                console.log(error);
-            }
-        });
-    }, []);
+            });
+        },
+        [getTasks]
+    );
 
     React.useEffect(() => {
         setUpObservers(roleView, taskStatusKey);
