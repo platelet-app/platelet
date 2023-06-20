@@ -39,9 +39,8 @@ jobs:
       with:
         awsEnvName: ${{ secrets.AMPLIFY_ENV_NAME }}
         awsExportsFilepath: ${{ github.workspace }}/src/aws-exports-es5.js
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ${{ secrets.AWS_REGION }}
-        API_URL: ${{ secrets.API_URL }}
-        AMPLIFY_ENV_NAME: ${{ secrets.AMPLIFY_ENV_NAME }}
+        awsAccessKeyId: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        awsRegion: ${{ secrets.AWS_REGION }}
+        apiURL: ${{ secrets.API_URL }}
+        amplifyEnvName: ${{ secrets.AMPLIFY_ENV_NAME }}
