@@ -54,6 +54,8 @@ jobs:
         REACT_APP_OFFLINE_ONLY: false
         REACT_APP_POPULATE_FAKE_DATA: false
         REACT_APP_GOOGLE_MAPS_API_KEY: ${{ secrets.ANDROID_GOOGLE_MAPS_API_KEY }}
+        REACT_APP_TENANT_GRAPHQL_ENDPOINT: ${{ secrets.API_URL }}
+        REACT_APP_TENANT_GRAPHQL_API_KEY: ${{ secrets.API_KEY }}
         CI: false
         GENERATE_SOURCEMAP: false
     - name: NPM test
