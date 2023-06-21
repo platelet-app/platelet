@@ -25,7 +25,6 @@ import * as models from "./models";
 import useCurrentTheme from "./hooks/useCurrentTheme";
 import TenantList from "./scenes/TenantPicker/TenantList";
 import Login from "./scenes/Login/Login";
-import configureAmplify from "./scenes/TenantPicker/utilities/configureAmplify";
 import SnackNotificationBar from "./components/SnackNotificationBar";
 
 declare module "@mui/material/styles" {
@@ -56,16 +55,6 @@ declare module "@mui/material/styles" {
             PENDING: React.CSSProperties["color"];
         };
     }
-}
-
-if (
-    (!process.env.REACT_APP_OFFLINE_ONLY ||
-        process.env.REACT_APP_OFFLINE_ONLY === "false") &&
-    (!process.env.REACT_APP_DEMO_MODE ||
-        process.env.REACT_APP_DEMO_MODE === "false")
-) {
-    const config = require("../src/aws-exports");
-    configureAmplify(config.default);
 }
 
 Logger.LOG_LEVEL = "ERROR";
@@ -154,19 +143,22 @@ function AppDefault(props: any) {
 
 const App = () => {
     const [setupComplete, setSetupComplete] = React.useState(false);
+    const onSetupComplete = React.useCallback(() => {
+        setSetupComplete(true);
+    }, []);
     const offline =
         process.env.REACT_APP_OFFLINE_ONLY &&
         process.env.REACT_APP_OFFLINE_ONLY === "true";
     if (offline) {
         return <AppDefault />;
-    } else if (true || setupComplete) {
+    } else if (setupComplete) {
         return (
             <Login>
                 <AppDefault />
             </Login>
         );
     } else {
-        return <TenantList onSetupComplete={() => setSetupComplete(true)} />;
+        return <TenantList onSetupComplete={onSetupComplete} />;
     }
 };
 

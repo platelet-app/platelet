@@ -6,14 +6,23 @@ import { DataStore } from "aws-amplify";
 
 describe("SignInHeader", () => {
     const original = window.location;
+    const OLD_ENV = process.env;
+
+    beforeEach(() => {
+        jest.resetModules();
+        process.env = { ...OLD_ENV };
+    });
     afterAll(() => {
         Object.defineProperty(window, "location", {
             configurable: true,
             value: original,
         });
+        process.env = OLD_ENV;
     });
 
-    it.skip("shows the team name", async () => {
+    it("shows the team name", async () => {
+        process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = "something";
+        process.env.REACT_APP_TENANT_GRAPHQL_API_KEY = "somekey";
         const windowReload = jest.fn();
         Object.defineProperty(window, "location", {
             configurable: true,

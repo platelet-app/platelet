@@ -110,9 +110,27 @@ export const TenantList: React.FC<TenantListProps> = ({
         }
     };
 
-    if (configFromLocalStorage) {
-        configureAmplify(JSON.parse(configFromLocalStorage));
-        onSetupComplete();
+    React.useEffect(() => {
+        if (
+            (!process.env.REACT_APP_OFFLINE_ONLY ||
+                process.env.REACT_APP_OFFLINE_ONLY === "false") &&
+            (!process.env.REACT_APP_DEMO_MODE ||
+                process.env.REACT_APP_DEMO_MODE === "false") &&
+            !process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT
+        ) {
+            const config = require("../../aws-exports");
+            configureAmplify(config.default);
+            onSetupComplete();
+        } else if (configFromLocalStorage) {
+            configureAmplify(JSON.parse(configFromLocalStorage));
+            onSetupComplete();
+        }
+    }, [configFromLocalStorage, onSetupComplete]);
+
+    if (
+        !process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT ||
+        configFromLocalStorage
+    ) {
         return <></>;
     } else if (errorState) {
         return (
