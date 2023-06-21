@@ -44,3 +44,4 @@ jobs:
         awsRegion: ${{ secrets.AWS_REGION }}
         apiURL: ${{ secrets.API_URL }}
         amplifyEnvName: ${{ secrets.AMPLIFY_ENV_NAME }}
+        tenantName: ${{ vars.TENANT_NAME }}
