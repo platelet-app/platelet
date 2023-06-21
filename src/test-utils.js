@@ -7,8 +7,8 @@ import {
     createTheme,
 } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
-import { SnackbarProvider, withSnackbar } from "notistack";
-import { Provider, useDispatch, useSelector } from "react-redux";
+import { SnackbarProvider } from "notistack";
+import { Provider, useDispatch } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import mediaQuery from "css-mediaquery";
 import ReactNotification from "react-notifications-component";
@@ -18,11 +18,10 @@ import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { render as rtlRender } from "@testing-library/react";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import rootSaga from "./redux/RootSagas";
-import { DismissButton } from "./styles/common";
-import SnackNotificationButtons from "./components/SnackNotificationButtons";
 import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./redux/Reducers";
 import { userRoles } from "./apiConsts";
+import SnackNotificationBar from "./components/SnackNotificationBar";
 
 const testUserModel = new models.User({
     name: "whoami",
@@ -100,32 +99,8 @@ function TestApp(props) {
         dispatch(initialiseApp());
     }
     React.useEffect(initialise, []);
+    <SnackNotificationBar />;
 
-    const incomingNotification = useSelector((state) => state.notification);
-
-    const snackDismissAction = (key) => (
-        <React.Fragment>
-            <DismissButton onClick={() => props.closeSnackbar(key)} />
-        </React.Fragment>
-    );
-
-    function showNotification() {
-        if (incomingNotification) {
-            const { message, options, restoreCallback, viewLink } =
-                incomingNotification;
-            options.action = (key) => (
-                <SnackNotificationButtons
-                    restoreCallback={restoreCallback}
-                    viewLink={viewLink}
-                    snackKey={key}
-                    closeSnackbar={props.closeSnackbar}
-                />
-            );
-            props.enqueueSnackbar(message, options);
-        }
-    }
-
-    React.useEffect(showNotification, [incomingNotification]);
     return (
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={theme}>
@@ -135,8 +110,6 @@ function TestApp(props) {
         </StyledEngineProvider>
     );
 }
-
-const AppSnacked = withSnackbar(TestApp);
 
 const sagaMiddleWare = createSagaMiddleware(sagaOptions);
 
@@ -167,7 +140,8 @@ function render(
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <ReactNotification />
                         <SnackbarProvider maxSnack={1}>
-                            <AppSnacked {...props}>{props.children}</AppSnacked>
+                            <TestApp {...props}>{props.children}</TestApp>
+                            <SnackNotificationBar {...props} />
                         </SnackbarProvider>
                     </LocalizationProvider>
                 </BrowserRouter>

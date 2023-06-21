@@ -10,7 +10,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import Moment from "react-moment";
 import { Logger } from "aws-amplify";
-import { SnackbarProvider, withSnackbar } from "notistack";
+import { SnackbarProvider } from "notistack";
 import moment from "moment-timezone";
 import "moment/locale/en-gb";
 import {
@@ -19,14 +19,14 @@ import {
     createTheme,
 } from "@mui/material/styles";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
-import SnackNotificationButtons from "./components/SnackNotificationButtons";
-import { getWhoami, notificationsSelector } from "./redux/Selectors";
+import { getWhoami } from "./redux/Selectors";
 import { DataStore } from "aws-amplify";
 import * as models from "./models";
 import useCurrentTheme from "./hooks/useCurrentTheme";
 import TenantList from "./scenes/TenantPicker/TenantList";
 import Login from "./scenes/Login/Login";
 import configureAmplify from "./scenes/TenantPicker/utilities/configureAmplify";
+import SnackNotificationBar from "./components/SnackNotificationBar";
 
 declare module "@mui/material/styles" {
     interface Palette {
@@ -76,11 +76,7 @@ Logger.LOG_LEVEL = "ERROR";
 
 let didInit = false;
 
-const AppContents: React.FC<SnackbarProvider> = ({
-    closeSnackbar,
-    enqueueSnackbar,
-}) => {
-    const incomingNotification = useSelector(notificationsSelector);
+const AppMain: React.FC = () => {
     const dispatch = useDispatch();
 
     function initialise() {
@@ -91,28 +87,6 @@ const AppContents: React.FC<SnackbarProvider> = ({
     }
     useEffect(initialise, [dispatch]);
 
-    const showNotification = React.useCallback(
-        (notification) => {
-            if (notification) {
-                const { message, options, restoreCallback, viewLink } =
-                    notification;
-                options.action = (key: number) => (
-                    <SnackNotificationButtons
-                        restoreCallback={restoreCallback}
-                        viewLink={viewLink}
-                        snackKey={key}
-                        closeSnackbar={closeSnackbar}
-                    />
-                );
-                enqueueSnackbar(message, options);
-            }
-        },
-        [enqueueSnackbar, closeSnackbar]
-    );
-    useEffect(
-        () => showNotification(incomingNotification),
-        [showNotification, incomingNotification]
-    );
     function checkServerSettings() {
         Moment.globalMoment = moment;
         Moment.globalLocale = "en-GB";
@@ -122,8 +96,6 @@ const AppContents: React.FC<SnackbarProvider> = ({
     dispatch(setMobileView(!useMediaQuery(theme.breakpoints.up("sm"))));
     return <MenuMainContainer />;
 };
-
-const AppMain = withSnackbar(AppContents);
 
 const taskStatus = {
     NEW: "rgba(252, 231, 121, 1)",
@@ -172,6 +144,7 @@ function AppDefault(props: any) {
                     <CssBaseline />
                     <SnackbarProvider maxSnack={1}>
                         <AppMain {...props} />
+                        <SnackNotificationBar {...props} />
                     </SnackbarProvider>
                 </ThemeProvider>
             </StyledEngineProvider>
