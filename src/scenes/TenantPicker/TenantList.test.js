@@ -117,7 +117,8 @@ describe("TenantList", () => {
         expect(setupComplete).toHaveBeenCalled();
     });
 
-    test("filter the tenants", async () => {
+    test.skip("filter the tenants", async () => {
+        // removed this feature for now
         const fakeItems = [
             { id: "someId", name: "First Tenant" },
             { id: "someId2", name: "Something Else" },
