@@ -26,6 +26,7 @@ import useCurrentTheme from "./hooks/useCurrentTheme";
 import TenantList from "./scenes/TenantPicker/TenantList";
 import Login from "./scenes/Login/Login";
 import SnackNotificationBar from "./components/SnackNotificationBar";
+import { Box } from "@mui/material";
 
 declare module "@mui/material/styles" {
     interface Palette {
@@ -100,6 +101,28 @@ const taskStatus = {
 
 function AppDefault(props: any) {
     const whoami = useSelector(getWhoami);
+    if (!whoami) {
+        return <></>;
+    } else {
+        return (
+            <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={props.theme}>
+                    <CssBaseline />
+                    <SnackbarProvider maxSnack={1}>
+                        <AppMain {...props} />
+                        <SnackNotificationBar {...props} />
+                    </SnackbarProvider>
+                </ThemeProvider>
+            </StyledEngineProvider>
+        );
+    }
+}
+
+const App = () => {
+    const [setupComplete, setSetupComplete] = React.useState(false);
+    const onSetupComplete = React.useCallback(() => {
+        setSetupComplete(true);
+    }, []);
     let theme;
     const themePreference = useCurrentTheme();
     if (themePreference === "dark") {
@@ -124,41 +147,28 @@ function AppDefault(props: any) {
             },
         });
     }
-    if (!whoami) {
-        return <></>;
+    const offline =
+        process.env.REACT_APP_OFFLINE_ONLY &&
+        process.env.REACT_APP_OFFLINE_ONLY === "true";
+    if (offline) {
+        return <AppDefault theme={theme} />;
+    } else if (setupComplete) {
+        return (
+            <Login>
+                <AppDefault theme={theme} />
+            </Login>
+        );
     } else {
         return (
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={theme}>
                     <CssBaseline />
-                    <SnackbarProvider maxSnack={1}>
-                        <AppMain {...props} />
-                        <SnackNotificationBar {...props} />
-                    </SnackbarProvider>
+                    <Box sx={{ padding: 1 }}>
+                        <TenantList onSetupComplete={onSetupComplete} />
+                    </Box>
                 </ThemeProvider>
             </StyledEngineProvider>
         );
-    }
-}
-
-const App = () => {
-    const [setupComplete, setSetupComplete] = React.useState(false);
-    const onSetupComplete = React.useCallback(() => {
-        setSetupComplete(true);
-    }, []);
-    const offline =
-        process.env.REACT_APP_OFFLINE_ONLY &&
-        process.env.REACT_APP_OFFLINE_ONLY === "true";
-    if (offline) {
-        return <AppDefault />;
-    } else if (setupComplete) {
-        return (
-            <Login>
-                <AppDefault />
-            </Login>
-        );
-    } else {
-        return <TenantList onSetupComplete={onSetupComplete} />;
     }
 };
 

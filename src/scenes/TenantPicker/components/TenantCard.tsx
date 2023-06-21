@@ -1,5 +1,5 @@
 import React from "react";
-import { Paper, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 interface TenantCardProps {
     name: string;
@@ -11,15 +11,19 @@ export const TenantCard: React.FC<TenantCardProps> = ({
     onClick,
 }: TenantCardProps) => {
     return (
-        <Paper
+        <Box
             sx={{
                 cursor: "pointer",
-                padding: 2,
-                maxWidth: 600,
+                "&:hover": {
+                    backgroundColor: "rgba(0, 0, 0, 0.2)",
+                },
+                borderRadius: 1,
+                width: "100%",
+                maxWidth: 500,
             }}
             onClick={onClick}
         >
             <Typography variant="h6">{name}</Typography>
-        </Paper>
+        </Box>
     );
 };
