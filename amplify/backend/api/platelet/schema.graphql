@@ -152,7 +152,7 @@ type Location
   comments: [Comment] @hasMany(indexName: "byParent", fields: ["id"])
   disabled: Int @default(value: "0")
   googleMapsPlaceId: String
-  archived: Int @default(value: "0") @index(name: "byArchived")
+  archived: Int @default(value: "0") @index(name: "byArchivedLocation", queryField: "locationsByArchivedStatus")
     @auth(rules: [
       {allow: private, operations: [read]},
       {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [create, read, delete]},
@@ -442,6 +442,7 @@ type Mutation {
   enableUser(userId: ID): User @function(name: "plateletAdminEnableUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   updateUserEmail(userId: ID, emailAddress: AWSEmail): User @function(name: "plateletAdminChangeUserEmail-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   resetUserPassword(userId: ID): SendFeedback @function(name: "plateletAdminResetUserPassword-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
+  stripLocations: [Location] @function(name: "plateletCleanUpArchiveData-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
 }
 
 type Statistics {

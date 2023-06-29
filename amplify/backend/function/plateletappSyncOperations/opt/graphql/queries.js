@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.tasksByStatus = exports.tasksByArchivedStatus = exports.syncVehicles = exports.syncVehicleAssignments = exports.syncUsers = exports.syncTenants = exports.syncTasks = exports.syncTaskAssignees = exports.syncScheduledTasks = exports.syncRiderResponsibilities = exports.syncPossibleRiderResponsibilities = exports.syncLocations = exports.syncDeliverables = exports.syncDeliverableTypes = exports.syncComments = exports.sendUserFeedback = exports.profilePictureUploadURL = exports.profilePictureURL = exports.listVehicles = exports.listVehicleAssignments = exports.listUsers = exports.listTenants = exports.listTasksByTenantId = exports.listTasks = exports.listTaskAssignees = exports.listScheduledTasks = exports.listRiderResponsibilities = exports.listPossibleRiderResponsibilities = exports.listLocations = exports.listDeliverables = exports.listDeliverableTypes = exports.listComments = exports.getVehicleAssignment = exports.getVehicle = exports.getUserByCognitoId = exports.getUser = exports.getTenant = exports.getTaskAssignee = exports.getTask = exports.getScheduledTask = exports.getRiderResponsibility = exports.getPossibleRiderResponsibilities = exports.getLocation = exports.getDeliverableType = exports.getDeliverable = exports.getComment = void 0;
+exports.tasksByStatus = exports.tasksByArchivedStatus = exports.syncVehicles = exports.syncVehicleAssignments = exports.syncUsers = exports.syncTenants = exports.syncTasks = exports.syncTaskAssignees = exports.syncScheduledTasks = exports.syncRiderResponsibilities = exports.syncPossibleRiderResponsibilities = exports.syncLocations = exports.syncDeliverables = exports.syncDeliverableTypes = exports.syncComments = exports.sendUserFeedback = exports.profilePictureUploadURL = exports.profilePictureURL = exports.locationsByArchivedStatus = exports.listVehicles = exports.listVehicleAssignments = exports.listUsers = exports.listTenants = exports.listTasksByTenantId = exports.listTasks = exports.listTaskAssignees = exports.listScheduledTasks = exports.listRiderResponsibilities = exports.listPossibleRiderResponsibilities = exports.listLocations = exports.listDeliverables = exports.listDeliverableTypes = exports.listComments = exports.getVehicleAssignment = exports.getVehicle = exports.getUserByCognitoId = exports.getUser = exports.getTenant = exports.getTaskAssignee = exports.getTask = exports.getScheduledTask = exports.getRiderResponsibility = exports.getPossibleRiderResponsibilities = exports.getLocation = exports.getDeliverableType = exports.getDeliverable = exports.getComment = void 0;
 /* tslint:disable */
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
@@ -775,6 +775,52 @@ const syncLocations = /* GraphQL */`
   }
 `;
 exports.syncLocations = syncLocations;
+const locationsByArchivedStatus = /* GraphQL */`
+  query LocationsByArchivedStatus(
+    $archived: Int!
+    $sortDirection: ModelSortDirection
+    $filter: ModelLocationFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    locationsByArchivedStatus(
+      archived: $archived
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
+exports.locationsByArchivedStatus = locationsByArchivedStatus;
 const getTask = /* GraphQL */`
   query GetTask($id: ID!) {
     getTask(id: $id) {

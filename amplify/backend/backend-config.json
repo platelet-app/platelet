@@ -325,6 +325,28 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "plateletCleanUpArchiveData": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "plateletCreateScheduledTasks": {
       "build": true,
       "dependsOn": [
@@ -645,6 +667,30 @@
         {
           "category": "function",
           "resourceName": "plateletArchiver"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletCleanUpArchiveData_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletCleanUpArchiveData"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletCleanUpArchiveData_plateletArchiveDays": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletCleanUpArchiveData"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletCleanUpArchiveData_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletCleanUpArchiveData"
         }
       ]
     },

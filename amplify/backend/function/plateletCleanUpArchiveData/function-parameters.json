@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "api": {
+      "platelet": [
+        "Query",
+        "Mutation"
+      ]
+    }
+  },
+  "lambdaLayers": [
+    {
+      "type": "ProjectLayer",
+      "resourceName": "plateletappSyncOperations",
+      "env": "fasdfdas",
+      "version": "Always choose latest version",
+      "isLatestVersionSelected": true
+    }
+  ],
+  "environmentVariableList": [
+    {
+      "cloudFormationParameterName": "plateletArchiveDays",
+      "environmentVariableName": "PLATELET_ARCHIVE_DAYS"
+    }
+  ]
+}

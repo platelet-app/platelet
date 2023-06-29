@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`plateletCleanUpArchiveData clean up some location data, ignore the newer one 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "query": "locationsByArchivedStatusQuery",
+        "variables": Object {
+          "archived": 1,
+          "nextToken": null,
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    Array [
+      Object {
+        "query": "updateLocationMutation",
+        "variables": Object {
+          "input": Object {
+            "contact": null,
+            "id": "1",
+            "line1": null,
+            "line2": null,
+            "line3": null,
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Promise {},
+    },
+    Object {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;
