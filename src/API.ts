@@ -4953,6 +4953,106 @@ export type ResetUserPasswordMutation = {
   } | null,
 };
 
+export type StripLocationsMutation = {
+  stripLocations?:  Array< {
+    __typename: "Location",
+    id: string,
+    tenantId: string,
+    createdBy?:  {
+      __typename: "User",
+      id: string,
+      username: string,
+      cognitoId: string,
+      tenantId: string,
+      isPrimaryAdmin?: number | null,
+      displayName: string,
+      name?: string | null,
+      roles: Array< Role >,
+      dateOfBirth?: string | null,
+      riderResponsibility?: string | null,
+      disabled?: number | null,
+      createdAt: string,
+      updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
+    } | null,
+    name?: string | null,
+    listed?: number | null,
+    contact?:  {
+      __typename: "AddressAndContactDetails",
+      name?: string | null,
+      telephoneNumber?: string | null,
+      mobileNumber?: string | null,
+      emailAddress?: string | null,
+      ward?: string | null,
+      line1?: string | null,
+      line2?: string | null,
+      line3?: string | null,
+      town?: string | null,
+      county?: string | null,
+      state?: string | null,
+      country?: string | null,
+      postcode?: string | null,
+      what3words?: string | null,
+    } | null,
+    ward?: string | null,
+    line1?: string | null,
+    line2?: string | null,
+    line3?: string | null,
+    town?: string | null,
+    county?: string | null,
+    state?: string | null,
+    country?: string | null,
+    postcode?: string | null,
+    what3words?: string | null,
+    tasksAsPickUp?:  {
+      __typename: "ModelTaskConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    tasksAsDropOff?:  {
+      __typename: "ModelTaskConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    taskAsEstablishment?:  {
+      __typename: "ModelTaskConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    scheduledTasksAsPickUp?:  {
+      __typename: "ModelScheduledTaskConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    scheduledTasksAsDropOff?:  {
+      __typename: "ModelScheduledTaskConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    scheduledTasksAsEstablishment?:  {
+      __typename: "ModelScheduledTaskConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    comments?:  {
+      __typename: "ModelCommentConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    disabled?: number | null,
+    googleMapsPlaceId?: string | null,
+    archived?: number | null,
+    createdAt: string,
+    updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
+    userCreatedLocationsId?: string | null,
+  } | null > | null,
+};
+
 export type GetTenantQueryVariables = {
   id: string,
 };
@@ -5715,6 +5815,48 @@ export type SyncLocationsQueryVariables = {
 
 export type SyncLocationsQuery = {
   syncLocations?:  {
+    __typename: "ModelLocationConnection",
+    items:  Array< {
+      __typename: "Location",
+      id: string,
+      tenantId: string,
+      name?: string | null,
+      listed?: number | null,
+      ward?: string | null,
+      line1?: string | null,
+      line2?: string | null,
+      line3?: string | null,
+      town?: string | null,
+      county?: string | null,
+      state?: string | null,
+      country?: string | null,
+      postcode?: string | null,
+      what3words?: string | null,
+      disabled?: number | null,
+      googleMapsPlaceId?: string | null,
+      archived?: number | null,
+      createdAt: string,
+      updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
+      userCreatedLocationsId?: string | null,
+    } | null >,
+    nextToken?: string | null,
+    startedAt?: number | null,
+  } | null,
+};
+
+export type LocationsByArchivedStatusQueryVariables = {
+  archived: number,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelLocationFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type LocationsByArchivedStatusQuery = {
+  locationsByArchivedStatus?:  {
     __typename: "ModelLocationConnection",
     items:  Array< {
       __typename: "Location",

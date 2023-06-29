@@ -3084,3 +3084,94 @@ export const resetUserPassword = /* GraphQL */ `
     }
   }
 `;
+export const stripLocations = /* GraphQL */ `
+  mutation StripLocations {
+    stripLocations {
+      id
+      tenantId
+      createdBy {
+        id
+        username
+        cognitoId
+        tenantId
+        isPrimaryAdmin
+        displayName
+        name
+        roles
+        dateOfBirth
+        riderResponsibility
+        disabled
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+      }
+      name
+      listed
+      contact {
+        name
+        telephoneNumber
+        mobileNumber
+        emailAddress
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+      }
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      tasksAsPickUp {
+        nextToken
+        startedAt
+      }
+      tasksAsDropOff {
+        nextToken
+        startedAt
+      }
+      taskAsEstablishment {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsPickUp {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsDropOff {
+        nextToken
+        startedAt
+      }
+      scheduledTasksAsEstablishment {
+        nextToken
+        startedAt
+      }
+      comments {
+        nextToken
+        startedAt
+      }
+      disabled
+      googleMapsPlaceId
+      archived
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedLocationsId
+    }
+  }
+`;

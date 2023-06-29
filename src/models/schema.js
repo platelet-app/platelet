@@ -1026,7 +1026,8 @@ export const schema = {
                 {
                     "type": "key",
                     "properties": {
-                        "name": "byArchived",
+                        "name": "byArchivedLocation",
+                        "queryField": "locationsByArchivedStatus",
                         "fields": [
                             "archived"
                         ]

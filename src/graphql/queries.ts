@@ -750,6 +750,51 @@ export const syncLocations = /* GraphQL */ `
     }
   }
 `;
+export const locationsByArchivedStatus = /* GraphQL */ `
+  query LocationsByArchivedStatus(
+    $archived: Int!
+    $sortDirection: ModelSortDirection
+    $filter: ModelLocationFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    locationsByArchivedStatus(
+      archived: $archived
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        tenantId
+        name
+        listed
+        ward
+        line1
+        line2
+        line3
+        town
+        county
+        state
+        country
+        postcode
+        what3words
+        disabled
+        googleMapsPlaceId
+        archived
+        createdAt
+        updatedAt
+        _version
+        _deleted
+        _lastChangedAt
+        userCreatedLocationsId
+      }
+      nextToken
+      startedAt
+    }
+  }
+`;
 export const getTask = /* GraphQL */ `
   query GetTask($id: ID!) {
     getTask(id: $id) {
