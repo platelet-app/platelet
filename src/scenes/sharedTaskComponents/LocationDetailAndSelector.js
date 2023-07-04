@@ -136,7 +136,7 @@ function LocationDetailAndSelector(props) {
     );
 
     const collapsedShowFields = ["ward", "postcode", "line1"];
-    const collapsedShowContactFields = ["telephoneNumber"];
+    const collapsedShowContactFields = ["telephoneNumber", "name"];
 
     return (
         <Box className={classes.root}>
