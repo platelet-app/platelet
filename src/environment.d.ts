@@ -8,7 +8,7 @@ declare global {
             REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_NAME?: string;
             REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_REGION?: string;
             REACT_APP_GOOGLE_MAPS_API_KEY: string;
-            REACT_APP_TENANT_GRAPHQL_ENDPOINT: URL;
+            REACT_APP_TENANT_GRAPHQL_ENDPOINT: URL | "undefined";
             REACT_APP_TENANT_GRAPHQL_API_KEY: string;
         }
     }

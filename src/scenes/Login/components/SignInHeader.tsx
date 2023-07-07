@@ -25,15 +25,18 @@ const SignInHeader: React.FC = () => {
             <Typography sx={{ color: "black" }}>
                 {tenantName?.toUpperCase()}
             </Typography>
-            {process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT && (
-                <Button
-                    aria-label="Change team"
-                    onClick={handleChangeTeam}
-                    variant="contained"
-                >
-                    Change Team
-                </Button>
-            )}
+            {process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT &&
+                // amplify doesn't allow unset env vars for individual branches
+                process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT !==
+                    "undefined" && (
+                    <Button
+                        aria-label="Change team"
+                        onClick={handleChangeTeam}
+                        variant="contained"
+                    >
+                        Change Team
+                    </Button>
+                )}
         </Stack>
     );
 };

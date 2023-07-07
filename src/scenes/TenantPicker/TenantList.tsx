@@ -8,6 +8,7 @@ import configureAmplify from "./utilities/configureAmplify";
 import saveAmplifyConfig from "../../utilities/saveAmplifyConfig";
 import _ from "lodash";
 import { PaddedPaper } from "../../styles/common";
+import clearAmplifyConfig from "../../utilities/clearAmplifyConfig";
 
 interface TenantListProps {
     onSetupComplete: () => void;
@@ -17,7 +18,6 @@ export const TenantList: React.FC<TenantListProps> = ({
     onSetupComplete,
 }: TenantListProps) => {
     const dispatch = useDispatch();
-    const configFromLocalStorage = localStorage.getItem("amplifyConfig");
 
     //function onChangeFilterTerm(e: ChangeEvent<HTMLInputElement>) {
     //    const { value } = e.target;
@@ -32,6 +32,7 @@ export const TenantList: React.FC<TenantListProps> = ({
     //}
 
     const { state, error, isFetching } = useTenantListGraphQL();
+    const [showList, setShowList] = React.useState(false);
 
     const onClickTenant = async (tenantId: string) => {
         try {
@@ -45,28 +46,42 @@ export const TenantList: React.FC<TenantListProps> = ({
         }
     };
 
-    React.useEffect(() => {
-        if (
-            (!process.env.REACT_APP_OFFLINE_ONLY ||
-                process.env.REACT_APP_OFFLINE_ONLY === "false") &&
-            (!process.env.REACT_APP_DEMO_MODE ||
-                process.env.REACT_APP_DEMO_MODE === "false") &&
-            !process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT
-        ) {
-            const config = require("../../aws-exports");
-            configureAmplify(config.default);
-            onSetupComplete();
-        } else if (configFromLocalStorage) {
-            configureAmplify(JSON.parse(configFromLocalStorage));
-            onSetupComplete();
+    const setup = React.useCallback(async () => {
+        const tenantId = localStorage.getItem("tenantId");
+        try {
+            if (
+                (!process.env.REACT_APP_OFFLINE_ONLY ||
+                    process.env.REACT_APP_OFFLINE_ONLY === "false") &&
+                (!process.env.REACT_APP_DEMO_MODE ||
+                    process.env.REACT_APP_DEMO_MODE === "false") &&
+                (!process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT ||
+                    // amplify doesn't allow unset env vars for individual branches
+                    process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT ===
+                        "undefined")
+            ) {
+                const config = require("../../aws-exports");
+                configureAmplify(config.default);
+                onSetupComplete();
+            } else if (tenantId) {
+                console.log("tenantId", tenantId);
+                const config = await saveAmplifyConfig(tenantId);
+                configureAmplify(config);
+                onSetupComplete();
+            } else {
+                setShowList(true);
+            }
+        } catch (error) {
+            console.log("couldn't get tenant info:", error);
+            clearAmplifyConfig();
+            setShowList(true);
         }
-    }, [configFromLocalStorage, onSetupComplete]);
+    }, [onSetupComplete]);
+    React.useEffect(() => {
+        setup();
+    }, [setup]);
 
-    if (
-        !process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT ||
-        configFromLocalStorage
-    ) {
-        return <></>;
+    if (!showList) {
+        return null;
     } else if (error) {
         return (
             <PaddedPaper>
@@ -85,6 +100,7 @@ export const TenantList: React.FC<TenantListProps> = ({
                     <Divider />
                     {_.range(0, 10).map((i) => (
                         <Skeleton
+                            key={i}
                             variant="rectangular"
                             sx={{ height: 30, maxWidth: 600, borderRadius: 1 }}
                         />

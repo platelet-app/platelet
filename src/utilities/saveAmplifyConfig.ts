@@ -39,21 +39,28 @@ const fetchData = (
 };
 
 async function saveAmplifyConfig(tenantId: string): Promise<object> {
-    const response: Response = await fetchData(getTenant, {
-        id: tenantId,
-    });
-    const { data } = await response.json();
-    const { config, version, name } = data.getTenant;
-    const currentVersion: string | null = localStorage.getItem("tenantVersion");
-    if (!currentVersion || version > parseInt(currentVersion)) {
-        console.log("Updating tenant config");
+    console.log("Fetching tenant config", tenantId);
+    try {
+        const response: Response = await fetchData(getTenant, {
+            id: tenantId,
+        });
+        const { data } = await response.json();
+        const { config, version, name } = data.getTenant;
+        const currentVersion: string | null =
+            localStorage.getItem("tenantVersion");
         const amplifyConfig = JSON.parse(config);
-        localStorage.setItem("amplifyConfig", JSON.stringify(amplifyConfig));
-        localStorage.setItem("tenantVersion", version.toString());
-        localStorage.setItem("tenantName", name);
+        if (!currentVersion || version > parseInt(currentVersion)) {
+            console.log("Updating tenant config");
+            localStorage.setItem(
+                "amplifyConfig",
+                JSON.stringify(amplifyConfig)
+            );
+            localStorage.setItem("tenantVersion", version.toString());
+            localStorage.setItem("tenantName", name);
+        }
         return amplifyConfig;
-    } else {
-        console.log("Tenant config is up to date");
+    } catch (e) {
+        console.log("could not get current config, using local storage");
         const config = localStorage.getItem("amplifyConfig");
         if (!config)
             throw new Error("Tenant config is not available in local storage");
