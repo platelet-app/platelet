@@ -8,4 +8,10 @@ export const override = (resources: AmplifyApiGraphQlResourceStackTemplate) => {
         "TaskAssignee", // <== The model that this resolver falls within
         "TaskTable" // <== The new datasource that you want to use
     );
+    overrideDataSourceByFileName(
+        resources,
+        "Mutation.createComment.postAuth.2", // <== The name of your file (without the extension)
+        "Comment", // <== The model that this resolver falls within
+        "UserTable" // <== The new datasource that you want to use
+    );
 };

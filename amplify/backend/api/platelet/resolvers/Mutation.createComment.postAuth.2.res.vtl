@@ -1,0 +1,17 @@
+## Raise a GraphQL field error in case of a datasource invocation error
+#if($ctx.error)
+    $util.error($ctx.error.message, $ctx.error.type)
+#end
+
+#set( $author = $ctx.result )
+#set( $ownerClaim0 = $util.defaultIfNull($ctx.identity.claims.get("sub"), null) )
+
+#if( $util.isNull($author) == false )
+    #if( $author.cognitoId != $ownerClaim0 )
+        $util.error("You cannot create a comment for someone else.", "NotAuthorizedError")
+    #else
+        $util.toJson({})
+    #end
+#else
+    $util.error("The author cannot be found.", "AuthorNotFoundError")
+#end
