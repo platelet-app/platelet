@@ -8,6 +8,7 @@ import {
     INIT_WHOAMI_OBSERVER,
     initWhoamiObserver,
 } from "./whoamiActions";
+import { REACT_APP_DEMO_MODE, REACT_APP_OFFLINE_ONLY } from "@env";
 import API from "@aws-amplify/api";
 import { Auth, DataStore, syncExpression } from "aws-amplify";
 import * as models from "../../models";
@@ -66,18 +67,16 @@ export function* watchInitWhoamiObserver() {
 }
 
 function* getWhoami() {
+    debugger;
     if (process.env.NODE_ENV === "test") {
         yield put(getWhoamiSuccess(testUser));
         return;
     }
-    if (
-        process.env.REACT_APP_DEMO_MODE === "true" ||
-        process.env.REACT_APP_OFFLINE_ONLY === "true"
-    ) {
+    if (REACT_APP_DEMO_MODE === "true" || REACT_APP_OFFLINE_ONLY === "true") {
         const existingUser = yield call(
             [DataStore, DataStore.query],
             models.User,
-            (u) => u.name("eq", "offline")
+            (u) => u.name.eq("offline")
         );
         if (existingUser.length === 0) {
             let userResult = fakeUser;
@@ -132,27 +131,28 @@ function* getWhoami() {
                     models.TaskAssignee,
                     models.Deliverable,
                 ];
+
                 yield call([DataStore, DataStore.configure], {
                     errorHandler: (err) => {
                         console.log("DataStore error:", err);
                         console.log("Cause:", err.cause);
                     },
                     syncExpressions: [
-                        //...modelsToSync.map((model) =>
-                        //    syncExpression(model, (m) =>
-                        //        m.tenantId.eq(tenantId)
-                        //    )
-                        //),
-                        //...archivedModels.map((model) =>
-                        //    syncExpression(model, (m) =>
-                        //        m.tenantId.eq(tenantId).archived.eq(0)
-                        //    )
-                        //),
-                        //syncExpression(models.Tenant, (m) => m.id.eq(tenantId)),
+                        ...modelsToSync.map((model) =>
+                            syncExpression(model, (m) =>
+                                m.tenantId.eq(tenantId)
+                            )
+                        ),
+                        ...archivedModels.map((model) =>
+                            syncExpression(model, (m) => [
+                                m.tenantId.eq(tenantId),
+                                m.archived.eq(0),
+                            ])
+                        ),
+                        syncExpression(models.Tenant, (m) => m.id.eq(tenantId)),
                     ],
                     conflictHandler: dataStoreConflictHandler,
                 });
-
                 result = yield call(
                     [DataStore, DataStore.query],
                     models.User,

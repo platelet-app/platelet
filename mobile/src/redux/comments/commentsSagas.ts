@@ -14,7 +14,6 @@ function listener() {
             observer = DataStore.observeQuery(models.Comment, Predicates.ALL, {
                 sort: (s) => s.createdAt("DESCENDING"),
             }).subscribe(async (result) => {
-                console.log(result);
                 const items = await Promise.all(
                     result.items.map(async (item) => {
                         const author = await item.author;
@@ -51,7 +50,6 @@ function* initializeCommentsObserver(): Generator<any, any, any> {
     try {
         while (true) {
             const result = yield take(channel);
-            console.log(result.items);
             yield put(
                 actions.setComments({
                     ...result,

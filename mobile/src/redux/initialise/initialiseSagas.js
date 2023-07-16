@@ -17,12 +17,19 @@ import {
 import { initTaskAssignees } from "../taskAssignees/taskAssigneesActions";
 import { initTaskDeliverables } from "../taskDeliverables/taskDeliverablesActions";
 import { initComments } from "../comments/commentsActions";
+import {
+    REACT_APP_DEMO_MODE,
+    REACT_APP_OFFLINE_ONLY,
+    REACT_APP_POPULATE_FAKE_DATA,
+} from "@env";
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
+
+const dateCreated = new Date().toISOString().split("T")[0];
 
 function generateTimes(previous = null, hours = 2) {
     let date;
@@ -41,11 +48,13 @@ function generateTimes(previous = null, hours = 2) {
     return { timeDroppedOff, timePickedUp, timeOfCall, timeCompleted };
 }
 
+const tenantId = "someTenantId";
+
 let profilePictures = [];
 let profilePictureThumbnails = [];
 if (
     process.env.NODE_ENV !== "test" &&
-    process.env.REACT_APP_POPULATE_FAKE_DATA === "true"
+    REACT_APP_POPULATE_FAKE_DATA === "true"
 ) {
     for (const i of _.range(1, 23)) {
         profilePictures.push(`${_.padStart(i, 4, "0")}.jpg`);
@@ -54,7 +63,7 @@ if (
 }
 
 function* initialiseApp() {
-    if (process.env.REACT_APP_DEMO_MODE === "true") {
+    if (REACT_APP_DEMO_MODE === "true") {
         /*yield call([DataStore, DataStore.start]);
         yield call([DataStore, DataStore.stop]);
         yield call([DataStore, DataStore.clear]);
@@ -62,9 +71,9 @@ function* initialiseApp() {
     }
     if (process.env.NODE_ENV !== "test") {
         if (
-            process.env.REACT_APP_DEMO_MODE === "true" ||
-            (process.env.REACT_APP_OFFLINE_ONLY === "true" &&
-                process.env.REACT_APP_POPULATE_FAKE_DATA === "true")
+            REACT_APP_DEMO_MODE === "true" ||
+            (REACT_APP_OFFLINE_ONLY === "true" &&
+                REACT_APP_POPULATE_FAKE_DATA === "true")
         ) {
             yield call(populateFakeData);
             yield call(populateTasks);
@@ -95,13 +104,15 @@ async function populateFakeData() {
         const checker = await DataStore.query(models.RiderResponsibility);
         if (checker.length === 0) {
             for (const value of Object.values(fakeData.responsibilities)) {
-                await DataStore.save(new models.RiderResponsibility(value));
+                await DataStore.save(
+                    new models.RiderResponsibility({ ...value, tenantId })
+                );
             }
         }
     }
     const responsibilities = await DataStore.query(models.RiderResponsibility);
     const offlineUser = await DataStore.query(models.User, (u) =>
-        u.name("eq", "offline")
+        u.name.eq("offline")
     );
     if (offlineUser.length === 0) {
         const profilePicture = profilePictures.pop();
@@ -114,6 +125,8 @@ async function populateFakeData() {
         const offlineUser = await DataStore.save(
             new models.User({
                 name: "offline",
+                tenantId,
+                cognitoId: "offline",
                 username: "offline",
                 riderResponsibility: resp1.label,
                 displayName: "Demo User",
@@ -121,20 +134,6 @@ async function populateFakeData() {
                     .past(50, new Date())
                     .toISOString()
                     .split("T")[0],
-                profilePicture: {
-                    key: profilePictureKey,
-                    bucket: process.env
-                        .REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_NAME,
-                    region: process.env
-                        .REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_REGION,
-                },
-                profilePictureThumbnail: {
-                    key: thumbnailKey,
-                    bucket: process.env
-                        .REACT_APP_DEMO_PROFILE_PICTURES_THUMBNAILS_BUCKET_NAME,
-                    region: process.env
-                        .REACT_APP_DEMO_PROFILE_PICTURES_THUMBNAILS_BUCKET_REGION,
-                },
                 roles: [userRoles.rider, userRoles.coordinator, userRoles.user],
             })
         );
@@ -143,6 +142,7 @@ async function populateFakeData() {
                 new models.PossibleRiderResponsibilities({
                     user: offlineUser,
                     riderResponsibility: i,
+                    tenantId,
                 })
             );
         }
@@ -153,6 +153,7 @@ async function populateFakeData() {
             const generatedName = faker.name.findName();
             let userToSave = {
                 name: generatedName,
+                tenantId,
                 username: uuidv4(),
                 displayName: generatedName,
                 dateOfBirth: faker.date
@@ -185,21 +186,10 @@ async function populateFakeData() {
             const newUser = await DataStore.save(
                 new models.User({
                     ...userToSave,
+                    tenantId,
                     riderResponsibility: resp1.label,
-                    profilePicture: {
-                        key: profilePictureKey,
-                        bucket: process.env
-                            .REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_NAME,
-                        region: process.env
-                            .REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_REGION,
-                    },
-                    profilePictureThumbnail: {
-                        key: thumbnailKey,
-                        bucket: process.env
-                            .REACT_APP_DEMO_PROFILE_PICTURES_THUMBNAILS_BUCKET_NAME,
-                        region: process.env
-                            .REACT_APP_DEMO_PROFILE_PICTURES_THUMBNAILS_BUCKET_REGION,
-                    },
+                    cognitoId: uuidv4(),
+                    username: uuidv4(),
                 })
             );
             for (const i of [resp1, resp2]) {
@@ -207,6 +197,7 @@ async function populateFakeData() {
                     new models.PossibleRiderResponsibilities({
                         user: newUser,
                         riderResponsibility: i,
+                        tenantId,
                     })
                 );
             }
@@ -224,6 +215,7 @@ async function populateFakeData() {
                         ...rest,
                         dateOfManufacture,
                         dateOfRegistration,
+                        tenantId,
                     })
                 );
             }
@@ -233,7 +225,9 @@ async function populateFakeData() {
         const checker = await DataStore.query(models.DeliverableType);
         if (checker.length === 0) {
             for (const value of Object.values(fakeData.deliverables)) {
-                await DataStore.save(new models.DeliverableType(value));
+                await DataStore.save(
+                    new models.DeliverableType({ ...value, tenantId })
+                );
             }
         }
     }
@@ -250,6 +244,7 @@ async function populateFakeData() {
                 await DataStore.save(
                     new models.Location({
                         contact,
+                        tenantId,
                         ...rest,
                         ...address,
                     })
@@ -265,7 +260,7 @@ async function randomComment(task) {
 
     if (Math.floor(Math.random() * 10000) % 4 === 0) {
         const author = await DataStore.query(models.User, (u) =>
-            u.name("eq", "offline")
+            u.name.eq("offline")
         );
         if (author[0]) {
             await DataStore.save(
@@ -274,6 +269,7 @@ async function randomComment(task) {
                     body,
                     parentId: task.id,
                     visibility: commentVisibility.everyone,
+                    tenantId,
                 })
             );
         }
@@ -289,20 +285,20 @@ function generateRequesterContact() {
 
 async function populateTasks() {
     const whoamiFind = await DataStore.query(models.User, (u) =>
-        u.name("eq", "offline")
+        u.name.eq("offline")
     );
     const availableDeliverables = await DataStore.query(models.DeliverableType);
     const availableRiders = (await DataStore.query(models.User)).filter(
         (u) => u.roles && u.roles.includes(userRoles.rider)
     );
     const availableLocations = await DataStore.query(models.Location, (l) =>
-        l.listed("eq", 1)
+        l.listed.eq(1)
     );
     const whoami = whoamiFind[0];
 
     // tasksNew
     const tasksNewCheck = await DataStore.query(models.Task, (t) =>
-        t.status("eq", tasksStatus.new)
+        t.status.eq(tasksStatus.new)
     );
     if (tasksNewCheck.length === 0) {
         let timeOfCall = null;
@@ -317,7 +313,9 @@ async function populateTasks() {
             const newTask = await DataStore.save(
                 new models.Task({
                     status: tasksStatus.new,
+                    dateCreated,
                     priority,
+                    tenantId,
                     timeOfCall,
                     pickUpLocation,
                     dropOffLocation,
@@ -329,6 +327,7 @@ async function populateTasks() {
             await DataStore.save(
                 new models.Deliverable({
                     deliverableType,
+                    tenantId,
                     unit: deliverableType.defaultUnit || "NONE",
                     count: getRandomInt(1, 4),
                     orderInGrid: 0,
@@ -338,6 +337,7 @@ async function populateTasks() {
             await DataStore.save(
                 new models.TaskAssignee({
                     task: newTask,
+                    tenantId,
                     assignee: whoami,
                     role: userRoles.coordinator,
                 })
@@ -346,10 +346,10 @@ async function populateTasks() {
     }
     // tasksCancelledRejected
     const tasksCancelledCheck = await DataStore.query(models.Task, (t) =>
-        t.status("eq", tasksStatus.cancelled)
+        t.status.eq(tasksStatus.cancelled)
     );
     const tasksRejectedCheck = await DataStore.query(models.Task, (t) =>
-        t.status("eq", tasksStatus.rejected)
+        t.status.eq(tasksStatus.rejected)
     );
     if ([...tasksCancelledCheck, ...tasksRejectedCheck].length === 0) {
         for (const i in _.range(5)) {
@@ -363,6 +363,7 @@ async function populateTasks() {
             const priority = _.sample(priorities);
             const newTask = await DataStore.save(
                 new models.Task({
+                    dateCreated,
                     status:
                         i > 1 ? tasksStatus.rejected : tasksStatus.cancelled,
                     priority,
@@ -371,6 +372,7 @@ async function populateTasks() {
                     timeCancelled: i > 1 ? null : new Date().toISOString(),
                     pickUpLocation,
                     dropOffLocation,
+                    tenantId,
                     requesterContact,
                     createdBy: whoami,
                 })
@@ -382,6 +384,7 @@ async function populateTasks() {
                     unit: deliverableType.defaultUnit || "NONE",
                     count: getRandomInt(1, 4),
                     orderInGrid: 0,
+                    tenantId,
                     task: newTask,
                 })
             );
@@ -390,6 +393,7 @@ async function populateTasks() {
                     task: newTask,
                     assignee: whoami,
                     role: userRoles.coordinator,
+                    tenantId,
                 })
             );
             randomComment(newTask);
@@ -397,7 +401,7 @@ async function populateTasks() {
     }
     // tasksActive
     const tasksActiveCheck = await DataStore.query(models.Task, (task) =>
-        task.status("eq", tasksStatus.active)
+        task.status.eq(tasksStatus.active)
     );
     if (tasksActiveCheck.length === 0) {
         let timeOfCall = null;
@@ -412,10 +416,12 @@ async function populateTasks() {
             const priority = _.sample(priorities);
             const newTask = await DataStore.save(
                 new models.Task({
+                    dateCreated,
                     status: tasksStatus.active,
                     priority,
                     timeOfCall,
                     pickUpLocation,
+                    tenantId,
                     dropOffLocation,
                     riderResponsibility: rider.riderResponsibility,
                     requesterContact,
@@ -429,6 +435,7 @@ async function populateTasks() {
                     unit: deliverableType.defaultUnit || "NONE",
                     count: getRandomInt(1, 4),
                     orderInGrid: 0,
+                    tenantId,
                     task: newTask,
                 })
             );
@@ -437,6 +444,7 @@ async function populateTasks() {
                     task: newTask,
                     assignee: whoami,
                     role: userRoles.coordinator,
+                    tenantId,
                 })
             );
             await DataStore.save(
@@ -444,6 +452,7 @@ async function populateTasks() {
                     task: newTask,
                     assignee: rider,
                     role: userRoles.rider,
+                    tenantId,
                 })
             );
             randomComment(newTask);
@@ -451,7 +460,7 @@ async function populateTasks() {
     }
     // tasksPickedUp
     const tasksPickedUpCheck = await DataStore.query(models.Task, (task) =>
-        task.status("eq", tasksStatus.pickedUp)
+        task.status.eq(tasksStatus.pickedUp)
     );
     if (tasksPickedUpCheck.length === 0) {
         let timeOfCall = null;
@@ -467,9 +476,11 @@ async function populateTasks() {
             const priority = _.sample(priorities);
             const newTask = await DataStore.save(
                 new models.Task({
+                    dateCreated,
                     status: tasksStatus.pickedUp,
                     priority,
                     timeOfCall,
+                    tenantId,
                     pickUpLocation,
                     establishmentLocation: pickUpLocation,
                     timePickedUp: times.timePickedUp,
@@ -485,6 +496,7 @@ async function populateTasks() {
                 new models.Deliverable({
                     deliverableType,
                     unit: deliverableType.defaultUnit || "NONE",
+                    tenantId,
                     count: getRandomInt(1, 4),
                     orderInGrid: 0,
                     task: newTask,
@@ -494,6 +506,7 @@ async function populateTasks() {
                 new models.TaskAssignee({
                     task: newTask,
                     assignee: whoami,
+                    tenantId,
                     role: userRoles.coordinator,
                 })
             );
@@ -501,6 +514,7 @@ async function populateTasks() {
                 new models.TaskAssignee({
                     task: newTask,
                     assignee: rider,
+                    tenantId,
                     role: userRoles.rider,
                 })
             );
@@ -509,11 +523,7 @@ async function populateTasks() {
     }
     // tasksDroppedOff
     const tasksDroppedOffCheck = await DataStore.query(models.Task, (task) =>
-        task.or((task) =>
-            task
-                .status("eq", tasksStatus.droppedOff)
-                .status("eq", tasksStatus.completed)
-        )
+        task.status.eq(tasksStatus.droppedOff)
     );
     if (tasksDroppedOffCheck.length === 0) {
         let timeOfCall = null;
@@ -529,6 +539,8 @@ async function populateTasks() {
             const priority = _.sample(priorities);
             const newTask = await DataStore.save(
                 new models.Task({
+                    dateCreated,
+                    tenantId,
                     status:
                         i < 8 ? tasksStatus.completed : tasksStatus.droppedOff,
                     priority,
@@ -550,6 +562,7 @@ async function populateTasks() {
             await DataStore.save(
                 new models.Deliverable({
                     deliverableType,
+                    tenantId,
                     unit: deliverableType.defaultUnit || "NONE",
                     count: getRandomInt(1, 4),
                     orderInGrid: 0,
@@ -559,6 +572,7 @@ async function populateTasks() {
             await DataStore.save(
                 new models.TaskAssignee({
                     task: newTask,
+                    tenantId,
                     assignee: whoami,
                     role: userRoles.coordinator,
                 })
@@ -566,6 +580,7 @@ async function populateTasks() {
             await DataStore.save(
                 new models.TaskAssignee({
                     task: newTask,
+                    tenantId,
                     assignee: rider,
                     role: userRoles.rider,
                 })

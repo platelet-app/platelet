@@ -1,9 +1,8 @@
-import React from "react";
 import "@azure/core-asynciterator-polyfill";
 import { DataStore } from "aws-amplify";
 import { ExpoSQLiteAdapter } from "@aws-amplify/datastore-storage-adapter/ExpoSQLiteAdapter";
 //import { StatusBar } from "expo-status-bar";
-import { withAuthenticator } from "@aws-amplify/ui-react-native";
+import { Authenticator } from "@aws-amplify/ui-react-native";
 import { PaperProvider } from "react-native-paper";
 import { Amplify } from "aws-amplify";
 import config from "./src/aws-exports";
@@ -12,16 +11,24 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Dashboard from "./src/scenes/Dashboard/Dashboard";
 import Task from "./src/scenes/Dashboard/components/Task";
 import { store } from "./src/redux";
-import { Provider, useDispatch } from "react-redux";
-import { initialiseApp } from "./src/redux/initialise/initialiseActions";
+import { Provider } from "react-redux";
+import { Logger } from "aws-amplify";
+import { REACT_APP_OFFLINE_ONLY } from "@env";
 
-Amplify.configure(config);
+if (REACT_APP_OFFLINE_ONLY === "true") {
+    console.log("Offline only mode");
+    Amplify.configure(config);
+}
 
 DataStore.configure({
     storageAdapter: ExpoSQLiteAdapter,
 });
 
+Logger.LOG_LEVEL = "ERROR";
+
 const Stack = createNativeStackNavigator();
+
+console.log(process.env);
 
 const Main = () => {
     return (
@@ -38,4 +45,16 @@ const Main = () => {
     );
 };
 
-export default withAuthenticator(Main);
+const App = () => {
+    if (REACT_APP_OFFLINE_ONLY === "true") {
+        return <Main />;
+    } else {
+        return (
+            <Authenticator.Provider>
+                <Main />
+            </Authenticator.Provider>
+        );
+    }
+};
+
+export default App;

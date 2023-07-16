@@ -12,7 +12,6 @@ const useTaskDeliverablesRedux = (
     taskType: "Task" | "ScheduledTask" = "Task"
 ) => {
     const taskDeliverables = useSelector(taskDeliverablesSelector);
-    console.log(taskDeliverables);
     if (taskType === "Task") {
         return taskDeliverables.items.filter(
             (item: ResolvedDeliverable) => item.task?.id === taskId

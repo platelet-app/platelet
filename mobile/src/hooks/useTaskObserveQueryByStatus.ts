@@ -2,11 +2,20 @@ import { DataStore } from "aws-amplify";
 import React from "react";
 import * as models from "../models";
 
-const useTaskObserveQueryByStatus = (status: models.TaskStatus) => {
+const useTaskObserveQueryByStatus = (
+    status: models.TaskStatus[] | models.TaskStatus
+) => {
     const observeQuery = React.useRef({ unsubscribe: () => {} });
     const [state, setState] = React.useState<models.Task[]>([]);
     const [error, setError] = React.useState<Error | null>(null);
     const [isFetching, setIsFetching] = React.useState(false);
+
+    let actualStatus: models.TaskStatus[] = [];
+    if (!Array.isArray(status)) {
+        actualStatus = [status];
+    } else {
+        actualStatus = status;
+    }
 
     const getTasks = React.useCallback(() => {
         try {
@@ -17,8 +26,9 @@ const useTaskObserveQueryByStatus = (status: models.TaskStatus) => {
                 // for some reason observeQuery won't update
                 // when just filtered by status
                 // so gotta do it manually I guess
-                console.log("items", items);
-                const filtered = items.filter((item) => item.status === status);
+                const filtered = items.filter((item) =>
+                    actualStatus.some((s) => s === item.status)
+                );
                 setState(filtered);
                 setIsFetching(false);
             });
