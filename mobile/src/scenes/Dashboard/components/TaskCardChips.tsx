@@ -34,27 +34,15 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
     let chips = [];
     if (status) {
         chips.push(
-            <TaskStatusChip
-                style={styles.chip}
-                size="small"
-                status={status}
-                key={status}
-            />
+            <TaskStatusChip style={styles.chip} status={status} key={status} />
         );
     }
     if (priority) {
-        chips.push(
-            <PriorityChip
-                style={styles.chip}
-                size="small"
-                priority={priority}
-                key={priority}
-            />
-        );
+        chips.push(<PriorityChip priority={priority} key={priority} />);
     }
     if (riderResponsibility) {
         chips.push(
-            <Chip style={styles.chip} key={riderResponsibility}>
+            <Chip compact style={styles.chip} key={riderResponsibility}>
                 {riderResponsibility}
             </Chip>
         );
@@ -88,7 +76,11 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
     if (limit && chips.length > limit) {
         const moreChips = chips.length - limit;
         chips = chips.slice(0, limit);
-        chips.push(<Chip>...</Chip>);
+        chips.push(
+            <Chip compact style={styles.chip} key="more-chip">
+                ...
+            </Chip>
+        );
     }
 
     return (
@@ -104,7 +96,7 @@ const styles = StyleSheet.create({
         flexWrap: "wrap",
     },
     chip: {
-        margin: 2,
+        marginRight: 4,
     },
 });
 

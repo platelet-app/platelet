@@ -15,17 +15,19 @@ const generateLabel = (status: models.TaskStatus) => {
 
 type TaskStatusChipProps = {
     status?: models.TaskStatus | null;
-    size?: "small" | "medium";
     style?: object;
 };
 
 const TaskStatusChip: React.FC<TaskStatusChipProps> = ({
     status = models.TaskStatus.NEW,
-    size = "medium",
     style = {},
 }) => {
     if (status) {
-        return <Chip style={style}>{generateLabel(status)}</Chip>;
+        return (
+            <Chip compact style={style}>
+                {generateLabel(status)}
+            </Chip>
+        );
     } else {
         return <></>;
     }

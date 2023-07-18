@@ -30,7 +30,7 @@ const Stack = createNativeStackNavigator();
 const Main = () => {
     return (
         <Provider store={store}>
-            <PaperProvider>
+            <PaperProvider theme={{ version: 2 }}>
                 <NavigationContainer>
                     <Stack.Navigator initialRouteName="Dashboard">
                         <Stack.Screen name="Dashboard" component={Dashboard} />

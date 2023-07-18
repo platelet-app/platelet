@@ -32,10 +32,6 @@ const useMyAssignedTasks = (
     const [error, setError] = React.useState<Error | null>(null);
     const [isFetching, setIsFetching] = React.useState(false);
 
-    React.useEffect(() => {
-        log(taskIds);
-    }, [taskIds]);
-
     stateRef.current = state;
 
     let actualStatus: models.TaskStatus[] = React.useMemo(() => {
@@ -56,6 +52,7 @@ const useMyAssignedTasks = (
             tasksObserver.current = DataStore.observeQuery(models.Task, (t) =>
                 t.and((t) => [
                     t.or((t) => [...taskIds].map((id) => t.id.eq(id))),
+                    t.or((t) => actualStatus.map((s) => t.status.eq(s))),
                 ])
             ).subscribe(async ({ items }) => {
                 const resolvedTasks: ResolvedTask[] = await Promise.all(
@@ -82,7 +79,7 @@ const useMyAssignedTasks = (
             }
             setIsFetching(false);
         }
-    }, [taskIds]);
+    }, [taskIds, actualStatus]);
 
     React.useEffect(() => {
         setUpTasksObserver();
@@ -162,10 +159,7 @@ const useMyAssignedTasks = (
                         return t.task;
                     })
                 );
-                const filteredTasks = resolvedTasks.filter((t) =>
-                    actualStatus.some((s) => t.status === s)
-                );
-                const taskIds = filteredTasks.map((t) => t.id);
+                const taskIds = resolvedTasks.map((t) => t.id);
                 setTaskIds(new Set(taskIds));
             });
             return;

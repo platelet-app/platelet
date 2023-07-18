@@ -1,6 +1,6 @@
 import * as models from "../../../models";
 import React from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import TaskCardLocationDetail from "./TaskCardLocationDetail";
 import CommentsBadge from "./CommentsBadge";
 import TaskCardTimestamp from "./TaskCardTimestamp";
@@ -31,10 +31,13 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onPress }) => {
         }
     }
 
-    const cutOff = 4;
+    const cutOff = 3;
 
     return (
-        <TouchableOpacity onPress={onPress}>
+        <TouchableOpacity
+            style={{ paddingLeft: 8, paddingRight: 8 }}
+            onPress={onPress}
+        >
             <TaskCardChips
                 limit={cutOff}
                 deliverables={deliverables}
@@ -45,17 +48,21 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onPress }) => {
                 nullLocationText="No pick up address"
                 location={task.pickUpLocation}
             />
-            <Divider />
+            <Divider style={{ width: "80%" }} />
             <TaskCardLocationDetail
                 nullLocationText="No delivery address"
                 location={task.dropOffLocation}
             />
-            {(task?.createdAt || task?.timeOfCall) && (
-                <TaskCardTimestamp
-                    timestamp={task.createdAt || task.timeOfCall || ""}
-                />
-            )}
-            {taskBadge}
+            <View
+                style={{ flexDirection: "row", gap: 10, alignItems: "center" }}
+            >
+                {(task?.createdAt || task?.timeOfCall) && (
+                    <TaskCardTimestamp
+                        timestamp={task.createdAt || task.timeOfCall || ""}
+                    />
+                )}
+                {taskBadge}
+            </View>
         </TouchableOpacity>
     );
 };

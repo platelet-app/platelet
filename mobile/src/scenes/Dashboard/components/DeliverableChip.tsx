@@ -6,14 +6,12 @@ import * as models from "../../../models";
 type DeliverableChipProps = {
     deliverable: models.Deliverable | null;
     showIcon?: boolean;
-    size?: "small" | "medium";
     style?: object;
 };
 
 const DeliverableChip: React.FC<DeliverableChipProps> = ({
     deliverable,
     showIcon = false,
-    size = "small",
     style = {},
 }) => {
     const [label, setLabel] = React.useState("");

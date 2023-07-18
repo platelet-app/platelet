@@ -3,22 +3,29 @@ import { Chip } from "react-native-paper";
 
 type PriorityChipProps = {
     priority: "HIGH" | "MEDIUM" | "LOW" | null;
-    size?: "small" | "medium";
-    style?: object;
 };
 
-const PriorityChip: React.FC<PriorityChipProps> = ({
-    priority,
-    size = "medium",
-    style = {},
-}) => {
-    let color = undefined;
+const PriorityChip: React.FC<PriorityChipProps> = ({ priority }) => {
+    let borderColor = "";
     if (priority === "HIGH") {
-        //color = red[500];
+        borderColor = "red";
     } else if (priority === "MEDIUM") {
-        //color = orange[500];
+        borderColor = "orange";
+    } else {
+        borderColor = "green";
     }
-    return <Chip style={style}>{priority}</Chip>;
+    return (
+        <Chip
+            style={{
+                borderColor,
+                borderWidth: borderColor ? 1 : 0,
+                marginRight: 4,
+            }}
+            compact
+        >
+            {priority}
+        </Chip>
+    );
 };
 
 export default PriorityChip;
