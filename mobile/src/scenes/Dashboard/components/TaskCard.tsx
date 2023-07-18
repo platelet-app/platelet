@@ -34,10 +34,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onPress }) => {
     const cutOff = 3;
 
     return (
-        <TouchableOpacity
-            style={{ paddingLeft: 8, paddingRight: 8 }}
-            onPress={onPress}
-        >
+        <TouchableOpacity onPress={onPress}>
             <TaskCardChips
                 limit={cutOff}
                 deliverables={deliverables}
@@ -53,6 +50,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onPress }) => {
                 nullLocationText="No delivery address"
                 location={task.dropOffLocation}
             />
+            <View style={{ height: 8 }} />
             <View
                 style={{ flexDirection: "row", gap: 10, alignItems: "center" }}
             >

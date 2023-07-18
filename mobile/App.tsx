@@ -9,7 +9,7 @@ import config from "./src/aws-exports";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Dashboard from "./src/scenes/Dashboard/Dashboard";
-import Task from "./src/scenes/Dashboard/components/Task";
+import Task from "./src/scenes/Task/Task";
 import { store } from "./src/redux";
 import { Provider } from "react-redux";
 import { Logger } from "aws-amplify";

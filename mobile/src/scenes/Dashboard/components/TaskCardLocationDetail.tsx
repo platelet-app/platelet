@@ -25,7 +25,12 @@ const TaskHistoryCardLocationDetail: React.FC<
     }
     return (
         <View>
-            <Text>{addressString || nullLocationText}</Text>
+            <Text
+                style={{ fontStyle: addressString ? "normal" : "italic" }}
+                numberOfLines={1}
+            >
+                {addressString || nullLocationText}
+            </Text>
         </View>
     );
 };

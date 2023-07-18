@@ -27,7 +27,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         await DataStore.clear();
     };
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{ paddingLeft: 8, paddingRight: 8 }}>
             <Button onPress={clearDataStore}>Clear DataStore</Button>
             <TasksGridTasksList
                 navigation={navigation}
