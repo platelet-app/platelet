@@ -9,7 +9,7 @@ import {
     initWhoamiObserver,
 } from "./whoamiActions";
 import { REACT_APP_DEMO_MODE, REACT_APP_OFFLINE_ONLY } from "@env";
-import API from "@aws-amplify/api";
+import { API } from "aws-amplify";
 import { Auth, DataStore, syncExpression } from "aws-amplify";
 import * as models from "../../models";
 import * as queries from "../../graphql/queries";
@@ -67,7 +67,6 @@ export function* watchInitWhoamiObserver() {
 }
 
 function* getWhoami() {
-    debugger;
     if (process.env.NODE_ENV === "test") {
         yield put(getWhoamiSuccess(testUser));
         return;
@@ -139,17 +138,25 @@ function* getWhoami() {
                     },
                     syncExpressions: [
                         ...modelsToSync.map((model) =>
-                            syncExpression(model, (m) =>
-                                m.tenantId.eq(tenantId)
+                            syncExpression(
+                                model,
+                                () => (m) => m.tenantId.eq(tenantId)
                             )
                         ),
                         ...archivedModels.map((model) =>
-                            syncExpression(model, (m) => [
-                                m.tenantId.eq(tenantId),
-                                m.archived.eq(0),
-                            ])
+                            syncExpression(
+                                model,
+                                () => (m) =>
+                                    m.and((m) => [
+                                        m.tenantId.eq(tenantId),
+                                        m.archived.eq(0),
+                                    ])
+                            )
                         ),
-                        syncExpression(models.Tenant, (m) => m.id.eq(tenantId)),
+                        syncExpression(
+                            models.Tenant,
+                            () => (m) => m.id.eq(tenantId)
+                        ),
                     ],
                     conflictHandler: dataStoreConflictHandler,
                 });
@@ -184,6 +191,7 @@ function* getWhoami() {
                         throw new NotFound("Could not find logged in user");
                     }
                 } else {
+                    console.log("SUCCESS WHOAMI", result[0]);
                     yield put(getWhoamiSuccess(result[0]));
                     yield put(initWhoamiObserver(result[0].id));
                 }

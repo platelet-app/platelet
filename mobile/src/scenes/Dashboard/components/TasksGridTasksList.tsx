@@ -1,7 +1,7 @@
 import * as models from "../../../models";
 import { FlatList } from "react-native";
 import TaskCard from "./TaskCard";
-import useTaskObserveQueryByStatus from "../../../hooks/useTaskObserveQueryByStatus";
+import useMyAssignedTasks from "../../../hooks/useMyAssignedTasks";
 
 type TasksGridTasksListProps = {
     status: models.TaskStatus[];
@@ -12,7 +12,7 @@ const TasksGridTasksList = ({
     status,
     navigation,
 }: TasksGridTasksListProps) => {
-    const { state } = useTaskObserveQueryByStatus(status);
+    const { state } = useMyAssignedTasks(status, models.Role.RIDER);
 
     return (
         <FlatList
@@ -21,7 +21,6 @@ const TasksGridTasksList = ({
                 <TaskCard
                     task={item}
                     onPress={() => {
-                        console.log("Pressed");
                         navigation.navigate("Task", { taskId: item.id });
                     }}
                 />

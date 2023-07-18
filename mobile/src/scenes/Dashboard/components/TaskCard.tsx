@@ -22,10 +22,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onPress }) => {
     const assignees = useTaskAssigneesRedux(task.id, true);
     const deliverables = useTaskDeliverablesRedux(task.id);
     const comments = useCommentsRedux(task.id);
-    const [pickUpLocation, setPickUpLocation] =
-        React.useState<models.Location | null>(null);
-    const [dropOffLocation, setDropOffLocation] =
-        React.useState<models.Location | null>(null);
 
     let taskBadge = <></>;
 
@@ -37,15 +33,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onPress }) => {
 
     const cutOff = 4;
 
-    const resolveLocation = React.useCallback(async () => {
-        setPickUpLocation((await task.pickUpLocation) || null);
-        setDropOffLocation((await task.dropOffLocation) || null);
-    }, [task.pickUpLocation, task.dropOffLocation]);
-
-    React.useEffect(() => {
-        resolveLocation();
-    }, [resolveLocation]);
-
     return (
         <TouchableOpacity onPress={onPress}>
             <TaskCardChips
@@ -56,12 +43,12 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onPress }) => {
             />
             <TaskCardLocationDetail
                 nullLocationText="No pick up address"
-                location={pickUpLocation}
+                location={task.pickUpLocation}
             />
             <Divider />
             <TaskCardLocationDetail
                 nullLocationText="No delivery address"
-                location={dropOffLocation}
+                location={task.dropOffLocation}
             />
             {(task?.createdAt || task?.timeOfCall) && (
                 <TaskCardTimestamp

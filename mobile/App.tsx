@@ -15,8 +15,7 @@ import { Provider } from "react-redux";
 import { Logger } from "aws-amplify";
 import { REACT_APP_OFFLINE_ONLY } from "@env";
 
-if (REACT_APP_OFFLINE_ONLY === "true") {
-    console.log("Offline only mode");
+if (REACT_APP_OFFLINE_ONLY !== "true") {
     Amplify.configure(config);
 }
 
@@ -27,8 +26,6 @@ DataStore.configure({
 Logger.LOG_LEVEL = "ERROR";
 
 const Stack = createNativeStackNavigator();
-
-console.log(process.env);
 
 const Main = () => {
     return (
@@ -51,7 +48,9 @@ const App = () => {
     } else {
         return (
             <Authenticator.Provider>
-                <Main />
+                <Authenticator>
+                    <Main />
+                </Authenticator>
             </Authenticator.Provider>
         );
     }

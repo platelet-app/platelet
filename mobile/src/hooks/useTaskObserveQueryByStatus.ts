@@ -10,12 +10,13 @@ const useTaskObserveQueryByStatus = (
     const [error, setError] = React.useState<Error | null>(null);
     const [isFetching, setIsFetching] = React.useState(false);
 
-    let actualStatus: models.TaskStatus[] = [];
-    if (!Array.isArray(status)) {
-        actualStatus = [status];
-    } else {
-        actualStatus = status;
-    }
+    let actualStatus: models.TaskStatus[] = React.useMemo(() => {
+        if (!Array.isArray(status)) {
+            return [status];
+        } else {
+            return status;
+        }
+    }, [status]);
 
     const getTasks = React.useCallback(() => {
         try {
@@ -36,10 +37,9 @@ const useTaskObserveQueryByStatus = (
             if (error instanceof Error) {
                 setError(error);
             }
-        } finally {
             setIsFetching(false);
         }
-    }, [status]);
+    }, [actualStatus]);
 
     React.useEffect(() => {
         getTasks();

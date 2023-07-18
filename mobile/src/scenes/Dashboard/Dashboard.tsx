@@ -4,6 +4,8 @@ import { SafeAreaView, StyleSheet } from "react-native";
 import TasksGridTasksList from "./components/TasksGridTasksList";
 import { useDispatch } from "react-redux";
 import { initialiseApp } from "../../redux/initialise/initialiseActions";
+import { Button } from "react-native-paper";
+import { DataStore } from "aws-amplify";
 
 type DashboardProps = {
     navigation: any;
@@ -20,8 +22,13 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         }
     };
     React.useEffect(initialise, [dispatch]);
+
+    const clearDataStore = async () => {
+        await DataStore.clear();
+    };
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView>
+            <Button onPress={clearDataStore}>Clear DataStore</Button>
             <TasksGridTasksList
                 navigation={navigation}
                 status={[
