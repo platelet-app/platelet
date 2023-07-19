@@ -450,14 +450,19 @@ export default async function generateReportBasic(
     }
     const actualEndDate = endDate ? new Date(endDate) : null;
     const actualStartDate = startDate ? new Date(startDate) : null;
+    const startDateCopy = actualStartDate ? new Date(actualStartDate) : null;
+    const endDateCopy = actualEndDate ? new Date(actualEndDate) : null;
     if (actualStartDate) {
         actualStartDate.setUTCHours(0, 0, 0, 0);
+        // sometimes changing the time changes the date, so we set it back
+        if (startDateCopy) actualStartDate.setDate(startDateCopy.getDate());
     }
     // if we use ALL we are using graphql and createdAt, so we add a day to the end date
     // and set the time to 00
     if (actualEndDate) {
-        if (role === "ALL") actualEndDate.setDate(actualEndDate.getDate() + 1);
         actualEndDate.setUTCHours(0, 0, 0, 0);
+        if (role === "ALL" && endDateCopy)
+            actualEndDate.setDate(endDateCopy.getDate() + 1);
     }
     console.log("get tasks", actualStartDate, actualEndDate);
     if (
