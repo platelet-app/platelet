@@ -1,8 +1,7 @@
 import * as models from "../models";
-import { tasksStatus, userRoles } from "../apiConsts";
 import { DataStore } from "aws-amplify";
 
-interface TaskInterface {
+export interface TaskInterface {
     id: string;
     timeCancelled?: string | null;
     timeDroppedOff?: string | null;
@@ -23,45 +22,49 @@ export default async function determineTaskStatus(
     // sort out cancelled and rejected first
     if (!!task.timeCancelled) {
         return !!task.timePickedUp
-            ? tasksStatus.abandoned
-            : tasksStatus.cancelled;
+            ? models.TaskStatus.ABANDONED
+            : models.TaskStatus.CANCELLED;
     } else if (!!task.timeRejected) {
-        return tasksStatus.rejected;
+        return models.TaskStatus.REJECTED;
     }
-    if (riderAssignees === null) {
-        riderAssignees = (await DataStore.query(models.TaskAssignee, (a) =>
-            a.role("eq", userRoles.rider)
-        )) as Assignee[];
-    }
-    let isRiderAssigned = false;
-    if (task && task.id) {
-        isRiderAssigned = riderAssignees.some(
-            (a) => a.task && a.task.id === task.id
-        );
-    }
-    if (!isRiderAssigned) {
-        return tasksStatus.new;
-    } else if (isRiderAssigned && !!!task.timePickedUp) {
-        return tasksStatus.active;
+
+    if (!!task.timePickedUp && !!!task.timeDroppedOff) {
+        return models.TaskStatus.PICKED_UP;
     } else if (
-        isRiderAssigned &&
-        !!task.timePickedUp &&
-        !!!task.timeDroppedOff
-    ) {
-        return tasksStatus.pickedUp;
-    } else if (
-        isRiderAssigned &&
         !!task.timePickedUp &&
         !!task.timeDroppedOff &&
         !!!task.timeRiderHome
     ) {
-        return tasksStatus.droppedOff;
+        return models.TaskStatus.DROPPED_OFF;
     } else if (
-        isRiderAssigned &&
         !!task.timePickedUp &&
         !!task.timeDroppedOff &&
         !!task.timeRiderHome
     ) {
-        return tasksStatus.completed;
+        return models.TaskStatus.COMPLETED;
+    }
+    let isRiderAssigned = false;
+    if (riderAssignees === null) {
+        const riderAssigneeData = await DataStore.query(
+            models.TaskAssignee,
+            (a) =>
+                a.and((a) => [
+                    a.task.id.eq(task.id),
+                    a.role.eq(models.Role.RIDER),
+                ])
+        );
+        if (riderAssigneeData.length > 0) {
+            isRiderAssigned = true;
+        }
+    } else if (task && task.id) {
+        isRiderAssigned = riderAssignees.some(
+            (a) => a.task && a.task.id === task.id
+        );
+    }
+
+    if (!isRiderAssigned) {
+        return models.TaskStatus.NEW;
+    } else {
+        return models.TaskStatus.ACTIVE;
     }
 }

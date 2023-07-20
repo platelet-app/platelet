@@ -1,4 +1,5 @@
-import { Text, View } from "react-native";
+import { Text } from "react-native-paper";
+import { View } from "react-native";
 
 type LabelItemPairProps = {
     label: string;

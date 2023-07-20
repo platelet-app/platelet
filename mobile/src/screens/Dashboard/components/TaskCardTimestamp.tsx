@@ -1,6 +1,6 @@
 import React from "react";
 import moment from "moment";
-import { Text } from "react-native";
+import { Text } from "react-native-paper";
 
 type TaskHistoryTimestampProps = {
     timestamp: string;

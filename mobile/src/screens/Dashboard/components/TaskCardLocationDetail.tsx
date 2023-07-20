@@ -1,9 +1,9 @@
-import { Location } from "../API";
-import * as models from "../models";
-import { Text, View } from "react-native";
+import * as models from "../../../models";
+import { Text } from "react-native-paper";
+import { View } from "react-native";
 
 type TaskHistoryCardLocationDetailProps = {
-    location?: Location | models.Location | null;
+    location?: models.Location | null;
     nullLocationText?: string;
 };
 
