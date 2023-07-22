@@ -10,6 +10,7 @@ import determineTaskStatus, {
 } from "../../../utilities/determineTaskStatus";
 import { saveTaskTimeWithKeyReactNative } from "../utilities";
 import TaskTimePicker from "./TaskTimePicker";
+import TaskActionsConfirmationDialog from "./TaskActionsConfirmationDialog";
 
 type TaskActionsProps = {
     taskId: string;
@@ -23,17 +24,15 @@ const fields = {
     timeRiderHome: "Rider home",
 };
 
-export type TaskUpdateKeys = keyof Omit<TaskInterface, "id">;
+export type TaskUpdateKey = keyof Omit<TaskInterface, "id">;
 
 const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
-    const [buttonsState, setButtonsState] = React.useState<TaskUpdateKeys[]>(
-        []
-    );
+    const [buttonsState, setButtonsState] = React.useState<TaskUpdateKey[]>([]);
     const [isPosting, setIsPosting] = React.useState(false);
     const [confirmationKey, setConfirmationKey] =
-        React.useState<TaskUpdateKeys | null>(null);
+        React.useState<TaskUpdateKey | null>(null);
     const [editKey, setEditKey] = React.useState<Omit<
-        TaskUpdateKeys,
+        TaskUpdateKey,
         "id"
     > | null>(null);
     const { state, isFetching, error } = useModelSubscription<models.Task>(
@@ -43,18 +42,18 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
     const errorMessage = "Sorry, something went wrong";
     const hasFullPermissions = true;
 
-    function onClickToggle(key: TaskUpdateKeys) {
+    function onClickToggle(key: TaskUpdateKey) {
         setConfirmationKey(key);
     }
 
-    function onClickEdit(key: TaskUpdateKeys) {
+    function onClickEdit(key: TaskUpdateKey) {
         setEditKey(key);
     }
     function onCancelEdit() {
         setEditKey(null);
     }
 
-    async function setTimeWithKey(key: TaskUpdateKeys, value: string | Date) {
+    async function setTimeWithKey(key: TaskUpdateKey, value: string | Date) {
         setIsPosting(true);
         setEditKey(null);
         try {
@@ -67,7 +66,7 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
         }
     }
 
-    async function saveValues(values: TaskInterface) {
+    async function saveValues(values: Partial<TaskInterface>) {
         setIsPosting(true);
         setConfirmationKey(null);
         try {
@@ -102,16 +101,16 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
         const result = Object.keys(fields).filter((key) => {
             return !!state[key as keyof typeof fields];
         });
-        setButtonsState(result as TaskUpdateKeys[]);
+        setButtonsState(result as TaskUpdateKey[]);
     }
     React.useEffect(calculateState, [state]);
 
-    const getIcon = (key: TaskUpdateKeys) => {
+    const getIcon = (key: TaskUpdateKey) => {
         if (buttonsState.includes(key)) return "checkbox-marked-outline";
         return "checkbox-blank-outline";
     };
 
-    function checkDisabled(key: TaskUpdateKeys) {
+    function checkDisabled(key: TaskUpdateKey) {
         if (!hasFullPermissions || state?.status === models.TaskStatus.PENDING)
             return true;
         const stopped =
@@ -145,90 +144,106 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
         } else return false;
     }
     return (
-        <Card
-            style={{
-                padding: 8,
-            }}
-        >
-            <View>
-                {Object.entries(fields).map(([key, value], index) => {
-                    let borderTopLeftRadius = 0;
-                    let borderTopRightRadius = 0;
-                    let borderBottomLeftRadius = 0;
-                    let borderBottomRightRadius = 0;
-                    if (index === 0) {
-                        borderTopLeftRadius = 8;
-                        borderTopRightRadius = 8;
-                    }
-                    if (index === Object.entries(fields).length - 1) {
-                        borderBottomLeftRadius = 8;
-                        borderBottomRightRadius = 8;
-                    }
+        <>
+            <Card
+                style={{
+                    padding: 8,
+                }}
+            >
+                <View>
+                    {Object.entries(fields).map(([key, value], index) => {
+                        let borderTopLeftRadius = 0;
+                        let borderTopRightRadius = 0;
+                        let borderBottomLeftRadius = 0;
+                        let borderBottomRightRadius = 0;
+                        if (index === 0) {
+                            borderTopLeftRadius = 8;
+                            borderTopRightRadius = 8;
+                        }
+                        if (index === Object.entries(fields).length - 1) {
+                            borderBottomLeftRadius = 8;
+                            borderBottomRightRadius = 8;
+                        }
+                        const disabled = checkDisabled(key as TaskUpdateKey);
 
-                    return (
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                gap: 8,
-                            }}
-                            key={key}
-                        >
+                        return (
                             <View
                                 style={{
                                     flexDirection: "row",
                                     alignItems: "center",
+                                    justifyContent: "space-between",
                                     gap: 8,
                                 }}
+                                key={key}
                             >
-                                <ToggleButton
-                                    size={30}
-                                    disabled={checkDisabled(
-                                        key as TaskUpdateKeys
-                                    )}
+                                <View
                                     style={{
-                                        height: 45,
-                                        borderWidth: 0.4,
-                                        borderTopLeftRadius,
-                                        borderTopRightRadius,
-                                        borderBottomLeftRadius,
-                                        borderBottomRightRadius,
-                                    }}
-                                    icon={getIcon(key as TaskUpdateKeys)}
-                                    value={key}
-                                    status={
-                                        buttonsState.includes(
-                                            key as TaskUpdateKeys
-                                        )
-                                            ? "checked"
-                                            : "unchecked"
-                                    }
-                                />
-                                <TouchableOpacity
-                                    disabled={checkDisabled(
-                                        key as TaskUpdateKeys
-                                    )}
-                                    onPress={() => {
-                                        onClickToggle(key as TaskUpdateKeys);
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        gap: 8,
                                     }}
                                 >
-                                    <Text
-                                        style={{ textTransform: "uppercase" }}
+                                    <ToggleButton
+                                        size={30}
+                                        disabled={checkDisabled(
+                                            key as TaskUpdateKey
+                                        )}
+                                        onPress={() => {
+                                            onClickToggle(key as TaskUpdateKey);
+                                        }}
+                                        style={{
+                                            height: 50,
+                                            borderWidth: 0.4,
+                                            borderTopLeftRadius,
+                                            borderTopRightRadius,
+                                            borderBottomLeftRadius,
+                                            borderBottomRightRadius,
+                                        }}
+                                        icon={getIcon(key as TaskUpdateKey)}
+                                        value={key}
+                                        status={
+                                            buttonsState.includes(
+                                                key as TaskUpdateKey
+                                            )
+                                                ? "checked"
+                                                : "unchecked"
+                                        }
+                                    />
+                                    <TouchableOpacity
+                                        disabled={disabled}
+                                        onPress={() => {
+                                            onClickToggle(key as TaskUpdateKey);
+                                        }}
                                     >
-                                        {value}
-                                    </Text>
-                                </TouchableOpacity>
+                                        <Text
+                                            style={{
+                                                fontSize: 16,
+                                                opacity: disabled ? 0.5 : 1,
+                                                textTransform: "uppercase",
+                                            }}
+                                        >
+                                            {value}
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <TaskTimePicker
+                                    onChange={() => {}}
+                                    time={state?.[key as keyof TaskInterface]}
+                                />
                             </View>
-                            <TaskTimePicker
-                                onChange={() => {}}
-                                time={state?.[key as keyof TaskInterface]}
-                            />
-                        </View>
-                    );
-                })}
-            </View>
-        </Card>
+                        );
+                    })}
+                </View>
+            </Card>
+            <TaskActionsConfirmationDialog
+                key={confirmationKey}
+                nullify={!!state?.[confirmationKey as keyof TaskInterface]}
+                taskKey={confirmationKey as TaskUpdateKey}
+                open={!!confirmationKey}
+                onClose={() => setConfirmationKey(null)}
+                onConfirm={saveValues}
+            />
+        </>
     );
 };
 

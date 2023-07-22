@@ -14,6 +14,9 @@ import { store } from "./src/redux";
 import { Provider } from "react-redux";
 import { Logger } from "aws-amplify";
 import { REACT_APP_OFFLINE_ONLY } from "@env";
+import { enGB, registerTranslation } from "react-native-paper-dates";
+
+registerTranslation("en-GB", enGB);
 
 if (REACT_APP_OFFLINE_ONLY !== "true") {
     Amplify.configure(config);
