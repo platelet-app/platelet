@@ -4,30 +4,15 @@ import { S3ObjectAccessLevels } from "../../../apiConsts";
 import * as models from "../../../models";
 import * as queries from "../../../graphql/queries";
 
-let aws_config = {
-    default: {
-        aws_user_files_s3_bucket: "",
-        aws_user_files_s3_bucket_region: "",
-    },
-};
-
-if (
-    (!process.env.REACT_APP_OFFLINE_ONLY ||
-        process.env.REACT_APP_OFFLINE_ONLY === "false") &&
-    (!process.env.REACT_APP_DEMO_MODE ||
-        process.env.REACT_APP_DEMO_MODE === "false") &&
-    process.env.JEST_WORKER_ID === undefined
-) {
-    aws_config = require("../../../aws-exports");
-}
-
 async function uploadProfilePicture(userId, selectedFile) {
     if (selectedFile) {
-        const bucket = aws_config.default
-            ? aws_config.default.aws_user_files_s3_bucket
-            : null;
-        const region = aws_config.default
-            ? aws_config.default.aws_user_files_s3_bucket_region
+        const amplifyConfig = localStorage.getItem("amplifyConfig");
+        if (!amplifyConfig)
+            throw new Error("Tenant config is not available in local storage");
+        const aws_config = JSON.parse(amplifyConfig);
+        const bucket = aws_config ? aws_config.aws_user_files_s3_bucket : null;
+        const region = aws_config
+            ? aws_config.aws_user_files_s3_bucket_region
             : null;
         const visibility = S3ObjectAccessLevels.public;
 
