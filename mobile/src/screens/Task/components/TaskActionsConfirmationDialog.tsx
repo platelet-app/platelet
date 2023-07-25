@@ -1,20 +1,37 @@
 import React from "react";
-import { TimePicker, TimePickerModal } from "react-native-paper-dates";
-import { Button, Dialog, Text } from "react-native-paper";
+import { DatePickerModal, TimePickerModal } from "react-native-paper-dates";
+import { Button, Dialog, Portal, TextInput } from "react-native-paper";
 import { TaskUpdateKey } from "./TaskActions";
 import moment from "moment";
 import { TouchableOpacity } from "react-native";
+import TaskDateTimeTextInput from "./TaskDateTimeTextInput";
 
 type Value = {
     [K in TaskUpdateKey]?: string;
 };
 
 type TaskActionsConfirmationDialogProps = {
+    startingValue?: string | Date | null;
+    startingNameValue?: string | null;
     open: boolean;
     taskKey: TaskUpdateKey;
+    nameKey?: "timePickedUpSenderName" | "timeDroppedOffRecipientName" | null;
     onClose: () => void;
     onConfirm: (value: Value) => void;
     nullify: boolean;
+};
+
+const humanReadableName = (
+    nameKey: "timePickedUpSenderName" | "timeDroppedOffRecipientName"
+) => {
+    switch (nameKey) {
+        case "timePickedUpSenderName":
+            return "Sender name";
+        case "timeDroppedOffRecipientName":
+            return "Recipient name";
+        default:
+            return "";
+    }
 };
 
 const humanReadableConfirmation = (field: TaskUpdateKey, nullify: boolean) => {
@@ -46,53 +63,106 @@ const humanReadableConfirmation = (field: TaskUpdateKey, nullify: boolean) => {
 
 const TaskActionsConfirmationDialog: React.FC<
     TaskActionsConfirmationDialogProps
-> = ({ open, taskKey, onClose, onConfirm, nullify }) => {
-    const [value, setValue] = React.useState<Date>(new Date());
+> = ({
+    startingValue,
+    startingNameValue,
+    open,
+    taskKey,
+    nameKey = null,
+    onClose,
+    onConfirm,
+    nullify,
+}) => {
+    const [value, setValue] = React.useState<Date>(
+        startingValue ? new Date(startingValue) : new Date()
+    );
     const [timePickerOpen, setTimePickerOpen] = React.useState(false);
+    const [datePickerOpen, setDatePickerOpen] = React.useState(false);
+    const [nameValue, setNameValue] = React.useState(startingNameValue || "");
 
     const handleConfirm = () => {
         const result = nullify ? null : value.toISOString();
-        onConfirm({ [taskKey]: result });
+        if (nameKey) {
+            onConfirm({ [taskKey]: result, [nameKey]: nameValue });
+        } else {
+            onConfirm({ [taskKey]: result });
+        }
         onClose();
     };
 
     return (
-        <Dialog visible={open} onDismiss={onClose}>
-            <Dialog.Title>
-                {humanReadableConfirmation(taskKey, nullify)}
-            </Dialog.Title>
-            <Dialog.Content>
-                {!nullify && (
-                    <>
-                        <TouchableOpacity
-                            onPress={() => setTimePickerOpen(true)}
-                        >
-                            <Text>
-                                {moment(value).format("DD/MM/yyyy, HH:mm")}
-                            </Text>
-                        </TouchableOpacity>
-                        <TimePickerModal
-                            visible={timePickerOpen}
-                            use24HourClock
-                            onDismiss={() => setTimePickerOpen(false)}
-                            onConfirm={(date) => {
-                                const dateCopy = new Date(value);
-                                dateCopy.setHours(date.hours);
-                                dateCopy.setMinutes(date.minutes);
-                                setValue(dateCopy);
-                                setTimePickerOpen(false);
-                            }}
-                            hours={value.getHours()}
-                            minutes={value.getMinutes()}
-                        />
-                    </>
-                )}
-            </Dialog.Content>
-            <Dialog.Actions>
-                <Button onPress={onClose}>Cancel</Button>
-                <Button onPress={handleConfirm}>OK</Button>
-            </Dialog.Actions>
-        </Dialog>
+        <Portal>
+            <Dialog visible={open} onDismiss={onClose}>
+                <Dialog.Title>
+                    {humanReadableConfirmation(taskKey, nullify)}
+                </Dialog.Title>
+                <Dialog.Content>
+                    {!nullify && (
+                        <>
+                            <TouchableOpacity
+                                onPress={() => setDatePickerOpen(true)}
+                            >
+                                <TaskDateTimeTextInput
+                                    value={moment(value).format("DD/MM/YYYY")}
+                                    label="Date"
+                                />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => setTimePickerOpen(true)}
+                            >
+                                <TaskDateTimeTextInput
+                                    value={moment(value).format("HH:mm")}
+                                    label="Time"
+                                />
+                            </TouchableOpacity>
+                            {nameKey && (
+                                <TextInput
+                                    mode="outlined"
+                                    value={nameValue}
+                                    onChangeText={setNameValue}
+                                    label={humanReadableName(nameKey)}
+                                />
+                            )}
+                        </>
+                    )}
+                </Dialog.Content>
+                <Dialog.Actions>
+                    <Button onPress={onClose}>Cancel</Button>
+                    <Button onPress={handleConfirm}>OK</Button>
+                </Dialog.Actions>
+            </Dialog>
+            <TimePickerModal
+                visible={timePickerOpen}
+                use24HourClock
+                onDismiss={() => setTimePickerOpen(false)}
+                onConfirm={(date) => {
+                    const dateCopy = new Date(value);
+                    dateCopy.setHours(date.hours);
+                    dateCopy.setMinutes(date.minutes);
+                    setValue(dateCopy);
+                    setTimePickerOpen(false);
+                }}
+                hours={value.getHours()}
+                minutes={value.getMinutes()}
+            />
+            <DatePickerModal
+                locale="en-GB"
+                visible={datePickerOpen}
+                onDismiss={() => setDatePickerOpen(false)}
+                mode="single"
+                onConfirm={({ date }) => {
+                    if (date) {
+                        const dateCopy = new Date(value);
+                        dateCopy.setFullYear(date.getFullYear());
+                        dateCopy.setMonth(date.getMonth());
+                        dateCopy.setDate(date.getDate());
+                        setValue(dateCopy);
+                        setDatePickerOpen(false);
+                    }
+                }}
+                date={value}
+            />
+        </Portal>
     );
 };
 

@@ -1,14 +1,12 @@
 import { DataStore } from "aws-amplify";
 import React from "react";
-import { Card, ToggleButton } from "react-native-paper";
+import { Card, ToggleButton, Text, Snackbar } from "react-native-paper";
 import { TouchableOpacity, View } from "react-native";
-import { Text } from "react-native-paper";
 import useModelSubscription from "../../../hooks/useModelSubscription";
 import * as models from "../../../models";
 import determineTaskStatus, {
     TaskInterface,
 } from "../../../utilities/determineTaskStatus";
-import { saveTaskTimeWithKeyReactNative } from "../utilities";
 import TaskTimePicker from "./TaskTimePicker";
 import TaskActionsConfirmationDialog from "./TaskActionsConfirmationDialog";
 
@@ -31,14 +29,9 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
     const [isPosting, setIsPosting] = React.useState(false);
     const [confirmationKey, setConfirmationKey] =
         React.useState<TaskUpdateKey | null>(null);
-    const [editKey, setEditKey] = React.useState<Omit<
-        TaskUpdateKey,
-        "id"
-    > | null>(null);
-    const { state, isFetching, error } = useModelSubscription<models.Task>(
-        models.Task,
-        taskId
-    );
+    const [editKey, setEditKey] = React.useState<TaskUpdateKey | null>(null);
+    const { state, setState, isFetching, error } =
+        useModelSubscription<models.Task>(models.Task, taskId);
     const errorMessage = "Sorry, something went wrong";
     const hasFullPermissions = true;
 
@@ -48,22 +41,6 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
 
     function onClickEdit(key: TaskUpdateKey) {
         setEditKey(key);
-    }
-    function onCancelEdit() {
-        setEditKey(null);
-    }
-
-    async function setTimeWithKey(key: TaskUpdateKey, value: string | Date) {
-        setIsPosting(true);
-        setEditKey(null);
-        try {
-            await saveTaskTimeWithKeyReactNative(key, value, taskId);
-            setIsPosting(false);
-        } catch (error) {
-            console.log(error);
-            setIsPosting(false);
-            //dispatch(displayErrorNotification(errorMessage));
-        }
     }
 
     async function saveValues(values: Partial<TaskInterface>) {
@@ -87,6 +64,7 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
                     }
                 })
             );
+            setState(updatedTask);
         } catch (e) {
             console.log(e);
             //dispatch(displayErrorNotification("Sorry, something went wrong"));
@@ -111,7 +89,13 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
     };
 
     function checkDisabled(key: TaskUpdateKey) {
-        if (!hasFullPermissions || state?.status === models.TaskStatus.PENDING)
+        if (
+            error ||
+            isFetching ||
+            isPosting ||
+            !hasFullPermissions ||
+            state?.status === models.TaskStatus.PENDING
+        )
             return true;
         const stopped =
             buttonsState.includes("timeCancelled") ||
@@ -143,6 +127,16 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
             );
         } else return false;
     }
+
+    let nameKey:
+        | "timePickedUpSenderName"
+        | "timeDroppedOffRecipientName"
+        | null = null;
+    if ([confirmationKey, editKey].includes("timePickedUp"))
+        nameKey = "timePickedUpSenderName";
+    else if ([confirmationKey, editKey].includes("timeDroppedOff"))
+        nameKey = "timeDroppedOffRecipientName";
+
     return (
         <>
             <Card
@@ -165,6 +159,19 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
                             borderBottomRightRadius = 8;
                         }
                         const disabled = checkDisabled(key as TaskUpdateKey);
+
+                        let showInfo = false;
+                        if (
+                            key === "timePickedUp" &&
+                            state?.timePickedUpSenderName
+                        ) {
+                            showInfo = true;
+                        } else if (
+                            key === "timeDroppedOff" &&
+                            state?.timeDroppedOffRecipientName
+                        ) {
+                            showInfo = true;
+                        }
 
                         return (
                             <View
@@ -192,7 +199,7 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
                                             onClickToggle(key as TaskUpdateKey);
                                         }}
                                         style={{
-                                            height: 50,
+                                            height: 53,
                                             borderWidth: 0.4,
                                             borderTopLeftRadius,
                                             borderTopRightRadius,
@@ -226,21 +233,44 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
-                                <TaskTimePicker
-                                    onChange={() => {}}
-                                    time={state?.[key as keyof TaskInterface]}
-                                />
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        onClickEdit(key as TaskUpdateKey);
+                                    }}
+                                >
+                                    <TaskTimePicker
+                                        time={
+                                            state?.[key as keyof TaskInterface]
+                                        }
+                                        onClickEdit={() =>
+                                            onClickEdit(key as TaskUpdateKey)
+                                        }
+                                        infoIcon={showInfo}
+                                    />
+                                </TouchableOpacity>
                             </View>
                         );
                     })}
                 </View>
             </Card>
             <TaskActionsConfirmationDialog
-                key={confirmationKey}
+                key={confirmationKey || "confirmationDialog"}
                 nullify={!!state?.[confirmationKey as keyof TaskInterface]}
                 taskKey={confirmationKey as TaskUpdateKey}
+                nameKey={nameKey}
                 open={!!confirmationKey}
                 onClose={() => setConfirmationKey(null)}
+                onConfirm={saveValues}
+            />
+            <TaskActionsConfirmationDialog
+                key={editKey || "editDialog"}
+                startingValue={state?.[editKey as keyof TaskInterface]}
+                nullify={false}
+                startingNameValue={state?.[nameKey as keyof TaskInterface]}
+                taskKey={editKey as TaskUpdateKey}
+                nameKey={nameKey}
+                open={!!editKey}
+                onClose={() => setEditKey(null)}
                 onConfirm={saveValues}
             />
         </>
