@@ -1,11 +1,14 @@
 import React from "react";
 import * as models from "../../models";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import TasksGridTasksList from "./components/TasksGridTasksList";
 import { useDispatch } from "react-redux";
 import { initialiseApp } from "../../redux/initialise/initialiseActions";
-import { Button } from "react-native-paper";
 import { DataStore } from "aws-amplify";
+import {
+    SafeAreaProvider,
+    useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 type DashboardProps = {
     navigation: any;
@@ -14,6 +17,7 @@ type DashboardProps = {
 const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
     const didInit = React.useRef(false);
     const dispatch = useDispatch();
+    const insets = useSafeAreaInsets();
 
     const initialise = () => {
         if (!didInit.current) {
@@ -27,8 +31,14 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
         await DataStore.clear();
     };
     return (
-        <SafeAreaView style={{ paddingLeft: 8, paddingRight: 8 }}>
-            <Button onPress={clearDataStore}>Clear DataStore</Button>
+        <View
+            style={{
+                paddingTop: insets.top,
+                paddingBottom: insets.bottom,
+                paddingLeft: insets.left + 8,
+                paddingRight: insets.right + 8,
+            }}
+        >
             <TasksGridTasksList
                 navigation={navigation}
                 status={[
@@ -38,7 +48,7 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
                     models.TaskStatus.ACTIVE,
                 ]}
             />
-        </SafeAreaView>
+        </View>
     );
 };
 

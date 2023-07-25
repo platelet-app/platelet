@@ -15,6 +15,7 @@ import { Provider } from "react-redux";
 import { Logger } from "aws-amplify";
 import { REACT_APP_OFFLINE_ONLY } from "@env";
 import { enGB, registerTranslation } from "react-native-paper-dates";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 registerTranslation("en-GB", enGB);
 
@@ -33,14 +34,20 @@ const Stack = createNativeStackNavigator();
 const Main = () => {
     return (
         <Provider store={store}>
-            <PaperProvider theme={{ version: 2 }}>
-                <NavigationContainer>
-                    <Stack.Navigator initialRouteName="Dashboard">
-                        <Stack.Screen name="Dashboard" component={Dashboard} />
-                        <Stack.Screen name="Task" component={Task} />
-                    </Stack.Navigator>
-                </NavigationContainer>
-            </PaperProvider>
+            <SafeAreaProvider>
+                <PaperProvider theme={{ version: 3 }}>
+                    <NavigationContainer>
+                        <Stack.Navigator initialRouteName="Dashboard">
+                            <Stack.Screen
+                                name="Dashboard"
+                                component={Dashboard}
+                                options={{ headerShown: false }}
+                            />
+                            <Stack.Screen name="Task" component={Task} />
+                        </Stack.Navigator>
+                    </NavigationContainer>
+                </PaperProvider>
+            </SafeAreaProvider>
         </Provider>
     );
 };
