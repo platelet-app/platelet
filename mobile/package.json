@@ -26,6 +26,7 @@
     "expo-status-bar": "~1.4.4",
     "faker": "5.5.3",
     "moment": "^2.29.4",
+    "moment-timezone": "^0.5.43",
     "react": "18.2.0",
     "react-native": "0.71.8",
     "react-native-get-random-values": "~1.8.0",

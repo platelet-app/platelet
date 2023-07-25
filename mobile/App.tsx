@@ -16,7 +16,10 @@ import { Logger } from "aws-amplify";
 import { REACT_APP_OFFLINE_ONLY } from "@env";
 import { enGB, registerTranslation } from "react-native-paper-dates";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import moment from "moment";
+import localization from "moment/locale/en-gb";
 
+moment.updateLocale("en-GB", localization);
 registerTranslation("en-GB", enGB);
 
 if (REACT_APP_OFFLINE_ONLY !== "true") {
