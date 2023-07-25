@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import * as models from "../../../models";
-import { Text, Divider, Card } from "react-native-paper";
+import { Text, Divider, Card, TouchableRipple } from "react-native-paper";
 import useModelSubscription from "../../../hooks/useModelSubscription";
 import LabelItemPair from "./LabelItemPair";
 
@@ -79,38 +79,44 @@ ${value}`;
                         {wholeAddress}
                     </Text>
                 )}
-                <View>
-                    {Object.entries(fields).map(([key, label]) => {
-                        if (!showHidden && hiddenFields.includes(key)) {
-                            return null;
-                        } else if (!showHidden) {
-                            return (
-                                <LabelItemPair
-                                    key={key}
-                                    label={label}
-                                    item={
-                                        state?.[
-                                            key as keyof TaskLocationDetailFields
-                                        ]
-                                    }
-                                />
-                            );
-                        } else {
-                            return null;
-                        }
-                    })}
-                    {Object.entries(contactFields).map(([key, label]) => (
-                        <LabelItemPair
-                            key={key}
-                            label={label}
-                            item={
-                                state?.contact?.[
-                                    key as keyof TaskContactDetailFields
-                                ]
+                <TouchableRipple
+                    onPress={() => {
+                        setShowHidden(true);
+                    }}
+                >
+                    <>
+                        {Object.entries(fields).map(([key, label]) => {
+                            if (!showHidden && hiddenFields.includes(key)) {
+                                return null;
+                            } else if (!showHidden) {
+                                return (
+                                    <LabelItemPair
+                                        key={key}
+                                        label={label}
+                                        item={
+                                            state?.[
+                                                key as keyof TaskLocationDetailFields
+                                            ]
+                                        }
+                                    />
+                                );
+                            } else {
+                                return null;
                             }
-                        />
-                    ))}
-                </View>
+                        })}
+                        {Object.entries(contactFields).map(([key, label]) => (
+                            <LabelItemPair
+                                key={key}
+                                label={label}
+                                item={
+                                    state?.contact?.[
+                                        key as keyof TaskContactDetailFields
+                                    ]
+                                }
+                            />
+                        ))}
+                    </>
+                </TouchableRipple>
                 <Divider />
                 <Text
                     variant="bodyLarge"
