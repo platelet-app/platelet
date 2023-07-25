@@ -3,10 +3,19 @@ import { View } from "react-native";
 
 type LabelItemPairProps = {
     label: string;
-    item: string | null;
+    item?: string | null;
+    showUnset?: boolean;
 };
 
-const LabelItemPair: React.FC<LabelItemPairProps> = ({ label, item }) => {
+const LabelItemPair: React.FC<LabelItemPairProps> = ({
+    label,
+    item,
+    showUnset = false,
+}) => {
+    let text = item;
+    if (!item && showUnset) {
+        text = "Unset";
+    }
     return (
         <View
             style={{
@@ -17,11 +26,12 @@ const LabelItemPair: React.FC<LabelItemPairProps> = ({ label, item }) => {
         >
             <Text>{label}: </Text>
             <Text
+                selectable
                 style={{
                     fontStyle: item ? "normal" : "italic",
                 }}
             >
-                {item || "Unset"}
+                {text}
             </Text>
         </View>
     );

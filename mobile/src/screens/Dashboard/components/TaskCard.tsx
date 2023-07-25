@@ -13,8 +13,13 @@ import { Divider, Card } from "react-native-paper";
 
 const colourBarPercent = "90%";
 
+type ResolvedTask = models.Task & {
+    pickUpLocation: models.Location;
+    dropOffLocation: models.Location;
+};
+
 type TaskCardProps = {
-    task: models.Task;
+    task: ResolvedTask;
     onPress?: () => void;
 };
 

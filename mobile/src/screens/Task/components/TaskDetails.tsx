@@ -50,12 +50,18 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ taskId }) => {
             >
                 {state?.timeOfCall && (
                     <LabelItemPair
+                        showUnset
                         label="Time of call"
                         item={calendarTime || ""}
                     />
                 )}
-                <LabelItemPair label="Priority" item={state?.priority || ""} />
                 <LabelItemPair
+                    showUnset
+                    label="Priority"
+                    item={state?.priority || ""}
+                />
+                <LabelItemPair
+                    showUnset
                     label="Rider role"
                     item={state?.riderResponsibility || ""}
                 />

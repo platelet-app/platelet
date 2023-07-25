@@ -9,6 +9,7 @@ import determineTaskStatus, {
 } from "../../../utilities/determineTaskStatus";
 import TaskTimePicker from "./TaskTimePicker";
 import TaskActionsConfirmationDialog from "./TaskActionsConfirmationDialog";
+import GenericErrorSnack from "../../../snacks/GenericErrorSnack";
 
 type TaskActionsProps = {
     taskId: string;
@@ -32,7 +33,7 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
     const [editKey, setEditKey] = React.useState<TaskUpdateKey | null>(null);
     const { state, setState, isFetching, error } =
         useModelSubscription<models.Task>(models.Task, taskId);
-    const errorMessage = "Sorry, something went wrong";
+    const [snackVisible, setSnackVisible] = React.useState(false);
     const hasFullPermissions = true;
 
     function onClickToggle(key: TaskUpdateKey) {
@@ -67,7 +68,7 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
             setState(updatedTask);
         } catch (e) {
             console.log(e);
-            //dispatch(displayErrorNotification("Sorry, something went wrong"));
+            setSnackVisible(true);
         } finally {
             setIsPosting(false);
             setEditKey(null);
@@ -200,6 +201,7 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
                                         }}
                                         style={{
                                             height: 53,
+                                            width: 53,
                                             borderWidth: 0.4,
                                             borderTopLeftRadius,
                                             borderTopRightRadius,
@@ -272,6 +274,10 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
                 open={!!editKey}
                 onClose={() => setEditKey(null)}
                 onConfirm={saveValues}
+            />
+            <GenericErrorSnack
+                visible={snackVisible}
+                onDismiss={() => setSnackVisible(false)}
             />
         </>
     );
