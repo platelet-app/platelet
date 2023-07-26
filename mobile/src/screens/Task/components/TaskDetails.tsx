@@ -41,7 +41,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ taskId }) => {
             <Card.Content
                 style={{
                     flexDirection: "column",
-                    gap: 8,
+                    gap: 4,
                 }}
             >
                 {state?.timeOfCall && (

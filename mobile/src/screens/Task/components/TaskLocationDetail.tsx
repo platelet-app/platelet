@@ -118,7 +118,9 @@ ${value}`;
                     </>
                 </TouchableRipple>
             </Card.Content>
-            <Divider style={{ marginTop: 8 }} />
+            <Divider
+                style={{ marginTop: 8, width: "90%", alignSelf: "center" }}
+            />
             <Text
                 variant="bodyLarge"
                 style={{
