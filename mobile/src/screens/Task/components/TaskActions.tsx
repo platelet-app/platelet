@@ -140,12 +140,8 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
 
     return (
         <>
-            <Card
-                style={{
-                    padding: 8,
-                }}
-            >
-                <View>
+            <Card>
+                <Card.Content>
                     {Object.entries(fields).map(([key, value], index) => {
                         let borderTopLeftRadius = 0;
                         let borderTopRightRadius = 0;
@@ -253,7 +249,7 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
                             </View>
                         );
                     })}
-                </View>
+                </Card.Content>
             </Card>
             <TaskActionsConfirmationDialog
                 key={confirmationKey || "confirmationDialog"}

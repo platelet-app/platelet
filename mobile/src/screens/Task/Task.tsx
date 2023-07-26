@@ -6,6 +6,8 @@ import TaskActions from "./components/TaskActions";
 import TaskDetails from "./components/TaskDetails";
 import TaskLocationDetail from "./components/TaskLocationDetail";
 import taskStatusHumanReadable from "../../utilities/taskStatusHumanReadable";
+import TaskInventoryDetail from "./components/TaskInventoryDetail";
+import TaskAssigneesDetail from "./components/TaskAssigneesDetail";
 
 type TaskProps = {
     route: any;
@@ -53,12 +55,14 @@ const Task: React.FC<TaskProps> = ({ route, navigation }) => {
             <TaskActions taskId={taskId} />
             <TaskLocationDetail
                 locationId={pickUpLocationId}
-                title="Collect from:"
+                title="Collect from"
             />
             <TaskLocationDetail
                 locationId={dropOffLocationId}
-                title="Deliver to:"
+                title="Deliver to"
             />
+            <TaskInventoryDetail taskId={taskId} />
+            <TaskAssigneesDetail taskId={taskId} />
         </ScrollView>
     );
 };

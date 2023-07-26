@@ -1,85 +1,44 @@
 import React from "react";
 import * as models from "../models";
 import { DataStore } from "aws-amplify";
-import { useSelector } from "react-redux";
-import { dataStoreModelSyncedStatusSelector } from "../redux/Selectors";
 import convertModelListToTypedObject from "./utilities/convertModelListToTypedObject";
 import _ from "lodash";
-import LocalPredicates from "../utilities/predicates";
 
-type StateType = {
-    [key: string]: models.Deliverable;
+type ResolvedDeliverable = Omit<models.Deliverable, "deliverableType"> & {
+    deliverableType: models.DeliverableType | null;
 };
 
-const useTaskDeliverables = (
-    taskId: string,
-    taskModelType: "Task" | "ScheduledTask"
-) => {
+type StateType = {
+    [key: string]: ResolvedDeliverable;
+};
+
+const useTaskDeliverables = (taskId: string) => {
     const deliverablesObserver = React.useRef({ unsubscribe: () => {} });
-    const deliverablesSynced = useSelector(
-        dataStoreModelSyncedStatusSelector
-    ).Deliverable;
-    const deliverableTypesSynced = useSelector(
-        dataStoreModelSyncedStatusSelector
-    ).DeliverableType;
 
     const [state, setState] = React.useState<StateType>({});
     const [isFetching, setIsFetching] = React.useState(true);
     const [error, setError] = React.useState<Error | null>(null);
 
-    const loadedOnce = React.useRef(false);
     const getDeliverables = React.useCallback(async () => {
-        if (!loadedOnce.current) setIsFetching(true);
         try {
-            const result = await DataStore.query(
-                models.Deliverable,
-                LocalPredicates.unarchived
-            );
-            let filtered = [];
-            if (taskModelType === "Task") {
-                filtered = result.filter((d) => d.task && d.task.id === taskId);
-            } else {
-                filtered = result.filter(
-                    (d) => d.scheduledTask && d.scheduledTask.id === taskId
-                );
-            }
-            setState(
-                convertModelListToTypedObject<models.Deliverable>(filtered)
-            );
-            setIsFetching(false);
-            loadedOnce.current = true;
             deliverablesObserver.current.unsubscribe();
-            deliverablesObserver.current = DataStore.observe(
-                models.Deliverable
-            ).subscribe(async ({ opType, element }) => {
-                DataStore.query(models.Deliverable, element.id).then(
-                    (result) => {
-                        if (opType === "DELETE") {
-                            setState((prevState) =>
-                                _.omit(prevState, element.id)
-                            );
-                            return;
-                        }
-                        if (
-                            element.task?.id !== taskId &&
-                            element.scheduledTask?.id !== taskId
-                        )
-                            return;
-                        if (result) {
-                            if (opType === "INSERT") {
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    [element.id]: result,
-                                }));
-                            } else if (opType === "UPDATE") {
-                                setState((prevState) => ({
-                                    ...prevState,
-                                    [element.id]: result,
-                                }));
-                            }
-                        }
-                    }
+            deliverablesObserver.current = DataStore.observeQuery(
+                models.Deliverable,
+                (d) => d.task.id.eq(taskId)
+            ).subscribe(async ({ items }) => {
+                const resolved: ResolvedDeliverable[] = await Promise.all(
+                    items.map(async (item) => {
+                        const deliverableType =
+                            (await item.deliverableType) || null;
+                        return { ...item, deliverableType };
+                    })
                 );
+                const typedDeliverables =
+                    convertModelListToTypedObject<ResolvedDeliverable>(
+                        resolved
+                    );
+                setState(typedDeliverables);
+                setIsFetching(false);
             });
         } catch (e: unknown) {
             if (e instanceof Error) {
@@ -87,14 +46,14 @@ const useTaskDeliverables = (
             }
             console.log(e);
         }
-    }, [taskId, taskModelType]);
+    }, [taskId]);
 
     React.useEffect(() => {
         getDeliverables();
         return () => deliverablesObserver.current.unsubscribe();
-    }, [deliverablesSynced, deliverableTypesSynced, getDeliverables]);
+    }, [getDeliverables]);
 
-    return { state, isFetching, error, setState };
+    return { state: Object.values(state), isFetching, error };
 };
 
 export default useTaskDeliverables;

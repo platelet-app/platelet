@@ -1,9 +1,9 @@
 import React from "react";
-import { View } from "react-native";
 import * as models from "../../../models";
-import { Text, Divider, Card, TouchableRipple } from "react-native-paper";
+import { Text, Card, TouchableRipple, Divider } from "react-native-paper";
 import useModelSubscription from "../../../hooks/useModelSubscription";
 import LabelItemPair from "./LabelItemPair";
+import DividerWithBottomMargin from "../../../components/DividerWithBottomMargin";
 
 type TaskLocationDetailProps = {
     locationId: string | null;
@@ -70,10 +70,10 @@ ${value}`;
         [state]
     );
     return (
-        <Card style={{ padding: 8 }}>
-            <View style={{ gap: 8 }}>
-                <Text variant="titleLarge">{title}</Text>
-                <Divider />
+        <Card>
+            <Card.Title title={title} />
+            <DividerWithBottomMargin />
+            <Card.Content style={{ gap: 8 }}>
                 {showHidden && (
                     <Text style={{ textAlign: "right" }} selectable>
                         {wholeAddress}
@@ -117,19 +117,20 @@ ${value}`;
                         ))}
                     </>
                 </TouchableRipple>
-                <Divider />
-                <Text
-                    variant="bodyLarge"
-                    style={{
-                        textDecorationLine: "underline",
-                        fontStyle: "italic",
-                        alignSelf: "flex-end",
-                    }}
-                    onPress={() => setShowHidden((prevState) => !prevState)}
-                >
-                    {showHidden ? "See less" : "See more"}
-                </Text>
-            </View>
+            </Card.Content>
+            <Divider style={{ marginTop: 8 }} />
+            <Text
+                variant="bodyLarge"
+                style={{
+                    padding: 8,
+                    textDecorationLine: "underline",
+                    fontStyle: "italic",
+                    alignSelf: "flex-end",
+                }}
+                onPress={() => setShowHidden((prevState) => !prevState)}
+            >
+                {showHidden ? "See less" : "See more"}
+            </Text>
         </Card>
     );
 };

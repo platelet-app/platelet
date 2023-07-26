@@ -37,12 +37,8 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ taskId }) => {
     }
 
     return (
-        <Card
-            style={{
-                padding: 8,
-            }}
-        >
-            <View
+        <Card>
+            <Card.Content
                 style={{
                     flexDirection: "column",
                     gap: 8,
@@ -65,7 +61,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ taskId }) => {
                     label="Rider role"
                     item={state?.riderResponsibility || ""}
                 />
-            </View>
+            </Card.Content>
         </Card>
     );
 };
