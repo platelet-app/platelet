@@ -1,25 +1,23 @@
 import React from "react";
 import * as models from "../../../models";
-import { FlatList, View } from "react-native";
+import { FlatList, ScrollView, View } from "react-native";
 import TaskCard from "./TaskCard";
 import useMyAssignedTasks from "../../../hooks/useMyAssignedTasks";
 import { Divider, Text } from "react-native-paper";
 import taskStatusHumanReadable from "../../../utilities/taskStatusHumanReadable";
+import { useNavigation } from "@react-navigation/native";
 
 type TasksGridTasksListProps = {
     status: models.TaskStatus[];
-    navigation: any;
 };
 
 type SortedTasksType = {
     [key in models.TaskStatus]?: models.Task[];
 };
 
-const TasksGridTasksList = ({
-    status,
-    navigation,
-}: TasksGridTasksListProps) => {
+const TasksGridTasksList = ({ status }: TasksGridTasksListProps) => {
     const { state } = useMyAssignedTasks(status, models.Role.RIDER);
+    const navigation = useNavigation();
 
     const sorted: SortedTasksType = React.useMemo(
         () =>
@@ -31,30 +29,27 @@ const TasksGridTasksList = ({
     );
 
     return (
-        <View style={{ gap: 8 }}>
+        <ScrollView style={{ gap: 8 }}>
             {Object.entries(sorted).map(([key, value]) => (
                 <View key={key}>
                     <Text variant="titleMedium">
                         {taskStatusHumanReadable(key as models.TaskStatus)}
                     </Text>
                     <Divider />
-                    <FlatList
-                        data={value}
-                        renderItem={({ item }) => (
-                            <TaskCard
-                                task={item}
-                                onPress={() => {
-                                    navigation.navigate("Task", {
-                                        taskId: item.id,
-                                    });
-                                }}
-                            />
-                        )}
-                        keyExtractor={(item) => item.id}
-                    />
+                    {value.map((item) => (
+                        <TaskCard
+                            key={item.id}
+                            task={item}
+                            onPress={() => {
+                                navigation.navigate("Task", {
+                                    taskId: item.id,
+                                });
+                            }}
+                        />
+                    ))}
                 </View>
             ))}
-        </View>
+        </ScrollView>
     );
 };
 

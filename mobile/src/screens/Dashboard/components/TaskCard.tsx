@@ -5,7 +5,6 @@ import TaskCardLocationDetail from "./TaskCardLocationDetail";
 import CommentsBadge from "./CommentsBadge";
 import TaskCardTimestamp from "./TaskCardTimestamp";
 import TaskCardChips from "./TaskCardChips";
-import useTaskAssigneesRedux from "../../../hooks/useTaskAssigneesRedux";
 import useTaskDeliverablesRedux from "../../../hooks/useTaskDeliverablesRedux";
 import useCommentsRedux from "../../../hooks/useCommentsRedux";
 //import UserAvatar from "./UserAvatar";
@@ -13,7 +12,7 @@ import { Divider, Card } from "react-native-paper";
 
 const colourBarPercent = "90%";
 
-type ResolvedTask = models.Task & {
+type ResolvedTask = Omit<models.Task, "pickUpLocation" | "dropOffLocation"> & {
     pickUpLocation: models.Location;
     dropOffLocation: models.Location;
 };
@@ -24,7 +23,6 @@ type TaskCardProps = {
 };
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, onPress }) => {
-    const assignees = useTaskAssigneesRedux(task.id, true);
     const deliverables = useTaskDeliverablesRedux(task.id);
     const comments = useCommentsRedux(task.id);
 

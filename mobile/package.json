@@ -15,6 +15,8 @@
     "@expo/webpack-config": "^18.0.1",
     "@react-native-async-storage/async-storage": "1.17.11",
     "@react-native-community/netinfo": "9.3.7",
+    "@react-navigation/bottom-tabs": "^6.5.8",
+    "@react-navigation/material-bottom-tabs": "^6.2.16",
     "@react-navigation/native-stack": "^6.9.13",
     "@reduxjs/toolkit": "^1.9.5",
     "amazon-cognito-identity-js": "^6.3.1",
