@@ -5,10 +5,7 @@ import TasksGridTasksList from "./components/TasksGridTasksList";
 import { useDispatch } from "react-redux";
 import { initialiseApp } from "../../redux/initialise/initialiseActions";
 import { DataStore } from "aws-amplify";
-import {
-    SafeAreaProvider,
-    useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type DashboardProps = {
     navigation: any;
@@ -42,10 +39,9 @@ const Dashboard: React.FC<DashboardProps> = ({ navigation }) => {
             <TasksGridTasksList
                 navigation={navigation}
                 status={[
-                    models.TaskStatus.NEW,
+                    models.TaskStatus.ACTIVE,
                     models.TaskStatus.PICKED_UP,
                     models.TaskStatus.DROPPED_OFF,
-                    models.TaskStatus.ACTIVE,
                 ]}
             />
         </View>
