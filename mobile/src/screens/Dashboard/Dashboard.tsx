@@ -3,12 +3,14 @@ import * as models from "../../models";
 import { View } from "react-native";
 import TasksGridTasksList from "./components/TasksGridTasksList";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useColorScheme } from "react-native";
 
 type DashboardProps = {
     status: "inProgress" | "completed";
 };
 
 const Dashboard: React.FC<DashboardProps> = ({ status }) => {
+    const colorScheme = useColorScheme();
     const insets = useSafeAreaInsets();
     let statuses = [];
     if (status === "inProgress") {
@@ -29,14 +31,17 @@ const Dashboard: React.FC<DashboardProps> = ({ status }) => {
         <View
             style={{
                 height: "100%",
-                backgroundColor: "#fff",
+                backgroundColor: colorScheme === "dark" ? "#000000" : "#ffffff",
                 paddingTop: insets.top,
                 paddingBottom: insets.bottom,
                 paddingLeft: insets.left + 8,
                 paddingRight: insets.right + 8,
             }}
         >
-            <TasksGridTasksList status={statuses} />
+            <TasksGridTasksList
+                limit={status === "completed"}
+                status={statuses}
+            />
         </View>
     );
 };

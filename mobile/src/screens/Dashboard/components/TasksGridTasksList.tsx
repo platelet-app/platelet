@@ -13,6 +13,7 @@ import _ from "lodash";
 
 type TasksGridTasksListProps = {
     status: models.TaskStatus[];
+    limit?: boolean;
 };
 
 type SortedTasksType = {
@@ -20,10 +21,14 @@ type SortedTasksType = {
     data: ResolvedTask[];
 };
 
-const TasksGridTasksList = ({ status }: TasksGridTasksListProps) => {
+const TasksGridTasksList = ({
+    status,
+    limit = false,
+}: TasksGridTasksListProps) => {
     const { state, isFetching, error } = useMyAssignedTasks(
         status,
-        models.Role.RIDER
+        models.Role.RIDER,
+        limit
     );
     const navigation = useNavigation();
 

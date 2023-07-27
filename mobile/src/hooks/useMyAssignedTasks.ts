@@ -23,7 +23,8 @@ const log = (message: any) => {
 
 const useMyAssignedTasks = (
     status: models.TaskStatus[] | models.TaskStatus,
-    role: models.Role.COORDINATOR | models.Role.RIDER
+    role: models.Role.COORDINATOR | models.Role.RIDER,
+    limit: boolean = false
 ) => {
     const whoami = useSelector(getWhoami);
     const assigneeObserver = React.useRef({ unsubscribe: () => {} });
@@ -46,35 +47,85 @@ const useMyAssignedTasks = (
     }, [status]);
 
     const setUpTasksObserver = React.useCallback(() => {
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setHours(0, 0, 0, 0);
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        const oneWeekAgoString = oneWeekAgo.toISOString();
         try {
             tasksObserver.current.unsubscribe();
             if (taskIds.size === 0) {
                 setState({});
                 return;
             }
-            tasksObserver.current = DataStore.observeQuery(models.Task, (t) =>
-                t.and((t) => [
-                    t.or((t) => [...taskIds].map((id) => t.id.eq(id))),
-                    t.or((t) => actualStatus.map((s) => t.status.eq(s))),
-                ])
-            ).subscribe(async ({ items }) => {
-                const resolvedTasks: ResolvedTask[] = await Promise.all(
-                    items.map(async (t) => {
-                        const pickUpLocation = (await t.pickUpLocation) || null;
-                        const dropOffLocation =
-                            (await t.dropOffLocation) || null;
-                        return {
-                            ...t,
-                            pickUpLocation,
-                            dropOffLocation,
-                        };
-                    })
-                );
-                setState(
-                    convertModelListToTypedObject<ResolvedTask>(resolvedTasks)
-                );
-                setIsFetching(false);
-            });
+            if (limit) {
+                tasksObserver.current = DataStore.observeQuery(
+                    models.Task,
+                    (t) =>
+                        t.and((t) => [
+                            t.or((t) => [...taskIds].map((id) => t.id.eq(id))),
+                            t.or((t) =>
+                                actualStatus.map((s) => t.status.eq(s))
+                            ),
+                            t.or((t) => [
+                                t.createdAt.eq(undefined),
+                                t.createdAt.gt(oneWeekAgoString),
+                            ]),
+                        ]),
+                    { sort: (s) => s.createdAt("DESCENDING") }
+                ).subscribe(async ({ items }) => {
+                    const resolvedTasks: ResolvedTask[] = await Promise.all(
+                        items.map(async (t) => {
+                            const pickUpLocation =
+                                (await t.pickUpLocation) || null;
+                            const dropOffLocation =
+                                (await t.dropOffLocation) || null;
+                            return {
+                                ...t,
+                                pickUpLocation,
+                                dropOffLocation,
+                            };
+                        })
+                    );
+                    setState(
+                        convertModelListToTypedObject<ResolvedTask>(
+                            resolvedTasks
+                        )
+                    );
+                    setIsFetching(false);
+                });
+            } else {
+                tasksObserver.current = DataStore.observeQuery(
+                    models.Task,
+                    (t) =>
+                        t.and((t) => [
+                            t.or((t) => [...taskIds].map((id) => t.id.eq(id))),
+                            t.or((t) =>
+                                actualStatus.map((s) => t.status.eq(s))
+                            ),
+                        ]),
+                    { sort: (s) => s.createdAt("DESCENDING") }
+                ).subscribe(async ({ items }) => {
+                    const resolvedTasks: ResolvedTask[] = await Promise.all(
+                        items.map(async (t) => {
+                            const pickUpLocation =
+                                (await t.pickUpLocation) || null;
+                            const dropOffLocation =
+                                (await t.dropOffLocation) || null;
+                            return {
+                                ...t,
+                                pickUpLocation,
+                                dropOffLocation,
+                            };
+                        })
+                    );
+                    setState(
+                        convertModelListToTypedObject<ResolvedTask>(
+                            resolvedTasks
+                        )
+                    );
+                    setIsFetching(false);
+                });
+            }
         } catch (error: unknown) {
             if (error instanceof Error) {
                 setError(error);
@@ -82,7 +133,7 @@ const useMyAssignedTasks = (
             }
             setIsFetching(false);
         }
-    }, [taskIds, actualStatus]);
+    }, [taskIds, actualStatus, limit]);
 
     React.useEffect(() => {
         setUpTasksObserver();
