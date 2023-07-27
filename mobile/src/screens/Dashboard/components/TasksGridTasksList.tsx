@@ -8,7 +8,7 @@ import useMyAssignedTasks, {
 import { Text } from "react-native-paper";
 import taskStatusHumanReadable from "../../../utilities/taskStatusHumanReadable";
 import { useNavigation } from "@react-navigation/native";
-import ContentLoader, { Rect, Circle, Path } from "react-content-loader/native";
+import ContentLoader, { Rect } from "react-content-loader/native";
 import _ from "lodash";
 
 type TasksGridTasksListProps = {
@@ -36,12 +36,16 @@ const TasksGridTasksList = ({
         () =>
             status.map((s) => {
                 const tasks = state.filter((t) => t.status === s);
+                let limitedTasks = tasks;
+                if (limit) {
+                    limitedTasks = tasks.slice(0, 50);
+                }
                 return {
                     title: s,
-                    data: tasks,
+                    data: limitedTasks,
                 };
             }),
-        [state, status]
+        [state, status, limit]
     );
 
     if (isFetching) {
