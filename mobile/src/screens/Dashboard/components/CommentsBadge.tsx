@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { useColorScheme, View } from "react-native";
 import { Text } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 
@@ -11,6 +11,7 @@ const CommentsBadge: React.FC<CommentsBadgeProps> = ({
     count,
     iconSize = 18,
 }) => {
+    const colorScheme = useColorScheme();
     if (count > 0) {
         return (
             <View
@@ -18,7 +19,11 @@ const CommentsBadge: React.FC<CommentsBadgeProps> = ({
                     flexDirection: "row",
                 }}
             >
-                <MaterialIcons name="message" size={iconSize} color="black" />
+                <MaterialIcons
+                    name="message"
+                    size={iconSize}
+                    color={colorScheme === "dark" ? "#ffffff" : "#000000"}
+                />
                 <Text>{count}</Text>
             </View>
         );

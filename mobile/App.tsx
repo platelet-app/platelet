@@ -4,10 +4,14 @@ import { DataStore } from "aws-amplify";
 import { ExpoSQLiteAdapter } from "@aws-amplify/datastore-storage-adapter/ExpoSQLiteAdapter";
 //import { StatusBar } from "expo-status-bar";
 import { Authenticator } from "@aws-amplify/ui-react-native";
-import { PaperProvider } from "react-native-paper";
+import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
 import { Amplify } from "aws-amplify";
 import config from "./src/aws-exports";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+    NavigationContainer,
+    DefaultTheme,
+    DarkTheme,
+} from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Dashboard from "./src/screens/Dashboard/Dashboard";
 import Task from "./src/screens/Task/Task";
@@ -20,6 +24,7 @@ import moment from "moment";
 import localization from "moment/locale/en-gb";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { initialiseApp } from "./src/redux/initialise/initialiseActions";
+import { useColorScheme } from "react-native";
 
 declare global {
     namespace ReactNavigation {
@@ -101,6 +106,7 @@ function CompletedStack() {
 const Main = () => {
     const didInit = React.useRef(false);
     const dispatch = useDispatch();
+    const colorScheme = useColorScheme();
 
     const initialise = () => {
         if (!didInit.current) {
@@ -110,8 +116,12 @@ const Main = () => {
     };
     React.useEffect(initialise, [dispatch]);
     return (
-        <PaperProvider theme={{ version: 3 }}>
-            <NavigationContainer>
+        <PaperProvider
+            theme={colorScheme === "dark" ? MD3DarkTheme : MD3LightTheme}
+        >
+            <NavigationContainer
+                theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+            >
                 <Tab.Navigator initialRouteName="Feed">
                     <Tab.Screen
                         name="InProgressStack"
