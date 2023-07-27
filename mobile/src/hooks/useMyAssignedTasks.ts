@@ -5,7 +5,10 @@ import { getWhoami } from "../redux/Selectors";
 import { DataStore } from "aws-amplify";
 import convertModelListToTypedObject from "./utilities/convertModelListToTypedObject";
 
-type ResolvedTask = Omit<models.Task, "pickUpLocation" | "dropOffLocation"> & {
+export type ResolvedTask = Omit<
+    models.Task,
+    "pickUpLocation" | "dropOffLocation"
+> & {
     pickUpLocation: models.Location | null;
     dropOffLocation: models.Location | null;
 };
@@ -30,7 +33,7 @@ const useMyAssignedTasks = (
     const [taskIds, setTaskIds] = React.useState<Set<string>>(new Set());
     const [state, setState] = React.useState<StateType>({});
     const [error, setError] = React.useState<Error | null>(null);
-    const [isFetching, setIsFetching] = React.useState(false);
+    const [isFetching, setIsFetching] = React.useState(true);
 
     stateRef.current = state;
 
