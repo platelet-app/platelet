@@ -20,6 +20,7 @@ const PriorityChip: React.FC<PriorityChipProps> = ({ priority }) => {
                 borderColor,
                 borderWidth: borderColor ? 1 : 0,
                 marginRight: 4,
+                height: 32,
             }}
             compact
         >

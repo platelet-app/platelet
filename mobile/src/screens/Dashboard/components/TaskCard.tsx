@@ -1,4 +1,3 @@
-import * as models from "../../../models";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import TaskCardLocationDetail from "./TaskCardLocationDetail";
@@ -7,15 +6,8 @@ import TaskCardTimestamp from "./TaskCardTimestamp";
 import TaskCardChips from "./TaskCardChips";
 import useTaskDeliverablesRedux from "../../../hooks/useTaskDeliverablesRedux";
 import useCommentsRedux from "../../../hooks/useCommentsRedux";
-//import UserAvatar from "./UserAvatar";
-import { Divider, Card } from "react-native-paper";
-
-const colourBarPercent = "90%";
-
-type ResolvedTask = Omit<models.Task, "pickUpLocation" | "dropOffLocation"> & {
-    pickUpLocation: models.Location;
-    dropOffLocation: models.Location;
-};
+import { Divider } from "react-native-paper";
+import { ResolvedTask } from "../../../hooks/useMyAssignedTasks";
 
 type TaskCardProps = {
     task: ResolvedTask;
@@ -48,7 +40,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onPress }) => {
                 nullLocationText="No pick up address"
                 location={task.pickUpLocation}
             />
-            <Divider style={{ width: "80%" }} />
+            <Divider style={{ width: "20%", margin: 1 }} />
             <TaskCardLocationDetail
                 nullLocationText="No delivery address"
                 location={task.dropOffLocation}
