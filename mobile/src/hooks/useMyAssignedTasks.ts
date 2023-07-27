@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { getWhoami } from "../redux/Selectors";
 import { DataStore } from "aws-amplify";
 import convertModelListToTypedObject from "./utilities/convertModelListToTypedObject";
+import _ from "lodash";
 
 export type ResolvedTask = Omit<
     models.Task,
@@ -31,12 +32,14 @@ const useMyAssignedTasks = (
     const tasksObserver = React.useRef({ unsubscribe: () => {} });
     const locationObserver = React.useRef({ unsubscribe: () => {} });
     const stateRef = React.useRef<StateType>({});
-    const [taskIds, setTaskIds] = React.useState<Set<string>>(new Set());
+    const taskIdsRef = React.useRef<string[]>([]);
+    const [taskIds, setTaskIds] = React.useState<string[]>([]);
     const [state, setState] = React.useState<StateType>({});
     const [error, setError] = React.useState<Error | null>(null);
     const [isFetching, setIsFetching] = React.useState(true);
 
     stateRef.current = state;
+    taskIdsRef.current = taskIds;
 
     let actualStatus: models.TaskStatus[] = React.useMemo(() => {
         if (!Array.isArray(status)) {
@@ -53,7 +56,7 @@ const useMyAssignedTasks = (
         const oneWeekAgoString = oneWeekAgo.toISOString();
         try {
             tasksObserver.current.unsubscribe();
-            if (taskIds.size === 0) {
+            if (taskIds.length === 0) {
                 setState({});
                 return;
             }
@@ -62,7 +65,6 @@ const useMyAssignedTasks = (
                     models.Task,
                     (t) =>
                         t.and((t) => [
-                            t.or((t) => [...taskIds].map((id) => t.id.eq(id))),
                             t.or((t) =>
                                 actualStatus.map((s) => t.status.eq(s))
                             ),
@@ -73,8 +75,11 @@ const useMyAssignedTasks = (
                         ]),
                     { sort: (s) => s.createdAt("DESCENDING") }
                 ).subscribe(async ({ items }) => {
+                    const filtered = items.filter((t) =>
+                        taskIdsRef.current.includes(t.id)
+                    );
                     const resolvedTasks: ResolvedTask[] = await Promise.all(
-                        items.map(async (t) => {
+                        filtered.map(async (t) => {
                             const pickUpLocation =
                                 (await t.pickUpLocation) || null;
                             const dropOffLocation =
@@ -98,15 +103,17 @@ const useMyAssignedTasks = (
                     models.Task,
                     (t) =>
                         t.and((t) => [
-                            t.or((t) => [...taskIds].map((id) => t.id.eq(id))),
                             t.or((t) =>
                                 actualStatus.map((s) => t.status.eq(s))
                             ),
                         ]),
                     { sort: (s) => s.createdAt("DESCENDING") }
                 ).subscribe(async ({ items }) => {
+                    const filtered = items.filter((t) =>
+                        taskIdsRef.current.includes(t.id)
+                    );
                     const resolvedTasks: ResolvedTask[] = await Promise.all(
-                        items.map(async (t) => {
+                        filtered.map(async (t) => {
                             const pickUpLocation =
                                 (await t.pickUpLocation) || null;
                             const dropOffLocation =
@@ -214,7 +221,11 @@ const useMyAssignedTasks = (
                     })
                 );
                 const taskIds = resolvedTasks.map((t) => t.id);
-                setTaskIds(new Set(taskIds));
+                if (_.isEqual(taskIds, taskIdsRef.current)) {
+                    return;
+                } else {
+                    setTaskIds(taskIds);
+                }
             });
             return;
             // some alternative way using observe instead of observeQuery
