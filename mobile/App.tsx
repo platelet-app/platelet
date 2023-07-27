@@ -18,13 +18,18 @@ import { REACT_APP_OFFLINE_ONLY } from "@env";
 import { enGB, registerTranslation } from "react-native-paper-dates";
 import moment from "moment";
 import localization from "moment/locale/en-gb";
-import { createStackNavigator } from "@react-navigation/stack";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { initialiseApp } from "./src/redux/initialise/initialiseActions";
 
+declare global {
+    namespace ReactNavigation {
+        interface RootParamList {
+            Home: undefined;
+            Task: { taskId: string };
+            NotFound: undefined;
+        }
+    }
+}
 const Tab = createMaterialBottomTabNavigator();
 
 moment.updateLocale("en-GB", localization);
