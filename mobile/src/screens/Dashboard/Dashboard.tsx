@@ -28,6 +28,8 @@ const Dashboard: React.FC<DashboardProps> = ({ status }) => {
     return (
         <View
             style={{
+                height: "100%",
+                backgroundColor: "#fff",
                 paddingTop: insets.top,
                 paddingBottom: insets.bottom,
                 paddingLeft: insets.left + 8,
