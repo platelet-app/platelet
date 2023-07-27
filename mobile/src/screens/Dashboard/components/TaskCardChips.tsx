@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     },
     chip: {
         marginRight: 4,
+        height: 32,
     },
 });
 
