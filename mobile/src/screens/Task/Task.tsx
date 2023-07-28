@@ -1,5 +1,5 @@
 import { ScrollView } from "react-native";
-import React from "react";
+import * as React from "react";
 import * as models from "../../models";
 import useModelSubscription from "../../hooks/useModelSubscription";
 import TaskActions from "./components/TaskActions";

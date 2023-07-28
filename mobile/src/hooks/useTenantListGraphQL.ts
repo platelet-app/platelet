@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { ModelIDInput, ModelIntInput, ModelStringInput } from "../API";
 
 type Tenant = {

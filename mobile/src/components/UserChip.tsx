@@ -1,8 +1,7 @@
-import React from "react";
+import * as React from "react";
 import { Chip, Avatar } from "react-native-paper";
 import * as models from "../models";
 import { generateS3Link } from "../amplifyUtilities";
-import { Image } from "react-native";
 
 type UserChipProps = {
     user: models.User;

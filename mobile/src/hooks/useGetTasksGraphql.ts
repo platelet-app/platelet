@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { GraphQLQuery } from "@aws-amplify/api";
 import { API } from "aws-amplify";
 import {

@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { DataStore } from "aws-amplify";
 import { useSelector } from "react-redux";
 import { dataStoreModelSyncedStatusSelector } from "../redux/Selectors";

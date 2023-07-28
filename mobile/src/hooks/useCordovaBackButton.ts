@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import React from "react";
+import * as React from "react";
 import { v4 as uuidv4 } from "uuid";
 import * as modalTrackerActions from "../redux/modalTracker/modalTrackerActions";
 import { useSelector } from "react-redux";

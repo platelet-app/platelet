@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import "@azure/core-asynciterator-polyfill";
 import { DataStore } from "aws-amplify";
 import { ExpoSQLiteAdapter } from "@aws-amplify/datastore-storage-adapter/ExpoSQLiteAdapter";
@@ -21,7 +21,7 @@ import { Logger } from "aws-amplify";
 import { REACT_APP_OFFLINE_ONLY } from "@env";
 import { enGB, registerTranslation } from "react-native-paper-dates";
 import moment from "moment";
-import localization from "moment/locale/en-gb";
+import "moment/locale/en-gb";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { initialiseApp } from "./src/redux/initialise/initialiseActions";
 import { useColorScheme } from "react-native";
@@ -37,7 +37,7 @@ declare global {
 }
 const Tab = createMaterialBottomTabNavigator();
 
-moment.updateLocale("en-GB", localization);
+moment.locale("en-GB");
 registerTranslation("en-GB", enGB);
 
 if (REACT_APP_OFFLINE_ONLY !== "true") {

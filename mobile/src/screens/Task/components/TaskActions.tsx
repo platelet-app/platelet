@@ -1,5 +1,5 @@
 import { DataStore } from "aws-amplify";
-import React from "react";
+import * as React from "react";
 import { Card, ToggleButton, Text, Snackbar } from "react-native-paper";
 import { TouchableOpacity, View } from "react-native";
 import useModelSubscription from "../../../hooks/useModelSubscription";

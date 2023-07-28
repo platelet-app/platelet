@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import * as models from "../models";
 import { useSelector } from "react-redux";
 import { getWhoami } from "../redux/Selectors";

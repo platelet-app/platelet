@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import * as models from "../../../models";
 import { Text, Card, TouchableRipple, Divider } from "react-native-paper";
 import useModelSubscription from "../../../hooks/useModelSubscription";

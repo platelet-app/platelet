@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 
 export default function useLongPressEventContextMenu(
     callback: (event?: React.MouseEvent) => void,

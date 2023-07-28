@@ -1,5 +1,5 @@
-import React from "react";
 import * as models from "../../../models";
+import * as React from "react";
 import { ScrollView, SectionList, View } from "react-native";
 import TaskCard from "./TaskCard";
 import useMyAssignedTasks, {
@@ -112,7 +112,13 @@ const TasksGridTasksList = ({
                         />
                     )}
                     renderSectionHeader={({ section: { title } }) => (
-                        <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                        <Text
+                            style={{
+                                fontWeight: "bold",
+                                fontSize: 16,
+                                marginTop: 10,
+                            }}
+                        >
                             {taskStatusHumanReadable(title)}
                         </Text>
                     )}

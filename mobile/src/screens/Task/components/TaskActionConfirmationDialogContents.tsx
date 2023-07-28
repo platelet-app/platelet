@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { useTheme } from "@mui/styles";
 import { DateTimePicker } from "@mui/lab";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";

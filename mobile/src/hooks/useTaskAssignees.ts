@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import * as models from "../models";
 import { DataStore } from "aws-amplify";
 import convertModelListToTypedObject from "./utilities/convertModelListToTypedObject";

@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { TouchableOpacity, View } from "react-native";
 import TaskCardLocationDetail from "./TaskCardLocationDetail";
 import CommentsBadge from "./CommentsBadge";

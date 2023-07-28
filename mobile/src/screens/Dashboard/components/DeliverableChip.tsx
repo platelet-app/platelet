@@ -1,5 +1,5 @@
 import { Chip } from "react-native-paper";
-import React from "react";
+import * as React from "react";
 //import { getDeliverableIconByEnum } from "../utilities";
 import * as models from "../../../models";
 

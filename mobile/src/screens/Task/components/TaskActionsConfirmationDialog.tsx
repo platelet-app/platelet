@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { DatePickerModal, TimePickerModal } from "react-native-paper-dates";
 import { Button, Dialog, Portal, TextInput } from "react-native-paper";
 import { TaskUpdateKey } from "./TaskActions";

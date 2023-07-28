@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import * as models from "../../models";
 import { View } from "react-native";
 import TasksGridTasksList from "./components/TasksGridTasksList";
