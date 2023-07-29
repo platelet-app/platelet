@@ -89,7 +89,8 @@ export function* watchInitialiseApp() {
 
 function* initialiseObservers() {
     yield all([
-        put(initTaskAssignees()),
+        // mobile version doesn't use assignees for now
+        //put(initTaskAssignees()),
         put(initTaskDeliverables()),
         put(initComments()),
     ]);
