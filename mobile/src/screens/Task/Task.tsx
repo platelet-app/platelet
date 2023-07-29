@@ -1,4 +1,5 @@
 import { ScrollView } from "react-native";
+import NotFound from "../Errors/NotFound";
 import * as React from "react";
 import * as models from "../../models";
 import useModelSubscription from "../../hooks/useModelSubscription";
@@ -8,6 +9,7 @@ import TaskLocationDetail from "./components/TaskLocationDetail";
 import taskStatusHumanReadable from "../../utilities/taskStatusHumanReadable";
 import TaskInventoryDetail from "./components/TaskInventoryDetail";
 import TaskAssigneesDetail from "./components/TaskAssigneesDetail";
+import GenericError from "../Errors/GenericError";
 
 type TaskProps = {
     route: any;
@@ -49,22 +51,28 @@ const Task: React.FC<TaskProps> = ({ route, navigation }) => {
         resolveLocations();
     }, [resolveLocations]);
 
-    return (
-        <ScrollView contentContainerStyle={{ padding: 8, gap: 8 }}>
-            <TaskDetails taskId={taskId} />
-            <TaskActions taskId={taskId} />
-            <TaskLocationDetail
-                locationId={pickUpLocationId}
-                title="Collect from"
-            />
-            <TaskLocationDetail
-                locationId={dropOffLocationId}
-                title="Deliver to"
-            />
-            <TaskInventoryDetail taskId={taskId} />
-            <TaskAssigneesDetail taskId={taskId} />
-        </ScrollView>
-    );
+    if (error) {
+        return <GenericError />;
+    } else if (notFound) {
+        return <NotFound />;
+    } else {
+        return (
+            <ScrollView contentContainerStyle={{ padding: 8, gap: 8 }}>
+                <TaskDetails taskId={taskId} />
+                <TaskActions taskId={taskId} />
+                <TaskLocationDetail
+                    locationId={pickUpLocationId}
+                    title="Collect from"
+                />
+                <TaskLocationDetail
+                    locationId={dropOffLocationId}
+                    title="Deliver to"
+                />
+                <TaskInventoryDetail taskId={taskId} />
+                <TaskAssigneesDetail taskId={taskId} />
+            </ScrollView>
+        );
+    }
 };
 
 export default Task;
