@@ -1,12 +1,16 @@
 import * as models from "../models";
 import { DataStore } from "aws-amplify";
-import React from "react";
+import * as React from "react";
 import convertModelListToTypedObject from "./utilities/convertModelListToTypedObject";
 import { useSelector } from "react-redux";
 import { getWhoami } from "../redux/Selectors";
 
 export type CommentsState = {
-    [key: string]: models.Comment;
+    [key: string]: ResolvedComment;
+};
+
+type ResolvedComment = Omit<models.Comment, "author"> & {
+    author: models.User | null;
 };
 
 const useComments = (parentId: string) => {
@@ -17,7 +21,7 @@ const useComments = (parentId: string) => {
     const observer = React.useRef({ unsubscribe: () => {} });
 
     const filterHidden = React.useCallback(
-        (comments: models.Comment[]) => {
+        (comments: ResolvedComment[]) => {
             return comments.filter(
                 (c) =>
                     c.visibility === models.CommentVisibility.EVERYONE ||
@@ -33,18 +37,19 @@ const useComments = (parentId: string) => {
         if (!parentId) return;
         setIsFetching(true);
         try {
-            const comments = await DataStore.query(models.Comment, (c) =>
-                c.parentId("eq", parentId)
-            );
-            const filtered = filterHidden(comments);
-            setState(convertModelListToTypedObject<models.Comment>(filtered));
             observer.current.unsubscribe();
             observer.current = DataStore.observeQuery(models.Comment, (c) =>
-                c.parentId("eq", parentId)
+                c.parentId.eq(parentId)
             ).subscribe(async ({ items }) => {
-                const filtered = filterHidden(items);
+                const resolved: ResolvedComment[] = await Promise.all(
+                    items.map(async (item) => {
+                        const author = (await item.author) || null;
+                        return { ...item, author };
+                    })
+                );
+                const filtered = filterHidden(resolved);
                 setState(
-                    convertModelListToTypedObject<models.Comment>(filtered)
+                    convertModelListToTypedObject<ResolvedComment>(filtered)
                 );
             });
         } catch (e: unknown) {
@@ -62,7 +67,7 @@ const useComments = (parentId: string) => {
         return () => observer.current.unsubscribe();
     }, [getComments]);
 
-    return { state, setState, isFetching, error };
+    return { state: Object.values(state), setState, isFetching, error };
 };
 
 export default useComments;
