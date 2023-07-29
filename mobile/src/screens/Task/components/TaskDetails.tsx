@@ -24,6 +24,14 @@ const isToday = (time: string | undefined | null) => {
     );
 };
 
+const CardWrapper = ({ children }: { children: React.ReactNode }) => {
+    return (
+        <Card>
+            <Card.Content>{children}</Card.Content>
+        </Card>
+    );
+};
+
 const TaskDetails: React.FC<TaskDetailsProps> = ({ taskId }) => {
     const { state, isFetching, error } = useModelSubscription<models.Task>(
         models.Task,
@@ -41,51 +49,50 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ taskId }) => {
     }
 
     if (error) {
-        return <GenericError />;
+        return (
+            <CardWrapper>
+                <GenericError />
+            </CardWrapper>
+        );
     } else if (isFetching) {
         return (
-            <ContentLoader
-                testID="task-details-skeleton"
-                speed={2}
-                width="100%"
-                height={300}
-                viewBox="0 0 400 300"
-                backgroundColor={colors.shimmerBackground}
-                foregroundColor={colors.shimmerForeground}
-            >
-                <Rect x="0" y="0" rx="0" ry="0" width="400" height="100" />
-                <Rect x="0" y="110" rx="0" ry="0" width="400" height="100" />
-                <Rect x="0" y="220" rx="0" ry="0" width="400" height="100" />
-            </ContentLoader>
+            <CardWrapper>
+                <ContentLoader
+                    testID="task-details-skeleton"
+                    speed={2}
+                    width="100%"
+                    height={60}
+                    viewBox="0 0 400 60"
+                    backgroundColor={colors.shimmerBackground}
+                    foregroundColor={colors.shimmerForeground}
+                >
+                    <Rect x="0" y="0" rx="0" ry="0" width="400" height="20" />
+                    <Rect x="0" y="22" rx="0" ry="0" width="400" height="20" />
+                    <Rect x="0" y="44" rx="0" ry="0" width="400" height="20" />
+                </ContentLoader>
+            </CardWrapper>
         );
     } else {
         return (
-            <Card>
-                <Card.Content
-                    style={{
-                        flexDirection: "column",
-                        gap: 4,
-                    }}
-                >
-                    {state?.timeOfCall && (
-                        <LabelItemPair
-                            showUnset
-                            label="Time of call"
-                            item={calendarTime || ""}
-                        />
-                    )}
+            <CardWrapper>
+                {state?.timeOfCall && (
                     <LabelItemPair
                         showUnset
-                        label="Priority"
-                        item={state?.priority || ""}
+                        label="Time of call"
+                        item={calendarTime || ""}
                     />
-                    <LabelItemPair
-                        showUnset
-                        label="Rider role"
-                        item={state?.riderResponsibility || ""}
-                    />
-                </Card.Content>
-            </Card>
+                )}
+                <LabelItemPair
+                    showUnset
+                    label="Priority"
+                    item={state?.priority || ""}
+                />
+                <LabelItemPair
+                    showUnset
+                    label="Rider role"
+                    item={state?.riderResponsibility || ""}
+                />
+            </CardWrapper>
         );
     }
 };

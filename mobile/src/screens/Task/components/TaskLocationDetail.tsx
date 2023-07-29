@@ -82,21 +82,62 @@ ${value}`;
         return <GenericError />;
     } else if (isFetching) {
         return (
-            <ContentLoader
-                testID="task-location-skeleton"
-                speed={2}
-                width="100%"
-                height={300}
-                viewBox="0 0 400 300"
-                backgroundColor={colors.shimmerBackground}
-                foregroundColor={colors.shimmerForeground}
-            >
-                <Rect x="0" y="0" rx="0" ry="0" width="400" height="100" />
-                <Rect x="0" y="110" rx="0" ry="0" width="400" height="100" />
-                <Rect x="0" y="220" rx="0" ry="0" width="400" height="100" />
-                <Rect x="0" y="330" rx="0" ry="0" width="400" height="100" />
-                <Rect x="0" y="440" rx="0" ry="0" width="400" height="100" />
-            </ContentLoader>
+            <Card>
+                <Card.Title title={title} />
+                <DividerWithBottomMargin />
+                <Card.Content>
+                    <ContentLoader
+                        testID="task-location-skeleton"
+                        speed={2}
+                        width="100%"
+                        height={100}
+                        viewBox="0 0 400 100"
+                        backgroundColor={colors.shimmerBackground}
+                        foregroundColor={colors.shimmerForeground}
+                    >
+                        <Rect
+                            x="0"
+                            y="0"
+                            rx="0"
+                            ry="0"
+                            width="400"
+                            height="20"
+                        />
+                        <Rect
+                            x="0"
+                            y="22"
+                            rx="0"
+                            ry="0"
+                            width="400"
+                            height="20"
+                        />
+                        <Rect
+                            x="0"
+                            y="44"
+                            rx="0"
+                            ry="0"
+                            width="400"
+                            height="20"
+                        />
+                        <Rect
+                            x="0"
+                            y="66"
+                            rx="0"
+                            ry="0"
+                            width="400"
+                            height="20"
+                        />
+                        <Rect
+                            x="0"
+                            y="88"
+                            rx="0"
+                            ry="0"
+                            width="400"
+                            height="20"
+                        />
+                    </ContentLoader>
+                </Card.Content>
+            </Card>
         );
     } else {
         return (
