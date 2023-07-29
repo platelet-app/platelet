@@ -2,6 +2,7 @@ import { Chip } from "react-native-paper";
 import * as React from "react";
 //import { getDeliverableIconByEnum } from "../utilities";
 import * as models from "../../../models";
+import SmallChip from "./SmallChip";
 
 type DeliverableChipProps = {
     deliverable: models.Deliverable | null;
@@ -27,11 +28,7 @@ const DeliverableChip: React.FC<DeliverableChipProps> = ({
     }, [getLabel]);
 
     if (label) {
-        return (
-            <Chip compact style={style}>
-                {label}
-            </Chip>
-        );
+        return <SmallChip style={style}>{label}</SmallChip>;
     }
     return null;
 };

@@ -1,5 +1,6 @@
 import { Chip } from "react-native-paper";
 import * as models from "../../../models";
+import SmallChip from "./SmallChip";
 //import { TaskStatus } from "../API";
 
 const generateLabel = (status: models.TaskStatus) => {
@@ -23,11 +24,7 @@ const TaskStatusChip: React.FC<TaskStatusChipProps> = ({
     style = {},
 }) => {
     if (status) {
-        return (
-            <Chip compact style={style}>
-                {generateLabel(status)}
-            </Chip>
-        );
+        return <SmallChip style={style}>{generateLabel(status)}</SmallChip>;
     } else {
         return <></>;
     }

@@ -6,6 +6,7 @@ import DeliverableChip from "./DeliverableChip";
 //import UserChip from "./UserChip";
 import PriorityChip from "./PriorityChip";
 import { Chip, List } from "react-native-paper";
+import SmallChip from "./SmallChip";
 
 type ResolvedDeliverable = models.Deliverable & {
     deliverableType: models.DeliverableType;
@@ -42,9 +43,9 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
     }
     if (riderResponsibility) {
         chips.push(
-            <Chip compact style={styles.chip} key={riderResponsibility}>
+            <SmallChip style={styles.chip} key={riderResponsibility}>
                 {riderResponsibility}
-            </Chip>
+            </SmallChip>
         );
     }
     let assigneeChips: React.ReactElement[] = [];
@@ -74,12 +75,11 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
     chips = [...chips, ...assigneeChips, ...deliverableChips];
 
     if (limit && chips.length > limit) {
-        const moreChips = chips.length - limit;
         chips = chips.slice(0, limit);
         chips.push(
-            <Chip compact style={styles.chip} key="more-chip">
+            <SmallChip style={styles.chip} key="more-chip">
                 ...
-            </Chip>
+            </SmallChip>
         );
     }
 
@@ -97,7 +97,6 @@ const styles = StyleSheet.create({
     },
     chip: {
         marginRight: 4,
-        height: 32,
     },
 });
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Chip } from "react-native-paper";
+import SmallChip from "./SmallChip";
 
 type PriorityChipProps = {
     priority: "HIGH" | "MEDIUM" | "LOW" | null;
@@ -15,17 +15,15 @@ const PriorityChip: React.FC<PriorityChipProps> = ({ priority }) => {
         borderColor = "green";
     }
     return (
-        <Chip
+        <SmallChip
             style={{
                 borderColor,
                 borderWidth: borderColor ? 1 : 0,
                 marginRight: 4,
-                height: 32,
             }}
-            compact
         >
             {priority}
-        </Chip>
+        </SmallChip>
     );
 };
 
