@@ -1,9 +1,11 @@
-import { Text, View } from "react-native";
-import { Card } from "react-native-paper";
+import { Card, useTheme } from "react-native-paper";
+import * as React from "react";
 import useModelSubscription from "../../../hooks/useModelSubscription";
 import * as models from "../../../models";
 import LabelItemPair from "./LabelItemPair";
 import moment from "moment";
+import GenericError from "../../Errors/GenericError";
+import ContentLoader, { Rect } from "react-content-loader/native";
 
 type TaskDetailsProps = {
     taskId: string;
@@ -27,6 +29,8 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ taskId }) => {
         models.Task,
         taskId
     );
+    const { colors } = useTheme();
+
     let calendarTime = "";
     const momentFormat = "DD/MM/YYYY, HH:mm";
 
@@ -36,34 +40,54 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ taskId }) => {
         calendarTime = moment(state?.timeOfCall).format(momentFormat);
     }
 
-    return (
-        <Card>
-            <Card.Content
-                style={{
-                    flexDirection: "column",
-                    gap: 4,
-                }}
+    if (error) {
+        return <GenericError />;
+    } else if (isFetching) {
+        return (
+            <ContentLoader
+                testID="task-details-skeleton"
+                speed={2}
+                width="100%"
+                height={300}
+                viewBox="0 0 400 300"
+                backgroundColor={colors.shimmerBackground}
+                foregroundColor={colors.shimmerForeground}
             >
-                {state?.timeOfCall && (
+                <Rect x="0" y="0" rx="0" ry="0" width="400" height="100" />
+                <Rect x="0" y="110" rx="0" ry="0" width="400" height="100" />
+                <Rect x="0" y="220" rx="0" ry="0" width="400" height="100" />
+            </ContentLoader>
+        );
+    } else {
+        return (
+            <Card>
+                <Card.Content
+                    style={{
+                        flexDirection: "column",
+                        gap: 4,
+                    }}
+                >
+                    {state?.timeOfCall && (
+                        <LabelItemPair
+                            showUnset
+                            label="Time of call"
+                            item={calendarTime || ""}
+                        />
+                    )}
                     <LabelItemPair
                         showUnset
-                        label="Time of call"
-                        item={calendarTime || ""}
+                        label="Priority"
+                        item={state?.priority || ""}
                     />
-                )}
-                <LabelItemPair
-                    showUnset
-                    label="Priority"
-                    item={state?.priority || ""}
-                />
-                <LabelItemPair
-                    showUnset
-                    label="Rider role"
-                    item={state?.riderResponsibility || ""}
-                />
-            </Card.Content>
-        </Card>
-    );
+                    <LabelItemPair
+                        showUnset
+                        label="Rider role"
+                        item={state?.riderResponsibility || ""}
+                    />
+                </Card.Content>
+            </Card>
+        );
+    }
 };
 
 export default TaskDetails;

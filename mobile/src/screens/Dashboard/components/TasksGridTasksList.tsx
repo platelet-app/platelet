@@ -1,11 +1,11 @@
 import * as models from "../../../models";
 import * as React from "react";
-import { ScrollView, SectionList, useColorScheme, View } from "react-native";
+import { ScrollView, SectionList, View } from "react-native";
 import TaskCard from "./TaskCard";
 import useMyAssignedTasks, {
     ResolvedTask,
 } from "../../../hooks/useMyAssignedTasks";
-import { Text } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
 import taskStatusHumanReadable from "../../../utilities/taskStatusHumanReadable";
 import { useNavigation } from "@react-navigation/native";
 import ContentLoader, { Rect } from "react-content-loader/native";
@@ -31,7 +31,7 @@ const TasksGridTasksList = ({
         limit
     );
     const navigation = useNavigation();
-    const theme = useColorScheme();
+    const { colors } = useTheme();
 
     const sorted: SortedTasksType[] = React.useMemo(
         () =>
@@ -59,8 +59,8 @@ const TasksGridTasksList = ({
                     width="100%"
                     height={1650}
                     viewBox="0 0 400 1650"
-                    backgroundColor={theme === "dark" ? "#333" : "#f3f3f3"}
-                    foregroundColor={theme === "dark" ? "#555" : "#ecebeb"}
+                    backgroundColor={colors.shimmerBackground}
+                    foregroundColor={colors.shimmerForeground}
                 >
                     {_.range(0, 15).map((i) => {
                         if (i % 5 === 0) {

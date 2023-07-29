@@ -52,6 +52,33 @@ Logger.LOG_LEVEL = "ERROR";
 
 const Stack = createNativeStackNavigator();
 
+declare global {
+    namespace ReactNativePaper {
+        interface ThemeColors {
+            shimmerForeground: string;
+            shimmerBackground: string;
+        }
+    }
+}
+
+const lightTheme = {
+    ...MD3LightTheme,
+    colors: {
+        ...MD3LightTheme.colors,
+        shimmerForeground: "#ecebeb",
+        shimmerBackground: "#f3f3f3",
+    },
+};
+
+const darkTheme = {
+    ...MD3DarkTheme,
+    colors: {
+        ...MD3DarkTheme.colors,
+        shimmerForeground: "#333",
+        shimmerBackground: "#555",
+    },
+};
+
 const InProgress = () => {
     return <Dashboard status="inProgress" />;
 };
@@ -116,9 +143,7 @@ const Main = () => {
     };
     React.useEffect(initialise, [dispatch]);
     return (
-        <PaperProvider
-            theme={colorScheme === "dark" ? MD3DarkTheme : MD3LightTheme}
-        >
+        <PaperProvider theme={colorScheme === "dark" ? darkTheme : lightTheme}>
             <NavigationContainer
                 theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
             >
