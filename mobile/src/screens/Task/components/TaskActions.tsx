@@ -192,6 +192,7 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
                                         disabled={checkDisabled(
                                             key as TaskUpdateKey
                                         )}
+                                        aria-label={value}
                                         onPress={() => {
                                             onClickToggle(key as TaskUpdateKey);
                                         }}
