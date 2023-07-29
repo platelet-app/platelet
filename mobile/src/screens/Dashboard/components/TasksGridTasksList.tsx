@@ -1,6 +1,6 @@
 import * as models from "../../../models";
 import * as React from "react";
-import { ScrollView, SectionList, View } from "react-native";
+import { ScrollView, SectionList, useColorScheme, View } from "react-native";
 import TaskCard from "./TaskCard";
 import useMyAssignedTasks, {
     ResolvedTask,
@@ -31,6 +31,7 @@ const TasksGridTasksList = ({
         limit
     );
     const navigation = useNavigation();
+    const theme = useColorScheme();
 
     const sorted: SortedTasksType[] = React.useMemo(
         () =>
@@ -53,12 +54,13 @@ const TasksGridTasksList = ({
         return (
             <ScrollView>
                 <ContentLoader
+                    testID="task-grid-tasks-list-skeleton"
                     speed={2}
                     width="100%"
                     height={1650}
                     viewBox="0 0 400 1650"
-                    backgroundColor="#f3f3f3"
-                    foregroundColor="#ecebeb"
+                    backgroundColor={theme === "dark" ? "#333" : "#f3f3f3"}
+                    foregroundColor={theme === "dark" ? "#555" : "#ecebeb"}
                 >
                     {_.range(0, 15).map((i) => {
                         if (i % 5 === 0) {
@@ -94,6 +96,8 @@ const TasksGridTasksList = ({
                 </ContentLoader>
             </ScrollView>
         );
+    } else if (error) {
+        return <Text>Sorry, something went wrong.</Text>;
     } else {
         return (
             <View style={{ gap: 8 }}>

@@ -32,11 +32,12 @@ const useMyAssignedTasks = (
     const tasksObserver = React.useRef({ unsubscribe: () => {} });
     const locationObserver = React.useRef({ unsubscribe: () => {} });
     const stateRef = React.useRef<StateType>({});
-    const taskIdsRef = React.useRef<string[]>([]);
-    const [taskIds, setTaskIds] = React.useState<string[]>([]);
+    const taskIdsRef = React.useRef<string[] | null>(null);
+    const [taskIds, setTaskIds] = React.useState<string[] | null>(null);
     const [state, setState] = React.useState<StateType>({});
     const [error, setError] = React.useState<Error | null>(null);
     const [isFetching, setIsFetching] = React.useState(true);
+    const isFetchingAssigneesRef = React.useRef(true);
 
     stateRef.current = state;
     taskIdsRef.current = taskIds;
@@ -50,16 +51,15 @@ const useMyAssignedTasks = (
     }, [status]);
 
     const setUpTasksObserver = React.useCallback(() => {
+        if (isFetchingAssigneesRef.current) {
+            return;
+        }
         const oneWeekAgo = new Date();
         oneWeekAgo.setHours(0, 0, 0, 0);
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
         const oneWeekAgoString = oneWeekAgo.toISOString();
         try {
             tasksObserver.current.unsubscribe();
-            if (taskIds.length === 0) {
-                setState({});
-                return;
-            }
             if (limit) {
                 tasksObserver.current = DataStore.observeQuery(
                     models.Task,
@@ -76,7 +76,7 @@ const useMyAssignedTasks = (
                     { sort: (s) => s.createdAt("DESCENDING") }
                 ).subscribe(async ({ items }) => {
                     const filtered = items.filter((t) =>
-                        taskIdsRef.current.includes(t.id)
+                        taskIdsRef.current?.includes(t.id)
                     );
                     const resolvedTasks: ResolvedTask[] = await Promise.all(
                         filtered.map(async (t) => {
@@ -110,7 +110,7 @@ const useMyAssignedTasks = (
                     { sort: (s) => s.createdAt("DESCENDING") }
                 ).subscribe(async ({ items }) => {
                     const filtered = items.filter((t) =>
-                        taskIdsRef.current.includes(t.id)
+                        taskIdsRef.current?.includes(t.id)
                     );
                     const resolvedTasks: ResolvedTask[] = await Promise.all(
                         filtered.map(async (t) => {
@@ -226,6 +226,7 @@ const useMyAssignedTasks = (
                 } else {
                     setTaskIds(taskIds);
                 }
+                isFetchingAssigneesRef.current = false;
             });
             return;
             // some alternative way using observe instead of observeQuery
