@@ -14,7 +14,6 @@ type StateType = {
 
 const useTaskAssignees = (taskId: string) => {
     const taskAssigneesObserver = React.useRef({ unsubscribe: () => {} });
-
     const [state, setState] = React.useState<StateType>({});
     const [isFetching, setIsFetching] = React.useState(true);
     const [error, setError] = React.useState<Error | null>(null);
@@ -44,6 +43,7 @@ const useTaskAssignees = (taskId: string) => {
                 setError(e);
             }
             console.log(e);
+            setIsFetching(false);
         }
     }, [taskId]);
 
