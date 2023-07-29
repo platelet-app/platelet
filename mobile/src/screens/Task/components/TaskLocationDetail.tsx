@@ -1,9 +1,17 @@
 import * as React from "react";
 import * as models from "../../../models";
-import { Text, Card, TouchableRipple, Divider } from "react-native-paper";
+import {
+    Text,
+    Card,
+    TouchableRipple,
+    Divider,
+    useTheme,
+} from "react-native-paper";
 import useModelSubscription from "../../../hooks/useModelSubscription";
 import LabelItemPair from "./LabelItemPair";
 import DividerWithBottomMargin from "../../../components/DividerWithBottomMargin";
+import ContentLoader, { Rect } from "react-content-loader/native";
+import GenericError from "../../Errors/GenericError";
 
 type TaskLocationDetailProps = {
     locationId: string | null;
@@ -53,6 +61,7 @@ const TaskLocationDetail: React.FC<TaskLocationDetailProps> = ({
         models.Location,
         locationId || undefined
     );
+    const { colors } = useTheme();
     const hiddenFields = ["line2", "line3", "county", "town", "country"];
     const wholeAddress = React.useMemo(
         () =>
@@ -69,72 +78,96 @@ ${value}`;
             }, ""),
         [state]
     );
-    return (
-        <Card>
-            <Card.Title title={title} />
-            <DividerWithBottomMargin />
-            <Card.Content style={{ gap: 8 }}>
-                {showHidden && (
-                    <Text style={{ textAlign: "right" }} selectable>
-                        {wholeAddress}
-                    </Text>
-                )}
-                <TouchableRipple
-                    onPress={() => {
-                        setShowHidden(true);
-                    }}
-                >
-                    <>
-                        {Object.entries(fields).map(([key, label]) => {
-                            if (!showHidden && hiddenFields.includes(key)) {
-                                return null;
-                            } else if (!showHidden) {
-                                return (
+    if (error) {
+        return <GenericError />;
+    } else if (isFetching) {
+        return (
+            <ContentLoader
+                testID="task-location-skeleton"
+                speed={2}
+                width="100%"
+                height={300}
+                viewBox="0 0 400 300"
+                backgroundColor={colors.shimmerBackground}
+                foregroundColor={colors.shimmerForeground}
+            >
+                <Rect x="0" y="0" rx="0" ry="0" width="400" height="100" />
+                <Rect x="0" y="110" rx="0" ry="0" width="400" height="100" />
+                <Rect x="0" y="220" rx="0" ry="0" width="400" height="100" />
+                <Rect x="0" y="330" rx="0" ry="0" width="400" height="100" />
+                <Rect x="0" y="440" rx="0" ry="0" width="400" height="100" />
+            </ContentLoader>
+        );
+    } else {
+        return (
+            <Card>
+                <Card.Title title={title} />
+                <DividerWithBottomMargin />
+                <Card.Content style={{ gap: 8 }}>
+                    {showHidden && (
+                        <Text style={{ textAlign: "right" }} selectable>
+                            {wholeAddress}
+                        </Text>
+                    )}
+                    <TouchableRipple
+                        onPress={() => {
+                            setShowHidden(true);
+                        }}
+                    >
+                        <>
+                            {Object.entries(fields).map(([key, label]) => {
+                                if (!showHidden && hiddenFields.includes(key)) {
+                                    return null;
+                                } else if (!showHidden) {
+                                    return (
+                                        <LabelItemPair
+                                            key={key}
+                                            label={label}
+                                            item={
+                                                state?.[
+                                                    key as keyof TaskLocationDetailFields
+                                                ]
+                                            }
+                                        />
+                                    );
+                                } else {
+                                    return null;
+                                }
+                            })}
+                            {Object.entries(contactFields).map(
+                                ([key, label]) => (
                                     <LabelItemPair
                                         key={key}
                                         label={label}
                                         item={
-                                            state?.[
-                                                key as keyof TaskLocationDetailFields
+                                            state?.contact?.[
+                                                key as keyof TaskContactDetailFields
                                             ]
                                         }
                                     />
-                                );
-                            } else {
-                                return null;
-                            }
-                        })}
-                        {Object.entries(contactFields).map(([key, label]) => (
-                            <LabelItemPair
-                                key={key}
-                                label={label}
-                                item={
-                                    state?.contact?.[
-                                        key as keyof TaskContactDetailFields
-                                    ]
-                                }
-                            />
-                        ))}
-                    </>
-                </TouchableRipple>
-            </Card.Content>
-            <Divider
-                style={{ marginTop: 8, width: "90%", alignSelf: "center" }}
-            />
-            <Text
-                variant="bodyLarge"
-                style={{
-                    padding: 8,
-                    textDecorationLine: "underline",
-                    fontStyle: "italic",
-                    alignSelf: "flex-end",
-                }}
-                onPress={() => setShowHidden((prevState) => !prevState)}
-            >
-                {showHidden ? "See less" : "See more"}
-            </Text>
-        </Card>
-    );
+                                )
+                            )}
+                        </>
+                    </TouchableRipple>
+                </Card.Content>
+                <Divider
+                    style={{ marginTop: 8, width: "90%", alignSelf: "center" }}
+                />
+                <Text
+                    variant="bodyLarge"
+                    style={{
+                        padding: 8,
+                        textDecorationLine: "underline",
+                        fontStyle: "italic",
+                        alignSelf: "flex-end",
+                    }}
+                    onPress={() => setShowHidden((prevState) => !prevState)}
+                >
+                    {showHidden ? "See less" : "See more"}
+                </Text>
+            </Card>
+        );
+    }
 };
 
 export default TaskLocationDetail;
