@@ -1,11 +1,9 @@
 import * as models from "../../../models";
 import { StyleSheet, View } from "react-native";
-//import * as APITypes from "../API";
 import TaskStatusChip from "./TaskStatusChip";
 import DeliverableChip from "./DeliverableChip";
-//import UserChip from "./UserChip";
 import PriorityChip from "./PriorityChip";
-import { Chip, List } from "react-native-paper";
+import { List } from "react-native-paper";
 import SmallChip from "./SmallChip";
 
 type ResolvedDeliverable = models.Deliverable & {

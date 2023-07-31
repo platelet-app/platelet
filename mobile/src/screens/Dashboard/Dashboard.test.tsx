@@ -601,7 +601,7 @@ describe("Dashboard", () => {
         const unsubscribe2 = jest.fn();
         jest.spyOn(DataStore, "observeQuery").mockImplementation(() => {
             return {
-                subscribe: (callback) => {
+                subscribe: (callback: any) => {
                     callback({ items: [] });
                     return {
                         unsubscribe,

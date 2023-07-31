@@ -18,7 +18,7 @@ const PriorityChip: React.FC<PriorityChipProps> = ({ priority }) => {
         <SmallChip
             style={{
                 borderColor,
-                borderWidth: borderColor ? 1 : 0,
+                borderWidth: borderColor ? 2 : 0,
                 marginRight: 4,
             }}
         >

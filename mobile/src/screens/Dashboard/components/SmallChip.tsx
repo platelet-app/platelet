@@ -12,7 +12,6 @@ const SmallChip: React.FC<SmallChipProps> = ({ children, style }) => {
         <View
             style={{
                 backgroundColor: theme === "dark" ? "#333" : "#eee",
-                borderWidth: 2,
                 borderRadius: 30,
                 padding: 6,
                 height: 34,
