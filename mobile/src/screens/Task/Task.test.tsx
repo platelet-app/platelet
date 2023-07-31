@@ -8,6 +8,7 @@ const tenantId = "test-tenant-id";
 
 describe("Task", () => {
     beforeEach(async () => {
+        jest.restoreAllMocks();
         jest.useFakeTimers();
     });
     afterEach(async () => {
