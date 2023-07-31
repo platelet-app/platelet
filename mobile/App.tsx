@@ -57,6 +57,15 @@ declare global {
         interface ThemeColors {
             shimmerForeground: string;
             shimmerBackground: string;
+            NEW: string;
+            ACTIVE: string;
+            PICKED_UP: string;
+            DROPPED_OFF: string;
+            COMPLETED: string;
+            CANCELLED: string;
+            ABANDONED: string;
+            REJECTED: string;
+            PENDING: string;
         }
     }
 }
@@ -67,6 +76,15 @@ const lightTheme = {
         ...MD3LightTheme.colors,
         shimmerForeground: "#ecebeb",
         shimmerBackground: "#f3f3f3",
+        NEW: "rgba(252, 231, 121, 1)",
+        ACTIVE: "#8fb7ff",
+        PICKED_UP: "#ffc252",
+        DROPPED_OFF: "#15d615",
+        COMPLETED: "#b8ffb8",
+        CANCELLED: "#8f8fff",
+        ABANDONED: "#ff8787",
+        REJECTED: "#adadad",
+        PENDING: "lightblue",
     },
 };
 
@@ -76,6 +94,15 @@ const darkTheme = {
         ...MD3DarkTheme.colors,
         shimmerForeground: "#333",
         shimmerBackground: "#555",
+        NEW: "rgba(252, 231, 121, 1)",
+        ACTIVE: "#3e5d94",
+        PICKED_UP: "#946000",
+        DROPPED_OFF: "#004d00",
+        COMPLETED: "#4d804d",
+        CANCELLED: "#0000a8",
+        ABANDONED: "#940000",
+        REJECTED: "#4d4d4d",
+        PENDING: "lightblue",
     },
 };
 

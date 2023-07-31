@@ -116,15 +116,25 @@ const TasksGridTasksList = ({
                         />
                     )}
                     renderSectionHeader={({ section: { title } }) => (
-                        <Text
+                        <View
                             style={{
-                                fontWeight: "bold",
-                                fontSize: 16,
                                 marginTop: 10,
+                                backgroundColor:
+                                    colors[title as keyof typeof colors],
+                                padding: 2,
+                                paddingLeft: 10,
+                                borderRadius: 10,
                             }}
                         >
-                            {taskStatusHumanReadable(title)}
-                        </Text>
+                            <Text
+                                style={{
+                                    fontWeight: "bold",
+                                    fontSize: 16,
+                                }}
+                            >
+                                {taskStatusHumanReadable(title)}
+                            </Text>
+                        </View>
                     )}
                 />
             </View>
