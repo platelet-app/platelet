@@ -9,8 +9,9 @@ export type CommentsState = {
     [key: string]: ResolvedComment;
 };
 
-type ResolvedComment = Omit<models.Comment, "author"> & {
+export type ResolvedComment = Omit<models.Comment, "author"> & {
     author: models.User | null;
+    _version?: number;
 };
 
 const useComments = (parentId: string) => {
