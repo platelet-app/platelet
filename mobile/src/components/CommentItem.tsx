@@ -1,6 +1,7 @@
 import moment from "moment";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as React from "react";
+import * as models from "../models";
 import { useColorScheme, View } from "react-native";
 import { Card, Text } from "react-native-paper";
 import { useSelector } from "react-redux";
@@ -14,7 +15,7 @@ type CommentItemProps = {
 };
 
 const CommentItem: React.FC<CommentItemProps> = ({ comment, showAuthor }) => {
-    const { author, body, createdAt } = comment;
+    const { author, body, createdAt, visibility } = comment;
     const whoami = useSelector(getWhoami);
 
     const isSelf = author?.id === whoami?.id;
@@ -22,13 +23,19 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, showAuthor }) => {
     const colorScheme = useColorScheme();
 
     const alignSelf = isSelf ? "flex-end" : "flex-start";
+    const isPrivate = visibility === models.CommentVisibility.ME;
 
     return (
         <View>
             {author && showAuthor && (
                 <CommentAuthor isSelf={isSelf} user={author} />
             )}
-            <Card style={{ alignSelf }}>
+            <Card
+                style={{
+                    alignSelf,
+                }}
+                mode={isPrivate ? "contained" : "elevated"}
+            >
                 <Card.Content>
                     <Text>{body}</Text>
                 </Card.Content>
@@ -43,20 +50,30 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, showAuthor }) => {
                         marginRight: 8,
                     }}
                 >
-                    <Text
-                        style={{
-                            fontSize: 12,
-                            fontStyle: "italic",
-                            opacity: 0.3,
-                        }}
-                    >
-                        {moment(createdAt).calendar()}
-                    </Text>
+                    {createdAt && (
+                        <Text
+                            style={{
+                                fontSize: 12,
+                                fontStyle: "italic",
+                                opacity: 0.3,
+                            }}
+                        >
+                            {moment(createdAt).calendar()}
+                        </Text>
+                    )}
                     {editCount > 0 && (
                         <MaterialIcons
                             name="edit"
                             color={
                                 colorScheme === "dark" ? "#bebebe" : "#bfbdc2"
+                            }
+                        />
+                    )}
+                    {isPrivate && (
+                        <MaterialIcons
+                            name="lock"
+                            color={
+                                colorScheme === "dark" ? "#ff8787" : "#940000"
                             }
                         />
                     )}
