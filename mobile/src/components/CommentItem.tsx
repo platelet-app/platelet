@@ -8,6 +8,11 @@ import { useSelector } from "react-redux";
 import { ResolvedComment } from "../hooks/useComments";
 import { getWhoami } from "../redux/Selectors";
 import CommentAuthor from "./CommentAuthor";
+import { DataStore } from "aws-amplify";
+import { HoldItem } from "react-native-hold-menu";
+import CommentDeleteConfirmationDialog from "./CommentDeleteConfirmationDialog";
+import CommentEditDialog from "./CommentEditDialog";
+import { MenuItemProps } from "react-native-hold-menu/lib/typescript/components/menu/types";
 
 type CommentItemProps = {
     comment: ResolvedComment;
@@ -17,11 +22,9 @@ type CommentItemProps = {
 const CommentItem: React.FC<CommentItemProps> = ({ comment, showAuthor }) => {
     const { author, body, createdAt, visibility } = comment;
     const whoami = useSelector(getWhoami);
-
-    const isSelf = author?.id === whoami?.id;
+    const isSelf = whoami?.id === author?.id;
     const editCount = comment._version ? comment._version - 1 : 0;
     const colorScheme = useColorScheme();
-
     const alignSelf = isSelf ? "flex-end" : "flex-start";
     const isPrivate = visibility === models.CommentVisibility.ME;
 
@@ -32,6 +35,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, showAuthor }) => {
             )}
             <Card
                 style={{
+                    maxWidth: "90%",
                     alignSelf,
                 }}
                 mode={isPrivate ? "contained" : "elevated"}

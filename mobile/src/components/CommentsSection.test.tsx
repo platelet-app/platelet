@@ -261,6 +261,49 @@ describe("CommentsSection", () => {
         await screen.findByText("private comment", {}, { timeout: 5000 });
         screen.getByText("test comment");
     });
+    test.skip("edit a comment", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                name: "test user",
+                displayName: "test user",
+                username: "test user",
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+            })
+        );
+        const task = await DataStore.save(
+            new models.Task({
+                tenantId,
+                status: models.TaskStatus.ACTIVE,
+                dateCreated,
+            })
+        );
+        await DataStore.save(
+            new models.Comment({
+                tenantId,
+                body: "some comment",
+                parentId: task.id,
+                visibility: models.CommentVisibility.EVERYONE,
+                author: whoami,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+        };
+        render(<CommentsSection parentId={task.id} />, { preloadedState });
+        const comment = await screen.findByText(
+            "some comment",
+            {},
+            { timeout: 5000 }
+        );
+        fireEvent(comment, "onLongPress");
+        const textInput = screen.getByDisplayValue("some comment");
+        fireEvent(textInput, "onChangeText", "edited comment");
+        const saveButton = screen.getByRole("button", { name: "Save" });
+        fireEvent(saveButton, "onPress");
+        await screen.findByText("edited comment", {}, { timeout: 5000 });
+    });
     test("unsubscribe observer on unmount", async () => {
         const unsubscribe = jest.fn();
         jest.spyOn(DataStore, "observeQuery").mockImplementation(() => {

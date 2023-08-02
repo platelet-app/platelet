@@ -79,6 +79,7 @@ const NewCommentCard: React.FC<NewCommentCardProps> = ({ parentId }) => {
                     mode="outlined"
                     onChangeText={setBody}
                     placeholder={placeHolder}
+                    multiline
                 />
             </Card.Content>
             <Card.Actions>

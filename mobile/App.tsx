@@ -25,6 +25,11 @@ import "moment/locale/en-gb";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { initialiseApp } from "./src/redux/initialise/initialiseActions";
 import { useColorScheme } from "react-native";
+import { HoldMenuProvider } from "react-native-hold-menu";
+import {
+    SafeAreaProvider,
+    useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 declare global {
     namespace ReactNavigation {
@@ -169,30 +174,36 @@ const Main = () => {
         }
     };
     React.useEffect(initialise, [dispatch]);
+    const insets = useSafeAreaInsets();
     return (
         <PaperProvider theme={colorScheme === "dark" ? darkTheme : lightTheme}>
-            <NavigationContainer
-                theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+            <HoldMenuProvider
+                safeAreaInsets={insets}
+                theme={colorScheme === "dark" ? "dark" : "light"}
             >
-                <Tab.Navigator initialRouteName="Feed">
-                    <Tab.Screen
-                        name="InProgressStack"
-                        component={InProgressStack}
-                        options={{
-                            tabBarIcon: "compass-outline",
-                            tabBarLabel: "In Progress",
-                        }}
-                    />
-                    <Tab.Screen
-                        name="CompletedStack"
-                        component={CompletedStack}
-                        options={{
-                            tabBarIcon: "check-circle-outline",
-                            tabBarLabel: "Completed",
-                        }}
-                    />
-                </Tab.Navigator>
-            </NavigationContainer>
+                <NavigationContainer
+                    theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+                >
+                    <Tab.Navigator initialRouteName="Feed">
+                        <Tab.Screen
+                            name="InProgressStack"
+                            component={InProgressStack}
+                            options={{
+                                tabBarIcon: "compass-outline",
+                                tabBarLabel: "In Progress",
+                            }}
+                        />
+                        <Tab.Screen
+                            name="CompletedStack"
+                            component={CompletedStack}
+                            options={{
+                                tabBarIcon: "check-circle-outline",
+                                tabBarLabel: "Completed",
+                            }}
+                        />
+                    </Tab.Navigator>
+                </NavigationContainer>
+            </HoldMenuProvider>
         </PaperProvider>
     );
 };
@@ -209,7 +220,9 @@ const App = () => {
             <Provider store={store}>
                 <Authenticator.Provider>
                     <Authenticator>
-                        <Main />
+                        <SafeAreaProvider>
+                            <Main />
+                        </SafeAreaProvider>
                     </Authenticator>
                 </Authenticator.Provider>
             </Provider>
