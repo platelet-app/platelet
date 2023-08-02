@@ -1,18 +1,13 @@
 import moment from "moment";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as React from "react";
-import * as models from "../models";
+import * as models from "../../models";
 import { useColorScheme, View } from "react-native";
 import { Card, Text } from "react-native-paper";
 import { useSelector } from "react-redux";
-import { ResolvedComment } from "../hooks/useComments";
-import { getWhoami } from "../redux/Selectors";
+import { ResolvedComment } from "../../hooks/useComments";
+import { getWhoami } from "../../redux/Selectors";
 import CommentAuthor from "./CommentAuthor";
-import { DataStore } from "aws-amplify";
-import { HoldItem } from "react-native-hold-menu";
-import CommentDeleteConfirmationDialog from "./CommentDeleteConfirmationDialog";
-import CommentEditDialog from "./CommentEditDialog";
-import { MenuItemProps } from "react-native-hold-menu/lib/typescript/components/menu/types";
 
 type CommentItemProps = {
     comment: ResolvedComment;

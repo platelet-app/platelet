@@ -1,20 +1,20 @@
 import * as React from "react";
 import { View } from "react-native";
-import useComments, { ResolvedComment } from "../hooks/useComments";
-import GenericError from "../screens/Errors/GenericError";
+import useComments, { ResolvedComment } from "../../hooks/useComments";
+import GenericError from "../../screens/Errors/GenericError";
 import CommentItem from "./CommentItem";
 import NewCommentCard from "./NewCommentCard";
-import * as models from "../models";
+import * as models from "../../models";
 import CommentDeleteConfirmationDialog from "./CommentDeleteConfirmationDialog";
 import CommentEditDialog from "./CommentEditDialog";
 import { DataStore } from "aws-amplify";
 import { MenuItemProps } from "react-native-hold-menu/lib/typescript/components/menu/types";
 import { useSelector } from "react-redux";
-import { getWhoami } from "../redux/Selectors";
+import { getWhoami } from "../../redux/Selectors";
 import { HoldItem } from "react-native-hold-menu";
 import * as Clipboard from "expo-clipboard";
-import CopyTextSnack from "../snacks/CopyTextSnack";
-import GenericErrorSnack from "../snacks/GenericErrorSnack";
+import CopyTextSnack from "../../snacks/CopyTextSnack";
+import GenericErrorSnack from "../../snacks/GenericErrorSnack";
 
 type CommentsSectionProps = {
     parentId: string;

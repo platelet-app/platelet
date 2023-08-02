@@ -1,14 +1,13 @@
 import * as React from "react";
-import * as models from "../models";
+import * as models from "../../models";
 import { Button, Card, TextInput } from "react-native-paper";
-import { Text } from "react-native-paper/lib/typescript/src/components/Avatar/Avatar";
 import CommentVisibilityChips from "./CommentVisibilityChips";
 import { useSelector } from "react-redux";
-import { getWhoami, tenantIdSelector } from "../redux/Selectors";
+import { getWhoami, tenantIdSelector } from "../../redux/Selectors";
 import CommentAuthor from "./CommentAuthor";
-import UserAvatar from "./UserAvatar";
 import { DataStore } from "aws-amplify";
 import { View } from "react-native";
+import GenericErrorSnack from "../../snacks/GenericErrorSnack";
 
 type NewCommentCardProps = {
     parentId: string;
@@ -59,38 +58,50 @@ const NewCommentCard: React.FC<NewCommentCardProps> = ({ parentId }) => {
     }
 
     return (
-        <Card>
-            <Card.Content>
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                    }}
-                >
-                    <CommentAuthor user={whoami} />
-                    <CommentVisibilityChips
-                        value={visibility}
-                        onChange={setVisibility}
+        <>
+            <Card>
+                <Card.Content>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                        }}
+                    >
+                        <CommentAuthor user={whoami} />
+                        <CommentVisibilityChips
+                            value={visibility}
+                            onChange={setVisibility}
+                        />
+                    </View>
+                    <TextInput
+                        value={body}
+                        mode="outlined"
+                        onChangeText={setBody}
+                        placeholder={placeHolder}
+                        multiline
                     />
-                </View>
-                <TextInput
-                    value={body}
-                    mode="outlined"
-                    onChangeText={setBody}
-                    placeholder={placeHolder}
-                    multiline
-                />
-            </Card.Content>
-            <Card.Actions>
-                <Button disabled={isPosting || !!!body} onPress={handleDiscard}>
-                    Discard
-                </Button>
-                <Button disabled={isPosting || !!!body} onPress={handlePost}>
-                    Post
-                </Button>
-            </Card.Actions>
-        </Card>
+                </Card.Content>
+                <Card.Actions>
+                    <Button
+                        disabled={isPosting || !!!body}
+                        onPress={handleDiscard}
+                    >
+                        Discard
+                    </Button>
+                    <Button
+                        disabled={isPosting || !!!body}
+                        onPress={handlePost}
+                    >
+                        Post
+                    </Button>
+                </Card.Actions>
+            </Card>
+            <GenericErrorSnack
+                visible={!!error}
+                onDismiss={() => setError(null)}
+            />
+        </>
     );
 };
 

@@ -1,7 +1,7 @@
-import * as models from "../models";
+import * as models from "../../models";
 import { Text } from "react-native-paper";
 import { View } from "react-native";
-import UserAvatar from "./UserAvatar";
+import UserAvatar from "../UserAvatar";
 
 type CommentAuthorProps = {
     user: models.User;

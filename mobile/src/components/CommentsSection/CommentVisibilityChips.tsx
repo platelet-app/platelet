@@ -1,4 +1,4 @@
-import * as models from "../models";
+import * as models from "../../models";
 import { View } from "react-native";
 import { Chip, useTheme } from "react-native-paper";
 

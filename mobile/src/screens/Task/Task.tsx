@@ -10,7 +10,7 @@ import taskStatusHumanReadable from "../../utilities/taskStatusHumanReadable";
 import TaskInventoryDetail from "./components/TaskInventoryDetail";
 import TaskAssigneesDetail from "./components/TaskAssigneesDetail";
 import GenericError from "../Errors/GenericError";
-import CommentsSection from "../../components/CommentsSection";
+import CommentsSection from "../../components/CommentsSection/CommentsSection";
 
 type TaskProps = {
     route: any;
