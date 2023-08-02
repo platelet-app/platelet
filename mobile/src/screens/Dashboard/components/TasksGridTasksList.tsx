@@ -10,6 +10,9 @@ import taskStatusHumanReadable from "../../../utilities/taskStatusHumanReadable"
 import { useNavigation } from "@react-navigation/native";
 import ContentLoader, { Rect } from "react-content-loader/native";
 import _ from "lodash";
+import { filterTasks } from "../../../utilities/filterTasks";
+import { useSelector } from "react-redux";
+import { dashboardFilterTermSelector } from "../../../redux/Selectors";
 
 type TasksGridTasksListProps = {
     status: models.TaskStatus[];
@@ -33,10 +36,26 @@ const TasksGridTasksList = ({
     const navigation = useNavigation();
     const { colors } = useTheme();
 
+    const dashboardFilter = useSelector(dashboardFilterTermSelector);
+
+    const filteredTasksIds = React.useMemo(() => {
+        if (!dashboardFilter) {
+            return null;
+        } else {
+            return filterTasks(state, dashboardFilter);
+        }
+    }, [dashboardFilter, state]);
+
     const sorted: SortedTasksType[] = React.useMemo(
         () =>
             status.map((s) => {
-                const tasks = state.filter((t) => t.status === s);
+                let tasks = state.filter((t) => t.status === s);
+                if (filteredTasksIds) {
+                    tasks = tasks.filter((t) =>
+                        filteredTasksIds.includes(t.id)
+                    );
+                }
+
                 let limitedTasks = tasks;
                 if (limit) {
                     limitedTasks = tasks.slice(0, 50);
@@ -46,7 +65,7 @@ const TasksGridTasksList = ({
                     data: limitedTasks,
                 };
             }),
-        [state, status, limit]
+        [state, status, limit, filteredTasksIds]
     );
 
     if (isFetching) {

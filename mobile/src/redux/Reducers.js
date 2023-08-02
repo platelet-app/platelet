@@ -13,7 +13,10 @@ import {
     SET_ROLE_VIEW,
     SET_IDLE_STATUS,
 } from "./Actions";
-import { dashboardFilter } from "./dashboardFilter/DashboardFilterReducers";
+import {
+    dashboardFilter,
+    dashboardFilterTextboxValue,
+} from "./dashboardFilter/DashboardFilterReducers";
 import { notification } from "./notifications/NotificationsReducers";
 import {
     awsHubDataStoreEventsReducer,
@@ -239,6 +242,7 @@ const appReducer = combineReducers({
     idleStatus,
     dashboardTabIndex,
     dashboardFilteredUser,
+    dashboardFilterTextboxValue,
     awsHubDataStoreEventsReducer,
     awsHubDataStoreModelsSyncedStatusReducer,
     taskAssigneesReducer,

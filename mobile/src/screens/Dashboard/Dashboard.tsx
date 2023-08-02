@@ -32,8 +32,6 @@ const Dashboard: React.FC<DashboardProps> = ({ status }) => {
             style={{
                 height: "100%",
                 backgroundColor: colorScheme === "dark" ? "#000000" : "#ffffff",
-                paddingTop: insets.top,
-                paddingBottom: insets.bottom,
                 paddingLeft: insets.left + 8,
                 paddingRight: insets.right + 8,
             }}

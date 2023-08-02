@@ -1,6 +1,6 @@
 import {
-    DEBOUNCE_DASHBOARD_FILTER,
     setDashboardFilter,
+    SET_DASHBOARD_FILTER_TEXTBOX_VALUE,
 } from "./DashboardFilterActions";
 import { debounce, put } from "redux-saga/effects";
 
@@ -9,5 +9,5 @@ function* dashboardFilter(action) {
 }
 
 export function* watchDebounceDashboardFilter() {
-    yield debounce(300, DEBOUNCE_DASHBOARD_FILTER, dashboardFilter);
+    yield debounce(300, SET_DASHBOARD_FILTER_TEXTBOX_VALUE, dashboardFilter);
 }

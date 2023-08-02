@@ -2,7 +2,6 @@ import * as React from "react";
 import "@azure/core-asynciterator-polyfill";
 import { DataStore } from "aws-amplify";
 import { ExpoSQLiteAdapter } from "@aws-amplify/datastore-storage-adapter/ExpoSQLiteAdapter";
-//import { StatusBar } from "expo-status-bar";
 import { Authenticator } from "@aws-amplify/ui-react-native";
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
 import { Amplify } from "aws-amplify";
@@ -30,6 +29,7 @@ import {
     SafeAreaProvider,
     useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import SearchAndUserMenuBar from "./src/screens/Dashboard/components/SearchAndUserMenuBar";
 
 declare global {
     namespace ReactNavigation {
@@ -130,7 +130,7 @@ function InProgressStack() {
             <Stack.Screen
                 name="Home"
                 component={InProgress}
-                options={{ headerShown: false }}
+                options={{ header: () => <SearchAndUserMenuBar /> }}
             />
             <Stack.Screen
                 name="Task"
@@ -151,7 +151,7 @@ function CompletedStack() {
             <Stack.Screen
                 name="Home"
                 component={Completed}
-                options={{ headerShown: false }}
+                options={{ header: () => <SearchAndUserMenuBar /> }}
             />
             <Stack.Screen
                 name="Task"
@@ -184,7 +184,7 @@ const Main = () => {
                 <NavigationContainer
                     theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
                 >
-                    <Tab.Navigator initialRouteName="Feed">
+                    <Tab.Navigator initialRouteName="InProgressStack">
                         <Tab.Screen
                             name="InProgressStack"
                             component={InProgressStack}
