@@ -11,7 +11,6 @@ import {
     DefaultTheme,
     DarkTheme,
 } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Dashboard from "./src/screens/Dashboard/Dashboard";
 import Task from "./src/screens/Task/Task";
 import { store } from "./src/redux";
@@ -217,15 +216,15 @@ const App = () => {
         );
     } else {
         return (
-            <Provider store={store}>
-                <Authenticator.Provider>
-                    <Authenticator>
+            <Authenticator.Provider>
+                <Authenticator loginMechanisms={["email"]}>
+                    <Provider store={store}>
                         <SafeAreaProvider>
                             <Main />
                         </SafeAreaProvider>
-                    </Authenticator>
-                </Authenticator.Provider>
-            </Provider>
+                    </Provider>
+                </Authenticator>
+            </Authenticator.Provider>
         );
     }
 };
