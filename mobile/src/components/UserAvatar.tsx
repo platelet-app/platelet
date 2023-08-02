@@ -5,9 +5,10 @@ import * as models from "../models";
 
 type UserAvatarProps = {
     user: models.User;
+    size?: number;
 };
 
-const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
+const UserAvatar: React.FC<UserAvatarProps> = ({ user, size = 35 }) => {
     const nameArray = user.displayName
         ? user.displayName.split(" ")
         : ["n", "a"];
@@ -36,9 +37,9 @@ const UserAvatar: React.FC<UserAvatarProps> = ({ user }) => {
     return (
         <>
             {avatarURL && (
-                <Avatar.Image size={35} source={{ uri: avatarURL }} />
+                <Avatar.Image size={size} source={{ uri: avatarURL }} />
             )}
-            {!avatarURL && <Avatar.Text label={initials} size={35} />}
+            {!avatarURL && <Avatar.Text label={initials} size={size} />}
         </>
     );
 };
