@@ -1,3 +1,4 @@
+import * as React from "react";
 import {
     NativeSyntheticEvent,
     TextInputChangeEventData,
@@ -12,8 +13,10 @@ import {
     dashboardFilterTextboxValueSelector,
     getWhoami,
 } from "../../../redux/Selectors";
+import LogoutDialog from "./LogoutDialog";
 
 const SearchAndUserMenuBar = () => {
+    const [logoutDialog, setLogoutDialog] = React.useState(false);
     const insets = useSafeAreaInsets();
     const currentFilter = useSelector(dashboardFilterTextboxValueSelector);
     const whoami = useSelector(getWhoami);
@@ -48,7 +51,15 @@ const SearchAndUserMenuBar = () => {
                 value={currentFilter}
                 placeholder="Filter..."
             />
-            <UserAvatar size={50} user={whoami} />
+            <UserAvatar
+                onPress={() => setLogoutDialog(true)}
+                size={50}
+                user={whoami}
+            />
+            <LogoutDialog
+                visible={logoutDialog}
+                onDismiss={() => setLogoutDialog(false)}
+            />
         </View>
     );
 };

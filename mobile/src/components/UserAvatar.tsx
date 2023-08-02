@@ -1,14 +1,19 @@
 import * as React from "react";
-import { Avatar } from "react-native-paper";
+import { Avatar, TouchableRipple } from "react-native-paper";
 import { generateS3Link } from "../amplifyUtilities";
 import * as models from "../models";
 
 type UserAvatarProps = {
     user: models.User;
     size?: number;
+    onPress?: () => void;
 };
 
-const UserAvatar: React.FC<UserAvatarProps> = ({ user, size = 35 }) => {
+const UserAvatar: React.FC<UserAvatarProps> = ({
+    user,
+    size = 35,
+    onPress,
+}) => {
     const nameArray = user.displayName
         ? user.displayName.split(" ")
         : ["n", "a"];
@@ -35,12 +40,13 @@ const UserAvatar: React.FC<UserAvatarProps> = ({ user, size = 35 }) => {
         getThumbnail();
     }, [getThumbnail]);
     return (
-        <>
-            {avatarURL && (
+        <TouchableRipple onPress={onPress}>
+            {avatarURL ? (
                 <Avatar.Image size={size} source={{ uri: avatarURL }} />
+            ) : (
+                <Avatar.Text label={initials} size={size} />
             )}
-            {!avatarURL && <Avatar.Text label={initials} size={size} />}
-        </>
+        </TouchableRipple>
     );
 };
 
