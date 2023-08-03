@@ -4,7 +4,7 @@ import SignInHeader from "./components/SignInHeader";
 import "./login.css";
 
 type LoginProps = {
-    children: React.ReactElement;
+    children: React.ReactNode;
     teamName?: string;
 };
 
