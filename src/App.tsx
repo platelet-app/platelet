@@ -1,13 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { MenuMainContainer } from "./navigation/MenuMainContainer";
 import "./index.css";
 import "./App.css";
 import CssBaseline from "@mui/material/CssBaseline";
-import { useDispatch, useSelector } from "react-redux";
-import { setMobileView } from "./redux/Actions";
+import { useDispatch } from "react-redux";
 import "@aws-amplify/ui-react/styles.css";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import { useTheme } from "@mui/material/styles";
 import Moment from "react-moment";
 import { Logger } from "aws-amplify";
 import { SnackbarProvider } from "notistack";
@@ -18,15 +15,13 @@ import {
     StyledEngineProvider,
     createTheme,
 } from "@mui/material/styles";
-import { initialiseApp } from "./redux/initialise/initialiseActions";
-import { getWhoami } from "./redux/Selectors";
 import { DataStore } from "aws-amplify";
 import * as models from "./models";
 import useCurrentTheme from "./hooks/useCurrentTheme";
-import TenantList from "./scenes/TenantPicker/TenantList";
 import Login from "./scenes/Login/Login";
 import SnackNotificationBar from "./components/SnackNotificationBar";
-import { Box } from "@mui/material";
+import TenantListProvider from "./scenes/TenantPicker/TenantListProvider";
+import { initialiseApp } from "./redux/initialise/initialiseActions";
 
 declare module "@mui/material/styles" {
     interface Palette {
@@ -64,28 +59,8 @@ Logger.LOG_LEVEL = "ERROR";
 (window as any).DataStore = DataStore;
 (window as any).models = models;
 
-let didInit = false;
-
-const AppMain: React.FC = () => {
-    const dispatch = useDispatch();
-
-    function initialise() {
-        if (!didInit) {
-            dispatch(initialiseApp());
-            didInit = true;
-        }
-    }
-    useEffect(initialise, [dispatch]);
-
-    function checkServerSettings() {
-        Moment.globalMoment = moment;
-        Moment.globalLocale = "en-GB";
-    }
-    useEffect(checkServerSettings, []);
-    const theme = useTheme();
-    dispatch(setMobileView(!useMediaQuery(theme.breakpoints.up("sm"))));
-    return <MenuMainContainer />;
-};
+Moment.globalMoment = moment;
+Moment.globalLocale = "en-GB";
 
 const taskStatus = {
     NEW: "rgba(252, 231, 121, 1)",
@@ -99,30 +74,19 @@ const taskStatus = {
     PENDING: "lightblue",
 };
 
-function AppDefault(props: any) {
-    const whoami = useSelector(getWhoami);
-    if (!whoami) {
-        return <></>;
-    } else {
-        return (
-            <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={props.theme}>
-                    <CssBaseline />
-                    <SnackbarProvider maxSnack={1}>
-                        <AppMain {...props} />
-                        <SnackNotificationBar {...props} />
-                    </SnackbarProvider>
-                </ThemeProvider>
-            </StyledEngineProvider>
-        );
-    }
-}
+const InitComponent = ({ children }: { children: React.ReactNode }) => {
+    const didInit = React.useRef(false);
+    const dispatch = useDispatch();
+    React.useEffect(() => {
+        if (!didInit.current) {
+            dispatch(initialiseApp());
+            didInit.current = true;
+        }
+    }, [dispatch]);
+    return <>{children}</>;
+};
 
-const App = () => {
-    const [setupComplete, setSetupComplete] = React.useState(false);
-    const onSetupComplete = React.useCallback(() => {
-        setSetupComplete(true);
-    }, []);
+const App = (props: any) => {
     let theme;
     const themePreference = useCurrentTheme();
     if (themePreference === "dark") {
@@ -147,29 +111,24 @@ const App = () => {
             },
         });
     }
-    const offline =
-        process.env.REACT_APP_OFFLINE_ONLY &&
-        process.env.REACT_APP_OFFLINE_ONLY === "true";
-    if (offline) {
-        return <AppDefault theme={theme} />;
-    } else if (setupComplete) {
-        return (
-            <Login>
-                <AppDefault theme={theme} />
-            </Login>
-        );
-    } else {
-        return (
-            <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={theme}>
-                    <CssBaseline />
-                    <Box sx={{ padding: 1 }}>
-                        <TenantList onSetupComplete={onSetupComplete} />
-                    </Box>
-                </ThemeProvider>
-            </StyledEngineProvider>
-        );
-    }
+
+    return (
+        <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={theme}>
+                <SnackbarProvider maxSnack={1}>
+                    <TenantListProvider>
+                        <Login>
+                            <InitComponent>
+                                <CssBaseline />
+                                <MenuMainContainer />
+                                <SnackNotificationBar {...props} />
+                            </InitComponent>
+                        </Login>
+                    </TenantListProvider>
+                </SnackbarProvider>
+            </ThemeProvider>
+        </StyledEngineProvider>
+    );
 };
 
 export default App;
