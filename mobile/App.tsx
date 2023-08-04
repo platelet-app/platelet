@@ -29,6 +29,7 @@ import {
     useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import SearchAndUserMenuBar from "./src/screens/Dashboard/components/SearchAndUserMenuBar";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 declare global {
     namespace ReactNavigation {
