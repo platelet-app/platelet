@@ -3,7 +3,8 @@
   "compilerOptions": {
     "strict": true,
     "jsx": "react-jsx",
-    "typeRoots": ["./src/types"]
+    "typeRoots": ["./src/types"],
+    "types": ["react-native", "jest", "react-native-svg"]
   },
   "include": ["**/*.ts", "**/*.tsx"]
 }

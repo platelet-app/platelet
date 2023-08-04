@@ -24,8 +24,8 @@ const SearchAndUserMenuBar = () => {
     const handleChange = (
         e: NativeSyntheticEvent<TextInputChangeEventData>
     ) => {
-        const value = e.nativeEvent.text;
-        dispatch(setDashboardFilterTextboxValue(value));
+        const { text } = e.nativeEvent;
+        dispatch(setDashboardFilterTextboxValue(text));
     };
 
     const handleClear = () => {

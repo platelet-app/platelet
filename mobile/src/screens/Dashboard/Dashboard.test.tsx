@@ -2,11 +2,13 @@ import * as React from "react";
 import { DataStore } from "aws-amplify";
 import { useDispatch } from "react-redux";
 import * as models from "../../models";
-import { render, screen, waitFor } from "../../test-utils";
+import { fireEvent, render, screen, waitFor } from "../../test-utils";
 import Dashboard from "./Dashboard";
 import * as commentActions from "../../redux/comments/commentsActions";
 import * as taskDeliverablesActions from "../../redux/taskDeliverables/taskDeliverablesActions";
 import _ from "lodash";
+import SearchAndUserMenuBar from "./components/SearchAndUserMenuBar";
+import { setDashboardFilter } from "../../redux/dashboardFilter/DashboardFilterActions";
 
 const tenantId = "test-tenant";
 
@@ -594,6 +596,99 @@ describe("Dashboard", () => {
             screen.getByText(new RegExp(`\\bboop\\b`));
         });
         expect(screen.queryByText(new RegExp(`\\bNew location\\b`))).toBeNull();
+    });
+
+    test("filtering the dashboard", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                name: "John Doe",
+                displayName: "John Doe",
+                cognitoId: "123",
+                roles: [models.Role.RIDER],
+                tenantId,
+                username: "johndoe",
+            })
+        );
+        const pickUpLocation = await DataStore.save(
+            new models.Location({
+                tenantId,
+                listed: 1,
+                line1: "123 Main St",
+                town: "SomeTown",
+                postcode: "12345",
+            })
+        );
+        const dropOffLocation = await DataStore.save(
+            new models.Location({
+                tenantId,
+                listed: 1,
+                line1: "Another street",
+                town: "Another town",
+                postcode: "54321",
+            })
+        );
+        const task1 = await DataStore.save(
+            new models.Task({
+                dateCreated,
+                tenantId,
+                pickUpLocation,
+                status: models.TaskStatus.ACTIVE,
+                priority: models.Priority.LOW,
+            })
+        );
+        const task2 = await DataStore.save(
+            new models.Task({
+                dateCreated,
+                tenantId,
+                dropOffLocation,
+                status: models.TaskStatus.ACTIVE,
+                priority: models.Priority.HIGH,
+            })
+        );
+        await DataStore.save(
+            new models.TaskAssignee({
+                tenantId,
+                task: task1,
+                assignee: whoami,
+                role: models.Role.RIDER,
+            })
+        );
+        await DataStore.save(
+            new models.TaskAssignee({
+                tenantId,
+                task: task2,
+                assignee: whoami,
+                role: models.Role.RIDER,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+        };
+        const { store } = render(
+            <>
+                <FakeDispatchComponent />
+                <SearchAndUserMenuBar />
+                <Dashboard status="inProgress" />
+            </>,
+            { preloadedState }
+        );
+        await finishLoading();
+        await screen.findByText("LOW");
+        const filter = screen.getByRole("search");
+        fireEvent(filter, "onChangeText", "LOW");
+        // for some reason fireEvent won't work, so forcing it..
+        store.dispatch(setDashboardFilter("LOW"));
+        await waitFor(() => {
+            expect(screen.queryByText("HIGH")).toBeNull();
+        });
+        screen.getByText("LOW");
+        store.dispatch(setDashboardFilter(""));
+        await screen.findByText("HIGH");
+        store.dispatch(setDashboardFilter("another street"));
+        await waitFor(() => {
+            expect(screen.queryByText("LOW")).toBeNull();
+        });
+        screen.getByText("HIGH");
     });
 
     test("observers are unsubscribed on unmount", async () => {

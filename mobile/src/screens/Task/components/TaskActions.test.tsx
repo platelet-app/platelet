@@ -609,39 +609,123 @@ describe("TaskActions", () => {
             expect(button).toBeDisabled();
         });
     });
-    test.skip.each`
+    // this doesn't really test much, but the date picker refuses to work with testing library
+    test.each`
         status
         ${models.TaskStatus.CANCELLED} | ${models.TaskStatus.REJECTED} | ${models.TaskStatus.COMPLETED}
-    `("change the times without a name", async ({ status }) => {
-        global.Date = RealDate;
-        const date = new Date();
-        let mockTask: models.Task;
-        if (status === models.TaskStatus.CANCELLED) {
-            mockTask = new models.Task({
-                tenantId,
-                dateCreated,
-                status,
-                timeCancelled: date.toISOString(),
-            });
-        } else if (status === models.TaskStatus.REJECTED) {
-            mockTask = new models.Task({
-                tenantId,
-                dateCreated,
-                status,
-                timeRejected: date.toISOString(),
-            });
-        } else {
-            mockTask = new models.Task({
-                tenantId,
-                dateCreated,
-                status,
-                timePickedUp: date.toISOString(),
-                timeDroppedOff: date.toISOString(),
-                timeRiderHome: date.toISOString(),
-            });
-        }
-        await DataStore.save(mockTask);
+    `(
+        "change the times without a name",
+        async ({ status }: { status: models.TaskStatus }) => {
+            const date = new Date();
+            let mockTask: models.Task;
+            if (status === models.TaskStatus.CANCELLED) {
+                mockTask = new models.Task({
+                    tenantId,
+                    dateCreated,
+                    status,
+                    timeCancelled: date.toISOString(),
+                });
+            } else if (status === models.TaskStatus.REJECTED) {
+                mockTask = new models.Task({
+                    tenantId,
+                    dateCreated,
+                    status,
+                    timeRejected: date.toISOString(),
+                });
+            } else {
+                mockTask = new models.Task({
+                    tenantId,
+                    dateCreated,
+                    status,
+                    timePickedUp: date.toISOString(),
+                    timeDroppedOff: date.toISOString(),
+                    timeRiderHome: date.toISOString(),
+                });
+            }
+            await DataStore.save(mockTask);
 
+            const rider = await DataStore.save(
+                new models.User({
+                    tenantId,
+                    cognitoId: "rider",
+                    username: "rider",
+                    displayName: "rider",
+                    roles: [models.Role.RIDER],
+                })
+            );
+            await DataStore.save(
+                new models.TaskAssignee({
+                    tenantId,
+                    task: mockTask,
+                    assignee: rider,
+                    role: models.Role.RIDER,
+                })
+            );
+            const saveSpy = jest.spyOn(DataStore, "save");
+            render(<TaskActions taskId={mockTask.id} />);
+            let buttonCheck = "";
+            if (status === models.TaskStatus.CANCELLED) {
+                buttonCheck = "Cancelled";
+            } else if (status === models.TaskStatus.REJECTED) {
+                buttonCheck = "Rejected";
+            } else {
+                buttonCheck = "Rider home";
+            }
+            await finishLoading(buttonCheck);
+            if (status === models.TaskStatus.REJECTED) {
+                fireEvent(
+                    screen.getByRole("button", { name: "Edit Rejected" }),
+                    "onPress"
+                );
+                const okButton = screen.getByRole("button", { name: "OK" });
+                fireEvent(okButton, "onPress");
+                await waitFor(() => {
+                    expect(saveSpy).toHaveBeenCalledWith({
+                        ...mockTask,
+                        timeRejected: isoDate,
+                    });
+                });
+            } else if (status === models.TaskStatus.CANCELLED) {
+                fireEvent(
+                    screen.getByRole("button", { name: "Edit Cancelled" }),
+                    "onPress"
+                );
+                // don't know why get by placeholder or label doesn't work here
+                const okButton = screen.getByRole("button", { name: "OK" });
+                fireEvent(okButton, "onPress");
+                await waitFor(() => {
+                    expect(saveSpy).toHaveBeenCalledWith({
+                        ...mockTask,
+                        timeCancelled: isoDate,
+                    });
+                });
+            } else if (status === models.TaskStatus.COMPLETED) {
+                fireEvent(
+                    screen.getByRole("button", { name: "Edit Rider home" }),
+                    "onPress"
+                );
+                const okButton = screen.getByRole("button", { name: "OK" });
+                fireEvent(okButton, "onPress");
+                await waitFor(() => {
+                    expect(saveSpy).toHaveBeenCalledWith({
+                        ...mockTask,
+                        timeRiderHome: isoDate,
+                    });
+                });
+            }
+        }
+    );
+
+    test("change the sender name", async () => {
+        const mockTask = await DataStore.save(
+            new models.Task({
+                tenantId,
+                dateCreated,
+                status: models.TaskStatus.PICKED_UP,
+                timePickedUp: isoDate,
+                timePickedUpSenderName: "sender",
+            })
+        );
         const rider = await DataStore.save(
             new models.User({
                 tenantId,
@@ -661,54 +745,68 @@ describe("TaskActions", () => {
         );
         const saveSpy = jest.spyOn(DataStore, "save");
         render(<TaskActions taskId={mockTask.id} />);
-        let buttonCheck = "";
-        if (status === models.TaskStatus.CANCELLED) {
-            buttonCheck = "Cancelled";
-        } else if (status === models.TaskStatus.REJECTED) {
-            buttonCheck = "Rejected";
-        } else {
-            buttonCheck = "Rider home";
-        }
-        await finishLoading(buttonCheck);
-        if (status === models.TaskStatus.REJECTED) {
-            fireEvent(
-                screen.getByRole("button", { name: "Edit Rejected" }),
-                "onPress"
-            );
-            const okButton = screen.getByRole("button", { name: "OK" });
-            fireEvent(okButton, "onPress");
-            await waitFor(() => {
-                expect(saveSpy).toHaveBeenCalledWith({
-                    ...mockTask,
-                    timeRejected: "2021-01-01T12:00:00.000Z",
-                });
+        await finishLoading();
+        fireEvent(
+            screen.getByRole("button", { name: "Edit Picked up" }),
+            "onPress"
+        );
+        const input = screen.getByDisplayValue("sender");
+        fireEvent.changeText(input, "new sender");
+        const okButton = screen.getByRole("button", { name: "OK" });
+        fireEvent(okButton, "onPress");
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockTask,
+                timePickedUpSenderName: "new sender",
+                timePickedUp: isoDate,
             });
-        } else if (status === models.TaskStatus.CANCELLED) {
-            fireEvent(
-                screen.getByRole("button", { name: "Edit Cancelled" }),
-                "onPress"
-            );
-            const okButton = screen.getByRole("button", { name: "OK" });
-            fireEvent(okButton, "onPress");
-            await waitFor(() => {
-                expect(saveSpy).toHaveBeenCalledWith({
-                    ...mockTask,
-                    timeCancelled: "2021-01-01T12:00:00.000Z",
-                });
+        });
+    });
+    test("change the recipient name", async () => {
+        const mockTask = await DataStore.save(
+            new models.Task({
+                tenantId,
+                dateCreated,
+                status: models.TaskStatus.DROPPED_OFF,
+                timePickedUp: isoDate,
+                timeDroppedOff: isoDate,
+                timeDroppedOffRecipientName: "recipient",
+            })
+        );
+        const rider = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "rider",
+                username: "rider",
+                displayName: "rider",
+                roles: [models.Role.RIDER],
+            })
+        );
+        await DataStore.save(
+            new models.TaskAssignee({
+                tenantId,
+                task: mockTask,
+                assignee: rider,
+                role: models.Role.RIDER,
+            })
+        );
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(<TaskActions taskId={mockTask.id} />);
+        await finishLoading("Delivered");
+        fireEvent(
+            screen.getByRole("button", { name: "Edit Delivered" }),
+            "onPress"
+        );
+        const input = screen.getByDisplayValue("recipient");
+        fireEvent.changeText(input, "new recipient");
+        const okButton = screen.getByRole("button", { name: "OK" });
+        fireEvent(okButton, "onPress");
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockTask,
+                timeDroppedOffRecipientName: "new recipient",
+                timePickedUp: isoDate,
             });
-        } else if (status === models.TaskStatus.COMPLETED) {
-            fireEvent(
-                screen.getByRole("button", { name: "Edit Rider home" }),
-                "onPress"
-            );
-            const okButton = screen.getByRole("button", { name: "OK" });
-            fireEvent(okButton, "onPress");
-            await waitFor(() => {
-                expect(saveSpy).toHaveBeenCalledWith({
-                    ...mockTask,
-                    timeRiderHome: "2021-01-01T12:00:00.000Z",
-                });
-            });
-        }
+        });
     });
 });

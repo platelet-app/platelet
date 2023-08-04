@@ -120,6 +120,7 @@ const TaskActionsConfirmationDialog: React.FC<
                                     mode="outlined"
                                     value={nameValue}
                                     onChangeText={setNameValue}
+                                    aria-label={humanReadableName(nameKey)}
                                     placeholder={humanReadableName(nameKey)}
                                 />
                             )}

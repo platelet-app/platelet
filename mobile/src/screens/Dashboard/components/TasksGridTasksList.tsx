@@ -13,6 +13,7 @@ import _ from "lodash";
 import { filterTasks } from "../../../utilities/filterTasks";
 import { useSelector } from "react-redux";
 import { dashboardFilterTermSelector } from "../../../redux/Selectors";
+import GenericError from "../../Errors/GenericError";
 
 type TasksGridTasksListProps = {
     status: models.TaskStatus[];
@@ -68,7 +69,9 @@ const TasksGridTasksList = ({
         [state, status, limit, filteredTasksIds]
     );
 
-    if (isFetching) {
+    if (error) {
+        return <GenericError />;
+    } else if (isFetching) {
         let count = 0;
         return (
             <ScrollView>
@@ -115,8 +118,6 @@ const TasksGridTasksList = ({
                 </ContentLoader>
             </ScrollView>
         );
-    } else if (error) {
-        return <Text>Sorry, something went wrong.</Text>;
     } else {
         return (
             <View style={{ gap: 8 }}>
