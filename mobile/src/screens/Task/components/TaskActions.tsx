@@ -31,10 +31,9 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
     const [confirmationKey, setConfirmationKey] =
         React.useState<TaskUpdateKey | null>(null);
     const [editKey, setEditKey] = React.useState<TaskUpdateKey | null>(null);
-    const { state, setState, isFetching, error } =
+    const { state, setState, isFetching, notFound, error } =
         useModelSubscription<models.Task>(models.Task, taskId);
     const [snackVisible, setSnackVisible] = React.useState(false);
-    const hasFullPermissions = true;
 
     function onClickToggle(key: TaskUpdateKey) {
         setConfirmationKey(key);
@@ -91,10 +90,10 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
 
     function checkDisabled(key: TaskUpdateKey) {
         if (
+            notFound ||
             error ||
             isFetching ||
             isPosting ||
-            !hasFullPermissions ||
             state?.status === models.TaskStatus.PENDING
         )
             return true;
@@ -241,6 +240,7 @@ const TaskActions: React.FC<TaskActionsProps> = ({ taskId }) => {
                                         time={
                                             state?.[key as keyof TaskInterface]
                                         }
+                                        label={`Edit ${value}`}
                                         onClickEdit={() =>
                                             onClickEdit(key as TaskUpdateKey)
                                         }

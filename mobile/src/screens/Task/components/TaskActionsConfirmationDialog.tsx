@@ -83,7 +83,7 @@ const TaskActionsConfirmationDialog: React.FC<
     const handleConfirm = () => {
         const result = nullify ? null : value.toISOString();
         if (nameKey) {
-            onConfirm({ [taskKey]: result, [nameKey]: nameValue });
+            onConfirm({ [taskKey]: result, [nameKey]: nameValue || null });
         } else {
             onConfirm({ [taskKey]: result });
         }
@@ -120,7 +120,7 @@ const TaskActionsConfirmationDialog: React.FC<
                                     mode="outlined"
                                     value={nameValue}
                                     onChangeText={setNameValue}
-                                    label={humanReadableName(nameKey)}
+                                    placeholder={humanReadableName(nameKey)}
                                 />
                             )}
                         </>

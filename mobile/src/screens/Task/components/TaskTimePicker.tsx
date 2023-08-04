@@ -6,12 +6,14 @@ type TaskTimePickerProps = {
     time?: string | null;
     onClickEdit?: () => void;
     infoIcon?: boolean;
+    label: string;
 };
 
 const TaskTimePicker: React.FC<TaskTimePickerProps> = ({
     time = null,
     onClickEdit,
     infoIcon = false,
+    label,
 }) => {
     const timeString = moment(time).format("HH:mm");
     if (!time) {
@@ -40,6 +42,7 @@ const TaskTimePicker: React.FC<TaskTimePickerProps> = ({
                 <IconButton
                     style={{ marginLeft: infoIcon ? 0 : 8, marginRight: 0 }}
                     icon="pencil"
+                    aria-label={label}
                     onPress={() => {
                         if (onClickEdit) {
                             onClickEdit();
