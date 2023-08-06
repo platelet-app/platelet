@@ -14,11 +14,14 @@ type TaskActionsConfirmationDialogProps = {
     startingValue?: string | Date | null;
     startingNameValue?: string | null;
     open: boolean;
-    taskKey: TaskUpdateKey;
+    taskKey: TaskUpdateKey | null;
     nameKey?: "timePickedUpSenderName" | "timeDroppedOffRecipientName" | null;
     onClose: () => void;
     onConfirm: (value: Value) => void;
     nullify: boolean;
+    needsReason?: boolean;
+    reasonBody?: string;
+    onChangeReasonBody?: (reasonBody: string) => void;
 };
 
 const humanReadableName = (
@@ -34,7 +37,10 @@ const humanReadableName = (
     }
 };
 
-const humanReadableConfirmation = (field: TaskUpdateKey, nullify: boolean) => {
+const humanReadableConfirmation = (
+    field: TaskUpdateKey | null,
+    nullify: boolean
+) => {
     switch (field) {
         case "timePickedUp":
             return nullify
@@ -72,6 +78,9 @@ const TaskActionsConfirmationDialog: React.FC<
     onClose,
     onConfirm,
     nullify,
+    needsReason = false,
+    reasonBody = "",
+    onChangeReasonBody,
 }) => {
     const [value, setValue] = React.useState<Date>(
         startingValue ? new Date(startingValue) : new Date()
@@ -81,6 +90,7 @@ const TaskActionsConfirmationDialog: React.FC<
     const [nameValue, setNameValue] = React.useState(startingNameValue || "");
 
     const handleConfirm = () => {
+        if (!taskKey) return;
         const result = nullify ? null : value.toISOString();
         if (nameKey) {
             onConfirm({ [taskKey]: result, [nameKey]: nameValue || null });
@@ -122,6 +132,16 @@ const TaskActionsConfirmationDialog: React.FC<
                                     onChangeText={setNameValue}
                                     aria-label={humanReadableName(nameKey)}
                                     placeholder={humanReadableName(nameKey)}
+                                />
+                            )}
+                            {needsReason && (
+                                <TextInput
+                                    mode="outlined"
+                                    value={reasonBody}
+                                    onChangeText={onChangeReasonBody}
+                                    aria-label="Reason"
+                                    placeholder="Reason (optional)"
+                                    multiline
                                 />
                             )}
                         </>

@@ -5,7 +5,6 @@ import {
     View,
 } from "react-native";
 import { Searchbar } from "react-native-paper";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import UserAvatar from "../../../components/UserAvatar";
 import { setDashboardFilterTextboxValue } from "../../../redux/dashboardFilter/DashboardFilterActions";
@@ -17,7 +16,6 @@ import LogoutDialog from "./LogoutDialog";
 
 const SearchAndUserMenuBar = () => {
     const [logoutDialog, setLogoutDialog] = React.useState(false);
-    const insets = useSafeAreaInsets();
     const currentFilter = useSelector(dashboardFilterTextboxValueSelector);
     const whoami = useSelector(getWhoami);
     const dispatch = useDispatch();
@@ -37,11 +35,9 @@ const SearchAndUserMenuBar = () => {
             style={{
                 flexDirection: "row",
                 gap: 4,
+                height: 50,
                 alignItems: "center",
                 justifyContent: "space-between",
-                paddingLeft: insets.left + 16,
-                paddingRight: insets.right + 16,
-                paddingTop: insets.top,
             }}
         >
             <Searchbar

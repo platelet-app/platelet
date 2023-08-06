@@ -12,6 +12,7 @@ import {
     SET_COMMENTS_OBJECT_UUID,
     SET_ROLE_VIEW,
     SET_IDLE_STATUS,
+    SET_DASHBOARD_TAB_INDEX,
 } from "./Actions";
 import {
     dashboardFilter,
@@ -94,7 +95,8 @@ function guidedSetupOpen(state = false, action) {
 
 function dashboardTabIndex(state = 0, action) {
     switch (action.type) {
-        case "SET_DASHBOARD_TAB_INDEX":
+        case SET_DASHBOARD_TAB_INDEX:
+            console.log("SET_DASHBOARD_TAB_INDEX", action.data);
             return action.data;
         default:
             return state;

@@ -10,6 +10,7 @@ import {
     NavigationContainer,
     DefaultTheme,
     DarkTheme,
+    useNavigationState,
 } from "@react-navigation/native";
 import Dashboard from "./src/screens/Dashboard/Dashboard";
 import Task from "./src/screens/Task/Task";
@@ -28,8 +29,9 @@ import {
     SafeAreaProvider,
     useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import SearchAndUserMenuBar from "./src/screens/Dashboard/components/SearchAndUserMenuBar";
+import DashboardHeader from "./src/screens/Dashboard/components/DashboardHeader";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { setDashboardTabIndex } from "./src/redux/Actions";
 
 declare global {
     namespace ReactNavigation {
@@ -112,11 +114,11 @@ const darkTheme = {
 };
 
 const InProgress = () => {
-    return <Dashboard status="inProgress" />;
+    return <Dashboard tabIndex={0} status="inProgress" />;
 };
 
 const Completed = () => {
-    return <Dashboard status="completed" />;
+    return <Dashboard tabIndex={1} status="completed" />;
 };
 
 function InProgressStack() {
@@ -130,7 +132,7 @@ function InProgressStack() {
             <Stack.Screen
                 name="Home"
                 component={InProgress}
-                options={{ header: () => <SearchAndUserMenuBar /> }}
+                options={{ header: () => <DashboardHeader tabIndex={0} /> }}
             />
             <Stack.Screen
                 name="Task"
@@ -151,7 +153,7 @@ function CompletedStack() {
             <Stack.Screen
                 name="Home"
                 component={Completed}
-                options={{ header: () => <SearchAndUserMenuBar /> }}
+                options={{ header: () => <DashboardHeader tabIndex={1} /> }}
             />
             <Stack.Screen
                 name="Task"

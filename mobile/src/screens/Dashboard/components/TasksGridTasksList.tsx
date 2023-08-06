@@ -18,6 +18,7 @@ import GenericError from "../../Errors/GenericError";
 type TasksGridTasksListProps = {
     status: models.TaskStatus[];
     limit?: boolean;
+    tabIndex: number;
 };
 
 type SortedTasksType = {
@@ -28,6 +29,7 @@ type SortedTasksType = {
 const TasksGridTasksList = ({
     status,
     limit = false,
+    tabIndex,
 }: TasksGridTasksListProps) => {
     const { state, isFetching, error } = useMyAssignedTasks(
         status,
@@ -126,6 +128,7 @@ const TasksGridTasksList = ({
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
                         <TaskCard
+                            tabIndex={tabIndex}
                             key={item.id}
                             task={item}
                             onPress={() => {

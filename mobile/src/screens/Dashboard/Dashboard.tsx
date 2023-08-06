@@ -7,9 +7,10 @@ import { useColorScheme } from "react-native";
 
 type DashboardProps = {
     status: "inProgress" | "completed";
+    tabIndex: number;
 };
 
-const Dashboard: React.FC<DashboardProps> = ({ status }) => {
+const Dashboard: React.FC<DashboardProps> = ({ status, tabIndex }) => {
     const colorScheme = useColorScheme();
     const insets = useSafeAreaInsets();
     let statuses = [];
@@ -39,6 +40,7 @@ const Dashboard: React.FC<DashboardProps> = ({ status }) => {
             <TasksGridTasksList
                 limit={status === "completed"}
                 status={statuses}
+                tabIndex={tabIndex}
             />
         </View>
     );
