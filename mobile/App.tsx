@@ -10,7 +10,6 @@ import {
     NavigationContainer,
     DefaultTheme,
     DarkTheme,
-    useNavigationState,
 } from "@react-navigation/native";
 import Dashboard from "./src/screens/Dashboard/Dashboard";
 import Task from "./src/screens/Task/Task";
@@ -24,14 +23,12 @@ import "moment/locale/en-gb";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { initialiseApp } from "./src/redux/initialise/initialiseActions";
 import { useColorScheme } from "react-native";
-import { HoldMenuProvider } from "react-native-hold-menu";
 import {
     SafeAreaProvider,
     useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import DashboardHeader from "./src/screens/Dashboard/components/DashboardHeader";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { setDashboardTabIndex } from "./src/redux/Actions";
 
 declare global {
     namespace ReactNavigation {
@@ -179,33 +176,28 @@ const Main = () => {
     const insets = useSafeAreaInsets();
     return (
         <PaperProvider theme={colorScheme === "dark" ? darkTheme : lightTheme}>
-            <HoldMenuProvider
-                safeAreaInsets={insets}
-                theme={colorScheme === "dark" ? "dark" : "light"}
+            <NavigationContainer
+                theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
             >
-                <NavigationContainer
-                    theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-                >
-                    <Tab.Navigator initialRouteName="InProgressStack">
-                        <Tab.Screen
-                            name="InProgressStack"
-                            component={InProgressStack}
-                            options={{
-                                tabBarIcon: "compass-outline",
-                                tabBarLabel: "In Progress",
-                            }}
-                        />
-                        <Tab.Screen
-                            name="CompletedStack"
-                            component={CompletedStack}
-                            options={{
-                                tabBarIcon: "check-circle-outline",
-                                tabBarLabel: "Completed",
-                            }}
-                        />
-                    </Tab.Navigator>
-                </NavigationContainer>
-            </HoldMenuProvider>
+                <Tab.Navigator initialRouteName="InProgressStack">
+                    <Tab.Screen
+                        name="InProgressStack"
+                        component={InProgressStack}
+                        options={{
+                            tabBarIcon: "compass-outline",
+                            tabBarLabel: "In Progress",
+                        }}
+                    />
+                    <Tab.Screen
+                        name="CompletedStack"
+                        component={CompletedStack}
+                        options={{
+                            tabBarIcon: "check-circle-outline",
+                            tabBarLabel: "Completed",
+                        }}
+                    />
+                </Tab.Navigator>
+            </NavigationContainer>
         </PaperProvider>
     );
 };

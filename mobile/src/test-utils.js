@@ -9,8 +9,6 @@ import rootSaga from "./redux/RootSagas";
 import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./redux/Reducers";
 import { PaperProvider } from "react-native-paper";
-import { HoldMenuProvider } from "react-native-hold-menu";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const testUserModel = new models.User({
     name: "whoami",
@@ -70,11 +68,7 @@ function render(
         return (
             <Provider store={store}>
                 <PaperProvider>
-                    <HoldMenuProvider>
-                        <NavigationContainer>
-                            {props.children}
-                        </NavigationContainer>
-                    </HoldMenuProvider>
+                    <NavigationContainer>{props.children}</NavigationContainer>
                 </PaperProvider>
             </Provider>
         );
