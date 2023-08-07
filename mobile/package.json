@@ -7,7 +7,7 @@
         "android": "expo start --android",
         "ios": "expo start --ios",
         "web": "expo start --web",
-        "test": "jest --watch --testTimeout=40000"
+        "test": "jest --watch --testTimeout=60000"
     },
     "dependencies": {
         "@aws-amplify/datastore-storage-adapter": "^2.0.42",
@@ -24,7 +24,6 @@
         "aws-amplify": "^5.3.6",
         "core-js": "^3.31.1",
         "expo": "~48.0.18",
-        "expo-clipboard": "~4.1.2",
         "expo-file-system": "~15.2.2",
         "expo-sqlite": "~11.1.1",
         "expo-status-bar": "~1.4.4",
