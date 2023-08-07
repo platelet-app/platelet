@@ -8,7 +8,6 @@ import * as models from "../../models";
 import CommentDeleteConfirmationDialog from "./CommentDeleteConfirmationDialog";
 import CommentEditDialog from "./CommentEditDialog";
 import { DataStore } from "aws-amplify";
-import * as Clipboard from "expo-clipboard";
 import CopyTextSnack from "../../snacks/CopyTextSnack";
 import GenericErrorSnack from "../../snacks/GenericErrorSnack";
 
@@ -45,7 +44,11 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ parentId }) => {
                             upd.body = "";
                         })
                     );
-                    await DataStore.delete(updated);
+                    const toDelete = await DataStore.query(
+                        models.Comment,
+                        updated.id
+                    );
+                    if (toDelete) await DataStore.delete(toDelete);
                 }
             }
         } catch (e) {

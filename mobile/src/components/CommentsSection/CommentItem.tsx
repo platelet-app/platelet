@@ -60,6 +60,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
                                 onDismiss={closeMenu}
                                 anchor={
                                     <IconButton
+                                        aria-label="Comment menu"
                                         size={18}
                                         style={{ margin: 0 }}
                                         icon="dots-vertical"

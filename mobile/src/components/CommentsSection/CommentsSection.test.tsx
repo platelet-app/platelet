@@ -65,29 +65,28 @@ describe("CommentsSection", () => {
             whoami: { user: whoami },
         };
         render(<CommentsSection parentId={task.id} />, { preloadedState });
-        await screen.findAllByText("test comment");
+        await screen.findByText("test comment");
         // HoldItem component renders comments twice (for animation?)
-        screen.getAllByText(`${comment.body}`);
-        screen.getAllByText(`${comment2.body}`);
+        screen.getByText(`${comment.body}`);
+        screen.getByText(`${comment2.body}`);
         // new comment card
-        screen.getAllByText(`${whoami.displayName}`);
-        screen.getAllByText(`${anotherUser.displayName}`);
+        expect(screen.getAllByText(`${whoami.displayName}`)).toHaveLength(2);
+        screen.getByText(`${anotherUser.displayName}`);
         await DataStore.save(
             models.Comment.copyOf(comment, (updated) => {
                 updated.body = "updated comment";
             })
         );
-        await waitFor(() => screen.getAllByText("updated comment"), {
+        await waitFor(() => screen.getByText("updated comment"), {
             timeout: 5000,
         });
         await DataStore.delete(comment2);
-        // wait for github bug to be fixed
-        //await waitFor(
-        //    () => {
-        //        expect(screen.queryByText(`${comment2.body}`)).toBeNull();
-        //    },
-        //    { timeout: 5000 }
-        //);
+        await waitFor(
+            () => {
+                expect(screen.queryByText(`${comment2.body}`)).toBeNull();
+            },
+            { timeout: 5000 }
+        );
         await DataStore.save(
             new models.Comment({
                 tenantId,
@@ -97,8 +96,8 @@ describe("CommentsSection", () => {
                 author: anotherUser,
             })
         );
-        await waitFor(() => screen.getAllByText("boop"), { timeout: 5000 });
-        screen.getAllByText(`${anotherUser.displayName}`);
+        await waitFor(() => screen.getByText("boop"), { timeout: 5000 });
+        screen.getByText(`${anotherUser.displayName}`);
     });
     test("don't show private comments for another user", async () => {
         const whoami = await DataStore.save(
@@ -142,7 +141,7 @@ describe("CommentsSection", () => {
         };
         render(<CommentsSection parentId={task.id} />, { preloadedState });
         await expect(
-            screen.findAllByText("private comment", {}, { timeout: 5000 })
+            screen.findByText("private comment", {}, { timeout: 5000 })
         ).rejects.toThrow();
         await DataStore.save(
             new models.Comment({
@@ -154,7 +153,7 @@ describe("CommentsSection", () => {
             })
         );
         await expect(
-            screen.findAllByText("boop", {}, { timeout: 5000 })
+            screen.findByText("boop", {}, { timeout: 5000 })
         ).rejects.toThrow();
     });
     test("show your own private comments", async () => {
@@ -188,7 +187,7 @@ describe("CommentsSection", () => {
             whoami: { user: whoami },
         };
         render(<CommentsSection parentId={task.id} />, { preloadedState });
-        await screen.findAllByText("private comment", {}, { timeout: 5000 });
+        await screen.findByText("private comment", {}, { timeout: 5000 });
         await DataStore.save(
             new models.Comment({
                 tenantId,
@@ -198,7 +197,7 @@ describe("CommentsSection", () => {
                 author: whoami,
             })
         );
-        await screen.findAllByText("boop", {}, { timeout: 5000 });
+        await screen.findByText("boop", {}, { timeout: 5000 });
     });
     test("post a comment and private comment", async () => {
         const whoami = await DataStore.save(
@@ -259,8 +258,8 @@ describe("CommentsSection", () => {
                 id: expect.any(String),
             })
         );
-        await screen.findAllByText("private comment", {}, { timeout: 5000 });
-        screen.getAllByText("test comment");
+        await screen.findByText("private comment", {}, { timeout: 5000 });
+        screen.getByText("test comment");
     });
     test("post a comment failure", async () => {
         const whoami = await DataStore.save(
@@ -293,8 +292,7 @@ describe("CommentsSection", () => {
         expect(postButton).toBeDisabled();
         await screen.findByText("Sorry, something went wrong");
     });
-    // doesn't seem to work with react-native-hold-menu
-    test.skip("edit a comment", async () => {
+    test("edit a comment", async () => {
         const whoami = await DataStore.save(
             new models.User({
                 tenantId,
@@ -312,7 +310,7 @@ describe("CommentsSection", () => {
                 dateCreated,
             })
         );
-        await DataStore.save(
+        const comment = await DataStore.save(
             new models.Comment({
                 tenantId,
                 body: "some comment",
@@ -324,20 +322,73 @@ describe("CommentsSection", () => {
         const preloadedState = {
             whoami: { user: whoami },
         };
+        const saveSpy = jest.spyOn(DataStore, "save");
         render(<CommentsSection parentId={task.id} />, { preloadedState });
-        const comment = await screen.findAllByText(
-            "some comment",
-            {},
-            { timeout: 5000 }
-        );
-        fireEvent(comment[0], "onLongPress");
-        await waitFor(() => screen.getByText("Edit"), { timeout: 5000 });
+        await screen.findByText("some comment", {}, { timeout: 5000 });
+        const menu = screen.getByRole("button", { name: "Comment menu" });
+        fireEvent(menu, "onPress");
+        const editButton = await screen.findByText("Edit");
         fireEvent(editButton, "onPress");
         const textInput = screen.getByDisplayValue("some comment");
         fireEvent(textInput, "onChangeText", "edited comment");
         const saveButton = screen.getByRole("button", { name: "Save" });
         fireEvent(saveButton, "onPress");
-        await screen.findAllByText("edited comment", {}, { timeout: 5000 });
+        await screen.findByText("edited comment", {}, { timeout: 5000 });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...comment,
+            body: "edited comment",
+        });
+    });
+    test.only("delete a comment", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                name: "test user",
+                displayName: "test user",
+                username: "test user",
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+            })
+        );
+        const task = await DataStore.save(
+            new models.Task({
+                tenantId,
+                status: models.TaskStatus.ACTIVE,
+                dateCreated,
+            })
+        );
+        const comment = await DataStore.save(
+            new models.Comment({
+                tenantId,
+                body: "some comment",
+                parentId: task.id,
+                visibility: models.CommentVisibility.EVERYONE,
+                author: whoami,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+        };
+        const saveSpy = jest.spyOn(DataStore, "save");
+        const deleteSpy = jest.spyOn(DataStore, "delete");
+        render(<CommentsSection parentId={task.id} />, { preloadedState });
+        await screen.findByText("some comment", {}, { timeout: 5000 });
+        const menu = screen.getByRole("button", { name: "Comment menu" });
+        fireEvent(menu, "onPress");
+        const editButton = await screen.findByText("Delete");
+        fireEvent(editButton, "onPress");
+        await expect(screen.getAllByText("some comment")).toHaveLength(2);
+        const saveButton = screen.getByRole("button", { name: "Delete" });
+        fireEvent(saveButton, "onPress");
+        const expected = { ...comment, body: "" };
+        await waitFor(() => expect(deleteSpy).toHaveBeenCalledWith(expected));
+        expect(saveSpy).toHaveBeenCalledWith(expected);
+        await waitFor(
+            () => {
+                expect(screen.queryByText("some comment")).toBeNull();
+            },
+            { timeout: 5000 }
+        );
     });
     test("unsubscribe observer on unmount", async () => {
         const unsubscribe = jest.fn();
