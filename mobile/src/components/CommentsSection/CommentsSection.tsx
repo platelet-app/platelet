@@ -8,10 +8,6 @@ import * as models from "../../models";
 import CommentDeleteConfirmationDialog from "./CommentDeleteConfirmationDialog";
 import CommentEditDialog from "./CommentEditDialog";
 import { DataStore } from "aws-amplify";
-import { MenuItemProps } from "react-native-hold-menu/lib/typescript/components/menu/types";
-import { useSelector } from "react-redux";
-import { getWhoami } from "../../redux/Selectors";
-import { HoldItem } from "react-native-hold-menu";
 import * as Clipboard from "expo-clipboard";
 import CopyTextSnack from "../../snacks/CopyTextSnack";
 import GenericErrorSnack from "../../snacks/GenericErrorSnack";
@@ -20,16 +16,10 @@ type CommentsSectionProps = {
     parentId: string;
 };
 
-enum CommentItemMenuAction {
+export enum CommentItemMenuAction {
     EDIT,
     DELETE,
 }
-
-type ActionParams = {
-    "Copy text"?: string[];
-    Edit?: string[];
-    Delete?: string[];
-};
 
 const CommentsSection: React.FC<CommentsSectionProps> = ({ parentId }) => {
     const { state, error } = useComments(parentId);
@@ -37,7 +27,6 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ parentId }) => {
         React.useState<CommentItemMenuAction | null>(null);
     const [selectedComment, setSelectedComment] =
         React.useState<ResolvedComment | null>(null);
-    const whoami = useSelector(getWhoami);
     const [copyTextSnackVisible, setCopyTextSnackVisible] =
         React.useState(false);
     const [errorSnackVisible, setErrorSnackVisible] = React.useState(false);
@@ -94,29 +83,6 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ parentId }) => {
         setSelectedComment(null);
     };
 
-    const handleChangeSelectedComment = (commentId: string) => {
-        const comment = state.find((c) => c.id === commentId);
-        if (comment) {
-            setSelectedComment(comment);
-        }
-    };
-
-    const copyText = async (commentId: string) => {
-        try {
-            const comment = await DataStore.query(models.Comment, commentId);
-            if (comment) {
-                const text = comment.body;
-                if (text) {
-                    Clipboard.setString(text);
-                }
-            }
-        } catch (e) {
-            console.log(e);
-            setErrorSnackVisible(true);
-        }
-        setCopyTextSnackVisible(true);
-    };
-
     if (error) {
         return <GenericError />;
     } else {
@@ -133,61 +99,16 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ parentId }) => {
                             index > 0 && array[index - 1].author
                                 ? array[index - 1].author?.id
                                 : null;
-
-                        let actionParams: ActionParams = {
-                            "Copy text": [comment.id],
-                        };
-                        let menuItems: MenuItemProps[] = [
-                            {
-                                text: "Copy text",
-                                onPress: copyText,
-                            },
-                        ];
-
-                        const isSelf = comment.author?.id === whoami?.id;
-                        if (isSelf) {
-                            menuItems = [
-                                ...menuItems,
-                                {
-                                    text: "Edit",
-                                    onPress: (commentId: string) => {
-                                        setVisibleDialog(
-                                            CommentItemMenuAction.EDIT
-                                        );
-                                        handleChangeSelectedComment(commentId);
-                                    },
-                                },
-                                {
-                                    text: "Delete",
-                                    isDestructive: true,
-                                    onPress: (commentId: string) => {
-                                        setVisibleDialog(
-                                            CommentItemMenuAction.DELETE
-                                        );
-                                        handleChangeSelectedComment(commentId);
-                                    },
-                                },
-                            ];
-                            actionParams = {
-                                ...actionParams,
-                                Edit: [comment.id],
-                                Delete: [comment.id],
-                            };
-                        }
-
                         return (
-                            <HoldItem
+                            <CommentItem
                                 key={comment.id}
-                                items={menuItems}
-                                actionParams={actionParams}
-                            >
-                                <CommentItem
-                                    showAuthor={
-                                        prevAuthorId !== comment.author?.id
-                                    }
-                                    comment={comment}
-                                />
-                            </HoldItem>
+                                showAuthor={prevAuthorId !== comment.author?.id}
+                                comment={comment}
+                                setAction={(action) => {
+                                    setVisibleDialog(action);
+                                    setSelectedComment(comment);
+                                }}
+                            />
                         );
                     })}
                 <NewCommentCard parentId={parentId} />
