@@ -22,11 +22,11 @@ const Task: React.FC<TaskProps> = ({ route, navigation }) => {
     const { state, isFetching, error, notFound } =
         useModelSubscription<models.Task>(models.Task, taskId);
     const [pickUpLocationId, setPickUpLocationId] = React.useState<
-        string | null
-    >(null);
+        string | null | undefined
+    >(undefined);
     const [dropOffLocationId, setDropOffLocationId] = React.useState<
-        string | null
-    >(null);
+        string | null | undefined
+    >(undefined);
 
     React.useEffect(() => {
         const label = taskStatusHumanReadable(
@@ -38,15 +38,16 @@ const Task: React.FC<TaskProps> = ({ route, navigation }) => {
     }, [state?.status, navigation]);
 
     const resolveLocations = React.useCallback(async () => {
+        if (isFetching) return;
         if (state?.pickUpLocation) {
             const result = await state?.pickUpLocation;
-            if (result) setPickUpLocationId(result.id);
+            setPickUpLocationId(result?.id || null);
         }
         if (state?.dropOffLocation) {
             const result = await state?.dropOffLocation;
-            if (result) setDropOffLocationId(result.id);
+            setDropOffLocationId(result?.id || null);
         }
-    }, [state]);
+    }, [state, isFetching]);
 
     React.useEffect(() => {
         resolveLocations();
@@ -65,6 +66,7 @@ const Task: React.FC<TaskProps> = ({ route, navigation }) => {
                     locationId={pickUpLocationId}
                     title="Collect from"
                 />
+
                 <TaskLocationDetail
                     locationId={dropOffLocationId}
                     title="Deliver to"

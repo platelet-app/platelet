@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import * as React from "react";
 import SearchAndUserMenuBar from "./SearchAndUserMenuBar";
-import { Text } from "react-native-paper";
 import { selectedItemsSelector } from "../../../redux/Selectors";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

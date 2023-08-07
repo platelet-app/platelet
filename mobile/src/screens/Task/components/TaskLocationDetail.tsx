@@ -14,7 +14,7 @@ import ContentLoader, { Rect } from "react-content-loader/native";
 import GenericError from "../../Errors/GenericError";
 
 type TaskLocationDetailProps = {
-    locationId: string | null;
+    locationId?: string | null;
     title: string;
 };
 
@@ -59,7 +59,7 @@ const TaskLocationDetail: React.FC<TaskLocationDetailProps> = ({
     const [showHidden, setShowHidden] = React.useState(false);
     const { state, isFetching, error } = useModelSubscription<models.Location>(
         models.Location,
-        locationId || undefined
+        locationId
     );
     const { colors } = useTheme();
     const hiddenFields = ["line2", "line3", "county", "town", "country"];
