@@ -47,7 +47,12 @@ describe("Dashboard", () => {
     `(
         "renders column titles",
         async ({ status }: { status: "inProgress" | "completed" }) => {
-            render(<Dashboard status={status} />);
+            render(
+                <Dashboard
+                    tabIndex={status === "inProgress" ? 0 : 1}
+                    status={status}
+                />
+            );
             screen.getByTestId("task-grid-tasks-list-skeleton");
             await finishLoading();
             if (status === "inProgress") {
@@ -130,7 +135,13 @@ describe("Dashboard", () => {
             const preloadedState = {
                 whoami: { user: whoami },
             };
-            render(<Dashboard status={status} />, { preloadedState });
+            render(
+                <Dashboard
+                    tabIndex={status === "inProgress" ? 0 : 1}
+                    status={status}
+                />,
+                { preloadedState }
+            );
             await finishLoading();
             if (status === "inProgress") {
                 screen.getByText("LOW");
@@ -283,7 +294,7 @@ describe("Dashboard", () => {
         };
         render(
             <>
-                <Dashboard status={"inProgress"} />
+                <Dashboard tabIndex={0} status={"inProgress"} />
                 <FakeDispatchComponent />
             </>,
             { preloadedState }
@@ -405,7 +416,7 @@ describe("Dashboard", () => {
         };
         render(
             <>
-                <Dashboard status={"inProgress"} />
+                <Dashboard tabIndex={0} status={"inProgress"} />
                 <FakeDispatchComponent />
             </>,
             { preloadedState }
@@ -530,7 +541,9 @@ describe("Dashboard", () => {
         const preloadedState = {
             whoami: { user: whoami },
         };
-        render(<Dashboard status="inProgress" />, { preloadedState });
+        render(<Dashboard tabIndex={0} status="inProgress" />, {
+            preloadedState,
+        });
         await finishLoading();
         for (const l of [
             pickUpLocation,
@@ -668,7 +681,7 @@ describe("Dashboard", () => {
             <>
                 <FakeDispatchComponent />
                 <SearchAndUserMenuBar />
-                <Dashboard status="inProgress" />
+                <Dashboard tabIndex={0} status="inProgress" />
             </>,
             { preloadedState }
         );
@@ -710,7 +723,9 @@ describe("Dashboard", () => {
                 subscribe: () => ({ unsubscribe: unsubscribe2 }),
             };
         });
-        const { component } = render(<Dashboard status={"inProgress"} />);
+        const { component } = render(
+            <Dashboard tabIndex={0} status={"inProgress"} />
+        );
         await finishLoading();
         await waitFor(() => {
             expect(unsubscribe).toHaveBeenCalledTimes(0);
