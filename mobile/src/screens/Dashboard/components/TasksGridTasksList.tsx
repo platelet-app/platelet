@@ -38,7 +38,6 @@ const TasksGridTasksList = ({
     );
     const navigation = useNavigation();
     const { colors } = useTheme();
-
     const dashboardFilter = useSelector(dashboardFilterTermSelector);
 
     const filteredTasksIds = React.useMemo(() => {
@@ -70,6 +69,32 @@ const TasksGridTasksList = ({
             }),
         [state, status, limit, filteredTasksIds]
     );
+
+    // for when doing checkbox select all
+    /*const selectAllByStatus = (status: models.TaskStatus) => {
+        const tasks = state.filter((t) => t.status === status);
+        dispatch(selectMultipleItems(tasks, tabIndex));
+    };
+
+    const checkboxStatus = (status: models.TaskStatus) => {
+        if (_.isEmpty(selectedItems)) {
+            return "unchecked";
+        }
+        const tasks = state.filter((t) => t.status === status);
+
+        const intersection = _.intersection(
+            tasks.map((t) => t.id),
+            // @ts-ignore
+            Object.values(selectedItems).map((t: models.Task) => t.id)
+        );
+        if (intersection.length === 0) {
+            return "unchecked";
+        } else if (intersection.length === tasks.length) {
+            return "checked";
+        } else {
+            return "indeterminate";
+        }
+        };*/
 
     if (error) {
         return <GenericError />;
