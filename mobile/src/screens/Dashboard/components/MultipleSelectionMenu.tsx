@@ -16,18 +16,8 @@ import generateMultipleTaskComments from "../utilities/generateMultipleTaskComme
 
 type MultipleSelectionMenuProps = {
     tabIndex: number;
+    style?: React.CSSProperties;
 };
-
-type TaskTimeKey =
-    | "timeOfCall"
-    | "timePickedUp"
-    | "timeDroppedOff"
-    | "timeCancelled"
-    | "timeRejected"
-    | "timeRiderHome"
-    | "timePickedUpSenderName"
-    | "timeDroppedOffRecipientName"
-    | null;
 
 enum actions {
     markPickedUp,
@@ -67,6 +57,7 @@ const getNameKey = (action: actions | null) => {
 
 const MultipleSelectionMenu: React.FC<MultipleSelectionMenuProps> = ({
     tabIndex,
+    style = {},
 }) => {
     const [visible, setVisible] = React.useState(false);
     const [selectedAction, setSelectedAction] = React.useState<actions | null>(
@@ -136,7 +127,9 @@ const MultipleSelectionMenu: React.FC<MultipleSelectionMenuProps> = ({
     const handleConfirm = async (values: any) => {
         if (selectedAction === null) return;
 
-        const items = Object.values(selectedItems) as models.Task[];
+        const items = selectedItems
+            ? (Object.values(selectedItems) as models.Task[])
+            : [];
 
         const generatedModels = await generateMultipleTaskTimeModels(
             items,
@@ -172,6 +165,7 @@ const MultipleSelectionMenu: React.FC<MultipleSelectionMenuProps> = ({
                 alignItems: "center",
                 justifyContent: "space-between",
                 height: 50,
+                ...style,
             }}
         >
             <View
@@ -183,7 +177,7 @@ const MultipleSelectionMenu: React.FC<MultipleSelectionMenuProps> = ({
             >
                 <IconButton icon="arrow-left" onPress={handleBackButton} />
                 <Text variant="titleLarge">
-                    {Object.values(selectedItems).length}
+                    {selectedItems && Object.values(selectedItems).length}
                 </Text>
             </View>
             <View

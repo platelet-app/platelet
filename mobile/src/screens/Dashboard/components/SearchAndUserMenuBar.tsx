@@ -14,7 +14,13 @@ import {
 } from "../../../redux/Selectors";
 import LogoutDialog from "./LogoutDialog";
 
-const SearchAndUserMenuBar = () => {
+type SearchAndUserMenuBarProps = {
+    style?: React.CSSProperties;
+};
+
+const SearchAndUserMenuBar: React.FC<SearchAndUserMenuBarProps> = ({
+    style = {},
+}) => {
     const [logoutDialog, setLogoutDialog] = React.useState(false);
     const currentFilter = useSelector(dashboardFilterTextboxValueSelector);
     const whoami = useSelector(getWhoami);
@@ -38,6 +44,7 @@ const SearchAndUserMenuBar = () => {
                 height: 50,
                 alignItems: "center",
                 justifyContent: "space-between",
+                ...style,
             }}
         >
             <Searchbar

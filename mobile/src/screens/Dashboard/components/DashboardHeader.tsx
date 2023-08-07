@@ -35,19 +35,17 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ tabIndex }) => {
     const dataIsSelected = selectedItems[tabIndex]
         ? Object.values(selectedItems[tabIndex]).length > 0
         : false;
-    if (dataIsSelected) {
-        return (
-            <DashboardHeaderWrapper>
-                <MultipleSelectionMenu tabIndex={tabIndex} />
-            </DashboardHeaderWrapper>
-        );
-    } else {
-        return (
-            <DashboardHeaderWrapper>
-                <SearchAndUserMenuBar />
-            </DashboardHeaderWrapper>
-        );
-    }
+    return (
+        <DashboardHeaderWrapper>
+            <MultipleSelectionMenu
+                style={{ display: dataIsSelected ? "flex" : "none" }}
+                tabIndex={tabIndex}
+            />
+            <SearchAndUserMenuBar
+                style={{ display: dataIsSelected ? "none" : "flex" }}
+            />
+        </DashboardHeaderWrapper>
+    );
 };
 
 export default DashboardHeader;
