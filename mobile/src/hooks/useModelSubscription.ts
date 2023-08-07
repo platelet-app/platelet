@@ -25,7 +25,6 @@ const useModelSubscription = <T extends PersistentModel>(
     const getData = React.useCallback(async () => {
         if (!id) {
             setState(null);
-            setIsFetching(false);
             return;
         }
         observer.current.unsubscribe();
