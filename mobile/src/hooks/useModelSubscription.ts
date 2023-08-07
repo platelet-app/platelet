@@ -9,7 +9,7 @@ import {
 
 const useModelSubscription = <T extends PersistentModel>(
     model: PersistentModelConstructor<T>,
-    id?: string
+    id?: string | null
 ) => {
     const [state, setState] = React.useState<T | null>(null);
     const [isFetching, setIsFetching] = React.useState(true);
@@ -23,12 +23,15 @@ const useModelSubscription = <T extends PersistentModel>(
     ];
 
     const getData = React.useCallback(async () => {
-        if (!id) {
+        if (id === undefined) {
+            return;
+        }
+        if (id === null) {
             setState(null);
+            setIsFetching(false);
             return;
         }
         observer.current.unsubscribe();
-        setIsFetching(true);
         try {
             // @ts-ignore
             const result = await DataStore.query(model, id);
