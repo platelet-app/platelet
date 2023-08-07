@@ -1,4 +1,5 @@
 import * as React from "react";
+import { StatusBar } from "expo-status-bar";
 import "@azure/core-asynciterator-polyfill";
 import { DataStore } from "aws-amplify";
 import { ExpoSQLiteAdapter } from "@aws-amplify/datastore-storage-adapter/ExpoSQLiteAdapter";
@@ -173,12 +174,12 @@ const Main = () => {
         }
     };
     React.useEffect(initialise, [dispatch]);
-    const insets = useSafeAreaInsets();
     return (
         <PaperProvider theme={colorScheme === "dark" ? darkTheme : lightTheme}>
             <NavigationContainer
                 theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
             >
+                <StatusBar translucent backgroundColor="transparent" />
                 <Tab.Navigator initialRouteName="InProgressStack">
                     <Tab.Screen
                         name="InProgressStack"
