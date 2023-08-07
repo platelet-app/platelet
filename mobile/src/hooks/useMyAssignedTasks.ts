@@ -198,25 +198,17 @@ const useMyAssignedTasks = (
 
     const setUpAssignedTasksObserver = React.useCallback(async () => {
         try {
-            // TODO: for now use manual filtering
-            // consider filtering in the query once this is fixed
-            // https://github.com/aws-amplify/amplify-android/issues/2069
             assigneeObserver.current.unsubscribe();
             assigneeObserver.current = DataStore.observeQuery(
-                models.TaskAssignee
+                models.TaskAssignee,
+                (a) =>
+                    a.and((a) => [
+                        a.role.eq(role),
+                        a.assignee.id.eq(whoami?.id),
+                    ])
             ).subscribe(async ({ items }) => {
-                const filteredItems = items.filter(
-                    (item) => item.role === role
-                );
-                const myTasks = [];
-                for (const item of filteredItems) {
-                    const assignee = await item.assignee;
-                    if (assignee.id === whoami?.id) {
-                        myTasks.push(item);
-                    }
-                }
                 const resolvedTasks = await Promise.all(
-                    myTasks.map((t) => {
+                    items.map((t) => {
                         return t.task;
                     })
                 );
