@@ -21,7 +21,7 @@
         "@react-navigation/native-stack": "^6.9.13",
         "@reduxjs/toolkit": "^1.9.5",
         "amazon-cognito-identity-js": "^6.3.1",
-        "aws-amplify": "^5.3.4",
+        "aws-amplify": "^5.3.6",
         "core-js": "^3.31.1",
         "expo": "~48.0.18",
         "expo-clipboard": "~4.1.2",
