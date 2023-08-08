@@ -6,13 +6,14 @@ import {
     selectedItemsSelector,
     tenantIdSelector,
 } from "../../../redux/Selectors";
-import { View } from "react-native";
+import { BackHandler, View } from "react-native";
 import { clearItems } from "../../../redux/selectionMode/selectionModeActions";
 import * as models from "../../../models";
 import TaskActionsConfirmationDialog from "../../Task/components/TaskActionsConfirmationDialog";
 import generateMultipleTaskTimeModels from "../utilities/generateMultipleTaskTimeModels";
 import { DataStore } from "aws-amplify";
 import generateMultipleTaskComments from "../utilities/generateMultipleTaskComments";
+import { useFocusEffect } from "@react-navigation/native";
 
 type MultipleSelectionMenuProps = {
     tabIndex: number;
@@ -70,6 +71,26 @@ const MultipleSelectionMenu: React.FC<MultipleSelectionMenuProps> = ({
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
     const tenantId = useSelector(tenantIdSelector);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                if (selectedItems && Object.keys(selectedItems).length > 0) {
+                    dispatch(clearItems(tabIndex));
+                    return true;
+                } else {
+                    return false;
+                }
+            };
+
+            const subscription = BackHandler.addEventListener(
+                "hardwareBackPress",
+                onBackPress
+            );
+
+            return () => subscription.remove();
+        }, [dispatch, selectedItems, tabIndex])
+    );
 
     const handleBackButton = () => {
         dispatch(clearItems(tabIndex));
