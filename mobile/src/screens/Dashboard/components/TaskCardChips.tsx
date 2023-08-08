@@ -39,7 +39,8 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
     if (priority) {
         chips.push(<PriorityChip priority={priority} key={priority} />);
     }
-    if (riderResponsibility) {
+    // ignore rider responsibility for now
+    if (false) {
         chips.push(
             <SmallChip style={styles.chip} key={riderResponsibility}>
                 {riderResponsibility}
