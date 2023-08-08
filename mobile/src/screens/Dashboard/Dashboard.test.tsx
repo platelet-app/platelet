@@ -9,6 +9,7 @@ import * as taskDeliverablesActions from "../../redux/taskDeliverables/taskDeliv
 import _ from "lodash";
 import SearchAndUserMenuBar from "./components/SearchAndUserMenuBar";
 import { setDashboardFilter } from "../../redux/dashboardFilter/DashboardFilterActions";
+import MultipleSelectionMenu from "./components/MultipleSelectionMenu";
 
 const tenantId = "test-tenant";
 
@@ -24,8 +25,23 @@ const FakeDispatchComponent = () => {
 };
 
 describe("Dashboard", () => {
+    const RealDate = Date;
+    const isoDate = "2021-11-29T23:24:58.987Z";
+
+    function mockDate() {
+        global.Date = class extends RealDate {
+            constructor() {
+                super();
+                return new RealDate(isoDate);
+            }
+        };
+    }
+    afterEach(async () => {
+        await DataStore.clear();
+    });
     beforeEach(() => {
         jest.restoreAllMocks();
+        mockDate();
     });
     afterEach(async () => {
         await DataStore.clear();
@@ -738,4 +754,400 @@ describe("Dashboard", () => {
             expect(unsubscribe2).toHaveBeenCalledTimes(1);
         });
     });
+    test("mark multiple tasks as picked up", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                name: "John Doe",
+                displayName: "John Doe",
+                cognitoId: "123",
+                roles: [models.Role.RIDER],
+                tenantId,
+                username: "johndoe",
+            })
+        );
+        const task = await DataStore.save(
+            new models.Task({
+                tenantId,
+                status: models.TaskStatus.ACTIVE,
+                dateCreated,
+                priority: models.Priority.LOW,
+            })
+        );
+        const task2 = await DataStore.save(
+            new models.Task({
+                tenantId,
+                status: models.TaskStatus.ACTIVE,
+                dateCreated,
+                priority: models.Priority.HIGH,
+            })
+        );
+        await Promise.all(
+            [task, task2].map((task) => {
+                return DataStore.save(
+                    new models.TaskAssignee({
+                        tenantId,
+                        task: task,
+                        assignee: whoami,
+                        role: models.Role.RIDER,
+                    })
+                );
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+        };
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(
+            <>
+                <MultipleSelectionMenu tabIndex={0} />
+                <Dashboard tabIndex={0} status={"inProgress"} />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await finishLoading();
+        fireEvent(screen.getByText("LOW"), "onLongPress");
+        fireEvent(screen.getByText("HIGH"), "onLongPress");
+        expect(
+            screen.getAllByRole("button", { name: "Unselect task" })
+        ).toHaveLength(2);
+        fireEvent(
+            screen.getByRole("button", { name: "Mark selected picked up" }),
+            "onPress"
+        );
+        screen.getByText("Set the picked up time?");
+        const input = screen.getByPlaceholderText("Sender name");
+        fireEvent(input, "onChangeText", "John Doe");
+        expect(input.props.value).toBe("John Doe");
+        fireEvent(screen.getByRole("button", { name: "OK" }), "onPress");
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...task,
+                timePickedUp: isoDate,
+                status: models.TaskStatus.PICKED_UP,
+                timePickedUpSenderName: "John Doe",
+            });
+        });
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...task2,
+                timePickedUp: isoDate,
+                status: models.TaskStatus.PICKED_UP,
+                timePickedUpSenderName: "John Doe",
+            });
+        });
+    });
+    test("mark multiple tasks as delivered", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                name: "John Doe",
+                displayName: "John Doe",
+                cognitoId: "123",
+                roles: [models.Role.RIDER],
+                tenantId,
+                username: "johndoe",
+            })
+        );
+        const task = await DataStore.save(
+            new models.Task({
+                tenantId,
+                status: models.TaskStatus.PICKED_UP,
+                timePickedUp: isoDate,
+                dateCreated,
+                priority: models.Priority.LOW,
+            })
+        );
+        const task2 = await DataStore.save(
+            new models.Task({
+                tenantId,
+                status: models.TaskStatus.PICKED_UP,
+                timePickedUp: isoDate,
+                dateCreated,
+                priority: models.Priority.HIGH,
+            })
+        );
+        await Promise.all(
+            [task, task2].map((task) => {
+                return DataStore.save(
+                    new models.TaskAssignee({
+                        tenantId,
+                        task: task,
+                        assignee: whoami,
+                        role: models.Role.RIDER,
+                    })
+                );
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+        };
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(
+            <>
+                <MultipleSelectionMenu tabIndex={0} />
+                <Dashboard tabIndex={0} status={"inProgress"} />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await finishLoading();
+        fireEvent(screen.getByText("LOW"), "onLongPress");
+        fireEvent(screen.getByText("HIGH"), "onLongPress");
+        expect(
+            screen.getAllByRole("button", { name: "Unselect task" })
+        ).toHaveLength(2);
+        fireEvent(
+            screen.getByRole("button", { name: "Mark selected delivered" }),
+            "onPress"
+        );
+        screen.getByText("Set the delivered time?");
+        const input = screen.getByPlaceholderText("Recipient name");
+        fireEvent(input, "onChangeText", "Another Person");
+        expect(input.props.value).toBe("Another Person");
+        fireEvent(screen.getByRole("button", { name: "OK" }), "onPress");
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...task,
+                timeDroppedOff: isoDate,
+                status: models.TaskStatus.DROPPED_OFF,
+                timeDroppedOffRecipientName: "Another Person",
+            });
+        });
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...task2,
+                timeDroppedOff: isoDate,
+                status: models.TaskStatus.DROPPED_OFF,
+                timeDroppedOffRecipientName: "Another Person",
+            });
+        });
+    });
+    test("mark multiple tasks as rider home", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                name: "John Doe",
+                displayName: "John Doe",
+                cognitoId: "123",
+                roles: [models.Role.RIDER],
+                tenantId,
+                username: "johndoe",
+            })
+        );
+        const task = await DataStore.save(
+            new models.Task({
+                tenantId,
+                status: models.TaskStatus.DROPPED_OFF,
+                timePickedUp: isoDate,
+                timeDroppedOff: isoDate,
+                dateCreated,
+                priority: models.Priority.LOW,
+            })
+        );
+        const task2 = await DataStore.save(
+            new models.Task({
+                tenantId,
+                status: models.TaskStatus.DROPPED_OFF,
+                timePickedUp: isoDate,
+                timeDroppedOff: isoDate,
+                dateCreated,
+                priority: models.Priority.HIGH,
+            })
+        );
+        await Promise.all(
+            [task, task2].map((task) => {
+                return DataStore.save(
+                    new models.TaskAssignee({
+                        tenantId,
+                        task: task,
+                        assignee: whoami,
+                        role: models.Role.RIDER,
+                    })
+                );
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+        };
+        const saveSpy = jest.spyOn(DataStore, "save");
+        render(
+            <>
+                <MultipleSelectionMenu tabIndex={0} />
+                <Dashboard tabIndex={0} status={"inProgress"} />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await finishLoading();
+        fireEvent(screen.getByText("LOW"), "onLongPress");
+        fireEvent(screen.getByText("HIGH"), "onLongPress");
+        expect(
+            screen.getAllByRole("button", { name: "Unselect task" })
+        ).toHaveLength(2);
+        fireEvent(
+            screen.getByRole("button", { name: "Mark selected rider home" }),
+            "onPress"
+        );
+        screen.getByText("Set the rider home time?");
+        fireEvent(screen.getByRole("button", { name: "OK" }), "onPress");
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...task,
+                timeRiderHome: isoDate,
+                status: models.TaskStatus.COMPLETED,
+            });
+        });
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...task2,
+                timeRiderHome: isoDate,
+                status: models.TaskStatus.COMPLETED,
+            });
+        });
+    });
+    test.only.each`
+        status
+        ${models.TaskStatus.REJECTED} | ${models.TaskStatus.CANCELLED}
+    `(
+        "mark multiple tasks as cancelled or rejected",
+        async ({ status }: { status: models.TaskStatus }) => {
+            const whoami = await DataStore.save(
+                new models.User({
+                    name: "John Doe",
+                    displayName: "John Doe",
+                    cognitoId: "123",
+                    roles: [models.Role.RIDER],
+                    tenantId,
+                    username: "johndoe",
+                })
+            );
+            const task = await DataStore.save(
+                new models.Task({
+                    tenantId,
+                    status: models.TaskStatus.ACTIVE,
+                    dateCreated,
+                    priority: models.Priority.LOW,
+                })
+            );
+            const task2 = await DataStore.save(
+                new models.Task({
+                    tenantId,
+                    status: models.TaskStatus.ACTIVE,
+                    dateCreated,
+                    priority: models.Priority.HIGH,
+                })
+            );
+            await Promise.all(
+                [task, task2].map((task) => {
+                    return DataStore.save(
+                        new models.TaskAssignee({
+                            tenantId,
+                            task: task,
+                            assignee: whoami,
+                            role: models.Role.RIDER,
+                        })
+                    );
+                })
+            );
+            const mockComment = new models.Comment({
+                tenantId,
+                author: whoami,
+                body: "Some reason",
+                parentId: "tempId",
+            });
+            const preloadedState = {
+                whoami: { user: whoami },
+                tenantId,
+            };
+            const saveSpy = jest.spyOn(DataStore, "save");
+            render(
+                <>
+                    <MultipleSelectionMenu tabIndex={0} />
+                    <Dashboard tabIndex={0} status={"inProgress"} />
+                </>,
+                {
+                    preloadedState,
+                }
+            );
+            await finishLoading();
+            fireEvent(screen.getByText("LOW"), "onLongPress");
+            fireEvent(screen.getByText("HIGH"), "onLongPress");
+            expect(
+                screen.getAllByRole("button", { name: "Unselect task" })
+            ).toHaveLength(2);
+            fireEvent(
+                screen.getByRole("button", { name: "More options" }),
+                "onPress"
+            );
+            const menuText =
+                status === models.TaskStatus.REJECTED
+                    ? "Rejected"
+                    : "Cancelled";
+            fireEvent(screen.getByText(menuText), "onPress");
+            const title =
+                status === models.TaskStatus.REJECTED
+                    ? "rejected"
+                    : "cancelled";
+            screen.getByText(`Set the ${title} time?`);
+            const commentInput = screen.getByPlaceholderText("Reason...");
+            fireEvent(commentInput, "onChangeText", "Some reason");
+            expect(commentInput.props.value).toBe("Some reason");
+            fireEvent(screen.getByRole("button", { name: "OK" }), "onPress");
+            if (status === models.TaskStatus.REJECTED) {
+                await waitFor(() => {
+                    expect(saveSpy).toHaveBeenCalledWith({
+                        ...task,
+                        timeRejected: isoDate,
+                        status: models.TaskStatus.REJECTED,
+                    });
+                });
+                await waitFor(() => {
+                    expect(saveSpy).toHaveBeenCalledWith({
+                        ...task2,
+                        timeRejected: isoDate,
+                        status: models.TaskStatus.REJECTED,
+                    });
+                });
+            } else {
+                await waitFor(() => {
+                    expect(saveSpy).toHaveBeenCalledWith({
+                        ...task,
+                        timeCancelled: isoDate,
+                        status: models.TaskStatus.CANCELLED,
+                    });
+                });
+                await waitFor(() => {
+                    expect(saveSpy).toHaveBeenCalledWith({
+                        ...task2,
+                        timeCancelled: isoDate,
+                        status: models.TaskStatus.CANCELLED,
+                    });
+                });
+            }
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockComment,
+                    parentId: task.id,
+                    id: expect.any(String),
+                    visibility: models.CommentVisibility.EVERYONE,
+                });
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockComment,
+                    parentId: task2.id,
+                    id: expect.any(String),
+                    visibility: models.CommentVisibility.EVERYONE,
+                });
+            });
+
+            await waitFor(
+                () => {
+                    expect(screen.queryByText("LOW")).toBeNull();
+                    expect(screen.queryByText("HIGH")).toBeNull();
+                },
+                { timeout: 5000 }
+            );
+        }
+    );
 });

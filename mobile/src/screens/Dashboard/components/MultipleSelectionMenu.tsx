@@ -189,6 +189,7 @@ const MultipleSelectionMenu: React.FC<MultipleSelectionMenuProps> = ({
             >
                 <IconButton
                     icon="package-up"
+                    aria-label="Mark selected picked up"
                     onPress={() => {
                         setSelectedAction(actions.markPickedUp);
                     }}
@@ -196,6 +197,7 @@ const MultipleSelectionMenu: React.FC<MultipleSelectionMenuProps> = ({
                 />
                 <IconButton
                     icon="package-down"
+                    aria-label="Mark selected delivered"
                     onPress={() => {
                         setSelectedAction(actions.markDelivered);
                     }}
@@ -203,6 +205,7 @@ const MultipleSelectionMenu: React.FC<MultipleSelectionMenuProps> = ({
                 />
                 <IconButton
                     icon="home"
+                    aria-label="Mark selected rider home"
                     onPress={() => {
                         setSelectedAction(actions.markRiderHome);
                     }}
@@ -212,10 +215,15 @@ const MultipleSelectionMenu: React.FC<MultipleSelectionMenuProps> = ({
                     visible={visible}
                     onDismiss={closeMenu}
                     anchor={
-                        <IconButton icon="dots-vertical" onPress={openMenu} />
+                        <IconButton
+                            aria-label="More options"
+                            icon="dots-vertical"
+                            onPress={openMenu}
+                        />
                     }
                 >
                     <Menu.Item
+                        aria-label="Mark selected cancelled"
                         onPress={() => {
                             setVisible(false);
                             setSelectedAction(actions.markCancelled);
@@ -223,6 +231,7 @@ const MultipleSelectionMenu: React.FC<MultipleSelectionMenuProps> = ({
                         title="Cancelled"
                     />
                     <Menu.Item
+                        aria-label="Mark selected rejected"
                         onPress={() => {
                             setVisible(false);
                             setSelectedAction(actions.markRejected);
@@ -232,6 +241,7 @@ const MultipleSelectionMenu: React.FC<MultipleSelectionMenuProps> = ({
                 </Menu>
             </View>
             <TaskActionsConfirmationDialog
+                key={selectedAction || "task-actions-confirmation-dialog"}
                 nullify={false}
                 taskKey={getKey(selectedAction)}
                 nameKey={getNameKey(selectedAction)}

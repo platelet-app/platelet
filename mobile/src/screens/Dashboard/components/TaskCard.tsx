@@ -6,7 +6,7 @@ import TaskCardTimestamp from "./TaskCardTimestamp";
 import TaskCardChips from "./TaskCardChips";
 import useTaskDeliverablesRedux from "../../../hooks/useTaskDeliverablesRedux";
 import useCommentsRedux from "../../../hooks/useCommentsRedux";
-import { Divider, IconButton, useTheme } from "react-native-paper";
+import { IconButton, useTheme } from "react-native-paper";
 import { ResolvedTask } from "../../../hooks/useMyAssignedTasks";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -103,6 +103,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onPress, tabIndex }) => {
                         }}
                     />
                     <IconButton
+                        aria-label="Unselect task"
                         icon="checkbox-marked"
                         style={{
                             position: "absolute",

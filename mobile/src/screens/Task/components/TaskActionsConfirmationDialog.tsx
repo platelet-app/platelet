@@ -140,7 +140,7 @@ const TaskActionsConfirmationDialog: React.FC<
                                     value={reasonBody}
                                     onChangeText={onChangeReasonBody}
                                     aria-label="Reason"
-                                    placeholder="Reason (optional)"
+                                    placeholder="Reason..."
                                     multiline
                                 />
                             )}
