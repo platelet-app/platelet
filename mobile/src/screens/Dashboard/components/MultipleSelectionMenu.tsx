@@ -20,12 +20,13 @@ type MultipleSelectionMenuProps = {
     style?: React.CSSProperties;
 };
 
+// give them proper strings for the sake of the confirmation dialog key
 enum actions {
-    markPickedUp,
-    markDelivered,
-    markRiderHome,
-    markCancelled,
-    markRejected,
+    markPickedUp = "action-mark-picked-up",
+    markDelivered = "action-mark-delivered",
+    markRiderHome = "action-mark-rider-home",
+    markCancelled = "action-mark-cancelled",
+    markRejected = "action-mark-rejected",
 }
 
 const getKey = (action: actions | null) => {
@@ -262,7 +263,11 @@ const MultipleSelectionMenu: React.FC<MultipleSelectionMenuProps> = ({
                 </Menu>
             </View>
             <TaskActionsConfirmationDialog
-                key={selectedAction || "task-actions-confirmation-dialog"}
+                key={
+                    selectedAction !== null
+                        ? selectedAction
+                        : "task-actions-confirmation-dialog"
+                }
                 nullify={false}
                 taskKey={getKey(selectedAction)}
                 nameKey={getNameKey(selectedAction)}
