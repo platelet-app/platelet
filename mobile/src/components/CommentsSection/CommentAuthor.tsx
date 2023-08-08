@@ -1,5 +1,4 @@
 import * as models from "../../models";
-import { Text } from "react-native-paper";
 import { View } from "react-native";
 import UserAvatar from "../UserAvatar";
 
@@ -22,7 +21,6 @@ const CommentAuthor: React.FC<CommentAuthorProps> = ({ user, isSelf }) => {
             }}
         >
             <UserAvatar user={user} />
-            <Text>{user.displayName}</Text>
         </View>
     );
 };

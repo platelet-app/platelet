@@ -35,7 +35,13 @@ const TaskAssigneesDetail: React.FC<TaskAssigneesDetailProps> = ({
             <Card>
                 <Card.Title title="Assignees" />
                 <DividerWithBottomMargin />
-                <Card.Content style={{ flexDirection: "row", gap: 8 }}>
+                <Card.Content
+                    style={{
+                        flexDirection: "row",
+                        gap: 8,
+                        flexWrap: "wrap",
+                    }}
+                >
                     {state.map((a) => (
                         <UserChip key={a.id} user={a.assignee} />
                     ))}

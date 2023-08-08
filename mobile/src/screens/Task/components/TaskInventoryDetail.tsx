@@ -47,6 +47,12 @@ const TaskInventoryDetail: React.FC<TaskInventoryDetailProps> = ({
                 </ContentLoader>
             </CardWrapper>
         );
+    } else if (state.length === 0) {
+        return (
+            <CardWrapper>
+                <Text>No items.</Text>
+            </CardWrapper>
+        );
     } else {
         return (
             <CardWrapper>

@@ -20,7 +20,9 @@ const SmallChip: React.FC<SmallChipProps> = ({ children, style }) => {
                 ...style,
             }}
         >
-            <Text style={{ fontSize: 13 }}>{children}</Text>
+            <Text numberOfLines={1} style={{ fontSize: 13, maxWidth: 130 }}>
+                {children}
+            </Text>
         </View>
     );
 };

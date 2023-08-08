@@ -95,4 +95,31 @@ describe("TaskInventoryDetail", () => {
         );
         screen.getByText("New Deliverable");
     });
+    it("empty inventory", async () => {
+        const task = await DataStore.save(
+            new models.Task({
+                tenantId,
+                dateCreated,
+                status: models.TaskStatus.ACTIVE,
+            })
+        );
+        render(<TaskInventoryDetail taskId={task.id} />);
+        await finishLoading();
+        screen.getByText("No items.");
+    });
+    test("show the inventory error", async () => {
+        const task = await DataStore.save(
+            new models.Task({
+                tenantId,
+                dateCreated,
+                status: models.TaskStatus.ACTIVE,
+            })
+        );
+        jest.spyOn(DataStore, "observeQuery").mockImplementationOnce(() => {
+            throw new Error("error");
+        });
+        render(<TaskInventoryDetail taskId={task.id} />);
+        await finishLoading();
+        screen.getByText("Sorry, something went wrong");
+    });
 });

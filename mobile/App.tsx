@@ -24,10 +24,7 @@ import "moment/locale/en-gb";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { initialiseApp } from "./src/redux/initialise/initialiseActions";
 import { useColorScheme } from "react-native";
-import {
-    SafeAreaProvider,
-    useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import DashboardHeader from "./src/screens/Dashboard/components/DashboardHeader";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 

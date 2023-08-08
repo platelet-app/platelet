@@ -42,6 +42,13 @@ describe("TaskLocationDetail", () => {
         screen.getByText("John Smith");
         screen.getByText("1234567890");
     });
+
+    test("no location set", async () => {
+        render(<TaskLocationDetail title="Pick up" locationId={null} />);
+        await finishLoading();
+        screen.getByText("No location set.");
+    });
+
     test("show the address error", async () => {
         const location = await DataStore.save(
             new models.Location({
@@ -56,6 +63,7 @@ describe("TaskLocationDetail", () => {
         await finishLoading();
         await screen.findByText("Sorry, something went wrong");
     });
+
     test("show the address and observe changes", async () => {
         const location = await DataStore.save(
             new models.Location({

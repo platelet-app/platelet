@@ -52,6 +52,22 @@ const contactFields = {
     telephoneNumber: "Telephone",
 };
 
+const CardWrapper = ({
+    children,
+    title,
+}: {
+    children: React.ReactNode;
+    title: string;
+}) => {
+    return (
+        <Card>
+            <Card.Title title={title} />
+            <DividerWithBottomMargin />
+            {children}
+        </Card>
+    );
+};
+
 const TaskLocationDetail: React.FC<TaskLocationDetailProps> = ({
     locationId,
     title,
@@ -82,9 +98,7 @@ ${value}`;
         return <GenericError />;
     } else if (isFetching) {
         return (
-            <Card>
-                <Card.Title title={title} />
-                <DividerWithBottomMargin />
+            <CardWrapper title={title}>
                 <Card.Content>
                     <ContentLoader
                         testID="task-location-skeleton"
@@ -137,13 +151,19 @@ ${value}`;
                         />
                     </ContentLoader>
                 </Card.Content>
-            </Card>
+            </CardWrapper>
+        );
+    } else if (state === null) {
+        return (
+            <CardWrapper title={title}>
+                <Card.Content>
+                    <Text>No location set.</Text>
+                </Card.Content>
+            </CardWrapper>
         );
     } else {
         return (
-            <Card>
-                <Card.Title title={title} />
-                <DividerWithBottomMargin />
+            <CardWrapper title={title}>
                 <Card.Content style={{ gap: 8 }}>
                     {showHidden && (
                         <Text style={{ textAlign: "right" }} selectable>
@@ -206,7 +226,7 @@ ${value}`;
                 >
                     {showHidden ? "See less" : "See more"}
                 </Text>
-            </Card>
+            </CardWrapper>
         );
     }
 };
