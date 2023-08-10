@@ -251,6 +251,7 @@ const MultipleSelectionMenu: React.FC<MultipleSelectionMenuProps> = ({
                             setSelectedAction(actions.markCancelled);
                         }}
                         title="Cancelled"
+                        disabled={checkButtonDisabled(actions.markCancelled)}
                     />
                     <Menu.Item
                         aria-label="Mark selected rejected"
@@ -259,6 +260,7 @@ const MultipleSelectionMenu: React.FC<MultipleSelectionMenuProps> = ({
                             setSelectedAction(actions.markRejected);
                         }}
                         title="Rejected"
+                        disabled={checkButtonDisabled(actions.markRejected)}
                     />
                 </Menu>
             </View>
