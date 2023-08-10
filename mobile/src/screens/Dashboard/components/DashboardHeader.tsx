@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import * as React from "react";
 import SearchAndUserMenuBar from "./SearchAndUserMenuBar";
 import { selectedItemsSelector } from "../../../redux/Selectors";
-import { View } from "react-native";
+import { useColorScheme, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MultipleSelectionMenu from "./MultipleSelectionMenu";
 
@@ -16,12 +16,14 @@ const DashboardHeaderWrapper = ({
     children: React.ReactNode;
 }) => {
     const insets = useSafeAreaInsets();
+    const colorScheme = useColorScheme();
     return (
         <View
             style={{
                 paddingLeft: insets.left + 16,
                 paddingRight: insets.right + 16,
                 paddingTop: insets.top,
+                backgroundColor: colorScheme === "dark" ? "#000" : "#fff",
             }}
         >
             {children}
