@@ -3,7 +3,6 @@ import { StatusBar } from "expo-status-bar";
 import "@azure/core-asynciterator-polyfill";
 import { DataStore } from "aws-amplify";
 import { ExpoSQLiteAdapter } from "@aws-amplify/datastore-storage-adapter/ExpoSQLiteAdapter";
-import { Authenticator } from "@aws-amplify/ui-react-native";
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
 import { Amplify } from "aws-amplify";
 import config from "./src/aws-exports";
@@ -27,6 +26,8 @@ import { useColorScheme } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import DashboardHeader from "./src/screens/Dashboard/components/DashboardHeader";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import TenantListProvider from "./src/screens/TenantPicker/TenantListProvider";
+import Login from "./src/screens/Login/Login";
 
 declare global {
     namespace ReactNavigation {
@@ -172,54 +173,60 @@ const Main = () => {
     };
     React.useEffect(initialise, [dispatch]);
     return (
-        <PaperProvider theme={colorScheme === "dark" ? darkTheme : lightTheme}>
-            <NavigationContainer
-                theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-            >
-                <StatusBar translucent backgroundColor="transparent" />
-                <Tab.Navigator initialRouteName="InProgressStack">
-                    <Tab.Screen
-                        name="InProgressStack"
-                        component={InProgressStack}
-                        options={{
-                            tabBarIcon: "compass-outline",
-                            tabBarLabel: "In Progress",
-                        }}
-                    />
-                    <Tab.Screen
-                        name="CompletedStack"
-                        component={CompletedStack}
-                        options={{
-                            tabBarIcon: "check-circle-outline",
-                            tabBarLabel: "Completed",
-                        }}
-                    />
-                </Tab.Navigator>
-            </NavigationContainer>
-        </PaperProvider>
+        <NavigationContainer
+            theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+            <StatusBar translucent backgroundColor="transparent" />
+            <Tab.Navigator initialRouteName="InProgressStack">
+                <Tab.Screen
+                    name="InProgressStack"
+                    component={InProgressStack}
+                    options={{
+                        tabBarIcon: "compass-outline",
+                        tabBarLabel: "In Progress",
+                    }}
+                />
+                <Tab.Screen
+                    name="CompletedStack"
+                    component={CompletedStack}
+                    options={{
+                        tabBarIcon: "check-circle-outline",
+                        tabBarLabel: "Completed",
+                    }}
+                />
+            </Tab.Navigator>
+        </NavigationContainer>
     );
 };
 
 const App = () => {
-    if (REACT_APP_OFFLINE_ONLY === "true") {
-        return (
-            <Provider store={store}>
-                <Main />
-            </Provider>
-        );
-    } else {
-        return (
-            <Authenticator.Provider>
-                <Authenticator loginMechanisms={["email"]}>
-                    <Provider store={store}>
-                        <SafeAreaProvider>
+    const colorScheme = useColorScheme();
+    const [tenantProviderKey, setTenantProviderKey] = React.useState(false);
+    return (
+        <SafeAreaProvider>
+            <PaperProvider
+                theme={colorScheme === "dark" ? darkTheme : lightTheme}
+            >
+                <TenantListProvider
+                    key={
+                        tenantProviderKey
+                            ? "tenant-list-provider-1"
+                            : "tenant-list-provider-2"
+                    }
+                >
+                    <Login
+                        onChangeTeam={() => {
+                            setTenantProviderKey(!tenantProviderKey);
+                        }}
+                    >
+                        <Provider store={store}>
                             <Main />
-                        </SafeAreaProvider>
-                    </Provider>
-                </Authenticator>
-            </Authenticator.Provider>
-        );
-    }
+                        </Provider>
+                    </Login>
+                </TenantListProvider>
+            </PaperProvider>
+        </SafeAreaProvider>
+    );
 };
 
 export default App;
