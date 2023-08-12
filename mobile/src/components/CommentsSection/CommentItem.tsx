@@ -40,7 +40,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
     return (
         <View>
             {author && showAuthor && (
-                <CommentAuthor isSelf={isSelf} user={author} />
+                <CommentAuthor showName isSelf={isSelf} user={author} />
             )}
             <Card
                 style={{

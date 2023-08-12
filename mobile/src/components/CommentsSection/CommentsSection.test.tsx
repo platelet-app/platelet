@@ -69,8 +69,7 @@ describe("CommentsSection", () => {
         // HoldItem component renders comments twice (for animation?)
         screen.getByText(`${comment.body}`);
         screen.getByText(`${comment2.body}`);
-        // new comment card
-        expect(screen.getAllByText(`${whoami.displayName}`)).toHaveLength(2);
+        screen.getByText(`${whoami.displayName}`);
         screen.getByText(`${anotherUser.displayName}`);
         await DataStore.save(
             models.Comment.copyOf(comment, (updated) => {
@@ -339,7 +338,7 @@ describe("CommentsSection", () => {
             body: "edited comment",
         });
     });
-    test.only("delete a comment", async () => {
+    test("delete a comment", async () => {
         const whoami = await DataStore.save(
             new models.User({
                 tenantId,
