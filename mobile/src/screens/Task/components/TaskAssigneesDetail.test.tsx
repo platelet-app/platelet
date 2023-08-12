@@ -12,6 +12,9 @@ describe("TaskAssigneesDetail", () => {
             expect(screen.queryByTestId("task-assignees-skeleton")).toBeNull();
         });
     };
+    beforeAll(async () => {
+        jest.useFakeTimers();
+    });
     beforeEach(async () => {
         jest.restoreAllMocks();
     });

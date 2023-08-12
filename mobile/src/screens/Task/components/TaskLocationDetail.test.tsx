@@ -4,7 +4,6 @@ import { screen, render, waitFor } from "../../../test-utils";
 import TaskLocationDetail from "./TaskLocationDetail";
 
 const tenantId = "test-tenant-id";
-const dateCreated = new Date().toISOString().split("T")[0];
 
 describe("TaskLocationDetail", () => {
     const finishLoading = async () => {
@@ -17,6 +16,9 @@ describe("TaskLocationDetail", () => {
     });
     afterEach(async () => {
         await DataStore.clear();
+    });
+    beforeAll(async () => {
+        jest.useFakeTimers();
     });
 
     test("show the address for a task", async () => {

@@ -36,16 +36,24 @@ describe("Dashboard", () => {
             }
         };
     }
+
+    beforeAll(async () => {
+        jest.useFakeTimers();
+    });
+
     afterEach(async () => {
         await DataStore.clear();
     });
+
     beforeEach(() => {
         jest.restoreAllMocks();
         mockDate();
     });
+
     afterEach(async () => {
         await DataStore.clear();
     });
+
     const finishLoading = async () => {
         await waitFor(
             () => {
@@ -1007,7 +1015,7 @@ describe("Dashboard", () => {
             });
         });
     });
-    test.only.each`
+    test.each`
         status
         ${models.TaskStatus.REJECTED} | ${models.TaskStatus.CANCELLED}
     `(

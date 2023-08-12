@@ -1,19 +1,24 @@
 import { DataStore } from "aws-amplify";
 import Task from "./Task";
-import { render, waitFor, screen } from "../../test-utils";
+import { render, screen } from "../../test-utils";
 import * as models from "../../models";
 const dateCreated = new Date().toISOString().split("T")[0];
 
 const tenantId = "test-tenant-id";
 
 describe("Task", () => {
-    beforeEach(async () => {
-        jest.restoreAllMocks();
+    beforeAll(async () => {
         jest.useFakeTimers();
     });
+
+    beforeEach(async () => {
+        jest.restoreAllMocks();
+    });
+
     afterEach(async () => {
         await DataStore.clear();
     });
+
     test("show a task", async () => {
         const task = await DataStore.save(
             new models.Task({

@@ -12,6 +12,9 @@ describe("TaskInventoryDetail", () => {
             expect(screen.queryByTestId("task-inventory-skeleton")).toBeNull();
         });
     };
+    beforeAll(async () => {
+        jest.useFakeTimers();
+    });
     it("shows inventory and updates", async () => {
         const task = await DataStore.save(
             new models.Task({

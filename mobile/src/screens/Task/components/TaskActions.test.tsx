@@ -3,7 +3,6 @@ import { render, fireEvent, waitFor, screen } from "../../../test-utils";
 
 import { DataStore } from "aws-amplify";
 import * as models from "../../../models";
-import moment from "moment";
 const dateCreated = new Date().toISOString().split("T")[0];
 const tenantId = "test-tenant-id";
 
@@ -28,6 +27,9 @@ describe("TaskActions", () => {
     beforeEach(async () => {
         jest.restoreAllMocks();
         mockDate();
+    });
+    beforeAll(async () => {
+        jest.useFakeTimers();
     });
     afterEach(async () => {
         await DataStore.clear();

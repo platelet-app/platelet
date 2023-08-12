@@ -12,12 +12,19 @@ describe("TaskDetails", () => {
             expect(screen.queryByTestId("task-details-skeleton")).toBeNull();
         });
     };
+
+    beforeAll(async () => {
+        jest.useFakeTimers();
+    });
+
     beforeEach(async () => {
         jest.restoreAllMocks();
     });
+
     afterEach(async () => {
         await DataStore.clear();
     });
+
     test("show a task and details", async () => {
         const task = await DataStore.save(
             new models.Task({

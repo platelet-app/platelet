@@ -9,10 +9,14 @@ const dateCreated = new Date().toISOString().split("T")[0];
 describe("CommentsSection", () => {
     beforeEach(async () => {
         jest.restoreAllMocks();
-        jest.useFakeTimers();
     });
+
     afterEach(async () => {
         await DataStore.clear();
+    });
+
+    beforeAll(async () => {
+        jest.useFakeTimers();
     });
 
     test("show comments and respond to changes", async () => {
