@@ -2,6 +2,7 @@ import TenantListProvider from "./TenantListProvider";
 import { Amplify } from "aws-amplify";
 import { fireEvent, render, screen, waitFor } from "../../test-utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Text } from "react-native";
 
 const fakeConfigData = `{"test":"test"}`;
 const fakeAmplifyConfig = {
@@ -23,10 +24,13 @@ describe("TenantListProvider", () => {
     const OLD_ENV = process.env;
 
     beforeEach(async () => {
-        jest.resetModules();
         jest.restoreAllMocks();
+        jest.resetModules();
         await AsyncStorage.clear();
         process.env = { ...OLD_ENV };
+    });
+    afterEach(() => {
+        jest.resetModules();
     });
 
     afterAll(() => {
@@ -110,7 +114,7 @@ describe("TenantListProvider", () => {
         const localStorageSpy = jest.spyOn(AsyncStorage, "setItem");
         render(
             <TenantListProvider>
-                <>test</>
+                <Text>test</Text>
             </TenantListProvider>
         );
         await waitFor(() => {
@@ -168,7 +172,11 @@ describe("TenantListProvider", () => {
             .spyOn(AsyncStorage, "getItem")
             .mockReturnValueOnce("1")
             .mockReturnValue(fakeConfigData);
-        render(<TenantListProvider>test</TenantListProvider>);
+        render(
+            <TenantListProvider>
+                <Text>test</Text>
+            </TenantListProvider>
+        );
         expect(screen.queryByText("test")).toBeNull();
         await waitFor(() => {
             expect(localStorageSpy).toHaveBeenCalled();
@@ -203,7 +211,11 @@ describe("TenantListProvider", () => {
             .spyOn(AsyncStorage, "getItem")
             .mockReturnValueOnce("1")
             .mockReturnValue(fakeConfigData);
-        render(<TenantListProvider>test</TenantListProvider>);
+        render(
+            <TenantListProvider>
+                <Text>test</Text>
+            </TenantListProvider>
+        );
         expect(screen.queryByText("test")).toBeNull();
         await waitFor(() => {
             expect(localStorageSpy).toHaveBeenCalled();
@@ -246,7 +258,11 @@ describe("TenantListProvider", () => {
             .spyOn(AsyncStorage, "getItem")
             .mockReturnValueOnce("1")
             .mockReturnValue(undefined);
-        render(<TenantListProvider>test</TenantListProvider>);
+        render(
+            <TenantListProvider>
+                <Text>test</Text>
+            </TenantListProvider>
+        );
         expect(screen.queryByText("test")).toBeNull();
         await waitFor(() => {
             expect(localStorageSpy).toHaveBeenCalledTimes(2);
@@ -291,7 +307,11 @@ describe("TenantListProvider", () => {
             .mockReturnValueOnce("1")
             .mockReturnValue(fakeConfigData);
         const localStorageSetSpy = jest.spyOn(AsyncStorage, "setItem");
-        render(<TenantListProvider>test</TenantListProvider>);
+        render(
+            <TenantListProvider>
+                <Text>test</Text>
+            </TenantListProvider>
+        );
         expect(screen.queryByText("test")).toBeNull();
         await waitFor(() => {
             expect(localStorageSpy).toHaveBeenCalled();
@@ -309,6 +329,19 @@ describe("TenantListProvider", () => {
             "amplifyConfig",
             fakeConfigData
         );
+        screen.getByText("test");
+    });
+    test("configuring with an existing config from aws-exports", async () => {
+        process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = undefined;
+        const amplifySpy = jest.spyOn(Amplify, "configure");
+        render(
+            <TenantListProvider>
+                <Text>test</Text>
+            </TenantListProvider>
+        );
+        await waitFor(() => {
+            expect(amplifySpy).toHaveBeenCalledWith(fakeAmplifyConfig);
+        });
         screen.getByText("test");
     });
 });

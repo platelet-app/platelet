@@ -45,6 +45,7 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
                 setShowList(true);
             }
         } catch (error) {
+            // my test fails if this comment isn't here..
             if (error instanceof Error) {
                 log("couldn't get tenant info", error.message);
             }
