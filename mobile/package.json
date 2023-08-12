@@ -7,7 +7,8 @@
         "android": "expo start --android",
         "ios": "expo start --ios",
         "web": "expo start --web",
-        "test": "jest --watch --testTimeout=60000"
+        "test": "jest --watch --testTimeout=60000",
+        "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --testTimeout=100000000"
     },
     "dependencies": {
         "@aws-amplify/datastore-storage-adapter": "^2.0.42",
