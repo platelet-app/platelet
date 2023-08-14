@@ -10,6 +10,13 @@ import _ from "lodash";
 import SearchAndUserMenuBar from "./components/SearchAndUserMenuBar";
 import { setDashboardFilter } from "../../redux/dashboardFilter/DashboardFilterActions";
 import MultipleSelectionMenu from "./components/MultipleSelectionMenu";
+import { AppState } from "react-native";
+
+jest.mock("react-native/Libraries/AppState/AppState", () => ({
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    currentState: "active",
+}));
 
 const tenantId = "test-tenant";
 
@@ -64,6 +71,53 @@ describe("Dashboard", () => {
             { timeout: 5000 }
         );
     };
+
+    test.skip("disable and restart observers on inactive/active status", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                name: "John Doe",
+                displayName: "John Doe",
+                cognitoId: "123",
+                roles: [models.Role.RIDER],
+                tenantId,
+                username: "johndoe",
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+        };
+        const appStateSpy = jest.spyOn(AppState, "addEventListener");
+        const unsubscribe = jest.fn();
+        const unsubscribe2 = jest.fn();
+        const subscribe = jest.fn((callback: any) => {
+            callback({ items: [] });
+            return {
+                unsubscribe,
+            };
+        });
+        const subscribe2 = jest.fn(() => ({ unsubscribe: unsubscribe2 }));
+        render(<Dashboard tabIndex={0} status="inProgress" />, {
+            preloadedState,
+        });
+        //await appStateSpy.mock.calls[0][1]("active");
+        jest.spyOn(DataStore, "observeQuery").mockImplementation(() => {
+            return {
+                subscribe,
+            };
+        });
+
+        jest.spyOn(DataStore, "observe").mockImplementation(() => {
+            return {
+                subscribe: subscribe2,
+            };
+        });
+        await finishLoading();
+        expect(subscribe).toHaveBeenCalledTimes(1);
+        expect(subscribe2).toHaveBeenCalledTimes(1);
+        await appStateSpy.mock.calls[0][1]("inactive");
+        expect(unsubscribe).toHaveBeenCalledTimes(1);
+        expect(unsubscribe2).toHaveBeenCalledTimes(1);
+    });
 
     test.each`
         status
