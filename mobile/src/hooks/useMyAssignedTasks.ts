@@ -5,6 +5,7 @@ import { getWhoami } from "../redux/Selectors";
 import { DataStore } from "aws-amplify";
 import convertModelListToTypedObject from "./utilities/convertModelListToTypedObject";
 import _ from "lodash";
+import useAppActiveStatus from "./useAppActiveStatus";
 
 export type ResolvedTask = Omit<
     models.Task,
@@ -38,6 +39,7 @@ const useMyAssignedTasks = (
     const [error, setError] = React.useState<Error | null>(null);
     const [isFetching, setIsFetching] = React.useState(true);
     const isFetchingAssigneesRef = React.useRef(true);
+    const appStatus = useAppActiveStatus();
 
     stateRef.current = state;
     taskIdsRef.current = taskIds;
@@ -51,9 +53,15 @@ const useMyAssignedTasks = (
     }, [status]);
 
     const setUpTasksObserver = React.useCallback(() => {
+        // when appStatus changes back to the foreground, we want to restart the observer
+        if (appStatus !== "active") {
+            tasksObserver.current.unsubscribe();
+            return;
+        }
         if (isFetchingAssigneesRef.current) {
             return;
         }
+        log("setting up tasks observer");
         const oneWeekAgo = new Date();
         oneWeekAgo.setHours(0, 0, 0, 0);
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
@@ -140,7 +148,7 @@ const useMyAssignedTasks = (
             }
             setIsFetching(false);
         }
-    }, [taskIds, actualStatus, limit]);
+    }, [taskIds, actualStatus, limit, appStatus]);
 
     React.useEffect(() => {
         setUpTasksObserver();
@@ -150,6 +158,12 @@ const useMyAssignedTasks = (
     }, [setUpTasksObserver]);
 
     const setUpLocationObserver = React.useCallback(() => {
+        // when appStatus changes back to the foreground, we want to restart the observer
+        if (appStatus !== "active") {
+            locationObserver.current.unsubscribe();
+            return;
+        }
+        log("setting up location observer");
         locationObserver.current.unsubscribe();
         locationObserver.current = DataStore.observe(models.Location).subscribe(
             async (location) => {
@@ -187,7 +201,7 @@ const useMyAssignedTasks = (
                 }
             }
         );
-    }, []);
+    }, [appStatus]);
 
     React.useEffect(() => {
         setUpLocationObserver();
@@ -197,6 +211,12 @@ const useMyAssignedTasks = (
     }, [setUpLocationObserver]);
 
     const setUpAssignedTasksObserver = React.useCallback(async () => {
+        // when appStatus changes back to the foreground, we want to restart the observer
+        if (appStatus !== "active") {
+            assigneeObserver.current.unsubscribe();
+            return;
+        }
+        log("setting up assigned tasks observer");
         try {
             assigneeObserver.current.unsubscribe();
             assigneeObserver.current = DataStore.observeQuery(
@@ -222,7 +242,7 @@ const useMyAssignedTasks = (
             });
             return;
             // some alternative way using observe instead of observeQuery
-            const initialValues = await DataStore.query(
+            /*const initialValues = await DataStore.query(
                 models.TaskAssignee,
                 (t) =>
                     t.and((t) => [
@@ -281,14 +301,14 @@ const useMyAssignedTasks = (
                         return newState;
                     });
                 }
-            });
+            });*/
         } catch (error: unknown) {
             if (error instanceof Error) {
                 log(error);
                 setError(error);
             }
         }
-    }, [actualStatus, whoami?.id, role]);
+    }, [whoami?.id, role, appStatus]);
 
     React.useEffect(() => {
         setUpAssignedTasksObserver();
