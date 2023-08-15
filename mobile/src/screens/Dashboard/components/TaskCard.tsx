@@ -129,6 +129,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onPress, tabIndex }) => {
                         backgroundColor: "black",
                     }}
                     onPress={(e) => handleSelect(e, false)}
+                    onLongPress={(e) => handleSelect(e, true)}
                 />
             )}
         </TouchableOpacity>
