@@ -816,6 +816,324 @@ describe("Dashboard", () => {
             expect(unsubscribe2).toHaveBeenCalledTimes(1);
         });
     });
+    test("the select/unselect buttons", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                name: "John Doe",
+                displayName: "John Doe",
+                cognitoId: "123",
+                roles: [models.Role.RIDER],
+                tenantId,
+                username: "johndoe",
+            })
+        );
+        const task = await DataStore.save(
+            new models.Task({
+                tenantId,
+                status: models.TaskStatus.ACTIVE,
+                dateCreated,
+                priority: models.Priority.LOW,
+            })
+        );
+        const task2 = await DataStore.save(
+            new models.Task({
+                tenantId,
+                status: models.TaskStatus.ACTIVE,
+                dateCreated,
+                priority: models.Priority.HIGH,
+            })
+        );
+        await Promise.all(
+            [task, task2].map((task) => {
+                return DataStore.save(
+                    new models.TaskAssignee({
+                        tenantId,
+                        task: task,
+                        assignee: whoami,
+                        role: models.Role.RIDER,
+                    })
+                );
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+        };
+        render(
+            <>
+                <MultipleSelectionMenu tabIndex={0} />
+                <Dashboard tabIndex={0} status={"inProgress"} />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await finishLoading();
+        fireEvent(screen.getByText("LOW"), "onLongPress");
+        screen.getByText("1");
+        const unselectButton = screen.getByRole("button", {
+            name: "Unselect task",
+        });
+        const selectButton = screen.getByRole("button", {
+            name: "Select task",
+        });
+        fireEvent(selectButton, "onPress");
+        screen.getByText("2");
+        expect(
+            screen.getAllByRole("button", { name: "Unselect task" })
+        ).toHaveLength(2);
+        fireEvent(unselectButton, "onPress");
+        screen.getByRole("button", { name: "Select task" });
+        const unselect2 = screen.getByRole("button", { name: "Unselect task" });
+        fireEvent(unselect2, "onPress");
+        expect(
+            screen.queryByRole("button", { name: "Unselect task" })
+        ).toBeNull();
+        expect(
+            screen.queryByRole("button", { name: "Select task" })
+        ).toBeNull();
+    });
+    test("disable buttons always on completed tab", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                name: "John Doe",
+                displayName: "John Doe",
+                cognitoId: "123",
+                roles: [models.Role.RIDER],
+                tenantId,
+                username: "johndoe",
+            })
+        );
+        const task = await DataStore.save(
+            new models.Task({
+                tenantId,
+                status: models.TaskStatus.COMPLETED,
+                dateCreated,
+                priority: models.Priority.LOW,
+            })
+        );
+        const task2 = await DataStore.save(
+            new models.Task({
+                tenantId,
+                status: models.TaskStatus.CANCELLED,
+                dateCreated,
+                priority: models.Priority.MEDIUM,
+            })
+        );
+        const task3 = await DataStore.save(
+            new models.Task({
+                tenantId,
+                status: models.TaskStatus.REJECTED,
+                dateCreated,
+                priority: models.Priority.HIGH,
+            })
+        );
+        const task4 = await DataStore.save(
+            new models.Task({
+                tenantId,
+                status: models.TaskStatus.ABANDONED,
+                dateCreated,
+                priority: models.Priority.LOW,
+            })
+        );
+        const [ass, _ass1, _ass2] = await Promise.all(
+            [task, task2, task3].map((t) => {
+                return DataStore.save(
+                    new models.TaskAssignee({
+                        tenantId,
+                        task: t,
+                        assignee: whoami,
+                        role: models.Role.RIDER,
+                    })
+                );
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+        };
+        render(
+            <>
+                <MultipleSelectionMenu tabIndex={0} />
+                <Dashboard tabIndex={1} status={"completed"} />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await finishLoading();
+        fireEvent(screen.getByText("LOW"), "onLongPress");
+        const pickedUpButton = screen.getByRole("button", {
+            name: "Mark selected picked up",
+        });
+        const droppedOffButton = screen.getByRole("button", {
+            name: "Mark selected delivered",
+        });
+        const riderHomeButton = screen.getByRole("button", {
+            name: "Mark selected rider home",
+        });
+        expect(pickedUpButton).toBeDisabled();
+        expect(droppedOffButton).toBeDisabled();
+        expect(riderHomeButton).toBeDisabled();
+        fireEvent(
+            screen.getByRole("button", { name: "More options" }),
+            "onPress"
+        );
+        expect(screen.getAllByRole("menuitem")[0]).toBeDisabled();
+        expect(screen.getAllByRole("menuitem")[1]).toBeDisabled();
+        fireEvent(screen.getByText("MEDIUM"), "onLongPress");
+        fireEvent(screen.getByText("LOW"), "onLongPress");
+        expect(pickedUpButton).toBeDisabled();
+        expect(droppedOffButton).toBeDisabled();
+        expect(riderHomeButton).toBeDisabled();
+        fireEvent(
+            screen.getByRole("button", { name: "More options" }),
+            "onPress"
+        );
+        expect(screen.getAllByRole("menuitem")[0]).toBeDisabled();
+        expect(screen.getAllByRole("menuitem")[1]).toBeDisabled();
+        fireEvent(screen.getByText("HIGH"), "onLongPress");
+        fireEvent(screen.getByText("MEDIUM"), "onLongPress");
+        expect(pickedUpButton).toBeDisabled();
+        expect(droppedOffButton).toBeDisabled();
+        expect(riderHomeButton).toBeDisabled();
+        fireEvent(
+            screen.getByRole("button", { name: "More options" }),
+            "onPress"
+        );
+        expect(screen.getAllByRole("menuitem")[0]).toBeDisabled();
+        expect(screen.getAllByRole("menuitem")[1]).toBeDisabled();
+        await DataStore.delete(ass);
+        await waitFor(
+            () => {
+                expect(screen.queryByText("LOW")).toBeNull();
+            },
+            { timeout: 5000 }
+        );
+        DataStore.save(
+            new models.TaskAssignee({
+                tenantId,
+                task: task4,
+                assignee: whoami,
+                role: models.Role.RIDER,
+            })
+        );
+        const lastButton = await screen.findByText(
+            "LOW",
+            {},
+            { timeout: 5000 }
+        );
+        fireEvent(lastButton, "onPress");
+        expect(pickedUpButton).toBeDisabled();
+        expect(droppedOffButton).toBeDisabled();
+        expect(riderHomeButton).toBeDisabled();
+        fireEvent(
+            screen.getByRole("button", { name: "More options" }),
+            "onPress"
+        );
+        expect(screen.getAllByRole("menuitem")[0]).toBeDisabled();
+        expect(screen.getAllByRole("menuitem")[1]).toBeDisabled();
+    });
+    test("disable buttons based on status", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                name: "John Doe",
+                displayName: "John Doe",
+                cognitoId: "123",
+                roles: [models.Role.RIDER],
+                tenantId,
+                username: "johndoe",
+            })
+        );
+        const task = await DataStore.save(
+            new models.Task({
+                tenantId,
+                status: models.TaskStatus.ACTIVE,
+                dateCreated,
+                priority: models.Priority.LOW,
+            })
+        );
+        const task2 = await DataStore.save(
+            new models.Task({
+                tenantId,
+                status: models.TaskStatus.PICKED_UP,
+                dateCreated,
+                priority: models.Priority.MEDIUM,
+            })
+        );
+        const task3 = await DataStore.save(
+            new models.Task({
+                tenantId,
+                status: models.TaskStatus.DROPPED_OFF,
+                dateCreated,
+                priority: models.Priority.HIGH,
+            })
+        );
+        await Promise.all(
+            [task, task2, task3].map((task) => {
+                return DataStore.save(
+                    new models.TaskAssignee({
+                        tenantId,
+                        task: task,
+                        assignee: whoami,
+                        role: models.Role.RIDER,
+                    })
+                );
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+        };
+        render(
+            <>
+                <MultipleSelectionMenu tabIndex={0} />
+                <Dashboard tabIndex={0} status={"inProgress"} />
+            </>,
+            {
+                preloadedState,
+            }
+        );
+        await finishLoading();
+        fireEvent(screen.getByText("LOW"), "onLongPress");
+        const pickedUpButton = screen.getByRole("button", {
+            name: "Mark selected picked up",
+        });
+        const droppedOffButton = screen.getByRole("button", {
+            name: "Mark selected delivered",
+        });
+        const riderHomeButton = screen.getByRole("button", {
+            name: "Mark selected rider home",
+        });
+        expect(pickedUpButton).not.toBeDisabled();
+        expect(droppedOffButton).toBeDisabled();
+        expect(riderHomeButton).toBeDisabled();
+        fireEvent(
+            screen.getByRole("button", { name: "More options" }),
+            "onPress"
+        );
+        expect(screen.getAllByRole("menuitem")[0]).not.toBeDisabled();
+        expect(screen.getAllByRole("menuitem")[1]).not.toBeDisabled();
+        fireEvent(screen.getByText("MEDIUM"), "onLongPress");
+        fireEvent(screen.getByText("LOW"), "onLongPress");
+        expect(pickedUpButton).toBeDisabled();
+        expect(droppedOffButton).not.toBeDisabled();
+        expect(riderHomeButton).toBeDisabled();
+        fireEvent(
+            screen.getByRole("button", { name: "More options" }),
+            "onPress"
+        );
+        expect(screen.getAllByRole("menuitem")[0]).not.toBeDisabled();
+        expect(screen.getAllByRole("menuitem")[1]).not.toBeDisabled();
+        fireEvent(screen.getByText("HIGH"), "onLongPress");
+        fireEvent(screen.getByText("MEDIUM"), "onLongPress");
+        expect(pickedUpButton).toBeDisabled();
+        expect(droppedOffButton).toBeDisabled();
+        expect(riderHomeButton).not.toBeDisabled();
+        fireEvent(
+            screen.getByRole("button", { name: "More options" }),
+            "onPress"
+        );
+        expect(screen.getAllByRole("menuitem")[0]).toBeDisabled();
+        expect(screen.getAllByRole("menuitem")[1]).toBeDisabled();
+    });
     test("mark multiple tasks as picked up", async () => {
         const whoami = await DataStore.save(
             new models.User({
