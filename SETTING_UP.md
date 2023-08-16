@@ -85,6 +85,18 @@ Attach this policy to the account to give access:
 }
 ```
 
+In your tenant API edit the file `amplify/backend/api/platelettenantapi/custom-roles.json` and add:
+
+```
+{
+  "adminRoleNames": [
+    "<your-user-arn>"
+  ]
+}
+```
+
+using the ARN of the user with the above policy attached.
+
 You can find the API ARN in AWS AppSync console. Select your API and click Settings on the sidebar.
 
 The account will also need access to these actions:
