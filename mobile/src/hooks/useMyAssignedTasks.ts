@@ -221,18 +221,19 @@ const useMyAssignedTasks = (
             assigneeObserver.current.unsubscribe();
             assigneeObserver.current = DataStore.observeQuery(
                 models.TaskAssignee,
-                (a) =>
-                    a.and((a) => [
-                        a.role.eq(role),
-                        a.assignee.id.eq(whoami?.id),
-                    ])
+                (a) => a.role.eq(role)
             ).subscribe(async ({ items }) => {
-                const resolvedTasks = await Promise.all(
-                    items.map((t) => {
-                        return t.task;
+                const resolved = await Promise.all(
+                    items.map(async (a) => {
+                        const assignee = await a.assignee;
+                        const task = await a.task;
+                        return { ...a, assignee, task };
                     })
                 );
-                const taskIds = resolvedTasks.map((t) => t.id);
+                const filtered = resolved.filter(
+                    (a) => a.assignee.id === whoami?.id
+                );
+                const taskIds = filtered.map((t) => t.task.id);
                 if (_.isEqual(taskIds, taskIdsRef.current)) {
                     return;
                 } else {
