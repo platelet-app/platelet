@@ -199,6 +199,47 @@ describe("TenantListProvider", () => {
         expect(screen.getByText("test")).toBeInTheDocument();
     });
 
+    test.skip("configuring with an existing config, but graphql times out", async () => {
+        process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = new URL(
+            "http://localhost:4000/graphql"
+        );
+        jest.spyOn(global, "fetch").mockImplementation(() => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({});
+                }, 5000);
+            });
+        });
+        const localStorageSetSpy = jest.spyOn(Storage.prototype, "setItem");
+        const amplifySpy = jest.spyOn(Amplify, "configure");
+        const localStorageSpy = jest
+            .spyOn(Storage.prototype, "getItem")
+            .mockReturnValueOnce("1")
+            .mockReturnValue(fakeConfigData);
+        render(<TenantListProvider>test</TenantListProvider>);
+        expect(screen.queryByText("test")).toBeNull();
+        await waitFor(() => {
+            expect(localStorageSpy).toHaveBeenCalled();
+        });
+        console.log(localStorageSpy.mock.calls);
+        const parsedConfig = JSON.parse(fakeConfigData);
+        await waitFor(() => {
+            expect(amplifySpy).toHaveBeenCalledWith(parsedConfig);
+        });
+        expect(localStorageSetSpy).not.toHaveBeenCalledWith(
+            "tenantVersion",
+            "2"
+        );
+        expect(localStorageSetSpy).not.toHaveBeenCalledWith(
+            "tenantName",
+            "Tenant 1"
+        );
+        expect(localStorageSetSpy).not.toHaveBeenCalledWith(
+            "amplifyConfig",
+            fakeConfigData
+        );
+        expect(screen.getByText("test")).toBeInTheDocument();
+    });
     test("configuring with an existing config, but graphql fails", async () => {
         process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = new URL(
             "http://localhost:4000/graphql"

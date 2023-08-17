@@ -44,7 +44,9 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
                 setIsProcessing(false);
             } else if (tenantId) {
                 console.log("tenantId", tenantId);
-                const config = await saveAmplifyConfig(tenantId);
+                // only wait 3 seconds
+                // and fallback to localstorage if it isn't fast enough
+                const config = await saveAmplifyConfig(tenantId, 3000);
                 configureAmplify(config);
                 setIsProcessing(false);
             } else {
