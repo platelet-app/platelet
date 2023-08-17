@@ -17,6 +17,9 @@ const dataStoreConflictHandler = async (
         remoteModel,
         localModel
     );
+    if (remoteModel.archived === 1) {
+        return DISCARD;
+    }
     if (
         modelConstructor ===
         (models.Task as PersistentModelConstructor<models.Task>)
@@ -41,13 +44,15 @@ const dataStoreConflictHandler = async (
         newModel = models.Task.copyOf(newModel, (task) => {
             task.status = status;
         });
-        const { createdAt, updatedAt, ...rest } = newModel;
+        const { createdAt, updatedAt, tenantId, archived, ...rest } = newModel;
         return rest;
     } else if (
         modelConstructor ===
         (models.Comment as PersistentModelConstructor<models.Comment>)
     ) {
-        return remoteModel;
+        const { createdAt, updatedAt, tenantId, archived, ...rest } =
+            remoteModel;
+        return rest;
     }
     return DISCARD;
 };
