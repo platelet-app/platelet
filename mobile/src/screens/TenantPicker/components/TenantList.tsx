@@ -42,7 +42,7 @@ export const TenantList: React.FC<TenantListProps> = ({ onComplete }) => {
         setIsProcessing(true);
         try {
             await AsyncStorage.setItem("tenantId", tenantId);
-            const config = await saveAmplifyConfig(tenantId);
+            const config = await saveAmplifyConfig(tenantId, 300000);
             configureAmplify(config);
             onComplete();
         } catch (error) {

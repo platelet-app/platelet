@@ -37,7 +37,7 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
                 setIsProcessing(false);
             } else if (tenantId) {
                 log(`tenantId: ${tenantId}`);
-                const config = await saveAmplifyConfig(tenantId);
+                const config = await saveAmplifyConfig(tenantId, 3000);
                 configureAmplify(config);
                 setIsProcessing(false);
             } else {
