@@ -18,7 +18,7 @@ import { Provider, useDispatch } from "react-redux";
 import { Logger } from "aws-amplify";
 import { REACT_APP_OFFLINE_ONLY } from "@env";
 import { enGB, registerTranslation } from "react-native-paper-dates";
-import moment from "moment";
+import * as moment from "moment";
 import "moment/locale/en-gb";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { initialiseApp } from "./src/redux/initialise/initialiseActions";
@@ -28,6 +28,7 @@ import DashboardHeader from "./src/screens/Dashboard/components/DashboardHeader"
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TenantListProvider from "./src/screens/TenantPicker/TenantListProvider";
 import Login from "./src/screens/Login/Login";
+import * as _ from "lodash";
 
 declare global {
     namespace ReactNavigation {
@@ -74,9 +75,7 @@ declare global {
 }
 
 const lightTheme = {
-    ...MD3LightTheme,
     colors: {
-        ...MD3LightTheme.colors,
         shimmerForeground: "#ecebeb",
         shimmerBackground: "#f3f3f3",
         NEW: "rgba(252, 231, 121, 1)",
@@ -92,9 +91,7 @@ const lightTheme = {
 };
 
 const darkTheme = {
-    ...MD3DarkTheme,
     colors: {
-        ...MD3DarkTheme.colors,
         shimmerForeground: "#333",
         shimmerBackground: "#555",
         NEW: "rgba(252, 231, 121, 1)",
@@ -108,6 +105,9 @@ const darkTheme = {
         PENDING: "lightblue",
     },
 };
+
+const darkThemeMerged = _.merge(MD3DarkTheme, darkTheme);
+const lightThemeMerged = _.merge(MD3LightTheme, lightTheme);
 
 const InProgress = () => {
     return <Dashboard tabIndex={0} status="inProgress" />;
@@ -205,7 +205,9 @@ const App = () => {
     return (
         <SafeAreaProvider>
             <PaperProvider
-                theme={colorScheme === "dark" ? darkTheme : lightTheme}
+                theme={
+                    colorScheme === "dark" ? darkThemeMerged : lightThemeMerged
+                }
             >
                 <TenantListProvider
                     key={
