@@ -5,7 +5,6 @@ import { call, take, put } from "redux-saga/effects";
 import { eventChannel } from "redux-saga";
 import { DataStore, Predicates } from "aws-amplify";
 import * as models from "../../models";
-import LocalPredicates from "../../utilities/predicates";
 
 function listener() {
     return eventChannel((emitter) => {
