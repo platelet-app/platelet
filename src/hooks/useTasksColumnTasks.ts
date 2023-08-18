@@ -42,7 +42,6 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
         unsubscribe: () => {},
     });
     const stateRef = React.useRef<TaskStateType>({});
-    const taskAssigneeItemsRef = React.useRef<models.TaskAssignee[]>([]);
     const locationsSubscription = React.useRef({
         unsubscribe: () => {},
     });
@@ -52,34 +51,14 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
     const [isFetching, setIsFetching] = React.useState(true);
     const [error, setError] = React.useState(false);
     stateRef.current = state;
-    taskAssigneeItemsRef.current = taskAssignees.items;
+    const tasksKeyJSON = JSON.stringify(taskStatusKey);
 
-    const myTaskAssigneeIds = React.useMemo(() => {
-        const result = taskAssignees.items
-            .filter(
-                (a: models.TaskAssignee) =>
-                    a?.assignee?.id === whoami?.id && a?.role === roleView
-            )
-            .map((a2: models.TaskAssignee) => a2?.task?.id)
-            .sort((a: string, b: string) => {
-                return a.localeCompare(b);
-            });
-
-        if (dashboardFilteredUser && roleView === models.Role.COORDINATOR) {
-            const theirAssignments = taskAssignees.items.filter(
-                (a: models.TaskAssignee) =>
-                    a.role === models.Role.RIDER &&
-                    a.task &&
-                    a.assignee?.id === dashboardFilteredUser
-            );
-            const theirTaskIds = theirAssignments.map(
-                (a: models.TaskAssignee) => a.task?.id
-            );
-            const intersectingTasksIds = _.intersection(result, theirTaskIds);
-            return intersectingTasksIds;
-        }
-        return result;
-    }, [taskAssignees.items, roleView, whoami, dashboardFilteredUser]);
+    let myTaskAssigneeIds = taskAssignees.items
+        .filter(
+            (a: models.TaskAssignee) =>
+                a?.assignee?.id === whoami?.id && a?.role === roleView
+        )
+        .map((a2: models.TaskAssignee) => a2?.task?.id);
 
     function addTaskToState(newTask: models.Task) {
         setState((prevState) => {
@@ -93,6 +72,30 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
             else return prevState;
         });
     }
+
+    if (dashboardFilteredUser && roleView === models.Role.COORDINATOR) {
+        const theirAssignments = taskAssignees.items.filter(
+            (a: models.TaskAssignee) =>
+                a.role === models.Role.RIDER &&
+                a.task &&
+                a.assignee?.id === dashboardFilteredUser
+        );
+        const theirTaskIds = theirAssignments.map(
+            (a: models.TaskAssignee) => a.task?.id
+        );
+        const intersectingTasksIds = _.intersection(
+            myTaskAssigneeIds,
+            theirTaskIds
+        );
+        myTaskAssigneeIds = intersectingTasksIds;
+    }
+
+    const sortedMyTaskAssigneeIds = myTaskAssigneeIds.sort(
+        (a: string, b: string) => {
+            return a.localeCompare(b);
+        }
+    );
+    const taskIdsJson = JSON.stringify(sortedMyTaskAssigneeIds);
 
     const getTasks = React.useCallback(async () => {
         if (
@@ -115,9 +118,7 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
                             taskStatusKey,
                             dashboardFilteredUser,
                             models.Role.RIDER,
-                            // can get away with a ref here
-                            // since myTaskAssigneeIds is a memoized value linked to taskAssignees.items
-                            taskAssigneeItemsRef.current
+                            taskAssignees.items
                         )
                     );
                 } else if (roleView !== "ALL") {
@@ -135,11 +136,12 @@ const useTasksColumnTasks = (taskStatusKey: models.TaskStatus[]) => {
         }
     }, [
         dashboardFilteredUser,
-        taskStatusKey,
+        tasksKeyJSON,
         roleView,
         selectionActionsPending,
-        myTaskAssigneeIds,
+        taskIdsJson,
         taskAssigneesReady,
+        whoami.id,
     ]);
 
     React.useEffect(() => {
