@@ -6,6 +6,7 @@ import TenantList from "./components/TenantList";
 import { useColorScheme, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { DataStore } from "aws-amplify";
 
 type TenantListProviderProps = {
     children?: React.ReactNode;
@@ -29,6 +30,15 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
 
     const setup = React.useCallback(async () => {
         setIsProcessing(true);
+        const lastSynced = await AsyncStorage.getItem("dateLastSynced");
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        if (lastSynced && new Date(lastSynced) < sevenDaysAgo) {
+            console.log(
+                "more than 7 days since last sync, clearing stale data from DataStore"
+            );
+            await DataStore.clear();
+        }
         try {
             const tenantId = await AsyncStorage.getItem("tenantId");
             if (!process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT) {
