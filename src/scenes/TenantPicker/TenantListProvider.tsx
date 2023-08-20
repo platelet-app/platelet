@@ -4,6 +4,7 @@ import configureAmplify from "./utilities/configureAmplify";
 import saveAmplifyConfig from "../../utilities/saveAmplifyConfig";
 import TenantList from "./components/TenantList";
 import { Box, CircularProgress } from "@mui/material";
+import { DataStore } from "aws-amplify";
 
 type TenantListProviderProps = {
     children: React.ReactNode;
@@ -27,6 +28,15 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
     const setup = React.useCallback(async () => {
         if (offline) return;
         setIsProcessing(true);
+        const lastSynced = localStorage.getItem("dateLastSynced");
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        if (lastSynced && new Date(lastSynced) < sevenDaysAgo) {
+            console.log(
+                "more than 7 days since last sync, clearing stale data from DataStore"
+            );
+            await DataStore.clear();
+        }
         const tenantId = localStorage.getItem("tenantId");
         try {
             if (
