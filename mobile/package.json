@@ -56,5 +56,16 @@
         "react-native-dotenv": "^3.4.9",
         "typescript": "^4.9.4"
     },
-    "private": true
+    "private": true,
+    "description": "Mobile version of Platelet",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/platelet-app/platelet.git"
+    },
+    "author": "Theo Cranmore",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/platelet-app/platelet/issues"
+    },
+    "homepage": "https://github.com/platelet-app/platelet#readme"
 }
