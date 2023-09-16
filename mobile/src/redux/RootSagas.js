@@ -12,7 +12,6 @@ import {
     watchInitialWhoamiCompleted,
 } from "./initialise/initialiseSagas";
 import { watchDebounceDashboardFilter } from "./dashboardFilter/DashboardFilterSagas";
-import { watchInitializeTaskAssigneesObserver } from "./taskAssignees/taskAssigneesSagas";
 import {
     watchSelectAllItems,
     watchFilterFromAvailableItems,
@@ -29,7 +28,6 @@ export default function* rootSaga() {
         call(watchInitialiseApp),
         call(watchInitialWhoamiCompleted),
         call(watchDebounceDashboardFilter),
-        call(watchInitializeTaskAssigneesObserver),
         call(watchSelectAllItems),
         call(watchFilterFromAvailableItems),
         call(watchInitWhoamiObserver),

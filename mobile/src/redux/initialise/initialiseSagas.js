@@ -14,7 +14,6 @@ import {
     tasksStatus,
     userRoles,
 } from "../../apiConsts";
-import { initTaskAssignees } from "../taskAssignees/taskAssigneesActions";
 import { initTaskDeliverables } from "../taskDeliverables/taskDeliverablesActions";
 import { initComments } from "../comments/commentsActions";
 import {
