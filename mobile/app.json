@@ -21,10 +21,16 @@
             "adaptiveIcon": {
                 "foregroundImage": "./assets/adaptive-icon.png",
                 "backgroundColor": "#ffffff"
-            }
+            },
+            "package": "com.platelet.app.mobile"
         },
         "web": {
             "favicon": "./assets/favicon.png"
+        },
+        "extra": {
+            "eas": {
+                "projectId": "272e7bac-96ae-46c5-bdc3-42902c18fa6f"
+            }
         }
     }
 }
