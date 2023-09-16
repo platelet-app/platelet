@@ -41,17 +41,15 @@ const useModelSubscription = <T extends PersistentModel>(
                 setState(result);
                 setIsFetching(false);
                 observer.current = DataStore.observe(model, id).subscribe(
-                    async ({ opType }) => {
+                    async ({ opType, element }) => {
                         if (opType === "DELETE") {
                             setNotFound(true);
                             return;
                         } else {
-                            // @ts-ignore
-                            const result = await DataStore.query(model, id);
-                            if (!result) {
+                            if (!element) {
                                 setNotFound(true);
                             } else {
-                                setState(result);
+                                setState(element);
                             }
                         }
                     }
