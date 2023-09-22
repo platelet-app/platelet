@@ -4,8 +4,8 @@
     "main": "node_modules/expo/AppEntry.js",
     "scripts": {
         "start": "expo start",
-        "android": "expo start --android",
-        "ios": "expo start --ios",
+        "android": "expo run:android",
+        "ios": "expo run:ios",
         "web": "expo start --web",
         "test": "jest --watch --testTimeout=60000",
         "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand --testTimeout=100000000"
@@ -17,6 +17,7 @@
         "@expo/webpack-config": "^19.0.0",
         "@react-native-async-storage/async-storage": "1.18.2",
         "@react-native-community/netinfo": "9.3.10",
+        "@react-native/gradle-plugin": "^0.72.11",
         "@react-navigation/bottom-tabs": "^6.5.8",
         "@react-navigation/material-bottom-tabs": "^6.2.16",
         "@react-navigation/native-stack": "^6.9.13",
@@ -26,6 +27,7 @@
         "core-js": "^3.31.1",
         "expo": "^49.0.11",
         "expo-file-system": "~15.4.4",
+        "expo-splash-screen": "~0.20.5",
         "expo-sqlite": "~11.3.3",
         "expo-status-bar": "~1.6.0",
         "faker": "5.5.3",
