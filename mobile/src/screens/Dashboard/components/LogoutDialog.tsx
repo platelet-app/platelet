@@ -1,7 +1,6 @@
 import { Button, Dialog, Portal } from "react-native-paper";
-import { logoutUser } from "../../../redux/login/LoginActions";
 import { Text, useTheme } from "react-native-paper";
-import { useDispatch } from "react-redux";
+import { Auth, DataStore } from "aws-amplify";
 
 type LogoutDialogProps = {
     visible: boolean;
@@ -9,9 +8,14 @@ type LogoutDialogProps = {
 };
 
 const LogoutDialog: React.FC<LogoutDialogProps> = ({ visible, onDismiss }) => {
-    const dispatch = useDispatch();
-    const handleLogout = () => {
-        dispatch(logoutUser());
+    const handleLogout = async () => {
+        try {
+            await Auth.signOut();
+            await DataStore.stop();
+            await DataStore.clear();
+        } catch (error) {
+            console.log(error);
+        }
     };
     const { colors } = useTheme();
     return (

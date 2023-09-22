@@ -6,7 +6,6 @@ import {
     watchInitWhoamiObserver,
     watchRefreshWhoami,
 } from "./whoami/whoamiSagas";
-import { watchLogout } from "./login/LoginSagas";
 import {
     watchInitialiseApp,
     watchInitialWhoamiCompleted,
@@ -24,7 +23,6 @@ export default function* rootSaga() {
         call(awsHubSagas.watchInitialiseDataStoreListener),
         call(watchGetWhoami),
         call(watchRefreshWhoami),
-        call(watchLogout),
         call(watchInitialiseApp),
         call(watchInitialWhoamiCompleted),
         call(watchDebounceDashboardFilter),
