@@ -28,13 +28,13 @@ const clearLastSyncedDate = () => {
 function* initialiseDataStoreListener() {
     if (
         process.env.NODE_ENV === "test" ||
-        process.env.REACT_APP_DEMO_MODE === "true"
+        process.env.EXPO_PUBLIC_DEMO_MODE === "true"
     ) {
         yield put(actions.setNetworkStatus(true));
         yield put(actions.setReadyStatus(true));
         yield put(actions.setModelSyncedAll());
         return;
-    } else if (process.env.REACT_APP_OFFLINE_ONLY === "true") {
+    } else if (process.env.EXPO_PUBLIC_OFFLINE_ONLY === "true") {
         yield put(actions.setNetworkStatus(false));
         yield put(actions.setReadyStatus(true));
         return;

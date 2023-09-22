@@ -8,7 +8,6 @@ import {
     INIT_WHOAMI_OBSERVER,
     initWhoamiObserver,
 } from "./whoamiActions";
-import { REACT_APP_DEMO_MODE, REACT_APP_OFFLINE_ONLY } from "@env";
 import { API } from "aws-amplify";
 import { Auth, DataStore, syncExpression } from "aws-amplify";
 import * as models from "../../models";
@@ -71,7 +70,10 @@ function* getWhoami() {
         yield put(getWhoamiSuccess(testUser));
         return;
     }
-    if (REACT_APP_DEMO_MODE === "true" || REACT_APP_OFFLINE_ONLY === "true") {
+    if (
+        process.env.EXPO_PUBLIC_DEMO_MODE === "true" ||
+        process.env.EXPO_PUBLIC_OFFLINE_ONLY === "true"
+    ) {
         const existingUser = yield call(
             [DataStore, DataStore.query],
             models.User,

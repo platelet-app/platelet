@@ -1,9 +1,6 @@
 import MockAsyncStorage from "mock-async-storage";
 import "@testing-library/jest-native/extend-expect";
 import mockSafeAreaContext from "react-native-safe-area-context/jest/mock";
-import * as dotenv from "dotenv";
-
-dotenv.config({ path: "./env.test" });
 
 const mockImpl = new MockAsyncStorage();
 jest.mock("@react-native-async-storage/async-storage", () => mockImpl);

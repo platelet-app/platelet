@@ -37,7 +37,7 @@ describe("TenantListProvider", () => {
         process.env = OLD_ENV;
     });
     it("lists the tenants", async () => {
-        process.env["REACT_APP_TENANT_GRAPHQL_ENDPOINT"] = new URL(
+        process.env["EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT"] = new URL(
             new URL("http://localhost:4000/graphql")
         );
         const fakeItems = [
@@ -60,7 +60,7 @@ describe("TenantListProvider", () => {
     });
 
     it("failure while listing the tenants", async () => {
-        process.env["REACT_APP_TENANT_GRAPHQL_ENDPOINT"] = new URL(
+        process.env["EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT"] = new URL(
             "http://localhost:4000/graphql"
         );
         const querySpy = jest
@@ -80,7 +80,7 @@ describe("TenantListProvider", () => {
     });
 
     test("clicking and configuring a tenant", async () => {
-        process.env["REACT_APP_TENANT_GRAPHQL_ENDPOINT"] = new URL(
+        process.env["EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT"] = new URL(
             "http://localhost:4000/graphql"
         );
         const fakeItems = [
@@ -141,7 +141,7 @@ describe("TenantListProvider", () => {
     });
 
     test("configuring with an existing config", async () => {
-        process.env["REACT_APP_TENANT_GRAPHQL_ENDPOINT"] = new URL(
+        process.env["EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT"] = new URL(
             "http://localhost:4000/graphql"
         );
         jest.spyOn(global, "fetch")
@@ -201,7 +201,7 @@ describe("TenantListProvider", () => {
     });
 
     test("configuring with an existing config, but graphql fails", async () => {
-        process.env["REACT_APP_TENANT_GRAPHQL_ENDPOINT"] = new URL(
+        process.env["EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT"] = new URL(
             "http://localhost:4000/graphql"
         );
         jest.spyOn(global, "fetch").mockRejectedValue(new Error());
@@ -241,7 +241,7 @@ describe("TenantListProvider", () => {
 
     test("configuring with an existing config, but it doesn't exist", async () => {
         const fakeItems = [{ id: "someId", name: "Tenant 1" }];
-        process.env["REACT_APP_TENANT_GRAPHQL_ENDPOINT"] = new URL(
+        process.env["EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT"] = new URL(
             "http://localhost:4000/graphql"
         );
         jest.spyOn(global, "fetch")
@@ -276,7 +276,7 @@ describe("TenantListProvider", () => {
     });
 
     test("update the config when it is out of date", async () => {
-        process.env["REACT_APP_TENANT_GRAPHQL_ENDPOINT"] = new URL(
+        process.env["EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT"] = new URL(
             "http://localhost:4000/graphql"
         );
         jest.spyOn(global, "fetch")
@@ -334,7 +334,7 @@ describe("TenantListProvider", () => {
         screen.getByText("test");
     });
     test("configuring with an existing config from aws-exports", async () => {
-        process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = undefined;
+        process.env.EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT = undefined;
         const amplifySpy = jest.spyOn(Amplify, "configure");
         render(
             <TenantListProvider>
@@ -347,7 +347,7 @@ describe("TenantListProvider", () => {
         screen.getByText("test");
     });
     it("clears stale data when it hasn't been synced for over a week", async () => {
-        process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = new URL(
+        process.env.EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT = new URL(
             "http://localhost:4000/graphql"
         );
         jest.spyOn(global, "fetch").mockResolvedValueOnce(

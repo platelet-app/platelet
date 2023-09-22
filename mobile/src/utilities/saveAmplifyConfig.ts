@@ -22,9 +22,9 @@ const fetchData = async (
     variables: TenantQueryVariables | null = null,
     timeout: number = 300000
 ) => {
-    const APPSYNC_API_URL = process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT;
+    const APPSYNC_API_URL = process.env.EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT;
     const credentialsAppSync = {
-        "x-api-key": process.env.REACT_APP_TENANT_GRAPHQL_API_KEY,
+        "x-api-key": process.env.EXPO_PUBLIC_TENANT_GRAPHQL_API_KEY,
     };
     if (!APPSYNC_API_URL)
         throw new Error("Tenant GraphQL endpoint is not defined");

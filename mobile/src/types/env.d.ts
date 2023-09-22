@@ -1,15 +1,16 @@
-declare module "@env" {
-    export const REACT_APP_OFFLINE_ONLY: "true" | "false" | undefined;
-    export const REACT_APP_POPULATE_FAKE_DATA: "true" | "false" | undefined;
-    export const REACT_APP_DEMO_MODE: "true" | "false" | undefined;
-    export const REACT_APP_RESIZE_BUCKET_NAME: string | undefined;
-    export const REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_NAME:
-        | string
-        | undefined;
-    export const REACT_APP_DEMO_PROFILE_PICTURES_BUCKET_REGION:
-        | string
-        | undefined;
-    export const REACT_APP_GOOGLE_MAPS_API_KEY: string | undefined;
-    export const REACT_APP_TENANT_GRAPHQL_ENDPOINT: string | undefined;
-    export const REACT_APP_TENANT_GRAPHQL_API_KEY: string | undefined;
+declare global {
+    namespace NodeJS {
+        interface ProcessEnv {
+            NODE_ENV: "development" | "production";
+            EXPO_PUBLIC_DEMO_MODE: "true" | "false";
+            EXPO_PUBLIC_OFFLINE_ONLY: "true" | "false";
+            EXPO_PUBLIC_POPULATE_FAKE_DATA: "true" | "false";
+            EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT: URL | "undefined" | undefined;
+            EXPO_PUBLIC_TENANT_GRAPHQL_API_KEY: string;
+        }
+    }
 }
+
+// If this file has no import/export statements (i.e. is a script)
+// convert it into a module by adding an empty export statement.
+export {};

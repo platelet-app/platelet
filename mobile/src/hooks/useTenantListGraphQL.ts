@@ -50,20 +50,21 @@ const fetchData = (
     variables: ListTenantsQueryVariables | null = null
 ) => {
     if (
-        !process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT ||
-        process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT === "undefined"
+        !process.env.EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT ||
+        process.env.EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT === "undefined"
     ) {
         console.warn(
-            "REACT_APP_TENANT_GRAPHQL_ENDPOINT is undefined, returning empty response"
+            "EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT is undefined, returning empty response"
         );
         return Promise.resolve({
             json: () =>
                 Promise.resolve({ data: { listTenants: { items: [] } } }),
         });
     }
-    const APPSYNC_API_URL = process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT;
+    const APPSYNC_API_URL = process.env.EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT;
+    console.log("fdsafads2", process.env.EXPO_PUBLIC_TENANT_GRAPHQL_API_KEY);
     const credentialsAppSync = {
-        "x-api-key": process.env.REACT_APP_TENANT_GRAPHQL_API_KEY,
+        "x-api-key": process.env.EXPO_PUBLIC_TENANT_GRAPHQL_API_KEY,
     };
     return fetch(APPSYNC_API_URL, {
         method: "POST",
@@ -88,7 +89,9 @@ const useTenantListGraphQL = () => {
         try {
             setIsFetching(true);
             const response = await fetchData(listTenants);
+            console.log(response);
             const { data } = await response.json();
+            console.log(data);
             setState(data.listTenants.items);
         } catch (error) {
             console.log("List tenant graphql error:", error);

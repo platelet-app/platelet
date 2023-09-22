@@ -16,7 +16,6 @@ import Task from "./src/screens/Task/Task";
 import { store } from "./src/redux";
 import { Provider, useDispatch } from "react-redux";
 import { Logger } from "aws-amplify";
-import { REACT_APP_OFFLINE_ONLY } from "@env";
 import { enGB, registerTranslation } from "react-native-paper-dates";
 import * as moment from "moment";
 import "moment/locale/en-gb";
@@ -44,7 +43,7 @@ const Tab = createMaterialBottomTabNavigator();
 moment.locale("en-GB");
 registerTranslation("en-GB", enGB);
 
-if (REACT_APP_OFFLINE_ONLY !== "true") {
+if (process.env.EXPO_PUBLIC_OFFLINE_ONLY !== "true") {
     Amplify.configure(config);
 }
 

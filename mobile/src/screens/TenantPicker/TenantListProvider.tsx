@@ -41,7 +41,7 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
         }
         try {
             const tenantId = await AsyncStorage.getItem("tenantId");
-            if (!process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT) {
+            if (!process.env.EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT) {
                 const config = require("../../aws-exports");
                 configureAmplify(config.default);
                 setIsProcessing(false);

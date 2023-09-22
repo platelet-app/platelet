@@ -16,11 +16,6 @@ import {
 } from "../../apiConsts";
 import { initTaskDeliverables } from "../taskDeliverables/taskDeliverablesActions";
 import { initComments } from "../comments/commentsActions";
-import {
-    REACT_APP_DEMO_MODE,
-    REACT_APP_OFFLINE_ONLY,
-    REACT_APP_POPULATE_FAKE_DATA,
-} from "@env";
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -53,7 +48,7 @@ let profilePictures = [];
 let profilePictureThumbnails = [];
 if (
     process.env.NODE_ENV !== "test" &&
-    REACT_APP_POPULATE_FAKE_DATA === "true"
+    process.env.EXPO_PUBLIC_POPULATE_FAKE_DATA === "true"
 ) {
     for (const i of _.range(1, 23)) {
         profilePictures.push(`${_.padStart(i, 4, "0")}.jpg`);
@@ -62,7 +57,7 @@ if (
 }
 
 function* initialiseApp() {
-    if (REACT_APP_DEMO_MODE === "true") {
+    if (process.env.EXPO_PUBLIC_DEMO_MODE === "true") {
         /*yield call([DataStore, DataStore.start]);
         yield call([DataStore, DataStore.stop]);
         yield call([DataStore, DataStore.clear]);
@@ -70,9 +65,9 @@ function* initialiseApp() {
     }
     if (process.env.NODE_ENV !== "test") {
         if (
-            REACT_APP_DEMO_MODE === "true" ||
-            (REACT_APP_OFFLINE_ONLY === "true" &&
-                REACT_APP_POPULATE_FAKE_DATA === "true")
+            process.env.EXPO_PUBLIC_DEMO_MODE === "true" ||
+            (process.env.EXPO_PUBLIC_OFFLINE_ONLY === "true" &&
+                process.env.EXPO_PUBLIC_POPULATE_FAKE_DATA === "true")
         ) {
             yield call(populateFakeData);
             yield call(populateTasks);
