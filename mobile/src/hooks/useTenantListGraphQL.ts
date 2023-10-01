@@ -62,7 +62,6 @@ const fetchData = (
         });
     }
     const APPSYNC_API_URL = process.env.EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT;
-    console.log("fdsafads2", process.env.EXPO_PUBLIC_TENANT_GRAPHQL_API_KEY);
     const credentialsAppSync = {
         "x-api-key": process.env.EXPO_PUBLIC_TENANT_GRAPHQL_API_KEY,
     };

@@ -3,6 +3,7 @@ import { Amplify, DataStore } from "aws-amplify";
 import { fireEvent, render, screen, waitFor } from "../../test-utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text } from "react-native";
+import * as SplashScreen from "expo-splash-screen";
 
 const fakeConfigData = `{"test":"test"}`;
 const fakeAmplifyConfig = {
@@ -20,6 +21,13 @@ jest.mock(
     { virtual: true }
 );
 
+jest.mock("expo-splash-screen", () => {
+    return {
+        hideAsync: jest.fn(),
+        preventAutoHideAsync: jest.fn(),
+    };
+});
+
 describe("TenantListProvider", () => {
     const OLD_ENV = process.env;
 
@@ -35,6 +43,35 @@ describe("TenantListProvider", () => {
 
     afterAll(() => {
         process.env = OLD_ENV;
+    });
+    it("hide the splash when the app is ready", async () => {
+        const hideAsyncSpy = jest.spyOn(SplashScreen, "hideAsync");
+        process.env["EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT"] = new URL(
+            new URL("http://localhost:4000/graphql")
+        );
+        const fakeItems = [
+            { id: 1, name: "Tenant 1" },
+            { id: 2, name: "Tenant 2" },
+        ];
+        jest.spyOn(global, "fetch").mockResolvedValue({
+            json: () =>
+                Promise.resolve({
+                    data: { listTenants: { items: fakeItems } },
+                }),
+        });
+        render(
+            <TenantListProvider>
+                <></>
+            </TenantListProvider>
+        );
+        await screen.findByText("Tenant 1");
+
+        fireEvent(await screen.findByTestId("tenant-list"), "layout", {
+            nativeEvent: { layout: { height: 100 } },
+        });
+        await waitFor(() => {
+            expect(hideAsyncSpy).toHaveBeenCalled();
+        });
     });
     it("lists the tenants", async () => {
         process.env["EXPO_PUBLIC_TENANT_GRAPHQL_ENDPOINT"] = new URL(

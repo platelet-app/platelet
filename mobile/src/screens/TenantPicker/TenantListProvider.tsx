@@ -3,10 +3,12 @@ import clearAmplifyConfig from "../../utilities/clearAmplifyConfig";
 import configureAmplify from "./utilities/configureAmplify";
 import saveAmplifyConfig from "../../utilities/saveAmplifyConfig";
 import TenantList from "./components/TenantList";
-import { useColorScheme, View } from "react-native";
-import { ActivityIndicator } from "react-native-paper";
+import { View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DataStore } from "aws-amplify";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
 
 type TenantListProviderProps = {
     children?: React.ReactNode;
@@ -21,7 +23,6 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
 }) => {
     const [isProcessing, setIsProcessing] = React.useState(true);
     const [showList, setShowList] = React.useState(false);
-    const colorScheme = useColorScheme();
 
     const handleListSetup = React.useCallback(() => {
         setShowList(false);
@@ -69,23 +70,36 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
         setup();
     }, [setup]);
 
+    const onLayoutRootView = React.useCallback(async () => {
+        if (!isProcessing) {
+            // This tells the splash screen to hide immediately! If we call this after
+            // `setAppIsReady`, then we may see a blank screen while the app is
+            // loading its initial state and rendering its first pixels. So instead,
+            // we hide the splash screen once we know the root view has already
+            // performed layout.
+            await SplashScreen.hideAsync();
+        }
+    }, [isProcessing]);
+
     if (isProcessing) {
+        return null;
+    } else if (showList) {
         return (
             <View
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    alignContent: "center",
-                    backgroundColor: colorScheme === "dark" ? "#000" : "#fff",
-                }}
+                testID="tenant-list"
+                height="100%"
+                width="100%"
+                onLayout={onLayoutRootView}
             >
-                <ActivityIndicator animating={true} />
+                <TenantList onComplete={handleListSetup} />
             </View>
         );
-    } else if (showList) {
-        return <TenantList onComplete={handleListSetup} />;
     } else {
-        return <>{children}</>;
+        return (
+            <View height="100%" width="100%" onLayout={onLayoutRootView}>
+                {children}
+            </View>
+        );
     }
 };
 
