@@ -97,8 +97,9 @@ const TaskHistoryTaskDialog: React.FC<TaskHistoryTaskDialogProps> = ({
         return (
             <DialogWrapper taskId={taskId}>
                 <Stack alignItems="center" spacing={2}>
-                    {_.range(0, 2).map(() => (
+                    {_.range(0, 2).map((key: number) => (
                         <Skeleton
+                            key={key}
                             variant="rectangular"
                             height={100}
                             width={"100%"}
@@ -112,8 +113,9 @@ const TaskHistoryTaskDialog: React.FC<TaskHistoryTaskDialogProps> = ({
                         width={"100%"}
                         sx={{ borderRadius: "1em" }}
                     />
-                    {_.range(0, 2).map(() => (
+                    {_.range(0, 2).map((key: number) => (
                         <Skeleton
+                            key={`${key}-2`}
                             sx={{ borderRadius: "1em" }}
                             variant="rectangular"
                             height={150}
