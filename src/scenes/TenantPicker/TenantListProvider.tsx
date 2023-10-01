@@ -79,8 +79,16 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
         return <>{children}</>;
     } else if (isProcessing) {
         return (
-            <Box sx={{ display: "flex" }}>
-                <CircularProgress />
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                    justifyContent: "center",
+                    paddingTop: 5,
+                }}
+            >
+                <CircularProgress size={150} />
             </Box>
         );
     } else if (showList) {
