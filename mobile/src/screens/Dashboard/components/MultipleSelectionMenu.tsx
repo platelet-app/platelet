@@ -65,13 +65,17 @@ const MultipleSelectionMenu: React.FC<MultipleSelectionMenuProps> = ({
     const [selectedAction, setSelectedAction] = React.useState<actions | null>(
         null
     );
-    const [reasonBody, setReasonBody] = React.useState("");
+    const reasonBody = React.useRef("");
     const openMenu = () => setVisible(true);
     const closeMenu = () => setVisible(false);
     const selectedItems = useSelector(selectedItemsSelector)[tabIndex];
     const dispatch = useDispatch();
     const whoami = useSelector(getWhoami);
     const tenantId = useSelector(tenantIdSelector);
+
+    const setReasonBody = (body: string) => {
+        reasonBody.current = body;
+    };
 
     useFocusEffect(
         React.useCallback(() => {
@@ -158,12 +162,12 @@ const MultipleSelectionMenu: React.FC<MultipleSelectionMenuProps> = ({
             values
         );
         let generatedCommentModels: models.Comment[] = [];
-        if (reasonBody) {
+        if (reasonBody.current) {
             const author = await DataStore.query(models.User, whoami.id);
             if (author && tenantId) {
                 generatedCommentModels = await generateMultipleTaskComments(
                     items,
-                    reasonBody,
+                    reasonBody.current,
                     author,
                     tenantId
                 );
@@ -279,7 +283,6 @@ const MultipleSelectionMenu: React.FC<MultipleSelectionMenuProps> = ({
                 needsReason={[actions.markRejected, actions.markCancelled].some(
                     (a) => a === selectedAction
                 )}
-                reasonBody={reasonBody}
                 onChangeReasonBody={setReasonBody}
             />
         </View>

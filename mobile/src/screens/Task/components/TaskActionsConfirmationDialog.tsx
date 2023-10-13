@@ -3,7 +3,7 @@ import { DatePickerModal, TimePickerModal } from "react-native-paper-dates";
 import { Button, Dialog, Portal, TextInput } from "react-native-paper";
 import { TaskUpdateKey } from "./TaskActions";
 import moment from "moment";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import TaskDateTimeTextInput from "./TaskDateTimeTextInput";
 
 type Value = {
@@ -79,7 +79,6 @@ const TaskActionsConfirmationDialog: React.FC<
     onConfirm,
     nullify,
     needsReason = false,
-    reasonBody = "",
     onChangeReasonBody,
 }) => {
     const [value, setValue] = React.useState<Date>(
@@ -87,13 +86,20 @@ const TaskActionsConfirmationDialog: React.FC<
     );
     const [timePickerOpen, setTimePickerOpen] = React.useState(false);
     const [datePickerOpen, setDatePickerOpen] = React.useState(false);
-    const [nameValue, setNameValue] = React.useState(startingNameValue || "");
+    const nameValue = React.useRef(startingNameValue || "");
+
+    const setNameValue = (value: string) => {
+        nameValue.current = value;
+    };
 
     const handleConfirm = () => {
         if (!taskKey) return;
         const result = nullify ? null : value.toISOString();
         if (nameKey) {
-            onConfirm({ [taskKey]: result, [nameKey]: nameValue || null });
+            onConfirm({
+                [taskKey]: result,
+                [nameKey]: nameValue.current || null,
+            });
         } else {
             onConfirm({ [taskKey]: result });
         }
@@ -112,23 +118,29 @@ const TaskActionsConfirmationDialog: React.FC<
                             <TouchableOpacity
                                 onPress={() => setDatePickerOpen(true)}
                             >
-                                <TaskDateTimeTextInput
-                                    value={moment(value).format("DD/MM/YYYY")}
-                                    label="Date"
-                                />
+                                <View>
+                                    <TaskDateTimeTextInput
+                                        value={moment(value).format(
+                                            "DD/MM/YYYY"
+                                        )}
+                                        label="Date"
+                                    />
+                                </View>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => setTimePickerOpen(true)}
                             >
-                                <TaskDateTimeTextInput
-                                    value={moment(value).format("HH:mm")}
-                                    label="Time"
-                                />
+                                <View>
+                                    <TaskDateTimeTextInput
+                                        value={moment(value).format("HH:mm")}
+                                        label="Time"
+                                    />
+                                </View>
                             </TouchableOpacity>
                             {nameKey && (
                                 <TextInput
                                     mode="outlined"
-                                    value={nameValue}
+                                    defaultValue={startingNameValue || ""}
                                     onChangeText={setNameValue}
                                     aria-label={humanReadableName(nameKey)}
                                     placeholder={humanReadableName(nameKey)}
@@ -137,7 +149,6 @@ const TaskActionsConfirmationDialog: React.FC<
                             {needsReason && (
                                 <TextInput
                                     mode="outlined"
-                                    value={reasonBody}
                                     onChangeText={onChangeReasonBody}
                                     aria-label="Reason"
                                     placeholder="Reason..."

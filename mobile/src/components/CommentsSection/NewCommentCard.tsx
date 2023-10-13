@@ -75,7 +75,7 @@ const NewCommentCard: React.FC<NewCommentCardProps> = ({ parentId }) => {
                         />
                     </View>
                     <TextInput
-                        value={body}
+                        defaultValue={body}
                         mode="outlined"
                         onChangeText={setBody}
                         placeholder={placeHolder}

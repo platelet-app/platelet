@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Dialog, Button, Portal, Card, TextInput } from "react-native-paper";
 
-import { ResolvedComment } from "../hooks/useComments";
+import { ResolvedComment } from "../../hooks/useComments";
 
 type CommentEditDialogProps = {
     comment: ResolvedComment | null;
@@ -16,7 +16,10 @@ const CommentEditDialog: React.FC<CommentEditDialogProps> = ({
     onDismiss,
     onConfirm,
 }) => {
-    const [body, setBody] = React.useState(comment?.body || "");
+    const commentBody = React.useRef("");
+    const setBody = (body: string) => {
+        commentBody.current = body;
+    };
     return (
         <Portal>
             <Dialog visible={visible} onDismiss={onDismiss}>
@@ -27,13 +30,15 @@ const CommentEditDialog: React.FC<CommentEditDialogProps> = ({
                         placeholder="Edit comment..."
                         multiline
                         mode="outlined"
-                        value={body}
+                        defaultValue={comment?.body || ""}
                         onChangeText={setBody}
                     />
                 </Dialog.Content>
                 <Dialog.Actions>
                     <Button onPress={onDismiss}>Cancel</Button>
-                    <Button onPress={() => onConfirm(body)}>Save</Button>
+                    <Button onPress={() => onConfirm(commentBody.current)}>
+                        Save
+                    </Button>
                 </Dialog.Actions>
             </Dialog>
         </Portal>
