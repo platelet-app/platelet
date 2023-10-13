@@ -4,8 +4,6 @@ import "@azure/core-asynciterator-polyfill";
 import { DataStore } from "aws-amplify";
 import { ExpoSQLiteAdapter } from "@aws-amplify/datastore-storage-adapter/ExpoSQLiteAdapter";
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
-import { Amplify } from "aws-amplify";
-import config from "./src/aws-exports";
 import {
     NavigationContainer,
     DefaultTheme,
@@ -42,10 +40,6 @@ const Tab = createMaterialBottomTabNavigator();
 
 moment.locale("en-GB");
 registerTranslation("en-GB", enGB);
-
-if (process.env.EXPO_PUBLIC_OFFLINE_ONLY !== "true") {
-    Amplify.configure(config);
-}
 
 DataStore.configure({
     storageAdapter: ExpoSQLiteAdapter,
