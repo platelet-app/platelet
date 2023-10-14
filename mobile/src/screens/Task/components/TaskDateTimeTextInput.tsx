@@ -1,4 +1,5 @@
 import * as React from "react";
+import { View } from "react-native";
 import { TextInput } from "react-native-paper";
 
 type TaskDateTimeTextInputProps = {
@@ -11,13 +12,15 @@ const TaskDateTimeTextInput: React.FC<TaskDateTimeTextInputProps> = ({
     value,
 }) => {
     return (
-        <TextInput
-            mode="outlined"
-            value={value}
-            editable={false}
-            label={label}
-            right={<TextInput.Icon icon="menu-down" />}
-        />
+        <View pointerEvents="none">
+            <TextInput
+                mode="outlined"
+                value={value}
+                editable={false}
+                label={label}
+                right={<TextInput.Icon icon="menu-down" />}
+            />
+        </View>
     );
 };
 

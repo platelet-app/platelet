@@ -118,24 +118,18 @@ const TaskActionsConfirmationDialog: React.FC<
                             <TouchableOpacity
                                 onPress={() => setDatePickerOpen(true)}
                             >
-                                <View>
-                                    <TaskDateTimeTextInput
-                                        value={moment(value).format(
-                                            "DD/MM/YYYY"
-                                        )}
-                                        label="Date"
-                                    />
-                                </View>
+                                <TaskDateTimeTextInput
+                                    value={moment(value).format("DD/MM/YYYY")}
+                                    label="Date"
+                                />
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => setTimePickerOpen(true)}
                             >
-                                <View>
-                                    <TaskDateTimeTextInput
-                                        value={moment(value).format("HH:mm")}
-                                        label="Time"
-                                    />
-                                </View>
+                                <TaskDateTimeTextInput
+                                    value={moment(value).format("HH:mm")}
+                                    label="Time"
+                                />
                             </TouchableOpacity>
                             {nameKey && (
                                 <TextInput
