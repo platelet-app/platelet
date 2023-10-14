@@ -263,6 +263,7 @@ describe("CommentsSection", () => {
         );
         await screen.findByText("private comment", {}, { timeout: 5000 });
         screen.getByText("test comment");
+        expect(input).toHaveProp("value", "");
     });
     test("post a comment failure", async () => {
         const whoami = await DataStore.save(
