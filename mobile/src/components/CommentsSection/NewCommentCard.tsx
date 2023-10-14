@@ -17,7 +17,7 @@ const NewCommentCard: React.FC<NewCommentCardProps> = ({ parentId }) => {
     const [body, setBody] = React.useState("");
     const [isPosting, setIsPosting] = React.useState(false);
     const [error, setError] = React.useState<Error | null>(null);
-    const [resetTextInput, setResetTextInput] = React.useState("");
+    const [resetTextInput, setResetTextInput] = React.useState(false);
     const [visibility, setVisibility] =
         React.useState<models.CommentVisibility>(
             models.CommentVisibility.EVERYONE
@@ -39,7 +39,7 @@ const NewCommentCard: React.FC<NewCommentCardProps> = ({ parentId }) => {
                 })
             );
             setBody("");
-            setResetTextInput("");
+            setResetTextInput(!resetTextInput);
         } catch (e) {
             if (e instanceof Error) {
                 setError(e);
@@ -52,7 +52,7 @@ const NewCommentCard: React.FC<NewCommentCardProps> = ({ parentId }) => {
 
     const handleDiscard = () => {
         setBody("");
-        setResetTextInput("");
+        setResetTextInput(!resetTextInput);
     };
 
     let placeHolder = "Write a comment...";
@@ -78,8 +78,12 @@ const NewCommentCard: React.FC<NewCommentCardProps> = ({ parentId }) => {
                         />
                     </View>
                     <TextInput
+                        key={
+                            resetTextInput
+                                ? "comment-text-input-first"
+                                : "comment-text-input-second"
+                        }
                         defaultValue=""
-                        value={resetTextInput}
                         mode="outlined"
                         onChangeText={setBody}
                         placeholder={placeHolder}
