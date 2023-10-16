@@ -1,11 +1,13 @@
 {
-  "AppSyncApiName": "platelet",
-  "DynamoDBBillingMode": "PAY_PER_REQUEST",
-  "DynamoDBEnableServerSideEncryption": false,
-  "AuthCognitoUserPoolId": {
-    "Fn::GetAtt": [
-      "authplatelet61a0ac07",
-      "Outputs.UserPoolId"
-    ]
-  }
+    "AppSyncApiName": "platelet",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "DynamoDBEnableServerSideEncryption": false,
+    "DynamoDBEnablePointInTimeRecovery": true,
+    "AuthCognitoUserPoolId": {
+        "Fn::GetAtt": [
+            "authplatelet61a0ac07",
+            "Outputs.UserPoolId"
+        ]
+    }
 }
+
