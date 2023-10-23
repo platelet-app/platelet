@@ -16,6 +16,7 @@ export type ModelTenantConditionInput = {
   and?: Array< ModelTenantConditionInput | null > | null,
   or?: Array< ModelTenantConditionInput | null > | null,
   not?: ModelTenantConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
   tenantAdminId?: ModelIDInput | null,
 };
 
@@ -57,6 +58,13 @@ export type ModelSizeInput = {
   ge?: number | null,
   gt?: number | null,
   between?: Array< number | null > | null,
+};
+
+export type ModelBooleanInput = {
+  ne?: boolean | null,
+  eq?: boolean | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
 };
 
 export type ModelIDInput = {
@@ -563,6 +571,7 @@ export type ModelUserConditionInput = {
   and?: Array< ModelUserConditionInput | null > | null,
   or?: Array< ModelUserConditionInput | null > | null,
   not?: ModelUserConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelIntInput = {
@@ -617,6 +626,7 @@ export type ModelPossibleRiderResponsibilitiesConditionInput = {
   and?: Array< ModelPossibleRiderResponsibilitiesConditionInput | null > | null,
   or?: Array< ModelPossibleRiderResponsibilitiesConditionInput | null > | null,
   not?: ModelPossibleRiderResponsibilitiesConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
   userPossibleRiderResponsibilitiesId?: ModelIDInput | null,
   riderResponsibilityPossibleUsersId?: ModelIDInput | null,
 };
@@ -658,6 +668,7 @@ export type ModelVehicleConditionInput = {
   and?: Array< ModelVehicleConditionInput | null > | null,
   or?: Array< ModelVehicleConditionInput | null > | null,
   not?: ModelVehicleConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
   userCreatedVehiclesId?: ModelIDInput | null,
 };
 
@@ -692,6 +703,7 @@ export type ModelVehicleAssignmentConditionInput = {
   and?: Array< ModelVehicleAssignmentConditionInput | null > | null,
   or?: Array< ModelVehicleAssignmentConditionInput | null > | null,
   not?: ModelVehicleAssignmentConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
   userVehicleAssignmentsId?: ModelIDInput | null,
   vehicleAssignmentsId?: ModelIDInput | null,
 };
@@ -752,6 +764,7 @@ export type ModelLocationConditionInput = {
   and?: Array< ModelLocationConditionInput | null > | null,
   or?: Array< ModelLocationConditionInput | null > | null,
   not?: ModelLocationConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
   userCreatedLocationsId?: ModelIDInput | null,
 };
 
@@ -832,6 +845,7 @@ export type ModelTaskConditionInput = {
   and?: Array< ModelTaskConditionInput | null > | null,
   or?: Array< ModelTaskConditionInput | null > | null,
   not?: ModelTaskConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
   userCreatedTasksId?: ModelIDInput | null,
 };
 
@@ -893,6 +907,7 @@ export type ModelTaskAssigneeConditionInput = {
   and?: Array< ModelTaskAssigneeConditionInput | null > | null,
   or?: Array< ModelTaskAssigneeConditionInput | null > | null,
   not?: ModelTaskAssigneeConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
   userAssignmentsId?: ModelIDInput | null,
   taskAssigneesId?: ModelIDInput | null,
 };
@@ -937,6 +952,7 @@ export type ModelScheduledTaskConditionInput = {
   and?: Array< ModelScheduledTaskConditionInput | null > | null,
   or?: Array< ModelScheduledTaskConditionInput | null > | null,
   not?: ModelScheduledTaskConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
   userCreatedScheduledTasksId?: ModelIDInput | null,
 };
 
@@ -981,6 +997,7 @@ export type ModelCommentConditionInput = {
   and?: Array< ModelCommentConditionInput | null > | null,
   or?: Array< ModelCommentConditionInput | null > | null,
   not?: ModelCommentConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
   userCommentsId?: ModelIDInput | null,
 };
 
@@ -1027,6 +1044,7 @@ export type ModelDeliverableTypeConditionInput = {
   and?: Array< ModelDeliverableTypeConditionInput | null > | null,
   or?: Array< ModelDeliverableTypeConditionInput | null > | null,
   not?: ModelDeliverableTypeConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelDeliverableTypeIconInput = {
@@ -1077,6 +1095,7 @@ export type ModelDeliverableConditionInput = {
   and?: Array< ModelDeliverableConditionInput | null > | null,
   or?: Array< ModelDeliverableConditionInput | null > | null,
   not?: ModelDeliverableConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
   taskDeliverablesId?: ModelIDInput | null,
   scheduledTaskDeliverablesId?: ModelIDInput | null,
   deliverableTypeDeliverablesId?: ModelIDInput | null,
@@ -1115,6 +1134,7 @@ export type ModelRiderResponsibilityConditionInput = {
   and?: Array< ModelRiderResponsibilityConditionInput | null > | null,
   or?: Array< ModelRiderResponsibilityConditionInput | null > | null,
   not?: ModelRiderResponsibilityConditionInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type UpdateRiderResponsibilityInput = {
@@ -1142,6 +1162,7 @@ export type ModelTenantFilterInput = {
   and?: Array< ModelTenantFilterInput | null > | null,
   or?: Array< ModelTenantFilterInput | null > | null,
   not?: ModelTenantFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
   tenantAdminId?: ModelIDInput | null,
 };
 
@@ -1167,6 +1188,7 @@ export type ModelUserFilterInput = {
   and?: Array< ModelUserFilterInput | null > | null,
   or?: Array< ModelUserFilterInput | null > | null,
   not?: ModelUserFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelUserConnection = {
@@ -1188,6 +1210,7 @@ export type ModelPossibleRiderResponsibilitiesFilterInput = {
   and?: Array< ModelPossibleRiderResponsibilitiesFilterInput | null > | null,
   or?: Array< ModelPossibleRiderResponsibilitiesFilterInput | null > | null,
   not?: ModelPossibleRiderResponsibilitiesFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
   userPossibleRiderResponsibilitiesId?: ModelIDInput | null,
   riderResponsibilityPossibleUsersId?: ModelIDInput | null,
 };
@@ -1204,6 +1227,7 @@ export type ModelVehicleFilterInput = {
   and?: Array< ModelVehicleFilterInput | null > | null,
   or?: Array< ModelVehicleFilterInput | null > | null,
   not?: ModelVehicleFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
   userCreatedVehiclesId?: ModelIDInput | null,
 };
 
@@ -1213,6 +1237,7 @@ export type ModelVehicleAssignmentFilterInput = {
   and?: Array< ModelVehicleAssignmentFilterInput | null > | null,
   or?: Array< ModelVehicleAssignmentFilterInput | null > | null,
   not?: ModelVehicleAssignmentFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
   userVehicleAssignmentsId?: ModelIDInput | null,
   vehicleAssignmentsId?: ModelIDInput | null,
 };
@@ -1238,6 +1263,7 @@ export type ModelLocationFilterInput = {
   and?: Array< ModelLocationFilterInput | null > | null,
   or?: Array< ModelLocationFilterInput | null > | null,
   not?: ModelLocationFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
   userCreatedLocationsId?: ModelIDInput | null,
 };
 
@@ -1265,6 +1291,7 @@ export type ModelTaskFilterInput = {
   and?: Array< ModelTaskFilterInput | null > | null,
   or?: Array< ModelTaskFilterInput | null > | null,
   not?: ModelTaskFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
   userCreatedTasksId?: ModelIDInput | null,
 };
 
@@ -1286,6 +1313,7 @@ export type ModelTaskAssigneeFilterInput = {
   and?: Array< ModelTaskAssigneeFilterInput | null > | null,
   or?: Array< ModelTaskAssigneeFilterInput | null > | null,
   not?: ModelTaskAssigneeFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
   userAssignmentsId?: ModelIDInput | null,
   taskAssigneesId?: ModelIDInput | null,
 };
@@ -1302,6 +1330,7 @@ export type ModelScheduledTaskFilterInput = {
   and?: Array< ModelScheduledTaskFilterInput | null > | null,
   or?: Array< ModelScheduledTaskFilterInput | null > | null,
   not?: ModelScheduledTaskFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
   userCreatedScheduledTasksId?: ModelIDInput | null,
 };
 
@@ -1316,6 +1345,7 @@ export type ModelCommentFilterInput = {
   and?: Array< ModelCommentFilterInput | null > | null,
   or?: Array< ModelCommentFilterInput | null > | null,
   not?: ModelCommentFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
   userCommentsId?: ModelIDInput | null,
 };
 
@@ -1330,6 +1360,7 @@ export type ModelDeliverableTypeFilterInput = {
   and?: Array< ModelDeliverableTypeFilterInput | null > | null,
   or?: Array< ModelDeliverableTypeFilterInput | null > | null,
   not?: ModelDeliverableTypeFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelDeliverableTypeConnection = {
@@ -1349,6 +1380,7 @@ export type ModelDeliverableFilterInput = {
   and?: Array< ModelDeliverableFilterInput | null > | null,
   or?: Array< ModelDeliverableFilterInput | null > | null,
   not?: ModelDeliverableFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
   taskDeliverablesId?: ModelIDInput | null,
   scheduledTaskDeliverablesId?: ModelIDInput | null,
   deliverableTypeDeliverablesId?: ModelIDInput | null,
@@ -1362,6 +1394,7 @@ export type ModelRiderResponsibilityFilterInput = {
   and?: Array< ModelRiderResponsibilityFilterInput | null > | null,
   or?: Array< ModelRiderResponsibilityFilterInput | null > | null,
   not?: ModelRiderResponsibilityFilterInput | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelRiderResponsibilityConnection = {
@@ -1377,6 +1410,7 @@ export type ModelSubscriptionTenantFilterInput = {
   referenceIdentifier?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionTenantFilterInput | null > | null,
   or?: Array< ModelSubscriptionTenantFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionIDInput = {
@@ -1422,6 +1456,7 @@ export type ModelSubscriptionUserFilterInput = {
   disabled?: ModelSubscriptionIntInput | null,
   and?: Array< ModelSubscriptionUserFilterInput | null > | null,
   or?: Array< ModelSubscriptionUserFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionIntInput = {
@@ -1441,6 +1476,7 @@ export type ModelSubscriptionPossibleRiderResponsibilitiesFilterInput = {
   tenantId?: ModelSubscriptionIDInput | null,
   and?: Array< ModelSubscriptionPossibleRiderResponsibilitiesFilterInput | null > | null,
   or?: Array< ModelSubscriptionPossibleRiderResponsibilitiesFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionVehicleFilterInput = {
@@ -1454,6 +1490,7 @@ export type ModelSubscriptionVehicleFilterInput = {
   disabled?: ModelSubscriptionIntInput | null,
   and?: Array< ModelSubscriptionVehicleFilterInput | null > | null,
   or?: Array< ModelSubscriptionVehicleFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionVehicleAssignmentFilterInput = {
@@ -1461,6 +1498,7 @@ export type ModelSubscriptionVehicleAssignmentFilterInput = {
   tenantId?: ModelSubscriptionIDInput | null,
   and?: Array< ModelSubscriptionVehicleAssignmentFilterInput | null > | null,
   or?: Array< ModelSubscriptionVehicleAssignmentFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionLocationFilterInput = {
@@ -1483,6 +1521,7 @@ export type ModelSubscriptionLocationFilterInput = {
   archived?: ModelSubscriptionIntInput | null,
   and?: Array< ModelSubscriptionLocationFilterInput | null > | null,
   or?: Array< ModelSubscriptionLocationFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionTaskFilterInput = {
@@ -1508,6 +1547,7 @@ export type ModelSubscriptionTaskFilterInput = {
   archived?: ModelSubscriptionIntInput | null,
   and?: Array< ModelSubscriptionTaskFilterInput | null > | null,
   or?: Array< ModelSubscriptionTaskFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionTaskAssigneeFilterInput = {
@@ -1517,6 +1557,7 @@ export type ModelSubscriptionTaskAssigneeFilterInput = {
   archived?: ModelSubscriptionIntInput | null,
   and?: Array< ModelSubscriptionTaskAssigneeFilterInput | null > | null,
   or?: Array< ModelSubscriptionTaskAssigneeFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionScheduledTaskFilterInput = {
@@ -1530,6 +1571,7 @@ export type ModelSubscriptionScheduledTaskFilterInput = {
   disabled?: ModelSubscriptionIntInput | null,
   and?: Array< ModelSubscriptionScheduledTaskFilterInput | null > | null,
   or?: Array< ModelSubscriptionScheduledTaskFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionCommentFilterInput = {
@@ -1541,6 +1583,7 @@ export type ModelSubscriptionCommentFilterInput = {
   archived?: ModelSubscriptionIntInput | null,
   and?: Array< ModelSubscriptionCommentFilterInput | null > | null,
   or?: Array< ModelSubscriptionCommentFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionDeliverableTypeFilterInput = {
@@ -1553,6 +1596,7 @@ export type ModelSubscriptionDeliverableTypeFilterInput = {
   disabled?: ModelSubscriptionIntInput | null,
   and?: Array< ModelSubscriptionDeliverableTypeFilterInput | null > | null,
   or?: Array< ModelSubscriptionDeliverableTypeFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionDeliverableFilterInput = {
@@ -1564,6 +1608,7 @@ export type ModelSubscriptionDeliverableFilterInput = {
   archived?: ModelSubscriptionIntInput | null,
   and?: Array< ModelSubscriptionDeliverableFilterInput | null > | null,
   or?: Array< ModelSubscriptionDeliverableFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type ModelSubscriptionRiderResponsibilityFilterInput = {
@@ -1573,6 +1618,7 @@ export type ModelSubscriptionRiderResponsibilityFilterInput = {
   disabled?: ModelSubscriptionIntInput | null,
   and?: Array< ModelSubscriptionRiderResponsibilityFilterInput | null > | null,
   or?: Array< ModelSubscriptionRiderResponsibilityFilterInput | null > | null,
+  _deleted?: ModelBooleanInput | null,
 };
 
 export type CreateTenantMutationVariables = {

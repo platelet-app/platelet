@@ -18,6 +18,7 @@
         "@reduxjs/toolkit": "^1.6.1",
         "@testing-library/react": "^12.1.2",
         "@testing-library/user-event": "^13.5.0",
+        "@types/autosuggest-highlight": "^3.2.2",
         "@types/jest": "^29.0.1",
         "@types/node": "^18.7.18",
         "@types/react": "^17.0.49",

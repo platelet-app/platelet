@@ -126,7 +126,10 @@ function LocationDetailAndSelector(props) {
             direction={"row"}
         >
             {!props.location || props.editMode ? (
-                <FavouriteLocationsSelect onSelect={props.onSelectPreset} />
+                <FavouriteLocationsSelect
+                    online
+                    onSelect={props.onSelectPreset}
+                />
             ) : (
                 locationTitle
             )}

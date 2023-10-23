@@ -28,6 +28,7 @@ export const createTenant = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       createdAt
       updatedAt
@@ -35,6 +36,7 @@ export const createTenant = /* GraphQL */ `
       _deleted
       _lastChangedAt
       tenantAdminId
+      __typename
     }
   }
 `;
@@ -64,6 +66,7 @@ export const updateTenant = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       createdAt
       updatedAt
@@ -71,6 +74,7 @@ export const updateTenant = /* GraphQL */ `
       _deleted
       _lastChangedAt
       tenantAdminId
+      __typename
     }
   }
 `;
@@ -100,6 +104,7 @@ export const deleteTenant = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       createdAt
       updatedAt
@@ -107,6 +112,7 @@ export const deleteTenant = /* GraphQL */ `
       _deleted
       _lastChangedAt
       tenantAdminId
+      __typename
     }
   }
 `;
@@ -136,6 +142,7 @@ export const createUser = /* GraphQL */ `
         country
         postcode
         what3words
+        __typename
       }
       displayName
       name
@@ -145,39 +152,48 @@ export const createUser = /* GraphQL */ `
       possibleRiderResponsibilities {
         nextToken
         startedAt
+        __typename
       }
       profilePicture {
         bucket
         key
         region
+        __typename
       }
       comments {
         nextToken
         startedAt
+        __typename
       }
       assignments {
         nextToken
         startedAt
+        __typename
       }
       vehicleAssignments {
         nextToken
         startedAt
+        __typename
       }
       createdTasks {
         nextToken
         startedAt
+        __typename
       }
       createdLocations {
         nextToken
         startedAt
+        __typename
       }
       createdVehicles {
         nextToken
         startedAt
+        __typename
       }
       createdScheduledTasks {
         nextToken
         startedAt
+        __typename
       }
       disabled
       createdAt
@@ -185,6 +201,7 @@ export const createUser = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -214,6 +231,7 @@ export const updateUser = /* GraphQL */ `
         country
         postcode
         what3words
+        __typename
       }
       displayName
       name
@@ -223,39 +241,48 @@ export const updateUser = /* GraphQL */ `
       possibleRiderResponsibilities {
         nextToken
         startedAt
+        __typename
       }
       profilePicture {
         bucket
         key
         region
+        __typename
       }
       comments {
         nextToken
         startedAt
+        __typename
       }
       assignments {
         nextToken
         startedAt
+        __typename
       }
       vehicleAssignments {
         nextToken
         startedAt
+        __typename
       }
       createdTasks {
         nextToken
         startedAt
+        __typename
       }
       createdLocations {
         nextToken
         startedAt
+        __typename
       }
       createdVehicles {
         nextToken
         startedAt
+        __typename
       }
       createdScheduledTasks {
         nextToken
         startedAt
+        __typename
       }
       disabled
       createdAt
@@ -263,6 +290,7 @@ export const updateUser = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -292,6 +320,7 @@ export const deleteUser = /* GraphQL */ `
         country
         postcode
         what3words
+        __typename
       }
       displayName
       name
@@ -301,39 +330,48 @@ export const deleteUser = /* GraphQL */ `
       possibleRiderResponsibilities {
         nextToken
         startedAt
+        __typename
       }
       profilePicture {
         bucket
         key
         region
+        __typename
       }
       comments {
         nextToken
         startedAt
+        __typename
       }
       assignments {
         nextToken
         startedAt
+        __typename
       }
       vehicleAssignments {
         nextToken
         startedAt
+        __typename
       }
       createdTasks {
         nextToken
         startedAt
+        __typename
       }
       createdLocations {
         nextToken
         startedAt
+        __typename
       }
       createdVehicles {
         nextToken
         startedAt
+        __typename
       }
       createdScheduledTasks {
         nextToken
         startedAt
+        __typename
       }
       disabled
       createdAt
@@ -341,6 +379,7 @@ export const deleteUser = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -369,6 +408,7 @@ export const createPossibleRiderResponsibilities = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       riderResponsibility {
         id
@@ -380,6 +420,7 @@ export const createPossibleRiderResponsibilities = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       createdAt
       updatedAt
@@ -388,6 +429,7 @@ export const createPossibleRiderResponsibilities = /* GraphQL */ `
       _lastChangedAt
       userPossibleRiderResponsibilitiesId
       riderResponsibilityPossibleUsersId
+      __typename
     }
   }
 `;
@@ -416,6 +458,7 @@ export const updatePossibleRiderResponsibilities = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       riderResponsibility {
         id
@@ -427,6 +470,7 @@ export const updatePossibleRiderResponsibilities = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       createdAt
       updatedAt
@@ -435,6 +479,7 @@ export const updatePossibleRiderResponsibilities = /* GraphQL */ `
       _lastChangedAt
       userPossibleRiderResponsibilitiesId
       riderResponsibilityPossibleUsersId
+      __typename
     }
   }
 `;
@@ -463,6 +508,7 @@ export const deletePossibleRiderResponsibilities = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       riderResponsibility {
         id
@@ -474,6 +520,7 @@ export const deletePossibleRiderResponsibilities = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       createdAt
       updatedAt
@@ -482,6 +529,7 @@ export const deletePossibleRiderResponsibilities = /* GraphQL */ `
       _lastChangedAt
       userPossibleRiderResponsibilitiesId
       riderResponsibilityPossibleUsersId
+      __typename
     }
   }
 `;
@@ -510,6 +558,7 @@ export const createVehicle = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       name
       manufacturer
@@ -519,10 +568,12 @@ export const createVehicle = /* GraphQL */ `
       assignments {
         nextToken
         startedAt
+        __typename
       }
       comments {
         nextToken
         startedAt
+        __typename
       }
       disabled
       createdAt
@@ -531,6 +582,7 @@ export const createVehicle = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCreatedVehiclesId
+      __typename
     }
   }
 `;
@@ -559,6 +611,7 @@ export const updateVehicle = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       name
       manufacturer
@@ -568,10 +621,12 @@ export const updateVehicle = /* GraphQL */ `
       assignments {
         nextToken
         startedAt
+        __typename
       }
       comments {
         nextToken
         startedAt
+        __typename
       }
       disabled
       createdAt
@@ -580,6 +635,7 @@ export const updateVehicle = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCreatedVehiclesId
+      __typename
     }
   }
 `;
@@ -608,6 +664,7 @@ export const deleteVehicle = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       name
       manufacturer
@@ -617,10 +674,12 @@ export const deleteVehicle = /* GraphQL */ `
       assignments {
         nextToken
         startedAt
+        __typename
       }
       comments {
         nextToken
         startedAt
+        __typename
       }
       disabled
       createdAt
@@ -629,6 +688,7 @@ export const deleteVehicle = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCreatedVehiclesId
+      __typename
     }
   }
 `;
@@ -655,6 +715,7 @@ export const createVehicleAssignment = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedVehiclesId
+        __typename
       }
       assignee {
         id
@@ -673,6 +734,7 @@ export const createVehicleAssignment = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       createdAt
       updatedAt
@@ -681,6 +743,7 @@ export const createVehicleAssignment = /* GraphQL */ `
       _lastChangedAt
       userVehicleAssignmentsId
       vehicleAssignmentsId
+      __typename
     }
   }
 `;
@@ -707,6 +770,7 @@ export const updateVehicleAssignment = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedVehiclesId
+        __typename
       }
       assignee {
         id
@@ -725,6 +789,7 @@ export const updateVehicleAssignment = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       createdAt
       updatedAt
@@ -733,6 +798,7 @@ export const updateVehicleAssignment = /* GraphQL */ `
       _lastChangedAt
       userVehicleAssignmentsId
       vehicleAssignmentsId
+      __typename
     }
   }
 `;
@@ -759,6 +825,7 @@ export const deleteVehicleAssignment = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedVehiclesId
+        __typename
       }
       assignee {
         id
@@ -777,6 +844,7 @@ export const deleteVehicleAssignment = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       createdAt
       updatedAt
@@ -785,6 +853,7 @@ export const deleteVehicleAssignment = /* GraphQL */ `
       _lastChangedAt
       userVehicleAssignmentsId
       vehicleAssignmentsId
+      __typename
     }
   }
 `;
@@ -813,6 +882,7 @@ export const createLocation = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       name
       listed
@@ -831,6 +901,7 @@ export const createLocation = /* GraphQL */ `
         country
         postcode
         what3words
+        __typename
       }
       ward
       line1
@@ -845,30 +916,37 @@ export const createLocation = /* GraphQL */ `
       tasksAsPickUp {
         nextToken
         startedAt
+        __typename
       }
       tasksAsDropOff {
         nextToken
         startedAt
+        __typename
       }
       taskAsEstablishment {
         nextToken
         startedAt
+        __typename
       }
       scheduledTasksAsPickUp {
         nextToken
         startedAt
+        __typename
       }
       scheduledTasksAsDropOff {
         nextToken
         startedAt
+        __typename
       }
       scheduledTasksAsEstablishment {
         nextToken
         startedAt
+        __typename
       }
       comments {
         nextToken
         startedAt
+        __typename
       }
       disabled
       googleMapsPlaceId
@@ -879,6 +957,7 @@ export const createLocation = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCreatedLocationsId
+      __typename
     }
   }
 `;
@@ -907,6 +986,7 @@ export const updateLocation = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       name
       listed
@@ -925,6 +1005,7 @@ export const updateLocation = /* GraphQL */ `
         country
         postcode
         what3words
+        __typename
       }
       ward
       line1
@@ -939,30 +1020,37 @@ export const updateLocation = /* GraphQL */ `
       tasksAsPickUp {
         nextToken
         startedAt
+        __typename
       }
       tasksAsDropOff {
         nextToken
         startedAt
+        __typename
       }
       taskAsEstablishment {
         nextToken
         startedAt
+        __typename
       }
       scheduledTasksAsPickUp {
         nextToken
         startedAt
+        __typename
       }
       scheduledTasksAsDropOff {
         nextToken
         startedAt
+        __typename
       }
       scheduledTasksAsEstablishment {
         nextToken
         startedAt
+        __typename
       }
       comments {
         nextToken
         startedAt
+        __typename
       }
       disabled
       googleMapsPlaceId
@@ -973,6 +1061,7 @@ export const updateLocation = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCreatedLocationsId
+      __typename
     }
   }
 `;
@@ -1001,6 +1090,7 @@ export const deleteLocation = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       name
       listed
@@ -1019,6 +1109,7 @@ export const deleteLocation = /* GraphQL */ `
         country
         postcode
         what3words
+        __typename
       }
       ward
       line1
@@ -1033,30 +1124,37 @@ export const deleteLocation = /* GraphQL */ `
       tasksAsPickUp {
         nextToken
         startedAt
+        __typename
       }
       tasksAsDropOff {
         nextToken
         startedAt
+        __typename
       }
       taskAsEstablishment {
         nextToken
         startedAt
+        __typename
       }
       scheduledTasksAsPickUp {
         nextToken
         startedAt
+        __typename
       }
       scheduledTasksAsDropOff {
         nextToken
         startedAt
+        __typename
       }
       scheduledTasksAsEstablishment {
         nextToken
         startedAt
+        __typename
       }
       comments {
         nextToken
         startedAt
+        __typename
       }
       disabled
       googleMapsPlaceId
@@ -1067,6 +1165,7 @@ export const deleteLocation = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCreatedLocationsId
+      __typename
     }
   }
 `;
@@ -1096,6 +1195,7 @@ export const createTask = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       dateCreated
       timeOfCall
@@ -1121,6 +1221,7 @@ export const createTask = /* GraphQL */ `
         country
         postcode
         what3words
+        __typename
       }
       pickUpLocationId
       dropOffLocationId
@@ -1149,6 +1250,7 @@ export const createTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       dropOffLocation {
         id
@@ -1174,6 +1276,7 @@ export const createTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       establishmentLocation {
         id
@@ -1199,20 +1302,24 @@ export const createTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       riderResponsibility
       assignees {
         nextToken
         startedAt
+        __typename
       }
       priority
       deliverables {
         nextToken
         startedAt
+        __typename
       }
       comments {
         nextToken
         startedAt
+        __typename
       }
       status
       isRiderUsingOwnVehicle
@@ -1222,6 +1329,7 @@ export const createTask = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCreatedTasksId
+      __typename
     }
   }
 `;
@@ -1251,6 +1359,7 @@ export const updateTask = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       dateCreated
       timeOfCall
@@ -1276,6 +1385,7 @@ export const updateTask = /* GraphQL */ `
         country
         postcode
         what3words
+        __typename
       }
       pickUpLocationId
       dropOffLocationId
@@ -1304,6 +1414,7 @@ export const updateTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       dropOffLocation {
         id
@@ -1329,6 +1440,7 @@ export const updateTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       establishmentLocation {
         id
@@ -1354,20 +1466,24 @@ export const updateTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       riderResponsibility
       assignees {
         nextToken
         startedAt
+        __typename
       }
       priority
       deliverables {
         nextToken
         startedAt
+        __typename
       }
       comments {
         nextToken
         startedAt
+        __typename
       }
       status
       isRiderUsingOwnVehicle
@@ -1377,6 +1493,7 @@ export const updateTask = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCreatedTasksId
+      __typename
     }
   }
 `;
@@ -1406,6 +1523,7 @@ export const deleteTask = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       dateCreated
       timeOfCall
@@ -1431,6 +1549,7 @@ export const deleteTask = /* GraphQL */ `
         country
         postcode
         what3words
+        __typename
       }
       pickUpLocationId
       dropOffLocationId
@@ -1459,6 +1578,7 @@ export const deleteTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       dropOffLocation {
         id
@@ -1484,6 +1604,7 @@ export const deleteTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       establishmentLocation {
         id
@@ -1509,20 +1630,24 @@ export const deleteTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       riderResponsibility
       assignees {
         nextToken
         startedAt
+        __typename
       }
       priority
       deliverables {
         nextToken
         startedAt
+        __typename
       }
       comments {
         nextToken
         startedAt
+        __typename
       }
       status
       isRiderUsingOwnVehicle
@@ -1532,6 +1657,7 @@ export const deleteTask = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCreatedTasksId
+      __typename
     }
   }
 `;
@@ -1570,6 +1696,7 @@ export const createTaskAssignee = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedTasksId
+        __typename
       }
       assignee {
         id
@@ -1588,6 +1715,7 @@ export const createTaskAssignee = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       archived
       createdAt
@@ -1597,6 +1725,7 @@ export const createTaskAssignee = /* GraphQL */ `
       _lastChangedAt
       userAssignmentsId
       taskAssigneesId
+      __typename
     }
   }
 `;
@@ -1635,6 +1764,7 @@ export const updateTaskAssignee = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedTasksId
+        __typename
       }
       assignee {
         id
@@ -1653,6 +1783,7 @@ export const updateTaskAssignee = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       archived
       createdAt
@@ -1662,6 +1793,7 @@ export const updateTaskAssignee = /* GraphQL */ `
       _lastChangedAt
       userAssignmentsId
       taskAssigneesId
+      __typename
     }
   }
 `;
@@ -1700,6 +1832,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedTasksId
+        __typename
       }
       assignee {
         id
@@ -1718,6 +1851,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       archived
       createdAt
@@ -1727,6 +1861,7 @@ export const deleteTaskAssignee = /* GraphQL */ `
       _lastChangedAt
       userAssignmentsId
       taskAssigneesId
+      __typename
     }
   }
 `;
@@ -1755,6 +1890,7 @@ export const createScheduledTask = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       requesterContact {
         name
@@ -1771,6 +1907,7 @@ export const createScheduledTask = /* GraphQL */ `
         country
         postcode
         what3words
+        __typename
       }
       cronExpression
       pickUpLocationId
@@ -1800,6 +1937,7 @@ export const createScheduledTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       dropOffLocation {
         id
@@ -1825,6 +1963,7 @@ export const createScheduledTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       establishmentLocation {
         id
@@ -1850,11 +1989,13 @@ export const createScheduledTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       priority
       deliverables {
         nextToken
         startedAt
+        __typename
       }
       disabled
       createdAt
@@ -1863,6 +2004,7 @@ export const createScheduledTask = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCreatedScheduledTasksId
+      __typename
     }
   }
 `;
@@ -1891,6 +2033,7 @@ export const updateScheduledTask = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       requesterContact {
         name
@@ -1907,6 +2050,7 @@ export const updateScheduledTask = /* GraphQL */ `
         country
         postcode
         what3words
+        __typename
       }
       cronExpression
       pickUpLocationId
@@ -1936,6 +2080,7 @@ export const updateScheduledTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       dropOffLocation {
         id
@@ -1961,6 +2106,7 @@ export const updateScheduledTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       establishmentLocation {
         id
@@ -1986,11 +2132,13 @@ export const updateScheduledTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       priority
       deliverables {
         nextToken
         startedAt
+        __typename
       }
       disabled
       createdAt
@@ -1999,6 +2147,7 @@ export const updateScheduledTask = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCreatedScheduledTasksId
+      __typename
     }
   }
 `;
@@ -2027,6 +2176,7 @@ export const deleteScheduledTask = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       requesterContact {
         name
@@ -2043,6 +2193,7 @@ export const deleteScheduledTask = /* GraphQL */ `
         country
         postcode
         what3words
+        __typename
       }
       cronExpression
       pickUpLocationId
@@ -2072,6 +2223,7 @@ export const deleteScheduledTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       dropOffLocation {
         id
@@ -2097,6 +2249,7 @@ export const deleteScheduledTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       establishmentLocation {
         id
@@ -2122,11 +2275,13 @@ export const deleteScheduledTask = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedLocationsId
+        __typename
       }
       priority
       deliverables {
         nextToken
         startedAt
+        __typename
       }
       disabled
       createdAt
@@ -2135,6 +2290,7 @@ export const deleteScheduledTask = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCreatedScheduledTasksId
+      __typename
     }
   }
 `;
@@ -2166,6 +2322,7 @@ export const createComment = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       visibility
       archived
@@ -2175,6 +2332,7 @@ export const createComment = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCommentsId
+      __typename
     }
   }
 `;
@@ -2206,6 +2364,7 @@ export const updateComment = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       visibility
       archived
@@ -2215,6 +2374,7 @@ export const updateComment = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCommentsId
+      __typename
     }
   }
 `;
@@ -2246,6 +2406,7 @@ export const deleteComment = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       visibility
       archived
@@ -2255,6 +2416,7 @@ export const deleteComment = /* GraphQL */ `
       _deleted
       _lastChangedAt
       userCommentsId
+      __typename
     }
   }
 `;
@@ -2272,6 +2434,7 @@ export const createDeliverableType = /* GraphQL */ `
       deliverables {
         nextToken
         startedAt
+        __typename
       }
       tags
       disabled
@@ -2280,6 +2443,7 @@ export const createDeliverableType = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -2297,6 +2461,7 @@ export const updateDeliverableType = /* GraphQL */ `
       deliverables {
         nextToken
         startedAt
+        __typename
       }
       tags
       disabled
@@ -2305,6 +2470,7 @@ export const updateDeliverableType = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -2322,6 +2488,7 @@ export const deleteDeliverableType = /* GraphQL */ `
       deliverables {
         nextToken
         startedAt
+        __typename
       }
       tags
       disabled
@@ -2330,6 +2497,7 @@ export const deleteDeliverableType = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -2354,6 +2522,7 @@ export const createDeliverable = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       task {
         id
@@ -2381,6 +2550,7 @@ export const createDeliverable = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedTasksId
+        __typename
       }
       scheduledTask {
         id
@@ -2397,6 +2567,7 @@ export const createDeliverable = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedScheduledTasksId
+        __typename
       }
       count
       unit
@@ -2404,6 +2575,7 @@ export const createDeliverable = /* GraphQL */ `
       comments {
         nextToken
         startedAt
+        __typename
       }
       archived
       createdAt
@@ -2414,6 +2586,7 @@ export const createDeliverable = /* GraphQL */ `
       taskDeliverablesId
       scheduledTaskDeliverablesId
       deliverableTypeDeliverablesId
+      __typename
     }
   }
 `;
@@ -2438,6 +2611,7 @@ export const updateDeliverable = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       task {
         id
@@ -2465,6 +2639,7 @@ export const updateDeliverable = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedTasksId
+        __typename
       }
       scheduledTask {
         id
@@ -2481,6 +2656,7 @@ export const updateDeliverable = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedScheduledTasksId
+        __typename
       }
       count
       unit
@@ -2488,6 +2664,7 @@ export const updateDeliverable = /* GraphQL */ `
       comments {
         nextToken
         startedAt
+        __typename
       }
       archived
       createdAt
@@ -2498,6 +2675,7 @@ export const updateDeliverable = /* GraphQL */ `
       taskDeliverablesId
       scheduledTaskDeliverablesId
       deliverableTypeDeliverablesId
+      __typename
     }
   }
 `;
@@ -2522,6 +2700,7 @@ export const deleteDeliverable = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       task {
         id
@@ -2549,6 +2728,7 @@ export const deleteDeliverable = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedTasksId
+        __typename
       }
       scheduledTask {
         id
@@ -2565,6 +2745,7 @@ export const deleteDeliverable = /* GraphQL */ `
         _deleted
         _lastChangedAt
         userCreatedScheduledTasksId
+        __typename
       }
       count
       unit
@@ -2572,6 +2753,7 @@ export const deleteDeliverable = /* GraphQL */ `
       comments {
         nextToken
         startedAt
+        __typename
       }
       archived
       createdAt
@@ -2582,6 +2764,7 @@ export const deleteDeliverable = /* GraphQL */ `
       taskDeliverablesId
       scheduledTaskDeliverablesId
       deliverableTypeDeliverablesId
+      __typename
     }
   }
 `;
@@ -2598,12 +2781,14 @@ export const createRiderResponsibility = /* GraphQL */ `
       possibleUsers {
         nextToken
         startedAt
+        __typename
       }
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -2620,12 +2805,14 @@ export const updateRiderResponsibility = /* GraphQL */ `
       possibleUsers {
         nextToken
         startedAt
+        __typename
       }
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -2642,12 +2829,14 @@ export const deleteRiderResponsibility = /* GraphQL */ `
       possibleUsers {
         nextToken
         startedAt
+        __typename
       }
       createdAt
       updatedAt
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -2684,6 +2873,7 @@ export const registerUser = /* GraphQL */ `
         country
         postcode
         what3words
+        __typename
       }
       displayName
       name
@@ -2693,39 +2883,48 @@ export const registerUser = /* GraphQL */ `
       possibleRiderResponsibilities {
         nextToken
         startedAt
+        __typename
       }
       profilePicture {
         bucket
         key
         region
+        __typename
       }
       comments {
         nextToken
         startedAt
+        __typename
       }
       assignments {
         nextToken
         startedAt
+        __typename
       }
       vehicleAssignments {
         nextToken
         startedAt
+        __typename
       }
       createdTasks {
         nextToken
         startedAt
+        __typename
       }
       createdLocations {
         nextToken
         startedAt
+        __typename
       }
       createdVehicles {
         nextToken
         startedAt
+        __typename
       }
       createdScheduledTasks {
         nextToken
         startedAt
+        __typename
       }
       disabled
       createdAt
@@ -2733,6 +2932,7 @@ export const registerUser = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -2767,6 +2967,7 @@ export const registerTenant = /* GraphQL */ `
         _version
         _deleted
         _lastChangedAt
+        __typename
       }
       createdAt
       updatedAt
@@ -2774,6 +2975,7 @@ export const registerTenant = /* GraphQL */ `
       _deleted
       _lastChangedAt
       tenantAdminId
+      __typename
     }
   }
 `;
@@ -2800,6 +3002,7 @@ export const updateUserRoles = /* GraphQL */ `
         country
         postcode
         what3words
+        __typename
       }
       displayName
       name
@@ -2809,39 +3012,48 @@ export const updateUserRoles = /* GraphQL */ `
       possibleRiderResponsibilities {
         nextToken
         startedAt
+        __typename
       }
       profilePicture {
         bucket
         key
         region
+        __typename
       }
       comments {
         nextToken
         startedAt
+        __typename
       }
       assignments {
         nextToken
         startedAt
+        __typename
       }
       vehicleAssignments {
         nextToken
         startedAt
+        __typename
       }
       createdTasks {
         nextToken
         startedAt
+        __typename
       }
       createdLocations {
         nextToken
         startedAt
+        __typename
       }
       createdVehicles {
         nextToken
         startedAt
+        __typename
       }
       createdScheduledTasks {
         nextToken
         startedAt
+        __typename
       }
       disabled
       createdAt
@@ -2849,6 +3061,7 @@ export const updateUserRoles = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -2875,6 +3088,7 @@ export const disableUser = /* GraphQL */ `
         country
         postcode
         what3words
+        __typename
       }
       displayName
       name
@@ -2884,39 +3098,48 @@ export const disableUser = /* GraphQL */ `
       possibleRiderResponsibilities {
         nextToken
         startedAt
+        __typename
       }
       profilePicture {
         bucket
         key
         region
+        __typename
       }
       comments {
         nextToken
         startedAt
+        __typename
       }
       assignments {
         nextToken
         startedAt
+        __typename
       }
       vehicleAssignments {
         nextToken
         startedAt
+        __typename
       }
       createdTasks {
         nextToken
         startedAt
+        __typename
       }
       createdLocations {
         nextToken
         startedAt
+        __typename
       }
       createdVehicles {
         nextToken
         startedAt
+        __typename
       }
       createdScheduledTasks {
         nextToken
         startedAt
+        __typename
       }
       disabled
       createdAt
@@ -2924,6 +3147,7 @@ export const disableUser = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -2950,6 +3174,7 @@ export const enableUser = /* GraphQL */ `
         country
         postcode
         what3words
+        __typename
       }
       displayName
       name
@@ -2959,39 +3184,48 @@ export const enableUser = /* GraphQL */ `
       possibleRiderResponsibilities {
         nextToken
         startedAt
+        __typename
       }
       profilePicture {
         bucket
         key
         region
+        __typename
       }
       comments {
         nextToken
         startedAt
+        __typename
       }
       assignments {
         nextToken
         startedAt
+        __typename
       }
       vehicleAssignments {
         nextToken
         startedAt
+        __typename
       }
       createdTasks {
         nextToken
         startedAt
+        __typename
       }
       createdLocations {
         nextToken
         startedAt
+        __typename
       }
       createdVehicles {
         nextToken
         startedAt
+        __typename
       }
       createdScheduledTasks {
         nextToken
         startedAt
+        __typename
       }
       disabled
       createdAt
@@ -2999,6 +3233,7 @@ export const enableUser = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -3025,6 +3260,7 @@ export const updateUserEmail = /* GraphQL */ `
         country
         postcode
         what3words
+        __typename
       }
       displayName
       name
@@ -3034,39 +3270,48 @@ export const updateUserEmail = /* GraphQL */ `
       possibleRiderResponsibilities {
         nextToken
         startedAt
+        __typename
       }
       profilePicture {
         bucket
         key
         region
+        __typename
       }
       comments {
         nextToken
         startedAt
+        __typename
       }
       assignments {
         nextToken
         startedAt
+        __typename
       }
       vehicleAssignments {
         nextToken
         startedAt
+        __typename
       }
       createdTasks {
         nextToken
         startedAt
+        __typename
       }
       createdLocations {
         nextToken
         startedAt
+        __typename
       }
       createdVehicles {
         nextToken
         startedAt
+        __typename
       }
       createdScheduledTasks {
         nextToken
         startedAt
+        __typename
       }
       disabled
       createdAt
@@ -3074,6 +3319,7 @@ export const updateUserEmail = /* GraphQL */ `
       _version
       _deleted
       _lastChangedAt
+      __typename
     }
   }
 `;
@@ -3081,6 +3327,7 @@ export const resetUserPassword = /* GraphQL */ `
   mutation ResetUserPassword($userId: ID) {
     resetUserPassword(userId: $userId) {
       successState
+      __typename
     }
   }
 `;

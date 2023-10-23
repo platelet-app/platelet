@@ -10,9 +10,9 @@ import { Box, Button, Stack, Tooltip } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import ClearButtonWithConfirmation from "../../../components/ClearButtonWithConfirmation";
-import CollapsibleToggle from "../../../components/CollapsibleToggle";
 import PopOutLocationSelectorForm from "./PopoutLocationSelectorForm";
 import { protectedFields } from "../../../apiConsts";
+import ClickableTextField from "../../../components/ClickableTextField";
 
 const useStyles = makeStyles()((theme) => ({
     label: {
@@ -52,11 +52,12 @@ function PopOutLocationSelector(props) {
     const [state, setState] = useState(null);
     const oldState = useRef(null);
     const [editMode, setEditMode] = useState(false);
-    const [collapsed, setCollapsed] = useState(true);
 
     function onSelectPreset(value) {
-        setState(value);
-        props.onChange(value);
+        if (value) {
+            setState(value);
+            props.onChange(value);
+        }
     }
 
     function onClickClearButton() {
@@ -127,6 +128,7 @@ function PopOutLocationSelector(props) {
                     direction="column"
                 >
                     <FavouriteLocationsSelect
+                        online
                         size="large"
                         onSelect={onSelectPreset}
                     />
@@ -167,9 +169,6 @@ function PopOutLocationSelector(props) {
         <></>
     );
 
-    const collapsedShowFields = ["ward", "postcode", "line1"];
-    const collapsedShowContactFields = ["telephoneNumber", "name"];
-
     return (
         <Box className={classes.root}>
             <Stack spacing={1} className={props.className} direction={"column"}>
@@ -180,43 +179,47 @@ function PopOutLocationSelector(props) {
                             {Object.entries(addressFields).map(
                                 ([key, label]) => {
                                     return (
-                                        (collapsedShowFields.includes(key) ||
-                                            !collapsed) && (
-                                            <LabelItemPair
-                                                key={key}
-                                                label={label}
-                                            >
-                                                <Typography>
-                                                    {state && state[key]}
-                                                </Typography>
-                                            </LabelItemPair>
-                                        )
+                                        <LabelItemPair key={key} label={label}>
+                                            <ClickableTextField
+                                                value={state && state[key]}
+                                                onChange={(value) => {
+                                                    handleConfirmation({
+                                                        ...state,
+                                                        [key]: value,
+                                                    });
+                                                }}
+                                            />
+                                        </LabelItemPair>
                                     );
                                 }
                             )}
 
-                            {!collapsed && (
-                                <Box className={classes.separator} />
-                            )}
+                            <Box className={classes.separator} />
                             <Box>
                                 {Object.entries(contactFields).map(
                                     ([key, label]) => {
                                         return (
-                                            (collapsedShowContactFields.includes(
-                                                key
-                                            ) ||
-                                                !collapsed) && (
-                                                <LabelItemPair
-                                                    key={key}
-                                                    label={label}
-                                                >
-                                                    <Typography>
-                                                        {state &&
-                                                            state.contact &&
-                                                            state.contact[key]}
-                                                    </Typography>
-                                                </LabelItemPair>
-                                            )
+                                            <LabelItemPair
+                                                key={key}
+                                                label={label}
+                                            >
+                                                <ClickableTextField
+                                                    value={
+                                                        state &&
+                                                        state.contact &&
+                                                        state.contact[key]
+                                                    }
+                                                    onChange={(value) => {
+                                                        handleConfirmation({
+                                                            ...state,
+                                                            contact: {
+                                                                ...state.contact,
+                                                                [key]: value,
+                                                            },
+                                                        });
+                                                    }}
+                                                />
+                                            </LabelItemPair>
                                         );
                                     }
                                 )}
@@ -226,14 +229,8 @@ function PopOutLocationSelector(props) {
                         <Stack
                             direction="row"
                             alignItems="center"
-                            justifyContent="space-between"
+                            justifyContent="flex-end"
                         >
-                            <CollapsibleToggle
-                                onClick={() =>
-                                    setCollapsed((prevState) => !prevState)
-                                }
-                                value={collapsed}
-                            />
                             {state &&
                                 !props.disableClear &&
                                 !props.override && (

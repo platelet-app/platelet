@@ -415,7 +415,7 @@
   },
   "geo": {
     "plateletPlace": {
-      "accessType": "AuthorizedUsers",
+      "accessType": "CognitoGroups",
       "dataProvider": "HERE",
       "dataSourceIntendedUse": "SingleUse",
       "dependsOn": [
@@ -425,6 +425,16 @@
           ],
           "category": "auth",
           "resourceName": "platelet61a0ac07"
+        },
+        {
+          "attributes": [
+            "ADMINGroupRole",
+            "COORDINATORGroupRole",
+            "RIDERGroupRole",
+            "USERGroupRole"
+          ],
+          "category": "auth",
+          "resourceName": "userPoolGroups"
         }
       ],
       "isDefault": true,

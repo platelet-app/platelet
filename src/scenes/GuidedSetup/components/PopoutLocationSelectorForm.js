@@ -1,5 +1,4 @@
 import { TextField, Stack, useMediaQuery } from "@mui/material";
-import CollapsibleToggle from "../../../components/CollapsibleToggle";
 import React, { useEffect, useState } from "react";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import PropTypes from "prop-types";
@@ -38,12 +37,8 @@ const contactFields = {
     telephoneNumber: "Telephone",
 };
 
-const collapsedShowFields = ["ward", "line1", "town", "postcode"];
-const collapsedShowContactFields = ["name", "telephoneNumber"];
-
 function PopOutLocationSelectorForm(props) {
     const [state, setState] = useState(initialState);
-    const [isCollapsed, setIsCollapsed] = useState(true);
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -79,58 +74,49 @@ function PopOutLocationSelectorForm(props) {
             >
                 {Object.entries(addressFields).map(([key, label]) => {
                     return (
-                        (collapsedShowFields.includes(key) || !isCollapsed) && (
-                            <TextField
-                                key={key}
-                                fullWidth
-                                inputProps={{
-                                    "aria-label": label,
-                                }}
-                                label={label}
-                                value={state[key]}
-                                onChange={(e) => {
-                                    const { value } = e.target;
-                                    setState((prevState) => ({
-                                        ...prevState,
-                                        [key]: value,
-                                    }));
-                                }}
-                            />
-                        )
+                        <TextField
+                            key={key}
+                            fullWidth
+                            inputProps={{
+                                "aria-label": label,
+                            }}
+                            label={label}
+                            value={state[key]}
+                            onChange={(e) => {
+                                const { value } = e.target;
+                                setState((prevState) => ({
+                                    ...prevState,
+                                    [key]: value,
+                                }));
+                            }}
+                        />
                     );
                 })}
 
                 {Object.entries(contactFields).map(([key, label]) => {
                     return (
-                        (collapsedShowContactFields.includes(key) ||
-                            !isCollapsed) && (
-                            <TextFieldUncontrolled
-                                key={key}
-                                fullWidth
-                                tel={key === "telephoneNumber"}
-                                inputProps={{
-                                    "aria-label": label,
-                                }}
-                                label={label}
-                                value={state.contact ? state.contact[key] : ""}
-                                onChange={(e) => {
-                                    const { value } = e.target;
-                                    setState((prevState) => ({
-                                        ...prevState,
-                                        contact: {
-                                            ...prevState.contact,
-                                            [key]: value,
-                                        },
-                                    }));
-                                }}
-                            />
-                        )
+                        <TextFieldUncontrolled
+                            key={key}
+                            fullWidth
+                            tel={key === "telephoneNumber"}
+                            inputProps={{
+                                "aria-label": label,
+                            }}
+                            label={label}
+                            value={state.contact ? state.contact[key] : ""}
+                            onChange={(e) => {
+                                const { value } = e.target;
+                                setState((prevState) => ({
+                                    ...prevState,
+                                    contact: {
+                                        ...prevState.contact,
+                                        [key]: value,
+                                    },
+                                }));
+                            }}
+                        />
                     );
                 })}
-                <CollapsibleToggle
-                    value={isCollapsed}
-                    onClick={() => setIsCollapsed((prevState) => !prevState)}
-                />
             </Stack>
         </ConfirmationDialog>
     );

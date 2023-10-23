@@ -30,6 +30,16 @@ function createMatchMedia(width) {
     });
 }
 
+jest.mock("aws-amplify", () => {
+    const Amplify = {
+        ...jest.requireActual("aws-amplify"),
+        Geo: {
+            searchByText: () => Promise.resolve([]),
+        },
+    };
+    return Amplify;
+});
+
 describe("TaskDetailsPanel", () => {
     const originalMatchMedia = window.matchMedia;
     beforeEach(() => {
@@ -55,16 +65,7 @@ describe("TaskDetailsPanel", () => {
     afterEach(async () => {
         window.matchMedia = originalMatchMedia;
         jest.restoreAllMocks();
-        const tasks = await DataStore.query(models.Task);
-        const locations = await DataStore.query(models.Location);
-        const responsibilities = await DataStore.query(
-            models.RiderResponsibility
-        );
-        await Promise.all(
-            [...tasks, ...locations, ...responsibilities].map((item) =>
-                DataStore.delete(item)
-            )
-        );
+        await DataStore.clear();
     });
 
     it("renders", async () => {
@@ -456,7 +457,7 @@ describe("TaskDetailsPanel", () => {
         });
         const textBox = screen.getByRole("textbox");
         userEvent.type(textBox, "Test");
-        userEvent.click(screen.getByText(mockEstablishment.name));
+        userEvent.click(screen.getByText("Establishment"));
         userEvent.click(screen.getByTestId("confirmation-ok-button"));
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledWith({
@@ -507,7 +508,7 @@ describe("TaskDetailsPanel", () => {
             );
         });
         userEvent.type(screen.getByRole("textbox"), "Test");
-        userEvent.click(screen.getByText(mockEstablishment.name));
+        userEvent.click(screen.getByText("Establishment"));
         userEvent.click(screen.getByTestId("confirmation-ok-button"));
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledWith({
@@ -554,8 +555,8 @@ describe("TaskDetailsPanel", () => {
         });
         const okButton = screen.getByTestId("confirmation-ok-button");
         expect(okButton).toBeDisabled();
-        userEvent.type(screen.getByRole("textbox"), "Test");
-        userEvent.click(screen.getByText(mockEstablishment.name));
+        userEvent.type(screen.getByRole("textbox"), mockEstablishment.name);
+        userEvent.click(screen.getByText("Establishment"));
         expect(okButton).toBeEnabled();
         userEvent.click(
             screen.getByRole("button", { name: "establishment not listed?" })

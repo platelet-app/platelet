@@ -225,6 +225,17 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                 currentlySelectedPreset.current = location;
             } else {
                 if (result && location) {
+                    // online result
+                    if (!location.id) {
+                        location = await DataStore.save(
+                            new models.Location({
+                                ...location,
+                                listed: 0,
+                                tenantId,
+                            })
+                        );
+                    }
+
                     await DataStore.save(
                         taskModel.copyOf(result, (updated) => {
                             // @ts-ignore
