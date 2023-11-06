@@ -27,6 +27,7 @@ exports.request = async (queryDetails, appsyncUrl) => {
 
     const signed = await signer.sign(requestToBeSigned);
     const request = new Request(endpoint, signed);
+    console.log("Signed request: ", request);
     return await fetch(request);
 };
 

@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`appSyncRequest make a request 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      Request {
+        "init": "init",
+        "input": "https://xxxxxx.appsync-api.ap-northeast-1.amazonaws.com/graphql",
+      },
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;

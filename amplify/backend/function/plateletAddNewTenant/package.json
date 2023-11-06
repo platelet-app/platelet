@@ -14,5 +14,8 @@
     "scripts": {
         "test": "jest test --watchAll --testTimeout=10000",
         "test:debug": "jest --watchAll --inspect test --runInBand --no-cache --testTimeout=100000000"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0"
     }
 }

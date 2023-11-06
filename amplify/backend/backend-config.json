@@ -83,6 +83,20 @@
       "dependsOn": [
         {
           "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletSendEmail"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
+        },
+        {
+          "attributes": [
             "UserPoolId"
           ],
           "category": "auth",
