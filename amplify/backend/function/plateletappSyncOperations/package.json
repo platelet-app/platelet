@@ -1,0 +1,15 @@
+{
+    "version": "1.0.0",
+    "description": "",
+    "devDependencies": {
+        "jest": "^29.7.0"
+    },
+    "scripts": {
+        "test": "jest test --watchAll --testTimeout=10000"
+    },
+    "jest": {
+        "modulePaths": [
+            "<rootDir>/lib/nodejs/node_modules"
+        ]
+    }
+}

@@ -24,7 +24,7 @@ exports[`plateletAdminAddNewUser add a new user 1`] = `
           "input": {
             "cognitoId": "testSubId",
             "contact": {
-              "emailAddress": "test@test.com",
+              "emailAddress": "test@taaaest.com",
             },
             "disabled": 0,
             "displayName": "test user",
@@ -32,6 +32,7 @@ exports[`plateletAdminAddNewUser add a new user 1`] = `
             "roles": [
               "USER",
               "COORDINATOR",
+              "ADMIN",
             ],
             "tenantId": "testTenantId",
             "username": "aa154086-8a21-4ff2-920e-c1c28052c8b8",

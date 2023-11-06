@@ -5,7 +5,16 @@ jest.mock(
     "/opt/appSyncRequest",
     () => {
         return {
-            request: jest.fn(),
+            request: jest.fn().mockResolvedValue({
+                json: () => ({
+                    data: {
+                        getUser: {
+                            id: "userId",
+                            _version: 1,
+                        },
+                    },
+                }),
+            }),
             errorCheck: jest.fn(),
         };
     },

@@ -12,24 +12,16 @@ Amplify Params - DO NOT EDIT */
 
 require("isomorphic-fetch");
 const aws = require("aws-sdk");
-const AWS = require("aws-sdk/global");
-const AUTH_TYPE = require("aws-appsync").AUTH_TYPE;
-const AWSAppSyncClient = require("aws-appsync").default;
 const uuid = require("uuid");
-const createUser = require("./createUser").createUser;
-const updateUser = require("./updateUser").updateUser;
-const createTenant = require("./createTenant").createTenant;
-const listTenants = require("./listTenants").listTenants;
 
-const appSyncConfig = {
-    url: process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT,
-    region: process.env.REGION,
-    auth: {
-        type: AUTH_TYPE.AWS_IAM,
-        credentials: AWS.config.credentials,
-    },
-    disableOffline: true,
-};
+const {
+    createUser,
+    updateUser,
+    createTenant,
+} = require("/opt/graphql/mutations");
+const { request, errorCheck } = require("/opt/appSyncRequest");
+
+const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
 
 async function sendWelcomeEmail(emailAddress, recipientName, password) {
     const ses = new aws.SES({
@@ -88,7 +80,7 @@ async function sendWelcomeEmail(emailAddress, recipientName, password) {
     return await ses.sendEmail(params).promise();
 }
 
-async function generateReferenceIdentifier(tenantName) {
+function generateReferenceIdentifier(tenantName) {
     if (!tenantName) {
         throw new Error(`tenantName is required`);
     }
@@ -99,54 +91,60 @@ async function generateReferenceIdentifier(tenantName) {
             `tenantName must be at least 4 characters without whitespace`
         );
     }
-    let attempt = 0;
-    const appSyncClient = new AWSAppSyncClient(appSyncConfig);
-    const listTenantsResult = await appSyncClient.query({
-        query: listTenants,
-    });
-    const tenantReferenceIdentifiers =
-        listTenantsResult.data.listTenants.items.map(
-            (tenant) => tenant.referenceIdentifier
-        );
-    console.log("Tenant reference identifiers:", tenantReferenceIdentifiers);
-    // get first 4 characters of tenant name
-    let first4Characters = tenantName.substring(0, 4);
-    while (
-        attempt < tenantName.length - 3 &&
-        tenantReferenceIdentifiers
-            .map((n) => n.toLowerCase())
-            .includes(first4Characters.toLowerCase())
-    ) {
-        // replace the last character of the first 4 characters with the next letter in the tenant name
-        first4Characters =
-            first4Characters.substring(0, 3) +
-            String.fromCharCode(tenantName.charCodeAt(3) + attempt);
-        attempt++;
-    }
-    if (
-        tenantReferenceIdentifiers
-            .map((n) => n.toLowerCase())
-            .includes(first4Characters.toLowerCase())
-    ) {
-        // generate 4 random letters
-        first4Characters = first4Characters + uuid.v4().substring(0, 4);
-    }
-    if (
-        tenantReferenceIdentifiers
-            .map((n) => n.toLowerCase())
-            .includes(first4Characters.toLowerCase())
-    ) {
-        throw new Error(`Could not generate a unique reference identifier`);
-    }
+    return tenantName.substring(0, 4);
+    //let attempt = 0;
+    //const listTenantsResult = await request(
+    //    {
+    //        query: listTenants,
+    //    },
+    //    GRAPHQL_ENDPOINT
+    //);
+    //const tenantReferenceIdentifiers =
+    //    listTenantsResult.data.listTenants.items.map(
+    //        (tenant) => tenant.referenceIdentifier
+    //    );
+    //console.log("Tenant reference identifiers:", tenantReferenceIdentifiers);
+    //// get first 4 characters of tenant name
+    //let first4Characters = tenantName.substring(0, 4);
+    //while (
+    //    attempt < tenantName.length - 3 &&
+    //    tenantReferenceIdentifiers
+    //        .map((n) => n.toLowerCase())
+    //        .includes(first4Characters.toLowerCase())
+    //) {
+    //    // replace the last character of the first 4 characters with the next letter in the tenant name
+    //    first4Characters =
+    //        first4Characters.substring(0, 3) +
+    //        String.fromCharCode(tenantName.charCodeAt(3) + attempt);
+    //    attempt++;
+    //}
+    //if (
+    //    tenantReferenceIdentifiers
+    //        .map((n) => n.toLowerCase())
+    //        .includes(first4Characters.toLowerCase())
+    //) {
+    //    // generate 4 random letters
+    //    first4Characters = first4Characters + uuid.v4().substring(0, 4);
+    //}
+    //if (
+    //    tenantReferenceIdentifiers
+    //        .map((n) => n.toLowerCase())
+    //        .includes(first4Characters.toLowerCase())
+    //) {
+    //    throw new Error(`Could not generate a unique reference identifier`);
+    //}
 }
 
 async function addTenant(tenant) {
     const referenceIdentifier = generateReferenceIdentifier(tenant.name);
-    const appSyncClient = new AWSAppSyncClient(appSyncConfig);
-    const createdTenant = await appSyncClient.mutate({
-        mutation: createTenant,
-        variables: { input: { ...tenant, referenceIdentifier } },
-    });
+    const createdTenant = await request(
+        {
+            mutation: createTenant,
+            variables: { input: { ...tenant, referenceIdentifier } },
+        },
+        GRAPHQL_ENDPOINT
+    );
+    errorCheck(createdTenant);
     return createdTenant.data.createTenant;
 }
 
@@ -180,6 +178,8 @@ async function addUserToCognito(user) {
         })
         .promise();
 
+    console.log("Cognito response:", cognitoResp.User.Attributes);
+
     if (!cognitoResp.User) {
         throw new Error(
             `Failure to create new user with email ${user.emailAddress}`
@@ -210,7 +210,7 @@ async function setUserRoles(username) {
         apiVersion: "2016-04-19",
     });
     const userPoolId = process.env.AUTH_PLATELET61A0AC07_USERPOOLID;
-    for (const role of ["USER", "ADMIN"]) {
+    for (const role of ["USER", "ADMIN", "COORDINATOR"]) {
         await cognitoClient
             .adminAddUserToGroup({
                 GroupName: role,
@@ -222,9 +222,9 @@ async function setUserRoles(username) {
 }
 
 async function createNewAdminUser(newUser) {
+    console.log("adsffda", newUser);
     const tenantId = uuid.v4();
 
-    const appSyncClient = new AWSAppSyncClient(appSyncConfig);
     let { name, displayName, emailAddress, username } = newUser;
     const createUserInput = {
         tenantId: tenantId,
@@ -234,14 +234,18 @@ async function createNewAdminUser(newUser) {
         username,
         name,
         displayName,
-        roles: ["USER", "ADMIN"],
+        roles: ["USER", "ADMIN", "COORDINATOR"],
         contact: { emailAddress },
     };
 
-    const createdUser = await appSyncClient.mutate({
-        mutation: createUser,
-        variables: { input: createUserInput },
-    });
+    const createdUser = await request(
+        {
+            mutation: createUser,
+            variables: { input: createUserInput },
+        },
+        GRAPHQL_ENDPOINT
+    );
+    errorCheck(createdUser);
 
     return createdUser.data.createUser;
 }
@@ -250,14 +254,13 @@ async function updateUserTenantAndCognito(user, tenantId, cognitoId) {
     if (!user || !user._version || !user.id || !tenantId || !cognitoId) {
         throw new Error(`user, _version, tenantId, and cognitoId are required`);
     }
-    const appSyncClient = new AWSAppSyncClient(appSyncConfig);
     const userPoolId = process.env.AUTH_PLATELET61A0AC07_USERPOOLID;
     const CognitoIdentityServiceProvider = aws.CognitoIdentityServiceProvider;
     const cognitoClient = new CognitoIdentityServiceProvider({
         apiVersion: "2016-04-19",
     });
 
-    const cognitoResp = await cognitoClient
+    await cognitoClient
         .adminUpdateUserAttributes({
             UserAttributes: [
                 {
@@ -285,10 +288,15 @@ async function updateUserTenantAndCognito(user, tenantId, cognitoId) {
         _version: user._version,
     };
 
-    return appSyncClient.mutate({
-        mutation: updateUser,
-        variables: { input: updateUserInput },
-    });
+    const userResult = await request(
+        {
+            mutation: updateUser,
+            variables: { input: updateUserInput },
+        },
+        GRAPHQL_ENDPOINT
+    );
+    errorCheck(userResult);
+    return userResult.data.updateUser;
 }
 
 exports.handler = async (event) => {
@@ -304,7 +312,7 @@ exports.handler = async (event) => {
         name: event.arguments.name,
         displayName: event.arguments.name,
         emailAddress: event.arguments.emailAddress,
-        roles: ["USER", "ADMIN"],
+        roles: ["USER", "ADMIN", "COORDINATOR"],
         username: uuid.v4(),
     };
     const tenant = {

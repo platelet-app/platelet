@@ -2,21 +2,21 @@
 
 exports[`plateletAdminResetUserPassword reset the user's password 1`] = `
 [MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
+  "calls": [
+    [
+      {
         "query": "getUser",
-        "variables": Object {
+        "variables": {
           "id": "user-id",
         },
       },
       "https://api.example.com/graphql",
     ],
   ],
-  "results": Array [
-    Object {
+  "results": [
+    {
       "type": "return",
-      "value": Object {
+      "value": {
         "json": [Function],
       },
     },
@@ -26,15 +26,15 @@ exports[`plateletAdminResetUserPassword reset the user's password 1`] = `
 
 exports[`plateletAdminResetUserPassword reset the user's password 2`] = `
 [MockFunction] {
-  "calls": Array [
-    Array [
+  "calls": [
+    [
       "some@example.com",
       "Some name",
       "i",
     ],
   ],
-  "results": Array [
-    Object {
+  "results": [
+    {
       "type": "return",
       "value": undefined,
     },
