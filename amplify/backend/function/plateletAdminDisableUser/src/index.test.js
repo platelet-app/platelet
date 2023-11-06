@@ -48,7 +48,7 @@ const cognitoIdentityServiceProvider = Object.getPrototypeOf(
     new aws.CognitoIdentityServiceProvider()
 );
 describe("plateletAdminDisableUser", () => {
-    afterEach(() => jest.restoreAllMocks());
+    afterEach(() => jest.resetAllMocks());
     test("disable a user", async () => {
         appsyncModule.request
             .mockResolvedValueOnce({
