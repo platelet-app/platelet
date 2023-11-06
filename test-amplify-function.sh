@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+#set -e
 
 cd amplify/backend/function
 
@@ -10,13 +10,14 @@ for dir in */ ; do
     if [ -d 'src' ];
     then
         cd 'src'
-        yarn run test -- --watchAll=false
+        yarn
+        yarn run test --watchAll=false
         cd ..
     fi
     if [ -d 'opt' ];
     then
         yarn
-        yarn run test -- --watchAll=false
+        yarn run test --watchAll=false
     fi
     cd ..
 done

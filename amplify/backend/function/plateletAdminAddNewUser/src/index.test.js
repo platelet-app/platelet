@@ -165,7 +165,10 @@ describe("plateletAdminAddNewUser", () => {
         jest.resetModules();
     });
 
-    afterEach(() => jest.resetAllMocks());
+    afterEach(() => {
+        jest.resetAllMocks();
+        jest.restoreAllMocks();
+    });
 
     it("should return a function", () => {
         expect(typeof handler).toBe("function");
