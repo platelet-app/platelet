@@ -55,6 +55,7 @@ function FavouriteLocationsSelect(props) {
                 county,
                 country,
                 postcode,
+                listed: 0,
             };
         }
         props.onSelect(result);
