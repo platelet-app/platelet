@@ -122,10 +122,10 @@
         "Runtime": "nodejs14.x",
         "Layers": [
           {
-            "Ref": "functionplateletSendEmailArn"
+            "Ref": "functionplateletappSyncOperationsArn"
           },
           {
-            "Ref": "functionplateletappSyncOperationsArn"
+            "Ref": "functionplateletSendEmailArn"
           }
         ],
         "Timeout": 25

@@ -155,9 +155,9 @@ describe("plateletAddNewTenant", () => {
 
     test("add a new tenant", async () => {
         jest.spyOn(appsyncModule, "request")
-            .mockResolvedValueOnce(mockNewUserResult)
-            .mockResolvedValueOnce(mockTenantResult)
-            .mockResolvedValueOnce(mockUpdateUserResult);
+            .mockResolvedValueOnce({ json: () => mockNewUserResult })
+            .mockResolvedValueOnce({ json: () => mockTenantResult })
+            .mockResolvedValueOnce({ json: () => mockUpdateUserResult });
         const cognitoSpy = jest.spyOn(
             awssdk.CognitoIdentityServiceProvider.prototype,
             "adminCreateUser"
@@ -223,14 +223,14 @@ describe("plateletAddNewTenant", () => {
 
         expect(requestSpy).toHaveBeenCalledWith(
             {
-                mutation: "createUserMutation",
+                query: "createUserMutation",
                 variables: { input: createUserInput },
             },
             "testEndpoint"
         );
         expect(requestSpy).toHaveBeenCalledWith(
             {
-                mutation: "createTenantMutation",
+                query: "createTenantMutation",
                 variables: { input: createTenantInput },
             },
             "testEndpoint"
@@ -238,7 +238,7 @@ describe("plateletAddNewTenant", () => {
         expect(requestSpy).toHaveBeenNthCalledWith(
             3,
             {
-                mutation: "updateUserMutation",
+                query: "updateUserMutation",
                 variables: { input: updateUserInput },
             },
             "testEndpoint"
