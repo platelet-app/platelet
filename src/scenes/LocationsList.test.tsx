@@ -16,12 +16,14 @@ describe("LocationsList", () => {
             new models.Location({
                 name: "location1",
                 tenantId,
+                listed: 1,
             })
         );
         await DataStore.save(
             new models.Location({
                 name: "location2",
                 tenantId,
+                listed: 1,
             })
         );
         await DataStore.save(
@@ -29,12 +31,21 @@ describe("LocationsList", () => {
                 name: "disabled location",
                 tenantId,
                 disabled: 1,
+                listed: 1,
+            })
+        );
+        await DataStore.save(
+            new models.Location({
+                name: "unlisted location",
+                tenantId,
+                listed: 0,
             })
         );
         render(<LocationsList />);
         expect(await screen.findByText("location1")).toBeInTheDocument();
         expect(screen.getByText("location2")).toBeInTheDocument();
         expect(screen.queryByText("disabled location")).toBeNull();
+        expect(screen.queryByText("unlisted location")).toBeNull();
         userEvent.click(
             screen.getByRole("checkbox", { name: "Show disabled" })
         );
@@ -45,17 +56,20 @@ describe("LocationsList", () => {
             new models.Location({
                 name: "some location",
                 tenantId,
+                listed: 1,
             })
         );
         await DataStore.save(
             new models.Location({
                 name: "another place",
                 tenantId,
+                listed: 1,
             })
         );
         await DataStore.save(
             new models.Location({
                 name: "Woop Woop",
+                listed: 1,
                 tenantId,
             })
         );
@@ -73,6 +87,7 @@ describe("LocationsList", () => {
             new models.Location({
                 name: "Woop Woop",
                 tenantId,
+                listed: 1,
             })
         );
         expect(await screen.findByText("Woop Woop")).toBeInTheDocument();

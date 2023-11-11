@@ -38,11 +38,15 @@ export default function LocationsList() {
     const [hideDisabled, setHideDisabled] = React.useState(true);
     const [searchText, setSearchText] = React.useState("");
 
+    // filter should be made with useCallback to prevent infinite render
+    const predicate = React.useCallback((l) => l.listed("eq", 1), []);
+
     const { state } = useListControls<models.Location>(
         ["name"],
         searchText,
         hideDisabled,
-        models.Location
+        models.Location,
+        predicate
     );
 
     const isAdmin = whoami.roles.includes("ADMIN");

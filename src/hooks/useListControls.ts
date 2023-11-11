@@ -4,6 +4,7 @@ import { matchSorter } from "match-sorter";
 import {
     PersistentModel,
     PersistentModelConstructor,
+    ProducerModelPredicate,
 } from "@aws-amplify/datastore";
 import { useDispatch } from "react-redux";
 import { displayErrorNotification } from "../redux/notifications/NotificationsActions";
@@ -12,7 +13,9 @@ const useListControls = <T extends PersistentModel>(
     searchKeys: string[] = [],
     searchInput: string = "",
     hideDisabled = true,
-    model: PersistentModelConstructor<T>
+    model: PersistentModelConstructor<T>,
+    // filter should be made with useCallback to prevent infinite render
+    filter?: ProducerModelPredicate<T>
 ) => {
     const [state, setState] = React.useState<T[]>([]);
     const [filteredState, setFilteredState] = React.useState<T[]>([]);
@@ -21,7 +24,7 @@ const useListControls = <T extends PersistentModel>(
     const getData = React.useCallback(() => {
         try {
             observer.current.unsubscribe();
-            observer.current = DataStore.observeQuery(model).subscribe(
+            observer.current = DataStore.observeQuery(model, filter).subscribe(
                 ({ items }) => {
                     setState(items);
                 }
@@ -30,7 +33,7 @@ const useListControls = <T extends PersistentModel>(
             console.log("Request failed", error);
             dispatch(displayErrorNotification("Sorry, something went wrong"));
         }
-    }, [dispatch, model]);
+    }, [dispatch, model, filter]);
 
     React.useEffect(() => {
         getData();
