@@ -115,6 +115,7 @@ function FavouriteLocationsSelect(props) {
             renderInput={(params) => (
                 <TextField
                     {...params}
+                    aria-label={props.label}
                     sx={props.sx}
                     label={props.label}
                     variant="outlined"

@@ -47,11 +47,16 @@ const contactFields = {
     telephoneNumber: "Telephone",
 };
 
+const popUpModes = {
+    editWithFavorites: "editWithFavorites",
+    editWithoutFavorites: "editWithoutFavorites",
+};
+
 function PopOutLocationSelector(props) {
     const { classes } = useStyles();
     const [state, setState] = useState(null);
     const oldState = useRef(null);
-    const [editMode, setEditMode] = useState(false);
+    const [editMode, setEditMode] = useState(null);
 
     function onSelectPreset(value) {
         if (value) {
@@ -77,26 +82,26 @@ function PopOutLocationSelector(props) {
     }, [props.override]);
 
     function handleConfirmation(value) {
+        setState(value);
+        props.onChange(value);
+        setEditMode(null);
+    }
+    function handleInlineConfirmation(value) {
         if (_.isEqual(state, value)) {
-            setEditMode(false);
+            setEditMode(null);
             return;
         }
-        if (!state) {
-            setState(value);
-            props.onChange(value);
-        } else {
-            let name = state.name;
-            if (state.listed === 1) {
-                name = `${name} (edited)`;
-            }
-            const result = _.omit(
-                { ...value, name, listed: 0 },
-                ...protectedFields
-            );
-            setState(result);
-            props.onChange(result);
+        let name = state.name;
+        if (state.listed === 1) {
+            name = `${name} (edited)`;
         }
-        setEditMode(false);
+        const result = _.omit(
+            { ...value, name, listed: 0 },
+            ...protectedFields
+        );
+        setState(result);
+        props.onChange(result);
+        setEditMode(null);
     }
 
     const presetName = state && state.name ? state.name : "";
@@ -134,7 +139,7 @@ function PopOutLocationSelector(props) {
                     />
                     <Button
                         aria-label={`${props.label} not listed?`}
-                        onClick={() => setEditMode(true)}
+                        onClick={() => setEditMode("editWithoutFavorites")}
                     >
                         Not listed?
                     </Button>
@@ -153,9 +158,7 @@ function PopOutLocationSelector(props) {
                             aria-label={"Edit"}
                             size={"small"}
                             disabled={props.disabled}
-                            onClick={() =>
-                                setEditMode((prevState) => !prevState)
-                            }
+                            onClick={() => setEditMode("editWithFavorites")}
                         >
                             <EditIcon
                                 color={editMode ? "secondary" : "inherit"}
@@ -183,7 +186,7 @@ function PopOutLocationSelector(props) {
                                             <ClickableTextField
                                                 value={state && state[key]}
                                                 onChange={(value) => {
-                                                    handleConfirmation({
+                                                    handleInlineConfirmation({
                                                         ...state,
                                                         [key]: value,
                                                     });
@@ -210,13 +213,15 @@ function PopOutLocationSelector(props) {
                                                         state.contact[key]
                                                     }
                                                     onChange={(value) => {
-                                                        handleConfirmation({
-                                                            ...state,
-                                                            contact: {
-                                                                ...state.contact,
-                                                                [key]: value,
-                                                            },
-                                                        });
+                                                        handleInlineConfirmation(
+                                                            {
+                                                                ...state,
+                                                                contact: {
+                                                                    ...state.contact,
+                                                                    [key]: value,
+                                                                },
+                                                            }
+                                                        );
                                                     }}
                                                 />
                                             </LabelItemPair>
@@ -250,6 +255,7 @@ function PopOutLocationSelector(props) {
             </Stack>
             <PopOutLocationSelectorForm
                 open={editMode}
+                showFavorites={editMode === popUpModes.editWithFavorites}
                 key={editMode}
                 onConfirmation={handleConfirmation}
                 label={`Enter ${props.label}`}
