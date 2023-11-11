@@ -13,6 +13,7 @@ import ClearButtonWithConfirmation from "../../../components/ClearButtonWithConf
 import PopOutLocationSelectorForm from "./PopoutLocationSelectorForm";
 import { protectedFields } from "../../../apiConsts";
 import ClickableTextField from "../../../components/ClickableTextField";
+import CollapsibleToggle from "../../../components/CollapsibleToggle";
 
 const useStyles = makeStyles()((theme) => ({
     label: {
@@ -57,6 +58,7 @@ function PopOutLocationSelector(props) {
     const [state, setState] = useState(null);
     const oldState = useRef(null);
     const [editMode, setEditMode] = useState(null);
+    const [showCollapsed, setShowCollapsed] = useState(false);
 
     function onSelectPreset(value) {
         if (value) {
@@ -172,6 +174,9 @@ function PopOutLocationSelector(props) {
         <></>
     );
 
+    const collapsedShowFields = ["ward", "postcode", "line1"];
+    const collapsedShowContactFields = ["telephoneNumber", "name"];
+
     return (
         <Box className={classes.root}>
             <Stack spacing={1} className={props.className} direction={"column"}>
@@ -181,6 +186,12 @@ function PopOutLocationSelector(props) {
                         <Stack direction={"column"}>
                             {Object.entries(addressFields).map(
                                 ([key, label]) => {
+                                    if (
+                                        !showCollapsed &&
+                                        !collapsedShowFields.includes(key)
+                                    ) {
+                                        return null;
+                                    }
                                     return (
                                         <LabelItemPair key={key} label={label}>
                                             <ClickableTextField
@@ -201,6 +212,14 @@ function PopOutLocationSelector(props) {
                             <Box>
                                 {Object.entries(contactFields).map(
                                     ([key, label]) => {
+                                        if (
+                                            !showCollapsed &&
+                                            !collapsedShowContactFields.includes(
+                                                key
+                                            )
+                                        ) {
+                                            return null;
+                                        }
                                         return (
                                             <LabelItemPair
                                                 key={key}
@@ -234,8 +253,16 @@ function PopOutLocationSelector(props) {
                         <Stack
                             direction="row"
                             alignItems="center"
-                            justifyContent="flex-end"
+                            justifyContent="space-between"
                         >
+                            {state && (
+                                <CollapsibleToggle
+                                    value={!showCollapsed}
+                                    onClick={() => {
+                                        setShowCollapsed(!showCollapsed);
+                                    }}
+                                />
+                            )}
                             {state &&
                                 !props.disableClear &&
                                 !props.override && (
