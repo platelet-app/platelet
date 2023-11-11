@@ -231,6 +231,10 @@ function PopOutLocationSelector(props) {
                                                         state.contact &&
                                                         state.contact[key]
                                                     }
+                                                    tel={
+                                                        key ===
+                                                        "telephoneNumber"
+                                                    }
                                                     onChange={(value) => {
                                                         handleInlineConfirmation(
                                                             {
