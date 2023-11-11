@@ -6,6 +6,7 @@ import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { useTheme } from "@mui/styles";
 import _ from "lodash";
 import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
+import { protectedFields } from "../../../apiConsts";
 
 const initialState = {
     name: "",
@@ -68,7 +69,7 @@ function PopOutLocationSelectorForm(props) {
 
     const handleChange = (e, key) => {
         const { value } = e.target;
-        const { id, ...rest } = state;
+        const rest = _.omit(state, protectedFields);
         setState({
             ...rest,
             name: "",
@@ -79,7 +80,7 @@ function PopOutLocationSelectorForm(props) {
 
     const handleContactChange = (e, key) => {
         const { value } = e.target;
-        const { id, ...rest } = state;
+        const rest = _.omit(state, protectedFields);
         setState({
             ...rest,
             contact: {
