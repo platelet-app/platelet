@@ -5,6 +5,7 @@ import saveAmplifyConfig from "../../utilities/saveAmplifyConfig";
 import TenantList from "./components/TenantList";
 import { Box, CircularProgress } from "@mui/material";
 import { DataStore } from "aws-amplify";
+import Splash from "./Splash";
 
 type TenantListProviderProps = {
     children: React.ReactNode;
@@ -78,19 +79,7 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
     if (offline) {
         return <>{children}</>;
     } else if (isProcessing) {
-        return (
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    width: "100%",
-                    justifyContent: "center",
-                    paddingTop: 5,
-                }}
-            >
-                <CircularProgress size={150} />
-            </Box>
-        );
+        return <Splash />;
     } else if (showList) {
         return <TenantList onComplete={handleListSetup} />;
     } else {
