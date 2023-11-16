@@ -112,23 +112,39 @@ const App = (props: any) => {
         });
     }
 
-    return (
-        <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={theme}>
-                <SnackbarProvider maxSnack={1}>
-                    <TenantListProvider>
-                        <Login>
-                            <InitComponent>
-                                <CssBaseline />
-                                <MenuMainContainer />
-                                <SnackNotificationBar {...props} />
-                            </InitComponent>
-                        </Login>
-                    </TenantListProvider>
-                </SnackbarProvider>
-            </ThemeProvider>
-        </StyledEngineProvider>
-    );
+    if (process.env.REACT_APP_DEMO_MODE === "true") {
+        return (
+            <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={theme}>
+                    <SnackbarProvider maxSnack={1}>
+                        <InitComponent>
+                            <CssBaseline />
+                            <MenuMainContainer />
+                            <SnackNotificationBar {...props} />
+                        </InitComponent>
+                    </SnackbarProvider>
+                </ThemeProvider>
+            </StyledEngineProvider>
+        );
+    } else {
+        return (
+            <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={theme}>
+                    <SnackbarProvider maxSnack={1}>
+                        <TenantListProvider>
+                            <Login>
+                                <InitComponent>
+                                    <CssBaseline />
+                                    <MenuMainContainer />
+                                    <SnackNotificationBar {...props} />
+                                </InitComponent>
+                            </Login>
+                        </TenantListProvider>
+                    </SnackbarProvider>
+                </ThemeProvider>
+            </StyledEngineProvider>
+        );
+    }
 };
 
 export default App;

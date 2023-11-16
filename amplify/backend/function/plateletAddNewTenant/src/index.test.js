@@ -1,8 +1,39 @@
 const handler = require("./index").handler;
-const appSyncClient = require("aws-appsync");
 const awssdk = require("aws-sdk");
-const createUser = require("./createUser").createUser;
-const deleteUser = require("./deleteUser").deleteUser;
+
+jest.mock(
+    "/opt/appSyncRequest",
+    () => {
+        return {
+            request: jest.fn(),
+            errorCheck: jest.fn(),
+        };
+    },
+    { virtual: true }
+);
+jest.mock(
+    "/opt/graphql/mutations",
+    () => {
+        return {
+            createUser: "createUserMutation",
+            createTenant: "createTenantMutation",
+            updateUser: "updateUserMutation",
+        };
+    },
+    { virtual: true }
+);
+jest.mock(
+    "/opt/graphql/queries",
+    () => {
+        return {
+            listUsers: "listUsersQuery",
+            listTenants: "listTenantsQuery",
+        };
+    },
+    { virtual: true }
+);
+
+const appsyncModule = require("/opt/appSyncRequest");
 
 const mockCognitoResponse = {
     User: {
@@ -15,6 +46,22 @@ const mockCognitoResponse = {
     },
 };
 
+const mockUpdateUserResult = {
+    data: {
+        updateUser: {
+            id: "testUserId",
+            displayName: "New User",
+            name: "New User",
+            tenantId: "testTenantId",
+            cognitoId: "testSubId",
+            username: "testUsername",
+            contact: {
+                emailAddress: "test@test.com",
+            },
+            _version: 1,
+        },
+    },
+};
 const mockNewUserResult = {
     data: {
         createUser: {
@@ -22,10 +69,21 @@ const mockNewUserResult = {
             displayName: "New User",
             name: "New User",
             tenantId: "testTenantId",
-            cognitoId: "testCognitoId",
+            cognitoId: "someCognitoId",
+            username: "testUsername",
             contact: {
-                emailAddress: "testEmailAddress@test.com",
+                emailAddress: "test@test.com",
             },
+            _version: 1,
+        },
+    },
+};
+
+const mockTenantResult = {
+    data: {
+        createTenant: {
+            id: "testTenantId",
+            name: "test tenant",
         },
     },
 };
@@ -64,7 +122,7 @@ jest.mock("aws-sdk", () => {
             adminAddUserToGroup() {
                 return this;
             }
-            adminDeleteUser() {
+            adminUpdateUserAttributes() {
                 return this;
             }
             promise() {
@@ -77,20 +135,6 @@ jest.mock("aws-sdk", () => {
             }
             promise() {
                 return Promise.resolve();
-            }
-        },
-    };
-});
-
-jest.mock("aws-appsync", () => {
-    return {
-        ...jest.requireActual("aws-appsync"),
-        default: class {
-            mutate() {
-                return Promise.resolve(mockNewUserResult);
-            }
-            query() {
-                return Promise.resolve(mockUsers);
             }
         },
     };
@@ -110,50 +154,43 @@ describe("plateletAddNewTenant", () => {
     });
 
     test("add a new tenant", async () => {
-        process.env.NODE_ENV = "dev";
-        process.env.AUTH_PLATELET61A0AC07_USERPOOLID = "testPoolId";
-        process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT = "testEndpoint";
-        process.env.PLATELET_WELCOME_EMAIL = "welcome@test.com";
-        process.env.PLATELET_DOMAIN_NAME = "test.com";
+        jest.spyOn(appsyncModule, "request")
+            .mockResolvedValueOnce({ json: () => mockNewUserResult })
+            .mockResolvedValueOnce({ json: () => mockTenantResult })
+            .mockResolvedValueOnce({ json: () => mockUpdateUserResult });
         const cognitoSpy = jest.spyOn(
             awssdk.CognitoIdentityServiceProvider.prototype,
             "adminCreateUser"
+        );
+        const cognitoAdminUpdateUserAttributesSpy = jest.spyOn(
+            awssdk.CognitoIdentityServiceProvider.prototype,
+            "adminUpdateUserAttributes"
         );
         const cognitoGroupsSpy = jest.spyOn(
             awssdk.CognitoIdentityServiceProvider.prototype,
             "adminAddUserToGroup"
         );
-        const appSyncMutateSpy = jest.spyOn(
-            appSyncClient.default.prototype,
-            "mutate"
-        );
-        const appSyncQuerySpy = jest.spyOn(
-            appSyncClient.default.prototype,
-            "query"
-        );
+        const requestSpy = jest.spyOn(appsyncModule, "request");
         const SESSpy = jest.spyOn(awssdk.SES.prototype, "sendEmail");
         const mockEvent = {
             arguments: {
-                name: "test user",
-                email: "test@test.com",
+                name: "New User",
+                emailAddress: "test@test.com",
                 tenantName: "test tenant",
             },
         };
-        await handler(mockEvent);
+        const result = await handler(mockEvent);
         expect(cognitoSpy).toHaveBeenCalledWith({
+            DesiredDeliveryMediums: ["EMAIL"],
             ForceAliasCreation: false,
             UserAttributes: [
                 {
                     Name: "email",
-                    Value: mockEvent.arguments.email,
+                    Value: mockEvent.arguments.emailAddress,
                 },
                 {
                     Name: "email_verified",
                     Value: "true",
-                },
-                {
-                    Name: "custom:tenantId",
-                    Value: mockEvent.arguments.tenantId,
                 },
             ],
             UserPoolId: "testPoolId",
@@ -162,31 +199,91 @@ describe("plateletAddNewTenant", () => {
             Username: expect.any(String),
         });
         const createUserInput = {
-            cognitoId: "testSubId",
+            cognitoId: expect.any(String),
             name: mockEvent.arguments.name,
             displayName: mockEvent.arguments.name,
-            roles: ["USER", "COORDINATOR"],
-            contact: { emailAddress: mockEvent.arguments.email },
+            roles: ["USER", "ADMIN", "COORDINATOR"],
+            isPrimaryAdmin: 1,
+            disabled: 0,
+            contact: { emailAddress: mockEvent.arguments.emailAddress },
             username: expect.any(String),
+            tenantId: expect.any(String),
         };
-        expect(appSyncMutateSpy).toHaveBeenCalledWith({
-            mutation: createUser,
-            variables: { input: createUserInput },
-        });
-        expect(appSyncQuerySpy).toHaveBeenCalledWith({
-            query: listUsers,
-            variables: { tenantId: mockEvent.arguments.tenantId },
-        });
-        expect(cognitoGroupsSpy).toHaveBeenCalledWith({
+        const createTenantInput = {
+            name: mockEvent.arguments.tenantName,
+            referenceIdentifier: "test",
+            tenantAdminId: "testUserId",
+        };
+        const updateUserInput = {
+            id: "testUserId",
+            cognitoId: "testSubId",
+            _version: 1,
+            tenantId: "testTenantId",
+        };
+
+        expect(requestSpy).toHaveBeenCalledWith(
+            {
+                query: "createUserMutation",
+                variables: { input: createUserInput },
+            },
+            "testEndpoint"
+        );
+        expect(requestSpy).toHaveBeenCalledWith(
+            {
+                query: "createTenantMutation",
+                variables: { input: createTenantInput },
+            },
+            "testEndpoint"
+        );
+        expect(requestSpy).toHaveBeenNthCalledWith(
+            3,
+            {
+                query: "updateUserMutation",
+                variables: { input: updateUserInput },
+            },
+            "testEndpoint"
+        );
+        for (const group of ["USER", "ADMIN", "COORDINATOR"]) {
+            expect(cognitoGroupsSpy).toHaveBeenCalledWith({
+                GroupName: group,
+                UserPoolId: "testPoolId",
+                Username: expect.any(String),
+            });
+        }
+        expect(cognitoAdminUpdateUserAttributesSpy).toHaveBeenCalledWith({
+            UserAttributes: [
+                {
+                    Name: "email",
+                    Value: mockEvent.arguments.emailAddress,
+                },
+                {
+                    Name: "email_verified",
+                    Value: "true",
+                },
+                {
+                    Name: "custom:tenantId",
+                    Value: "testTenantId",
+                },
+            ],
             UserPoolId: "testPoolId",
-            Username: expect.any(String),
-            GroupName: "USER",
-        });
-        expect(cognitoGroupsSpy).toHaveBeenCalledWith({
-            UserPoolId: "testPoolId",
-            Username: expect.any(String),
-            GroupName: "COORDINATOR",
+            Username: "testUsername",
         });
         expect(SESSpy).toHaveBeenCalledWith(mockEmailParams);
+        expect(result).toEqual({
+            id: "testTenantId",
+            name: mockEvent.arguments.tenantName,
+            admin: {
+                id: "testUserId",
+                name: mockEvent.arguments.name,
+                displayName: mockEvent.arguments.name,
+                tenantId: "testTenantId",
+                cognitoId: "testSubId",
+                username: expect.any(String),
+                contact: {
+                    emailAddress: mockEvent.arguments.emailAddress,
+                },
+                _version: 1,
+            },
+        });
     });
 });

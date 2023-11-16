@@ -34,42 +34,4 @@ It can be deployed to AWS using Amplify or can be used fully offline with no onl
 
 If you're interested in developing on Platelet please take a look at [CONTRIBUTING](CONTRIBUTING.md).
 
-## Setting up
-
-The easiest way to install Platelet is to connect a branch on GitHub to Amplify through the AWS console.
-
-### Cognito
-
-Under the Sign-up experience tab:
-
-- Add a custom attribute: `tenantId`
-
-- Disable Self-service sign-up
-
-You might also want to adjust token expiry times. By default token refresh expires after 30 minutes. This means that when users are somewhere with a poor connection, they might be logged out when opening the app.
-
-Under the App integration tab:
-
-Choose a client under App clients and analytics.
-
-Click Edit for App client information.
-
-Adjust Access token expiration and ID token expiration.
-
-### Function parameters
-
-Edit the file `amplify/backend/function/plateletSendUserFeedback/parameters.json` and replace the example email address with an email address to receive feedback to.
-
-Edit the files:
-
-`amplify/backend/function/plateletAddNewTenant/parameters.json`
-
-`amplify/backend/function/plateletAdminAddNewUser/parameters.json`
-
-With an email address to send registration emails from.
-
-`plateletDomainName` should be the URL (without "https://") where the app is hosted. This will be used to point users to the URL in registration emails.
-
-### AWS SES
-
-You will need to apply to AWS for unrestricted sending of emails.
+For set up instructions, look at [SETTING UP](SETTING_UP.md).

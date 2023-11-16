@@ -2,37 +2,37 @@
 
 exports[`index.js changing a user's roles 1`] = `
 [MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
+  "calls": [
+    [
+      {
         "query": "getUserQuery",
-        "variables": Object {
+        "variables": {
           "id": "userId",
         },
       },
       "https://api.example.com/graphql",
     ],
-    Array [
-      Object {
+    [
+      {
         "query": "updateUserMutation",
-        "variables": Object {
-          "input": Object {
+        "variables": {
+          "input": {
             "_version": 1,
             "id": "userId",
-            "roles": Array [],
+            "roles": [],
           },
         },
       },
       "https://api.example.com/graphql",
     ],
-    Array [
-      Object {
+    [
+      {
         "query": "updateUserMutation",
-        "variables": Object {
-          "input": Object {
+        "variables": {
+          "input": {
             "_version": 2,
             "id": "userId",
-            "roles": Array [
+            "roles": [
               "ADMIN",
               "RIDER",
               "USER",
@@ -43,16 +43,16 @@ exports[`index.js changing a user's roles 1`] = `
       "https://api.example.com/graphql",
     ],
   ],
-  "results": Array [
-    Object {
+  "results": [
+    {
       "type": "return",
       "value": Promise {},
     },
-    Object {
+    {
       "type": "return",
       "value": Promise {},
     },
-    Object {
+    {
       "type": "return",
       "value": Promise {},
     },
@@ -62,37 +62,37 @@ exports[`index.js changing a user's roles 1`] = `
 
 exports[`index.js changing a user's roles cognito failure and clean up 2`] = `
 [MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
+  "calls": [
+    [
+      {
         "query": "getUserQuery",
-        "variables": Object {
+        "variables": {
           "id": "userId",
         },
       },
       "https://api.example.com/graphql",
     ],
-    Array [
-      Object {
+    [
+      {
         "query": "updateUserMutation",
-        "variables": Object {
-          "input": Object {
+        "variables": {
+          "input": {
             "_version": 1,
             "id": "userId",
-            "roles": Array [],
+            "roles": [],
           },
         },
       },
       "https://api.example.com/graphql",
     ],
-    Array [
-      Object {
+    [
+      {
         "query": "updateUserMutation",
-        "variables": Object {
-          "input": Object {
+        "variables": {
+          "input": {
             "_version": 2,
             "id": "userId",
-            "roles": Array [
+            "roles": [
               "ADMIN",
               "RIDER",
               "USER",
@@ -102,27 +102,27 @@ exports[`index.js changing a user's roles cognito failure and clean up 2`] = `
       },
       "https://api.example.com/graphql",
     ],
-    Array [
-      Object {
+    [
+      {
         "query": "updateUserMutation",
-        "variables": Object {
-          "input": Object {
+        "variables": {
+          "input": {
             "_version": 1,
             "id": "userId",
-            "roles": Array [],
+            "roles": [],
           },
         },
       },
       "https://api.example.com/graphql",
     ],
-    Array [
-      Object {
+    [
+      {
         "query": "updateUserMutation",
-        "variables": Object {
-          "input": Object {
+        "variables": {
+          "input": {
             "_version": 2,
             "id": "userId",
-            "roles": Array [
+            "roles": [
               "USER",
             ],
           },
@@ -131,24 +131,24 @@ exports[`index.js changing a user's roles cognito failure and clean up 2`] = `
       "https://api.example.com/graphql",
     ],
   ],
-  "results": Array [
-    Object {
+  "results": [
+    {
       "type": "return",
       "value": Promise {},
     },
-    Object {
+    {
       "type": "return",
       "value": Promise {},
     },
-    Object {
+    {
       "type": "return",
       "value": Promise {},
     },
-    Object {
+    {
       "type": "return",
       "value": Promise {},
     },
-    Object {
+    {
       "type": "return",
       "value": Promise {},
     },
@@ -158,58 +158,58 @@ exports[`index.js changing a user's roles cognito failure and clean up 2`] = `
 
 exports[`index.js changing a user's roles cognito failure and clean up 3`] = `
 [MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
+  "calls": [
+    [
+      {
         "GroupName": "ADMIN",
         "UserPoolId": "somePoolId",
         "Username": "username",
       },
     ],
-    Array [
-      Object {
+    [
+      {
         "GroupName": "RIDER",
         "UserPoolId": "somePoolId",
         "Username": "username",
       },
     ],
-    Array [
-      Object {
+    [
+      {
         "GroupName": "USER",
         "UserPoolId": "somePoolId",
         "Username": "username",
       },
     ],
-    Array [
-      Object {
+    [
+      {
         "GroupName": "USER",
         "UserPoolId": "somePoolId",
         "Username": "username",
       },
     ],
   ],
-  "results": Array [
-    Object {
+  "results": [
+    {
       "type": "return",
-      "value": Object {
+      "value": {
         "promise": [Function],
       },
     },
-    Object {
+    {
       "type": "return",
-      "value": Object {
+      "value": {
         "promise": [Function],
       },
     },
-    Object {
+    {
       "type": "return",
-      "value": Object {
+      "value": {
         "promise": [Function],
       },
     },
-    Object {
+    {
       "type": "return",
-      "value": Object {
+      "value": {
         "promise": [Function],
       },
     },
@@ -219,58 +219,58 @@ exports[`index.js changing a user's roles cognito failure and clean up 3`] = `
 
 exports[`index.js changing a user's roles cognito failure and clean up 4`] = `
 [MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
+  "calls": [
+    [
+      {
         "GroupName": "COORDINATOR",
         "UserPoolId": "somePoolId",
         "Username": "username",
       },
     ],
-    Array [
-      Object {
+    [
+      {
         "GroupName": "ADMIN",
         "UserPoolId": "somePoolId",
         "Username": "username",
       },
     ],
-    Array [
-      Object {
+    [
+      {
         "GroupName": "COORDINATOR",
         "UserPoolId": "somePoolId",
         "Username": "username",
       },
     ],
-    Array [
-      Object {
+    [
+      {
         "GroupName": "RIDER",
         "UserPoolId": "somePoolId",
         "Username": "username",
       },
     ],
   ],
-  "results": Array [
-    Object {
+  "results": [
+    {
       "type": "return",
-      "value": Object {
+      "value": {
         "promise": [Function],
       },
     },
-    Object {
+    {
       "type": "return",
-      "value": Object {
+      "value": {
         "promise": [Function],
       },
     },
-    Object {
+    {
       "type": "return",
-      "value": Object {
+      "value": {
         "promise": [Function],
       },
     },
-    Object {
+    {
       "type": "return",
-      "value": Object {
+      "value": {
         "promise": [Function],
       },
     },
@@ -280,30 +280,30 @@ exports[`index.js changing a user's roles cognito failure and clean up 4`] = `
 
 exports[`index.js changing a user's roles cognito failure and clean up 5`] = `
 [MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
+  "calls": [
+    [
+      {
         "UserPoolId": "somePoolId",
         "Username": "username",
       },
     ],
-    Array [
-      Object {
+    [
+      {
         "UserPoolId": "somePoolId",
         "Username": "username",
       },
     ],
   ],
-  "results": Array [
-    Object {
+  "results": [
+    {
       "type": "return",
-      "value": Object {
+      "value": {
         "promise": [Function],
       },
     },
-    Object {
+    {
       "type": "return",
-      "value": Object {
+      "value": {
         "promise": [Function],
       },
     },

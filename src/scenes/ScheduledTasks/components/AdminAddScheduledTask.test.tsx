@@ -7,6 +7,16 @@ import { screen, waitFor } from "@testing-library/react";
 
 const tenantId = "tenantId";
 
+jest.mock("aws-amplify", () => {
+    const Amplify = {
+        ...jest.requireActual("aws-amplify"),
+        Geo: {
+            searchByText: () => Promise.resolve([]),
+        },
+    };
+    return Amplify;
+});
+
 describe("AdminAddScheduledTask", () => {
     afterEach(async () => {
         jest.restoreAllMocks();
@@ -298,7 +308,6 @@ describe("AdminAddScheduledTask", () => {
                 name: "pick-up not listed?",
             })
         );
-        userEvent.click(screen.getByText("Expand to see more"));
         userEvent.type(
             screen.getByRole("textbox", { name: "Ward" }),
             `${mockLocation.ward}`

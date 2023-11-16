@@ -114,6 +114,7 @@ export const getTask = /* GraphQL */ `
                     deliverableType {
                         id
                         label
+                        icon
                     }
                     count
                     unit

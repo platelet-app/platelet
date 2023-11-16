@@ -1,5 +1,5 @@
 import TenantListProvider from "./TenantListProvider";
-import Amplify from "aws-amplify";
+import Amplify, { DataStore } from "aws-amplify";
 import { render } from "../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -199,6 +199,47 @@ describe("TenantListProvider", () => {
         expect(screen.getByText("test")).toBeInTheDocument();
     });
 
+    test.skip("configuring with an existing config, but graphql times out", async () => {
+        process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = new URL(
+            "http://localhost:4000/graphql"
+        );
+        jest.spyOn(global, "fetch").mockImplementation(() => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({});
+                }, 5000);
+            });
+        });
+        const localStorageSetSpy = jest.spyOn(Storage.prototype, "setItem");
+        const amplifySpy = jest.spyOn(Amplify, "configure");
+        const localStorageSpy = jest
+            .spyOn(Storage.prototype, "getItem")
+            .mockReturnValueOnce("1")
+            .mockReturnValue(fakeConfigData);
+        render(<TenantListProvider>test</TenantListProvider>);
+        expect(screen.queryByText("test")).toBeNull();
+        await waitFor(() => {
+            expect(localStorageSpy).toHaveBeenCalled();
+        });
+        console.log(localStorageSpy.mock.calls);
+        const parsedConfig = JSON.parse(fakeConfigData);
+        await waitFor(() => {
+            expect(amplifySpy).toHaveBeenCalledWith(parsedConfig);
+        });
+        expect(localStorageSetSpy).not.toHaveBeenCalledWith(
+            "tenantVersion",
+            "2"
+        );
+        expect(localStorageSetSpy).not.toHaveBeenCalledWith(
+            "tenantName",
+            "Tenant 1"
+        );
+        expect(localStorageSetSpy).not.toHaveBeenCalledWith(
+            "amplifyConfig",
+            fakeConfigData
+        );
+        expect(screen.getByText("test")).toBeInTheDocument();
+    });
     test("configuring with an existing config, but graphql fails", async () => {
         process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = new URL(
             "http://localhost:4000/graphql"
@@ -254,8 +295,9 @@ describe("TenantListProvider", () => {
         const amplifySpy = jest.spyOn(Amplify, "configure");
         const localStorageSpy = jest
             .spyOn(Storage.prototype, "getItem")
+            .mockReturnValueOnce(null)
             .mockReturnValueOnce("1")
-            .mockReturnValue(undefined);
+            .mockReturnValue(null);
         render(<TenantListProvider>test</TenantListProvider>);
         expect(screen.queryByText("test")).toBeNull();
         await waitFor(() => {
@@ -299,6 +341,7 @@ describe("TenantListProvider", () => {
         const amplifySpy = jest.spyOn(Amplify, "configure");
         const localStorageSpy = jest
             .spyOn(Storage.prototype, "getItem")
+            .mockReturnValueOnce(null)
             .mockReturnValueOnce("someId")
             .mockReturnValueOnce("1")
             .mockReturnValue(fakeConfigData);
@@ -375,5 +418,42 @@ describe("TenantListProvider", () => {
             expect(screen.getByText("First Tenant")).toBeInTheDocument();
         });
         expect(screen.queryByText("Something Else")).not.toBeInTheDocument();
+    });
+    it("clears stale data when it hasn't been synced for over a week", async () => {
+        process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = new URL(
+            "http://localhost:4000/graphql"
+        );
+        jest.spyOn(global, "fetch").mockResolvedValueOnce(
+            Promise.resolve({
+                json: () =>
+                    Promise.resolve({
+                        data: {
+                            getTenant: {
+                                id: "someId",
+                                name: "Tenant 1",
+                                config: fakeConfigData,
+                                version: "2",
+                            },
+                        },
+                    }),
+            })
+        );
+        const clearSpy = jest.spyOn(DataStore, "clear");
+        const amplifySpy = jest.spyOn(Amplify, "configure");
+        jest.spyOn(Storage.prototype, "getItem")
+            .mockReturnValueOnce("2000-01-01")
+            .mockReturnValueOnce("someId")
+            .mockReturnValueOnce("1")
+            .mockReturnValue(fakeConfigData);
+        render(<TenantListProvider>test</TenantListProvider>);
+        expect(screen.queryByText("test")).toBeNull();
+        await waitFor(() => {
+            expect(clearSpy).toHaveBeenCalled();
+        });
+        const parsedConfig = JSON.parse(fakeConfigData);
+        await waitFor(() => {
+            expect(amplifySpy).toHaveBeenCalledWith(parsedConfig);
+        });
+        expect(screen.getByText("test")).toBeInTheDocument();
     });
 });

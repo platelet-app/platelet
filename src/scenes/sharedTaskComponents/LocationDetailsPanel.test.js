@@ -1,6 +1,6 @@
 import React from "react";
 import LocationDetailsPanel from "./LocationDetailsPanel";
-import { DataStore, API } from "aws-amplify";
+import { DataStore, API, Geo } from "aws-amplify";
 import { render } from "../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import * as amplify from "aws-amplify";
@@ -13,6 +13,16 @@ import { v4 as uuidv4 } from "uuid";
 const errorMessage = "Sorry, something went wrong";
 
 const tenantId = uuidv4();
+
+jest.mock("aws-amplify", () => {
+    const Amplify = {
+        ...jest.requireActual("aws-amplify"),
+        Geo: {
+            searchByText: () => Promise.resolve([]),
+        },
+    };
+    return Amplify;
+});
 
 const preloadedState = {
     tenantId,
@@ -51,11 +61,7 @@ const mockLocations = _.range(0, 10).map((i) => {
 describe("LocationDetailsPanel", () => {
     beforeEach(async () => {
         jest.restoreAllMocks();
-        const locations = await DataStore.query(models.Location);
-        const tasks = await DataStore.query(models.Task);
-        await Promise.all(
-            [...locations, ...tasks].map((m) => DataStore.delete(m))
-        );
+        await DataStore.clear();
         for (const loc of mockLocations) {
             await DataStore.save(loc);
         }
@@ -970,7 +976,7 @@ describe("LocationDetailsPanel", () => {
                     [locationKey]: mockLocation,
                 })
             );
-            const mockPreset = await DataStore.save(
+            await DataStore.save(
                 new models.Location({
                     name: "test preset",
                     listed: 1,
@@ -1002,7 +1008,7 @@ describe("LocationDetailsPanel", () => {
                 expect(querySpy).toHaveBeenCalledTimes(2);
             });
             userEvent.type(screen.getByRole("combobox"), "new preset");
-            userEvent.click(screen.getByText("new preset"));
+            userEvent.click(await screen.findByText("preset"));
             const label =
                 locationKey === "pickUpLocation" ? "pick-up" : "delivery";
             expect(
@@ -1019,4 +1025,78 @@ describe("LocationDetailsPanel", () => {
             });
         }
     );
+    test("online search when selecting a location", async () => {
+        const fakeOnlineLocation = {
+            label: "testLabel",
+            addressNumber: "123",
+            street: "testStreet",
+            neighborhood: "testNeighborhood",
+            municipality: "testMunicipality",
+            subRegion: "testSubRegion",
+            country: "testCountry",
+            postalCode: "testPostalCode",
+        };
+
+        const task = new models.Task({});
+        await DataStore.save(task);
+        const querySpy = jest.spyOn(DataStore, "query");
+        const saveSpy = jest.spyOn(DataStore, "save");
+        jest.spyOn(Geo, "searchByText").mockResolvedValue([fakeOnlineLocation]);
+        render(
+            <LocationDetailsPanel
+                taskModel={models.Task}
+                taskId={task.id}
+                locationKey={"pickUpLocation"}
+            />,
+            {
+                preloadedState,
+            }
+        );
+        const mockLocation = new models.Location({
+            country: "testCountry",
+            county: "testSubRegion",
+            line1: "123 testStreet",
+            line2: "testNeighborhood",
+            listed: 0,
+            postcode: "testPostalCode",
+            tenantId,
+            town: "testMunicipality",
+        });
+
+        render(<LocationDetailsPanel />, { preloadedState });
+        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(2));
+        const textBox = screen.getByRole("combobox", {
+            name: "Search locations...",
+        });
+        userEvent.type(textBox, "testLabel");
+        const option = await screen.findByText(
+            "testLabel",
+            {},
+            { timeout: 1000 }
+        );
+        userEvent.click(option);
+        await waitFor(() => {
+            expect(screen.queryByText("testLabel")).toBeNull();
+        });
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(2);
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockLocation,
+            id: expect.any(String),
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...task,
+            pickUpLocation: { ...mockLocation, id: expect.any(String) },
+            id: expect.any(String),
+        });
+        userEvent.click(screen.getByText("Expand to see more"));
+        const { label, addressNumber, street, ...rest } = fakeOnlineLocation;
+        expect(
+            screen.getByText(`${addressNumber} ${street}`)
+        ).toBeInTheDocument();
+        for (const value of Object.values(rest)) {
+            expect(screen.getByText(value)).toBeInTheDocument();
+        }
+    });
 });

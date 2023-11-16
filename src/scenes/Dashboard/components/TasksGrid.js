@@ -99,8 +99,8 @@ function TasksGrid(props) {
                 .map((taskKey) => {
                     const title = getColumnTitle(taskKey);
                     return (
-                        <>
-                            <Grid item key={title} className={classes.column}>
+                        <React.Fragment key={title}>
+                            <Grid item className={classes.column}>
                                 <TasksGridColumn
                                     title={title}
                                     columnCount={columnCount}
@@ -114,7 +114,7 @@ function TasksGrid(props) {
                                     <Divider orientation="vertical" />
                                 </Grid>
                             )}
-                        </>
+                        </React.Fragment>
                     );
                 })}
         </Grid>

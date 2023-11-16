@@ -4,6 +4,8 @@ import configureAmplify from "./utilities/configureAmplify";
 import saveAmplifyConfig from "../../utilities/saveAmplifyConfig";
 import TenantList from "./components/TenantList";
 import { Box, CircularProgress } from "@mui/material";
+import { DataStore } from "aws-amplify";
+import Splash from "./Splash";
 
 type TenantListProviderProps = {
     children: React.ReactNode;
@@ -27,6 +29,15 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
     const setup = React.useCallback(async () => {
         if (offline) return;
         setIsProcessing(true);
+        const lastSynced = localStorage.getItem("dateLastSynced");
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        if (lastSynced && new Date(lastSynced) < sevenDaysAgo) {
+            console.log(
+                "more than 7 days since last sync, clearing stale data from DataStore"
+            );
+            await DataStore.clear();
+        }
         const tenantId = localStorage.getItem("tenantId");
         try {
             if (
@@ -44,7 +55,9 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
                 setIsProcessing(false);
             } else if (tenantId) {
                 console.log("tenantId", tenantId);
-                const config = await saveAmplifyConfig(tenantId);
+                // only wait 3 seconds
+                // and fallback to localstorage if it isn't fast enough
+                const config = await saveAmplifyConfig(tenantId, 3000);
                 configureAmplify(config);
                 setIsProcessing(false);
             } else {
@@ -66,11 +79,7 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
     if (offline) {
         return <>{children}</>;
     } else if (isProcessing) {
-        return (
-            <Box sx={{ display: "flex" }}>
-                <CircularProgress />
-            </Box>
-        );
+        return <Splash />;
     } else if (showList) {
         return <TenantList onComplete={handleListSetup} />;
     } else {

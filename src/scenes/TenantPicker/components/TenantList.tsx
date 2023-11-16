@@ -34,7 +34,7 @@ export const TenantList: React.FC<TenantListProps> = ({ onComplete }) => {
     const onClickTenant = async (tenantId: string) => {
         try {
             localStorage.setItem("tenantId", tenantId);
-            const config = await saveAmplifyConfig(tenantId);
+            const config = await saveAmplifyConfig(tenantId, 300000);
             configureAmplify(config);
             onComplete();
         } catch (error) {

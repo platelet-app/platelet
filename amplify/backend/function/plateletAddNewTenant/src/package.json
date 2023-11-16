@@ -5,18 +5,20 @@
     "main": "index.js",
     "license": "Apache-2.0",
     "devDependencies": {
-        "@types/aws-lambda": "^8.10.92"
+        "@types/aws-lambda": "^8.10.92",
+        "jest": "^29.7.0",
+        "jest-fetch-mock": "^3.0.3"
     },
     "dependencies": {
         "aws-appsync": "4.0.0",
         "aws-sdk": "^2.1092.0",
-        "graphql": "^16.3.0",
+        "graphql": "^16.8.1",
         "graphql-tag": "^2.12.6",
         "isomorphic-fetch": "^3.0.0",
         "uuid": "^8.3.2"
     },
     "scripts": {
         "test": "jest test --watchAll --testTimeout=10000",
-        "test:debug": "jest --watchAll --inspect test --runInBand --no-cache --testTimeout=100000000"
+        "test:debug": "node --inspect-brk node_modules/.bin/jest --watchAll --runInBand --no-cache --testTimeout=100000000"
     }
 }

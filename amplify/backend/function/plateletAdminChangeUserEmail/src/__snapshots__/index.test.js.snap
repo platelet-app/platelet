@@ -2,23 +2,23 @@
 
 exports[`plateletAdminChangeUserEmail change the user's email 1`] = `
 [MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
+  "calls": [
+    [
+      {
         "query": "getUserQuery",
-        "variables": Object {
+        "variables": {
           "id": "userId",
         },
       },
       "https://api.example.com/graphql",
     ],
-    Array [
-      Object {
+    [
+      {
         "query": "updateUserMutation",
-        "variables": Object {
-          "input": Object {
+        "variables": {
+          "input": {
             "_version": 1,
-            "contact": Object {
+            "contact": {
               "emailAddress": "some@email.com",
             },
             "id": "userId",
@@ -28,12 +28,12 @@ exports[`plateletAdminChangeUserEmail change the user's email 1`] = `
       "https://api.example.com/graphql",
     ],
   ],
-  "results": Array [
-    Object {
+  "results": [
+    {
       "type": "return",
       "value": Promise {},
     },
-    Object {
+    {
       "type": "return",
       "value": Promise {},
     },
@@ -43,15 +43,15 @@ exports[`plateletAdminChangeUserEmail change the user's email 1`] = `
 
 exports[`plateletAdminChangeUserEmail change the user's email 2`] = `
 [MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
-        "UserAttributes": Array [
-          Object {
+  "calls": [
+    [
+      {
+        "UserAttributes": [
+          {
             "Name": "email",
             "Value": "some@email.com",
           },
-          Object {
+          {
             "Name": "email_verified",
             "Value": "true",
           },
@@ -61,10 +61,10 @@ exports[`plateletAdminChangeUserEmail change the user's email 2`] = `
       },
     ],
   ],
-  "results": Array [
-    Object {
+  "results": [
+    {
       "type": "return",
-      "value": Object {
+      "value": {
         "promise": [Function],
       },
     },
@@ -74,19 +74,19 @@ exports[`plateletAdminChangeUserEmail change the user's email 2`] = `
 
 exports[`plateletAdminChangeUserEmail change the user's email 3`] = `
 [MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
-        "Filter": "email = \\"some@email.com\\"",
+  "calls": [
+    [
+      {
+        "Filter": "email = "some@email.com"",
         "Limit": 1,
         "UserPoolId": "somePoolId",
       },
     ],
   ],
-  "results": Array [
-    Object {
+  "results": [
+    {
       "type": "return",
-      "value": Object {
+      "value": {
         "promise": [Function],
       },
     },
@@ -96,23 +96,23 @@ exports[`plateletAdminChangeUserEmail change the user's email 3`] = `
 
 exports[`plateletAdminChangeUserEmail change the user's email appsync failure 1`] = `
 [MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
+  "calls": [
+    [
+      {
         "query": "getUserQuery",
-        "variables": Object {
+        "variables": {
           "id": "userId",
         },
       },
       "https://api.example.com/graphql",
     ],
-    Array [
-      Object {
+    [
+      {
         "query": "updateUserMutation",
-        "variables": Object {
-          "input": Object {
+        "variables": {
+          "input": {
             "_version": 1,
-            "contact": Object {
+            "contact": {
               "emailAddress": "some@email.com",
             },
             "id": "userId",
@@ -122,12 +122,12 @@ exports[`plateletAdminChangeUserEmail change the user's email appsync failure 1`
       "https://api.example.com/graphql",
     ],
   ],
-  "results": Array [
-    Object {
+  "results": [
+    {
       "type": "return",
       "value": Promise {},
     },
-    Object {
+    {
       "type": "return",
       "value": Promise {},
     },
@@ -137,15 +137,15 @@ exports[`plateletAdminChangeUserEmail change the user's email appsync failure 1`
 
 exports[`plateletAdminChangeUserEmail change the user's email appsync failure 2`] = `
 [MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
-        "UserAttributes": Array [
-          Object {
+  "calls": [
+    [
+      {
+        "UserAttributes": [
+          {
             "Name": "email",
             "Value": "some@email.com",
           },
-          Object {
+          {
             "Name": "email_verified",
             "Value": "true",
           },
@@ -154,14 +154,14 @@ exports[`plateletAdminChangeUserEmail change the user's email appsync failure 2`
         "Username": "username",
       },
     ],
-    Array [
-      Object {
-        "UserAttributes": Array [
-          Object {
+    [
+      {
+        "UserAttributes": [
+          {
             "Name": "email",
             "Value": "originalEmail@example.com",
           },
-          Object {
+          {
             "Name": "email_verified",
             "Value": "true",
           },
@@ -171,16 +171,16 @@ exports[`plateletAdminChangeUserEmail change the user's email appsync failure 2`
       },
     ],
   ],
-  "results": Array [
-    Object {
+  "results": [
+    {
       "type": "return",
-      "value": Object {
+      "value": {
         "promise": [Function],
       },
     },
-    Object {
+    {
       "type": "return",
-      "value": Object {
+      "value": {
         "promise": [Function],
       },
     },
@@ -190,19 +190,19 @@ exports[`plateletAdminChangeUserEmail change the user's email appsync failure 2`
 
 exports[`plateletAdminChangeUserEmail fail changing the user's email to an existing email 1`] = `
 [MockFunction] {
-  "calls": Array [
-    Array [
-      Object {
-        "Filter": "email = \\"some@email.com\\"",
+  "calls": [
+    [
+      {
+        "Filter": "email = "some@email.com"",
         "Limit": 1,
         "UserPoolId": "somePoolId",
       },
     ],
   ],
-  "results": Array [
-    Object {
+  "results": [
+    {
       "type": "return",
-      "value": Object {
+      "value": {
         "promise": [Function],
       },
     },

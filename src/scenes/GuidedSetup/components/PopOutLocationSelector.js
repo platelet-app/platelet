@@ -10,9 +10,10 @@ import { Box, Button, Stack, Tooltip } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import ClearButtonWithConfirmation from "../../../components/ClearButtonWithConfirmation";
-import CollapsibleToggle from "../../../components/CollapsibleToggle";
 import PopOutLocationSelectorForm from "./PopoutLocationSelectorForm";
 import { protectedFields } from "../../../apiConsts";
+import ClickableTextField from "../../../components/ClickableTextField";
+import CollapsibleToggle from "../../../components/CollapsibleToggle";
 
 const useStyles = makeStyles()((theme) => ({
     label: {
@@ -47,16 +48,23 @@ const contactFields = {
     telephoneNumber: "Telephone",
 };
 
+const popUpModes = {
+    editWithFavorites: "editWithFavorites",
+    editWithoutFavorites: "editWithoutFavorites",
+};
+
 function PopOutLocationSelector(props) {
     const { classes } = useStyles();
     const [state, setState] = useState(null);
     const oldState = useRef(null);
-    const [editMode, setEditMode] = useState(false);
-    const [collapsed, setCollapsed] = useState(true);
+    const [editMode, setEditMode] = useState(null);
+    const [showCollapsed, setShowCollapsed] = useState(false);
 
     function onSelectPreset(value) {
-        setState(value);
-        props.onChange(value);
+        if (value) {
+            setState(value);
+            props.onChange(value);
+        }
     }
 
     function onClickClearButton() {
@@ -76,26 +84,26 @@ function PopOutLocationSelector(props) {
     }, [props.override]);
 
     function handleConfirmation(value) {
+        setState(value);
+        props.onChange(value);
+        setEditMode(null);
+    }
+    function handleInlineConfirmation(value) {
         if (_.isEqual(state, value)) {
-            setEditMode(false);
+            setEditMode(null);
             return;
         }
-        if (!state) {
-            setState(value);
-            props.onChange(value);
-        } else {
-            let name = state.name;
-            if (state.listed === 1) {
-                name = `${name} (edited)`;
-            }
-            const result = _.omit(
-                { ...value, name, listed: 0 },
-                ...protectedFields
-            );
-            setState(result);
-            props.onChange(result);
+        let name = state.name;
+        if (state.listed === 1) {
+            name = `${name} (edited)`;
         }
-        setEditMode(false);
+        const result = _.omit(
+            { ...value, name, listed: 0 },
+            ...protectedFields
+        );
+        setState(result);
+        props.onChange(result);
+        setEditMode(null);
     }
 
     const presetName = state && state.name ? state.name : "";
@@ -127,12 +135,13 @@ function PopOutLocationSelector(props) {
                     direction="column"
                 >
                     <FavouriteLocationsSelect
+                        online
                         size="large"
                         onSelect={onSelectPreset}
                     />
                     <Button
                         aria-label={`${props.label} not listed?`}
-                        onClick={() => setEditMode(true)}
+                        onClick={() => setEditMode("editWithoutFavorites")}
                     >
                         Not listed?
                     </Button>
@@ -151,9 +160,7 @@ function PopOutLocationSelector(props) {
                             aria-label={"Edit"}
                             size={"small"}
                             disabled={props.disabled}
-                            onClick={() =>
-                                setEditMode((prevState) => !prevState)
-                            }
+                            onClick={() => setEditMode("editWithFavorites")}
                         >
                             <EditIcon
                                 color={editMode ? "secondary" : "inherit"}
@@ -179,44 +186,68 @@ function PopOutLocationSelector(props) {
                         <Stack direction={"column"}>
                             {Object.entries(addressFields).map(
                                 ([key, label]) => {
+                                    if (
+                                        !showCollapsed &&
+                                        !collapsedShowFields.includes(key)
+                                    ) {
+                                        return null;
+                                    }
                                     return (
-                                        (collapsedShowFields.includes(key) ||
-                                            !collapsed) && (
-                                            <LabelItemPair
-                                                key={key}
-                                                label={label}
-                                            >
-                                                <Typography>
-                                                    {state && state[key]}
-                                                </Typography>
-                                            </LabelItemPair>
-                                        )
+                                        <LabelItemPair key={key} label={label}>
+                                            <ClickableTextField
+                                                value={state && state[key]}
+                                                onChange={(value) => {
+                                                    handleInlineConfirmation({
+                                                        ...state,
+                                                        [key]: value,
+                                                    });
+                                                }}
+                                            />
+                                        </LabelItemPair>
                                     );
                                 }
                             )}
 
-                            {!collapsed && (
-                                <Box className={classes.separator} />
-                            )}
+                            <Box className={classes.separator} />
                             <Box>
                                 {Object.entries(contactFields).map(
                                     ([key, label]) => {
-                                        return (
-                                            (collapsedShowContactFields.includes(
+                                        if (
+                                            !showCollapsed &&
+                                            !collapsedShowContactFields.includes(
                                                 key
-                                            ) ||
-                                                !collapsed) && (
-                                                <LabelItemPair
-                                                    key={key}
-                                                    label={label}
-                                                >
-                                                    <Typography>
-                                                        {state &&
-                                                            state.contact &&
-                                                            state.contact[key]}
-                                                    </Typography>
-                                                </LabelItemPair>
                                             )
+                                        ) {
+                                            return null;
+                                        }
+                                        return (
+                                            <LabelItemPair
+                                                key={key}
+                                                label={label}
+                                            >
+                                                <ClickableTextField
+                                                    value={
+                                                        state &&
+                                                        state.contact &&
+                                                        state.contact[key]
+                                                    }
+                                                    tel={
+                                                        key ===
+                                                        "telephoneNumber"
+                                                    }
+                                                    onChange={(value) => {
+                                                        handleInlineConfirmation(
+                                                            {
+                                                                ...state,
+                                                                contact: {
+                                                                    ...state.contact,
+                                                                    [key]: value,
+                                                                },
+                                                            }
+                                                        );
+                                                    }}
+                                                />
+                                            </LabelItemPair>
                                         );
                                     }
                                 )}
@@ -228,12 +259,14 @@ function PopOutLocationSelector(props) {
                             alignItems="center"
                             justifyContent="space-between"
                         >
-                            <CollapsibleToggle
-                                onClick={() =>
-                                    setCollapsed((prevState) => !prevState)
-                                }
-                                value={collapsed}
-                            />
+                            {state && (
+                                <CollapsibleToggle
+                                    value={!showCollapsed}
+                                    onClick={() => {
+                                        setShowCollapsed(!showCollapsed);
+                                    }}
+                                />
+                            )}
                             {state &&
                                 !props.disableClear &&
                                 !props.override && (
@@ -253,6 +286,7 @@ function PopOutLocationSelector(props) {
             </Stack>
             <PopOutLocationSelectorForm
                 open={editMode}
+                showFavorites={editMode === popUpModes.editWithFavorites}
                 key={editMode}
                 onConfirmation={handleConfirmation}
                 label={`Enter ${props.label}`}

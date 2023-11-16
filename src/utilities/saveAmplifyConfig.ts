@@ -15,15 +15,18 @@ type TenantQueryVariables = {
     id: string;
 };
 
-const fetchData = (
+const fetchData = async (
     query: string,
-    variables: TenantQueryVariables | null = null
+    variables: TenantQueryVariables | null = null,
+    timeout: number = 300000
 ) => {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
     const APPSYNC_API_URL = process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT;
     const credentialsAppSync = {
         "x-api-key": process.env.REACT_APP_TENANT_GRAPHQL_API_KEY,
     };
-    return fetch(APPSYNC_API_URL, {
+    const response = await fetch(APPSYNC_API_URL, {
         method: "POST",
         headers: {
             Accept: "application/json",
@@ -35,15 +38,25 @@ const fetchData = (
             variables: variables || {},
         }),
         credentials: "omit",
+        signal: controller.signal,
     });
+    clearTimeout(id);
+    return response;
 };
 
-async function saveAmplifyConfig(tenantId: string): Promise<object> {
+async function saveAmplifyConfig(
+    tenantId: string,
+    timeout: number
+): Promise<object> {
     console.log("Fetching tenant config", tenantId);
     try {
-        const response: Response = await fetchData(getTenant, {
-            id: tenantId,
-        });
+        const response: Response = await fetchData(
+            getTenant,
+            {
+                id: tenantId,
+            },
+            timeout
+        );
         const { data } = await response.json();
         const { config, version, name } = data.getTenant;
         const currentVersion: string | null =

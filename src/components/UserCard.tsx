@@ -4,6 +4,8 @@ import Typography from "@mui/material/Typography";
 import UserAvatar from "./UserAvatar";
 import { Box, Stack } from "@mui/material";
 import { ThemedLink } from "../styles/common";
+import * as models from "../models";
+import * as API from "../API";
 
 const sxDisabled = {
     position: "relative",
@@ -25,7 +27,17 @@ const sxDisabled = {
     },
 };
 
-export default function UserCard({ user, compact, thumbnailKey }) {
+type UserCardProps = {
+    user: models.User | API.User;
+    compact?: boolean;
+    thumbnailKey?: string | null;
+};
+
+const UserCard: React.FC<UserCardProps> = ({
+    user,
+    compact = false,
+    thumbnailKey = null,
+}) => {
     return (
         <ThemedLink
             to={"/user/" + encodeUUID(user.id)}
@@ -71,7 +83,7 @@ export default function UserCard({ user, compact, thumbnailKey }) {
                         >
                             <Typography>{user.displayName}</Typography>
                             {user.riderResponsibility ? (
-                                <Typography>
+                                <Typography style={{ fontStyle: "italic" }}>
                                     {user.riderResponsibility}
                                 </Typography>
                             ) : (
@@ -83,4 +95,6 @@ export default function UserCard({ user, compact, thumbnailKey }) {
             </Box>
         </ThemedLink>
     );
-}
+};
+
+export default UserCard;

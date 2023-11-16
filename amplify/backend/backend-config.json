@@ -83,6 +83,20 @@
       "dependsOn": [
         {
           "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletSendEmail"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
+        },
+        {
+          "attributes": [
             "UserPoolId"
           ],
           "category": "auth",
@@ -415,7 +429,7 @@
   },
   "geo": {
     "plateletPlace": {
-      "accessType": "AuthorizedUsers",
+      "accessType": "CognitoGroups",
       "dataProvider": "HERE",
       "dataSourceIntendedUse": "SingleUse",
       "dependsOn": [
@@ -425,6 +439,16 @@
           ],
           "category": "auth",
           "resourceName": "platelet61a0ac07"
+        },
+        {
+          "attributes": [
+            "ADMINGroupRole",
+            "COORDINATORGroupRole",
+            "RIDERGroupRole",
+            "USERGroupRole"
+          ],
+          "category": "auth",
+          "resourceName": "userPoolGroups"
         }
       ],
       "isDefault": true,
