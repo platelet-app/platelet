@@ -1,8 +1,6 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import "@azure/core-asynciterator-polyfill";
-import { DataStore } from "aws-amplify";
-import { ExpoSQLiteAdapter } from "@aws-amplify/datastore-storage-adapter/ExpoSQLiteAdapter";
 import { MD3DarkTheme, MD3LightTheme, PaperProvider } from "react-native-paper";
 import {
     NavigationContainer,
@@ -40,10 +38,6 @@ const Tab = createMaterialBottomTabNavigator();
 
 moment.locale("en-GB");
 registerTranslation("en-GB", enGB);
-
-DataStore.configure({
-    storageAdapter: ExpoSQLiteAdapter,
-});
 
 Logger.LOG_LEVEL = "ERROR";
 

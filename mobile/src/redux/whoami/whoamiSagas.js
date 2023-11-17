@@ -15,6 +15,7 @@ import * as queries from "../../graphql/queries";
 import { NotFound } from "http-errors";
 import { userRoles } from "../../apiConsts";
 import { eventChannel } from "redux-saga";
+import { ExpoSQLiteAdapter } from "@aws-amplify/datastore-storage-adapter/ExpoSQLiteAdapter";
 import dataStoreConflictHandler from "./dataStoreConflictHandler";
 
 const fakeUser = {
@@ -134,6 +135,7 @@ function* getWhoami() {
                 ];
 
                 yield call([DataStore, DataStore.configure], {
+                    storageAdapter: ExpoSQLiteAdapter,
                     errorHandler: (err) => {
                         console.log("DataStore error:", err);
                         console.log("Cause:", err.cause);
