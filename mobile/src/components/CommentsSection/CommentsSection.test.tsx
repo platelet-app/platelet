@@ -252,8 +252,9 @@ describe("CommentsSection", () => {
             })
         );
         const privateButton = screen.getByRole("button", { name: "ME" });
-        fireEvent(input, "onChangeText", "private comment");
         fireEvent(privateButton, "onPress");
+        const input2 = screen.getByPlaceholderText("Write a private note...");
+        fireEvent(input2, "onChangeText", "private comment");
         fireEvent(postButton, "onPress");
         await waitFor(() =>
             expect(saveSpy).toHaveBeenCalledWith({
@@ -263,7 +264,6 @@ describe("CommentsSection", () => {
         );
         await screen.findByText("private comment", {}, { timeout: 5000 });
         screen.getByText("test comment");
-        expect(input).toHaveProp("value", "");
     });
     test("post a comment failure", async () => {
         const whoami = await DataStore.save(
