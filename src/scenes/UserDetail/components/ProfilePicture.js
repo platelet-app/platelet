@@ -4,16 +4,19 @@ import { Paper, Stack } from "@mui/material";
 import ProfilePictureCropper from "./ProfilePictureCropper";
 import uploadProfilePicture from "./uploadProfilePicture";
 import { generateS3Link } from "../../../amplifyUtilities";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getWhoami } from "../../../redux/Selectors";
 import * as models from "../../../models";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 
 export default function ProfilePicture(props) {
     const [image, setImage] = useState(null);
     const [newImage, setNewImage] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [imageUrl, setImageUrl] = useState("");
+    const [resetProfilePicture, setResetProfilePicture] = useState(false);
     const whoami = useSelector(getWhoami);
+    const dispatch = useDispatch();
 
     const picturePermission =
         whoami.roles.includes(models.Role.ADMIN) || whoami.id === props.userId;
@@ -35,15 +38,26 @@ export default function ProfilePicture(props) {
 
     const sendPictureData = async (canvasResult) => {
         setUploading(true);
-        const blob = await new Promise((resolve) =>
-            canvasResult.toBlob(resolve, "image/jpeg")
-        );
-        const newImageURL = await canvasResult.toDataURL("image/jpeg");
+        try {
+            const blob = await new Promise((resolve) =>
+                canvasResult.toBlob(resolve, "image/jpeg")
+            );
+            const newImageURL = await canvasResult.toDataURL("image/jpeg");
 
-        await uploadProfilePicture(props.userId, blob);
-        setNewImage(newImageURL);
-        setUploading(false);
+            await uploadProfilePicture(props.userId, blob);
+            setNewImage(newImageURL);
+            setUploading(false);
+            setImage(null);
+        } catch (e) {
+            console.log(e);
+            dispatch(displayErrorNotification("Sorry, something went wrong."));
+            setUploading(false);
+        }
+    };
+
+    const handleDiscard = () => {
         setImage(null);
+        setResetProfilePicture(!resetProfilePicture);
     };
 
     const getProfilePicture = React.useCallback(async (profilePicture) => {
@@ -69,6 +83,12 @@ export default function ProfilePicture(props) {
 
     const profilePicture = image ? (
         <ProfilePictureCropper
+            key={
+                resetProfilePicture
+                    ? "reset-profile-picture"
+                    : "profile-picture"
+            }
+            onDiscard={handleDiscard}
             isPosting={uploading}
             onFinish={sendPictureData}
             image={image}

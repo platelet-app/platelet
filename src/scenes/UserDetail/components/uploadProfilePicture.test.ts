@@ -4,8 +4,10 @@ import uploadProfilePicture from "./uploadProfilePicture";
 import * as queries from "../../../graphql/queries";
 
 jest.mock("../../../aws-exports", () => ({
-    aws_user_files_s3_bucket: "test-bucket",
-    aws_user_files_s3_bucket_region: "eu-west-1",
+    default: {
+        aws_user_files_s3_bucket: "test-bucket",
+        aws_user_files_s3_bucket_region: "eu-west-1",
+    },
 }));
 
 describe("uploadProfilePicture", () => {
@@ -95,6 +97,9 @@ describe("uploadProfilePicture", () => {
         });
     });
     it("should upload a profile picture using local storage", async () => {
+        process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = new URL(
+            "https://test.com"
+        );
         const mockUser = await DataStore.save(
             new models.User({
                 displayName: "test-user",

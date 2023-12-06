@@ -9,13 +9,14 @@ import { ProfilePictureUploadURLQuery } from "../../../API";
 
 async function uploadProfilePicture(userId: string, selectedFile: any) {
     if (selectedFile) {
-        const amplifyConfig = localStorage.getItem("amplifyConfig");
         let aws_config;
-        if (amplifyConfig) {
+        if (process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT) {
+            const amplifyConfig = localStorage.getItem("amplifyConfig");
+            if (!amplifyConfig)
+                throw new Error("No amplify config found in local storage");
             aws_config = JSON.parse(amplifyConfig);
         } else {
-            const config = require("../../../aws-exports");
-            aws_config = config;
+            aws_config = require("../../../aws-exports").default;
         }
         if (!aws_config || _.isEmpty(aws_config))
             throw new Error("No amplify config found");
