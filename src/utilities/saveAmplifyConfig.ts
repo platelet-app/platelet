@@ -15,14 +15,16 @@ type TenantQueryVariables = {
     id: string;
 };
 
+const APPSYNC_API_URL = process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT;
+
 const fetchData = async (
     query: string,
     variables: TenantQueryVariables | null = null,
     timeout: number = 300000
 ) => {
+    if (!APPSYNC_API_URL) throw new Error("Tenant API URL is not defined");
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
-    const APPSYNC_API_URL = process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT;
     const credentialsAppSync = {
         "x-api-key": process.env.REACT_APP_TENANT_GRAPHQL_API_KEY,
     };
