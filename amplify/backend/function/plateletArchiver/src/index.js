@@ -21,6 +21,7 @@ const {
 const { request, errorCheck } = require("/opt/appSyncRequest");
 
 const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
+const DAYS_TO_ARCHIVE = 4;
 
 const query = /* GraphQL */ `
     query LIST_TASKS_BY_ARCHIVE_STATUS(
@@ -295,9 +296,12 @@ exports.handler = async (event) => {
         )
     );
     const tasksFlattened = tasks.flat();
-    const oneWeekAgo = moment.utc().subtract(7, "days").toISOString();
+    const daysAgo = moment
+        .utc()
+        .subtract(DAYS_TO_ARCHIVE, "days")
+        .toISOString();
     const filtered = tasksFlattened.filter(
-        (task) => task.createdAt && task.createdAt < oneWeekAgo
+        (task) => task.createdAt && task.createdAt < daysAgo
     );
     // split into 10 item lists
     const chunked = _.chunk(filtered, 10);

@@ -3,9 +3,10 @@ import clearAmplifyConfig from "../../utilities/clearAmplifyConfig";
 import configureAmplify from "./utilities/configureAmplify";
 import saveAmplifyConfig from "../../utilities/saveAmplifyConfig";
 import TenantList from "./components/TenantList";
-import { Box, CircularProgress } from "@mui/material";
 import { DataStore } from "aws-amplify";
 import Splash from "./Splash";
+
+export const DAYS_TO_WAIT_BEFORE_CLEARING_DATA = 4;
 
 type TenantListProviderProps = {
     children: React.ReactNode;
@@ -30,11 +31,11 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
         if (offline) return;
         setIsProcessing(true);
         const lastSynced = localStorage.getItem("dateLastSynced");
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        if (lastSynced && new Date(lastSynced) < sevenDaysAgo) {
+        const daysAgo = new Date();
+        daysAgo.setDate(daysAgo.getDate() - DAYS_TO_WAIT_BEFORE_CLEARING_DATA);
+        if (lastSynced && new Date(lastSynced) < daysAgo) {
             console.log(
-                "more than 7 days since last sync, clearing stale data from DataStore"
+                `more than ${DAYS_TO_WAIT_BEFORE_CLEARING_DATA} days since last sync, clearing stale data from DataStore`
             );
             await DataStore.clear();
         }

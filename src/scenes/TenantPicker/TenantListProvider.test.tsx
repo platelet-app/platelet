@@ -1,4 +1,6 @@
-import TenantListProvider from "./TenantListProvider";
+import TenantListProvider, {
+    DAYS_TO_WAIT_BEFORE_CLEARING_DATA,
+} from "./TenantListProvider";
 import Amplify, { DataStore } from "aws-amplify";
 import { render } from "../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
@@ -419,7 +421,9 @@ describe("TenantListProvider", () => {
         });
         expect(screen.queryByText("Something Else")).not.toBeInTheDocument();
     });
-    it("clears stale data when it hasn't been synced for over a week", async () => {
+    it("clears stale data when it hasn't been synced for some time", async () => {
+        const daysAgo = new Date();
+        daysAgo.setDate(daysAgo.getDate() - DAYS_TO_WAIT_BEFORE_CLEARING_DATA);
         process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = new URL(
             "http://localhost:4000/graphql"
         );
@@ -441,7 +445,7 @@ describe("TenantListProvider", () => {
         const clearSpy = jest.spyOn(DataStore, "clear");
         const amplifySpy = jest.spyOn(Amplify, "configure");
         jest.spyOn(Storage.prototype, "getItem")
-            .mockReturnValueOnce("2000-01-01")
+            .mockReturnValueOnce(daysAgo.toISOString())
             .mockReturnValueOnce("someId")
             .mockReturnValueOnce("1")
             .mockReturnValue(fakeConfigData);
@@ -455,5 +459,44 @@ describe("TenantListProvider", () => {
             expect(amplifySpy).toHaveBeenCalledWith(parsedConfig);
         });
         expect(screen.getByText("test")).toBeInTheDocument();
+    });
+    it("don't clear stale data when it hasn't been long enough", async () => {
+        const daysAgo = new Date();
+        daysAgo.setDate(
+            daysAgo.getDate() - DAYS_TO_WAIT_BEFORE_CLEARING_DATA + 1
+        );
+        process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = new URL(
+            "http://localhost:4000/graphql"
+        );
+        jest.spyOn(global, "fetch").mockResolvedValueOnce(
+            Promise.resolve({
+                json: () =>
+                    Promise.resolve({
+                        data: {
+                            getTenant: {
+                                id: "someId",
+                                name: "Tenant 1",
+                                config: fakeConfigData,
+                                version: "2",
+                            },
+                        },
+                    }),
+            })
+        );
+        const clearSpy = jest.spyOn(DataStore, "clear");
+        const amplifySpy = jest.spyOn(Amplify, "configure");
+        jest.spyOn(Storage.prototype, "getItem")
+            .mockReturnValueOnce(daysAgo.toISOString())
+            .mockReturnValueOnce("someId")
+            .mockReturnValueOnce("1")
+            .mockReturnValue(fakeConfigData);
+        render(<TenantListProvider>test</TenantListProvider>);
+        expect(screen.queryByText("test")).toBeNull();
+        expect(await screen.findByText("test")).toBeInTheDocument();
+        expect(clearSpy).not.toHaveBeenCalled();
+        const parsedConfig = JSON.parse(fakeConfigData);
+        await waitFor(() => {
+            expect(amplifySpy).toHaveBeenCalledWith(parsedConfig);
+        });
     });
 });

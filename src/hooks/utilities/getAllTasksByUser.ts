@@ -3,6 +3,7 @@ import * as models from "../../models";
 import { isCompletedTab } from "./isCompletedTab";
 import moment from "moment";
 import { convertTasksToStateType, TaskStateType } from "../useTasksColumnTasks";
+import { DAYS_AGO } from "./getTasksConsts";
 
 export default async function getAllTasksByUser(
     keys: models.TaskStatus[],
@@ -22,7 +23,7 @@ export default async function getAllTasksByUser(
     }
 
     if (isCompletedTab(keys)) {
-        const oneWeekAgo = moment.utc().subtract(7, "days").toISOString();
+        const daysAgo = moment.utc().subtract(DAYS_AGO, "days").toISOString();
         allTasks = await DataStore.query(
             models.Task,
             (task) =>
@@ -42,7 +43,7 @@ export default async function getAllTasksByUser(
                     .or((task) =>
                         task
                             .createdAt("eq", undefined!)
-                            .createdAt("gt", oneWeekAgo)
+                            .createdAt("gt", daysAgo)
                     ),
             {
                 sort: (s) => s.createdAt("DESCENDING"),

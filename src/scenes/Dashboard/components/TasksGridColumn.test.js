@@ -73,15 +73,7 @@ describe("TasksGridColumn", () => {
     });
     afterEach(async () => {
         jest.restoreAllMocks();
-        const tasks = await DataStore.query(models.Task);
-        const users = await DataStore.query(models.User);
-        const assignees = await DataStore.query(models.TaskAssignee);
-        const deliverables = await DataStore.query(models.Deliverable);
-        await Promise.all(
-            [...tasks, ...users, ...assignees, ...deliverables].map((t) =>
-                DataStore.delete(t)
-            )
-        );
+        await DataStore.clear();
     });
     it("renders without crashing", async () => {
         render(<TasksGridColumn taskKey={[tasksStatus.new]} />, {
