@@ -11,11 +11,22 @@ jest.mock("../../../aws-exports", () => ({
 }));
 
 describe("uploadProfilePicture", () => {
+    const OLD_ENV = process.env;
     afterEach(async () => {
         jest.restoreAllMocks();
         await DataStore.clear();
     });
+
+    beforeEach(() => {
+        jest.resetModules();
+        process.env = { ...OLD_ENV }; // Make a copy
+    });
+
+    afterAll(() => {
+        process.env = OLD_ENV; // Restore old environment
+    });
     it("should upload a profile picture using aws-exports", async () => {
+        process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = undefined;
         const mockUser = await DataStore.save(
             new models.User({
                 displayName: "test-user",
