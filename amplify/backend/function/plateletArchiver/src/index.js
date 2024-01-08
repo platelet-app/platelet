@@ -288,6 +288,23 @@ const updateTaskItem = async (task) => {
     return body.data.updateTask;
 };
 
+const updateTaskDateCompleted = async (task) => {
+    const variables = {
+        input: {
+            id: task.id,
+            dateCompleted: moment.utc().toISOString().split("T")[0],
+            _version: task._version,
+        },
+    };
+    const response = await request(
+        { query: updateTask, variables },
+        GRAPHQL_ENDPOINT
+    );
+    const body = await response.json();
+    errorCheck(body);
+    return body.data.updateTask;
+};
+
 exports.handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
     const tasks = await Promise.all(
@@ -296,12 +313,23 @@ exports.handler = async (event) => {
         )
     );
     const tasksFlattened = tasks.flat();
+    const tasksDateCompletedIsNull = tasksFlattened.filter(
+        (task) => !task.dateCompleted
+    );
+    const chunkedNullCompleted = _.chunk(tasksDateCompletedIsNull, 10);
+    for (const chunk of chunkedNullCompleted) {
+        await Promise.all(chunk.map((task) => updateTaskDateCompleted(task)));
+    }
+    const tasksDateCompletedIsNotNull = tasksFlattened.filter(
+        (task) => task.dateCompleted
+    );
     const daysAgo = moment
         .utc()
         .subtract(DAYS_TO_ARCHIVE, "days")
-        .toISOString();
-    const filtered = tasksFlattened.filter(
-        (task) => task.createdAt && task.createdAt < daysAgo
+        .toISOString()
+        .split("T")[0];
+    const filtered = tasksDateCompletedIsNotNull.filter(
+        (task) => task.dateCompleted && task.dateCompleted < daysAgo
     );
     // split into 10 item lists
     const chunked = _.chunk(filtered, 10);

@@ -1,5 +1,4 @@
 const indexModule = require("./index");
-const { default: fetch } = require("node-fetch");
 const _ = require("lodash");
 
 const mockTaskNewer = {
@@ -7,6 +6,7 @@ const mockTaskNewer = {
     status: "COMPLETED",
     archived: 0,
     createdAt: "2021-04-29T00:00:00.000Z",
+    dateCompleted: "2021-04-29",
     pickUpLocation: {
         listed: 1,
         _version: 1,
@@ -20,11 +20,23 @@ const mockTaskNewer = {
     _lastChangedAt: 1620000000000,
 };
 
+const mockTaskDateCompletedNull = {
+    id: "anotherTaskId",
+    status: "COMPLETED",
+    archived: 0,
+    createdAt: "2021-04-29T00:00:00.000Z",
+    dateCompleted: null,
+    _version: 1,
+    _deleted: null,
+    _lastChangedAt: 1620000000000,
+};
+
 const mockTask = {
     id: "someTaskId",
     status: "COMPLETED",
     archived: 0,
     createdAt: "2021-04-01T00:00:00.000Z",
+    dateCompleted: "2021-04-01",
     pickUpLocation: {
         listed: 1,
         _version: 1,
@@ -52,12 +64,19 @@ const fakeDataSecond = {
         nextToken: null,
     },
 };
+const fakeDataDateCompletedNull = {
+    tasksByArchivedStatus: {
+        items: [mockTaskDateCompletedNull],
+        nextToken: null,
+    },
+};
 
 const manyTasks = _.range(0, 30).map((i) => ({
     id: `someTaskId${i}`,
     status: "COMPLETED",
     archived: 0,
     createdAt: "2021-04-01T00:00:00.000Z",
+    dateCompleted: "2021-04-01",
     _version: 1,
     _deleted: null,
     _lastChangedAt: 1620000000000,
@@ -282,6 +301,39 @@ describe("plateletArchiver", () => {
                 "https://api.example.com/graphql"
             );
         }
+    });
+
+    test("update the null dateCompleted", async () => {
+        appsyncModule.request
+            .mockImplementationOnce(setupFetchStub(fakeDataDateCompletedNull))
+            .mockImplementation(setupFetchStub(fakeTaskReturn));
+        await indexModule.handler({}, indexModule.makeNewRequest);
+        expect(appsyncModule.request).toHaveBeenCalledWith(
+            {
+                query: "updateTaskMutation",
+                variables: {
+                    input: {
+                        _version: 1,
+                        id: mockTaskDateCompletedNull.id,
+                        dateCompleted: "2021-05-01",
+                    },
+                },
+            },
+            "https://api.example.com/graphql"
+        );
+        expect(appsyncModule.request).not.toHaveBeenCalledWith(
+            {
+                query: "updateTaskMutation",
+                variables: {
+                    input: {
+                        _version: 1,
+                        archived: 1,
+                        id: mockTaskDateCompletedNull.id,
+                    },
+                },
+            },
+            "https://api.example.com/graphql"
+        );
     });
 
     test("failure to archive an assignee", async () => {
