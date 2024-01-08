@@ -94,7 +94,7 @@
         "eject": "react-scripts eject",
         "preserve:static": "npm run build",
         "serve:static": "npx serve ./build  -p 3000",
-        "updateAppsyncOperations": "amplify api gql-compile && amplify codegen && babel --extensions \".ts,.js\" src/graphql --config-file ./babel.config.json -d ./amplify/backend/function/plateletappSyncOperations/opt/graphql/"
+        "updateAppsyncOperations": "amplify api gql-compile && amplify codegen && babel --extensions \".ts\" src/graphql --config-file ./babel.config.json -d ./amplify/backend/function/plateletappSyncOperations/opt/graphql/"
     },
     "eslintConfig": {
         "extends": [
@@ -118,9 +118,10 @@
         ]
     },
     "devDependencies": {
-        "@babel/cli": "^7.21.5",
-        "@babel/core": "^7.21.8",
-        "@babel/preset-env": "^7.21.5",
+        "@babel/cli": "^7.23.4",
+        "@babel/core": "^7.23.7",
+        "@babel/preset-env": "^7.23.8",
+        "@babel/preset-typescript": "^7.23.3",
         "@cypress/react": "^5.10.3",
         "@cypress/webpack-dev-server": "^1.7.0",
         "@peculiar/webcrypto": "^1.2.2",
