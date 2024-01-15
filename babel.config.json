@@ -1,12 +1,13 @@
 {
     "presets": [
         [
-            "@babel/preset-typescript",
+            "@babel/preset-env",
             {
                 "targets": {
-                    "node": 14
+                    "esmodules": true
                 }
             }
-        ]
+        ],
+        "@babel/preset-typescript"
     ]
 }

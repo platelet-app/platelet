@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"Amplify\",\"createdWith\":\"12.10.0\",\"stackType\":\"function-LambdaLayer\",\"metadata\":{}}",
+  "Description": "Lambda layer resource stack creation using Amplify CLI",
   "Parameters": {
     "env": {
       "Type": "String"
@@ -20,7 +20,7 @@
     }
   },
   "Resources": {
-    "LambdaLayerVersion7a365d34": {
+    "LambdaLayerVersion06a48596": {
       "Type": "AWS::Lambda::LayerVersion",
       "Properties": {
         "CompatibleRuntimes": {
@@ -51,13 +51,50 @@
       "DeletionPolicy": "Delete",
       "UpdateReplacePolicy": "Retain"
     },
-    "LambdaLayerPermissionPrivate7a365d34": {
+    "LambdaLayerPermissionPrivate06a48596": {
       "Type": "AWS::Lambda::LayerVersionPermission",
       "Properties": {
         "Action": "lambda:GetLayerVersion",
         "LayerVersionArn": {
-          "Ref": "LambdaLayerVersion7a365d34"
+          "Ref": "LambdaLayerVersion06a48596"
         },
+        "Principal": {
+          "Ref": "AWS::AccountId"
+        }
+      }
+    },
+    "LambdaLayerVersion7a365d34": {
+      "Type": "AWS::Lambda::LayerVersion",
+      "Properties": {
+        "CompatibleRuntimes": [
+          "nodejs16.x"
+        ],
+        "Content": {
+          "S3Bucket": {
+            "Ref": "deploymentBucketName"
+          },
+          "S3Key": "amplify-builds/plateletappSyncOperations-LambdaLayerVersion7a365d34-build.zip"
+        },
+        "Description": "Updated layer version 2024-01-08T21:56:50.402Z",
+        "LayerName": {
+          "Fn::Sub": [
+            "plateletappSyncOperations-${env}",
+            {
+              "env": {
+                "Ref": "env"
+              }
+            }
+          ]
+        }
+      },
+      "DeletionPolicy": "Delete",
+      "UpdateReplacePolicy": "Retain"
+    },
+    "LambdaLayerPermissionPrivate7a365d34": {
+      "Type": "AWS::Lambda::LayerVersionPermission",
+      "Properties": {
+        "Action": "lambda:GetLayerVersion",
+        "LayerVersionArn": "arn:aws:lambda:eu-west-1:130063560692:layer:plateletappSyncOperations-awaaaaa:1",
         "Principal": {
           "Ref": "AWS::AccountId"
         }
@@ -67,7 +104,7 @@
   "Outputs": {
     "Arn": {
       "Value": {
-        "Ref": "LambdaLayerVersion7a365d34"
+        "Ref": "LambdaLayerVersion06a48596"
       }
     }
   }
