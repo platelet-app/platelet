@@ -1,10 +1,9 @@
-import TenantListProvider, {
-    DAYS_TO_WAIT_BEFORE_CLEARING_DATA,
-} from "./TenantListProvider";
+import TenantListProvider from "./TenantListProvider";
 import Amplify, { DataStore } from "aws-amplify";
 import { render } from "../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { DAYS_AGO } from "../../hooks/utilities/getTasksConsts";
 
 const fakeConfigData = `{"test":"test"}`;
 const fakeAmplifyConfig = {
@@ -423,7 +422,7 @@ describe("TenantListProvider", () => {
     });
     it("clears stale data when it hasn't been synced for some time", async () => {
         const daysAgo = new Date();
-        daysAgo.setDate(daysAgo.getDate() - DAYS_TO_WAIT_BEFORE_CLEARING_DATA);
+        daysAgo.setDate(daysAgo.getDate() - DAYS_AGO);
         process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = new URL(
             "http://localhost:4000/graphql"
         );
@@ -462,9 +461,7 @@ describe("TenantListProvider", () => {
     });
     it("don't clear stale data when it hasn't been long enough", async () => {
         const daysAgo = new Date();
-        daysAgo.setDate(
-            daysAgo.getDate() - DAYS_TO_WAIT_BEFORE_CLEARING_DATA + 1
-        );
+        daysAgo.setDate(daysAgo.getDate() - DAYS_AGO + 1);
         process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = new URL(
             "http://localhost:4000/graphql"
         );
