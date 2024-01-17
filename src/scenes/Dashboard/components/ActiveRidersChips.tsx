@@ -27,6 +27,7 @@ import { makeStyles } from "tss-react/mui";
 import convertModelsToObject, {
     PersistentModelObjectType,
 } from "../../../utilities/convertModelsToObject";
+import { DAYS_AGO } from "../../../hooks/utilities/getTasksConsts";
 
 const useStyles = makeStyles()((theme: any) => ({
     gradientContainer: {
@@ -133,7 +134,7 @@ function RightArrow() {
 }
 
 const completedTabFilter = (assignment: models.TaskAssignee) => {
-    // if the job is in completed tab then only find out riders from the last week
+    // if the job is in completed tab then only find out riders assigned to tasks completed in last DAYS_AGO days
     // to mimic the dashboard
     return (
         assignment.task &&
@@ -143,7 +144,11 @@ const completedTabFilter = (assignment: models.TaskAssignee) => {
             models.TaskStatus.CANCELLED,
             models.TaskStatus.COMPLETED,
         ].some((ts) => assignment.task?.status === ts) &&
-        moment(assignment.task.createdAt).isAfter(moment().subtract(1, "week"))
+        (assignment.task.dateCompleted === null ||
+            assignment.task.dateCompleted === undefined ||
+            moment(assignment.task.dateCompleted).isAfter(
+                moment().subtract(DAYS_AGO, "days")
+            ))
     );
 };
 

@@ -117,13 +117,16 @@ describe("ActiveRiderChips", () => {
         taskStatus
         ${tasksStatus.completed} | ${tasksStatus.abandoned} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
     `(
-        "don't display riders from completed jobs older than a week",
+        "don't display riders from jobs completed more than 4 days ago",
         async ({ taskStatus }) => {
             const twoWeeksAgo = moment().subtract(2, "week");
             const fakeUser1 = new models.User({
                 displayName: uuidv4(),
             });
             const fakeUser2 = new models.User({
+                displayName: uuidv4(),
+            });
+            const fakeUser3 = new models.User({
                 displayName: uuidv4(),
             });
             const oldAssignmentModel = new models.TaskAssignee({
@@ -137,7 +140,7 @@ describe("ActiveRiderChips", () => {
                 ...oldAssignmentModel,
                 task: {
                     ...oldAssignmentModel.task,
-                    createdAt: twoWeeksAgo.toISOString(),
+                    dateCompleted: twoWeeksAgo.toISOString().split("T")[0],
                 },
             };
             const newAssignmentModel = new models.TaskAssignee({
@@ -147,11 +150,26 @@ describe("ActiveRiderChips", () => {
                 assignee: fakeUser2,
                 role: userRoles.rider,
             });
+            // check where dateCompleted is null too
+            const newAssignmentModelNull = new models.TaskAssignee({
+                task: new models.Task({
+                    status: taskStatus,
+                }),
+                assignee: fakeUser3,
+                role: userRoles.rider,
+            });
             const newAssignment = {
                 ...newAssignmentModel,
                 task: {
                     ...newAssignmentModel.task,
-                    createdAt: moment().toISOString(),
+                    dateCompleted: moment().toISOString().split("T")[0],
+                },
+            };
+            const newAssignmentNull = {
+                ...newAssignmentModelNull,
+                task: {
+                    ...newAssignmentModel.task,
+                    dateCompleted: null,
                 },
             };
             const newPreloadedState = {
@@ -159,7 +177,7 @@ describe("ActiveRiderChips", () => {
                 dashboardTabIndex: 1,
                 taskAssigneesReducer: {
                     ...preloadedState.taskAssigneesReducer,
-                    items: [newAssignment, oldAssignment],
+                    items: [newAssignment, oldAssignment, newAssignmentNull],
                 },
             };
             render(<ActiveRidersChips />, {
@@ -170,6 +188,9 @@ describe("ActiveRiderChips", () => {
                     screen.getByText(newAssignment.assignee.displayName)
                 ).toBeInTheDocument();
             });
+            expect(
+                screen.getByText(newAssignmentNull.assignee.displayName)
+            ).toBeInTheDocument();
             expect(
                 screen.queryByText(oldAssignment.assignee.displayName)
             ).toBeNull();

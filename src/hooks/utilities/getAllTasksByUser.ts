@@ -42,8 +42,11 @@ export default async function getAllTasksByUser(
                     )
                     .or((task) =>
                         task
-                            .createdAt("eq", undefined!)
-                            .createdAt("gt", daysAgo)
+                            //@ts-ignore
+                            .dateCompleted("eq", null)
+                            //@ts-ignore
+                            .dateCompleted("eq", undefined)
+                            .dateCompleted("gt", daysAgo)
                     ),
             {
                 sort: (s) => s.createdAt("DESCENDING"),
