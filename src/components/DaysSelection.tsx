@@ -33,6 +33,7 @@ type DaysSelectionProps = {
     size?: "small" | "medium";
     showCustom?: boolean;
     exclude?: Days[];
+    disabled?: boolean;
 };
 
 const DaysSelection: React.FC<DaysSelectionProps> = ({
@@ -41,6 +42,7 @@ const DaysSelection: React.FC<DaysSelectionProps> = ({
     size = "medium",
     showCustom = false,
     exclude = [],
+    disabled = false,
 }) => {
     let fields = { ...dayOptions };
     if (showCustom) {
@@ -58,6 +60,7 @@ const DaysSelection: React.FC<DaysSelectionProps> = ({
             {Object.entries(filtered).map(([label, day]) => (
                 <Grid item key={day}>
                     <Chip
+                        disabled={disabled}
                         size={size}
                         aria-label={label}
                         label={label}

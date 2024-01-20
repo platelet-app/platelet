@@ -1,48 +1,51 @@
-import { DataStore } from "aws-amplify";
-import { priorities, tasksStatus, userRoles } from "../../../apiConsts";
-import * as models from "../../../models";
+import { Task, Role, Priority, TaskStatus, User } from "../../../API";
 
-export default async function getStats(role, range, whoamiId) {
-    const stats = {
-        common: {},
+type PriorityUnion = Priority | "NONE" | "TOTAL";
+
+type Stats = {
+    common: {
+        TOTAL: number;
+        [key: string]: number;
+    };
+    priorities: {
+        [key in PriorityUnion]?: number;
+    };
+    riders: {
+        [key: string]: {
+            [key: string]: number;
+        };
+    };
+    riderResponsibilities: {
+        [key: string]: {
+            [key: string]: number;
+        };
+    };
+};
+
+export default function getStats(data: Task[], whoamiId: string) {
+    const stats: Stats = {
+        common: { TOTAL: 0 },
         priorities: {},
         riders: {},
         riderResponsibilities: {},
     };
     // get all tasks within the date range
-    const tasksWithinRange = await DataStore.query(models.Task, (t) =>
-        t.or((t) =>
-            t
-                .createdAt("eq", undefined)
-                .and((t) =>
-                    t.createdAt("le", range.start).createdAt("ge", range.end)
-                )
+    const myTasks = data.filter((t) =>
+        t.assignees?.items?.some(
+            (a) => a?.role === Role.COORDINATOR && a?.assignee?.id === whoamiId
         )
     );
-    const taskIds = tasksWithinRange.map((t) => t.id);
-    const coordAssignmentsAll = await DataStore.query(
-        models.TaskAssignee,
-        (a) => a.role("eq", userRoles.coordinator)
-    );
-    // get all of my tasks as a coordinator that fit in the range
-    const myCoordAssignments = coordAssignmentsAll.filter(
-        (a) => a.task && a.assignee && a.assignee.id === whoamiId
-    );
-    const myTasks = myCoordAssignments
-        .filter((ta) => taskIds.includes(ta.task.id))
-        .map((a) => a.task);
     const myTaskIds = myTasks.map((t) => t.id);
-    console.log(myTasks);
-    console.log(tasksWithinRange);
     stats.common.TOTAL = myTasks.length;
     // get the status stats
-    for (const status of Object.values(tasksStatus)) {
+    for (const status of Object.values(TaskStatus)) {
+        if (status === TaskStatus.PENDING) continue;
         stats.common[status] = myTasks.filter(
             (task) => task.status === status
         ).length;
     }
     // get the priority stats
-    for (const priority of Object.values(priorities)) {
+    for (const priority of Object.values(Priority)) {
         stats.priorities[priority] = myTasks.filter(
             (task) => task.priority === priority
         ).length;
@@ -52,50 +55,52 @@ export default async function getStats(role, range, whoamiId) {
     stats.priorities["TOTAL"] = myTasks.length;
 
     // get all the rider assignments that intersect with mine
-    const riderAssignmentsAll = await DataStore.query(
-        models.TaskAssignee,
-        (a) => a.role("eq", userRoles.rider)
+    const riderAssignmentsAll = data.filter((t) =>
+        t.assignees?.items?.some((a) => a?.role === Role.RIDER)
     );
-    const taskAssignments = riderAssignmentsAll.filter(
-        (ta) => ta.task && myTaskIds.includes(ta.task.id)
+    const taskAssignments = riderAssignmentsAll.filter((ta) =>
+        myTaskIds.includes(ta.id)
     );
-    const activeRiders = {};
-    for (const assignment of taskAssignments) {
-        if (assignment.assignee)
-            activeRiders[assignment.assignee.id] = assignment.assignee;
+    const assignments = taskAssignments
+        .map((ta) => ta?.assignees?.items)
+        .flat()
+        .filter((a) => a?.role === Role.RIDER);
+    const activeRiders: { [key: string]: User } = {};
+    for (const assignment of assignments) {
+        if (assignment?.assignee)
+            activeRiders[assignment?.assignee?.id] = assignment?.assignee;
     }
-    const riders = {};
+    const riders: { [key: string]: any } = {};
     for (const rider of Object.values(activeRiders)) {
         riders[rider.displayName] = {};
-        for (const priority of Object.values(priorities)) {
-            const count = taskAssignments.filter(
+        for (const priority of Object.values(Priority)) {
+            const count = assignments.filter(
                 (assignment) =>
-                    assignment.assignee &&
-                    assignment.assignee.id === rider.id &&
+                    assignment?.assignee.id === rider.id &&
                     assignment.task &&
                     assignment.task.priority === priority
             ).length;
             riders[rider.displayName][priority] = count;
         }
-        const noPriority = taskAssignments.filter(
+        const noPriority = assignments.filter(
             (assignment) =>
-                assignment.assignee &&
-                assignment.assignee.id === rider.id &&
+                assignment?.assignee.id === rider.id &&
                 assignment.task &&
                 !assignment.task.priority
         ).length;
-        const total = taskAssignments.filter(
-            (assignment) =>
-                assignment.assignee && assignment.assignee.id === rider.id
+        const total = assignments.filter(
+            (assignment) => assignment?.assignee.id === rider.id
         ).length;
         riders[rider.displayName]["TOTAL"] = total;
         riders[rider.displayName]["NONE"] = noPriority;
     }
-    const responsibilities = { None: { Total: 0 } };
+    const responsibilities: { [key: string]: { [key: string]: number } } = {
+        None: { Total: 0 },
+    };
     const prioritiesTemplate = {
-        [priorities.low]: 0,
-        [priorities.medium]: 0,
-        [priorities.high]: 0,
+        [Priority.LOW]: 0,
+        [Priority.MEDIUM]: 0,
+        [Priority.HIGH]: 0,
     };
     for (const task of myTasks) {
         const t = {
@@ -115,7 +120,7 @@ export default async function getStats(role, range, whoamiId) {
         }
     }
     for (const resp of Object.keys(responsibilities)) {
-        for (const priority of Object.values(priorities)) {
+        for (const priority of Object.values(Priority)) {
             if (resp === "None") {
                 responsibilities[resp][priority] = myTasks.filter(
                     (t) => !t.riderResponsibility && t.priority === priority
@@ -151,7 +156,6 @@ export default async function getStats(role, range, whoamiId) {
 
     stats.riders = riders;
     stats.riderResponsibilities = responsibilities;
-    console.log("Generated stats:", stats);
 
     return stats;
 }
