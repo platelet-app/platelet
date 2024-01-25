@@ -80,7 +80,12 @@ export const listTasksByTenantId = /* GraphQL */ `
                 assignees {
                     items {
                         _deleted
+                        role
+                        task {
+                            priority
+                        }
                         assignee {
+                            id
                             displayName
                             profilePicture {
                                 key
@@ -156,7 +161,9 @@ const useGetTasksGraphql = (
     limit: number = 10,
     sortDirection: ModelSortDirection = ModelSortDirection.DESC,
     startDate: Date | null = null,
-    endDate: Date | null = null
+    endDate: Date | null = null,
+    // if true then retrieve tasks between the times and not just the date
+    usePreciseDates: boolean = false
 ) => {
     const [state, setState] = React.useState<StateType>({});
     const [isFetching, setIsFetching] = React.useState(false);
@@ -211,7 +218,6 @@ const useGetTasksGraphql = (
                     actualEndDate.setDate(endDateCopy.getDate() + 1);
             }
 
-            console.log("get tasks", actualStartDate, actualEndDate);
             if (
                 actualStartDate &&
                 actualEndDate &&
@@ -305,15 +311,23 @@ const useGetTasksGraphql = (
             console.log("start date is not valid");
             return;
         }
+
         const actualEndDate = endDate ? new Date(endDate) : null;
         const actualStartDate = startDate ? new Date(startDate) : null;
-        if (actualStartDate) {
+        const startDateCopy = actualStartDate
+            ? new Date(actualStartDate)
+            : null;
+        const endDateCopy = actualEndDate ? new Date(actualEndDate) : null;
+        if (actualStartDate && !usePreciseDates) {
             actualStartDate.setUTCHours(0, 0, 0, 0);
+            // sometimes changing the time changes the date, so we set it back
+            if (startDateCopy) actualStartDate.setDate(startDateCopy.getDate());
         }
-        if (actualEndDate) {
-            actualEndDate.setDate(actualEndDate.getDate() + 1);
+        if (actualEndDate && !usePreciseDates) {
             actualEndDate.setUTCHours(0, 0, 0, 0);
+            if (endDateCopy) actualEndDate.setDate(endDateCopy.getDate() + 1);
         }
+
         if (
             actualStartDate &&
             actualEndDate &&
@@ -322,6 +336,7 @@ const useGetTasksGraphql = (
             console.log("start date is not before end date");
             return;
         }
+
         try {
             if (!tenantId) return;
             setState({});
@@ -377,7 +392,15 @@ const useGetTasksGraphql = (
         } finally {
             setIsFetching(false);
         }
-    }, [limit, tenantId, sortDirection, startDate, endDate, filterComments]);
+    }, [
+        limit,
+        tenantId,
+        sortDirection,
+        startDate,
+        endDate,
+        filterComments,
+        usePreciseDates,
+    ]);
 
     React.useEffect(() => {
         getTasks();

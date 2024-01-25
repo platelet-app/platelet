@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import * as models from "../../models";
 import { PaddedPaper } from "../../styles/common";
 import TasksStatistics from "./components/TasksStatistics";
@@ -12,64 +12,51 @@ import { displayErrorNotification } from "../../redux/notifications/Notification
 import DaysSelection, { Days } from "../../components/DaysSelection";
 import CoordinatorPicker from "../../components/CoordinatorPicker";
 import UserChip from "../../components/UserChip";
-
-const initialState = {
-    common: {
-        numCompleted: 0,
-        numPickedUp: 0,
-        numActive: 0,
-        numUnassigned: 0,
-        numRejected: 0,
-        numCancelled: 0,
-        numTasks: 0,
-        timeActive: 0,
-    },
-    priorities: {
-        high: 0,
-        medium: 0,
-        low: 0,
-    },
-    riders: {},
-};
+import useGetTasksGraphql from "../../hooks/useGetTasksGraphql";
+import { ModelSortDirection } from "../../API";
 
 function StatisticsDashboard() {
-    const [state, setState] = useState(initialState);
-    const [isFetching, setIsFetching] = useState(false);
-    const [adminSelectedUser, setAdminSelectedUser] = useState(null);
+    const [adminSelectedUser, setAdminSelectedUser] =
+        useState<models.User | null>(null);
     const whoami = useSelector(getWhoami);
     const [days, setDays] = useState(3);
+    const [startDate, setStartDate] = useState(
+        moment().subtract(3, "day").toDate()
+    );
+    const [endDate, setEndDate] = useState(moment().toDate());
+    const { state, isFetching, isFetchingMore, isFinished, getNext, error } =
+        useGetTasksGraphql(
+            100,
+            ModelSortDirection.DESC,
+            startDate,
+            endDate,
+            true
+        );
     const dispatch = useDispatch();
 
-    const handleDaysChange = (value) => {
+    React.useEffect(() => {
+        if (error) {
+            dispatch(displayErrorNotification("Sorry, something went wrong."));
+        }
+    }, [error, dispatch]);
+
+    const getMore = React.useCallback(async () => {
+        if (!isFinished && !isFetchingMore && !isFetching) {
+            console.log("Fetching more tasks...");
+            await getNext();
+        }
+    }, [isFinished, getNext, isFetchingMore, isFetching]);
+
+    React.useEffect(() => {
+        getMore();
+    }, [getMore]);
+
+    const handleDaysChange = (value: number) => {
         setDays(value);
+        setStartDate(moment().subtract(value, "day").toDate());
+        setEndDate(moment().toDate());
     };
 
-    const getStatsData = React.useCallback(async () => {
-        try {
-            setIsFetching(true);
-            const newMoment = moment();
-            const start = newMoment.toISOString();
-            const end = newMoment.subtract(days, "day").toISOString();
-            const range = {
-                start,
-                end,
-            };
-            setState(
-                await getStats(
-                    models.Role.COORDINATOR,
-                    range,
-                    adminSelectedUser ? adminSelectedUser.id : whoami.id
-                )
-            );
-            setIsFetching(false);
-        } catch (e) {
-            dispatch(displayErrorNotification("Sorry, something went wrong"));
-            setState(initialState);
-            console.log(e);
-        }
-    }, [days, whoami.id, dispatch, adminSelectedUser]);
-
-    useEffect(() => getStatsData(), [getStatsData]);
     const isAdmin = whoami?.roles?.includes(models.Role.ADMIN);
 
     return (
@@ -89,6 +76,7 @@ function StatisticsDashboard() {
                         exclude={[Days.TWO_WEEKS]}
                         value={days}
                         onChange={handleDaysChange}
+                        disabled={isFetching || isFetchingMore}
                     />
                     <Fade
                         in={isFetching}
@@ -116,7 +104,9 @@ function StatisticsDashboard() {
                     </Box>
                 )}
             </Stack>
-            <TasksStatistics data={state} />
+            <TasksStatistics
+                data={getStats(state, adminSelectedUser?.id || whoami.id)}
+            />
         </PaddedPaper>
     );
 }

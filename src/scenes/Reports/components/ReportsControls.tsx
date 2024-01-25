@@ -100,7 +100,7 @@ const ReportsControls: React.FC<ReportsControlsProps> = ({
         }
     };
 
-    const excludeDays = role !== "ALL" ? [Days.CUSTOM, Days.TWO_WEEKS] : [];
+    const excludeDays = role !== "ALL" ? [Days.CUSTOM] : [];
     return (
         <Stack spacing={1}>
             <Grid direction="column" container spacing={1}>

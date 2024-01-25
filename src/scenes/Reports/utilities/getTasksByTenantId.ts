@@ -1,4 +1,4 @@
-import { ListTasksByTenantIdQuery } from "../../../API";
+import { ListTasksByTenantIdQuery, Task } from "../../../API";
 import { API } from "aws-amplify";
 import { GraphQLQuery } from "@aws-amplify/api";
 
@@ -112,7 +112,7 @@ const getTasksByTenantId = async (
     tenantId: string,
     startDate?: Date,
     endDate?: Date
-) => {
+): Promise<(Task | null)[]> => {
     const items = [];
     let nextToken: string | null = null;
     const startDateString = startDate?.toISOString();

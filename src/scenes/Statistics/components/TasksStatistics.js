@@ -45,7 +45,10 @@ function hhmmss(secs) {
 }
 
 function CommonStats(props) {
-    const columns = [...Object.values(tasksStatus), "TOTAL"];
+    const columns = [
+        ...Object.values(tasksStatus).filter((s) => s !== tasksStatus.pending),
+        "TOTAL",
+    ];
     return (
         <TableContainer>
             <Table
