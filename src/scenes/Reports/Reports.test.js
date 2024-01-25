@@ -341,7 +341,7 @@ describe("Reports", () => {
         expect(button).toBeDisabled();
         await waitFor(() => {
             expect(generateReportSpy).toHaveBeenCalledWith(
-                whoami.id,
+                null,
                 "ALL",
                 tenantId,
                 new Date("2021-01-01"),
@@ -360,7 +360,7 @@ describe("Reports", () => {
         userEvent.click(button);
         await waitFor(() => {
             expect(generateReportSpy).toHaveBeenCalledWith(
-                whoami.id,
+                null,
                 "ALL",
                 tenantId,
                 startDate,
