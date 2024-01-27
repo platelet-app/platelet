@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import StatusBar from "./components/StatusBar";
+import CloseIcon from "@mui/icons-material/Close";
 import Dialog from "@mui/material/Dialog";
 import { useDispatch, useSelector } from "react-redux";
 import { decodeUUID } from "../../utilities";
@@ -11,12 +11,13 @@ import GetError from "../../ErrorComponents/GetError";
 import Typography from "@mui/material/Typography";
 import TaskOverview from "./components/TaskOverview";
 import CommentsSideBar from "./components/CommentsSideBar";
-import { Button, Hidden } from "@mui/material";
+import { Hidden, IconButton } from "@mui/material";
 import * as models from "../../models/index";
 import { DataStore } from "aws-amplify";
 import { dataStoreModelSyncedStatusSelector } from "../../redux/Selectors";
 import { useHistory, useLocation, useParams } from "react-router";
 import { setSelectionActionsPending } from "../../redux/selectionMode/selectionModeActions";
+import StatusBarMobile from "./components/StatusBarMobile";
 
 const drawerWidth = 420;
 const drawerWidthMd = 420;
@@ -34,12 +35,14 @@ const useStyles = makeStyles()((theme) => ({
         justify: "center",
     },
     overview: {
+        marginLeft: 50,
         marginRight: drawerWidth,
         [theme.breakpoints.down("lg")]: {
             marginRight: drawerWidthMd,
         },
         [theme.breakpoints.down("md")]: {
             marginRight: 0,
+            marginLeft: 0,
         },
     },
 }));
@@ -47,6 +50,8 @@ const useStyles = makeStyles()((theme) => ({
 const DialogWrapper = (props) => {
     const { handleClose } = props;
     const { classes } = useStyles();
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("md"));
     return (
         <Dialog
             onKeyUp={(e) => {
@@ -66,6 +71,23 @@ const DialogWrapper = (props) => {
             }}
             aria-label="task-dialog"
         >
+            {!isSm && (
+                <IconButton
+                    sx={{
+                        position: "absolute",
+                        borderWidth: 1,
+                        borderColor: "grey.500",
+                        borderStyle: "solid",
+                        top: 15,
+                        left: 8,
+                        zIndex: 1,
+                    }}
+                    data-cy="task-status-close"
+                    onClick={handleClose}
+                >
+                    <CloseIcon aria-label="close" fontSize="medium" />
+                </IconButton>
+            )}
             {props.children}
         </Dialog>
     );
@@ -76,6 +98,7 @@ function TaskDialogCompact() {
     const { classes } = useStyles();
     const theme = useTheme();
     const isMd = useMediaQuery(theme.breakpoints.down("lg"));
+    const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const taskObserver = useRef({ unsubscribe: () => {} });
     const [isFetching, setIsFetching] = useState(false);
     const [errorState, setErrorState] = useState(null);
@@ -119,12 +142,6 @@ function TaskDialogCompact() {
         else history.push("/");
     }
 
-    const statusBar = notFound ? (
-        <Button onClick={onClose}>Close</Button>
-    ) : (
-        <StatusBar handleClose={onClose} taskId={taskId} />
-    );
-
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -135,16 +152,14 @@ function TaskDialogCompact() {
     if (notFound) {
         return (
             <DialogWrapper handleClose={onClose}>
-                {statusBar}
                 <NotFound>
-                    <Typography>Task with UUID {taskId} not found.</Typography>
+                    <Typography>Task not found.</Typography>
                 </NotFound>
             </DialogWrapper>
         );
     } else if (errorState) {
         return (
             <DialogWrapper handleClose={onClose}>
-                {statusBar}
                 <GetError>
                     <Typography>
                         {errorState && errorState.message
@@ -158,7 +173,7 @@ function TaskDialogCompact() {
         return (
             <DialogWrapper handleClose={onClose}>
                 <div className={classes.overview}>
-                    {statusBar}
+                    {isSm && <StatusBarMobile taskId={taskId} />}
                     <TaskOverview isFetching={isFetching} taskId={taskId} />
                     <Hidden mdDown>
                         <CommentsSideBar

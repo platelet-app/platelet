@@ -14,11 +14,13 @@ import LocationDetailsPanel from "../../sharedTaskComponents/LocationDetailsPane
 import TaskAssignmentsPanel from "./TaskAssignmentsPanel";
 import CommentsSection from "../../Comments/CommentsSection";
 import PendingTaskAcceptReject from "./PendingTaskAcceptReject";
+import StatusBar from "./StatusBar";
 
 const useStyles = makeStyles()((theme) => ({
     root: {
         maxWidth: 1800,
         padding: 15,
+        paddingTop: 5,
         [theme.breakpoints.down("xl")]: {
             padding: 5,
         },
@@ -46,9 +48,11 @@ function TaskOverview({ taskId, isFetching }) {
     const { classes } = useStyles();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMd = useMediaQuery(theme.breakpoints.down("md"));
 
     return (
         <Container className={classes.root}>
+            {!isMd && <StatusBar taskId={taskId} />}
             <PendingTaskAcceptReject taskId={taskId} />
             <Grid container direction="row" spacing={isSm ? 1 : 3}>
                 <Grid item className={classes.item}>
@@ -67,7 +71,6 @@ function TaskOverview({ taskId, isFetching }) {
                             taskId={taskId}
                             locationKey={"pickUpLocation"}
                         />
-
                         <LocationDetailsPanel
                             taskModel={models.Task}
                             taskId={taskId}

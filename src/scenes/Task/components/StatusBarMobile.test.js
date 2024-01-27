@@ -1,4 +1,3 @@
-import StatusBar from "./StatusBar";
 import { render } from "../../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import { tasksStatus } from "../../../apiConsts";
@@ -8,15 +7,18 @@ import { createMatchMedia } from "../../../test-utils";
 import { DataStore } from "aws-amplify";
 import StatusBarMobile from "./StatusBarMobile";
 
-describe("StatusBar", () => {
+describe.only("StatusBarMobile", () => {
     beforeAll(() => {
         window.matchMedia = createMatchMedia(window.innerWidth);
     });
     afterEach(() => {
         jest.restoreAllMocks();
     });
+    beforeEach(() => {
+        window.matchMedia = createMatchMedia(240);
+    });
     it("renders correctly", () => {
-        render(<StatusBar />);
+        render(<StatusBarMobile />);
     });
 
     it.each`
@@ -32,7 +34,7 @@ describe("StatusBar", () => {
     `("renders the correct status", async ({ status }) => {
         const mockTask = await DataStore.save(new models.Task({ status }));
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<StatusBar taskId={mockTask.id} />);
+        render(<StatusBarMobile taskId={mockTask.id} />);
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledWith(models.Task, mockTask.id);
         });
@@ -101,7 +103,7 @@ describe("StatusBar", () => {
             )
         );
         const querySpy = jest.spyOn(DataStore, "query");
-        render(<StatusBar taskId={mockTask.id} />);
+        render(<StatusBarMobile taskId={mockTask.id} />);
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledWith(models.Task, mockTask.id);
         });
@@ -184,7 +186,7 @@ describe("StatusBar", () => {
         const querySpy = jest.spyOn(DataStore, "query");
         let cordovaSpy;
         cordovaSpy = jest.spyOn(window.cordova.plugins.clipboard, "copy");
-        render(<StatusBar taskId={mockTask.id} />);
+        render(<StatusBarMobile taskId={mockTask.id} />);
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledWith(models.Task, mockTask.id);
         });
@@ -262,7 +264,7 @@ describe("StatusBar", () => {
         );
         const querySpy = jest.spyOn(DataStore, "query");
         const clipboardSpy = jest.spyOn(navigator.clipboard, "writeText");
-        render(<StatusBar taskId={mockTask.id} />);
+        render(<StatusBarMobile taskId={mockTask.id} />);
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledWith(models.Task, mockTask.id);
         });
@@ -278,10 +280,19 @@ describe("StatusBar", () => {
 
     it("fails to copy task data to clipboard", async () => {
         jest.restoreAllMocks();
-        render(<StatusBar taskId={"nope"} />);
+        render(<StatusBarMobile taskId={"nope"} />);
         const copyButton = screen.getByText("Copy to clipboard");
         expect(copyButton).toBeInTheDocument();
         userEvent.click(copyButton);
         expect(await screen.findByText("Copy failed!")).toBeInTheDocument();
+    });
+
+    test("click the back button on mobile", async () => {
+        const mockClose = jest.fn();
+        render(<StatusBarMobile handleClose={mockClose} />);
+        const closeButton = screen.getByRole("button", { name: "Close" });
+        expect(closeButton).toBeInTheDocument();
+        userEvent.click(closeButton);
+        expect(mockClose).toHaveBeenCalled();
     });
 });
