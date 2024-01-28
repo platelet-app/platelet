@@ -24,7 +24,7 @@ const generateClass = (theme: any, status: models.TaskStatus) => {
         display: "flex",
         width: "100%",
         maxWidth: 825,
-        borderRadius: "1em",
+        borderRadius: 10,
         italic: {
             fontStyle: "italic",
         },

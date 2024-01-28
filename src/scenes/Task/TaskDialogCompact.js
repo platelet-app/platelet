@@ -173,7 +173,12 @@ function TaskDialogCompact() {
         return (
             <DialogWrapper handleClose={onClose}>
                 <div className={classes.overview}>
-                    {isSm && <StatusBarMobile taskId={taskId} />}
+                    {isSm && (
+                        <StatusBarMobile
+                            handleClose={onClose}
+                            taskId={taskId}
+                        />
+                    )}
                     <TaskOverview isFetching={isFetching} taskId={taskId} />
                     <Hidden mdDown>
                         <CommentsSideBar
