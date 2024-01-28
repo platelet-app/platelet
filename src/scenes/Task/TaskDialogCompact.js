@@ -75,17 +75,14 @@ const DialogWrapper = (props) => {
                 <IconButton
                     sx={{
                         position: "absolute",
-                        borderWidth: 1,
-                        borderColor: "grey.500",
-                        borderStyle: "solid",
-                        top: 15,
-                        left: 8,
+                        top: 10,
+                        left: 2,
                         zIndex: 1,
                     }}
                     data-cy="task-status-close"
                     onClick={handleClose}
                 >
-                    <CloseIcon aria-label="close" fontSize="medium" />
+                    <CloseIcon aria-label="close" fontSize="large" />
                 </IconButton>
             )}
             {props.children}
