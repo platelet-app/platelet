@@ -3,10 +3,10 @@ import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
 import PropTypes from "prop-types";
 import ClearIcon from "@mui/icons-material/Clear";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
+import ClickableTextField from "./ClickableTextField";
 
 function IncreaseDecreaseCounter(props) {
     const [state, setState] = useState(props.value);
@@ -47,7 +47,6 @@ function IncreaseDecreaseCounter(props) {
                     aria-label="increment"
                     disabled={props.disabled}
                     onClick={() => {
-                        props.onIncrease();
                         props.onChange(state + 1);
                         setState(state + 1);
                     }}
@@ -57,7 +56,15 @@ function IncreaseDecreaseCounter(props) {
                 </IconButton>
             </Grid>
             <Grid item>
-                <Typography>{state}</Typography>
+                <ClickableTextField
+                    textFieldProps={{ sx: { width: 40 } }}
+                    value={state}
+                    onChange={(v) => {
+                        const result = parseInt(v);
+                        setState(result);
+                        props.onChange(result);
+                    }}
+                />
             </Grid>
             <Grid item>
                 <IconButton
@@ -65,7 +72,6 @@ function IncreaseDecreaseCounter(props) {
                     aria-label="decrement"
                     disabled={props.disabled || state < 2}
                     onClick={() => {
-                        props.onDecrease();
                         props.onChange(state - 1);
                         setState(state - 1);
                     }}
@@ -79,8 +85,6 @@ function IncreaseDecreaseCounter(props) {
 }
 
 IncreaseDecreaseCounter.defaultProps = {
-    onIncrease: () => {},
-    onDecrease: () => {},
     onChange: () => {},
     onDelete: () => {},
     disabled: false,
@@ -88,8 +92,6 @@ IncreaseDecreaseCounter.defaultProps = {
 };
 
 IncreaseDecreaseCounter.propTypes = {
-    onIncrease: PropTypes.func,
-    onDecrease: PropTypes.func,
     onChange: PropTypes.func,
     onDelete: PropTypes.func,
     disabled: PropTypes.bool,

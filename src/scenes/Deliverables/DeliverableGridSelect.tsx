@@ -47,7 +47,7 @@ type DeliverableGridSelectProps = {
     disabled?: boolean;
 };
 
-type BasicDeliverableType = {
+export type BasicDeliverableType = {
     count: number;
     id: string;
     label: string;

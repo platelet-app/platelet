@@ -60,6 +60,7 @@ DeliverableCard.propTypes = {
     label: PropTypes.string,
     onDelete: PropTypes.func,
     compact: PropTypes.bool,
+    children: PropTypes.node,
 };
 
 DeliverableCard.defaultProps = {

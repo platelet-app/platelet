@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Typography from "@mui/material/Typography";
-import { makeStyles } from 'tss-react/mui';
+import { makeStyles } from "tss-react/mui";
 import PropTypes from "prop-types";
 import { TextFieldUncontrolled } from "./TextFields";
 
@@ -114,6 +114,7 @@ function ClickableTextField(props) {
     if (editMode) {
         return (
             <TextFieldUncontrolled
+                {...props.textFieldProps}
                 margin="dense"
                 variant="standard"
                 inputProps={{
@@ -151,6 +152,7 @@ ClickableTextField.propTypes = {
     onChange: PropTypes.func,
     tel: PropTypes.bool,
     onFinished: PropTypes.func,
+    textFieldProps: PropTypes.object,
 };
 
 ClickableTextField.defaultProps = {
@@ -159,6 +161,7 @@ ClickableTextField.defaultProps = {
     onChange: () => {},
     onFinished: () => {},
     tel: false,
+    textFieldProps: {},
 };
 
 export default ClickableTextField;
