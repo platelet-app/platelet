@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
-import { Paper, Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import ProfilePictureCropper from "./ProfilePictureCropper";
 import uploadProfilePicture from "./uploadProfilePicture";
 import { generateS3Link } from "../../../amplifyUtilities";
@@ -94,9 +94,9 @@ export default function ProfilePicture(props) {
             image={image}
         />
     ) : (
-        <img
-            width={300}
-            height={300}
+        <Box
+            sx={{ width: 300, height: 300, borderRadius: "1em" }}
+            component="img"
             alt={props.altText}
             src={newImage || imageUrl}
         />
@@ -123,7 +123,7 @@ export default function ProfilePicture(props) {
         );
 
     return (
-        <Paper sx={{ width: 370, height: 400, padding: 4 }}>
+        <Box sx={{ width: 370, height: 400, padding: 4 }}>
             <Stack
                 container
                 direction={"column"}
@@ -133,6 +133,6 @@ export default function ProfilePicture(props) {
                 {profilePicture}
                 {picturePermission && props.editable && picUploadButton}
             </Stack>
-        </Paper>
+        </Box>
     );
 }
