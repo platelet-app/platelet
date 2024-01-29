@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "tss-react/mui";
-import PropTypes from "prop-types";
 import { TextFieldUncontrolled } from "./TextFields";
 
 const useStyles = makeStyles()((theme) => ({
@@ -35,55 +34,71 @@ const useStyles = makeStyles()((theme) => ({
     },
 }));
 
-function ClickableTextField(props) {
-    const [editMode, setEditMode] = useState(false);
-    const [value, setValue] = useState("");
-    const firstValue = useRef(props.value);
+type ClickableTextFieldProps = {
+    value?: string | null;
+    disabled?: boolean;
+    label?: string | null;
+    onChange?: (value: string) => void;
+    tel?: boolean;
+    onFinished?: (value: string) => void;
+    textFieldProps?: object;
+};
 
+const ClickableTextField: React.FC<ClickableTextFieldProps> = ({
+    value = "",
+    disabled = false,
+    label = "",
+    onChange,
+    tel = false,
+    onFinished,
+    textFieldProps = {},
+}) => {
+    const [editMode, setEditMode] = useState(false);
+    const [state, setState] = useState("");
+    const firstValue = useRef(value);
     const { classes, cx } = useStyles();
 
-    function onChange(e) {
-        props.onChange(e.target.value);
-        setValue(e.target.value);
+    function handleChange(e: any) {
+        if (onChange) onChange(e.target.value);
+        setState(e.target.value);
     }
 
-    function onFinishedEntry(ev) {
+    function onFinishedEntry(ev: any) {
         setEditMode(false);
-        props.onFinished(ev.target.value);
+        if (onFinished) onFinished(ev.target.value);
         firstValue.current = ev.target.value;
     }
 
     function toggleEditMode() {
-        if (!props.disabled) {
+        if (!disabled) {
             setEditMode(!editMode);
         }
     }
 
     useEffect(() => {
-        firstValue.current = props.value;
-        setValue(props.value);
-    }, [props.value]);
+        firstValue.current = value || "";
+        setState(value || "");
+    }, [value]);
 
-    const label =
-        props.disabled && !props.label ? "" : props.label || "Click to edit";
+    const newLabel = disabled && !label ? "" : label || "Click to edit";
 
-    const stuff = props.disabled ? (
-        value ? (
+    const stuff = disabled ? (
+        state ? (
             <Typography
                 noWrap
                 className={classes.text}
                 onClick={toggleEditMode}
                 align={"right"}
             >
-                {value}
+                {state}
             </Typography>
         ) : (
             <></>
         )
-    ) : value ? (
+    ) : state ? (
         <Typography
             noWrap
-            aria-label={label}
+            aria-label={label || "Click to edit"}
             className={cx(
                 classes.hoverHighlight,
                 classes.enabled,
@@ -92,12 +107,12 @@ function ClickableTextField(props) {
             align={"right"}
             onClick={toggleEditMode}
         >
-            {value}
+            {state}
         </Typography>
     ) : (
         <Typography
             noWrap
-            aria-label={label}
+            aria-label={newLabel}
             onClick={toggleEditMode}
             className={cx(
                 classes.hoverHighlight,
@@ -107,61 +122,41 @@ function ClickableTextField(props) {
             )}
             align={"right"}
         >
-            {label}
+            {newLabel}
         </Typography>
     );
-
     if (editMode) {
         return (
             <TextFieldUncontrolled
-                {...props.textFieldProps}
+                {...textFieldProps}
                 margin="dense"
                 variant="standard"
                 inputProps={{
-                    "aria-label": label,
+                    "aria-label": newLabel,
                 }}
                 className={cx(classes.label, classes.text)}
-                tel={props.tel}
-                onPressEnter={(ev) => {
+                tel={tel}
+                onPressEnter={(ev: any) => {
                     onFinishedEntry(ev);
                     setEditMode(false);
                     ev.stopPropagation();
                 }}
-                onPressEscape={(ev) => {
+                onPressEscape={(ev: any) => {
                     ev.stopPropagation();
-                    onChange({
+                    handleChange({
                         target: { value: firstValue.current },
                     });
                     setEditMode(false);
                 }}
                 autoFocus={true}
-                onBlur={(ev) => onFinishedEntry(ev)}
-                value={value}
-                onChange={onChange}
+                onBlur={(ev: any) => onFinishedEntry(ev)}
+                value={state}
+                onChange={handleChange}
             />
         );
     } else {
         return <React.Fragment>{stuff}</React.Fragment>;
     }
-}
-
-ClickableTextField.propTypes = {
-    value: PropTypes.string,
-    disabled: PropTypes.bool,
-    label: PropTypes.string,
-    onChange: PropTypes.func,
-    tel: PropTypes.bool,
-    onFinished: PropTypes.func,
-    textFieldProps: PropTypes.object,
-};
-
-ClickableTextField.defaultProps = {
-    value: "",
-    disabled: false,
-    onChange: () => {},
-    onFinished: () => {},
-    tel: false,
-    textFieldProps: {},
 };
 
 export default ClickableTextField;

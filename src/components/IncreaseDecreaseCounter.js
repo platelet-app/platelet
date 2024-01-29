@@ -6,7 +6,7 @@ import Grid from "@mui/material/Grid";
 import PropTypes from "prop-types";
 import ClearIcon from "@mui/icons-material/Clear";
 import { makeStyles } from "tss-react/mui";
-import ClickableTextField from "./ClickableTextField";
+import ClickableDeliverableCount from "../scenes/Deliverables/components/ClickableDeliverableCount";
 
 function IncreaseDecreaseCounter(props) {
     const [state, setState] = useState(props.value);
@@ -56,7 +56,7 @@ function IncreaseDecreaseCounter(props) {
                 </IconButton>
             </Grid>
             <Grid item>
-                <ClickableTextField
+                <ClickableDeliverableCount
                     textFieldProps={{ sx: { width: 40 } }}
                     value={state}
                     onChange={(v) => {
