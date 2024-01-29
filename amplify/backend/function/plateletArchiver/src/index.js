@@ -362,10 +362,11 @@ exports.handler = async (event) => {
     const daysAgo = moment
         .utc()
         .subtract(DAYS_TO_ARCHIVE, "days")
-        .toISOString()
-        .split("T")[0];
+        .toISOString();
     const filtered = tasksDateCompletedIsNotNull.filter(
-        (task) => task.dateCompleted && task.dateCompleted < daysAgo
+        (task) =>
+            task.dateCompleted &&
+            new Date(task.dateCompleted).toISOString() < daysAgo
     );
     // split into 10 item lists
     const chunked = _.chunk(filtered, 10);
