@@ -6,16 +6,8 @@ exports[`plateletArchiver archive some tasks, ignore the newer task 1`] = `
     [
       {
         "query": "
-    query LIST_TASKS_BY_ARCHIVE_STATUS(
-        $archived: Int!
-        $status: ModelStringKeyConditionInput
-        $nextToken: String
-    ) {
-        tasksByArchivedStatus(
-            archived: $archived
-            status: $status
-            nextToken: $nextToken
-        ) {
+    query LIST_TASKS_BY_ARCHIVE_STATUS($archived: Int!, $nextToken: String) {
+        tasksByArchivedStatus(archived: $archived, nextToken: $nextToken) {
             items {
                 id
                 createdAt
@@ -43,9 +35,6 @@ exports[`plateletArchiver archive some tasks, ignore the newer task 1`] = `
         "variables": {
           "archived": 0,
           "nextToken": null,
-          "status": {
-            "eq": "COMPLETED",
-          },
         },
       },
       "https://api.example.com/graphql",
@@ -53,157 +42,8 @@ exports[`plateletArchiver archive some tasks, ignore the newer task 1`] = `
     [
       {
         "query": "
-    query LIST_TASKS_BY_ARCHIVE_STATUS(
-        $archived: Int!
-        $status: ModelStringKeyConditionInput
-        $nextToken: String
-    ) {
-        tasksByArchivedStatus(
-            archived: $archived
-            status: $status
-            nextToken: $nextToken
-        ) {
-            items {
-                id
-                createdAt
-                establishmentLocation {
-                    id
-                    listed
-                    _version
-                }
-                pickUpLocation {
-                    id
-                    listed
-                    _version
-                }
-                dropOffLocation {
-                    id
-                    listed
-                    _version
-                }
-                _version
-            }
-            nextToken
-        }
-    }
-",
-        "variables": {
-          "archived": 0,
-          "nextToken": null,
-          "status": {
-            "eq": "REJECTED",
-          },
-        },
-      },
-      "https://api.example.com/graphql",
-    ],
-    [
-      {
-        "query": "
-    query LIST_TASKS_BY_ARCHIVE_STATUS(
-        $archived: Int!
-        $status: ModelStringKeyConditionInput
-        $nextToken: String
-    ) {
-        tasksByArchivedStatus(
-            archived: $archived
-            status: $status
-            nextToken: $nextToken
-        ) {
-            items {
-                id
-                createdAt
-                establishmentLocation {
-                    id
-                    listed
-                    _version
-                }
-                pickUpLocation {
-                    id
-                    listed
-                    _version
-                }
-                dropOffLocation {
-                    id
-                    listed
-                    _version
-                }
-                _version
-            }
-            nextToken
-        }
-    }
-",
-        "variables": {
-          "archived": 0,
-          "nextToken": null,
-          "status": {
-            "eq": "ABANDONED",
-          },
-        },
-      },
-      "https://api.example.com/graphql",
-    ],
-    [
-      {
-        "query": "
-    query LIST_TASKS_BY_ARCHIVE_STATUS(
-        $archived: Int!
-        $status: ModelStringKeyConditionInput
-        $nextToken: String
-    ) {
-        tasksByArchivedStatus(
-            archived: $archived
-            status: $status
-            nextToken: $nextToken
-        ) {
-            items {
-                id
-                createdAt
-                establishmentLocation {
-                    id
-                    listed
-                    _version
-                }
-                pickUpLocation {
-                    id
-                    listed
-                    _version
-                }
-                dropOffLocation {
-                    id
-                    listed
-                    _version
-                }
-                _version
-            }
-            nextToken
-        }
-    }
-",
-        "variables": {
-          "archived": 0,
-          "nextToken": null,
-          "status": {
-            "eq": "CANCELLED",
-          },
-        },
-      },
-      "https://api.example.com/graphql",
-    ],
-    [
-      {
-        "query": "
-    query LIST_TASKS_BY_ARCHIVE_STATUS(
-        $archived: Int!
-        $status: ModelStringKeyConditionInput
-        $nextToken: String
-    ) {
-        tasksByArchivedStatus(
-            archived: $archived
-            status: $status
-            nextToken: $nextToken
-        ) {
+    query LIST_TASKS_BY_ARCHIVE_STATUS($archived: Int!, $nextToken: String) {
+        tasksByArchivedStatus(archived: $archived, nextToken: $nextToken) {
             items {
                 id
                 createdAt
@@ -231,9 +71,6 @@ exports[`plateletArchiver archive some tasks, ignore the newer task 1`] = `
         "variables": {
           "archived": 0,
           "nextToken": "tasktoken",
-          "status": {
-            "eq": "COMPLETED",
-          },
         },
       },
       "https://api.example.com/graphql",
@@ -552,18 +389,6 @@ exports[`plateletArchiver archive some tasks, ignore the newer task 1`] = `
       "type": "return",
       "value": Promise {},
     },
-    {
-      "type": "return",
-      "value": Promise {},
-    },
-    {
-      "type": "return",
-      "value": Promise {},
-    },
-    {
-      "type": "return",
-      "value": Promise {},
-    },
   ],
 }
 `;
@@ -574,16 +399,8 @@ exports[`plateletArchiver failure to archive an assignee 1`] = `
     [
       {
         "query": "
-    query LIST_TASKS_BY_ARCHIVE_STATUS(
-        $archived: Int!
-        $status: ModelStringKeyConditionInput
-        $nextToken: String
-    ) {
-        tasksByArchivedStatus(
-            archived: $archived
-            status: $status
-            nextToken: $nextToken
-        ) {
+    query LIST_TASKS_BY_ARCHIVE_STATUS($archived: Int!, $nextToken: String) {
+        tasksByArchivedStatus(archived: $archived, nextToken: $nextToken) {
             items {
                 id
                 createdAt
@@ -611,9 +428,6 @@ exports[`plateletArchiver failure to archive an assignee 1`] = `
         "variables": {
           "archived": 0,
           "nextToken": null,
-          "status": {
-            "eq": "COMPLETED",
-          },
         },
       },
       "https://api.example.com/graphql",
@@ -621,157 +435,8 @@ exports[`plateletArchiver failure to archive an assignee 1`] = `
     [
       {
         "query": "
-    query LIST_TASKS_BY_ARCHIVE_STATUS(
-        $archived: Int!
-        $status: ModelStringKeyConditionInput
-        $nextToken: String
-    ) {
-        tasksByArchivedStatus(
-            archived: $archived
-            status: $status
-            nextToken: $nextToken
-        ) {
-            items {
-                id
-                createdAt
-                establishmentLocation {
-                    id
-                    listed
-                    _version
-                }
-                pickUpLocation {
-                    id
-                    listed
-                    _version
-                }
-                dropOffLocation {
-                    id
-                    listed
-                    _version
-                }
-                _version
-            }
-            nextToken
-        }
-    }
-",
-        "variables": {
-          "archived": 0,
-          "nextToken": null,
-          "status": {
-            "eq": "REJECTED",
-          },
-        },
-      },
-      "https://api.example.com/graphql",
-    ],
-    [
-      {
-        "query": "
-    query LIST_TASKS_BY_ARCHIVE_STATUS(
-        $archived: Int!
-        $status: ModelStringKeyConditionInput
-        $nextToken: String
-    ) {
-        tasksByArchivedStatus(
-            archived: $archived
-            status: $status
-            nextToken: $nextToken
-        ) {
-            items {
-                id
-                createdAt
-                establishmentLocation {
-                    id
-                    listed
-                    _version
-                }
-                pickUpLocation {
-                    id
-                    listed
-                    _version
-                }
-                dropOffLocation {
-                    id
-                    listed
-                    _version
-                }
-                _version
-            }
-            nextToken
-        }
-    }
-",
-        "variables": {
-          "archived": 0,
-          "nextToken": null,
-          "status": {
-            "eq": "ABANDONED",
-          },
-        },
-      },
-      "https://api.example.com/graphql",
-    ],
-    [
-      {
-        "query": "
-    query LIST_TASKS_BY_ARCHIVE_STATUS(
-        $archived: Int!
-        $status: ModelStringKeyConditionInput
-        $nextToken: String
-    ) {
-        tasksByArchivedStatus(
-            archived: $archived
-            status: $status
-            nextToken: $nextToken
-        ) {
-            items {
-                id
-                createdAt
-                establishmentLocation {
-                    id
-                    listed
-                    _version
-                }
-                pickUpLocation {
-                    id
-                    listed
-                    _version
-                }
-                dropOffLocation {
-                    id
-                    listed
-                    _version
-                }
-                _version
-            }
-            nextToken
-        }
-    }
-",
-        "variables": {
-          "archived": 0,
-          "nextToken": null,
-          "status": {
-            "eq": "CANCELLED",
-          },
-        },
-      },
-      "https://api.example.com/graphql",
-    ],
-    [
-      {
-        "query": "
-    query LIST_TASKS_BY_ARCHIVE_STATUS(
-        $archived: Int!
-        $status: ModelStringKeyConditionInput
-        $nextToken: String
-    ) {
-        tasksByArchivedStatus(
-            archived: $archived
-            status: $status
-            nextToken: $nextToken
-        ) {
+    query LIST_TASKS_BY_ARCHIVE_STATUS($archived: Int!, $nextToken: String) {
+        tasksByArchivedStatus(archived: $archived, nextToken: $nextToken) {
             items {
                 id
                 createdAt
@@ -799,9 +464,6 @@ exports[`plateletArchiver failure to archive an assignee 1`] = `
         "variables": {
           "archived": 0,
           "nextToken": "tasktoken",
-          "status": {
-            "eq": "COMPLETED",
-          },
         },
       },
       "https://api.example.com/graphql",
@@ -860,18 +522,6 @@ exports[`plateletArchiver failure to archive an assignee 1`] = `
     ],
   ],
   "results": [
-    {
-      "type": "return",
-      "value": Promise {},
-    },
-    {
-      "type": "return",
-      "value": Promise {},
-    },
-    {
-      "type": "return",
-      "value": Promise {},
-    },
     {
       "type": "return",
       "value": Promise {},
@@ -902,16 +552,8 @@ exports[`plateletArchiver graphql failure to archive an assignee 1`] = `
     [
       {
         "query": "
-    query LIST_TASKS_BY_ARCHIVE_STATUS(
-        $archived: Int!
-        $status: ModelStringKeyConditionInput
-        $nextToken: String
-    ) {
-        tasksByArchivedStatus(
-            archived: $archived
-            status: $status
-            nextToken: $nextToken
-        ) {
+    query LIST_TASKS_BY_ARCHIVE_STATUS($archived: Int!, $nextToken: String) {
+        tasksByArchivedStatus(archived: $archived, nextToken: $nextToken) {
             items {
                 id
                 createdAt
@@ -939,9 +581,6 @@ exports[`plateletArchiver graphql failure to archive an assignee 1`] = `
         "variables": {
           "archived": 0,
           "nextToken": null,
-          "status": {
-            "eq": "COMPLETED",
-          },
         },
       },
       "https://api.example.com/graphql",
@@ -949,157 +588,8 @@ exports[`plateletArchiver graphql failure to archive an assignee 1`] = `
     [
       {
         "query": "
-    query LIST_TASKS_BY_ARCHIVE_STATUS(
-        $archived: Int!
-        $status: ModelStringKeyConditionInput
-        $nextToken: String
-    ) {
-        tasksByArchivedStatus(
-            archived: $archived
-            status: $status
-            nextToken: $nextToken
-        ) {
-            items {
-                id
-                createdAt
-                establishmentLocation {
-                    id
-                    listed
-                    _version
-                }
-                pickUpLocation {
-                    id
-                    listed
-                    _version
-                }
-                dropOffLocation {
-                    id
-                    listed
-                    _version
-                }
-                _version
-            }
-            nextToken
-        }
-    }
-",
-        "variables": {
-          "archived": 0,
-          "nextToken": null,
-          "status": {
-            "eq": "REJECTED",
-          },
-        },
-      },
-      "https://api.example.com/graphql",
-    ],
-    [
-      {
-        "query": "
-    query LIST_TASKS_BY_ARCHIVE_STATUS(
-        $archived: Int!
-        $status: ModelStringKeyConditionInput
-        $nextToken: String
-    ) {
-        tasksByArchivedStatus(
-            archived: $archived
-            status: $status
-            nextToken: $nextToken
-        ) {
-            items {
-                id
-                createdAt
-                establishmentLocation {
-                    id
-                    listed
-                    _version
-                }
-                pickUpLocation {
-                    id
-                    listed
-                    _version
-                }
-                dropOffLocation {
-                    id
-                    listed
-                    _version
-                }
-                _version
-            }
-            nextToken
-        }
-    }
-",
-        "variables": {
-          "archived": 0,
-          "nextToken": null,
-          "status": {
-            "eq": "ABANDONED",
-          },
-        },
-      },
-      "https://api.example.com/graphql",
-    ],
-    [
-      {
-        "query": "
-    query LIST_TASKS_BY_ARCHIVE_STATUS(
-        $archived: Int!
-        $status: ModelStringKeyConditionInput
-        $nextToken: String
-    ) {
-        tasksByArchivedStatus(
-            archived: $archived
-            status: $status
-            nextToken: $nextToken
-        ) {
-            items {
-                id
-                createdAt
-                establishmentLocation {
-                    id
-                    listed
-                    _version
-                }
-                pickUpLocation {
-                    id
-                    listed
-                    _version
-                }
-                dropOffLocation {
-                    id
-                    listed
-                    _version
-                }
-                _version
-            }
-            nextToken
-        }
-    }
-",
-        "variables": {
-          "archived": 0,
-          "nextToken": null,
-          "status": {
-            "eq": "CANCELLED",
-          },
-        },
-      },
-      "https://api.example.com/graphql",
-    ],
-    [
-      {
-        "query": "
-    query LIST_TASKS_BY_ARCHIVE_STATUS(
-        $archived: Int!
-        $status: ModelStringKeyConditionInput
-        $nextToken: String
-    ) {
-        tasksByArchivedStatus(
-            archived: $archived
-            status: $status
-            nextToken: $nextToken
-        ) {
+    query LIST_TASKS_BY_ARCHIVE_STATUS($archived: Int!, $nextToken: String) {
+        tasksByArchivedStatus(archived: $archived, nextToken: $nextToken) {
             items {
                 id
                 createdAt
@@ -1127,9 +617,6 @@ exports[`plateletArchiver graphql failure to archive an assignee 1`] = `
         "variables": {
           "archived": 0,
           "nextToken": "tasktoken",
-          "status": {
-            "eq": "COMPLETED",
-          },
         },
       },
       "https://api.example.com/graphql",
@@ -1188,18 +675,6 @@ exports[`plateletArchiver graphql failure to archive an assignee 1`] = `
     ],
   ],
   "results": [
-    {
-      "type": "return",
-      "value": Promise {},
-    },
-    {
-      "type": "return",
-      "value": Promise {},
-    },
-    {
-      "type": "return",
-      "value": Promise {},
-    },
     {
       "type": "return",
       "value": Promise {},

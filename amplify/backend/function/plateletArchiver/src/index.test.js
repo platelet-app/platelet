@@ -31,6 +31,17 @@ const mockTaskDateCompletedNull = {
     _lastChangedAt: 1620000000000,
 };
 
+const mockTaskNotDateCompletedNull = {
+    id: "anotherTaskId",
+    status: "NEW",
+    archived: 0,
+    createdAt: "2021-04-29T00:00:00.000Z",
+    dateCompleted: "2021-04-29",
+    _version: 1,
+    _deleted: null,
+    _lastChangedAt: 1620000000000,
+};
+
 const mockTask = {
     id: "someTaskId",
     status: "COMPLETED",
@@ -52,6 +63,12 @@ const mockTask = {
     _lastChangedAt: 1620000000000,
 };
 
+const fakeDataEmpty = {
+    tasksByArchivedStatus: {
+        items: [],
+        nextToken: null,
+    },
+};
 const fakeData = {
     tasksByArchivedStatus: {
         items: [mockTask, mockTaskNewer],
@@ -71,6 +88,13 @@ const fakeDataDateCompletedNull = {
     },
 };
 
+const fakeDateNotDateCompletedNull = {
+    tasksByArchivedStatus: {
+        items: [mockTaskNotDateCompletedNull],
+        nextToken: null,
+    },
+};
+
 const manyTasks = _.range(0, 30).map((i) => ({
     id: `someTaskId${i}`,
     status: "COMPLETED",
@@ -80,7 +104,6 @@ const manyTasks = _.range(0, 30).map((i) => ({
     _version: 1,
     _deleted: null,
     _lastChangedAt: 1620000000000,
-    status: "COMPLETED",
 }));
 
 const fakeDataMany = {
@@ -251,9 +274,6 @@ describe("plateletArchiver", () => {
         appsyncModule.request
             .mockImplementationOnce(setupFetchStub(fakeData))
             .mockImplementationOnce(setupFetchStub(fakeDataSecond))
-            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
-            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
-            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
             .mockImplementationOnce(setupFetchStub({}))
             .mockImplementationOnce(setupFetchStub(fakeAssigneeData))
             .mockImplementationOnce(setupFetchStub(fakeAssigneeDataSecond))
@@ -336,6 +356,41 @@ describe("plateletArchiver", () => {
         );
     });
 
+    test("update tasks with dateCompleted value when they shouldn't be", async () => {
+        appsyncModule.request
+            .mockImplementationOnce(
+                setupFetchStub(fakeDateNotDateCompletedNull)
+            )
+            .mockImplementation(setupFetchStub(fakeTaskReturn));
+        await indexModule.handler({}, indexModule.makeNewRequest);
+        expect(appsyncModule.request).toHaveBeenCalledWith(
+            {
+                query: "updateTaskMutation",
+                variables: {
+                    input: {
+                        _version: 1,
+                        id: mockTaskNotDateCompletedNull.id,
+                        dateCompleted: null,
+                    },
+                },
+            },
+            "https://api.example.com/graphql"
+        );
+        expect(appsyncModule.request).not.toHaveBeenCalledWith(
+            {
+                query: "updateTaskMutation",
+                variables: {
+                    input: {
+                        _version: 1,
+                        archived: 1,
+                        id: mockTaskNotDateCompletedNull.id,
+                    },
+                },
+            },
+            "https://api.example.com/graphql"
+        );
+    });
+
     test("failure to archive an assignee", async () => {
         const unArchivedFakeAssigneeReturn = {
             updateTaskAssignee: {
@@ -346,9 +401,6 @@ describe("plateletArchiver", () => {
         appsyncModule.request
             .mockImplementationOnce(setupFetchStub(fakeData))
             .mockImplementationOnce(setupFetchStub(fakeDataSecond))
-            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
-            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
-            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
             .mockImplementationOnce(setupFetchStub({}))
             .mockImplementationOnce(setupFetchStub(fakeAssigneeDataSecond))
             .mockImplementationOnce(
@@ -378,9 +430,6 @@ describe("plateletArchiver", () => {
         appsyncModule.request
             .mockImplementationOnce(setupFetchStub(fakeData))
             .mockImplementationOnce(setupFetchStub(fakeDataSecond))
-            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
-            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
-            .mockImplementationOnce(setupFetchStub(fakeEmptyData))
             .mockImplementationOnce(setupFetchStub({}))
             .mockImplementationOnce(setupFetchStub(fakeAssigneeDataSecond))
             .mockImplementationOnce(

@@ -24,16 +24,8 @@ const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
 const DAYS_TO_ARCHIVE = 3;
 
 const query = /* GraphQL */ `
-    query LIST_TASKS_BY_ARCHIVE_STATUS(
-        $archived: Int!
-        $status: ModelStringKeyConditionInput
-        $nextToken: String
-    ) {
-        tasksByArchivedStatus(
-            archived: $archived
-            status: $status
-            nextToken: $nextToken
-        ) {
+    query LIST_TASKS_BY_ARCHIVE_STATUS($archived: Int!, $nextToken: String) {
+        tasksByArchivedStatus(archived: $archived, nextToken: $nextToken) {
             items {
                 id
                 createdAt
@@ -179,14 +171,13 @@ const getComments = async (task) => {
     return items.flat();
 };
 
-const getUnArchivedTasksByStatus = async (status) => {
+const getUnArchivedTasks = async () => {
     const items = [];
     let nextToken = null;
 
     do {
         const variables = {
             archived: 0,
-            status: { eq: status },
             nextToken,
         };
         const response = await request({ query, variables }, GRAPHQL_ENDPOINT);
@@ -305,22 +296,67 @@ const updateTaskDateCompleted = async (task) => {
     return body.data.updateTask;
 };
 
+const updateTaskDateNotCompleted = async (task) => {
+    const variables = {
+        input: {
+            id: task.id,
+            dateCompleted: null,
+            _version: task._version,
+        },
+    };
+    const response = await request(
+        { query: updateTask, variables },
+        GRAPHQL_ENDPOINT
+    );
+    const body = await response.json();
+    errorCheck(body);
+    return body.data.updateTask;
+};
+
 exports.handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
-    const tasks = await Promise.all(
-        ["COMPLETED", "REJECTED", "ABANDONED", "CANCELLED"].map((status) =>
-            getUnArchivedTasksByStatus(status)
+    const unarchivedTasks = await getUnArchivedTasks();
+    const unarchivedTasksFlattened = unarchivedTasks.flat();
+    const uncompletedTasksDateCompletedIsNotNull =
+        unarchivedTasksFlattened.filter(
+            (task) =>
+                !!task.dateCompleted &&
+                [
+                    "NEW",
+                    "ACTIVE",
+                    "PICKED_UP",
+                    "DROPPED_OFF",
+                    "PENDING",
+                ].includes(task.status)
+        );
+    if (uncompletedTasksDateCompletedIsNotNull.length > 0) {
+        console.log(
+            "Found some tasks with dateCompleted set that aren't completed, putting them back to null"
+        );
+        const chunkedUncompletedTasksDateCompletedIsNotNull = _.chunk(
+            uncompletedTasksDateCompletedIsNotNull,
+            10
+        );
+        for (const chunk of chunkedUncompletedTasksDateCompletedIsNotNull) {
+            await Promise.all(
+                chunk.map((task) => updateTaskDateNotCompleted(task))
+            );
+        }
+    }
+
+    const tasks = unarchivedTasksFlattened.filter((task) =>
+        ["CANCELLED", "REJECTED", "ABANDONED", "COMPLETED"].includes(
+            task.status
         )
     );
-    const tasksFlattened = tasks.flat();
-    const tasksDateCompletedIsNull = tasksFlattened.filter(
+    const tasksDateCompletedIsNull = tasks.filter(
         (task) => !task.dateCompleted
     );
     const chunkedNullCompleted = _.chunk(tasksDateCompletedIsNull, 10);
     for (const chunk of chunkedNullCompleted) {
         await Promise.all(chunk.map((task) => updateTaskDateCompleted(task)));
     }
-    const tasksDateCompletedIsNotNull = tasksFlattened.filter(
+    const tasksDateCompletedIsNotNull = tasks.filter(
         (task) => task.dateCompleted
     );
     const daysAgo = moment
