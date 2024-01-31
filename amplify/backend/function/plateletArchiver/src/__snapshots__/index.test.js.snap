@@ -11,6 +11,8 @@ exports[`plateletArchiver archive some tasks, ignore the newer task 1`] = `
             items {
                 id
                 createdAt
+                dateCompleted
+                status
                 establishmentLocation {
                     id
                     listed
@@ -47,6 +49,8 @@ exports[`plateletArchiver archive some tasks, ignore the newer task 1`] = `
             items {
                 id
                 createdAt
+                dateCompleted
+                status
                 establishmentLocation {
                     id
                     listed
@@ -404,6 +408,8 @@ exports[`plateletArchiver failure to archive an assignee 1`] = `
             items {
                 id
                 createdAt
+                dateCompleted
+                status
                 establishmentLocation {
                     id
                     listed
@@ -440,6 +446,8 @@ exports[`plateletArchiver failure to archive an assignee 1`] = `
             items {
                 id
                 createdAt
+                dateCompleted
+                status
                 establishmentLocation {
                     id
                     listed
@@ -557,6 +565,8 @@ exports[`plateletArchiver graphql failure to archive an assignee 1`] = `
             items {
                 id
                 createdAt
+                dateCompleted
+                status
                 establishmentLocation {
                     id
                     listed
@@ -593,6 +603,8 @@ exports[`plateletArchiver graphql failure to archive an assignee 1`] = `
             items {
                 id
                 createdAt
+                dateCompleted
+                status
                 establishmentLocation {
                     id
                     listed

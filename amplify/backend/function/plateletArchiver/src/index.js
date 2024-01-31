@@ -29,6 +29,8 @@ const query = /* GraphQL */ `
             items {
                 id
                 createdAt
+                dateCompleted
+                status
                 establishmentLocation {
                     id
                     listed
@@ -316,6 +318,7 @@ const updateTaskDateNotCompleted = async (task) => {
 exports.handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
     const unarchivedTasks = await getUnArchivedTasks();
+    console.log("Found unarchived tasks: ", unarchivedTasks);
     const unarchivedTasksFlattened = unarchivedTasks.flat();
     const uncompletedTasksDateCompletedIsNotNull =
         unarchivedTasksFlattened.filter(
@@ -349,8 +352,13 @@ exports.handler = async (event) => {
             task.status
         )
     );
+    console.log("Found tasks: ", tasks);
     const tasksDateCompletedIsNull = tasks.filter(
         (task) => !task.dateCompleted
+    );
+    console.log(
+        "Found tasks with dateCompleted null: ",
+        tasksDateCompletedIsNull
     );
     const chunkedNullCompleted = _.chunk(tasksDateCompletedIsNull, 10);
     for (const chunk of chunkedNullCompleted) {
@@ -358,6 +366,10 @@ exports.handler = async (event) => {
     }
     const tasksDateCompletedIsNotNull = tasks.filter(
         (task) => task.dateCompleted
+    );
+    console.log(
+        "Found tasks with dateCompleted not null: ",
+        tasksDateCompletedIsNotNull
     );
     const daysAgo = moment
         .utc()
@@ -368,6 +380,7 @@ exports.handler = async (event) => {
             task.dateCompleted &&
             new Date(task.dateCompleted).toISOString() < daysAgo
     );
+    console.log("Found tasks to archive: ", filtered);
     // split into 10 item lists
     const chunked = _.chunk(filtered, 10);
     console.log("Chunked into: ", chunked.length, " chunks");
