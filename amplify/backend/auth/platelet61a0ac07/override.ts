@@ -21,4 +21,8 @@ export function override(
         accessToken: "days",
         idToken: "days",
     };
+    resources.userPool.adminCreateUserConfig = {
+        ...resources.userPool.adminCreateUserConfig,
+        allowAdminCreateUserOnly: true,
+    };
 }
