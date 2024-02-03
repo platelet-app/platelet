@@ -13,6 +13,7 @@ import { getApiControl } from "../Selectors";
 import { saveLogin } from "../../utilities";
 import { displayWarningNotification } from "../notifications/NotificationsActions";
 import { Auth, DataStore } from "aws-amplify";
+import { GET_WHOAMI_FAILURE } from "../whoami/whoamiActions";
 
 function* login(action) {
     const api = yield select(getApiControl);
@@ -79,4 +80,8 @@ function* refreshToken(action) {
 
 export function* watchRefreshToken() {
     yield takeLatest(refreshUserTokenActions.request, refreshToken);
+}
+
+export function* watchGetWhoamiFailure() {
+    yield takeLatest(GET_WHOAMI_FAILURE, logout);
 }
