@@ -274,10 +274,6 @@ async function updateUserTenantAndCognito(user, tenantId, cognitoId) {
                     Name: "email_verified",
                     Value: "true",
                 },
-                {
-                    Name: "custom:tenantId",
-                    Value: tenantId,
-                },
             ],
             UserPoolId: userPoolId,
             Username: user.username,
