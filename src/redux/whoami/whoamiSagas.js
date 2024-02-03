@@ -27,15 +27,6 @@ const fakeUser = {
     profilePictureThumbnailURL: null,
 };
 
-const testUserModel = new models.User({
-    name: "whoami",
-    displayName: "Mock User",
-    roles: Object.values(userRoles),
-    dateOfBirth: null,
-    profilePictureThumbnailURL: null,
-});
-const testUser = { ...testUserModel, id: "whoami" };
-
 function listener(userId) {
     return eventChannel((emitter) => {
         let observer = { unsubscribe: () => {} };
@@ -66,10 +57,6 @@ export function* watchInitWhoamiObserver() {
 }
 
 function* getWhoami() {
-    if (process.env.NODE_ENV === "test") {
-        yield put(getWhoamiSuccess(testUser));
-        return;
-    }
     if (
         process.env.REACT_APP_DEMO_MODE === "true" ||
         process.env.REACT_APP_OFFLINE_ONLY === "true"
@@ -103,28 +90,45 @@ function* getWhoami() {
             if (loggedInUser) {
                 if (
                     !loggedInUser.attributes ||
-                    !loggedInUser.attributes["custom:tenantId"]
+                    !loggedInUser.attributes["sub"]
                 ) {
-                    yield put(getWhoamiFailure("No tenantId"));
+                    yield put(getWhoamiFailure("User has no sub id"));
                     return;
                 }
-
-                const tenantId = loggedInUser.attributes["custom:tenantId"];
-                const modelsToSync = [];
-                for (const model of Object.values(models)) {
-                    if (
-                        [
-                            "User",
-                            "RiderResponsibility",
-                            "Vehicle",
-                            "DeliverableType",
-                            "PossibleRiderResponsibilities",
-                            "ScheduledTask",
-                        ].includes(model.name)
-                    ) {
-                        modelsToSync.push(model);
-                    }
+                const subId = loggedInUser.attributes["sub"];
+                let tenantId = yield call(
+                    [localStorage, localStorage.getItem],
+                    "userTenantId"
+                );
+                if (!tenantId) {
+                    console.log(
+                        "No tenant id found in local storage, retrieving from the API"
+                    );
+                    const userInfo = yield call([API, API.graphql], {
+                        query: queries.getUserByCognitoId,
+                        variables: { cognitoId: subId },
+                    });
+                    tenantId =
+                        userInfo?.data?.getUserByCognitoId?.items[0]?.tenantId;
+                    yield call(
+                        [localStorage, localStorage.setItem],
+                        "userTenantId",
+                        tenantId
+                    );
                 }
+                if (!tenantId) {
+                    throw new NotFound("Could not find tenant id for user");
+                }
+                console.log("Found user with tenant Id", tenantId);
+                const modelsToSync = [
+                    models.User,
+                    models.RiderResponsibility,
+                    models.Vehicle,
+                    models.DeliverableType,
+                    models.PossibleRiderResponsibilities,
+                    models.ScheduledTask,
+                    models.VehicleAssignment,
+                ];
                 const archivedModels = [
                     models.Task,
                     models.Comment,
@@ -199,6 +203,7 @@ function* getWhoami() {
             }
         } catch (error) {
             console.log(error);
+            yield call([localStorage, localStorage.removeItem], "userTenantId");
             yield put(getWhoamiFailure(error));
         }
     }
@@ -211,3 +216,7 @@ export function* watchGetWhoami() {
 export function* watchRefreshWhoami() {
     yield takeLatest(REFRESH_WHOAMI_REQUEST, getWhoami);
 }
+
+export const testFunctions = {
+    getWhoami,
+};
