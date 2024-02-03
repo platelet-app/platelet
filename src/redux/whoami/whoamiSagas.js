@@ -110,11 +110,13 @@ function* getWhoami() {
                     });
                     tenantId =
                         userInfo?.data?.getUserByCognitoId?.items[0]?.tenantId;
-                    yield call(
-                        [localStorage, localStorage.setItem],
-                        "userTenantId",
-                        tenantId
-                    );
+                    if (tenantId) {
+                        yield call(
+                            [localStorage, localStorage.setItem],
+                            "userTenantId",
+                            tenantId
+                        );
+                    }
                 }
                 if (!tenantId) {
                     throw new NotFound("Could not find tenant id for user");
