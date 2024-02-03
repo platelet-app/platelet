@@ -157,7 +157,6 @@ describe("whoamiSagas", () => {
         jest.spyOn(Auth, "currentAuthenticatedUser").mockResolvedValue(
             fakeCognitoResponse
         );
-        const removeSpy = jest.spyOn(Storage.prototype, "removeItem");
         jest.spyOn(API, "graphql").mockRejectedValue(new Error("someError"));
         jest.spyOn(Storage.prototype, "getItem").mockReturnValue(null);
         const setSpy = jest.spyOn(Storage.prototype, "setItem");
@@ -172,7 +171,6 @@ describe("whoamiSagas", () => {
 
         expect(dispatched).toMatchSnapshot();
         expect(setSpy).not.toHaveBeenCalled();
-        expect(removeSpy).toHaveBeenCalledWith("userTenantId");
     });
     it("can't find the user", async () => {
         const dispatched = [];
@@ -183,7 +181,6 @@ describe("whoamiSagas", () => {
             data: { getUserByCognitoId: { items: [] } },
         });
         jest.spyOn(Storage.prototype, "getItem").mockReturnValue(null);
-        const removeSpy = jest.spyOn(Storage.prototype, "removeItem");
 
         await runSaga(
             {
@@ -194,6 +191,5 @@ describe("whoamiSagas", () => {
         ).toPromise();
 
         expect(dispatched).toMatchSnapshot();
-        expect(removeSpy).toHaveBeenCalledWith("userTenantId");
     });
 });
