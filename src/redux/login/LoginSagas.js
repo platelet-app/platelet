@@ -51,6 +51,7 @@ function* logout(action) {
             );
             yield call([channel, channel.postMessage], "logout");
         }
+        yield call([localStorage, localStorage.removeItem], "userTenantId");
         yield call([DataStore, DataStore.stop]);
         yield call([DataStore, DataStore.clear]);
     } catch (error) {

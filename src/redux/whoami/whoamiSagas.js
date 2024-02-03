@@ -205,7 +205,6 @@ function* getWhoami() {
             }
         } catch (error) {
             console.log(error);
-            yield call([localStorage, localStorage.removeItem], "userTenantId");
             yield put(getWhoamiFailure(error));
         }
     }
