@@ -260,10 +260,6 @@ describe("plateletAddNewTenant", () => {
                     Name: "email_verified",
                     Value: "true",
                 },
-                {
-                    Name: "custom:tenantId",
-                    Value: "testTenantId",
-                },
             ],
             UserPoolId: "testPoolId",
             Username: "testUsername",

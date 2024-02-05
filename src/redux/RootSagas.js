@@ -6,7 +6,12 @@ import {
     watchInitWhoamiObserver,
     watchRefreshWhoami,
 } from "./whoami/whoamiSagas";
-import { watchLogin, watchLogout, watchRefreshToken } from "./login/LoginSagas";
+import {
+    watchGetWhoamiFailure,
+    watchLogin,
+    watchLogout,
+    watchRefreshToken,
+} from "./login/LoginSagas";
 import {
     watchInitialiseApp,
     watchInitialWhoamiCompleted,
@@ -39,5 +44,6 @@ export default function* rootSaga() {
         call(watchInitWhoamiObserver),
         call(watchInitializeTaskDeliverablesObserver),
         call(watchInitializeCommentsObserver),
+        call(watchGetWhoamiFailure),
     ]);
 }
