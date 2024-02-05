@@ -21,14 +21,14 @@
       "resourceName": "plateletappSyncOperations",
       "version": "Always choose latest version",
       "isLatestVersionSelected": true,
-      "env": "deev"
+      "env": "awaaaaa"
     },
     {
       "type": "ProjectLayer",
       "resourceName": "plateletSendEmail",
       "version": "Always choose latest version",
       "isLatestVersionSelected": true,
-      "env": "deev"
+      "env": "awaaaaa"
     }
   ],
   "environmentVariableList": [

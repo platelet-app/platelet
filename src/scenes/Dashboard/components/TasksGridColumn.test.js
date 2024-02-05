@@ -141,9 +141,45 @@ describe("TasksGridColumn", () => {
     it.each`
         taskStatus
         ${tasksStatus.completed} | ${tasksStatus.droppedOff} | ${tasksStatus.rejected} | ${tasksStatus.cancelled}
-        ${tasksStatus.active}    | ${tasksStatus.pickedUp}   | ${tasksStatus.pending}
+        ${tasksStatus.active}    | ${tasksStatus.pickedUp}   | ${tasksStatus.pending}  | ${tasksStatus.abandoned}
     `(
         "renders the tasks in ALL view for each status",
+        async ({ taskStatus }) => {
+            await Promise.all(
+                _.range(0, 10).map((i) =>
+                    DataStore.save(
+                        new models.Task({
+                            status: taskStatus,
+                            priority: priorities.medium,
+                            dateCompleted: new Date()
+                                .toISOString()
+                                .split("T")[0],
+                        })
+                    )
+                )
+            );
+            render(
+                <TasksGridColumn title={taskStatus} taskKey={[taskStatus]} />,
+                {
+                    preloadedState,
+                }
+            );
+            await finishLoading();
+            expect(screen.getByText(taskStatus)).toBeInTheDocument();
+            const links = screen.getAllByRole("link");
+            expect(links).toHaveLength(10);
+            for (const link of links) {
+                expect(link.firstChild.className).toMatch(
+                    new RegExp(`${taskStatus}`)
+                );
+            }
+        }
+    );
+    it.each`
+        taskStatus
+        ${tasksStatus.completed} | ${tasksStatus.rejected} | ${tasksStatus.cancelled} | ${tasksStatus.abandoned}
+    `(
+        "renders the tasks in ALL view for each completed status when dateCompleted is not defined",
         async ({ taskStatus }) => {
             await Promise.all(
                 _.range(0, 10).map((i) =>

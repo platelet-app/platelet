@@ -19,16 +19,16 @@
     {
       "type": "ProjectLayer",
       "resourceName": "plateletappSyncOperations",
-      "env": "whoa",
       "version": "Always choose latest version",
-      "isLatestVersionSelected": true
+      "isLatestVersionSelected": true,
+      "env": "awaaaaa"
     },
     {
       "type": "ProjectLayer",
       "resourceName": "plateletSendEmail",
-      "env": "whoa",
       "version": "Always choose latest version",
-      "isLatestVersionSelected": true
+      "isLatestVersionSelected": true,
+      "env": "awaaaaa"
     }
   ],
   "environmentVariableList": [

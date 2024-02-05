@@ -20,7 +20,7 @@
     }
   },
   "Resources": {
-    "LambdaLayerVersion2e765305": {
+    "LambdaLayerVersion06a48596": {
       "Type": "AWS::Lambda::LayerVersion",
       "Properties": {
         "CompatibleRuntimes": {
@@ -51,19 +51,19 @@
       "DeletionPolicy": "Delete",
       "UpdateReplacePolicy": "Retain"
     },
-    "LambdaLayerPermissionPrivate2e765305": {
+    "LambdaLayerPermissionPrivate06a48596": {
       "Type": "AWS::Lambda::LayerVersionPermission",
       "Properties": {
         "Action": "lambda:GetLayerVersion",
         "LayerVersionArn": {
-          "Ref": "LambdaLayerVersion2e765305"
+          "Ref": "LambdaLayerVersion06a48596"
         },
         "Principal": {
           "Ref": "AWS::AccountId"
         }
       }
     },
-    "LambdaLayerVersion20759465": {
+    "LambdaLayerVersion7a365d34": {
       "Type": "AWS::Lambda::LayerVersion",
       "Properties": {
         "CompatibleRuntimes": [
@@ -73,9 +73,9 @@
           "S3Bucket": {
             "Ref": "deploymentBucketName"
           },
-          "S3Key": "amplify-builds/plateletappSyncOperations-LambdaLayerVersion20759465-build.zip"
+          "S3Key": "amplify-builds/plateletappSyncOperations-LambdaLayerVersion7a365d34-build.zip"
         },
-        "Description": "Updated layer version 2023-10-23T19:40:33.714Z",
+        "Description": "Updated layer version 2024-01-08T21:56:50.402Z",
         "LayerName": {
           "Fn::Sub": [
             "plateletappSyncOperations-${env}",
@@ -90,85 +90,11 @@
       "DeletionPolicy": "Delete",
       "UpdateReplacePolicy": "Retain"
     },
-    "LambdaLayerPermissionPrivate20759465": {
+    "LambdaLayerPermissionPrivate7a365d34": {
       "Type": "AWS::Lambda::LayerVersionPermission",
       "Properties": {
         "Action": "lambda:GetLayerVersion",
-        "LayerVersionArn": "arn:aws:lambda:eu-west-1:130063560692:layer:plateletappSyncOperations-whoa:4",
-        "Principal": {
-          "Ref": "AWS::AccountId"
-        }
-      }
-    },
-    "LambdaLayerVersion9c9057b8": {
-      "Type": "AWS::Lambda::LayerVersion",
-      "Properties": {
-        "CompatibleRuntimes": [
-          "nodejs16.x"
-        ],
-        "Content": {
-          "S3Bucket": {
-            "Ref": "deploymentBucketName"
-          },
-          "S3Key": "amplify-builds/plateletappSyncOperations-LambdaLayerVersion9c9057b8-build.zip"
-        },
-        "Description": "Updated layer version 2023-10-23T19:14:29.494Z",
-        "LayerName": {
-          "Fn::Sub": [
-            "plateletappSyncOperations-${env}",
-            {
-              "env": {
-                "Ref": "env"
-              }
-            }
-          ]
-        }
-      },
-      "DeletionPolicy": "Delete",
-      "UpdateReplacePolicy": "Retain"
-    },
-    "LambdaLayerPermissionPrivate9c9057b8": {
-      "Type": "AWS::Lambda::LayerVersionPermission",
-      "Properties": {
-        "Action": "lambda:GetLayerVersion",
-        "LayerVersionArn": "arn:aws:lambda:eu-west-1:130063560692:layer:plateletappSyncOperations-whoa:3",
-        "Principal": {
-          "Ref": "AWS::AccountId"
-        }
-      }
-    },
-    "LambdaLayerVersion435f6b50": {
-      "Type": "AWS::Lambda::LayerVersion",
-      "Properties": {
-        "CompatibleRuntimes": [
-          "nodejs16.x"
-        ],
-        "Content": {
-          "S3Bucket": {
-            "Ref": "deploymentBucketName"
-          },
-          "S3Key": "amplify-builds/plateletappSyncOperations-LambdaLayerVersion435f6b50-build.zip"
-        },
-        "Description": "Updated layer version 2023-10-07T20:47:53.060Z",
-        "LayerName": {
-          "Fn::Sub": [
-            "plateletappSyncOperations-${env}",
-            {
-              "env": {
-                "Ref": "env"
-              }
-            }
-          ]
-        }
-      },
-      "DeletionPolicy": "Delete",
-      "UpdateReplacePolicy": "Retain"
-    },
-    "LambdaLayerPermissionPrivate435f6b50": {
-      "Type": "AWS::Lambda::LayerVersionPermission",
-      "Properties": {
-        "Action": "lambda:GetLayerVersion",
-        "LayerVersionArn": "arn:aws:lambda:eu-west-1:130063560692:layer:plateletappSyncOperations-whoa:2",
+        "LayerVersionArn": "arn:aws:lambda:eu-west-1:130063560692:layer:plateletappSyncOperations-awaaaaa:1",
         "Principal": {
           "Ref": "AWS::AccountId"
         }
@@ -178,7 +104,7 @@
   "Outputs": {
     "Arn": {
       "Value": {
-        "Ref": "LambdaLayerVersion2e765305"
+        "Ref": "LambdaLayerVersion06a48596"
       }
     }
   }
