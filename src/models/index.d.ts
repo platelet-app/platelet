@@ -230,7 +230,7 @@ type EagerUser = {
   readonly contact?: AddressAndContactDetails | null;
   readonly displayName: string;
   readonly name?: string | null;
-  readonly roles: Role[] | keyof typeof Role;
+  readonly roles: Role[] | Array<keyof typeof Role>;
   readonly dateOfBirth?: string | null;
   readonly riderResponsibility?: string | null;
   readonly possibleRiderResponsibilities?: (PossibleRiderResponsibilities | null)[] | null;
@@ -256,7 +256,7 @@ type LazyUser = {
   readonly contact?: AddressAndContactDetails | null;
   readonly displayName: string;
   readonly name?: string | null;
-  readonly roles: Role[] | keyof typeof Role;
+  readonly roles: Role[] | Array<keyof typeof Role>;
   readonly dateOfBirth?: string | null;
   readonly riderResponsibility?: string | null;
   readonly possibleRiderResponsibilities: AsyncCollection<PossibleRiderResponsibilities>;
@@ -439,6 +439,7 @@ type EagerTask = {
   readonly createdAt?: string | null;
   readonly createdBy?: User | null;
   readonly dateCreated: string;
+  readonly dateCompleted?: string | null;
   readonly timeOfCall?: string | null;
   readonly timePickedUp?: string | null;
   readonly timePickedUpSenderName?: string | null;
@@ -468,6 +469,7 @@ type LazyTask = {
   readonly createdAt?: string | null;
   readonly createdBy: AsyncItem<User | undefined>;
   readonly dateCreated: string;
+  readonly dateCompleted?: string | null;
   readonly timeOfCall?: string | null;
   readonly timePickedUp?: string | null;
   readonly timePickedUpSenderName?: string | null;

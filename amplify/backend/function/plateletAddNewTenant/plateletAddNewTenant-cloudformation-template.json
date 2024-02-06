@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"Amplify\",\"createdWith\":\"11.0.3\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
+  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"Amplify\",\"createdWith\":\"12.10.0\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
   "Parameters": {
     "CloudWatchRule": {
       "Type": "String",
@@ -122,10 +122,10 @@
         "Runtime": "nodejs14.x",
         "Layers": [
           {
-            "Ref": "functionplateletSendEmailArn"
+            "Ref": "functionplateletappSyncOperationsArn"
           },
           {
-            "Ref": "functionplateletappSyncOperationsArn"
+            "Ref": "functionplateletSendEmailArn"
           }
         ],
         "Timeout": 25

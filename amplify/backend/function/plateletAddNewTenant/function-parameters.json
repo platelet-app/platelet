@@ -18,17 +18,17 @@
   "lambdaLayers": [
     {
       "type": "ProjectLayer",
-      "resourceName": "plateletSendEmail",
-      "env": "whoa",
+      "resourceName": "plateletappSyncOperations",
       "version": "Always choose latest version",
-      "isLatestVersionSelected": true
+      "isLatestVersionSelected": true,
+      "env": "awaaaaa"
     },
     {
       "type": "ProjectLayer",
-      "resourceName": "plateletappSyncOperations",
-      "env": "whoa",
+      "resourceName": "plateletSendEmail",
       "version": "Always choose latest version",
-      "isLatestVersionSelected": true
+      "isLatestVersionSelected": true,
+      "env": "awaaaaa"
     }
   ],
   "environmentVariableList": [

@@ -89,17 +89,10 @@ exports.handler = async (event) => {
     console.log("user:", user);
     if (!user) return new Promise((_, reject) => reject("User not found"));
     if (event.identity.claims["cognito:groups"].includes("ADMIN")) {
-        let tenantId = event.identity.claims["custom:tenantId"];
-        // for some reason this isn't always defined
-        // get it from the API if it isn't
-        if (!tenantId) {
-            const adminResult = await getUserByCognitoId(
-                event.identity.claims.sub
-            );
-            const admin = adminResult.data.getUserByCognitoId.items[0];
-            console.log("admin:", admin);
-            tenantId = admin.tenantId;
-        }
+        const adminResult = await getUserByCognitoId(event.identity.claims.sub);
+        const admin = adminResult.data.getUserByCognitoId.items[0];
+        console.log("admin:", admin);
+        const tenantId = admin.tenantId;
         if (user.tenantId === tenantId) {
             return generatePresignedUrl(`public/${event.arguments.userId}.jpg`);
         } else {

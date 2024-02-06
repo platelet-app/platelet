@@ -341,7 +341,7 @@ describe("Reports", () => {
         expect(button).toBeDisabled();
         await waitFor(() => {
             expect(generateReportSpy).toHaveBeenCalledWith(
-                whoami.id,
+                null,
                 "ALL",
                 tenantId,
                 new Date("2021-01-01"),
@@ -360,7 +360,7 @@ describe("Reports", () => {
         userEvent.click(button);
         await waitFor(() => {
             expect(generateReportSpy).toHaveBeenCalledWith(
-                whoami.id,
+                null,
                 "ALL",
                 tenantId,
                 startDate,
@@ -368,7 +368,7 @@ describe("Reports", () => {
             );
         });
     });
-    test("only show up to one week if not ALL", async () => {
+    test("don't show custom if a role is picked", async () => {
         const whoami = await DataStore.save(
             new models.User({
                 displayName: "Test User",
@@ -383,13 +383,9 @@ describe("Reports", () => {
         };
         render(<Reports />, { preloadedState });
         expect(
-            screen.getByRole("button", { name: "Two weeks" })
-        ).toBeInTheDocument();
-        expect(
             screen.getByRole("button", { name: "Custom" })
         ).toBeInTheDocument();
         userEvent.click(screen.getByRole("button", { name: "RIDER" }));
-        expect(screen.queryByRole("button", { name: "Two weeks" })).toBeNull();
         expect(screen.queryByRole("button", { name: "Custom" })).toBeNull();
     });
 });

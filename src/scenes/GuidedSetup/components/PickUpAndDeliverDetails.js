@@ -14,6 +14,22 @@ export const PickUpAndDeliverDetails = ({
     const theme = useTheme();
     return (
         <Stack spacing={1}>
+            {process.env.REACT_APP_DEMO_MODE !== "true" && (
+                <Typography
+                    sx={{
+                        fontStyle: "italic",
+                        color: "gray",
+                        "&:hover": {
+                            color:
+                                theme.palette.mode === "dark"
+                                    ? "white"
+                                    : "black",
+                        },
+                    }}
+                >
+                    Try searching for a house number and postcode
+                </Typography>
+            )}
             <Stack
                 direction="row"
                 alignItems="center"

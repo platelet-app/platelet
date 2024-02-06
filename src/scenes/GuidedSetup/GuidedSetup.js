@@ -206,7 +206,6 @@ export const GuidedSetup = () => {
     const handleSave = async () => {
         setIsPosting(true);
         try {
-            console.log(timeOfCall);
             await saveNewTaskToDataStore(
                 {
                     ...formValues,

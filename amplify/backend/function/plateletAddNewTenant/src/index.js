@@ -10,7 +10,6 @@ Amplify Params - DO NOT EDIT */
  * @type {import('@types/aws-lambda').APIGatewayProxyHandler}
  */
 
-require("isomorphic-fetch");
 const aws = require("aws-sdk");
 const uuid = require("uuid");
 
@@ -19,6 +18,7 @@ const {
     updateUser,
     createTenant,
 } = require("/opt/graphql/mutations");
+
 const { request, errorCheck } = require("/opt/appSyncRequest");
 
 const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
@@ -51,6 +51,9 @@ async function sendWelcomeEmail(emailAddress, recipientName, password) {
                     </p>
                     <p>
                         <b>Password:</b> ${password}
+                    </p>
+                    <p>
+                        <b>This temporary password will expire in one week.</b>
                     </p>
                     <p>
                         Thank you.
@@ -137,13 +140,14 @@ function generateReferenceIdentifier(tenantName) {
 
 async function addTenant(tenant) {
     const referenceIdentifier = generateReferenceIdentifier(tenant.name);
-    const createdTenant = await request(
+    const createdTenantResult = await request(
         {
-            mutation: createTenant,
+            query: createTenant,
             variables: { input: { ...tenant, referenceIdentifier } },
         },
         GRAPHQL_ENDPOINT
     );
+    const createdTenant = await createdTenantResult.json();
     errorCheck(createdTenant);
     return createdTenant.data.createTenant;
 }
@@ -222,7 +226,6 @@ async function setUserRoles(username) {
 }
 
 async function createNewAdminUser(newUser) {
-    console.log("adsffda", newUser);
     const tenantId = uuid.v4();
 
     let { name, displayName, emailAddress, username } = newUser;
@@ -238,16 +241,16 @@ async function createNewAdminUser(newUser) {
         contact: { emailAddress },
     };
 
-    const createdUser = await request(
+    const createdUserResponse = await request(
         {
-            mutation: createUser,
+            query: createUser,
             variables: { input: createUserInput },
         },
         GRAPHQL_ENDPOINT
     );
-    errorCheck(createdUser);
-
-    return createdUser.data.createUser;
+    const result = await createdUserResponse.json();
+    errorCheck(result);
+    return result.data.createUser;
 }
 
 async function updateUserTenantAndCognito(user, tenantId, cognitoId) {
@@ -271,10 +274,6 @@ async function updateUserTenantAndCognito(user, tenantId, cognitoId) {
                     Name: "email_verified",
                     Value: "true",
                 },
-                {
-                    Name: "custom:tenantId",
-                    Value: tenantId,
-                },
             ],
             UserPoolId: userPoolId,
             Username: user.username,
@@ -290,13 +289,14 @@ async function updateUserTenantAndCognito(user, tenantId, cognitoId) {
 
     const userResult = await request(
         {
-            mutation: updateUser,
+            query: updateUser,
             variables: { input: updateUserInput },
         },
         GRAPHQL_ENDPOINT
     );
-    errorCheck(userResult);
-    return userResult.data.updateUser;
+    const result = await userResult.json();
+    errorCheck(result);
+    return result.data.updateUser;
 }
 
 exports.handler = async (event) => {

@@ -21,6 +21,7 @@ import {
     menuIndexSelector,
 } from "../redux/Selectors";
 import RoleViewSelect from "../scenes/Dashboard/components/RoleViewSelect";
+import ForwardBackButtons from "./ForwardBackButtons";
 
 const useStyles = makeStyles()((theme) => {
     return {
@@ -110,8 +111,16 @@ export function MenuMainContainer() {
                         </Stack>
                     ) : (
                         <>
-                            <Box sx={{ paddingRight: 1 }}>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                    paddingRight: 1,
+                                }}
+                            >
                                 <MobileNavigationDrawer />
+                                <ForwardBackButtons />
                             </Box>
                             {menuIndex === "dashboard" && (
                                 <>

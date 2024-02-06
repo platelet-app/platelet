@@ -225,10 +225,6 @@ describe("plateletAdminAddNewUser", () => {
                     Name: "email_verified",
                     Value: "true",
                 },
-                {
-                    Name: "custom:tenantId",
-                    Value: mockEvent.arguments.tenantId,
-                },
             ],
             UserPoolId: "testPoolId",
             TemporaryPassword: expect.stringMatching(/^[\w+]{8}$/),
@@ -298,10 +294,6 @@ describe("plateletAdminAddNewUser", () => {
                 {
                     Name: "email_verified",
                     Value: "true",
-                },
-                {
-                    Name: "custom:tenantId",
-                    Value: mockEvent.arguments.tenantId,
                 },
             ],
             TemporaryPassword: expect.stringMatching(/^[\w+]{8}$/),

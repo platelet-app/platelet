@@ -3,8 +3,9 @@ import clearAmplifyConfig from "../../utilities/clearAmplifyConfig";
 import configureAmplify from "./utilities/configureAmplify";
 import saveAmplifyConfig from "../../utilities/saveAmplifyConfig";
 import TenantList from "./components/TenantList";
-import { Box, CircularProgress } from "@mui/material";
 import { DataStore } from "aws-amplify";
+import Splash from "./Splash";
+import { DAYS_AGO } from "../../hooks/utilities/getTasksConsts";
 
 type TenantListProviderProps = {
     children: React.ReactNode;
@@ -29,11 +30,11 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
         if (offline) return;
         setIsProcessing(true);
         const lastSynced = localStorage.getItem("dateLastSynced");
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        if (lastSynced && new Date(lastSynced) < sevenDaysAgo) {
+        const daysAgo = new Date();
+        daysAgo.setDate(daysAgo.getDate() - DAYS_AGO);
+        if (lastSynced && new Date(lastSynced) < daysAgo) {
             console.log(
-                "more than 7 days since last sync, clearing stale data from DataStore"
+                `more than ${DAYS_AGO} days since last sync, clearing stale data from DataStore`
             );
             await DataStore.clear();
         }
@@ -78,19 +79,7 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
     if (offline) {
         return <>{children}</>;
     } else if (isProcessing) {
-        return (
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    width: "100%",
-                    justifyContent: "center",
-                    paddingTop: 5,
-                }}
-            >
-                <CircularProgress size={150} />
-            </Box>
-        );
+        return <Splash />;
     } else if (showList) {
         return <TenantList onComplete={handleListSetup} />;
     } else {

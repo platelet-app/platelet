@@ -1,31 +1,31 @@
 import React from "react";
-import { styled } from "@mui/styles";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import { encodeUUID } from "../utilities";
+import { ThemedLink } from "../styles/common";
 
-const VehicleBox = styled(Box)({
-    backgroundColor: "rgba(180, 180, 180, 0.1)",
-    padding: "0.5rem",
-    width: "100%",
-    maxWidth: 500,
-});
-
-export default function VehicleCard(props) {
+export default function VehicleCard({ vehicle }) {
     return (
-      <VehicleBox>
-          <Stack
-              spacing={1}
-              justifyContent={"space-between"}
-              alignItems={"center"}
-              direction={"row"}
-          >                    
-              <Typography>{props.vehicle.name}</Typography>
-              <Typography>
-                {props.vehicle.manufacturer + ' ' + props.vehicle.model}
-              </Typography>
-          </Stack>
-        </VehicleBox>
-
-    )
-    
-
+        <ThemedLink
+            to={"/vehicle/" + encodeUUID(vehicle.id)}
+            style={{ textDecoration: "none" }}
+        >
+            <Box
+                sx={{
+                    "&:hover": {
+                        backgroundColor: "rgba(0, 0, 0, 0.2)",
+                    },
+                    borderRadius: 1,
+                    width: "100%",
+                    maxWidth: 500,
+                }}
+            >
+                <Box sx={{ padding: 1 }}>
+                    <Typography>{vehicle.name}</Typography>
+                    <Typography style={{ fontStyle: "italic" }}>
+                        {vehicle.manufacturer + " " + vehicle.model}
+                    </Typography>
+                </Box>
+            </Box>
+        </ThemedLink>
+    );
 }

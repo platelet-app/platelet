@@ -55,6 +55,7 @@ function FavouriteLocationsSelect(props) {
                 county,
                 country,
                 postcode,
+                listed: 0,
             };
         }
         props.onSelect(result);
@@ -114,6 +115,7 @@ function FavouriteLocationsSelect(props) {
             renderInput={(params) => (
                 <TextField
                     {...params}
+                    aria-label={props.label}
                     sx={props.sx}
                     label={props.label}
                     variant="outlined"

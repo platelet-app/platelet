@@ -10,13 +10,23 @@ for dir in */ ; do
     if [ -d 'src' ];
     then
         cd 'src'
-        yarn
+        if [ -f "package-lock.json" ];
+        then
+            npm ci
+        else
+            yarn --frozen-lockfile
+        fi
         yarn run test --watchAll=false
         cd ..
     fi
     if [ -d 'opt' ];
     then
-        yarn
+        if [ -f "package-lock.json" ];
+        then
+            npm ci
+        else
+            yarn --frozen-lockfile
+        fi
         yarn run test --watchAll=false
     fi
     cd ..

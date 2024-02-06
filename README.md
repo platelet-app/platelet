@@ -6,8 +6,6 @@ Platelet is an offline first, cloud backed, dispatch software project for courie
 
 [Homepage](https://platelet.app)
 
-[Discord](https://discord.gg/tWhCM98ckB)
-
 ## Screenshots
 
 ![dashboard-light](https://github.com/platelet-app/platelet/assets/32309223/c82ff979-723e-4df9-bb3e-729607d07a2d)
