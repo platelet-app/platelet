@@ -6,6 +6,9 @@ import TenantList from "./components/TenantList";
 import { DataStore } from "aws-amplify";
 import Splash from "./Splash";
 import { DAYS_AGO } from "../../hooks/utilities/getTasksConsts";
+import { useDispatch, useSelector } from "react-redux";
+import { initialiseApp } from "../../redux/initialise/initialiseActions";
+import { getWhoami } from "../../redux/Selectors";
 
 type TenantListProviderProps = {
     children: React.ReactNode;
@@ -17,16 +20,24 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
     const [isProcessing, setIsProcessing] = React.useState(true);
     const [showList, setShowList] = React.useState(false);
 
+    const hasSetup = React.useRef(false);
+
     const offline =
         process.env.REACT_APP_OFFLINE_ONLY &&
         process.env.REACT_APP_OFFLINE_ONLY === "true";
 
+    const whoami = useSelector(getWhoami);
+
+    const dispatch = useDispatch();
+
     const handleListSetup = React.useCallback(() => {
         setShowList(false);
-        setIsProcessing(false);
-    }, []);
+        dispatch(initialiseApp());
+    }, [dispatch]);
 
     const setup = React.useCallback(async () => {
+        if (hasSetup.current) return;
+        hasSetup.current = true;
         if (offline) return;
         setIsProcessing(true);
         const lastSynced = localStorage.getItem("dateLastSynced");
@@ -52,16 +63,15 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
             ) {
                 const config = require("../../aws-exports");
                 configureAmplify(config.default);
-                setIsProcessing(false);
+                dispatch(initialiseApp());
             } else if (tenantId) {
                 console.log("tenantId", tenantId);
                 // only wait 3 seconds
                 // and fallback to localstorage if it isn't fast enough
                 const config = await saveAmplifyConfig(tenantId, 3000);
                 configureAmplify(config);
-                setIsProcessing(false);
+                dispatch(initialiseApp());
             } else {
-                setIsProcessing(false);
                 setShowList(true);
             }
         } catch (error) {
@@ -70,7 +80,11 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
             setIsProcessing(false);
             setShowList(true);
         }
-    }, [offline]);
+    }, [offline, dispatch]);
+
+    React.useEffect(() => {
+        if (!!whoami.id) setIsProcessing(false);
+    }, [whoami.id]);
 
     React.useEffect(() => {
         setup();
@@ -78,10 +92,10 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
 
     if (offline) {
         return <>{children}</>;
-    } else if (isProcessing) {
-        return <Splash />;
     } else if (showList) {
         return <TenantList onComplete={handleListSetup} />;
+    } else if (isProcessing) {
+        return <Splash />;
     } else {
         return <>{children}</>;
     }

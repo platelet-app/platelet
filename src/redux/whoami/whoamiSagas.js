@@ -27,45 +27,6 @@ const fakeUser = {
     profilePictureThumbnailURL: null,
 };
 
-async function fetchGraphQL(query, variables = {}) {
-    let config;
-    let API_ENDPOINT;
-    if (process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT === "undefined") {
-        config = require("../../aws-exports");
-        API_ENDPOINT = config?.default?.aws_appsync_graphqlEndpoint;
-    } else {
-        config = localStorage.getItem("amplifyConfig");
-        API_ENDPOINT = JSON.parse(config).aws_appsync_graphqlEndpoint;
-    }
-
-    // Options for the fetch request
-    const options = {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query, variables }),
-    };
-
-    const token = await Auth.currentSession().then((session) =>
-        session.getIdToken().getJwtToken()
-    );
-    options.headers["Authorization"] = token;
-    try {
-        const response = await fetch(API_ENDPOINT, options);
-        const result = await response.json();
-
-        if (result.errors) {
-            throw new Error(result.errors.map((e) => e.message).join(", "));
-        }
-
-        return result.data;
-    } catch (error) {
-        console.error("Error fetching GraphQL data:", error);
-        throw error;
-    }
-}
-
 function listener(userId) {
     return eventChannel((emitter) => {
         let observer = { unsubscribe: () => {} };
@@ -143,13 +104,12 @@ function* getWhoami() {
                     console.log(
                         "No tenant id found in local storage, retrieving from the API"
                     );
-                    const userInfo = yield call(
-                        fetchGraphQL,
-                        queries.getUserByCognitoId,
-                        { cognitoId: subId }
-                    );
-                    console.log("Got user info", userInfo);
-                    tenantId = userInfo?.getUserByCognitoId?.items[0]?.tenantId;
+                    const userInfo = yield call([API, API.graphql], {
+                        query: queries.getUserByCognitoId,
+                        variables: { cognitoId: subId },
+                    });
+                    tenantId =
+                        userInfo?.data?.getUserByCognitoId?.items[0]?.tenantId;
                     if (tenantId) {
                         yield call(
                             [localStorage, localStorage.setItem],
