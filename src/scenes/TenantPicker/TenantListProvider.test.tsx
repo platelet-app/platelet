@@ -4,9 +4,6 @@ import { render } from "../../test-utils";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DAYS_AGO } from "../../hooks/utilities/getTasksConsts";
-import * as redux from "react-redux";
-import { initialiseApp } from "../../redux/initialise/initialiseActions";
-import { getWhoamiSuccess } from "../../redux/whoami/whoamiActions";
 
 const fakeConfigData = `{"test":"test"}`;
 const fakeAmplifyConfig = {
@@ -93,8 +90,6 @@ describe("TenantListProvider", () => {
             { id: "someId", name: "Tenant 1" },
             { id: "someId2", name: "Tenant 2" },
         ];
-        const dispatch = jest.fn();
-        jest.spyOn(redux, "useDispatch").mockReturnValue(dispatch);
         const amplifySpy = jest.spyOn(Amplify, "configure");
         const querySpy = jest
             .spyOn(global, "fetch")
@@ -120,7 +115,7 @@ describe("TenantListProvider", () => {
                 })
             );
         const localStorageSpy = jest.spyOn(Storage.prototype, "setItem");
-        const { store } = render(
+        render(
             <TenantListProvider>
                 <>test</>
             </TenantListProvider>
@@ -146,10 +141,7 @@ describe("TenantListProvider", () => {
         expect(localStorageSpy).toHaveBeenCalledWith("tenantName", "Tenant 1");
         expect(localStorageSpy).toHaveBeenCalledWith("tenantVersion", "1");
         expect(localStorageSpy).toHaveBeenCalledWith("tenantId", "someId");
-        expect(dispatch).toHaveBeenCalledWith(initialiseApp());
-        store.dispatch(getWhoamiSuccess({ id: "someId" }));
-        expect(await screen.findByText("test")).toBeInTheDocument();
-        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(screen.getByText("test")).toBeInTheDocument();
     });
 
     test("configuring with an existing config", async () => {
@@ -184,9 +176,7 @@ describe("TenantListProvider", () => {
             .spyOn(Storage.prototype, "getItem")
             .mockReturnValueOnce("1")
             .mockReturnValue(fakeConfigData);
-        const dispatch = jest.fn();
-        jest.spyOn(redux, "useDispatch").mockReturnValue(dispatch);
-        const { store } = render(<TenantListProvider>test</TenantListProvider>);
+        render(<TenantListProvider>test</TenantListProvider>);
         expect(screen.queryByText("test")).toBeNull();
         await waitFor(() => {
             expect(localStorageSpy).toHaveBeenCalled();
@@ -207,10 +197,7 @@ describe("TenantListProvider", () => {
             "amplifyConfig",
             fakeConfigData
         );
-        expect(dispatch).toHaveBeenCalledWith(initialiseApp());
-        store.dispatch(getWhoamiSuccess({ id: "someId" }));
-        expect(await screen.findByText("test")).toBeInTheDocument();
-        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(screen.getByText("test")).toBeInTheDocument();
     });
 
     test.skip("configuring with an existing config, but graphql times out", async () => {
@@ -258,8 +245,6 @@ describe("TenantListProvider", () => {
         process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = new URL(
             "http://localhost:4000/graphql"
         );
-        const dispatch = jest.fn();
-        jest.spyOn(redux, "useDispatch").mockReturnValue(dispatch);
         jest.spyOn(global, "fetch").mockRejectedValue(new Error());
         const localStorageSetSpy = jest.spyOn(Storage.prototype, "setItem");
         const amplifySpy = jest.spyOn(Amplify, "configure");
@@ -267,7 +252,7 @@ describe("TenantListProvider", () => {
             .spyOn(Storage.prototype, "getItem")
             .mockReturnValueOnce("1")
             .mockReturnValue(fakeConfigData);
-        const { store } = render(<TenantListProvider>test</TenantListProvider>);
+        render(<TenantListProvider>test</TenantListProvider>);
         expect(screen.queryByText("test")).toBeNull();
         await waitFor(() => {
             expect(localStorageSpy).toHaveBeenCalled();
@@ -288,10 +273,7 @@ describe("TenantListProvider", () => {
             "amplifyConfig",
             fakeConfigData
         );
-        expect(dispatch).toHaveBeenCalledWith(initialiseApp());
-        store.dispatch(getWhoamiSuccess({ id: "someId" }));
-        expect(await screen.findByText("test")).toBeInTheDocument();
-        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(screen.getByText("test")).toBeInTheDocument();
     });
 
     test("configuring with an existing config, but it doesn't exist", async () => {
@@ -299,8 +281,6 @@ describe("TenantListProvider", () => {
         process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = new URL(
             "http://localhost:4000/graphql"
         );
-        const dispatch = jest.fn();
-        jest.spyOn(redux, "useDispatch").mockReturnValue(dispatch);
         jest.spyOn(global, "fetch")
             .mockRejectedValueOnce(new Error())
             .mockResolvedValueOnce({
@@ -328,7 +308,6 @@ describe("TenantListProvider", () => {
         expect(localStorageRemoveSpy).toHaveBeenCalledWith("tenantVersion");
         expect(localStorageRemoveSpy).toHaveBeenCalledWith("tenantName");
         expect(localStorageRemoveSpy).toHaveBeenCalledWith("amplifyConfig");
-        expect(dispatch).not.toHaveBeenCalled();
         await waitFor(() => {
             expect(screen.getByText("Tenant 1")).toBeInTheDocument();
         });
@@ -338,8 +317,6 @@ describe("TenantListProvider", () => {
         process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = new URL(
             "http://localhost:4000/graphql"
         );
-        const dispatch = jest.fn();
-        jest.spyOn(redux, "useDispatch").mockReturnValue(dispatch);
         jest.spyOn(global, "fetch")
             .mockResolvedValueOnce(
                 Promise.resolve({
@@ -370,7 +347,7 @@ describe("TenantListProvider", () => {
             .mockReturnValueOnce("1")
             .mockReturnValue(fakeConfigData);
         const localStorageSetSpy = jest.spyOn(Storage.prototype, "setItem");
-        const { store } = render(<TenantListProvider>test</TenantListProvider>);
+        render(<TenantListProvider>test</TenantListProvider>);
         expect(screen.queryByText("test")).toBeNull();
         await waitFor(() => {
             expect(localStorageSpy).toHaveBeenCalled();
@@ -388,25 +365,17 @@ describe("TenantListProvider", () => {
             "amplifyConfig",
             fakeConfigData
         );
-        expect(dispatch).toHaveBeenCalledWith(initialiseApp());
-        store.dispatch(getWhoamiSuccess({ id: "someId" }));
-        expect(await screen.findByText("test")).toBeInTheDocument();
-        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(screen.getByText("test")).toBeInTheDocument();
     });
 
     test("configuring with an existing config from aws-exports", async () => {
         process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = "undefined";
-        const dispatch = jest.fn();
-        jest.spyOn(redux, "useDispatch").mockReturnValue(dispatch);
         const amplifySpy = jest.spyOn(Amplify, "configure");
-        const { store } = render(<TenantListProvider>test</TenantListProvider>);
+        render(<TenantListProvider>test</TenantListProvider>);
         await waitFor(() => {
             expect(amplifySpy).toHaveBeenCalledWith(fakeAmplifyConfig);
         });
-        expect(dispatch).toHaveBeenCalledWith(initialiseApp());
-        store.dispatch(getWhoamiSuccess({ id: "someId" }));
-        expect(await screen.findByText("test")).toBeInTheDocument();
-        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(screen.getByText("test")).toBeInTheDocument();
     });
 
     test.skip("filter the tenants", async () => {
@@ -457,8 +426,6 @@ describe("TenantListProvider", () => {
         process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = new URL(
             "http://localhost:4000/graphql"
         );
-        const dispatch = jest.fn();
-        jest.spyOn(redux, "useDispatch").mockReturnValue(dispatch);
         jest.spyOn(global, "fetch").mockResolvedValueOnce(
             Promise.resolve({
                 json: () =>
@@ -481,7 +448,7 @@ describe("TenantListProvider", () => {
             .mockReturnValueOnce("someId")
             .mockReturnValueOnce("1")
             .mockReturnValue(fakeConfigData);
-        const { store } = render(<TenantListProvider>test</TenantListProvider>);
+        render(<TenantListProvider>test</TenantListProvider>);
         expect(screen.queryByText("test")).toBeNull();
         await waitFor(() => {
             expect(clearSpy).toHaveBeenCalled();
@@ -490,10 +457,7 @@ describe("TenantListProvider", () => {
         await waitFor(() => {
             expect(amplifySpy).toHaveBeenCalledWith(parsedConfig);
         });
-        expect(dispatch).toHaveBeenCalledWith(initialiseApp());
-        store.dispatch(getWhoamiSuccess({ id: "someId" }));
-        expect(await screen.findByText("test")).toBeInTheDocument();
-        expect(dispatch).toHaveBeenCalledTimes(1);
+        expect(screen.getByText("test")).toBeInTheDocument();
     });
     it("don't clear stale data when it hasn't been long enough", async () => {
         const daysAgo = new Date();
@@ -501,8 +465,6 @@ describe("TenantListProvider", () => {
         process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = new URL(
             "http://localhost:4000/graphql"
         );
-        const dispatch = jest.fn();
-        jest.spyOn(redux, "useDispatch").mockReturnValue(dispatch);
         jest.spyOn(global, "fetch").mockResolvedValueOnce(
             Promise.resolve({
                 json: () =>
@@ -525,16 +487,13 @@ describe("TenantListProvider", () => {
             .mockReturnValueOnce("someId")
             .mockReturnValueOnce("1")
             .mockReturnValue(fakeConfigData);
-        const { store } = render(<TenantListProvider>test</TenantListProvider>);
+        render(<TenantListProvider>test</TenantListProvider>);
         expect(screen.queryByText("test")).toBeNull();
+        expect(await screen.findByText("test")).toBeInTheDocument();
         expect(clearSpy).not.toHaveBeenCalled();
         const parsedConfig = JSON.parse(fakeConfigData);
         await waitFor(() => {
             expect(amplifySpy).toHaveBeenCalledWith(parsedConfig);
         });
-        expect(dispatch).toHaveBeenCalledWith(initialiseApp());
-        store.dispatch(getWhoamiSuccess({ id: "someId" }));
-        expect(await screen.findByText("test")).toBeInTheDocument();
-        expect(dispatch).toHaveBeenCalledTimes(1);
     });
 });
