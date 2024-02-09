@@ -27,6 +27,15 @@ Array [
 ]
 `;
 
+exports[`whoamiSagas errors from API 1`] = `
+Array [
+  Object {
+    "error": [Error: some error from the server],
+    "type": "GET_WHOAMI_FAILURE",
+  },
+]
+`;
+
 exports[`whoamiSagas get the user data from DataStore and the tenantId from localstorage 1`] = `
 Array [
   Object {
@@ -54,5 +63,160 @@ Array [
     "data": "someTenantId",
     "type": "SET_TENANT_ID",
   },
+]
+`;
+
+exports[`whoamiSagas get the user data from the API and save the tenantId 2`] = `
+Array [
+  Array [
+    "https://amazonaws.com/graphq",
+    Object {
+      "body": "{\\"query\\":\\"query GetUserByCognitoId(\\\\n  $cognitoId: ID!\\\\n  $sortDirection: ModelSortDirection\\\\n  $filter: ModelUserFilterInput\\\\n  $limit: Int\\\\n  $nextToken: String\\\\n) {\\\\n  getUserByCognitoId(\\\\n    cognitoId: $cognitoId\\\\n    sortDirection: $sortDirection\\\\n    filter: $filter\\\\n    limit: $limit\\\\n    nextToken: $nextToken\\\\n  ) {\\\\n    items {\\\\n      id\\\\n      username\\\\n      cognitoId\\\\n      tenantId\\\\n      isPrimaryAdmin\\\\n      displayName\\\\n      name\\\\n      roles\\\\n      dateOfBirth\\\\n      riderResponsibility\\\\n      disabled\\\\n      createdAt\\\\n      updatedAt\\\\n      _version\\\\n      _deleted\\\\n      _lastChangedAt\\\\n      __typename\\\\n    }\\\\n    nextToken\\\\n    startedAt\\\\n    __typename\\\\n  }\\\\n}\\\\n\\",\\"variables\\":{\\"cognitoId\\":\\"someCognitoId\\"}}",
+      "headers": Object {
+        "Authorization": "someToken",
+        "Content-Type": "application/json",
+      },
+      "method": "POST",
+    },
+  ],
+]
+`;
+
+exports[`whoamiSagas get the user data from the API and save the tenantId 3`] = `
+Array [
+  Array [
+    Object {
+      "query": "query GetUserByCognitoId(
+  $cognitoId: ID!
+  $sortDirection: ModelSortDirection
+  $filter: ModelUserFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  getUserByCognitoId(
+    cognitoId: $cognitoId
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    nextToken
+    startedAt
+    __typename
+  }
+}
+",
+      "variables": Object {
+        "cognitoId": "someCognitoId",
+      },
+    },
+  ],
+]
+`;
+
+exports[`whoamiSagas get the user data from the API and save the tenantId but get config from aws-exports 1`] = `
+Array [
+  Object {
+    "data": Object {
+      "cognitoId": "someCognitoId",
+      "id": "someUserId",
+      "tenantId": "someTenantId",
+    },
+    "type": "GET_WHOAMI_SUCCESS",
+  },
+  Object {
+    "type": "INIT_WHOAMI_OBSERVER",
+    "whoamiId": "someUserId",
+  },
+  Object {
+    "data": "someTenantId",
+    "type": "SET_TENANT_ID",
+  },
+]
+`;
+
+exports[`whoamiSagas get the user data from the API and save the tenantId but get config from aws-exports 2`] = `
+Array [
+  Array [
+    "https://another.com/graphql",
+    Object {
+      "body": "{\\"query\\":\\"query GetUserByCognitoId(\\\\n  $cognitoId: ID!\\\\n  $sortDirection: ModelSortDirection\\\\n  $filter: ModelUserFilterInput\\\\n  $limit: Int\\\\n  $nextToken: String\\\\n) {\\\\n  getUserByCognitoId(\\\\n    cognitoId: $cognitoId\\\\n    sortDirection: $sortDirection\\\\n    filter: $filter\\\\n    limit: $limit\\\\n    nextToken: $nextToken\\\\n  ) {\\\\n    items {\\\\n      id\\\\n      username\\\\n      cognitoId\\\\n      tenantId\\\\n      isPrimaryAdmin\\\\n      displayName\\\\n      name\\\\n      roles\\\\n      dateOfBirth\\\\n      riderResponsibility\\\\n      disabled\\\\n      createdAt\\\\n      updatedAt\\\\n      _version\\\\n      _deleted\\\\n      _lastChangedAt\\\\n      __typename\\\\n    }\\\\n    nextToken\\\\n    startedAt\\\\n    __typename\\\\n  }\\\\n}\\\\n\\",\\"variables\\":{\\"cognitoId\\":\\"someCognitoId\\"}}",
+      "headers": Object {
+        "Authorization": "someToken",
+        "Content-Type": "application/json",
+      },
+      "method": "POST",
+    },
+  ],
+]
+`;
+
+exports[`whoamiSagas get the user data from the API and save the tenantId but get config from aws-exports 3`] = `
+Array [
+  Array [
+    Object {
+      "query": "query GetUserByCognitoId(
+  $cognitoId: ID!
+  $sortDirection: ModelSortDirection
+  $filter: ModelUserFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  getUserByCognitoId(
+    cognitoId: $cognitoId
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    nextToken
+    startedAt
+    __typename
+  }
+}
+",
+      "variables": Object {
+        "cognitoId": "someCognitoId",
+      },
+    },
+  ],
 ]
 `;

@@ -17,6 +17,12 @@ const fakeCognitoResponse = {
     },
 };
 
+jest.mock("../../aws-exports", () => ({
+    default: {
+        aws_appsync_graphqlEndpoint: "https://another.com/graphql",
+    },
+}));
+
 jest.mock("uuid", () => ({ v4: () => "someUUID" }));
 
 describe("whoamiSagas", () => {
@@ -33,12 +39,32 @@ describe("whoamiSagas", () => {
         jest.spyOn(Auth, "currentAuthenticatedUser").mockResolvedValue(
             fakeCognitoResponse
         );
-        jest.spyOn(API, "graphql").mockResolvedValue({
+        jest.spyOn(Auth, "currentSession").mockResolvedValue({
+            getIdToken: () => ({ getJwtToken: () => "someToken" }),
+        });
+        const apiSpy = jest.spyOn(API, "graphql").mockResolvedValue({
             data: { getUserByCognitoId: { items: [fakeUser] } },
         });
-        jest.spyOn(Storage.prototype, "getItem").mockReturnValue(null);
+        jest.spyOn(Storage.prototype, "getItem")
+            .mockReturnValueOnce(null)
+            .mockReturnValueOnce(
+                '{"aws_appsync_graphqlEndpoint": "https://amazonaws.com/graphq"}'
+            );
         const setSpy = jest.spyOn(Storage.prototype, "setItem");
         const syncExpressionSpy = jest.spyOn(awsAmplify, "syncExpression");
+        const mockFetchPromise = Promise.resolve({
+            json: () =>
+                Promise.resolve({
+                    data: {
+                        getUserByCognitoId: {
+                            items: [{ tenantId: "someTenantId" }],
+                        },
+                    },
+                }),
+        });
+        const fetchSpy = jest
+            .spyOn(global, "fetch")
+            .mockImplementation(() => mockFetchPromise);
 
         await runSaga(
             {
@@ -57,6 +83,61 @@ describe("whoamiSagas", () => {
                 expect.any(Function)
             );
         }
+        expect(fetchSpy.mock.calls).toMatchSnapshot();
+        expect(apiSpy.mock.calls).toMatchSnapshot();
+    });
+    it("get the user data from the API and save the tenantId but get config from aws-exports", async () => {
+        process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT = undefined;
+        const dispatched = [];
+        jest.spyOn(Auth, "currentAuthenticatedUser").mockResolvedValue(
+            fakeCognitoResponse
+        );
+        jest.spyOn(Auth, "currentSession").mockResolvedValue({
+            getIdToken: () => ({ getJwtToken: () => "someToken" }),
+        });
+        const apiSpy = jest.spyOn(API, "graphql").mockResolvedValue({
+            data: { getUserByCognitoId: { items: [fakeUser] } },
+        });
+        jest.spyOn(Storage.prototype, "getItem")
+            .mockReturnValueOnce(null)
+            .mockReturnValueOnce(
+                '{"aws_appsync_graphqlEndpoint": "https://amazonaws.com/graphq"}'
+            );
+        const setSpy = jest.spyOn(Storage.prototype, "setItem");
+        const syncExpressionSpy = jest.spyOn(awsAmplify, "syncExpression");
+        const mockFetchPromise = Promise.resolve({
+            json: () =>
+                Promise.resolve({
+                    data: {
+                        getUserByCognitoId: {
+                            items: [{ tenantId: "someTenantId" }],
+                        },
+                    },
+                }),
+        });
+        const fetchSpy = jest
+            .spyOn(global, "fetch")
+            .mockImplementation(() => mockFetchPromise);
+
+        await runSaga(
+            {
+                dispatch: (action) => dispatched.push(action),
+                getState: () => ({ state: "test" }),
+            },
+            testFunctions.getWhoami
+        ).toPromise();
+
+        expect(dispatched).toMatchSnapshot();
+        expect(setSpy).toHaveBeenCalledWith("userTenantId", "someTenantId");
+        for (const m of Object.values(models)) {
+            if (!m.hasOwnProperty("copyOf")) continue;
+            expect(syncExpressionSpy).toHaveBeenCalledWith(
+                m,
+                expect.any(Function)
+            );
+        }
+        expect(fetchSpy.mock.calls).toMatchSnapshot();
+        expect(apiSpy.mock.calls).toMatchSnapshot();
     });
     it("get the user data from DataStore and the tenantId from localstorage", async () => {
         const dispatched = [];
@@ -157,8 +238,52 @@ describe("whoamiSagas", () => {
         jest.spyOn(Auth, "currentAuthenticatedUser").mockResolvedValue(
             fakeCognitoResponse
         );
-        jest.spyOn(API, "graphql").mockRejectedValue(new Error("someError"));
-        jest.spyOn(Storage.prototype, "getItem").mockReturnValue(null);
+        jest.spyOn(Auth, "currentSession").mockResolvedValue({
+            getIdToken: () => ({ getJwtToken: () => "someToken" }),
+        });
+        jest.spyOn(global, "fetch").mockRejectedValue(new Error("someError"));
+        jest.spyOn(Storage.prototype, "getItem")
+            .mockReturnValueOnce(null)
+            .mockReturnValueOnce(
+                '{"aws_appsync_graphqlEndpoint": "https://amazonaws.com/graphq"}'
+            );
+        const setSpy = jest.spyOn(Storage.prototype, "setItem");
+
+        await runSaga(
+            {
+                dispatch: (action) => dispatched.push(action),
+                getState: () => ({ state: "test" }),
+            },
+            testFunctions.getWhoami
+        ).toPromise();
+
+        expect(dispatched).toMatchSnapshot();
+        expect(setSpy).not.toHaveBeenCalled();
+    });
+    it("errors from API", async () => {
+        const dispatched = [];
+        jest.spyOn(Auth, "currentAuthenticatedUser").mockResolvedValue(
+            fakeCognitoResponse
+        );
+        jest.spyOn(Auth, "currentSession").mockResolvedValue({
+            getIdToken: () => ({ getJwtToken: () => "someToken" }),
+        });
+
+        const mockFetchPromise = Promise.resolve({
+            json: () =>
+                Promise.resolve({
+                    errors: [{ message: "some error from the server" }],
+                    data: {
+                        getUserByCognitoId: {},
+                    },
+                }),
+        });
+        jest.spyOn(global, "fetch").mockImplementation(() => mockFetchPromise);
+        jest.spyOn(Storage.prototype, "getItem")
+            .mockReturnValueOnce(null)
+            .mockReturnValueOnce(
+                '{"aws_appsync_graphqlEndpoint": "https://amazonaws.com/graphq"}'
+            );
         const setSpy = jest.spyOn(Storage.prototype, "setItem");
 
         await runSaga(
@@ -177,10 +302,26 @@ describe("whoamiSagas", () => {
         jest.spyOn(Auth, "currentAuthenticatedUser").mockResolvedValue(
             fakeCognitoResponse
         );
-        jest.spyOn(API, "graphql").mockResolvedValue({
-            data: { getUserByCognitoId: { items: [] } },
+        jest.spyOn(Auth, "currentSession").mockResolvedValue({
+            getIdToken: () => ({ getJwtToken: () => "someToken" }),
         });
-        jest.spyOn(Storage.prototype, "getItem").mockReturnValue(null);
+        jest.spyOn(Storage.prototype, "getItem")
+            .mockReturnValueOnce(null)
+            .mockReturnValueOnce(
+                '{"aws_appsync_graphqlEndpoint": "https://amazonaws.com/graphq"}'
+            );
+        const setSpy = jest.spyOn(Storage.prototype, "setItem");
+        const mockFetchPromise = Promise.resolve({
+            json: () =>
+                Promise.resolve({
+                    data: {
+                        getUserByCognitoId: {
+                            items: [],
+                        },
+                    },
+                }),
+        });
+        jest.spyOn(global, "fetch").mockImplementation(() => mockFetchPromise);
 
         await runSaga(
             {
@@ -191,5 +332,6 @@ describe("whoamiSagas", () => {
         ).toPromise();
 
         expect(dispatched).toMatchSnapshot();
+        expect(setSpy).not.toHaveBeenCalled();
     });
 });
