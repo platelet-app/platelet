@@ -74,6 +74,7 @@ const taskStatus = {
     PENDING: "lightblue",
 };
 
+// left here for demo mode
 const InitComponent = ({ children }: { children: React.ReactNode }) => {
     const didInit = React.useRef(false);
     const dispatch = useDispatch();
@@ -133,11 +134,9 @@ const App = (props: any) => {
                     <SnackbarProvider maxSnack={1}>
                         <TenantListProvider>
                             <Login>
-                                <InitComponent>
-                                    <CssBaseline />
-                                    <MenuMainContainer />
-                                    <SnackNotificationBar {...props} />
-                                </InitComponent>
+                                <CssBaseline />
+                                <MenuMainContainer />
+                                <SnackNotificationBar {...props} />
                             </Login>
                         </TenantListProvider>
                     </SnackbarProvider>
