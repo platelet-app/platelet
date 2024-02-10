@@ -74,6 +74,19 @@ const taskStatus = {
     PENDING: "lightblue",
 };
 
+// left here for demo mode
+const InitComponent = ({ children }: { children: React.ReactNode }) => {
+    const didInit = React.useRef(false);
+    const dispatch = useDispatch();
+    React.useEffect(() => {
+        if (!didInit.current) {
+            dispatch(initialiseApp());
+            didInit.current = true;
+        }
+    }, [dispatch]);
+    return <>{children}</>;
+};
+
 const App = (props: any) => {
     let theme;
     const themePreference = useCurrentTheme();
@@ -105,9 +118,11 @@ const App = (props: any) => {
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={theme}>
                     <SnackbarProvider maxSnack={1}>
-                        <CssBaseline />
-                        <MenuMainContainer />
-                        <SnackNotificationBar {...props} />
+                        <InitComponent>
+                            <CssBaseline />
+                            <MenuMainContainer />
+                            <SnackNotificationBar {...props} />
+                        </InitComponent>
                     </SnackbarProvider>
                 </ThemeProvider>
             </StyledEngineProvider>
