@@ -32,7 +32,10 @@ export default function getStats(data: Task[], whoamiId: string) {
     // get all tasks within the date range
     const myTasks = data.filter((t) =>
         t.assignees?.items?.some(
-            (a) => a?.role === Role.COORDINATOR && a?.assignee?.id === whoamiId
+            (a) =>
+                !a?._deleted &&
+                a?.role === Role.COORDINATOR &&
+                a?.assignee?.id === whoamiId
         )
     );
     const myTaskIds = myTasks.map((t) => t.id);
@@ -56,7 +59,7 @@ export default function getStats(data: Task[], whoamiId: string) {
 
     // get all the rider assignments that intersect with mine
     const riderAssignmentsAll = data.filter((t) =>
-        t.assignees?.items?.some((a) => a?.role === Role.RIDER)
+        t.assignees?.items?.some((a) => !a?._deleted && a?.role === Role.RIDER)
     );
     const taskAssignments = riderAssignmentsAll.filter((ta) =>
         myTaskIds.includes(ta.id)
@@ -64,7 +67,7 @@ export default function getStats(data: Task[], whoamiId: string) {
     const assignments = taskAssignments
         .map((ta) => ta?.assignees?.items)
         .flat()
-        .filter((a) => a?.role === Role.RIDER);
+        .filter((a) => !a?._deleted && a?.role === Role.RIDER);
     const activeRiders: { [key: string]: User } = {};
     for (const assignment of assignments) {
         if (assignment?.assignee)

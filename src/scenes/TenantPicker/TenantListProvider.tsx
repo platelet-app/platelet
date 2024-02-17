@@ -61,14 +61,14 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
                 configureAmplify(config);
                 setIsProcessing(false);
             } else {
-                setIsProcessing(false);
                 setShowList(true);
+                setIsProcessing(false);
             }
         } catch (error) {
             console.log("couldn't get tenant info:", error);
             clearAmplifyConfig();
-            setIsProcessing(false);
             setShowList(true);
+            setIsProcessing(false);
         }
     }, [offline]);
 

@@ -6,19 +6,19 @@ Object {
     "ABANDONED": 0,
     "ACTIVE": 0,
     "CANCELLED": 0,
-    "COMPLETED": 1,
+    "COMPLETED": 2,
     "DROPPED_OFF": 0,
     "NEW": 1,
     "PICKED_UP": 0,
     "REJECTED": 0,
-    "TOTAL": 2,
+    "TOTAL": 3,
   },
   "priorities": Object {
-    "HIGH": 1,
+    "HIGH": 2,
     "LOW": 0,
     "MEDIUM": 0,
     "NONE": 1,
-    "TOTAL": 2,
+    "TOTAL": 3,
   },
   "riderResponsibilities": Object {
     "None": Object {
@@ -29,11 +29,11 @@ Object {
       "Total": 1,
     },
     "someRiderResponsibility": Object {
-      "HIGH": 1,
+      "HIGH": 2,
       "LOW": 0,
       "MEDIUM": 0,
       "None": 0,
-      "Total": 1,
+      "Total": 2,
     },
   },
   "riders": Object {

@@ -46,8 +46,76 @@ describe("getStats", () => {
             _deleted: null,
             _lastChangedAt: 1620000000000,
         };
+        const mockTaskDeletedRider = {
+            id: "someId2",
+            timeOfCall: "2021-05-01T00:00:00.000Z",
+            riderResponsibility: "someRiderResponsibility",
+            priority: APITypes.Priority.HIGH,
+            status: APITypes.TaskStatus.COMPLETED,
+            createdAt: new Date().toISOString(),
+            assignees: {
+                items: [
+                    {
+                        role: models.Role.RIDER,
+                        task: {
+                            priority: APITypes.Priority.HIGH,
+                        },
+                        _deleted: true,
+                        assignee: {
+                            id: "someId",
+                            displayName: "Rider Name",
+                        },
+                    },
+                    {
+                        role: models.Role.COORDINATOR,
+                        assignee: {
+                            id: mockWhoami.id,
+                            displayName: "Coordinator Name",
+                        },
+                    },
+                ],
+            },
+            dateCreated: new Date().toISOString().split("T")[0],
+            _version: 1,
+            _deleted: null,
+            _lastChangedAt: 1620000000000,
+        };
+        const mockTaskDeletedMe = {
+            id: "someId3",
+            timeOfCall: "2021-05-01T00:00:00.000Z",
+            riderResponsibility: "someRiderResponsibility",
+            priority: APITypes.Priority.HIGH,
+            status: APITypes.TaskStatus.COMPLETED,
+            createdAt: new Date().toISOString(),
+            assignees: {
+                items: [
+                    {
+                        role: models.Role.RIDER,
+                        task: {
+                            priority: APITypes.Priority.HIGH,
+                        },
+                        assignee: {
+                            id: "someIdNope",
+                            displayName: "Rider Name Nope",
+                        },
+                    },
+                    {
+                        role: models.Role.COORDINATOR,
+                        _deleted: true,
+                        assignee: {
+                            id: mockWhoami.id,
+                            displayName: "Coordinator Name",
+                        },
+                    },
+                ],
+            },
+            dateCreated: new Date().toISOString().split("T")[0],
+            _version: 1,
+            _deleted: null,
+            _lastChangedAt: 1620000000000,
+        };
         const mockTaskNoPriority = {
-            id: "someId",
+            id: "someId4",
             timeOfCall: "2021-05-01T00:00:00.000Z",
             riderResponsibility: null,
             priority: null,
@@ -109,7 +177,13 @@ describe("getStats", () => {
             _lastChangedAt: 1620000000000,
         };
         const result = getStats(
-            [mockTask, notMyMockTask, mockTaskNoPriority],
+            [
+                mockTask,
+                notMyMockTask,
+                mockTaskNoPriority,
+                mockTaskDeletedMe,
+                mockTaskDeletedRider,
+            ],
             mockWhoami.id
         );
         expect(result).toMatchSnapshot();
