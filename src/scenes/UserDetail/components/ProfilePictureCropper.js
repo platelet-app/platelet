@@ -139,8 +139,17 @@ function ProfilePictureCropper(props) {
                 />
             </Box>
             <Stack direction={"row"} justifyContent={"space-between"}>
-                <Button onClick={() => {}}>Discard</Button>
-                <Button onClick={sendPictureData}>Finish</Button>
+                <Button
+                    disabled={props.isPosting}
+                    onClick={() => {
+                        if (props.onDiscard) props.onDiscard();
+                    }}
+                >
+                    Discard
+                </Button>
+                <Button disabled={props.isPosting} onClick={sendPictureData}>
+                    Finish
+                </Button>
             </Stack>
         </Stack>
     );

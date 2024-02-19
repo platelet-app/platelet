@@ -108,10 +108,6 @@ async function createNewCognitoUser(newUser, tenantId) {
                     Name: "email_verified",
                     Value: "true",
                 },
-                {
-                    Name: "custom:tenantId",
-                    Value: tenantId,
-                },
             ],
             TemporaryPassword: generatedPassword,
             UserPoolId: userPoolId,

@@ -40,7 +40,7 @@ const RoleViewSelect = () => {
                 }}
                 disabled={guidedSetupOpen}
                 size="small"
-                data-testId="role-menu"
+                data-testid="role-menu"
                 value={roleView}
             >
                 {whoami.roles.includes(models.Role.COORDINATOR) && (

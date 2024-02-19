@@ -91,7 +91,7 @@ describe("ScheduledTaskOverviewSummary", () => {
             screen.getByRole("button", { name: "edit establishment" })
         );
         userEvent.type(screen.getByRole("textbox"), "mock");
-        userEvent.click(await screen.findByText("mock establishment"));
+        userEvent.click(await screen.findByText("mock"));
         userEvent.click(screen.getByRole("button", { name: "OK" }));
         await waitFor(() => {
             expect(saveSpy).toHaveBeenCalledWith({

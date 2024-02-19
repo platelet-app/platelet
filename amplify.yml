@@ -51,3 +51,4 @@ test:
     test:
       commands:
         - npm test -- --watchAll=false
+        - bash test-amplify-function.sh

@@ -260,22 +260,37 @@ const TaskContextMenu: React.FC<TaskContextMenuProps> = ({
         setState(initialState);
     };
 
+    const generateKey = (pre: string) => {
+        return `${pre}_${task?.id}`;
+    };
+
     let menuItems: JSX.Element[] = [];
     if (task?.status === models.TaskStatus.PENDING) {
         menuItems = [
-            <MenuItem onClick={(e) => onUpdatePending(e, "accept")}>
+            <MenuItem
+                key={generateKey("pending-accept")}
+                onClick={(e) => onUpdatePending(e, "accept")}
+            >
                 Accept
             </MenuItem>,
-            <MenuItem onClick={(e) => onUpdatePending(e, "reject")}>
+            <MenuItem
+                key={generateKey("pending-reject")}
+                onClick={(e) => onUpdatePending(e, "reject")}
+            >
                 Reject
             </MenuItem>,
-            <MenuItem disabled={task === null} onClick={copyToClipboard}>
+            <MenuItem
+                key={generateKey("pending-copy")}
+                disabled={task === null}
+                onClick={copyToClipboard}
+            >
                 Copy to clipboard
             </MenuItem>,
         ];
     } else if (task) {
         menuItems = [
             <MenuItem
+                key={generateKey("picked-up")}
                 disabled={
                     task === null || task.status !== models.TaskStatus.ACTIVE
                 }
@@ -284,6 +299,7 @@ const TaskContextMenu: React.FC<TaskContextMenuProps> = ({
                 Mark picked up
             </MenuItem>,
             <MenuItem
+                key={generateKey("dropped-off")}
                 disabled={
                     task === null || task.status !== models.TaskStatus.PICKED_UP
                 }
@@ -292,6 +308,7 @@ const TaskContextMenu: React.FC<TaskContextMenuProps> = ({
                 Mark delivered
             </MenuItem>,
             <MenuItem
+                key={generateKey("rider-home")}
                 disabled={
                     task === null ||
                     task.status !== models.TaskStatus.DROPPED_OFF
@@ -301,6 +318,7 @@ const TaskContextMenu: React.FC<TaskContextMenuProps> = ({
                 Mark rider home
             </MenuItem>,
             <MenuItem
+                key={generateKey("rejected")}
                 disabled={
                     task === null ||
                     [
@@ -316,6 +334,7 @@ const TaskContextMenu: React.FC<TaskContextMenuProps> = ({
                 Mark rejected
             </MenuItem>,
             <MenuItem
+                key={generateKey("cancelled")}
                 disabled={
                     task === null ||
                     [
@@ -334,6 +353,7 @@ const TaskContextMenu: React.FC<TaskContextMenuProps> = ({
         if (actualRole === models.Role.COORDINATOR) {
             menuItems.push(
                 <MenuItem
+                    key={generateKey("duplicate")}
                     disabled={
                         task === null ||
                         [
@@ -350,7 +370,11 @@ const TaskContextMenu: React.FC<TaskContextMenuProps> = ({
             );
         }
         menuItems.push(
-            <MenuItem disabled={task === null} onClick={copyToClipboard}>
+            <MenuItem
+                key={generateKey("copy-to-clipboard")}
+                disabled={task === null}
+                onClick={copyToClipboard}
+            >
                 Copy to clipboard
             </MenuItem>
         );

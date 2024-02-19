@@ -6,7 +6,7 @@
     "dependencies": {
         "aws-appsync": "4.0.0",
         "aws-sdk": "^2.1088.0",
-        "graphql": "^16.3.0",
+        "graphql": "^16.8.1",
         "graphql-tag": "^2.12.6",
         "isomorphic-fetch": "^3.0.0",
         "uuid": "^8.3.2"
@@ -14,5 +14,8 @@
     "scripts": {
         "test": "jest test --watchAll --testTimeout=10000",
         "test:debug": "jest --watchAll --inspect test --runInBand --no-cache --testTimeout=100000000"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0"
     }
 }

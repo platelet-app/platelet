@@ -4,8 +4,10 @@ import dataStoreConflictHandler from "./dataStoreConflictHandler";
 import { PersistentModelConstructor, OpType } from "@aws-amplify/datastore";
 import { DataStore } from "aws-amplify";
 import { DISCARD } from "@aws-amplify/datastore";
+import _ from "lodash";
 
 const tenantId = "tenantId";
+const dateCreated = new Date().toISOString().split("T")[0];
 
 describe("dataStoreConflictHandler", () => {
     test("return DISCARD for location model", async () => {
@@ -68,15 +70,18 @@ describe("dataStoreConflictHandler", () => {
                         : null,
             };
 
-            const createdBy = new models.User({
-                tenantId,
-                username: "test",
-                cognitoId: "test",
-                displayName: "test",
-                roles: [models.Role.COORDINATOR],
-            });
+            const createdBy = await DataStore.save(
+                new models.User({
+                    tenantId,
+                    username: "test",
+                    cognitoId: "test",
+                    displayName: "test",
+                    roles: [models.Role.COORDINATOR],
+                })
+            );
             const mockRemoteTask = await DataStore.save(
                 new models.Task({
+                    dateCreated,
                     priority: models.Priority.HIGH,
                     status: models.TaskStatus.ACTIVE,
                     tenantId,
@@ -117,9 +122,16 @@ describe("dataStoreConflictHandler", () => {
                 operation: OpType.UPDATE,
                 attempts: 1,
             });
+            const expected = _.omit(
+                mockRemoteTask,
+                "createdAt",
+                "updatedAt",
+                "tenantId",
+                "archived"
+            );
 
             expect(result).toEqual({
-                ...mockRemoteTask,
+                ...expected,
                 ...data,
                 status: expect.any(String),
             });
@@ -133,15 +145,18 @@ describe("dataStoreConflictHandler", () => {
         const timePickedUpSenderName = "timePickedUpSenderName";
         const timeDroppedOffRecipientName = "timeDroppedOffRecipientName";
 
-        const createdBy = new models.User({
-            tenantId,
-            username: "test",
-            cognitoId: "test",
-            displayName: "test",
-            roles: [models.Role.COORDINATOR],
-        });
+        const createdBy = await DataStore.save(
+            new models.User({
+                tenantId,
+                username: "test",
+                cognitoId: "test",
+                displayName: "test",
+                roles: [models.Role.COORDINATOR],
+            })
+        );
         const mockRemoteTask = await DataStore.save(
             new models.Task({
+                dateCreated,
                 priority: models.Priority.HIGH,
                 status: models.TaskStatus.ACTIVE,
                 tenantId,
@@ -187,8 +202,16 @@ describe("dataStoreConflictHandler", () => {
             attempts: 1,
         });
 
+        const expected = _.omit(
+            mockRemoteTask,
+            "createdAt",
+            "updatedAt",
+            "tenantId",
+            "archived"
+        );
+
         expect(result).toEqual({
-            ...mockRemoteTask,
+            ...expected,
             status: models.TaskStatus.COMPLETED,
             timeDroppedOff,
             timePickedUp,

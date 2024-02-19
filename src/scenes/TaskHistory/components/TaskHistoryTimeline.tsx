@@ -295,7 +295,9 @@ const generateTimelineContent = (task: Task) => {
                     </Link>
                 </TimelineContent>
             ) : (
-                <>Created</>
+                <TimelineContent>
+                    <Typography>Created</Typography>
+                </TimelineContent>
             );
 
             return (

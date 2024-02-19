@@ -71,7 +71,7 @@ const TaskHistoryTaskDialogLocation: React.FC<
             console.log(data);
             if (data) {
                 return (
-                    <TaskHistoryLabelItemPair key={key} label={value}>
+                    <TaskHistoryLabelItemPair label={value}>
                         <Typography>{data}</Typography>
                     </TaskHistoryLabelItemPair>
                 );
@@ -106,8 +106,20 @@ const TaskHistoryTaskDialogLocation: React.FC<
                 <Divider />
                 {locationTitle}
                 <Stack>
-                    {locationContent.map((item) => item)}
-                    {contactContent.map((item) => item)}
+                    {locationContent.map((item, index) => (
+                        <React.Fragment
+                            key={`${index}-history-location-content`}
+                        >
+                            {item}
+                        </React.Fragment>
+                    ))}
+                    {contactContent.map((item, index) => (
+                        <React.Fragment
+                            key={`${index}-history-contact-content`}
+                        >
+                            {item}
+                        </React.Fragment>
+                    ))}
                 </Stack>
             </Stack>
         </Paper>

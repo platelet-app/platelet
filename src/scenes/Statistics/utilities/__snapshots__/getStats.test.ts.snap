@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`getStats should return the correct stats 1`] = `
+Object {
+  "common": Object {
+    "ABANDONED": 0,
+    "ACTIVE": 0,
+    "CANCELLED": 0,
+    "COMPLETED": 2,
+    "DROPPED_OFF": 0,
+    "NEW": 1,
+    "PICKED_UP": 0,
+    "REJECTED": 0,
+    "TOTAL": 3,
+  },
+  "priorities": Object {
+    "HIGH": 2,
+    "LOW": 0,
+    "MEDIUM": 0,
+    "NONE": 1,
+    "TOTAL": 3,
+  },
+  "riderResponsibilities": Object {
+    "None": Object {
+      "HIGH": 0,
+      "LOW": 0,
+      "MEDIUM": 0,
+      "None": 1,
+      "Total": 1,
+    },
+    "someRiderResponsibility": Object {
+      "HIGH": 2,
+      "LOW": 0,
+      "MEDIUM": 0,
+      "None": 0,
+      "Total": 2,
+    },
+  },
+  "riders": Object {
+    "Rider Name": Object {
+      "HIGH": 1,
+      "LOW": 0,
+      "MEDIUM": 0,
+      "NONE": 1,
+      "TOTAL": 2,
+    },
+  },
+}
+`;

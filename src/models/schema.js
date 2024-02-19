@@ -1106,6 +1106,13 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "dateCompleted": {
+                    "name": "dateCompleted",
+                    "isArray": false,
+                    "type": "AWSDate",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "timeOfCall": {
                     "name": "timeOfCall",
                     "isArray": false,
@@ -2579,6 +2586,6 @@ export const schema = {
             }
         }
     },
-    "codegenVersion": "3.4.0",
-    "version": "3a570d5d03205d7c0e430a090a4ca29b"
+    "codegenVersion": "3.4.4",
+    "version": "e8a37f7291c48282a191ed3e232cee52"
 };

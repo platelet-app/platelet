@@ -1,37 +1,37 @@
 import { API, graphqlOperation } from "aws-amplify";
+import { GraphQLQuery } from "@aws-amplify/api";
 import { DataStore } from "aws-amplify";
 import { S3ObjectAccessLevels } from "../../../apiConsts";
 import * as models from "../../../models";
 import * as queries from "../../../graphql/queries";
+import _ from "lodash";
+import { ProfilePictureUploadURLQuery } from "../../../API";
 
-let aws_config = {
-    default: {
-        aws_user_files_s3_bucket: "",
-        aws_user_files_s3_bucket_region: "",
-    },
-};
-
-if (
-    (!process.env.REACT_APP_OFFLINE_ONLY ||
-        process.env.REACT_APP_OFFLINE_ONLY === "false") &&
-    (!process.env.REACT_APP_DEMO_MODE ||
-        process.env.REACT_APP_DEMO_MODE === "false") &&
-    process.env.JEST_WORKER_ID === undefined
-) {
-    aws_config = require("../../../aws-exports");
-}
-
-async function uploadProfilePicture(userId, selectedFile) {
+async function uploadProfilePicture(userId: string, selectedFile: any) {
     if (selectedFile) {
-        const bucket = aws_config.default
-            ? aws_config.default.aws_user_files_s3_bucket
-            : null;
-        const region = aws_config.default
-            ? aws_config.default.aws_user_files_s3_bucket_region
+        let aws_config;
+        if (process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT) {
+            const amplifyConfig = localStorage.getItem("amplifyConfig");
+            if (!amplifyConfig)
+                throw new Error("No amplify config found in local storage");
+            aws_config = JSON.parse(amplifyConfig);
+        } else {
+            aws_config = require("../../../aws-exports").default;
+        }
+        if (!aws_config || _.isEmpty(aws_config))
+            throw new Error("No amplify config found");
+        const bucket = aws_config ? aws_config.aws_user_files_s3_bucket : null;
+        const region = aws_config
+            ? aws_config.aws_user_files_s3_bucket_region
             : null;
         const visibility = S3ObjectAccessLevels.public;
 
         const key = `${visibility}/${userId}.jpg`;
+
+        if (!bucket || !region)
+            throw new Error(
+                `No bucket or no region found: ${bucket} ${region}`
+            );
 
         const file = {
             bucket,
@@ -40,13 +40,15 @@ async function uploadProfilePicture(userId, selectedFile) {
         };
 
         try {
-            const uploadUrlData = await API.graphql(
+            const uploadUrlData = await API.graphql<
+                GraphQLQuery<ProfilePictureUploadURLQuery>
+            >(
                 graphqlOperation(queries.profilePictureUploadURL, {
                     userId,
                 })
             );
 
-            const uploadUrl = uploadUrlData.data.profilePictureUploadURL;
+            const uploadUrl = uploadUrlData?.data?.profilePictureUploadURL;
             if (!uploadUrl) throw new Error("No upload URL found");
 
             await fetch(uploadUrl, {
@@ -58,6 +60,7 @@ async function uploadProfilePicture(userId, selectedFile) {
                 body: selectedFile,
             });
             const existingUser = await DataStore.query(models.User, userId);
+            if (!existingUser) throw new Error("No user found");
             await DataStore.save(
                 models.User.copyOf(existingUser, (updated) => {
                     updated.profilePicture = file;

@@ -99,12 +99,22 @@ jest.mock(
     },
     { virtual: true }
 );
+jest.mock(
+    "/opt/sendWelcomeEmail",
+    () => {
+        return {
+            sendWelcomeEmail: jest.fn(),
+        };
+    },
+    { virtual: true }
+);
 
 const username = "aa154086-8a21-4ff2-920e-c1c28052c8b8";
 
 jest.mock("uuid", () => ({ v4: () => username }));
 
 const appsyncModule = require("/opt/appSyncRequest");
+const sendWelcomeEmail = require("/opt/sendWelcomeEmail");
 
 jest.mock("aws-sdk", () => {
     return {
@@ -155,7 +165,10 @@ describe("plateletAdminAddNewUser", () => {
         jest.resetModules();
     });
 
-    afterEach(() => jest.resetAllMocks());
+    afterEach(() => {
+        jest.resetAllMocks();
+        jest.restoreAllMocks();
+    });
 
     it("should return a function", () => {
         expect(typeof handler).toBe("function");
@@ -170,12 +183,11 @@ describe("plateletAdminAddNewUser", () => {
             awssdk.CognitoIdentityServiceProvider.prototype,
             "adminAddUserToGroup"
         );
-        const SESSpy = jest.spyOn(awssdk.SES.prototype, "sendEmail");
         const mockEvent = {
             arguments: {
                 name: "test user",
-                email: "test@test.com",
-                roles: ["USER", "COORDINATOR"],
+                email: "test@taaaest.com",
+                roles: ["USER", "COORDINATOR", "ADMIN"],
                 tenantId: "testTenantId",
             },
         };
@@ -213,10 +225,6 @@ describe("plateletAdminAddNewUser", () => {
                     Name: "email_verified",
                     Value: "true",
                 },
-                {
-                    Name: "custom:tenantId",
-                    Value: mockEvent.arguments.tenantId,
-                },
             ],
             UserPoolId: "testPoolId",
             TemporaryPassword: expect.stringMatching(/^[\w+]{8}$/),
@@ -233,7 +241,6 @@ describe("plateletAdminAddNewUser", () => {
             Username: username,
             GroupName: "COORDINATOR",
         });
-        expect(SESSpy).toHaveBeenCalledWith(mockEmailParams);
         expect(appsyncModule.request).toMatchSnapshot();
     });
     test("add a new user with non-unique name", async () => {
@@ -241,7 +248,6 @@ describe("plateletAdminAddNewUser", () => {
             awssdk.CognitoIdentityServiceProvider.prototype,
             "adminCreateUser"
         );
-        const SESSpy = jest.spyOn(awssdk.SES.prototype, "sendEmail");
         const mockEvent = {
             arguments: {
                 name: "Another Individual",
@@ -289,18 +295,12 @@ describe("plateletAdminAddNewUser", () => {
                     Name: "email_verified",
                     Value: "true",
                 },
-                {
-                    Name: "custom:tenantId",
-                    Value: mockEvent.arguments.tenantId,
-                },
             ],
             TemporaryPassword: expect.stringMatching(/^[\w+]{8}$/),
             MessageAction: "SUPPRESS",
             UserPoolId: "testPoolId",
             Username: username,
         });
-        expect(SESSpy).toHaveBeenCalledWith(mockEmailParams);
-        expect(SESSpy).toHaveBeenCalledTimes(1);
         expect(appsyncModule.request).toMatchSnapshot();
     });
 
@@ -416,9 +416,7 @@ describe("plateletAdminAddNewUser", () => {
             awssdk.CognitoIdentityServiceProvider.prototype,
             "adminDeleteUser"
         );
-        jest.spyOn(awssdk.SES.prototype, "sendEmail").mockImplementation(() => {
-            throw new Error("Some error");
-        });
+        sendWelcomeEmail.sendWelcomeEmail.mockRejectedValue("Some error");
         const mockEvent = {
             arguments: {
                 name: "Another Individual",
@@ -461,9 +459,7 @@ describe("plateletAdminAddNewUser", () => {
                     },
                 }),
             });
-        await expect(handler(mockEvent)).rejects.toEqual(
-            new Error("Some error")
-        );
+        await expect(handler(mockEvent)).rejects.toEqual("Some error");
         expect(cognitoSpy).toHaveBeenCalledTimes(1);
         expect(cognitoDeleteSpy).toHaveBeenCalledWith({
             UserPoolId: "testPoolId",

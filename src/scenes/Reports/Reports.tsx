@@ -81,7 +81,7 @@ function Reports() {
             const toTimeStamp = moment(toDate).format("YYYY-MM-DD");
             const fileName = `${finalUser.name}_${role}_${fromTimeStamp}_to_${toTimeStamp}.csv`;
             const result = await generateReportBasic(
-                finalUser.id,
+                role === "ALL" ? null : finalUser.id,
                 role,
                 tenantId,
                 fromDate,

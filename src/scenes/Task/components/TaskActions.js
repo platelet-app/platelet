@@ -201,6 +201,7 @@ function TaskActions(props) {
             );
         } else if (key === "timeRiderHome") {
             if (task && task.status === tasksStatus.new) return true;
+            if (state.includes("timeRiderHome")) return false;
             return !state.includes("timeDroppedOff");
         } else if (key === "timeRejected") {
             if (state.includes("timeRejected")) return false;

@@ -1,11 +1,12 @@
 import { TextField, Stack, useMediaQuery } from "@mui/material";
-import CollapsibleToggle from "../../../components/CollapsibleToggle";
 import React, { useEffect, useState } from "react";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import PropTypes from "prop-types";
 import { TextFieldUncontrolled } from "../../../components/TextFields";
 import { useTheme } from "@mui/styles";
 import _ from "lodash";
+import FavouriteLocationsSelect from "../../../components/FavouriteLocationsSelect";
+import { protectedFields } from "../../../apiConsts";
 
 const initialState = {
     name: "",
@@ -38,12 +39,8 @@ const contactFields = {
     telephoneNumber: "Telephone",
 };
 
-const collapsedShowFields = ["ward", "line1", "town", "postcode"];
-const collapsedShowContactFields = ["name", "telephoneNumber"];
-
 function PopOutLocationSelectorForm(props) {
     const [state, setState] = useState(initialState);
-    const [isCollapsed, setIsCollapsed] = useState(true);
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -64,6 +61,35 @@ function PopOutLocationSelectorForm(props) {
         props.onCancel();
     };
 
+    const handleSelect = (location) => {
+        if (location) {
+            setState(location);
+        }
+    };
+
+    const handleChange = (e, key) => {
+        const { value } = e.target;
+        const rest = _.omit(state, protectedFields);
+        setState({
+            ...rest,
+            name: "",
+            listed: 0,
+            [key]: value,
+        });
+    };
+
+    const handleContactChange = (e, key) => {
+        const { value } = e.target;
+        const rest = _.omit(state, protectedFields);
+        setState({
+            ...rest,
+            contact: {
+                ...rest.contact,
+                [key]: value,
+            },
+        });
+    };
+
     return (
         <ConfirmationDialog
             fullScreen={isSm}
@@ -77,60 +103,44 @@ function PopOutLocationSelectorForm(props) {
                 sx={{ marginTop: 1, width: "100%", minWidth: isSm ? 0 : 400 }}
                 spacing={1}
             >
+                {props.showFavorites && (
+                    <FavouriteLocationsSelect
+                        label="Search a new location"
+                        size="large"
+                        online
+                        onSelect={handleSelect}
+                    />
+                )}
                 {Object.entries(addressFields).map(([key, label]) => {
                     return (
-                        (collapsedShowFields.includes(key) || !isCollapsed) && (
-                            <TextField
-                                key={key}
-                                fullWidth
-                                inputProps={{
-                                    "aria-label": label,
-                                }}
-                                label={label}
-                                value={state[key]}
-                                onChange={(e) => {
-                                    const { value } = e.target;
-                                    setState((prevState) => ({
-                                        ...prevState,
-                                        [key]: value,
-                                    }));
-                                }}
-                            />
-                        )
+                        <TextField
+                            key={key}
+                            fullWidth
+                            inputProps={{
+                                "aria-label": label,
+                            }}
+                            label={label}
+                            value={state[key]}
+                            onChange={(e) => handleChange(e, key)}
+                        />
                     );
                 })}
 
                 {Object.entries(contactFields).map(([key, label]) => {
                     return (
-                        (collapsedShowContactFields.includes(key) ||
-                            !isCollapsed) && (
-                            <TextFieldUncontrolled
-                                key={key}
-                                fullWidth
-                                tel={key === "telephoneNumber"}
-                                inputProps={{
-                                    "aria-label": label,
-                                }}
-                                label={label}
-                                value={state.contact ? state.contact[key] : ""}
-                                onChange={(e) => {
-                                    const { value } = e.target;
-                                    setState((prevState) => ({
-                                        ...prevState,
-                                        contact: {
-                                            ...prevState.contact,
-                                            [key]: value,
-                                        },
-                                    }));
-                                }}
-                            />
-                        )
+                        <TextFieldUncontrolled
+                            key={key}
+                            fullWidth
+                            tel={key === "telephoneNumber"}
+                            inputProps={{
+                                "aria-label": label,
+                            }}
+                            label={label}
+                            value={state.contact ? state.contact[key] : ""}
+                            onChange={(e) => handleContactChange(e, key)}
+                        />
                     );
                 })}
-                <CollapsibleToggle
-                    value={isCollapsed}
-                    onClick={() => setIsCollapsed((prevState) => !prevState)}
-                />
             </Stack>
         </ConfirmationDialog>
     );
@@ -141,6 +151,7 @@ PopOutLocationSelectorForm.propTypes = {
     open: PropTypes.bool.isRequired,
     onCancel: PropTypes.func,
     onConfirmation: PropTypes.func,
+    showFavorites: PropTypes.bool,
     location: PropTypes.shape({
         name: PropTypes.string,
         ward: PropTypes.string,
@@ -160,6 +171,7 @@ PopOutLocationSelectorForm.propTypes = {
 
 PopOutLocationSelectorForm.defaultProps = {
     label: "",
+    showFavorites: false,
     location: null,
     onCancel: () => {},
     onConfirmation: () => {},

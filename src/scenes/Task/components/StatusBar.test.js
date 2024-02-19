@@ -6,7 +6,7 @@ import * as models from "../../../models/index";
 import userEvent from "@testing-library/user-event";
 import { createMatchMedia } from "../../../test-utils";
 import { DataStore } from "aws-amplify";
-import * as copyTaskDataToClipboard from "../../../utilities/copyTaskDataToClipboard";
+import StatusBarMobile from "./StatusBarMobile";
 
 describe("StatusBar", () => {
     beforeAll(() => {
@@ -283,23 +283,5 @@ describe("StatusBar", () => {
         expect(copyButton).toBeInTheDocument();
         userEvent.click(copyButton);
         expect(await screen.findByText("Copy failed!")).toBeInTheDocument();
-    });
-    test("click the close button", async () => {
-        const mockClose = jest.fn();
-        render(<StatusBar handleClose={mockClose} />);
-        const closeButton = screen.getByRole("button", { name: "Close" });
-        expect(closeButton).toBeInTheDocument();
-        userEvent.click(closeButton);
-        expect(mockClose).toHaveBeenCalled();
-    });
-
-    test("click the back button on mobile", async () => {
-        window.matchMedia = createMatchMedia(240);
-        const mockClose = jest.fn();
-        render(<StatusBar handleClose={mockClose} />);
-        const closeButton = screen.getByRole("button", { name: "Close" });
-        expect(closeButton).toBeInTheDocument();
-        userEvent.click(closeButton);
-        expect(mockClose).toHaveBeenCalled();
     });
 });

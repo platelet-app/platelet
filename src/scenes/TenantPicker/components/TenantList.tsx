@@ -1,22 +1,19 @@
 import React from "react";
-import useTenantListGraphQL from "../../hooks/useTenantListGraphQL";
+import useTenantListGraphQL from "../../../hooks/useTenantListGraphQL";
 import { Divider, Skeleton, Stack, Typography } from "@mui/material";
-import { TenantCard } from "./components/TenantCard";
-import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
+import { TenantCard } from "./TenantCard";
+import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { useDispatch } from "react-redux";
-import configureAmplify from "./utilities/configureAmplify";
-import saveAmplifyConfig from "../../utilities/saveAmplifyConfig";
+import saveAmplifyConfig from "../../../utilities/saveAmplifyConfig";
 import _ from "lodash";
-import { PaddedPaper } from "../../styles/common";
-import clearAmplifyConfig from "../../utilities/clearAmplifyConfig";
+import { PaddedPaper } from "../../../styles/common";
+import configureAmplify from "../utilities/configureAmplify";
 
-interface TenantListProps {
-    onSetupComplete: () => void;
-}
+type TenantListProps = {
+    onComplete: () => void;
+};
 
-export const TenantList: React.FC<TenantListProps> = ({
-    onSetupComplete,
-}: TenantListProps) => {
+export const TenantList: React.FC<TenantListProps> = ({ onComplete }) => {
     const dispatch = useDispatch();
 
     //function onChangeFilterTerm(e: ChangeEvent<HTMLInputElement>) {
@@ -30,59 +27,23 @@ export const TenantList: React.FC<TenantListProps> = ({
     //        setTenants(result);
     //    }
     //}
+    //
 
     const { state, error, isFetching } = useTenantListGraphQL();
-    const [showList, setShowList] = React.useState(false);
 
     const onClickTenant = async (tenantId: string) => {
         try {
             localStorage.setItem("tenantId", tenantId);
-            const config = await saveAmplifyConfig(tenantId);
+            const config = await saveAmplifyConfig(tenantId, 300000);
             configureAmplify(config);
-            onSetupComplete();
+            onComplete();
         } catch (error) {
             console.log("Get tenant graphql error:", error);
             dispatch(displayErrorNotification("Sorry, something went wrong"));
         }
     };
 
-    const setup = React.useCallback(async () => {
-        const tenantId = localStorage.getItem("tenantId");
-        try {
-            if (
-                (!process.env.REACT_APP_OFFLINE_ONLY ||
-                    process.env.REACT_APP_OFFLINE_ONLY === "false") &&
-                (!process.env.REACT_APP_DEMO_MODE ||
-                    process.env.REACT_APP_DEMO_MODE === "false") &&
-                (!process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT ||
-                    // amplify doesn't allow unset env vars for individual branches
-                    process.env.REACT_APP_TENANT_GRAPHQL_ENDPOINT ===
-                        "undefined")
-            ) {
-                const config = require("../../aws-exports");
-                configureAmplify(config.default);
-                onSetupComplete();
-            } else if (tenantId) {
-                console.log("tenantId", tenantId);
-                const config = await saveAmplifyConfig(tenantId);
-                configureAmplify(config);
-                onSetupComplete();
-            } else {
-                setShowList(true);
-            }
-        } catch (error) {
-            console.log("couldn't get tenant info:", error);
-            clearAmplifyConfig();
-            setShowList(true);
-        }
-    }, [onSetupComplete]);
-    React.useEffect(() => {
-        setup();
-    }, [setup]);
-
-    if (!showList) {
-        return null;
-    } else if (error) {
+    if (error) {
         return (
             <PaddedPaper>
                 <Typography variant="h6">

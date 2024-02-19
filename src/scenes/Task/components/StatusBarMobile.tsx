@@ -1,11 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import PropTypes from "prop-types";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { AppBar, Chip, Hidden, Stack } from "@mui/material";
+import { AppBar, Chip, Stack } from "@mui/material";
 import { ArrowButton } from "../../../components/Buttons";
 import { taskStatusHumanReadable } from "../../../utilities";
-
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import { makeStyles } from "tss-react/mui";
@@ -18,10 +15,9 @@ import { dataStoreModelSyncedStatusSelector } from "../../../redux/Selectors";
 import generateClipboardTextFromTask from "../../../utilities/generateClipboardTextFromTask";
 import { copyStringToClipboard } from "../../../utilities/copyStringToClipboard";
 import CopyFailedDialog from "../../../components/CopyFailedDialog";
-
 const colourBarPercent = "90%";
 
-const generateClass = (theme, status) => {
+const generateClass = (theme: any, status: models.TaskStatus) => {
     if (status) {
         return {
             padding: 2,
@@ -59,6 +55,7 @@ const generateClass = (theme, status) => {
     }
 };
 
+// @ts-ignore
 const useStyles = makeStyles()((theme, { status }) => {
     const root = generateClass(theme, status);
     return {
@@ -73,9 +70,14 @@ const useStyles = makeStyles()((theme, { status }) => {
     };
 });
 
-function StatusBar(props) {
-    const [copied, setCopied] = useState(null);
-    const [copyText, setCopyText] = useState(null);
+type StatusBarProps = {
+    handleClose?: () => void;
+    taskId?: string;
+};
+
+const StatusBarMobile: React.FC<StatusBarProps> = ({ taskId, handleClose }) => {
+    const [copied, setCopied] = useState<null | Boolean>(null);
+    const [copyText, setCopyText] = useState<string | null>("");
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const dispatch = useDispatch();
@@ -83,7 +85,8 @@ function StatusBar(props) {
         dataStoreModelSyncedStatusSelector
     ).Task;
     const taskObserver = useRef({ unsubscribe: () => {} });
-    const [status, setStatus] = useState(null);
+    const [status, setStatus] = useState<models.TaskStatus | null>(null);
+    // @ts-ignore
     const { classes } = useStyles({ status });
 
     const getTask = React.useCallback(async (taskId) => {
@@ -93,26 +96,23 @@ function StatusBar(props) {
                 models.Task,
                 taskId
             ).subscribe(({ element }) => {
-                setStatus(element.status);
+                setStatus(element.status as models.TaskStatus);
             });
-            setStatus(task.status);
+            if (task) setStatus(task.status as models.TaskStatus);
         } catch (e) {
             console.log(e);
         }
     }, []);
-
-    useEffect(
-        () => getTask(props.taskId),
-        [props.taskId, taskModelsSynced, getTask]
-    );
-
+    useEffect(() => {
+        getTask(taskId);
+    }, [taskId, taskModelsSynced, getTask]);
     async function copyToClipboard() {
-        if (!props.taskId) {
+        if (!taskId) {
             dispatch(displayErrorNotification("Copy failed."));
             return;
         }
         try {
-            const taskResult = await DataStore.query(models.Task, props.taskId);
+            const taskResult = await DataStore.query(models.Task, taskId);
             if (!taskResult) throw new Error("Task not found.");
             const deliverablesResult = await DataStore.query(
                 models.Deliverable
@@ -139,14 +139,13 @@ function StatusBar(props) {
             setCopied(false);
         }
     }
-
     let copyLabel = "Copy to clipboard";
     if (copied !== null && copied) {
         copyLabel = "Copy successful!";
     } else if (copied !== null && !copied) {
         copyLabel = "Copy failed!";
     }
-    let copyColor = "default";
+    let copyColor: "success" | "secondary" | "primary" = "primary";
     if (copied !== null && copied) {
         copyColor = "success";
     } else if (copied !== null && !copied) {
@@ -164,23 +163,13 @@ function StatusBar(props) {
                     alignItems={"center"}
                     sx={{ paddingTop: 1, width: "100%" }}
                 >
-                    <Hidden mdDown>
-                        <Button
-                            data-cy="task-status-close"
-                            onClick={props.handleClose}
-                        >
-                            Close
-                        </Button>
-                    </Hidden>
-                    <Hidden mdUp>
-                        <IconButton
-                            aria-label={"Close"}
-                            size={"small"}
-                            onClick={props.handleClose}
-                        >
-                            <ArrowButton size={3} direction={"back"} />
-                        </IconButton>
-                    </Hidden>
+                    <IconButton
+                        aria-label={"Close"}
+                        size={"small"}
+                        onClick={handleClose}
+                    >
+                        <ArrowButton size={3} direction={"back"} />
+                    </IconButton>
                     <Typography
                         data-cy="task-status"
                         className={classes.statusText}
@@ -189,7 +178,7 @@ function StatusBar(props) {
                     </Typography>
                     <Chip
                         onClick={copyToClipboard}
-                        variant={copied === null ? "outlined" : "default"}
+                        variant={copied === null ? "outlined" : "filled"}
                         color={copyColor}
                         sx={{ marginRight: isSm ? 0 : 2 }}
                         label={copyLabel}
@@ -197,22 +186,11 @@ function StatusBar(props) {
                 </Stack>
             </AppBar>
             <CopyFailedDialog
-                text={copyText}
+                text={copyText || ""}
                 onClose={() => setCopyText(null)}
             />
         </>
     );
-}
-
-StatusBar.propTypes = {
-    handleClose: PropTypes.func,
-    relayNext: PropTypes.string,
-    relayPrevious: PropTypes.string,
-    taskId: PropTypes.string,
 };
 
-StatusBar.defaultProps = {
-    handleClose: () => {},
-};
-
-export default StatusBar;
+export default StatusBarMobile;

@@ -1,10 +1,8 @@
-import { DataStore } from "aws-amplify";
 import _ from "lodash";
-import { commentVisibility } from "../../../apiConsts";
 import * as models from "../../../models";
 import { writeToString } from "@fast-csv/format";
 import getTasksByTenantId from "./getTasksByTenantId";
-import { Task, Role, CommentVisibility } from "../../../API";
+import { Task, Role, CommentVisibility, TaskAssignee } from "../../../API";
 
 const isDateValid = (date: Date): boolean => {
     const newDate = new Date(date);
@@ -72,175 +70,6 @@ function generateCountedHeader(count: number, fields: any, prefix: string) {
             return Object.keys(fields).map((k) => `${prefix}_${i}_${k}`);
         })
         .flat();
-}
-
-async function generateCSVDataStore(data: any[]) {
-    data = data.map((t) => {
-        const isRiderUsingOwnVehicleBool = !!t?.isRiderUsingOwnVehicle;
-        const isRiderUsingOwnVehicle = isRiderUsingOwnVehicleBool
-            ? "TRUE"
-            : "FALSE";
-
-        return { ...t, isRiderUsingOwnVehicle };
-    });
-    const rows = [];
-    const headers = [];
-    const assigneesCount = data.reduce((acc, task) => {
-        if (task.assignees && task.assignees.length > acc)
-            return task.assignees.length;
-        else return acc;
-    }, 0);
-    const itemOffsetCount =
-        [
-            ...Object.keys(taskFields),
-            ...Object.keys(locationFields),
-            ...Object.keys(locationFields),
-            ...Object.keys(requesterContactFields),
-        ].length +
-        assigneesCount * Object.keys(assigneeFields).length;
-
-    const itemsCount = data.reduce((acc, task) => {
-        if (task.items && task.items.length > acc) return task.items.length;
-        else return acc;
-    }, 0);
-
-    const commentsOffsetCount =
-        itemOffsetCount + itemsCount * Object.keys(itemFields).length;
-
-    const commentsCount = data.reduce((acc, task) => {
-        if (task.comments && task.comments.length > acc)
-            return task.comments.length;
-        else return acc;
-    }, 0);
-
-    headers.push(generateHeader(taskFields));
-    headers.push(generateHeader(requesterContactFields, "requesterContact"));
-    headers.push(generateHeader(locationFields, "pickUpLocation"));
-    headers.push(generateHeader(locationFields, "dropOffLocation"));
-    if (assigneesCount > 0) {
-        headers.push(
-            generateCountedHeader(assigneesCount, assigneeFields, "assignee")
-        );
-    }
-    if (itemsCount > 0) {
-        headers.push(generateCountedHeader(itemsCount, itemFields, "item"));
-    }
-    if (commentsCount > 0) {
-        headers.push(
-            generateCountedHeader(commentsCount, commentFields, "comment")
-        );
-    }
-    console.log(headers);
-    rows.push(headers.flat());
-    console.log(rows);
-    data.forEach((item) => {
-        let row: string[] = [];
-        const {
-            pickUpLocation,
-            dropOffLocation,
-            requesterContact,
-            comments,
-            items,
-            assignees,
-            createdBy,
-            ...rest
-        } = item;
-        Object.keys(taskFields).forEach((key) => {
-            row.push(rest[key]);
-        });
-        if (requesterContact)
-            Object.keys(requesterContactFields).forEach((key) => {
-                row.push(requesterContact[key]);
-            });
-        else
-            Object.values(requesterContactFields).forEach((value) => {
-                row.push(value);
-            });
-        if (pickUpLocation)
-            Object.keys(locationFields).forEach((key) => {
-                if (key === "listed") {
-                    row.push(pickUpLocation.listed === 1 ? "TRUE" : "FALSE");
-                } else {
-                    row.push(
-                        pickUpLocation[key] ||
-                            locationFields[key as keyof typeof locationFields]
-                    );
-                }
-            });
-        else
-            Object.values(locationFields).forEach((value) => {
-                row.push(value);
-            });
-
-        if (dropOffLocation)
-            Object.keys(locationFields).forEach((key) => {
-                if (key === "listed") {
-                    row.push(dropOffLocation.listed === 1 ? "TRUE" : "FALSE");
-                } else {
-                    row.push(
-                        dropOffLocation[key] ||
-                            locationFields[key as keyof typeof locationFields]
-                    );
-                }
-            });
-        else
-            Object.values(locationFields).forEach((value) => {
-                row.push(value);
-            });
-
-        if (assignees && assignees.length > 0) {
-            assignees.forEach((item: models.TaskAssignee) => {
-                Object.keys(assigneeFields).forEach((key) => {
-                    if (key === "name") {
-                        row.push(item?.assignee.name || assigneeFields.name);
-                    } else if (key === "role") {
-                        row.push(item?.role || assigneeFields.role);
-                    }
-                });
-            });
-        }
-
-        if (items && items.length > 0) {
-            if (row.length !== itemOffsetCount) {
-                _.range(itemOffsetCount - row.length).forEach(() => {
-                    row.push("");
-                });
-            }
-            items.forEach((item: models.Deliverable) => {
-                Object.keys(itemFields).forEach((key) => {
-                    if (key === "label") {
-                        row.push(
-                            item?.deliverableType?.label || itemFields[key]
-                        );
-                    } else {
-                        row.push(item?.count?.toString() || "");
-                    }
-                });
-            });
-        }
-
-        if (comments && comments.length > 0) {
-            if (row.length !== commentsOffsetCount) {
-                _.range(commentsOffsetCount - row.length).forEach(() => {
-                    row.push("");
-                });
-            }
-            comments.forEach((comment: models.Comment) => {
-                Object.keys(commentFields).forEach((key) => {
-                    if (key === "author") {
-                        row.push(
-                            comment.author?.displayName || commentFields[key]
-                        );
-                    } else {
-                        row.push(comment.body || commentFields.body);
-                    }
-                });
-            });
-        }
-
-        rows.push(row);
-    });
-    return await writeToString(rows);
 }
 
 async function generateCSV(data: (Task | null)[]) {
@@ -367,7 +196,16 @@ async function generateCSV(data: (Task | null)[]) {
                 row.push(value);
             });
 
-        const filteredAssignees = assignees?.items?.filter((a) => !a?._deleted);
+        // Sort by the role
+        const filteredAssignees = assignees?.items
+            ?.filter((a) => !a?._deleted)
+            .sort((a, b) => {
+                if (a && b) {
+                    if (a.role < b.role) return -1;
+                    if (a.role > b.role) return 1;
+                    return 0;
+                } else return 0;
+            });
 
         if (filteredAssignees && filteredAssignees.length > 0) {
             filteredAssignees.forEach((item) => {
@@ -448,16 +286,25 @@ export default async function generateReportBasic(
         console.log("start date is not valid");
         return;
     }
+    if (userId && role === "ALL") {
+        throw new Error("user needs a role");
+    } else if (!userId && role !== "ALL") {
+        throw new Error("userId is null");
+    }
     const actualEndDate = endDate ? new Date(endDate) : null;
     const actualStartDate = startDate ? new Date(startDate) : null;
+    const startDateCopy = actualStartDate ? new Date(actualStartDate) : null;
+    const endDateCopy = actualEndDate ? new Date(actualEndDate) : null;
     if (actualStartDate) {
         actualStartDate.setUTCHours(0, 0, 0, 0);
+        // sometimes changing the time changes the date, so we set it back
+        if (startDateCopy) actualStartDate.setDate(startDateCopy.getDate());
     }
     // if we use ALL we are using graphql and createdAt, so we add a day to the end date
     // and set the time to 00
     if (actualEndDate) {
-        if (role === "ALL") actualEndDate.setDate(actualEndDate.getDate() + 1);
         actualEndDate.setUTCHours(0, 0, 0, 0);
+        if (endDateCopy) actualEndDate.setDate(endDateCopy.getDate() + 1);
     }
     console.log("get tasks", actualStartDate, actualEndDate);
     if (
@@ -467,71 +314,29 @@ export default async function generateReportBasic(
     ) {
         throw new Error("start date is not before end date");
     }
-    if (role !== "ALL") {
-        const assignments = await DataStore.query(models.TaskAssignee);
-        const filteredAssignments = assignments.filter(
-            (assignment) =>
-                assignment.task &&
-                assignment.role === role &&
-                assignment.assignee &&
-                assignment.assignee.id === userId &&
-                assignment.task
-        );
-        const taskIds = filteredAssignments.map(
-            (assignment) => assignment.task.id
-        );
-        if (taskIds.length === 0) {
-            return generateCSVDataStore([]);
-        } else {
-            const deliverables = await DataStore.query(models.Deliverable);
-            const commentsAll = await DataStore.query(models.Comment, (c) =>
-                c.visibility("eq", commentVisibility.everyone)
-            );
-            const startDateString =
-                actualStartDate?.toISOString().split("T")[0] || "";
-            const endDateString =
-                actualEndDate?.toISOString().split("T")[0] || "";
-            const tasks = await DataStore.query(models.Task, (task) =>
-                task
-                    .dateCreated("ge", startDateString)
-                    .dateCreated("le", endDateString)
-                    .or((task) =>
-                        taskIds.reduce((task, id) => task.id("eq", id), task)
-                    )
-            );
-            const finalTasks = await Promise.all(
-                tasks.map(async (t) => {
-                    const comments = commentsAll.filter(
-                        (c) => c.parentId === t.id
-                    );
-                    const items = deliverables.filter(
-                        (d) => d.task && d.task.id === t.id
-                    );
-                    const assignees = assignments.filter(
-                        (assignment) =>
-                            assignment.task && assignment.task.id === t.id
-                    );
-                    return {
-                        ...t,
-                        comments,
-                        items,
-                        assignees,
-                    };
-                })
-            );
-            return generateCSVDataStore(finalTasks);
-        }
-    } else if (role === "ALL") {
-        if (!actualEndDate || !actualStartDate) {
-            throw new Error("start date or end date is null");
-        }
-        const tasks = await getTasksByTenantId(
-            tenantId,
-            actualStartDate,
-            actualEndDate
-        );
-        return generateCSV(tasks);
+    if (!actualEndDate || !actualStartDate) {
+        throw new Error("start date or end date is null");
     }
+
+    let tasks = await getTasksByTenantId(
+        tenantId,
+        actualStartDate,
+        actualEndDate
+    );
+    if (userId && role !== "ALL") {
+        tasks = tasks.filter((t) => {
+            if (t?.assignees?.items) {
+                return t.assignees.items.some(
+                    (a: TaskAssignee | null) =>
+                        a?.assignee.id === userId &&
+                        a?.role === role &&
+                        !a?._deleted
+                );
+            } else return false;
+        });
+    }
+
+    return generateCSV(tasks);
 }
 
 // callback code that may be useful

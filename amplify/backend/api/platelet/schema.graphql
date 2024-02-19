@@ -174,6 +174,7 @@ type Task
   createdAt: String @auth(rules: [{allow: private, operations: [read]}])
   createdBy: User @belongsTo
   dateCreated: AWSDate!
+  dateCompleted: AWSDate
   timeOfCall: AWSDateTime
   timePickedUp: AWSDateTime
     @auth(rules: [

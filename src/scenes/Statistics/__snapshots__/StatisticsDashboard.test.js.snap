@@ -1,0 +1,497 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StatisticsDashboard change the days 1`] = `
+Array [
+  Array [
+    Object {
+      "query": "
+    query ListTasksByTenantId(
+        $filter: ModelTaskFilterInput
+        $limit: Int
+        $nextToken: String
+        $tenantId: ID!
+        $sortDirection: ModelSortDirection
+        $startDate: String
+        $endDate: String
+    ) {
+        listTasksByTenantId(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+            tenantId: $tenantId
+            sortDirection: $sortDirection
+            createdAt: { between: [$startDate, $endDate] }
+        ) {
+            items {
+                id
+                timeOfCall
+                dateCreated
+                riderResponsibility
+                priority
+                status
+                createdAt
+                assignees {
+                    items {
+                        _deleted
+                        role
+                        task {
+                            priority
+                        }
+                        assignee {
+                            id
+                            displayName
+                            profilePicture {
+                                key
+                            }
+                        }
+                    }
+                }
+                pickUpLocation {
+                    name
+                    ward
+                    line1
+                    town
+                    postcode
+                }
+                dropOffLocation {
+                    ward
+                    line1
+                    name
+                    town
+                    postcode
+                }
+                deliverables {
+                    items {
+                        count
+                        _deleted
+                        deliverableType {
+                            label
+                            icon
+                        }
+                    }
+                }
+                comments {
+                    items {
+                        id
+                        _deleted
+                        visibility
+                        author {
+                            id
+                        }
+                    }
+                }
+                _version
+                _deleted
+                _lastChangedAt
+            }
+            nextToken
+            startedAt
+        }
+    }
+",
+      "variables": Object {
+        "endDate": "2021-11-29T23:24:58.987Z",
+        "limit": 100,
+        "sortDirection": "DESC",
+        "startDate": "2021-11-26T23:24:58.987Z",
+        "tenantId": "tenantId",
+      },
+    },
+  ],
+  Array [
+    Object {
+      "query": "
+    query ListTasksByTenantId(
+        $filter: ModelTaskFilterInput
+        $limit: Int
+        $nextToken: String
+        $tenantId: ID!
+        $sortDirection: ModelSortDirection
+        $startDate: String
+        $endDate: String
+    ) {
+        listTasksByTenantId(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+            tenantId: $tenantId
+            sortDirection: $sortDirection
+            createdAt: { between: [$startDate, $endDate] }
+        ) {
+            items {
+                id
+                timeOfCall
+                dateCreated
+                riderResponsibility
+                priority
+                status
+                createdAt
+                assignees {
+                    items {
+                        _deleted
+                        role
+                        task {
+                            priority
+                        }
+                        assignee {
+                            id
+                            displayName
+                            profilePicture {
+                                key
+                            }
+                        }
+                    }
+                }
+                pickUpLocation {
+                    name
+                    ward
+                    line1
+                    town
+                    postcode
+                }
+                dropOffLocation {
+                    ward
+                    line1
+                    name
+                    town
+                    postcode
+                }
+                deliverables {
+                    items {
+                        count
+                        _deleted
+                        deliverableType {
+                            label
+                            icon
+                        }
+                    }
+                }
+                comments {
+                    items {
+                        id
+                        _deleted
+                        visibility
+                        author {
+                            id
+                        }
+                    }
+                }
+                _version
+                _deleted
+                _lastChangedAt
+            }
+            nextToken
+            startedAt
+        }
+    }
+",
+      "variables": Object {
+        "endDate": "2021-11-29T23:24:59.387Z",
+        "limit": 100,
+        "sortDirection": "DESC",
+        "startDate": "2021-11-22T23:24:59.387Z",
+        "tenantId": "tenantId",
+      },
+    },
+  ],
+]
+`;
+
+exports[`StatisticsDashboard displays statistics for the current user 1`] = `
+Array [
+  Array [
+    Object {
+      "query": "
+    query ListTasksByTenantId(
+        $filter: ModelTaskFilterInput
+        $limit: Int
+        $nextToken: String
+        $tenantId: ID!
+        $sortDirection: ModelSortDirection
+        $startDate: String
+        $endDate: String
+    ) {
+        listTasksByTenantId(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+            tenantId: $tenantId
+            sortDirection: $sortDirection
+            createdAt: { between: [$startDate, $endDate] }
+        ) {
+            items {
+                id
+                timeOfCall
+                dateCreated
+                riderResponsibility
+                priority
+                status
+                createdAt
+                assignees {
+                    items {
+                        _deleted
+                        role
+                        task {
+                            priority
+                        }
+                        assignee {
+                            id
+                            displayName
+                            profilePicture {
+                                key
+                            }
+                        }
+                    }
+                }
+                pickUpLocation {
+                    name
+                    ward
+                    line1
+                    town
+                    postcode
+                }
+                dropOffLocation {
+                    ward
+                    line1
+                    name
+                    town
+                    postcode
+                }
+                deliverables {
+                    items {
+                        count
+                        _deleted
+                        deliverableType {
+                            label
+                            icon
+                        }
+                    }
+                }
+                comments {
+                    items {
+                        id
+                        _deleted
+                        visibility
+                        author {
+                            id
+                        }
+                    }
+                }
+                _version
+                _deleted
+                _lastChangedAt
+            }
+            nextToken
+            startedAt
+        }
+    }
+",
+      "variables": Object {
+        "endDate": "2021-11-29T23:24:58.987Z",
+        "limit": 100,
+        "sortDirection": "DESC",
+        "startDate": "2021-11-26T23:24:58.987Z",
+        "tenantId": "tenantId",
+      },
+    },
+  ],
+]
+`;
+
+exports[`StatisticsDashboard get further pages from graphql 1`] = `
+Array [
+  Array [
+    Object {
+      "query": "
+    query ListTasksByTenantId(
+        $filter: ModelTaskFilterInput
+        $limit: Int
+        $nextToken: String
+        $tenantId: ID!
+        $sortDirection: ModelSortDirection
+        $startDate: String
+        $endDate: String
+    ) {
+        listTasksByTenantId(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+            tenantId: $tenantId
+            sortDirection: $sortDirection
+            createdAt: { between: [$startDate, $endDate] }
+        ) {
+            items {
+                id
+                timeOfCall
+                dateCreated
+                riderResponsibility
+                priority
+                status
+                createdAt
+                assignees {
+                    items {
+                        _deleted
+                        role
+                        task {
+                            priority
+                        }
+                        assignee {
+                            id
+                            displayName
+                            profilePicture {
+                                key
+                            }
+                        }
+                    }
+                }
+                pickUpLocation {
+                    name
+                    ward
+                    line1
+                    town
+                    postcode
+                }
+                dropOffLocation {
+                    ward
+                    line1
+                    name
+                    town
+                    postcode
+                }
+                deliverables {
+                    items {
+                        count
+                        _deleted
+                        deliverableType {
+                            label
+                            icon
+                        }
+                    }
+                }
+                comments {
+                    items {
+                        id
+                        _deleted
+                        visibility
+                        author {
+                            id
+                        }
+                    }
+                }
+                _version
+                _deleted
+                _lastChangedAt
+            }
+            nextToken
+            startedAt
+        }
+    }
+",
+      "variables": Object {
+        "endDate": "2021-11-29T23:24:58.987Z",
+        "limit": 100,
+        "sortDirection": "DESC",
+        "startDate": "2021-11-26T23:24:58.987Z",
+        "tenantId": "tenantId",
+      },
+    },
+  ],
+  Array [
+    Object {
+      "query": "
+    query ListTasksByTenantId(
+        $filter: ModelTaskFilterInput
+        $limit: Int
+        $nextToken: String
+        $tenantId: ID!
+        $sortDirection: ModelSortDirection
+        $startDate: String
+        $endDate: String
+    ) {
+        listTasksByTenantId(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+            tenantId: $tenantId
+            sortDirection: $sortDirection
+            createdAt: { between: [$startDate, $endDate] }
+        ) {
+            items {
+                id
+                timeOfCall
+                dateCreated
+                riderResponsibility
+                priority
+                status
+                createdAt
+                assignees {
+                    items {
+                        _deleted
+                        role
+                        task {
+                            priority
+                        }
+                        assignee {
+                            id
+                            displayName
+                            profilePicture {
+                                key
+                            }
+                        }
+                    }
+                }
+                pickUpLocation {
+                    name
+                    ward
+                    line1
+                    town
+                    postcode
+                }
+                dropOffLocation {
+                    ward
+                    line1
+                    name
+                    town
+                    postcode
+                }
+                deliverables {
+                    items {
+                        count
+                        _deleted
+                        deliverableType {
+                            label
+                            icon
+                        }
+                    }
+                }
+                comments {
+                    items {
+                        id
+                        _deleted
+                        visibility
+                        author {
+                            id
+                        }
+                    }
+                }
+                _version
+                _deleted
+                _lastChangedAt
+            }
+            nextToken
+            startedAt
+        }
+    }
+",
+      "variables": Object {
+        "endDate": "2021-11-30T00:00:00.000Z",
+        "limit": 100,
+        "nextToken": "something",
+        "sortDirection": "DESC",
+        "startDate": "2021-11-26T00:00:00.000Z",
+        "tenantId": "tenantId",
+      },
+    },
+  ],
+]
+`;

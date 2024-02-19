@@ -1,8 +1,13 @@
 const plateletProfilePictureResolver = require("./index").handler;
 const { S3Client } = require("@aws-sdk/client-s3");
 const sharp = require("sharp");
+const fetch = require("node-fetch");
 
 jest.mock("sharp");
+jest.mock("node-fetch", () => ({
+    ...jest.requireActual("node-fetch"),
+    default: jest.fn(),
+}));
 
 jest.mock("aws-sdk", () => {
     return {
@@ -43,8 +48,22 @@ describe("plateletProfilePictureResolver", () => {
     });
 
     it("returns the full profile picture for someone", async () => {
+        jest.spyOn(fetch, "default").mockResolvedValue({
+            json: async () => {
+                return {
+                    data: {
+                        getUser: {
+                            profilePicture: {
+                                key: "public/testId.jpg",
+                            },
+                        },
+                    },
+                };
+            },
+        });
+
         const result = await plateletProfilePictureResolver(event);
-        console.log(result);
+
         expect(
             result.startsWith(
                 `${beginString}${event.source.profilePicture.key}`

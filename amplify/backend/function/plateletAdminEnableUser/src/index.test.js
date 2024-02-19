@@ -48,7 +48,7 @@ const cognitoIdentityServiceProvider = Object.getPrototypeOf(
     new aws.CognitoIdentityServiceProvider()
 );
 describe("plateletAdminEnableUser", () => {
-    afterEach(() => jest.restoreAllMocks());
+    afterEach(() => jest.resetAllMocks());
     test("enable a user", async () => {
         appsyncModule.request
             .mockResolvedValueOnce({
