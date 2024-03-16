@@ -144,7 +144,8 @@ function* getWhoami() {
                     errorHandler: (err) => {
                         console.log("DataStore error:", err);
                         console.log("Cause:", err.cause);
-                        Sentry.captureMessage(`DataStore error: ${err}`);
+                        if (process.env.REACT_APP_DEMO_MODE === "false")
+                            Sentry.captureMessage(`DataStore error: ${err}`);
                     },
                     syncExpressions: [
                         ...modelsToSync.map((model) =>
