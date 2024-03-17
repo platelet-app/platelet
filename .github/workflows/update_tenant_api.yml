@@ -28,7 +28,7 @@ jobs:
       with:
         app-id: ${{ vars.AMPLIFY_APP_ID }}
         branch-name: ${{ github.ref_name }}
-        commit-id: ${{ github.event.created && "HEAD" || github.sha }}
+        commit-id: ${{ github.event.created && 'HEAD' || github.sha }}
         wait: ${{ github.event_name == 'workflow_dispatch' && inputs.wait_for_amplify || true }}
       id: amplify_status
       env:
