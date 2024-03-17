@@ -13,6 +13,7 @@ backend:
       commands:
         - '# Execute Amplify CLI with the helper script'
         - npm install -g prebuild-install --unsafe-perm=true
+        - amplify --version
         - amplifyPush --simple
 frontend:
   phases:
