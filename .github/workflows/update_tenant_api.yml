@@ -24,12 +24,13 @@ jobs:
         node-version: [16.x]
     steps:
     - name: Wait for Amplify to finish remote build
-      uses: duckbytes/amplify-build-status@master
+      uses: duckbytes/amplify-build-status@get_env_name
       with:
         app-id: ${{ secrets.AMPLIFY_APP_ID }}
         branch-name: ${{ github.ref_name }}
-        commit-id: ${{ github.sha }}
+        commit-id: ${{ github.event.created && "HEAD" || github.sha }}
         wait: ${{ github.event_name == 'workflow_dispatch' && inputs.wait_for_amplify || true }}
+      id: amplify_status
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -47,11 +48,11 @@ jobs:
     - name: Update the tenant API
       uses: platelet-app/update-tenant-api-action@main
       with:
-        awsEnvName: ${{ secrets.AMPLIFY_ENV_NAME }}
+        awsEnvName: ${{ steps.amplify_status.backend_environment }}
         awsExportsFilepath: ${{ github.workspace }}/src/aws-exports-es5.js
         awsAccessKeyId: ${{ secrets.AWS_ACCESS_KEY_ID }}
         awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         awsRegion: ${{ secrets.AWS_REGION }}
         apiURL: ${{ secrets.API_URL }}
-        amplifyEnvName: ${{ secrets.AMPLIFY_ENV_NAME }}
+        amplifyEnvName: ${{ steps.amplify_status.backend_environment }}
         tenantName: ${{ vars.TENANT_NAME }}
