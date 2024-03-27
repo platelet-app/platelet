@@ -12,6 +12,7 @@ Amplify Params - DO NOT EDIT */
 
 const aws = require("aws-sdk");
 const uuid = require("uuid");
+const { sendTenantWelcomeEmail } = require("/opt/sendWelcomeEmail");
 
 const {
     createUser,
@@ -22,66 +23,6 @@ const {
 const { request, errorCheck } = require("/opt/appSyncRequest");
 
 const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
-
-async function sendWelcomeEmail(emailAddress, recipientName, password) {
-    const ses = new aws.SES({
-        apiVersion: "2010-12-01",
-        region: process.env.REGION,
-    });
-    const params = {
-        Destination: {
-            ToAddresses: [emailAddress],
-        },
-        Message: {
-            Body: {
-                Html: {
-                    Charset: "UTF-8",
-                    Data: `
-                    <p>
-                        Welcome to https://${process.env.PLATELET_DOMAIN_NAME}, ${recipientName}!
-                    </p>
-                    <p>
-                        Your account has been created. You can now start adding users to your team.
-                    </p>
-                    <p>
-                        You will be asked to change your password on first log in.
-                    </p>
-                    <p>
-                        <b>Username:</b> ${emailAddress}
-                    </p>
-                    <p>
-                        <b>Password:</b> ${password}
-                    </p>
-                    <p>
-                        <b>This temporary password will expire in one week.</b>
-                    </p>
-                    <p>
-                        Thank you.
-                    </p>
-                    `,
-                },
-                Text: {
-                    Charset: "UTF-8",
-                    Data: `Welcome to https://${process.env.PLATELET_DOMAIN_NAME}, ${recipientName}!
-                    Your account has been created. You can now start adding users to your team.
-                    You will be asked to change your password on first log in.
-                    Username: ${emailAddress}
-                    Password: ${password}
-                    Thank you.`,
-                },
-            },
-            Subject: {
-                Charset: "UTF-8",
-                Data: "Welcome to Platelet!",
-            },
-        },
-        Source: process.env.PLATELET_WELCOME_EMAIL,
-        ReplyToAddresses: [process.env.PLATELET_WELCOME_EMAIL],
-        ReturnPath: process.env.PLATELET_WELCOME_EMAIL,
-    };
-
-    return await ses.sendEmail(params).promise();
-}
 
 function generateReferenceIdentifier(tenantName) {
     if (!tenantName) {
@@ -329,7 +270,7 @@ exports.handler = async (event) => {
     await setUserRoles(user.username);
     console.log("Tenant result:", newTenant);
     console.log("User result:", newUser);
-    await sendWelcomeEmail(
+    await sendTenantWelcomeEmail(
         event.arguments.emailAddress,
         event.arguments.name,
         cognitoUser.password
