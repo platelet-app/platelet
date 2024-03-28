@@ -20,19 +20,23 @@
     }
   },
   "Resources": {
-    "LambdaLayerVersion822d55fd": {
+    "LambdaLayerVersion13d98260": {
       "Type": "AWS::Lambda::LayerVersion",
       "Properties": {
-        "CompatibleRuntimes": [
-          "nodejs16.x"
-        ],
+        "CompatibleRuntimes": {
+          "Ref": "runtimes"
+        },
         "Content": {
           "S3Bucket": {
             "Ref": "deploymentBucketName"
           },
-          "S3Key": "amplify-builds/plateletSendEmail-LambdaLayerVersion822d55fd-build.zip"
+          "S3Key": {
+            "Ref": "s3Key"
+          }
         },
-        "Description": "Updated layer version 2024-02-06T21:07:13.529Z",
+        "Description": {
+          "Ref": "description"
+        },
         "LayerName": {
           "Fn::Sub": [
             "plateletSendEmail-${env}",
@@ -47,11 +51,13 @@
       "DeletionPolicy": "Delete",
       "UpdateReplacePolicy": "Retain"
     },
-    "LambdaLayerPermissionPrivate822d55fd": {
+    "LambdaLayerPermissionPrivate13d98260": {
       "Type": "AWS::Lambda::LayerVersionPermission",
       "Properties": {
         "Action": "lambda:GetLayerVersion",
-        "LayerVersionArn": "arn:aws:lambda:eu-west-1:130063560692:layer:plateletSendEmail-rereer:1",
+        "LayerVersionArn": {
+          "Ref": "LambdaLayerVersion13d98260"
+        },
         "Principal": {
           "Ref": "AWS::AccountId"
         }
@@ -61,7 +67,7 @@
   "Outputs": {
     "Arn": {
       "Value": {
-        "Ref": "LambdaLayerVersion822d55fd"
+        "Ref": "LambdaLayerVersion13d98260"
       }
     }
   }
