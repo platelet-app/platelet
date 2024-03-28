@@ -120,6 +120,7 @@ const App = (props: any) => {
         });
     }
 
+    // ee
     if (process.env.REACT_APP_DEMO_MODE === "true") {
         return (
             <StyledEngineProvider injectFirst>
