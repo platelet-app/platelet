@@ -46,7 +46,7 @@ test:
         - '**/*.mp4'
     preTest:
       commands:
-        - npm ci
+        - echo "no tests"
     test:
       commands:
         - echo "no tests"
