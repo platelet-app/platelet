@@ -1,6 +1,7 @@
 type Tenant
 @auth(rules: [
 {allow: private, operations: [read]},
+{allow: private, provider: iam, operations: [read]},
 ])
 @model {
   id: ID!
