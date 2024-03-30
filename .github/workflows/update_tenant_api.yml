@@ -18,13 +18,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: amazon/aws-cli:latest
     environment: ${{ github.ref_name }}
     strategy:
       matrix:
         node-version: [16.x]
     steps:
+    - name: Install AWS CLI v2
+      run: |
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        ./aws/install
     - name: Wait for Amplify to finish remote build
       uses: duckbytes/amplify-build-status@get_env_name
       with:
