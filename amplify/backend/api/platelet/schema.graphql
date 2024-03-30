@@ -437,7 +437,7 @@ type SendFeedback {
 
 type Mutation {
   registerUser(name: String, email: String, tenantId: ID, roles: [Role]): User @function(name: "plateletAdminAddNewUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
-  registerTenant(name: String, emailAddress: String, tenantName: String): Tenant @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: groups, groups: ["SUPER"]}])
+  registerTenant(name: String, emailAddress: String, tenantName: String): Tenant @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: private, provider: iam}])
   updateUserRoles(userId: ID, roles: [Role]): User @function(name: "plateletAdminChangeUserRoles-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   disableUser(userId: ID): User @function(name: "plateletAdminDisableUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   enableUser(userId: ID): User @function(name: "plateletAdminEnableUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
