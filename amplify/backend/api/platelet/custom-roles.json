@@ -1,0 +1,5 @@
+{
+    "adminRoleNames": [
+        "arn:aws:iam::130063560692:user/production-app.platelet.app"
+    ]
+}
