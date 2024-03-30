@@ -18,6 +18,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: amazon/aws-cli:latest
     environment: ${{ github.ref_name }}
     strategy:
       matrix:
