@@ -56,6 +56,9 @@ jobs:
           #     apiURL: ${{ vars.API_URL }}
           #     amplifyEnvName: ${{ steps.amplify_status.outputs.environment_name }}
           #     tenantName: ${{ vars.TENANT_NAME }}
+    - name: echo log
+      run: |
+        echo ${{ steps.amplify_status.outputs.graphql_endpoint }}
     - name: Register the tenant admin
       uses: platelet-app/register-tenant-action@master
       with:
