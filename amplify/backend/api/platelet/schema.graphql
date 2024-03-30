@@ -4,7 +4,7 @@ type Tenant
 ])
 @model {
   id: ID!
-  name: String!
+  name: String! @index(name: "byTenantName", queryField: "getTenantByTenantName")
   referenceIdentifier: String!
   admin: User! @hasOne
 }
