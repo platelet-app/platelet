@@ -70,6 +70,16 @@ export const schema = {
                     "properties": {}
                 },
                 {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantName",
+                        "queryField": "getTenantByTenantName",
+                        "fields": [
+                            "name"
+                        ]
+                    }
+                },
+                {
                     "type": "auth",
                     "properties": {
                         "rules": [
