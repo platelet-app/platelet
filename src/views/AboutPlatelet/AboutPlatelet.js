@@ -64,25 +64,9 @@ function AboutPlatelet() {
             statistical analysis
           </Typography>
         </Grid>
-        <Grid item>
-          <Typography>
-            platelet.app is open sourced under the Apache license and is hosted
-            on github at:
-          </Typography>
-        </Grid>
-        <Grid item>
-          <Typography
-            component={"a"}
-            color="textSecondary"
-            href={"https://github.com/platelet-app/platelet/"}
-          >
-            https://github.com/platelet-app/platelet/
-          </Typography>
-        </Grid>
       </Grid>
     </div>
   );
 }
 
 export default AboutPlatelet;
-
