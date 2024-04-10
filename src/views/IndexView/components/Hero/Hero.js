@@ -111,7 +111,7 @@ const Hero = ({ themeMode = "light", className, ...rest }) => {
         variant: "h2",
         color: "textPrimary",
       }}
-      ctaGroup={[viewDemo, viewCode]}
+      ctaGroup={[viewDemo]}
       data-aos="fade-right"
       disableGutter
       className={classes.leftSideContent}
