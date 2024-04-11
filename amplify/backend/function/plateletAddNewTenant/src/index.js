@@ -271,19 +271,24 @@ const cleanUp = async (user, tenant, cognitoUser) => {
             GRAPHQL_ENDPOINT
         );
         const result = await existingUser.json();
-        const { id, _version } = result.data.getUser;
-        await request(
-            {
-                query: deleteUser,
-                variables: {
-                    input: {
-                        id,
-                        _version,
+        if (result?.data?.getUser) {
+            const { id, _version } = result.data.getUser;
+            console.log("User id:", id, "version:", _version);
+            await request(
+                {
+                    query: deleteUser,
+                    variables: {
+                        input: {
+                            id,
+                            _version,
+                        },
                     },
                 },
-            },
-            GRAPHQL_ENDPOINT
-        );
+                GRAPHQL_ENDPOINT
+            );
+        } else {
+            console.warn("User to clean up was not found");
+        }
     }
     if (tenant) {
         console.log("Deleting tenant:", tenant.id);
@@ -296,19 +301,24 @@ const cleanUp = async (user, tenant, cognitoUser) => {
             GRAPHQL_ENDPOINT
         );
         const result = await existingTenant.json();
-        const { id, _version } = result.data.getTenant;
-        await request(
-            {
-                query: deleteTenant,
-                variables: {
-                    input: {
-                        id,
-                        _version,
+        if (result?.data?.getTenant) {
+            const { id, _version } = result.data.getTenant;
+            console.log("Tenant id:", id, "version:", _version);
+            await request(
+                {
+                    query: deleteTenant,
+                    variables: {
+                        input: {
+                            id,
+                            _version,
+                        },
                     },
                 },
-            },
-            GRAPHQL_ENDPOINT
-        );
+                GRAPHQL_ENDPOINT
+            );
+        } else {
+            console.warn("Tenant to clean up was not found");
+        }
     }
 };
 
