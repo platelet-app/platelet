@@ -18,7 +18,10 @@ const {
     createUser,
     updateUser,
     createTenant,
+    deleteTenant,
+    deleteUser,
 } = require("/opt/graphql/mutations");
+const { getTenant, getUser } = require("/opt/graphql/queries");
 
 const { request, errorCheck } = require("/opt/appSyncRequest");
 
@@ -240,6 +243,75 @@ async function updateUserTenantAndCognito(user, tenantId, cognitoId) {
     return result.data.updateUser;
 }
 
+const cleanUp = async (user, tenant, cognitoUser) => {
+    console.log("Cleaning up user and tenant");
+    const userPoolId = process.env.AUTH_PLATELET61A0AC07_USERPOOLID;
+    if (cognitoUser) {
+        console.log("Deleting cognito user:", cognitoUser.username);
+        const CognitoIdentityServiceProvider =
+            aws.CognitoIdentityServiceProvider;
+        const cognitoClient = new CognitoIdentityServiceProvider({
+            apiVersion: "2016-04-19",
+        });
+        await cognitoClient
+            .adminDeleteUser({
+                UserPoolId: userPoolId,
+                Username: user.username,
+            })
+            .promise();
+    }
+    if (user) {
+        console.log("Deleting user:", user.id);
+        const existingUser = await request(
+            {
+                query: getUser,
+                variables: { id: user.id },
+            },
+
+            GRAPHQL_ENDPOINT
+        );
+        const result = await existingUser.json();
+        const { id, _version } = result.data.getUser;
+        await request(
+            {
+                query: deleteUser,
+                variables: {
+                    input: {
+                        id,
+                        _version,
+                    },
+                },
+            },
+            GRAPHQL_ENDPOINT
+        );
+    }
+    if (tenant) {
+        console.log("Deleting tenant:", tenant.id);
+        const existingTenant = await request(
+            {
+                query: getTenant,
+                variables: { id: tenant.id },
+            },
+
+            GRAPHQL_ENDPOINT
+        );
+        const result = await existingTenant.json();
+        const { id, _version } = result.data.getTenant;
+        await request(
+            {
+                query: deleteTenant,
+                variables: {
+                    input: {
+                        id,
+                        _version,
+                    },
+                },
+            },
+            GRAPHQL_ENDPOINT
+        );
+    }
+};
+
 exports.handler = async (event) => {
     console.log("Arguments:", event.arguments);
     console.log(
@@ -259,22 +331,32 @@ exports.handler = async (event) => {
     const tenant = {
         name: event.arguments.tenantName,
     };
-    const newUser = await createNewAdminUser(user);
-    const newTenant = await addTenant({ ...tenant, tenantAdminId: newUser.id });
-    const cognitoUser = await addUserToCognito(user, newTenant.id);
-    const admin = await updateUserTenantAndCognito(
-        newUser,
-        newTenant.id,
-        cognitoUser.sub
-    );
-    await setUserRoles(user.username);
-    console.log("Tenant result:", newTenant);
-    console.log("User result:", newUser);
-    await sendTenantWelcomeEmail(
-        event.arguments.emailAddress,
-        event.arguments.name,
-        cognitoUser.password
-    );
-    console.log("Successfully sent welcome email");
-    return { ...newTenant, admin };
+    let newUser, newTenant, cognitoUser;
+    try {
+        newUser = await createNewAdminUser(user);
+        newTenant = await addTenant({
+            ...tenant,
+            tenantAdminId: newUser.id,
+        });
+        cognitoUser = await addUserToCognito(user, newTenant.id);
+        const admin = await updateUserTenantAndCognito(
+            newUser,
+            newTenant.id,
+            cognitoUser.sub
+        );
+        await setUserRoles(user.username);
+        console.log("Tenant result:", newTenant);
+        console.log("User result:", newUser);
+        await sendTenantWelcomeEmail(
+            event.arguments.emailAddress,
+            event.arguments.name,
+            cognitoUser.password
+        );
+        console.log("Successfully sent welcome email");
+        return { ...newTenant, admin };
+    } catch (e) {
+        console.error("Error:", e);
+        await cleanUp(newUser, newTenant, cognitoUser);
+        throw e;
+    }
 };
