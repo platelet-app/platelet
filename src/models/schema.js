@@ -88,6 +88,13 @@ export const schema = {
                                 "operations": [
                                     "read"
                                 ]
+                            },
+                            {
+                                "allow": "private",
+                                "provider": "iam",
+                                "operations": [
+                                    "read"
+                                ]
                             }
                         ]
                     }
