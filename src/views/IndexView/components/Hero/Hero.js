@@ -88,6 +88,18 @@ const Hero = ({ themeMode = "light", className, ...rest }) => {
       View the code
     </Button>
   );
+  const contact = (
+    <Button
+      variant="contained"
+      color="primary"
+      component="a"
+      href="mailto:info@platelet.app"
+      target="_top"
+      rel="noopener noreferrer"
+    >
+      Get in contact
+    </Button>
+  );
 
   const loginButton = (
     <Button
@@ -111,7 +123,7 @@ const Hero = ({ themeMode = "light", className, ...rest }) => {
         variant: "h2",
         color: "textPrimary",
       }}
-      ctaGroup={[viewDemo]}
+      ctaGroup={[viewDemo, contact]}
       data-aos="fade-right"
       disableGutter
       className={classes.leftSideContent}
