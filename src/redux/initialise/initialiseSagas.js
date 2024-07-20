@@ -5,11 +5,11 @@ import { initialiseAwsDataStoreListener } from "../awsHubListener/awsHubListener
 import { initialiseBroadcastAPIListener } from "../broadcastAPI/broadcastAPIActions";
 import { GET_WHOAMI_SUCCESS, getWhoamiRequest } from "../whoami/whoamiActions";
 import * as actions from "./initialiseActions";
-import * as fakeData from "../fakeOfflineData.json";
+import fakeData from "../fakeOfflineData.json";
 import * as models from "../../models/index";
 import { DataStore } from "aws-amplify";
 import _ from "lodash";
-import path from "path";
+import path from "path-browserify";
 import {
     commentVisibility,
     priorities,
