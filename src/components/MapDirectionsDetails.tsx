@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Box, Typography, List, ListItem } from "@mui/material";
+import { Box, Typography, List, ListItem, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 type MapDirectionsDetailsProps = {
@@ -18,6 +18,7 @@ const MapDirectionsDetails: React.FC<MapDirectionsDetailsProps> = ({
     routeIndex,
 }) => {
     const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("md"));
     return (
         <Box
             sx={{
@@ -38,7 +39,9 @@ const MapDirectionsDetails: React.FC<MapDirectionsDetailsProps> = ({
             }}
         >
             <div>
-                <Typography variant="h4">{selected.summary}</Typography>
+                {!isSm && (
+                    <Typography variant="h4">{selected.summary}</Typography>
+                )}
                 <Typography>
                     {leg.start_address.split(",")[0]} to{" "}
                     {leg.end_address.split(",")[0]}
@@ -46,28 +49,32 @@ const MapDirectionsDetails: React.FC<MapDirectionsDetailsProps> = ({
                 <Typography>Distance: {leg.distance?.text}</Typography>
                 <Typography>Duration: {leg.duration?.text}</Typography>
             </div>
-            <div>
-                <Typography variant="h4">Other Routes</Typography>
-                <List>
-                    {routes.map((route, index) => (
-                        <ListItem
-                            sx={{
-                                cursor: "pointer",
-                                borderRadius: "1em",
-                                background:
-                                    index === routeIndex
-                                        ? "rgba(0,0,0,0.3)"
-                                        : "transparent",
-                                "&:hover": { background: "rgba(0,0,0,0.3)" },
-                            }}
-                            onClick={() => onSelectRouteIndex(index)}
-                            key={route.summary}
-                        >
-                            <Typography>{route.summary}</Typography>
-                        </ListItem>
-                    ))}
-                </List>
-            </div>
+            {!isSm && (
+                <div>
+                    <Typography variant="h4">Other Routes</Typography>
+                    <List>
+                        {routes.map((route, index) => (
+                            <ListItem
+                                sx={{
+                                    cursor: "pointer",
+                                    borderRadius: "1em",
+                                    background:
+                                        index === routeIndex
+                                            ? "rgba(0,0,0,0.3)"
+                                            : "transparent",
+                                    "&:hover": {
+                                        background: "rgba(0,0,0,0.3)",
+                                    },
+                                }}
+                                onClick={() => onSelectRouteIndex(index)}
+                                key={route.summary}
+                            >
+                                <Typography>{route.summary}</Typography>
+                            </ListItem>
+                        ))}
+                    </List>
+                </div>
+            )}
         </Box>
     );
 };
