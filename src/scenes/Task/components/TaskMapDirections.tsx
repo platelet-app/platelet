@@ -1,9 +1,7 @@
 import * as React from "react";
 import * as models from "../../../models";
-import { useTheme } from "@mui/material/styles";
 import MapDirections from "../../../components/MapDirections";
 import useModelSubscription from "../../../hooks/useModelSubscription";
-import { Box, Paper } from "@mui/material";
 
 type TaskMapDirectionsProps = {
     taskId: string;
@@ -14,7 +12,6 @@ const TaskMapDirections: React.FC<TaskMapDirectionsProps> = ({ taskId }) => {
         models.Task,
         taskId
     );
-    const theme = useTheme();
 
     if (isFetching) {
         return null;
@@ -45,8 +42,6 @@ const TaskMapDirections: React.FC<TaskMapDirectionsProps> = ({ taskId }) => {
     ]
         .filter(Boolean)
         .join(", ");
-
-    console.log(state);
 
     return <MapDirections origin={origin} destination={destination} />;
 };

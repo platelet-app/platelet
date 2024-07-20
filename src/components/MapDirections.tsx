@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
-
+import { useTheme } from "@mui/material/styles";
 import { Map, useMapsLibrary, useMap } from "@vis.gl/react-google-maps";
+import {
+    Box,
+    IconButton,
+    useMediaQuery,
+    ClickAwayListener,
+} from "@mui/material";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
+import CloseFullscreenIcon from "@mui/icons-material/CloseFullscreen";
+import MapDirectionsDetails from "./MapDirectionsDetails";
 
 type MapDirectionsProps = {
     origin: string;
@@ -10,26 +19,112 @@ type MapDirectionsProps = {
 const MapDirections: React.FC<MapDirectionsProps> = ({
     origin,
     destination,
-}) => (
-    <Map
-        style={{
-            borderRadius: "1em",
-            width: 400,
-            height: 400,
-            overflow: "hidden",
-        }}
-        key={`${origin}-${destination}`}
-        defaultCenter={{ lat: 51.4545, lng: -2.5879 }}
-        defaultZoom={9}
-        gestureHandling={"greedy"}
-        fullscreenControl={false}
-        disableDefaultUI
-    >
-        <Directions origin={origin} destination={destination} />
-    </Map>
-);
+}) => {
+    const theme = useTheme();
+    const isSm = useMediaQuery(theme.breakpoints.down("md"));
+    const [isExpanded, setIsExpanded] = useState(false);
+    const [isFetching, setIsFetching] = useState(true);
+    const pad = !isSm && isExpanded ? "10%" : 0;
 
-const Directions: React.FC<MapDirectionsProps> = ({ origin, destination }) => {
+    const onLoaded = React.useCallback(() => {
+        setIsFetching(false);
+    }, [setIsFetching]);
+
+    const background =
+        theme.palette.mode === "dark"
+            ? "radial-gradient(circle, rgba(64,64,64,1) 60%, rgba(0,0,0,0) 100%)"
+            : `radial-gradient(circle, ${theme.palette.background.paper} 60%, rgba(0,0,0,0) 100%)`;
+
+    return (
+        <ClickAwayListener
+            onClickAway={(e) => {
+                if (!isExpanded) return;
+                setIsExpanded(false);
+            }}
+        >
+            <Box
+                sx={{
+                    position: isExpanded ? "fixed" : "relative",
+                    top: pad,
+                    left: pad,
+                    right: pad,
+                    bottom: pad,
+                    zIndex: 9999999,
+                }}
+            >
+                <Box
+                    sx={{
+                        display: isFetching ? "none" : "block",
+                        position: "relative",
+                        borderRadius: isSm ? undefined : "1em",
+                        width: isSm ? "100%" : isExpanded ? "100%" : 400,
+                        height: isExpanded ? "100%" : 400,
+                        "&:hover": {
+                            "& .select": {
+                                display: "inline",
+                            },
+                        },
+                    }}
+                >
+                    <Map
+                        style={{
+                            borderRadius: isSm ? undefined : "1em",
+                            width: isSm ? "100%" : isExpanded ? "100%" : 400,
+                            height: isExpanded ? "100%" : 400,
+                            overflow: "hidden",
+                        }}
+                        key={`${origin}-${destination}-${isExpanded}`}
+                        defaultCenter={{ lat: 51.4545, lng: -2.5879 }}
+                        defaultZoom={9}
+                        gestureHandling={isExpanded ? "greedy" : "none"}
+                        fullscreenControl={false}
+                        disableDefaultUI={!isExpanded}
+                    >
+                        <Directions
+                            origin={origin}
+                            destination={destination}
+                            showDetails={isExpanded}
+                            onLoaded={onLoaded}
+                        />
+                    </Map>
+                    <IconButton
+                        className="select"
+                        sx={{
+                            background,
+                            margin: 2,
+                            position: "absolute",
+                            display: isSm || isExpanded ? "inline" : "none",
+                            top: 4,
+                            right: 4,
+                            zIndex: 90,
+                        }}
+                        onClick={() => setIsExpanded(!isExpanded)}
+                    >
+                        {isExpanded ? (
+                            <CloseFullscreenIcon />
+                        ) : (
+                            <OpenInFullIcon />
+                        )}
+                    </IconButton>
+                </Box>
+            </Box>
+        </ClickAwayListener>
+    );
+};
+
+type DirectionsProps = {
+    origin: string;
+    destination: string;
+    showDetails?: boolean;
+    onLoaded?: () => void;
+};
+
+const Directions: React.FC<DirectionsProps> = ({
+    origin,
+    destination,
+    showDetails,
+    onLoaded,
+}) => {
     const map = useMap();
     const routesLibrary = useMapsLibrary("routes");
     const [directionsService, setDirectionsService] =
@@ -50,12 +145,12 @@ const Directions: React.FC<MapDirectionsProps> = ({ origin, destination }) => {
 
     // Use directions service
     const getDirections = React.useCallback(async () => {
-        if (
-            !directionsService ||
-            !directionsRenderer ||
-            !(origin && destination)
-        )
+        if (!directionsService || !directionsRenderer) return;
+        if (!origin || !destination) {
+            if (onLoaded) onLoaded();
             return;
+        }
+
         const response = await directionsService.route({
             origin,
             destination,
@@ -64,14 +159,15 @@ const Directions: React.FC<MapDirectionsProps> = ({ origin, destination }) => {
         });
         directionsRenderer.setDirections(response);
         setRoutes(response.routes);
-    }, [directionsService, directionsRenderer, origin, destination]);
+        if (onLoaded) onLoaded();
+    }, [directionsService, directionsRenderer, origin, destination, onLoaded]);
 
     useEffect(() => {
         getDirections();
         return () => {
             if (directionsRenderer) directionsRenderer.setMap(null);
         };
-    }, [getDirections, directionsRenderer]);
+    }, [getDirections, directionsRenderer, onLoaded]);
 
     // Update direction route
     useEffect(() => {
@@ -79,29 +175,17 @@ const Directions: React.FC<MapDirectionsProps> = ({ origin, destination }) => {
         directionsRenderer.setRouteIndex(routeIndex);
     }, [routeIndex, directionsRenderer]);
 
-    if (!leg) return null;
+    if (!leg || !showDetails) return null;
 
-    return <div className="directions" />;
-    /*
-            <h2>{selected.summary}</h2>
-            <p>
-                {leg.start_address.split(",")[0]} to{" "}
-                {leg.end_address.split(",")[0]}
-            </p>
-            <p>Distance: {leg.distance?.text}</p>
-            <p>Duration: {leg.duration?.text}</p>
-
-            <h2>Other Routes</h2>
-            <ul>
-                {routes.map((route, index) => (
-                    <li key={route.summary}>
-                        <button onClick={() => setRouteIndex(index)}>
-                            {route.summary}
-                        </button>
-                    </li>
-                ))}
-            </ul>
-     */
+    return (
+        <MapDirectionsDetails
+            leg={leg}
+            routes={routes}
+            selected={selected}
+            routeIndex={routeIndex}
+            onSelectRouteIndex={setRouteIndex}
+        />
+    );
 };
 
 export default MapDirections;
