@@ -24,16 +24,11 @@ const MapDirections: React.FC<MapDirectionsProps> = ({
     const isSm = useMediaQuery(theme.breakpoints.down("md"));
     const [isExpanded, setIsExpanded] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
-    const pad = !isSm && isExpanded ? "10%" : 0;
+    const pad = !isSm && isExpanded ? "5%" : 0;
 
     const onLoaded = React.useCallback(() => {
         setIsFetching(false);
     }, [setIsFetching]);
-
-    const background =
-        theme.palette.mode === "dark"
-            ? "radial-gradient(circle, rgba(64,64,64,1) 60%, rgba(0,0,0,0) 100%)"
-            : `radial-gradient(circle, ${theme.palette.background.paper} 60%, rgba(0,0,0,0) 100%)`;
 
     return (
         <ClickAwayListener
@@ -43,6 +38,11 @@ const MapDirections: React.FC<MapDirectionsProps> = ({
             }}
         >
             <Box
+                onKeyDown={(e: React.KeyboardEvent) => {
+                    if (e.key === "Escape" && isExpanded) {
+                        setIsExpanded(false);
+                    }
+                }}
                 sx={{
                     position: isExpanded ? "fixed" : "relative",
                     top: pad,
@@ -59,11 +59,6 @@ const MapDirections: React.FC<MapDirectionsProps> = ({
                         borderRadius: isSm ? undefined : "1em",
                         width: isSm ? "100%" : isExpanded ? "100%" : 400,
                         height: isExpanded ? "100%" : 400,
-                        "&:hover": {
-                            "& .select": {
-                                display: "inline",
-                            },
-                        },
                     }}
                 >
                     <Map
@@ -88,15 +83,18 @@ const MapDirections: React.FC<MapDirectionsProps> = ({
                         />
                     </Map>
                     <IconButton
-                        className="select"
                         sx={{
-                            background,
+                            background: "rgba(255, 255, 255, 0.9)",
                             margin: 2,
                             position: "absolute",
-                            display: isSm || isExpanded ? "inline" : "none",
                             top: 4,
                             right: 4,
                             zIndex: 90,
+                            color: theme.palette.common.black,
+                            "&:hover": {
+                                background: theme.palette.primary.main,
+                                color: theme.palette.common.white,
+                            },
                         }}
                         onClick={() => setIsExpanded(!isExpanded)}
                     >

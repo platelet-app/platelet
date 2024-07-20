@@ -8,7 +8,7 @@ type TaskMapDirectionsProps = {
 };
 
 const TaskMapDirections: React.FC<TaskMapDirectionsProps> = ({ taskId }) => {
-    const { state, isFetching, error } = useModelSubscription(
+    const { state, isFetching, error } = useModelSubscription<models.Task>(
         models.Task,
         taskId
     );
