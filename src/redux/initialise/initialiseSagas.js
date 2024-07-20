@@ -55,17 +55,6 @@ if (
     }
 }
 
-function loadScript(src, position, id) {
-    if (!position) {
-        return;
-    }
-    const script = document.createElement("script");
-    script.setAttribute("async", "");
-    script.setAttribute("id", id);
-    script.src = src;
-    position.appendChild(script);
-}
-
 function* initialiseApp() {
     if (process.env.REACT_APP_DEMO_MODE === "true") {
         /*yield call([DataStore, DataStore.start]);
