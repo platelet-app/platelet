@@ -85,26 +85,6 @@ function* initialiseApp() {
     }
     yield put(initialiseAwsDataStoreListener());
     yield put(getWhoamiRequest());
-
-    // add Google maps API to window
-    // only used by OnlineLocationSearch component for now
-    // disabled when in demo mode
-
-    if (process.env.REACT_APP_DEMO_MODE !== "true") {
-        const GOOGLE_MAPS_API_KEY =
-            process.env.REACT_APP_GOOGLE_MAPS_API_KEY || "";
-
-        if (typeof window !== "undefined") {
-            if (!document.querySelector("#google-maps")) {
-                yield call(
-                    loadScript,
-                    `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`,
-                    document.querySelector("head"),
-                    "google-maps"
-                );
-            }
-        }
-    }
 }
 
 export function* watchInitialiseApp() {
