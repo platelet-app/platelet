@@ -67,6 +67,9 @@ function TaskOverview({ taskId, isFetching }) {
                             taskModelType="Task"
                             taskId={taskId}
                         />
+                        <Hidden mdUp>
+                            <TaskAssignmentsPanel taskId={taskId} />
+                        </Hidden>
                     </Stack>
                 </Grid>
                 <Grid item className={classes.item}>
@@ -82,9 +85,6 @@ function TaskOverview({ taskId, isFetching }) {
                             locationKey={"dropOffLocation"}
                         />
                         <TaskMapDirections taskId={taskId} />
-                        <Hidden mdUp>
-                            <TaskAssignmentsPanel taskId={taskId} />
-                        </Hidden>
                     </Stack>
                 </Grid>
                 <Hidden mdUp>
