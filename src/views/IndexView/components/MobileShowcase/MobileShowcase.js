@@ -10,10 +10,6 @@ const MobileShowcase = ({ themeMode = "light", ...rest }) => {
   const classes = showCaseStyles();
 
   const theme = useTheme();
-  const isMd = useMediaQuery(theme.breakpoints.up("md"), {
-    defaultMatches: true,
-  });
-
   const isSm = useMediaQuery(theme.breakpoints.down("sm"));
 
   const mobileClass =
@@ -50,8 +46,8 @@ const MobileShowcase = ({ themeMode = "light", ...rest }) => {
         </Grid>
         <Grid item>
           <Typography variant={"h6"}>
-            Responsive design and offline capabilities means platelet.app will
-            work on any device, anywhere.
+            Available for riders on Android and iOS. With offline capabilities
+            so you can continue to deliver in areas with poor network coverage.
           </Typography>
         </Grid>
       </Grid>
