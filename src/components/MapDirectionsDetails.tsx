@@ -23,15 +23,15 @@ const MapDirectionsDetails: React.FC<MapDirectionsDetailsProps> = ({
         <Box
             sx={{
                 padding: 2,
-                borderTopLeftRadius: "1em",
+                borderBottomRightRadius: "1em",
                 borderBottomLeftRadius: "1em",
                 position: "absolute",
-                top: 100,
+                top: 0,
                 paddingRight: 6,
-                right: 0,
+                right: 80,
                 background:
                     theme.palette.mode === "dark"
-                        ? "rgba(0,0,0,0.8)"
+                        ? "rgba(0,0,0,0.6)"
                         : "rgba(255,255,255,0.8)",
                 display: "flex",
                 flexDirection: "column",
