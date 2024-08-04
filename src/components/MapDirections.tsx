@@ -236,6 +236,8 @@ const Directions: React.FC<DirectionsProps> = ({
     const selected = routes[routeIndex];
     const leg = selected?.legs[0];
 
+    const [error, setError] = useState<Error | null>(null);
+
     // Initialize directions service and renderer
     useEffect(() => {
         if (!routesLibrary || !map) return;
@@ -245,9 +247,12 @@ const Directions: React.FC<DirectionsProps> = ({
                 new routesLibrary.DirectionsRenderer({ map })
             );
         } catch (error) {
-            console.warn(
-                `Could not initialize google directions service: ${error}`
-            );
+            if (error instanceof Error) {
+                console.warn(
+                    `Could not initialize google directions service: ${error.message}`
+                );
+                setError(error);
+            }
         }
     }, [routesLibrary, map]);
 
@@ -269,7 +274,10 @@ const Directions: React.FC<DirectionsProps> = ({
             setRoutes(response.routes);
             if (onLoaded) onLoaded();
         } catch (error) {
-            console.warn(`Could not get directions: ${error}`);
+            if (error instanceof Error) {
+                console.warn(`Could not get directions: ${error}`);
+                setError(error);
+            }
         }
     }, [directionsService, directionsRenderer, origin, destination, onLoaded]);
 
@@ -287,6 +295,7 @@ const Directions: React.FC<DirectionsProps> = ({
     }, [routeIndex, directionsRenderer]);
 
     if (!leg || !showDetails) return null;
+    if (error) return null;
 
     return (
         <MapDirectionsDetails
