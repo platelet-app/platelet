@@ -239,8 +239,16 @@ const Directions: React.FC<DirectionsProps> = ({
     // Initialize directions service and renderer
     useEffect(() => {
         if (!routesLibrary || !map) return;
-        setDirectionsService(new routesLibrary.DirectionsService());
-        setDirectionsRenderer(new routesLibrary.DirectionsRenderer({ map }));
+        try {
+            setDirectionsService(new routesLibrary.DirectionsService());
+            setDirectionsRenderer(
+                new routesLibrary.DirectionsRenderer({ map })
+            );
+        } catch (error) {
+            console.warn(
+                `Could not initialize google directions service: ${error}`
+            );
+        }
     }, [routesLibrary, map]);
 
     // Use directions service
@@ -250,16 +258,19 @@ const Directions: React.FC<DirectionsProps> = ({
             if (onLoaded) onLoaded();
             return;
         }
-
-        const response = await directionsService.route({
-            origin,
-            destination,
-            travelMode: google.maps.TravelMode.DRIVING,
-            provideRouteAlternatives: true,
-        });
-        directionsRenderer.setDirections(response);
-        setRoutes(response.routes);
-        if (onLoaded) onLoaded();
+        try {
+            const response = await directionsService.route({
+                origin,
+                destination,
+                travelMode: google.maps.TravelMode.DRIVING,
+                provideRouteAlternatives: true,
+            });
+            directionsRenderer.setDirections(response);
+            setRoutes(response.routes);
+            if (onLoaded) onLoaded();
+        } catch (error) {
+            console.warn(`Could not get directions: ${error}`);
+        }
     }, [directionsService, directionsRenderer, origin, destination, onLoaded]);
 
     useEffect(() => {
