@@ -131,14 +131,14 @@
     ],
     "locations": [
         {
-            "name": "Bristol Royal Infirmary",
+            "name": "Blackberry Hill Hospital",
             "address": {
-                "line1": "Bristol Royal Infirmary",
-                "line2": "Marlborough Street",
+                "line1": "Blackberry Hill Hospital",
+                "line2": "Manor Road",
                 "town": "Bristol",
                 "county": "Bristol",
                 "country": "UK",
-                "postcode": "BS2 8HW",
+                "postcode": "BS16 2EW",
                 "what3words": "some.what.words"
             },
             "listed": 1,
@@ -175,15 +175,14 @@
             "disabled": 0
         },
         {
-            "name": "Southmead Hospital - NICU",
+            "name": "Clevedon Hospital",
             "address": {
-                "ward": "Neonatal Intensive Care",
-                "line1": "Southmead Hospital",
-                "line2": "Southmead Road",
+                "line1": "Clevedon Hospital",
+                "line2": "Old Street",
                 "town": "Bristol",
                 "county": "Bristol",
                 "country": "UK",
-                "postcode": "BS10 5NB",
+                "postcode": "BS21 6BS",
                 "what3words": "some.what.words"
             },
             "listed": 1,
