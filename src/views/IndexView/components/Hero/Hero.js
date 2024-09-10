@@ -57,7 +57,7 @@ const Hero = ({ themeMode = "light", className, ...rest }) => {
 
   const title = (
     <Typography variant="h2" component="span" className={classes.fontWeight900}>
-      A dispatch system designed for emergency volunteer couriers
+      A dispatch system designed for emergency couriers
       <br />
     </Typography>
   );
