@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, Typography, Box, Avatar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import steve from "../../assets/images/steve.jpeg";
+import steve from "../../assets/images/steve.jpg";
 import joepic from "../../assets/images/joe.jpg";
 
 const useStyles = makeStyles((theme) => ({
