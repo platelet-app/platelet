@@ -6,6 +6,7 @@ import DashboardShowcase from "./components/DashboardShowcase";
 import MobileShowcase from "./components/MobileShowcase";
 import AboutPlatelet from "views/AboutPlatelet";
 import AboutBloodBikes from "views/AboutBloodBikes";
+import Testimonials from "views/Testimonials";
 
 const useStyles = makeStyles(() => ({
   sectionAlternateNoPaddingTop: {
@@ -36,11 +37,14 @@ const IndexView = ({ themeMode }) => {
         <Features />
       </Section>
       <SectionAlternate>
-        <AboutPlatelet />
+        <Testimonials />
       </SectionAlternate>
       <Section>
-        <AboutBloodBikes />
+        <AboutPlatelet />
       </Section>
+      <SectionAlternate>
+        <AboutBloodBikes />
+      </SectionAlternate>
     </div>
   );
 };

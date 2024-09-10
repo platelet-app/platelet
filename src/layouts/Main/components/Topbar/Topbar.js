@@ -147,6 +147,19 @@ const Topbar = ({
         </Grid>
         <Hidden smDown>
           <Grid item>
+            <Link href={"#testimonials"}>
+              <Typography
+                component={"a"}
+                className={clsx(classes.navLink, "submenu-item")}
+                color="textSecondary"
+              >
+                Testimonials
+              </Typography>
+            </Link>
+          </Grid>
+        </Hidden>
+        <Hidden smDown>
+          <Grid item>
             <Link href={"#about-platelet"}>
               <Typography
                 component={"a"}

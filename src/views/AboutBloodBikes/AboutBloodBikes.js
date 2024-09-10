@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    background: theme.palette.background.paper,
+    background: theme.palette.alternate.main,
   },
   inner: {
     maxWidth: theme.layout.contentWidth,
