@@ -34,7 +34,7 @@ const data = [
   {
     icon: "fa-solid fa-hand-pointer",
     color: colors.common.white,
-    title: "Ease of use",
+    title: "Easy to use",
     subtitle:
       "Used by volunteers across the country, Platelet Dispatch lets them save lives without slowing them down.",
   },
