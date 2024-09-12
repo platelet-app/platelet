@@ -80,7 +80,7 @@ const Hero = ({ themeMode = "light", className, ...rest }) => {
       target="_blank"
       href="https://demo.platelet.app"
     >
-      View a demo
+      Try the demo
     </Button>
   );
 
