@@ -6,6 +6,12 @@ const useStyles = makeStyles((theme) => ({
   root: {
     background: theme.palette.alternate.main,
   },
+
+  subText: {
+    background: theme.palette.text.orangeGradient,
+    backgroundClip: "text",
+    textFillColor: "transparent",
+  },
   inner: {
     maxWidth: theme.layout.contentWidth,
     width: "100%",
@@ -34,7 +40,9 @@ function AboutBloodBikes() {
         className={classes.inner}
       >
         <Grid item>
-          <Typography variant={"h3"}>About the blood bikes</Typography>
+          <Typography className={classes.subText} variant={"h3"}>
+            About the blood bikes
+          </Typography>
         </Grid>
         <Grid item>
           <Typography>

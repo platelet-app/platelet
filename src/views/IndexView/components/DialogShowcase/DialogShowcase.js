@@ -45,14 +45,15 @@ const DialogShowcase = ({ themeMode = "light", ...rest }) => {
         className={classes.text}
       >
         <Grid item>
-          <Typography variant={"h4"}>
+          <Typography className={classes.subText} variant={"h4"}>
             Easily view, edit, and share job details
           </Typography>
         </Grid>
         <Grid item>
           <Typography variant={"h6"}>
-            Select from a directory of hospital locations and items. Share extra
-            details in comments, or make private notes.
+            Select from a directory of locations and items. Share extra details
+            in comments, or make private notes. Add items and edit the
+            inventory. Set priority of consignments.
           </Typography>
         </Grid>
       </Grid>

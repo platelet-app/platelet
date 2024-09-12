@@ -86,10 +86,12 @@ const useStyles = makeStyles((theme) => ({
   },
   logoContainer: {
     width: 90,
-    height: 29,
+    height: 31,
+    margin: 10,
     [theme.breakpoints.up("md")]: {
       width: 180,
-      height: 58,
+      height: 62,
+      margin: 10,
     },
   },
   logoImage: {
@@ -166,20 +168,7 @@ const Topbar = ({
                 className={clsx(classes.navLink, "submenu-item")}
                 color="textSecondary"
               >
-                About platelet.app
-              </Typography>
-            </Link>
-          </Grid>
-        </Hidden>
-        <Hidden smDown>
-          <Grid item>
-            <Link href={"#about-bloodbikes"}>
-              <Typography
-                component={"a"}
-                className={clsx(classes.navLink, "submenu-item")}
-                color="textSecondary"
-              >
-                About the blood bikes
+                The Blood Bikes
               </Typography>
             </Link>
           </Grid>

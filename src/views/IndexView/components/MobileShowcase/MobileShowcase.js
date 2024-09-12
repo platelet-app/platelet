@@ -42,12 +42,15 @@ const MobileShowcase = ({ themeMode = "light", ...rest }) => {
         className={classes.text}
       >
         <Grid item>
-          <Typography variant={"h4"}>Offline first and mobile ready</Typography>
+          <Typography className={classes.subText} variant={"h4"}>
+            Offline first and mobile ready
+          </Typography>
         </Grid>
         <Grid item>
           <Typography variant={"h6"}>
-            Available for riders on Android and iOS. With offline capabilities
-            so you can continue to deliver in areas with poor network coverage.
+            Available for riders on Android and iOS, with offline capabilities
+            so you can continue to provide your service in areas with poor
+            network coverage.
           </Typography>
         </Grid>
       </Grid>

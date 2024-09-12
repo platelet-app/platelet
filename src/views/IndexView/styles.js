@@ -10,6 +10,11 @@ const showCaseStyles = makeStyles((theme) => ({
   root: {
     height: 600,
   },
+  subText: {
+    background: theme.palette.text.orangeGradient,
+    backgroundClip: "text",
+    textFillColor: "transparent",
+  },
   text: {
     [theme.breakpoints.down("sm")]: {
       height: 400,

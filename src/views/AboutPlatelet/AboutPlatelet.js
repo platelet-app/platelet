@@ -1,10 +1,15 @@
 import React from "react";
-import { Grid, Typography } from "@material-ui/core";
+import { Grid, Typography, useTheme } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     background: theme.palette.background.paper,
+  },
+  subText: {
+    background: theme.palette.text.orangeGradient,
+    backgroundClip: "text",
+    textFillColor: "transparent",
   },
   inner: {
     maxWidth: theme.layout.contentWidth,
@@ -25,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
 
 function AboutPlatelet() {
   const classes = useStyles();
+  const theme = useTheme();
   return (
     <div id="about-platelet" className={classes.root}>
       <Grid
@@ -34,34 +40,37 @@ function AboutPlatelet() {
         className={classes.inner}
       >
         <Grid item>
-          <Typography variant={"h3"}>About platelet.app</Typography>
-        </Grid>
-        <Grid item>
-          <Typography>
-            platelet.app was created in response to an increasing demand on the
-            blood biker network across the UK. Its primary mission is to unify
-            all blood bike charities under one centralised system, helping
-            volunteers deliver a vital service with a modern and easy to use
-            application that works on any internet capable device.
+          <Typography className={classes.subText} variant={"h3"}>
+            The Blood Bikes
           </Typography>
         </Grid>
         <Grid item>
-          <Typography>Some of the goals of platelet.app are to:</Typography>
-        </Grid>
-        <Grid item>
           <Typography>
-            - Provide a robust service for recording assignment details,
-            synchronised across all devices
-            <Typography></Typography>- Let volunteers coordinate cross country
-            relays over a wide network of charities
-            <Typography></Typography>- Focus on ease of use and a smooth user
-            experience
-            <Typography></Typography>- Provide more detailed tracking
-            information
-            <Typography></Typography>- Allow direct requests for deliveries by
-            hospital staff through a web interface
-            <Typography></Typography>- Help with easier reporting and
-            statistical analysis
+            Platelet Dispatch transformed operations for blood bikers with an
+            application built on modern technology.
+            <br />
+            <br />
+            Serverless architecture, AWS, and GraphQL reduces costs with no
+            reduction in reliability, while web technology and offline
+            capabilities let it work on any device, anywhere.
+            <br />
+            <br />
+            Replacing outdated, paper-based processes with a streamlined,
+            digital platform, data security is improved, and allows charities to
+            manage private information safely. Previously time consuming
+            reporting and statistics can now be done instantly. Reliability of
+            the service is increased.
+            <br />
+            <br />
+            Platelet Dispatch was developed with ease of use as a central
+            requirement, making for a reduced learning curve and minimising
+            training time. Many users only volunteer a few days a month, and
+            Platelet Dispatch gets them up and running with minimal friction.
+            <br />
+            <br />
+            Platelet Dispatch has been used to record over{" "}
+            <span className={classes.subText}> 18,000 consignments </span>
+            for the blood bikes so far.
           </Typography>
         </Grid>
       </Grid>

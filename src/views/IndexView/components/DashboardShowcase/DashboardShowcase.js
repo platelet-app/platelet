@@ -39,13 +39,14 @@ const DashboardShowcase = ({ themeMode = "light", ...rest }) => {
         className={classes.text}
       >
         <Grid item>
-          <Typography variant={"h4"}>
+          <Typography className={classes.subText} variant={"h4"}>
             Tailored dashboards for coordinators and riders
           </Typography>
         </Grid>
         <Grid item>
           <Typography variant={"h6"}>
-            Assign jobs to users and see all your assigned jobs at a glance.
+            Assign jobs to riders and see all of their assigned jobs at a
+            glance.
           </Typography>
         </Grid>
       </Grid>

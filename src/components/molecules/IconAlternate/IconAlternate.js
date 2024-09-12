@@ -1,11 +1,11 @@
-import React from 'react';
-import clsx from 'clsx';
-import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
-import { Avatar, colors } from '@material-ui/core';
-import { Icon } from 'components/atoms';
+import React from "react";
+import clsx from "clsx";
+import PropTypes from "prop-types";
+import { makeStyles } from "@material-ui/core/styles";
+import { Avatar, colors } from "@material-ui/core";
+import { Icon } from "components/atoms";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   extraSmall: {
     width: 20,
     height: 20,
@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     height: 90,
   },
   circle: {
-    borderRadius: '100%',
+    borderRadius: "100%",
   },
   square: {
     borderRadius: theme.spacing(2),
@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
  *
  * @param {Object} props
  */
-const IconAlternate = props => {
+const IconAlternate = (props) => {
   const {
     iconProps,
     fontIconClass,
@@ -47,9 +47,9 @@ const IconAlternate = props => {
   } = props;
 
   const classes = useStyles();
-  const useBackgroundStyles = makeStyles(() => ({
+  const useBackgroundStyles = makeStyles((theme) => ({
     background: {
-      background: color[50],
+      background: theme.palette.text.orangeGradient,
     },
   }));
   const backgroundClasses = useBackgroundStyles();
@@ -57,18 +57,18 @@ const IconAlternate = props => {
   return (
     <Avatar
       className={clsx(
-        'icon-alternate',
+        "icon-alternate",
         classes[size],
         classes[shape],
         backgroundClasses.background,
-        className,
+        className
       )}
       {...rest}
     >
       <Icon
         size={size}
         fontIconClass={fontIconClass}
-        fontIconColor={color[500]}
+        fontIconColor={color[500] || color}
         className="icon-alternate__icon"
         {...iconProps}
       />
@@ -77,8 +77,8 @@ const IconAlternate = props => {
 };
 
 IconAlternate.defaultProps = {
-  size: 'medium',
-  shape: 'square',
+  size: "medium",
+  shape: "square",
   iconProps: {},
 };
 
@@ -94,7 +94,7 @@ IconAlternate.propTypes = {
   /**
    * Sizes of the icon
    */
-  size: PropTypes.oneOf(['extraSmall', 'small', 'medium', 'large']),
+  size: PropTypes.oneOf(["extraSmall", "small", "medium", "large"]),
   /**
    * Color of the icon
    */
@@ -118,11 +118,12 @@ IconAlternate.propTypes = {
     colors.brown,
     colors.grey,
     colors.blueGrey,
+    colors.common.white,
   ]),
   /**
    * The shape of the alternate icon
    */
-  shape: PropTypes.oneOf(['circle', 'square']),
+  shape: PropTypes.oneOf(["circle", "square"]),
   /**
    * Additional properties to pass to the Icon component
    */

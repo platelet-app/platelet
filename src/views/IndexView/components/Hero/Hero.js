@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, Typography } from "@material-ui/core";
+import { Button, Typography, useTheme } from "@material-ui/core";
 import { SectionHeader, TypedText } from "components/molecules";
 import { HeroShaped } from "components/organisms";
 import bike1 from "../../../../assets/images/bike1.jpg";
@@ -11,6 +11,11 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 900,
   },
   leftSideContent: {
+    "& .section-header__subtitle": {
+      background: theme.palette.text.orangeGradient,
+      backgroundClip: "text",
+      textFillColor: "transparent",
+    },
     "& .section-header__cta-container": {
       [theme.breakpoints.down("xs")]: {
         flexDirection: "column",
@@ -53,6 +58,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Hero = ({ themeMode = "light", className, ...rest }) => {
+  const theme = useTheme();
+  console.log(theme);
   const classes = useStyles();
 
   const title = (

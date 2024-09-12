@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { ThemeProvider } from '@material-ui/core/styles';
-import { Paper } from '@material-ui/core';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import getTheme from 'theme';
+import React, { useState, useEffect } from "react";
+import { ThemeProvider } from "@material-ui/core/styles";
+import { Paper } from "@material-ui/core";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import getTheme from "theme";
 
-import AOS from 'aos';
+import AOS from "aos";
 
 export const useDarkMode = () => {
-  const [themeMode, setTheme] = useState('light');
+  const [themeMode, setTheme] = useState("dark");
   const [mountedComponent, setMountedComponent] = useState(false);
 
-  const setMode = mode => {
-    window.localStorage.setItem('themeMode', mode);
+  const setMode = (mode) => {
+    window.localStorage.setItem("themeMode", mode);
     setTheme(mode);
   };
 
   const themeToggler = () => {
-    themeMode === 'light' ? setMode('dark') : setMode('light');
+    themeMode === "light" ? setMode("dark") : setMode("light");
   };
 
   useEffect(() => {
-    const localTheme = window.localStorage.getItem('themeMode');
-    localTheme ? setTheme(localTheme) : setMode('light');
+    const localTheme = window.localStorage.getItem("themeMode");
+    localTheme ? setTheme(localTheme) : setMode("dark");
     setMountedComponent(true);
     AOS.refresh();
   }, []);
@@ -33,10 +33,14 @@ export const useDarkMode = () => {
   return [themeMode, themeToggler, mountedComponent];
 };
 
-export default function WithLayout({ component: Component, layout: Layout, ...rest }) {
+export default function WithLayout({
+  component: Component,
+  layout: Layout,
+  ...rest
+}) {
   React.useEffect(() => {
     // Remove the server-side injected CSS.
-    const jssStyles = document.querySelector('#jss-server-side');
+    const jssStyles = document.querySelector("#jss-server-side");
     if (jssStyles) {
       jssStyles.parentElement.removeChild(jssStyles);
     }
@@ -45,13 +49,13 @@ export default function WithLayout({ component: Component, layout: Layout, ...re
       once: true,
       delay: 50,
       duration: 500,
-      easing: 'ease-in-out',
+      easing: "ease-in-out",
     });
   }, []);
 
   const [themeMode, themeToggler, mountedComponent] = useDarkMode();
 
-  if (!mountedComponent) return <div/>;
+  if (!mountedComponent) return <div />;
 
   return (
     <ThemeProvider theme={getTheme(themeMode)}>
@@ -65,3 +69,4 @@ export default function WithLayout({ component: Component, layout: Layout, ...re
     </ThemeProvider>
   );
 }
+

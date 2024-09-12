@@ -8,6 +8,11 @@ const useStyles = makeStyles((theme) => ({
   root: {
     background: theme.palette.alternate.main,
   },
+  textPerson: {
+    background: theme.palette.text.orangeGradient,
+    backgroundClip: "text",
+    textFillColor: "transparent",
+  },
   inner: {
     maxWidth: theme.layout.contentWidth,
     width: "100%",
@@ -51,7 +56,7 @@ function Testimonials() {
               src={`${steve}`}
             />
             <Box sx={{ display: "flex", gap: 10, flexDirection: "column" }}>
-              <Typography>
+              <Typography align="right">
                 “Platelet Dispatch has been a resounding success for our blood
                 bike group. We process about 400 jobs per month through the
                 platform and it has been easy to use, a great fit for our
@@ -59,7 +64,11 @@ function Testimonials() {
                 bikes this is a great job management solution with excellent
                 management reports."
               </Typography>
-              <Typography variant="h6">
+              <Typography
+                align="right"
+                className={classes.textPerson}
+                variant="h6"
+              >
                 Steve Curtis, Merseyside and Cheshire Blood Bikes
               </Typography>
             </Box>
@@ -138,7 +147,7 @@ function Testimonials() {
               the way and for the bespoke features we have requested. It has
               allowed us to integrate the app into our operation seamlessly!"
             </Typography>
-            <Typography variant="h6">
+            <Typography className={classes.textPerson} variant="h6">
               Joe Tooker, Vice Chair - Freewheelers Emergency Voluntary Blood
               Bike Service
             </Typography>

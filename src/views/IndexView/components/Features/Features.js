@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Grid, colors, makeStyles } from "@material-ui/core";
+import { Grid, colors, makeStyles, useTheme } from "@material-ui/core";
 import { SectionHeader, IconAlternate } from "components/molecules";
 import { CardBase, DescriptionListIcon } from "components/organisms";
 
@@ -13,47 +13,50 @@ const useStyles = makeStyles(() => ({
 const data = [
   {
     icon: "fas fa-file-invoice",
-    color: colors.indigo,
+    color: colors.common.white,
     title: "Reporting",
-    subtitle: "Instantly generate reports and statistical data.",
+    subtitle:
+      "Statistics and reporting features, with the ability to export your data.",
   },
   {
-    icon: "fas fa-user-friends",
-    color: colors.indigo,
-    title: "Relays",
-    subtitle: "Coordinate relays with your members and other groups.",
+    icon: "fas fa-motorcycle",
+    color: colors.common.white,
+    title: "Fleet management",
+    subtitle: "Add your vehicles and assign riders to them.",
   },
   {
     icon: "fas fa-mobile-alt",
-    color: colors.indigo,
+    color: colors.common.white,
     title: "Use anywhere",
     subtitle:
       "Developed with standard web technology for compatibility across a broad range of devices.",
   },
   {
-    icon: "fas fa-moon",
-    color: colors.indigo,
-    title: "Themeable",
-    subtitle: "Switch between light and dark mode.",
+    icon: "fa-solid fa-hand-pointer",
+    color: colors.common.white,
+    title: "Ease of use",
+    subtitle:
+      "Used by volunteers across the country, Platelet Dispatch lets them save lives without slowing them down.",
   },
   {
     icon: "fas fa-rocket",
-    color: colors.indigo,
-    title: "Real time collaboration",
+    color: colors.common.white,
+    title: "Update and track consignment status",
     subtitle:
-      "Updates and notifications are pushed instantly to your dashboard.",
+      "Mark consignments as Active, Picked Up, Delivered, Rider Home, or Cancelled, Rejected and Abandoned.",
   },
   {
-    icon: "fas fa-code",
-    color: colors.indigo,
-    title: "Serverless architecture",
+    icon: "fa-solid fa-clock-rotate-left",
+    color: colors.common.white,
+    title: "History",
     subtitle:
-      "Platelet uses AWS serverless technologies and GraphQL to provide a reliable service.",
+      "Look through consignment history and view a timeline of events, filtering by date to find what you need.",
   },
 ];
 
 const Features = ({ className, ...rest }) => {
   const classes = useStyles();
+  const theme = useTheme();
 
   return (
     <div className={className} {...rest}>
@@ -81,7 +84,9 @@ const Features = ({ className, ...rest }) => {
             <CardBase
               liftUp
               variant="outlined"
-              style={{ borderTop: `5px solid ${adv.color[500]}` }}
+              style={{
+                borderRadius: "1em",
+              }}
             >
               <DescriptionListIcon
                 icon={
