@@ -1,5 +1,12 @@
 import React from "react";
-import { Grid, Typography, Box, Avatar } from "@material-ui/core";
+import {
+  Grid,
+  Typography,
+  Box,
+  Avatar,
+  useMediaQuery,
+  useTheme,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import steve from "../../assets/images/steve.jpg";
 import joepic from "../../assets/images/joe.jpg";
@@ -33,6 +40,13 @@ const useStyles = makeStyles((theme) => ({
 function Testimonials() {
   const classes = useStyles();
   const [joe, setJoe] = React.useState(false);
+  const theme = useTheme();
+  const isSm = useMediaQuery(theme.breakpoints.down("md"));
+  const flexDirection = isSm ? "column" : "row";
+  const avatarStyle = {
+    width: isSm ? 70 : 200,
+    height: isSm ? 70 : 200,
+  };
   return (
     <div id="testimonials" className={classes.root}>
       <Grid
@@ -45,16 +59,14 @@ function Testimonials() {
           <Box
             sx={{
               display: "flex",
-              flexDirection: "row",
+              flexDirection: isSm ? "column-reverse" : "row",
               gap: 10,
               alignItems: "center",
             }}
           >
-            <Avatar
-              alt="Steve Curtis"
-              style={{ width: 200, height: 200 }}
-              src={`${steve}`}
-            />
+            {!isSm && (
+              <Avatar alt="Steve Curtis" style={avatarStyle} src={steve} />
+            )}
             <Box sx={{ display: "flex", gap: 10, flexDirection: "column" }}>
               <Typography align="right">
                 “Platelet Dispatch has been a resounding success for our blood
@@ -64,13 +76,26 @@ function Testimonials() {
                 bikes this is a great job management solution with excellent
                 management reports."
               </Typography>
-              <Typography
-                align="right"
-                className={classes.textPerson}
-                variant="h6"
+
+              <Box
+                style={{
+                  display: "flex",
+                  gap: 5,
+                  flexDirection: "row-reverse",
+                  alignItems: "center",
+                }}
               >
-                Steve Curtis, Merseyside and Cheshire Blood Bikes
-              </Typography>
+                <Typography
+                  align="right"
+                  className={classes.textPerson}
+                  variant="h6"
+                >
+                  Steve Curtis, Merseyside and Cheshire Blood Bikes
+                </Typography>
+                {isSm && (
+                  <Avatar alt="Steve Curtis" style={avatarStyle} src={steve} />
+                )}
+              </Box>
             </Box>
           </Box>
         </Grid>
@@ -78,7 +103,7 @@ function Testimonials() {
         <Box
           sx={{
             display: "flex",
-            flexDirection: "row",
+            flexDirection,
             gap: 10,
             alignItems: "center",
           }}
@@ -147,10 +172,22 @@ function Testimonials() {
               the way and for the bespoke features we have requested. It has
               allowed us to integrate the app into our operation seamlessly!"
             </Typography>
-            <Typography className={classes.textPerson} variant="h6">
-              Joe Tooker, Vice Chair - Freewheelers Emergency Voluntary Blood
-              Bike Service
-            </Typography>
+            <Box
+              style={{
+                display: "flex",
+                gap: 5,
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Typography className={classes.textPerson} variant="h6">
+                Joe Tooker, Vice Chair - Freewheelers Emergency Voluntary Blood
+                Bike Service
+              </Typography>
+              {isSm && (
+                <Avatar alt="Joe Tooker" style={avatarStyle} src={joepic} />
+              )}
+            </Box>
             <Typography
               style={{
                 fontWeight: "bold",
@@ -162,11 +199,9 @@ function Testimonials() {
               {!joe ? "Read More" : "Read Less"}
             </Typography>
           </Box>
-          <Avatar
-            alt="Joe Tooker"
-            style={{ width: 200, height: 200 }}
-            src={joepic}
-          />
+          {!isSm && (
+            <Avatar alt="Joe Tooker" style={avatarStyle} src={joepic} />
+          )}
         </Box>
       </Grid>
     </div>
