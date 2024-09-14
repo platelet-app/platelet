@@ -11,10 +11,14 @@ import {
   Typography,
   Link,
   Grid,
+  IconButton,
 } from "@material-ui/core";
 import { Image } from "components/atoms";
 import logo from "../../../../assets/images/platelet.png";
 import DarkModeToggle from "../../../../views/IndexView/components/DarkModeToggle";
+import { Icon } from "components/atoms";
+import { IconAlternate } from "components/molecules";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 //import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -192,6 +196,32 @@ const Topbar = ({
             themeMode={themeMode}
             onClick={() => themeToggler()}
           />
+        </ListItem>
+        <ListItem className={clsx(classes.listItem, "menu-item--no-dropdown")}>
+          <IconButton
+            component="a"
+            target="_blank"
+            href="https://www.facebook.com/profile.php?id=61565880591401"
+          >
+            <Icon
+              size={"small"}
+              fontIconClass={"fa-brands fa-facebook"}
+              fontIconColor={"white"}
+            />
+          </IconButton>
+        </ListItem>
+        <ListItem className={clsx(classes.listItem, "menu-item--no-dropdown")}>
+          <IconButton
+            component="a"
+            target="_blank"
+            href="https://www.linkedin.com/company/104959982/"
+          >
+            <Icon
+              size={"small"}
+              fontIconClass={"fa-brands fa-linkedin"}
+              fontIconColor={"white"}
+            />
+          </IconButton>
         </ListItem>
       </List>
     </Toolbar>
