@@ -7,7 +7,6 @@ import {
   Hidden,
   List,
   ListItem,
-  Button,
   Typography,
   Link,
   Grid,
@@ -17,8 +16,6 @@ import { Image } from "components/atoms";
 import logo from "../../../../assets/images/platelet.png";
 import DarkModeToggle from "../../../../views/IndexView/components/DarkModeToggle";
 import { Icon } from "components/atoms";
-import { IconAlternate } from "components/molecules";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 //import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
