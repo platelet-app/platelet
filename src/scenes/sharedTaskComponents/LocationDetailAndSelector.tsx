@@ -165,7 +165,7 @@ const LocationDetailAndSelector: React.FC<LocationDetailAndSelectorProps> = ({
             {!location || editMode ? (
                 <FavouriteLocationsSelect online onSelect={onSelectPreset} />
             ) : (
-                locationTitle
+                <></>
             )}
         </Stack>
     ) : (
@@ -180,7 +180,12 @@ const LocationDetailAndSelector: React.FC<LocationDetailAndSelectorProps> = ({
                     </Typography>
                 )}
                 {presetSelect}
-                {!editMode && location && (
+                {!editMode && location?.name && (
+                    <Typography sx={{ fontWeight: "bold" }}>
+                        {location.name}
+                    </Typography>
+                )}
+                {!editMode && state?.address && (
                     <Typography>
                         {Object.keys(addressFields)
                             .filter((v) => !["what3words"].includes(v))
@@ -193,6 +198,18 @@ const LocationDetailAndSelector: React.FC<LocationDetailAndSelectorProps> = ({
                             .filter((v) => v)
                             .join(", ")}
                     </Typography>
+                )}
+                {!editMode && state?.contact && (
+                    <Box>
+                        {state?.contact?.name && (
+                            <Typography>{state.contact.name}</Typography>
+                        )}
+                        {state?.contact?.telephoneNumber && (
+                            <Typography>
+                                {state.contact.telephoneNumber}
+                            </Typography>
+                        )}
+                    </Box>
                 )}
                 {editMode && (
                     <Stack direction={"column"}>
@@ -227,37 +244,39 @@ const LocationDetailAndSelector: React.FC<LocationDetailAndSelectorProps> = ({
                         })}
                     </Stack>
                 )}
-                <Box>
-                    {Object.entries(contactFields).map(([key, label]) => {
-                        return (
-                            <LabelItemPair key={key} label={label}>
-                                <ClickableTextField
-                                    label={label}
-                                    tel={key === "telephoneNumber"}
-                                    disabled={!editMode}
-                                    onFinished={(v) => {
-                                        setState((prevState) => ({
-                                            ...prevState,
-                                            contact: {
-                                                ...state.contact,
-                                                [key]: v,
-                                            },
-                                        }));
-                                        if (onChangeContact)
-                                            onChangeContact({
-                                                [key]: v,
-                                            });
-                                    }}
-                                    value={
-                                        state.contact[
-                                            key as keyof typeof state.contact
-                                        ]
-                                    }
-                                />
-                            </LabelItemPair>
-                        );
-                    })}
-                </Box>
+                {editMode && (
+                    <Stack direction={"column"}>
+                        {Object.entries(contactFields).map(([key, label]) => {
+                            return (
+                                <LabelItemPair key={key} label={label}>
+                                    <ClickableTextField
+                                        label={label}
+                                        tel={key === "telephoneNumber"}
+                                        disabled={!editMode}
+                                        onFinished={(v) => {
+                                            setState((prevState) => ({
+                                                ...prevState,
+                                                contact: {
+                                                    ...state.contact,
+                                                    [key]: v,
+                                                },
+                                            }));
+                                            if (onChangeContact)
+                                                onChangeContact({
+                                                    [key]: v,
+                                                });
+                                        }}
+                                        value={
+                                            state.contact[
+                                                key as keyof typeof state.contact
+                                            ]
+                                        }
+                                    />
+                                </LabelItemPair>
+                            );
+                        })}
+                    </Stack>
+                )}
                 {editMode && <Divider />}
                 <Box
                     sx={{
