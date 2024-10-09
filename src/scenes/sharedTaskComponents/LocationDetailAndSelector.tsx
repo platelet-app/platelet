@@ -5,17 +5,18 @@ import ClickableTextField from "../../components/ClickableTextField";
 import FavouriteLocationsSelect from "../../components/FavouriteLocationsSelect";
 import { makeStyles } from "tss-react/mui";
 import Divider from "@mui/material/Divider";
-import { Box, Stack, Tooltip } from "@mui/material";
-import { ThemedLink } from "../../styles/common";
+import { Box, Link, Stack, Tooltip } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { encodeUUID } from "../../utilities";
 import ClearButtonWithConfirmation from "../../components/ClearButtonWithConfirmation";
-import CollapsibleToggle from "../../components/CollapsibleToggle";
 import * as models from "../../models";
+import WhatThreeWords from "./WhatThreeWords";
 
 const useStyles = makeStyles()((theme) => ({
     root: {},
     label: {
         width: "90%",
+        fontWeight: "bold",
     },
     separator: {
         height: 10,
@@ -111,7 +112,6 @@ const LocationDetailAndSelector: React.FC<LocationDetailAndSelectorProps> = ({
 }) => {
     const { classes } = useStyles();
     const [state, setState] = useState(initialState);
-    const [collapsed, setCollapsed] = useState(true);
 
     function updateStateFromProps() {
         if (location) {
@@ -138,13 +138,24 @@ const LocationDetailAndSelector: React.FC<LocationDetailAndSelectorProps> = ({
     const locationLink =
         location && location.id ? `/location/${encodeUUID(location.id)}` : "";
     let locationTitle = <></>;
+    const theme = useTheme();
     if (location && !noLink && !!location.listed) {
         locationTitle = (
-            <ThemedLink to={locationLink}>
+            <Link
+                sx={{
+                    textDecoration: "none",
+                    color: theme.palette.text.primary,
+                    textDecorationColor: theme.palette.text.primary,
+                    "&:hover": {
+                        textDecoration: "underline",
+                    },
+                }}
+                href={locationLink}
+            >
                 <Typography noWrap className={classes.label}>
                     {presetName}
                 </Typography>
-            </ThemedLink>
+            </Link>
         );
     } else if (location && (noLink || !!!location.listed)) {
         locationTitle = (
@@ -180,11 +191,8 @@ const LocationDetailAndSelector: React.FC<LocationDetailAndSelectorProps> = ({
                     </Typography>
                 )}
                 {presetSelect}
-                {!editMode && location?.name && (
-                    <Typography sx={{ fontWeight: "bold" }}>
-                        {location.name}
-                    </Typography>
-                )}
+                {!editMode && locationTitle && locationTitle}
+
                 {!editMode && state?.address && (
                     <Typography>
                         {Object.keys(addressFields)
@@ -199,26 +207,36 @@ const LocationDetailAndSelector: React.FC<LocationDetailAndSelectorProps> = ({
                             .join(", ")}
                     </Typography>
                 )}
+
+                {!editMode && state?.address?.what3words && (
+                    <WhatThreeWords words={state.address.what3words} />
+                )}
                 {!editMode && state?.contact && (
-                    <Box>
-                        {state?.contact?.name && (
-                            <Typography>{state.contact.name}</Typography>
-                        )}
-                        {state?.contact?.telephoneNumber && (
-                            <Typography>
-                                {state.contact.telephoneNumber}
-                            </Typography>
-                        )}
-                    </Box>
+                    <>
+                        <Divider />
+                        <Box>
+                            {state?.contact?.name && (
+                                <LabelItemPair label="Name">
+                                    <Typography>
+                                        {state.contact.name}
+                                    </Typography>
+                                </LabelItemPair>
+                            )}
+                            {state?.contact?.telephoneNumber && (
+                                <LabelItemPair label="Telephone">
+                                    <Typography>
+                                        {state.contact.telephoneNumber}
+                                    </Typography>
+                                </LabelItemPair>
+                            )}
+                        </Box>
+                    </>
                 )}
                 {editMode && (
                     <Stack direction={"column"}>
                         {Object.entries(addressFields).map(([key, label]) => {
                             return (
-                                <LabelItemPair
-                                    key={key}
-                                    label={collapsed || editMode ? label : ""}
-                                >
+                                <LabelItemPair key={key} label={label}>
                                     <ClickableTextField
                                         label={label}
                                         disabled={!editMode}
