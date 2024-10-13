@@ -211,27 +211,29 @@ const LocationDetailAndSelector: React.FC<LocationDetailAndSelectorProps> = ({
                 {!editMode && state?.address?.what3words && (
                     <WhatThreeWords words={state.address.what3words} />
                 )}
-                {!editMode && state?.contact && (
-                    <>
-                        <Divider />
-                        <Box>
-                            {state?.contact?.name && (
-                                <LabelItemPair label="Name">
-                                    <Typography>
-                                        {state.contact.name}
-                                    </Typography>
-                                </LabelItemPair>
-                            )}
-                            {state?.contact?.telephoneNumber && (
-                                <LabelItemPair label="Telephone">
-                                    <Typography>
-                                        {state.contact.telephoneNumber}
-                                    </Typography>
-                                </LabelItemPair>
-                            )}
-                        </Box>
-                    </>
-                )}
+                {!editMode &&
+                    (state?.contact?.name ||
+                        state?.contact?.telephoneNumber) && (
+                        <>
+                            <Divider />
+                            <Box>
+                                {state?.contact?.name && (
+                                    <LabelItemPair label="Name">
+                                        <Typography>
+                                            {state.contact.name}
+                                        </Typography>
+                                    </LabelItemPair>
+                                )}
+                                {state?.contact?.telephoneNumber && (
+                                    <LabelItemPair label="Telephone">
+                                        <Typography>
+                                            {state.contact.telephoneNumber}
+                                        </Typography>
+                                    </LabelItemPair>
+                                )}
+                            </Box>
+                        </>
+                    )}
                 {editMode && (
                     <Stack direction={"column"}>
                         {Object.entries(addressFields).map(([key, label]) => {
