@@ -1,5 +1,5 @@
 import { Box, IconButton, Link, Tooltip } from "@mui/material";
-import w3wIcon from "../../assets/icons/w3w_Symbol_RGB_Red.svg";
+import w3wIcon from "../../assets/icons/w3w_Symbol_RGB_Red.png";
 import { useTheme } from "@mui/material/styles";
 
 type WhatThreeWordsProps = {
