@@ -1315,6 +1315,24 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "pickUpSchedule": {
+                    "name": "pickUpSchedule",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "Schedule"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "dropOffSchedule": {
+                    "name": "dropOffSchedule",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "Schedule"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "updatedAt": {
                     "name": "updatedAt",
                     "isArray": false,
@@ -2332,6 +2350,15 @@ export const schema = {
         }
     },
     "enums": {
+        "TimeRelation": {
+            "name": "TimeRelation",
+            "values": [
+                "BEFORE",
+                "AFTER",
+                "AT",
+                "ANY"
+            ]
+        },
         "DeliverableTypeIcon": {
             "name": "DeliverableTypeIcon",
             "values": [
@@ -2353,7 +2380,8 @@ export const schema = {
                 "REJECTED",
                 "ABANDONED",
                 "COMPLETED",
-                "PENDING"
+                "PENDING",
+                "FUTURE"
             ]
         },
         "Priority": {
@@ -2522,6 +2550,34 @@ export const schema = {
                 }
             }
         },
+        "Schedule": {
+            "name": "Schedule",
+            "fields": {
+                "relation": {
+                    "name": "relation",
+                    "isArray": false,
+                    "type": {
+                        "enum": "TimeRelation"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "date": {
+                    "name": "date",
+                    "isArray": false,
+                    "type": "AWSDate",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "time": {
+                    "name": "time",
+                    "isArray": false,
+                    "type": "AWSTime",
+                    "isRequired": false,
+                    "attributes": []
+                }
+            }
+        },
         "SendFeedback": {
             "name": "SendFeedback",
             "fields": {
@@ -2604,5 +2660,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.4",
-    "version": "e8a37f7291c48282a191ed3e232cee52"
+    "version": "cbea2d1a1ecb14ea73e59dc66581b71e"
 };

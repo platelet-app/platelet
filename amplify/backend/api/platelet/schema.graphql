@@ -160,6 +160,20 @@ type Location
     ])
 }
 
+enum TimeRelation {
+  BEFORE
+  AFTER
+  AT
+  ANY
+}
+
+type Schedule {
+  relation: TimeRelation
+  date: AWSDate
+  time: AWSTime
+}
+
+
 type Task
 @auth(rules: [
   {allow: private, operations: [read]},
@@ -247,6 +261,8 @@ type Task
       {allow: private, operations: [read]},
       {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read]},
     ])
+  pickUpSchedule: Schedule
+  dropOffSchedule: Schedule
 }
 
 type TaskAssignee
@@ -403,6 +419,7 @@ enum TaskStatus {
   ABANDONED
   COMPLETED
   PENDING
+  FUTURE
 }
 
 enum Priority {

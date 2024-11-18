@@ -1028,6 +1028,18 @@ export const getTask = /* GraphQL */ `query GetTask($id: ID!) {
     status
     isRiderUsingOwnVehicle
     archived
+    pickUpSchedule {
+      relation
+      date
+      time
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      date
+      time
+      __typename
+    }
     updatedAt
     _version
     _deleted

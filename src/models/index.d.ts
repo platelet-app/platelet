@@ -2,6 +2,13 @@ import { ModelInit, MutableModel } from "@aws-amplify/datastore";
 // @ts-ignore
 import { LazyLoading, LazyLoadingDisabled, AsyncItem, AsyncCollection } from "@aws-amplify/datastore";
 
+export enum TimeRelation {
+  BEFORE = "BEFORE",
+  AFTER = "AFTER",
+  AT = "AT",
+  ANY = "ANY"
+}
+
 export enum DeliverableTypeIcon {
   BUG = "BUG",
   CHILD = "CHILD",
@@ -19,7 +26,8 @@ export enum TaskStatus {
   REJECTED = "REJECTED",
   ABANDONED = "ABANDONED",
   COMPLETED = "COMPLETED",
-  PENDING = "PENDING"
+  PENDING = "PENDING",
+  FUTURE = "FUTURE"
 }
 
 export enum Priority {
@@ -102,6 +110,22 @@ type LazyAddressAndContactDetails = {
 export declare type AddressAndContactDetails = LazyLoading extends LazyLoadingDisabled ? EagerAddressAndContactDetails : LazyAddressAndContactDetails
 
 export declare const AddressAndContactDetails: (new (init: ModelInit<AddressAndContactDetails>) => AddressAndContactDetails)
+
+type EagerSchedule = {
+  readonly relation?: TimeRelation | keyof typeof TimeRelation | null;
+  readonly date?: string | null;
+  readonly time?: string | null;
+}
+
+type LazySchedule = {
+  readonly relation?: TimeRelation | keyof typeof TimeRelation | null;
+  readonly date?: string | null;
+  readonly time?: string | null;
+}
+
+export declare type Schedule = LazyLoading extends LazyLoadingDisabled ? EagerSchedule : LazySchedule
+
+export declare const Schedule: (new (init: ModelInit<Schedule>) => Schedule)
 
 type EagerSendFeedback = {
   readonly successState?: boolean | null;
@@ -460,6 +484,8 @@ type EagerTask = {
   readonly status?: TaskStatus | keyof typeof TaskStatus | null;
   readonly isRiderUsingOwnVehicle?: number | null;
   readonly archived?: number | null;
+  readonly pickUpSchedule?: Schedule | null;
+  readonly dropOffSchedule?: Schedule | null;
   readonly updatedAt?: string | null;
 }
 
@@ -490,6 +516,8 @@ type LazyTask = {
   readonly status?: TaskStatus | keyof typeof TaskStatus | null;
   readonly isRiderUsingOwnVehicle?: number | null;
   readonly archived?: number | null;
+  readonly pickUpSchedule?: Schedule | null;
+  readonly dropOffSchedule?: Schedule | null;
   readonly updatedAt?: string | null;
 }
 

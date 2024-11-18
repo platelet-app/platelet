@@ -282,6 +282,8 @@ export type Task = {
   status?: TaskStatus | null,
   isRiderUsingOwnVehicle?: number | null,
   archived?: number | null,
+  pickUpSchedule?: Schedule | null,
+  dropOffSchedule?: Schedule | null,
   updatedAt: string,
   _version: number,
   _deleted?: boolean | null,
@@ -445,6 +447,22 @@ export enum TaskStatus {
   ABANDONED = "ABANDONED",
   COMPLETED = "COMPLETED",
   PENDING = "PENDING",
+  FUTURE = "FUTURE",
+}
+
+
+export type Schedule = {
+  __typename: "Schedule",
+  relation?: TimeRelation | null,
+  date?: string | null,
+  time?: string | null,
+};
+
+export enum TimeRelation {
+  BEFORE = "BEFORE",
+  AFTER = "AFTER",
+  AT = "AT",
+  ANY = "ANY",
 }
 
 
@@ -820,8 +838,16 @@ export type CreateTaskInput = {
   status?: TaskStatus | null,
   isRiderUsingOwnVehicle?: number | null,
   archived?: number | null,
+  pickUpSchedule?: ScheduleInput | null,
+  dropOffSchedule?: ScheduleInput | null,
   _version?: number | null,
   userCreatedTasksId?: string | null,
+};
+
+export type ScheduleInput = {
+  relation?: TimeRelation | null,
+  date?: string | null,
+  time?: string | null,
 };
 
 export type ModelTaskConditionInput = {
@@ -885,6 +911,8 @@ export type UpdateTaskInput = {
   status?: TaskStatus | null,
   isRiderUsingOwnVehicle?: number | null,
   archived?: number | null,
+  pickUpSchedule?: ScheduleInput | null,
+  dropOffSchedule?: ScheduleInput | null,
   _version?: number | null,
   userCreatedTasksId?: string | null,
 };
@@ -2970,6 +2998,18 @@ export type CreateTaskMutation = {
     status?: TaskStatus | null,
     isRiderUsingOwnVehicle?: number | null,
     archived?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -3136,6 +3176,18 @@ export type UpdateTaskMutation = {
     status?: TaskStatus | null,
     isRiderUsingOwnVehicle?: number | null,
     archived?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -3302,6 +3354,18 @@ export type DeleteTaskMutation = {
     status?: TaskStatus | null,
     isRiderUsingOwnVehicle?: number | null,
     archived?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -5993,6 +6057,18 @@ export type GetTaskQuery = {
     status?: TaskStatus | null,
     isRiderUsingOwnVehicle?: number | null,
     archived?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -8333,6 +8409,18 @@ export type OnCreateTaskSubscription = {
     status?: TaskStatus | null,
     isRiderUsingOwnVehicle?: number | null,
     archived?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -8498,6 +8586,18 @@ export type OnUpdateTaskSubscription = {
     status?: TaskStatus | null,
     isRiderUsingOwnVehicle?: number | null,
     archived?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -8663,6 +8763,18 @@ export type OnDeleteTaskSubscription = {
     status?: TaskStatus | null,
     isRiderUsingOwnVehicle?: number | null,
     archived?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,

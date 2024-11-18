@@ -1366,6 +1366,18 @@ export const createTask = /* GraphQL */ `mutation CreateTask(
     status
     isRiderUsingOwnVehicle
     archived
+    pickUpSchedule {
+      relation
+      date
+      time
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      date
+      time
+      __typename
+    }
     updatedAt
     _version
     _deleted
@@ -1533,6 +1545,18 @@ export const updateTask = /* GraphQL */ `mutation UpdateTask(
     status
     isRiderUsingOwnVehicle
     archived
+    pickUpSchedule {
+      relation
+      date
+      time
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      date
+      time
+      __typename
+    }
     updatedAt
     _version
     _deleted
@@ -1700,6 +1724,18 @@ export const deleteTask = /* GraphQL */ `mutation DeleteTask(
     status
     isRiderUsingOwnVehicle
     archived
+    pickUpSchedule {
+      relation
+      date
+      time
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      date
+      time
+      __typename
+    }
     updatedAt
     _version
     _deleted

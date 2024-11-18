@@ -1330,6 +1330,18 @@ export const onCreateTask = /* GraphQL */ `subscription OnCreateTask($filter: Mo
     status
     isRiderUsingOwnVehicle
     archived
+    pickUpSchedule {
+      relation
+      date
+      time
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      date
+      time
+      __typename
+    }
     updatedAt
     _version
     _deleted
@@ -1494,6 +1506,18 @@ export const onUpdateTask = /* GraphQL */ `subscription OnUpdateTask($filter: Mo
     status
     isRiderUsingOwnVehicle
     archived
+    pickUpSchedule {
+      relation
+      date
+      time
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      date
+      time
+      __typename
+    }
     updatedAt
     _version
     _deleted
@@ -1658,6 +1682,18 @@ export const onDeleteTask = /* GraphQL */ `subscription OnDeleteTask($filter: Mo
     status
     isRiderUsingOwnVehicle
     archived
+    pickUpSchedule {
+      relation
+      date
+      time
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      date
+      time
+      __typename
+    }
     updatedAt
     _version
     _deleted
