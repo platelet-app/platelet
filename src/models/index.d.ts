@@ -6,7 +6,7 @@ export enum TimeRelation {
   BEFORE = "BEFORE",
   AFTER = "AFTER",
   AT = "AT",
-  ANY = "ANY"
+  ANYTIME = "ANYTIME"
 }
 
 export enum DeliverableTypeIcon {

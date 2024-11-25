@@ -164,7 +164,7 @@ enum TimeRelation {
   BEFORE
   AFTER
   AT
-  ANY
+  ANYTIME
 }
 
 type Schedule {
