@@ -2,9 +2,23 @@ import React from "react";
 import Typography from "@mui/material/Typography";
 import { Divider, Stack } from "@mui/material";
 import PopOutLocationSelector from "./PopOutLocationSelector";
-import { useTheme } from "@mui/styles";
+import { useTheme } from "@mui/material/styles";
+import PickUpAndDeliverSchedule from "../../../scenes/sharedTaskComponents/PickUpAndDeliverSchedule";
 
-export const PickUpAndDeliverDetails = ({
+type PickUpAndDeliverDetailsProps = {
+    onSetPickUpLocation: (location: any) => void;
+    onSetDropOffLocation: (location: any) => void;
+    onClearPickUpLocation: () => void;
+    onClearDropOffLocation: () => void;
+    overrides: {
+        pickUpLocation: any;
+        dropOffLocation: any;
+    };
+};
+
+export const PickUpAndDeliverDetails: React.FC<
+    PickUpAndDeliverDetailsProps
+> = ({
     onSetPickUpLocation,
     onSetDropOffLocation,
     onClearPickUpLocation,
@@ -66,6 +80,8 @@ export const PickUpAndDeliverDetails = ({
                 onChange={onSetDropOffLocation}
                 onClear={onClearDropOffLocation}
             />
+            <Divider />
+            <PickUpAndDeliverSchedule />
         </Stack>
     );
 };
