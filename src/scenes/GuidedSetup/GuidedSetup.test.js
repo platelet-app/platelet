@@ -41,10 +41,6 @@ describe("GuidedSetup", () => {
     const dateString = "2021-11-29";
     const timeStrings = { timeOfCall: isoDate, dateCreated: dateString };
 
-    const expandDetails = () => {
-        userEvent.click(screen.getByText("Expand to see more"));
-    };
-
     function mockDate() {
         global.Date = class extends RealDate {
             constructor() {
@@ -1003,7 +999,6 @@ describe("GuidedSetup", () => {
         expect(
             screen.getByText(`${addressNumber} ${street}`)
         ).toBeInTheDocument();
-        expandDetails();
         for (const value of Object.values(rest)) {
             expect(screen.getByText(value)).toBeInTheDocument();
         }
@@ -1114,7 +1109,6 @@ describe("GuidedSetup", () => {
             mockLocation.name,
         ];
 
-        expandDetails();
         for (const value of Object.values(rest)) {
             expect(screen.getByText(value)).toBeInTheDocument();
         }
@@ -1194,7 +1188,6 @@ describe("GuidedSetup", () => {
                 mockLocation.name,
             ];
 
-            expandDetails();
             for (const value of Object.values(rest)) {
                 expect(screen.getByText(value)).toBeInTheDocument();
             }
@@ -1290,7 +1283,6 @@ describe("GuidedSetup", () => {
             mockLocation.name,
         ];
 
-        expandDetails();
         for (const value of Object.values(rest)) {
             expect(screen.getByText(value)).toBeInTheDocument();
         }
@@ -1386,8 +1378,6 @@ describe("GuidedSetup", () => {
             mockLocation.town,
             mockLocation.name,
         ];
-
-        expandDetails();
 
         for (const value of Object.values(rest)) {
             expect(screen.getByText(value)).toBeInTheDocument();
