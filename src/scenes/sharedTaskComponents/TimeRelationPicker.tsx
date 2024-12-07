@@ -1,41 +1,41 @@
 import * as React from "react";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Select from "@mui/material/Select";
 import * as models from "../../models";
 import { Stack } from "@mui/material";
 import TimePickerBasic from "./TimePickerBasic";
 
-const TimeRelationPicker = () => {
-    const [relation, setRelation] = React.useState<models.TimeRelation>(
-        models.TimeRelation.ANYTIME
-    );
-    const [time, setTime] = React.useState("10:00");
+type TimeRelationPickerProps = {
+    relation: models.TimeRelation;
+    time: string;
+    isValid: boolean;
+    handleChange: (event: models.TimeRelation) => void;
+    handleChangeTime: (time: string) => void;
+};
 
-    const handleChange = (event: SelectChangeEvent) => {
-        setRelation(event.target.value as models.TimeRelation);
-    };
-
-    const isValidTime = (time: string) => {
-        const [hours, minutes] = time
-            .split(":")
-            .map((value) => parseInt(value));
-        return hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60;
-    };
-
-    const isValid = isValidTime(time);
-
-    const handleChangeTime = (value: string) => {
-        setTime(value);
-    };
+const TimeRelationPicker: React.FC<TimeRelationPickerProps> = ({
+    relation,
+    time,
+    isValid,
+    handleChange,
+    handleChangeTime,
+}) => {
+    const { ANYTIME, BEFORE, AFTER, AT } = models.TimeRelation;
 
     return (
-        <Stack spacing={1} direction="row" sx={{ minWidth: 340 }}>
+        <Stack spacing={1} direction="row">
             <FormControl fullWidth>
-                <Select value={relation} onChange={handleChange}>
-                    {Object.values(models.TimeRelation).map((timeRelation) => (
-                        <MenuItem value={timeRelation}>{timeRelation}</MenuItem>
-                    ))}
+                <Select
+                    value={relation}
+                    onChange={(event) =>
+                        handleChange(event.target.value as models.TimeRelation)
+                    }
+                >
+                    <MenuItem value={ANYTIME}>{ANYTIME}</MenuItem>
+                    <MenuItem value={BEFORE}>{BEFORE}</MenuItem>
+                    <MenuItem value={AT}>{AT}</MenuItem>
+                    <MenuItem value={AFTER}>{AFTER}</MenuItem>
                 </Select>
             </FormControl>
             {relation !== models.TimeRelation.ANYTIME && (

@@ -1,7 +1,15 @@
 import LocationDetailAndSelector from "./LocationDetailAndSelector";
 import { GraphQLQuery } from "@aws-amplify/api";
 import React, { useEffect, useRef, useState } from "react";
-import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
+import {
+    Box,
+    Divider,
+    Paper,
+    Skeleton,
+    Stack,
+    Typography,
+} from "@mui/material";
+import ScheduleIcon from "@mui/icons-material/Schedule";
 import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
@@ -22,6 +30,7 @@ import {
     GetTaskQuery,
     UpdateLocationMutation,
 } from "../../API";
+import humanReadableScheduleString from "../../utilities/humanReadableScheduleString";
 
 export const protectedFields = [
     "id",
@@ -69,6 +78,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     // @ts-ignore
     const tenantId = useSelector((state) => state.tenantId);
     const [state, setState] = useState<models.Location | null>(null);
+    const [schedule, setSchedule] = useState<models.Schedule | null>(null);
     const [editMode, setEditMode] = useState(false);
     const [errorState, setErrorState] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
@@ -136,6 +146,19 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                 }
             });
             const location = existingTask[locationKey] || null;
+            let schedule: models.Schedule | null | undefined = null;
+            if (
+                locationKey === "pickUpLocation" &&
+                "pickUpSchedule" in existingTask
+            ) {
+                schedule = existingTask.pickUpSchedule;
+            } else if (
+                locationKey === "dropOffLocation" &&
+                "dropOffSchedule" in existingTask
+            ) {
+                schedule = existingTask.dropOffSchedule;
+            }
+            setSchedule(schedule || null);
             locationObserver.current.unsubscribe();
             if (location) {
                 locationObserver.current = DataStore.observe(
@@ -610,6 +633,21 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                         </Stack>
                         <Divider />
                         {contents}
+                        <Divider />
+                        {schedule && (
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 1,
+                                }}
+                            >
+                                <ScheduleIcon />
+                                <Typography sx={{ fontWeight: "bold" }}>
+                                    {humanReadableScheduleString(schedule)}
+                                </Typography>
+                            </Box>
+                        )}
                     </Stack>
                 </Paper>
                 <ConfirmationDialog

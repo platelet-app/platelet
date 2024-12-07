@@ -9,7 +9,7 @@ import * as models from "../../../models";
 
 type NotesAndPriorityProps = {
     onChange: (value: string) => void;
-    priority: models.Priority;
+    priority: models.Priority | null;
     handleVisibilityChange: (value: models.CommentVisibility) => void;
     onChangePriority: (value: models.Priority | null) => void;
 };
