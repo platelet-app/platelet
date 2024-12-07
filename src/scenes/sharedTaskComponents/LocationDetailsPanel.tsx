@@ -9,7 +9,6 @@ import {
     Stack,
     Typography,
 } from "@mui/material";
-import ScheduleIcon from "@mui/icons-material/Schedule";
 import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
@@ -30,7 +29,7 @@ import {
     GetTaskQuery,
     UpdateLocationMutation,
 } from "../../API";
-import humanReadableScheduleString from "../../utilities/humanReadableScheduleString";
+import TaskScheduleDetails from "./TaskScheduleDetails";
 
 export const protectedFields = [
     "id",
@@ -201,6 +200,36 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
             setEditMode(true);
         }
     }, [state, isFetching, hasFullPermissions]);
+
+    const handleClearSchedule = async () => {
+        const task = await DataStore.query(models.Task, taskId);
+        if (!task) return;
+        await DataStore.save(
+            models.Task.copyOf(task, (updated) => {
+                if (locationKey === "pickUpLocation") {
+                    updated.pickUpSchedule = null;
+                } else if (locationKey === "dropOffLocation") {
+                    updated.dropOffSchedule = null;
+                }
+            })
+        );
+        setSchedule(null);
+    };
+
+    const handleEditSchedule = async (newSchedule: models.Schedule) => {
+        const task = await DataStore.query(models.Task, taskId);
+        if (!task) return;
+        await DataStore.save(
+            models.Task.copyOf(task, (updated) => {
+                if (locationKey === "pickUpLocation") {
+                    updated.pickUpSchedule = newSchedule;
+                } else if (locationKey === "dropOffLocation") {
+                    updated.dropOffSchedule = newSchedule;
+                }
+            })
+        );
+        setSchedule(newSchedule);
+    };
 
     async function editPreset(additionalValues?: LocationType) {
         try {
@@ -634,20 +663,11 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                         <Divider />
                         {contents}
                         <Divider />
-                        {schedule && (
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 1,
-                                }}
-                            >
-                                <ScheduleIcon />
-                                <Typography sx={{ fontWeight: "bold" }}>
-                                    {humanReadableScheduleString(schedule)}
-                                </Typography>
-                            </Box>
-                        )}
+                        <TaskScheduleDetails
+                            onClear={handleClearSchedule}
+                            onChange={handleEditSchedule}
+                            schedule={schedule}
+                        />
                     </Stack>
                 </Paper>
                 <ConfirmationDialog
