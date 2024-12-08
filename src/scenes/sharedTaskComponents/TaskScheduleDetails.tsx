@@ -1,6 +1,13 @@
 import * as React from "react";
 import * as models from "../../models";
-import { Box, IconButton, Stack, TextField, Typography } from "@mui/material";
+import {
+    Box,
+    Button,
+    IconButton,
+    Stack,
+    TextField,
+    Typography,
+} from "@mui/material";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import EditIcon from "@mui/icons-material/Edit";
 import humanReadableScheduleString from "../../utilities/humanReadableScheduleString";
@@ -12,6 +19,36 @@ import { DatePicker } from "@mui/lab";
 const isValidTime = (time: string) => {
     const [hours, minutes] = time.split(":").map((value) => parseInt(value));
     return hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60;
+};
+
+const isDueInOneHour = (schedule?: models.Schedule | null) => {
+    if (!schedule) {
+        return false;
+    }
+    const now = new Date();
+    const scheduleDate = new Date(schedule?.date ?? "");
+    scheduleDate.setUTCHours(parseInt(schedule.time?.split(":")[0] ?? "0"));
+    scheduleDate.setUTCMinutes(parseInt(schedule.time?.split(":")[1] ?? "0"));
+    scheduleDate.setUTCHours(scheduleDate.getUTCHours() - 1);
+
+    if (scheduleDate < now) {
+        return true;
+    }
+    return false;
+};
+
+const isOverDue = (schedule?: models.Schedule | null) => {
+    if (!schedule) {
+        return false;
+    }
+    const now = new Date();
+    const scheduleDate = new Date(schedule?.date ?? "");
+    scheduleDate.setUTCHours(parseInt(schedule.time?.split(":")[0] ?? "0"));
+    scheduleDate.setUTCMinutes(parseInt(schedule.time?.split(":")[1] ?? "0"));
+    if (scheduleDate < now) {
+        return true;
+    }
+    return false;
 };
 
 type TaskScheduleDetailsProps = {
@@ -36,22 +73,29 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
     const [scheduleState, setScheduleState] =
         React.useState<TaskScheduleDetailsState | null>(null);
 
-    React.useEffect(() => {
-        console.log("schedule", schedule);
+    const handleClear = () => {
+        onClear();
+        setConfirmClear(false);
+    };
+
+    const handleSetEditMode = () => {
         if (schedule) {
             setScheduleState({
-                time: schedule.time || "10:00",
+                time: schedule?.time || "10:00",
                 timeRelation:
-                    (schedule.relation as models.TimeRelation | null) ??
+                    (schedule?.relation as models.TimeRelation | null) ??
                     models.TimeRelation.ANYTIME,
-                date: new Date(schedule.date ?? ""),
+                date: new Date(schedule?.date ?? ""),
+            });
+        } else {
+            setScheduleState({
+                time: "10:00",
+                timeRelation: models.TimeRelation.ANYTIME,
+                date: new Date(),
             });
         }
-    }, [schedule]);
-
-    if (!schedule) {
-        return null;
-    }
+        setEditMode(true);
+    };
 
     const handleSaveEdit = () => {
         if (scheduleState) {
@@ -89,38 +133,65 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
         });
     };
 
+    let iconColor = "";
+    if (isDueInOneHour(schedule)) {
+        iconColor = "orange";
+    }
+    if (isOverDue(schedule)) {
+        iconColor = "red";
+    }
+
     return (
         <>
-            <Stack direction="row" justifyContent="space-between" spacing={1}>
-                <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                    }}
+            {schedule && (
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    spacing={1}
                 >
-                    <ScheduleIcon />
-                    <Typography sx={{ fontWeight: "bold" }}>
-                        {humanReadableScheduleString(schedule)}
-                    </Typography>
-                </Box>
-                <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                    }}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                        }}
+                    >
+                        <ScheduleIcon sx={{ color: iconColor }} />
+                        <Typography sx={{ fontWeight: "bold" }}>
+                            {humanReadableScheduleString(schedule)}
+                        </Typography>
+                    </Box>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                        }}
+                    >
+                        <IconButton onClick={() => setConfirmClear(true)}>
+                            <ClearIcon />
+                        </IconButton>
+                        <IconButton onClick={handleSetEditMode}>
+                            <EditIcon />
+                        </IconButton>
+                    </Box>
+                </Stack>
+            )}
+            {!schedule && (
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    spacing={1}
                 >
-                    <IconButton onClick={() => setConfirmClear(true)}>
-                        <ClearIcon />
-                    </IconButton>
-                    <IconButton onClick={() => setEditMode(true)}>
-                        <EditIcon />
-                    </IconButton>
-                </Box>
-            </Stack>
+                    <Typography>No schedule set</Typography>
+                    <Button color="primary" onClick={handleSetEditMode}>
+                        Add schedule
+                    </Button>
+                </Stack>
+            )}
             <ConfirmationDialog
-                onConfirmation={onClear}
+                onConfirmation={handleClear}
                 open={confirmClear}
                 onCancel={() => setConfirmClear(false)}
                 dialogTitle={"Clear schedule"}
