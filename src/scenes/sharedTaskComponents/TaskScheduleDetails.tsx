@@ -22,6 +22,13 @@ const isValidTime = (time: string) => {
 };
 
 const isDueInOneHour = (schedule?: models.Schedule | null) => {
+    if (
+        [models.TimeRelation.ANYTIME, models.TimeRelation.AFTER].includes(
+            schedule?.relation as models.TimeRelation
+        )
+    ) {
+        return false;
+    }
     if (!schedule) {
         return false;
     }
@@ -38,6 +45,13 @@ const isDueInOneHour = (schedule?: models.Schedule | null) => {
 };
 
 const isOverDue = (schedule?: models.Schedule | null) => {
+    if (
+        [models.TimeRelation.ANYTIME, models.TimeRelation.AFTER].includes(
+            schedule?.relation as models.TimeRelation
+        )
+    ) {
+        return false;
+    }
     if (!schedule) {
         return false;
     }
@@ -55,6 +69,7 @@ type TaskScheduleDetailsProps = {
     schedule: models.Schedule | null;
     onClear: () => void;
     onChange: (value: models.Schedule) => void;
+    noWarning?: boolean;
 };
 
 type TaskScheduleDetailsState = {
@@ -67,6 +82,7 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
     schedule,
     onClear,
     onChange,
+    noWarning = true,
 }) => {
     const [confirmClear, setConfirmClear] = React.useState(false);
     const [editMode, setEditMode] = React.useState(false);
@@ -134,11 +150,13 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
     };
 
     let iconColor = "";
-    if (isDueInOneHour(schedule)) {
-        iconColor = "orange";
-    }
-    if (isOverDue(schedule)) {
-        iconColor = "red";
+    if (!noWarning) {
+        if (isDueInOneHour(schedule)) {
+            iconColor = "orange";
+        }
+        if (isOverDue(schedule)) {
+            iconColor = "red";
+        }
     }
 
     return (

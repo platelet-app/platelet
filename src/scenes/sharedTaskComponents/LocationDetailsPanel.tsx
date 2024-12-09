@@ -30,6 +30,7 @@ import {
     UpdateLocationMutation,
 } from "../../API";
 import TaskScheduleDetails from "./TaskScheduleDetails";
+import useModelSubscription from "../../hooks/useModelSubscription";
 
 export const protectedFields = [
     "id",
@@ -77,7 +78,6 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     // @ts-ignore
     const tenantId = useSelector((state) => state.tenantId);
     const [state, setState] = useState<models.Location | null>(null);
-    const [schedule, setSchedule] = useState<models.Schedule | null>(null);
     const [editMode, setEditMode] = useState(false);
     const [errorState, setErrorState] = useState(false);
     const [isFetching, setIsFetching] = useState(true);
@@ -99,6 +99,24 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     const locationObserver = useRef({ unsubscribe: () => {} });
     const initialSetEdit = useRef(false);
     const errorMessage = "Sorry, an error occurred";
+
+    const { state: task } = useModelSubscription(taskModel, taskId);
+    const schedule =
+        locationKey === "pickUpLocation"
+            ? task?.pickUpSchedule || null
+            : task?.dropOffSchedule || null;
+
+    let noWarning = true;
+    if (taskModel.name === "Task") {
+        if (task && locationKey === "pickUpLocation") {
+            const t = task as models.Task;
+            noWarning = !!t.timePickedUp;
+        }
+        if (task && locationKey === "dropOffLocation") {
+            const t = task as models.Task;
+            noWarning = !!t.timeDroppedOff;
+        }
+    }
 
     const getLocation = React.useCallback(async () => {
         if (!loadedOnce.current) setIsFetching(true);
@@ -145,19 +163,6 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                 }
             });
             const location = existingTask[locationKey] || null;
-            let schedule: models.Schedule | null | undefined = null;
-            if (
-                locationKey === "pickUpLocation" &&
-                "pickUpSchedule" in existingTask
-            ) {
-                schedule = existingTask.pickUpSchedule;
-            } else if (
-                locationKey === "dropOffLocation" &&
-                "dropOffSchedule" in existingTask
-            ) {
-                schedule = existingTask.dropOffSchedule;
-            }
-            setSchedule(schedule || null);
             locationObserver.current.unsubscribe();
             if (location) {
                 locationObserver.current = DataStore.observe(
@@ -213,7 +218,6 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                 }
             })
         );
-        setSchedule(null);
     };
 
     const handleEditSchedule = async (newSchedule: models.Schedule) => {
@@ -228,7 +232,6 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                 }
             })
         );
-        setSchedule(newSchedule);
     };
 
     async function editPreset(additionalValues?: LocationType) {
@@ -667,6 +670,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                             onClear={handleClearSchedule}
                             onChange={handleEditSchedule}
                             schedule={schedule}
+                            noWarning={noWarning}
                         />
                     </Stack>
                 </Paper>
