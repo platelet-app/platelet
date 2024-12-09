@@ -1558,6 +1558,18 @@ export const getScheduledTask = /* GraphQL */ `query GetScheduledTask($id: ID!) 
       __typename
     }
     disabled
+    pickUpSchedule {
+      relation
+      date
+      time
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      date
+      time
+      __typename
+    }
     createdAt
     updatedAt
     _version

@@ -357,6 +357,8 @@ export type ScheduledTask = {
   priority?: Priority | null,
   deliverables?: ModelDeliverableConnection | null,
   disabled?: number | null,
+  pickUpSchedule?: Schedule | null,
+  dropOffSchedule?: Schedule | null,
   createdAt: string,
   updatedAt: string,
   _version: number,
@@ -437,20 +439,6 @@ export enum DeliverableUnit {
 }
 
 
-export enum TaskStatus {
-  NEW = "NEW",
-  ACTIVE = "ACTIVE",
-  PICKED_UP = "PICKED_UP",
-  DROPPED_OFF = "DROPPED_OFF",
-  CANCELLED = "CANCELLED",
-  REJECTED = "REJECTED",
-  ABANDONED = "ABANDONED",
-  COMPLETED = "COMPLETED",
-  PENDING = "PENDING",
-  FUTURE = "FUTURE",
-}
-
-
 export type Schedule = {
   __typename: "Schedule",
   relation?: TimeRelation | null,
@@ -463,6 +451,20 @@ export enum TimeRelation {
   AFTER = "AFTER",
   AT = "AT",
   ANYTIME = "ANYTIME",
+}
+
+
+export enum TaskStatus {
+  NEW = "NEW",
+  ACTIVE = "ACTIVE",
+  PICKED_UP = "PICKED_UP",
+  DROPPED_OFF = "DROPPED_OFF",
+  CANCELLED = "CANCELLED",
+  REJECTED = "REJECTED",
+  ABANDONED = "ABANDONED",
+  COMPLETED = "COMPLETED",
+  PENDING = "PENDING",
+  FUTURE = "FUTURE",
 }
 
 
@@ -969,6 +971,8 @@ export type CreateScheduledTaskInput = {
   establishmentLocationId?: string | null,
   priority?: Priority | null,
   disabled?: number | null,
+  pickUpSchedule?: ScheduleInput | null,
+  dropOffSchedule?: ScheduleInput | null,
   _version?: number | null,
   userCreatedScheduledTasksId?: string | null,
 };
@@ -998,6 +1002,8 @@ export type UpdateScheduledTaskInput = {
   establishmentLocationId?: string | null,
   priority?: Priority | null,
   disabled?: number | null,
+  pickUpSchedule?: ScheduleInput | null,
+  dropOffSchedule?: ScheduleInput | null,
   _version?: number | null,
   userCreatedScheduledTasksId?: string | null,
 };
@@ -3719,6 +3725,18 @@ export type CreateScheduledTaskMutation = {
       startedAt?: number | null,
     } | null,
     disabled?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
     _version: number,
@@ -3863,6 +3881,18 @@ export type UpdateScheduledTaskMutation = {
       startedAt?: number | null,
     } | null,
     disabled?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
     _version: number,
@@ -4007,6 +4037,18 @@ export type DeleteScheduledTaskMutation = {
       startedAt?: number | null,
     } | null,
     disabled?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
     _version: number,
@@ -6561,6 +6603,18 @@ export type GetScheduledTaskQuery = {
       startedAt?: number | null,
     } | null,
     disabled?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
     _version: number,
@@ -9124,6 +9178,18 @@ export type OnCreateScheduledTaskSubscription = {
       startedAt?: number | null,
     } | null,
     disabled?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
     _version: number,
@@ -9267,6 +9333,18 @@ export type OnUpdateScheduledTaskSubscription = {
       startedAt?: number | null,
     } | null,
     disabled?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
     _version: number,
@@ -9410,6 +9488,18 @@ export type OnDeleteScheduledTaskSubscription = {
       startedAt?: number | null,
     } | null,
     disabled?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      date?: string | null,
+      time?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
     _version: number,

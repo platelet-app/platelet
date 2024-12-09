@@ -1684,6 +1684,24 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "pickUpSchedule": {
+                    "name": "pickUpSchedule",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "Schedule"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "dropOffSchedule": {
+                    "name": "dropOffSchedule",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "Schedule"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -2660,5 +2678,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.4",
-    "version": "cbea2d1a1ecb14ea73e59dc66581b71e"
+    "version": "8519d73529c2b7c31e9ff468bcffdc40"
 };

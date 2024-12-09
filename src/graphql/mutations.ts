@@ -2093,6 +2093,18 @@ export const createScheduledTask = /* GraphQL */ `mutation CreateScheduledTask(
       __typename
     }
     disabled
+    pickUpSchedule {
+      relation
+      date
+      time
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      date
+      time
+      __typename
+    }
     createdAt
     updatedAt
     _version
@@ -2238,6 +2250,18 @@ export const updateScheduledTask = /* GraphQL */ `mutation UpdateScheduledTask(
       __typename
     }
     disabled
+    pickUpSchedule {
+      relation
+      date
+      time
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      date
+      time
+      __typename
+    }
     createdAt
     updatedAt
     _version
@@ -2383,6 +2407,18 @@ export const deleteScheduledTask = /* GraphQL */ `mutation DeleteScheduledTask(
       __typename
     }
     disabled
+    pickUpSchedule {
+      relation
+      date
+      time
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      date
+      time
+      __typename
+    }
     createdAt
     updatedAt
     _version

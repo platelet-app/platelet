@@ -303,6 +303,8 @@ type ScheduledTask
   priority: Priority
   deliverables: [Deliverable] @hasMany
   disabled: Int @default(value: "0")
+  pickUpSchedule: Schedule
+  dropOffSchedule: Schedule
 }
 
 

@@ -2047,6 +2047,18 @@ export const onCreateScheduledTask = /* GraphQL */ `subscription OnCreateSchedul
       __typename
     }
     disabled
+    pickUpSchedule {
+      relation
+      date
+      time
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      date
+      time
+      __typename
+    }
     createdAt
     updatedAt
     _version
@@ -2191,6 +2203,18 @@ export const onUpdateScheduledTask = /* GraphQL */ `subscription OnUpdateSchedul
       __typename
     }
     disabled
+    pickUpSchedule {
+      relation
+      date
+      time
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      date
+      time
+      __typename
+    }
     createdAt
     updatedAt
     _version
@@ -2335,6 +2359,18 @@ export const onDeleteScheduledTask = /* GraphQL */ `subscription OnDeleteSchedul
       __typename
     }
     disabled
+    pickUpSchedule {
+      relation
+      date
+      time
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      date
+      time
+      __typename
+    }
     createdAt
     updatedAt
     _version

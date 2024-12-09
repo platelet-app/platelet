@@ -567,6 +567,8 @@ type EagerScheduledTask = {
   readonly priority?: Priority | keyof typeof Priority | null;
   readonly deliverables?: (Deliverable | null)[] | null;
   readonly disabled?: number | null;
+  readonly pickUpSchedule?: Schedule | null;
+  readonly dropOffSchedule?: Schedule | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -583,6 +585,8 @@ type LazyScheduledTask = {
   readonly priority?: Priority | keyof typeof Priority | null;
   readonly deliverables: AsyncCollection<Deliverable>;
   readonly disabled?: number | null;
+  readonly pickUpSchedule?: Schedule | null;
+  readonly dropOffSchedule?: Schedule | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
