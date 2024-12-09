@@ -1,14 +1,7 @@
 import LocationDetailAndSelector from "./LocationDetailAndSelector";
 import { GraphQLQuery } from "@aws-amplify/api";
 import React, { useEffect, useRef, useState } from "react";
-import {
-    Box,
-    Divider,
-    Paper,
-    Skeleton,
-    Stack,
-    Typography,
-} from "@mui/material";
+import { Paper, Skeleton, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
@@ -663,9 +656,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                                 />
                             )}
                         </Stack>
-                        <Divider />
                         {contents}
-                        <Divider />
                         <TaskScheduleDetails
                             onClear={handleClearSchedule}
                             onChange={handleEditSchedule}

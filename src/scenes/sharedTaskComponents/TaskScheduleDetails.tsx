@@ -8,61 +8,16 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import ScheduleIcon from "@mui/icons-material/Schedule";
 import EditIcon from "@mui/icons-material/Edit";
-import humanReadableScheduleString from "../../utilities/humanReadableScheduleString";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import ClearIcon from "@mui/icons-material/Clear";
 import TimeRelationPicker from "./TimeRelationPicker";
 import { DatePicker } from "@mui/lab";
+import TaskScheduleIconText from "./TaskScheduleIconText";
 
 const isValidTime = (time: string) => {
     const [hours, minutes] = time.split(":").map((value) => parseInt(value));
     return hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60;
-};
-
-const isDueInOneHour = (schedule?: models.Schedule | null) => {
-    if (
-        [models.TimeRelation.ANYTIME, models.TimeRelation.AFTER].includes(
-            schedule?.relation as models.TimeRelation
-        )
-    ) {
-        return false;
-    }
-    if (!schedule) {
-        return false;
-    }
-    const now = new Date();
-    const scheduleDate = new Date(schedule?.date ?? "");
-    scheduleDate.setUTCHours(parseInt(schedule.time?.split(":")[0] ?? "0"));
-    scheduleDate.setUTCMinutes(parseInt(schedule.time?.split(":")[1] ?? "0"));
-    scheduleDate.setUTCHours(scheduleDate.getUTCHours() - 1);
-
-    if (scheduleDate < now) {
-        return true;
-    }
-    return false;
-};
-
-const isOverDue = (schedule?: models.Schedule | null) => {
-    if (
-        [models.TimeRelation.ANYTIME, models.TimeRelation.AFTER].includes(
-            schedule?.relation as models.TimeRelation
-        )
-    ) {
-        return false;
-    }
-    if (!schedule) {
-        return false;
-    }
-    const now = new Date();
-    const scheduleDate = new Date(schedule?.date ?? "");
-    scheduleDate.setUTCHours(parseInt(schedule.time?.split(":")[0] ?? "0"));
-    scheduleDate.setUTCMinutes(parseInt(schedule.time?.split(":")[1] ?? "0"));
-    if (scheduleDate < now) {
-        return true;
-    }
-    return false;
 };
 
 type TaskScheduleDetailsProps = {
@@ -149,16 +104,6 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
         });
     };
 
-    let iconColor = "";
-    if (!noWarning) {
-        if (isDueInOneHour(schedule)) {
-            iconColor = "orange";
-        }
-        if (isOverDue(schedule)) {
-            iconColor = "red";
-        }
-    }
-
     return (
         <>
             {schedule && (
@@ -167,18 +112,10 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
                     justifyContent="space-between"
                     spacing={1}
                 >
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                        }}
-                    >
-                        <ScheduleIcon sx={{ color: iconColor }} />
-                        <Typography sx={{ fontWeight: "bold" }}>
-                            {humanReadableScheduleString(schedule)}
-                        </Typography>
-                    </Box>
+                    <TaskScheduleIconText
+                        schedule={schedule}
+                        showWarning={!noWarning}
+                    />
                     <Box
                         sx={{
                             display: "flex",

@@ -232,6 +232,7 @@ const LocationDetailAndSelector: React.FC<LocationDetailAndSelectorProps> = ({
                                     </LabelItemPair>
                                 )}
                             </Box>
+                            <Divider />
                         </>
                     )}
                 {editMode && (
