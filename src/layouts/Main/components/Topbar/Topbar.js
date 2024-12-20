@@ -174,17 +174,19 @@ const Topbar = ({
             </Link>
           </Grid>
         </Hidden>
-        <Grid item>
-          <Link href={"mailto:info@platelet.app"}>
-            <Typography
-              component={"a"}
-              className={clsx(classes.navLink, "submenu-item")}
-              color="textSecondary"
-            >
-              info@platelet.app
-            </Typography>
-          </Link>
-        </Grid>
+        <Hidden smDown>
+          <Grid item>
+            <Link href={"mailto:info@platelet.app"}>
+              <Typography
+                component={"a"}
+                className={clsx(classes.navLink, "submenu-item")}
+                color="textSecondary"
+              >
+                info@platelet.app
+              </Typography>
+            </Link>
+          </Grid>
+        </Hidden>
       </Grid>
       <div className={classes.flexGrow} />
       <List disablePadding className={classes.navigationContainer}>
@@ -203,7 +205,7 @@ const Topbar = ({
             <Icon
               size={"small"}
               fontIconClass={"fa-brands fa-facebook"}
-              fontIconColor={"white"}
+              fontIconColor={themeMode === "dark" ? "white" : "#767676"}
             />
           </IconButton>
         </ListItem>
@@ -216,7 +218,7 @@ const Topbar = ({
             <Icon
               size={"small"}
               fontIconClass={"fa-brands fa-linkedin"}
-              fontIconColor={"white"}
+              fontIconColor={themeMode === "dark" ? "white" : "#767676"}
             />
           </IconButton>
         </ListItem>
