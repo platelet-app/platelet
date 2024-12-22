@@ -1,1 +1,1 @@
-export const DAYS_AGO = 3;
+export const DAYS_AGO = 2;
