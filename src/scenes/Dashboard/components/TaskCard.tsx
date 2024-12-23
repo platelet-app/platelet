@@ -55,6 +55,7 @@ const useStyles = makeStyles()((theme) => {
         REJECTED: generateClass(theme, "REJECTED"),
         ABANDONED: generateClass(theme, "ABANDONED"),
         PENDING: generateClass(theme, "PENDING"),
+        FUTURE: generateClass(theme, "FUTURE"),
         divider: { width: "0%", margin: 4 },
         typography: { fontSize: "14px" },
         badgeCircle: {
