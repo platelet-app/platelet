@@ -19,8 +19,8 @@ import {
     guidedSetupOpenSelector,
     selectedItemsSelector,
 } from "../../redux/Selectors";
-import { tasksStatus, userRoles } from "../../apiConsts";
 import { clearDashboardFilter } from "../../redux/dashboardFilter/DashboardFilterActions";
+import * as models from "../../models";
 import { Divider, Fab, Hidden, Stack } from "@mui/material";
 import ActiveRidersChips from "./components/ActiveRidersChips";
 import GuidedSetupDrawer from "./components/GuidedSetupDrawer";
@@ -81,47 +81,48 @@ function Dashboard() {
             if (
                 whoami.roles.includes(savedRoleMode) ||
                 (savedRoleMode === "ALL" &&
-                    whoami.roles.includes(userRoles.coordinator))
+                    whoami.roles.includes(models.Role.COORDINATOR))
             ) {
                 dispatch(setRoleView(savedRoleMode));
-            } else if (whoami.roles.includes(userRoles.coordinator)) {
-                dispatch(setRoleView(userRoles.coordinator));
-                saveDashboardRoleMode(userRoles.coordinator);
-            } else if (whoami.roles.includes(userRoles.rider)) {
-                dispatch(setRoleView(userRoles.rider));
+            } else if (whoami.roles.includes(models.Role.COORDINATOR)) {
+                dispatch(setRoleView(models.Role.COORDINATOR));
+                saveDashboardRoleMode(models.Role.COORDINATOR);
+            } else if (whoami.roles.includes(models.Role.RIDER)) {
+                dispatch(setRoleView(models.Role.RIDER));
                 dispatch(setDashboardFilteredUser(null));
-                saveDashboardRoleMode(userRoles.rider);
+                saveDashboardRoleMode(models.Role.RIDER);
             }
         }
     }, [dispatch, whoami.id, whoami.roles]);
     useEffect(setInitialRoleView, [whoami, setInitialRoleView]);
 
     let excludeColumnList = [
-        roleView === userRoles.rider ? tasksStatus.new : "",
-        tasksStatus.completed,
-        tasksStatus.cancelled,
-        tasksStatus.abandoned,
-        tasksStatus.rejected,
-        tasksStatus.pending,
+        roleView === models.Role.RIDER ? models.TaskStatus.NEW : "",
+        models.TaskStatus.COMPLETED,
+        models.TaskStatus.CANCELLED,
+        models.TaskStatus.ABANDONED,
+        models.TaskStatus.REJECTED,
+        models.TaskStatus.PENDING,
+        models.TaskStatus.FUTURE,
     ];
     if (dashboardTabIndex === 1) {
         excludeColumnList = [
-            tasksStatus.new,
-            tasksStatus.active,
-            tasksStatus.pickedUp,
-            tasksStatus.droppedOff,
-            tasksStatus.pending,
+            models.TaskStatus.NEW,
+            models.TaskStatus.ACTIVE,
+            models.TaskStatus.PICKED_UP,
+            models.TaskStatus.DROPPED_OFF,
+            models.TaskStatus.PENDING,
         ];
     } else if (dashboardTabIndex === 2) {
         excludeColumnList = [
-            tasksStatus.new,
-            tasksStatus.active,
-            tasksStatus.pickedUp,
-            tasksStatus.droppedOff,
-            tasksStatus.completed,
-            tasksStatus.cancelled,
-            tasksStatus.abandoned,
-            tasksStatus.rejected,
+            models.TaskStatus.NEW,
+            models.TaskStatus.ACTIVE,
+            models.TaskStatus.PICKED_UP,
+            models.TaskStatus.DROPPED_OFF,
+            models.TaskStatus.COMPLETED,
+            models.TaskStatus.CANCELLED,
+            models.TaskStatus.ABANDONED,
+            models.TaskStatus.REJECTED,
         ];
     }
 
@@ -137,7 +138,7 @@ function Dashboard() {
             <Hidden mdDown>
                 <Divider />
             </Hidden>
-            {[userRoles.coordinator, "ALL"].includes(roleView) && (
+            {[models.Role.COORDINATOR, "ALL"].includes(roleView) && (
                 <>
                     <ActiveRidersChips />
                     <Divider />
@@ -146,12 +147,12 @@ function Dashboard() {
             <Paper sx={{ marginBottom: 10 }}>
                 <TasksGrid
                     modalView={"edit"}
-                    hideRelayIcons={roleView === userRoles.rider}
+                    hideRelayIcons={roleView === models.Role.RIDER}
                     excludeColumnList={excludeColumnList}
                 />
             </Paper>
             <Hidden smUp>
-                {roleView && roleView === userRoles.rider ? (
+                {roleView && roleView === models.Role.RIDER ? (
                     <></>
                 ) : (
                     <AddClearFab />
