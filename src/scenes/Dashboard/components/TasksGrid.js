@@ -70,6 +70,7 @@ function TasksGrid(props) {
         [models.TaskStatus.ABANDONED],
         [models.TaskStatus.REJECTED],
         [models.TaskStatus.PENDING],
+        [models.TaskStatus.FUTURE],
     ].filter(
         (column) => _.intersection(excludeList, column).length === 0
     ).length;
@@ -92,6 +93,7 @@ function TasksGrid(props) {
                 [models.TaskStatus.ABANDONED],
                 [models.TaskStatus.REJECTED],
                 [models.TaskStatus.PENDING],
+                [models.TaskStatus.FUTURE],
             ]
                 .filter(
                     (column) => _.intersection(excludeList, column).length === 0
