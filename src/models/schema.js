@@ -2374,7 +2374,8 @@ export const schema = {
                 "BEFORE",
                 "AFTER",
                 "AT",
-                "ANYTIME"
+                "ANYTIME",
+                "BETWEEN"
             ]
         },
         "DeliverableTypeIcon": {
@@ -2580,17 +2581,17 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
-                "date": {
-                    "name": "date",
+                "timePrimary": {
+                    "name": "timePrimary",
                     "isArray": false,
-                    "type": "AWSDate",
+                    "type": "AWSDateTime",
                     "isRequired": false,
                     "attributes": []
                 },
-                "time": {
-                    "name": "time",
+                "timeSecondary": {
+                    "name": "timeSecondary",
                     "isArray": false,
-                    "type": "AWSTime",
+                    "type": "AWSDateTime",
                     "isRequired": false,
                     "attributes": []
                 }
@@ -2678,5 +2679,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.4",
-    "version": "8519d73529c2b7c31e9ff468bcffdc40"
+    "version": "d7d2d4025ea065d2c99af6d7845afd5e"
 };

@@ -1332,14 +1332,14 @@ export const onCreateTask = /* GraphQL */ `subscription OnCreateTask($filter: Mo
     archived
     pickUpSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     dropOffSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     updatedAt
@@ -1508,14 +1508,14 @@ export const onUpdateTask = /* GraphQL */ `subscription OnUpdateTask($filter: Mo
     archived
     pickUpSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     dropOffSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     updatedAt
@@ -1684,14 +1684,14 @@ export const onDeleteTask = /* GraphQL */ `subscription OnDeleteTask($filter: Mo
     archived
     pickUpSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     dropOffSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     updatedAt
@@ -2049,14 +2049,14 @@ export const onCreateScheduledTask = /* GraphQL */ `subscription OnCreateSchedul
     disabled
     pickUpSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     dropOffSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     createdAt
@@ -2205,14 +2205,14 @@ export const onUpdateScheduledTask = /* GraphQL */ `subscription OnUpdateSchedul
     disabled
     pickUpSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     dropOffSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     createdAt
@@ -2361,14 +2361,14 @@ export const onDeleteScheduledTask = /* GraphQL */ `subscription OnDeleteSchedul
     disabled
     pickUpSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     dropOffSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     createdAt

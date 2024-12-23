@@ -1368,14 +1368,14 @@ export const createTask = /* GraphQL */ `mutation CreateTask(
     archived
     pickUpSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     dropOffSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     updatedAt
@@ -1547,14 +1547,14 @@ export const updateTask = /* GraphQL */ `mutation UpdateTask(
     archived
     pickUpSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     dropOffSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     updatedAt
@@ -1726,14 +1726,14 @@ export const deleteTask = /* GraphQL */ `mutation DeleteTask(
     archived
     pickUpSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     dropOffSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     updatedAt
@@ -2095,14 +2095,14 @@ export const createScheduledTask = /* GraphQL */ `mutation CreateScheduledTask(
     disabled
     pickUpSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     dropOffSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     createdAt
@@ -2252,14 +2252,14 @@ export const updateScheduledTask = /* GraphQL */ `mutation UpdateScheduledTask(
     disabled
     pickUpSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     dropOffSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     createdAt
@@ -2409,14 +2409,14 @@ export const deleteScheduledTask = /* GraphQL */ `mutation DeleteScheduledTask(
     disabled
     pickUpSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     dropOffSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     createdAt

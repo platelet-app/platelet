@@ -165,12 +165,13 @@ enum TimeRelation {
   AFTER
   AT
   ANYTIME
+  BETWEEN
 }
 
 type Schedule {
   relation: TimeRelation
-  date: AWSDate
-  time: AWSTime
+  timePrimary: AWSDateTime
+  timeSecondary: AWSDateTime
 }
 
 

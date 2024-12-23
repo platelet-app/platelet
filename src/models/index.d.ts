@@ -6,7 +6,8 @@ export enum TimeRelation {
   BEFORE = "BEFORE",
   AFTER = "AFTER",
   AT = "AT",
-  ANYTIME = "ANYTIME"
+  ANYTIME = "ANYTIME",
+  BETWEEN = "BETWEEN"
 }
 
 export enum DeliverableTypeIcon {
@@ -113,14 +114,14 @@ export declare const AddressAndContactDetails: (new (init: ModelInit<AddressAndC
 
 type EagerSchedule = {
   readonly relation?: TimeRelation | keyof typeof TimeRelation | null;
-  readonly date?: string | null;
-  readonly time?: string | null;
+  readonly timePrimary?: string | null;
+  readonly timeSecondary?: string | null;
 }
 
 type LazySchedule = {
   readonly relation?: TimeRelation | keyof typeof TimeRelation | null;
-  readonly date?: string | null;
-  readonly time?: string | null;
+  readonly timePrimary?: string | null;
+  readonly timeSecondary?: string | null;
 }
 
 export declare type Schedule = LazyLoading extends LazyLoadingDisabled ? EagerSchedule : LazySchedule

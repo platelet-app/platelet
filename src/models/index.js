@@ -6,7 +6,8 @@ const TimeRelation = {
   "BEFORE": "BEFORE",
   "AFTER": "AFTER",
   "AT": "AT",
-  "ANYTIME": "ANYTIME"
+  "ANYTIME": "ANYTIME",
+  "BETWEEN": "BETWEEN"
 };
 
 const DeliverableTypeIcon = {

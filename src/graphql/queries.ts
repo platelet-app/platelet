@@ -1030,14 +1030,14 @@ export const getTask = /* GraphQL */ `query GetTask($id: ID!) {
     archived
     pickUpSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     dropOffSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     updatedAt
@@ -1560,14 +1560,14 @@ export const getScheduledTask = /* GraphQL */ `query GetScheduledTask($id: ID!) 
     disabled
     pickUpSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     dropOffSchedule {
       relation
-      date
-      time
+      timePrimary
+      timeSecondary
       __typename
     }
     createdAt
