@@ -11,7 +11,12 @@ const Splash = () => {
             }}
         >
             <Grow in timeout={1000}>
-                <img width={256} height={256} src="/icon/hires.png" />
+                <img
+                    width={400}
+                    height={200}
+                    alt="platelet dispatch logo"
+                    src="/icon/platelet-logo.png"
+                />
             </Grow>
         </Box>
     );
