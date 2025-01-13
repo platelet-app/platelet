@@ -22,7 +22,10 @@ import {
     NotesAndPriority,
 } from "./index";
 import { Paper, Stack } from "@mui/material";
-import { saveNewTaskToDataStore } from "./saveNewTaskToDataStore";
+import {
+    convertScheduleToTaskData,
+    saveNewTaskToDataStore,
+} from "./saveNewTaskToDataStore";
 import {
     getWhoami,
     guidedSetupOpenSelector,
@@ -32,10 +35,8 @@ import { showHide } from "../../styles/common";
 import _ from "lodash";
 import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
 import { useCordovaBackButton } from "../../hooks/useCordovaBackButton";
-import {
-    Schedule,
-    ScheduledDatePickerOption,
-} from "../sharedTaskComponents/PickUpAndDeliverSchedule";
+import { Schedule } from "../sharedTaskComponents/PickUpAndDeliverSchedule";
+import taskScheduleDueStatus from "../../utilities/taskScheduleDueStatus";
 
 type TabPanelProps = {
     children: React.ReactNode;
@@ -198,6 +199,12 @@ export const GuidedSetup = () => {
     const [discardConfirmationOpen, setDiscardConfirmationOpen] =
         useState(false);
     const whoami = useSelector(getWhoami);
+
+    let isDueInOneDay = false;
+    if (schedule.pickUp) {
+        const convertedSchedule = convertScheduleToTaskData(schedule.pickUp);
+        isDueInOneDay = !taskScheduleDueStatus(convertedSchedule, 0, 1);
+    }
 
     const handleChange = (_: any, newValue: number) => {
         setTabIndex(newValue);
@@ -530,7 +537,7 @@ export const GuidedSetup = () => {
                         variant="contained"
                         autoFocus
                     >
-                        Save to dashboard
+                        {isDueInOneDay ? "Save to future" : "Save to dashboard"}
                     </Button>
                 </Stack>
             </Stack>
