@@ -1,6 +1,6 @@
 const aws = require("aws-sdk");
 
-const PLATELET_DOMAIN_NAME = "platelet.app";
+const PLATELET_DOMAIN_NAME = "dispatch.platelet.app";
 const PLATELET_WELCOME_EMAIL = "noreply@platelet.app";
 
 exports.sendWelcomeEmail = async (emailAddress, recipientName, password) => {
