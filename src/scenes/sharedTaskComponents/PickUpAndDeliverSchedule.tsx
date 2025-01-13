@@ -127,12 +127,24 @@ const PickUpAndDeliverSchedule: React.FC<PickUpAndDeliverScheduleProps> = ({
         if (state?.selectionState === selection) {
             setState(null);
         } else {
+            const currentHour = new Date().getHours();
+            const currentMinute = new Date().getMinutes();
+            let defaultTime = "10:00";
+            if (currentMinute > 30) {
+                const paddedHour = (currentHour + 1)
+                    .toString()
+                    .padStart(2, "0");
+                defaultTime = `${paddedHour}:00`;
+            } else if (currentMinute > 0) {
+                const paddedHour = currentHour.toString().padStart(2, "0");
+                defaultTime = `${paddedHour}:30`;
+            }
             setState((prevState) => ({
                 ...prevState,
                 timeRelation:
                     prevState?.timeRelation || models.TimeRelation.ANYTIME,
                 customDate: prevState?.customDate || new Date(),
-                time: prevState?.time || "10:00",
+                time: prevState?.time || defaultTime,
                 selectionState: selection,
             }));
         }
@@ -158,6 +170,10 @@ const PickUpAndDeliverSchedule: React.FC<PickUpAndDeliverScheduleProps> = ({
     //         )}
     //     </Stack>
     // );
+
+    const showOnlyTodayTimes =
+        state?.selectionState === ScheduledDatePickerOption.TODAY ||
+        state?.customDate?.getDate() === new Date().getDate();
 
     return (
         <>
@@ -209,6 +225,7 @@ const PickUpAndDeliverSchedule: React.FC<PickUpAndDeliverScheduleProps> = ({
                     />
                     {state?.selectionState && (
                         <TimeRelationPicker
+                            showOnlyTodayTimes={showOnlyTodayTimes}
                             time={state?.time ?? ""}
                             relation={
                                 state?.timeRelation ??

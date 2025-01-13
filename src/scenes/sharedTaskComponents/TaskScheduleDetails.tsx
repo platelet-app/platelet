@@ -14,6 +14,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import TimeRelationPicker from "./TimeRelationPicker";
 import { DatePicker } from "@mui/lab";
 import TaskScheduleIconText from "./TaskScheduleIconText";
+import moment from "moment";
 
 const isValidTime = (time: string) => {
     const [hours, minutes] = time.split(":").map((value) => parseInt(value));
@@ -50,17 +51,30 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
     };
 
     const handleSetEditMode = () => {
+        const currentHour = new Date().getHours();
+        const currentMinute = new Date().getMinutes();
+        let defaultTime = "10:00";
+        if (currentMinute > 30) {
+            const paddedHour = (currentHour + 1).toString().padStart(2, "0");
+            defaultTime = `${paddedHour}:00`;
+        } else if (currentMinute > 0) {
+            const paddedHour = currentHour.toString().padStart(2, "0");
+            defaultTime = `${paddedHour}:30`;
+        }
+
         if (schedule) {
             setScheduleState({
-                time: schedule?.time || "10:00",
+                time:
+                    moment(schedule?.timePrimary).format("HH:mm") ||
+                    defaultTime,
                 timeRelation:
                     (schedule?.relation as models.TimeRelation | null) ??
                     models.TimeRelation.ANYTIME,
-                date: new Date(schedule?.date ?? ""),
+                date: new Date(schedule?.timePrimary ?? ""),
             });
         } else {
             setScheduleState({
-                time: "10:00",
+                time: defaultTime,
                 timeRelation: models.TimeRelation.ANYTIME,
                 date: new Date(),
             });
@@ -71,25 +85,12 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
     const handleSaveEdit = () => {
         if (scheduleState) {
             const { time, timeRelation, date } = scheduleState;
+            const timePrimaryDate = new Date(date ?? "");
+            timePrimaryDate.setHours(parseInt(time?.split(":")[0] ?? "0"));
+            timePrimaryDate.setMinutes(parseInt(time?.split(":")[1] ?? "0"));
+            const timePrimary = timePrimaryDate.toISOString();
             let result = {};
-            if (time) {
-                if (timeRelation === models.TimeRelation.ANYTIME) {
-                    result = { ...result, time: null };
-                } else {
-                    const timeDate = new Date();
-                    timeDate.setHours(parseInt(time.split(":")[0]));
-                    timeDate.setMinutes(parseInt(time.split(":")[1]));
-                    const newTime = timeDate.toISOString().split("T")[1];
-                    result = { ...result, time: newTime };
-                }
-            }
-            if (date) {
-                const newDate = date.toISOString().split("T")[0];
-                result = { ...result, date: newDate };
-            }
-            if (timeRelation) {
-                result = { ...result, relation: timeRelation };
-            }
+            result = { ...result, timePrimary, relation: timeRelation };
             onChange(result);
             setEditMode(false);
         }

@@ -12,6 +12,7 @@ type TimeRelationPickerProps = {
     isValid: boolean;
     handleChange: (event: models.TimeRelation) => void;
     handleChangeTime: (time: string) => void;
+    showOnlyTodayTimes?: boolean;
 };
 
 const TimeRelationPicker: React.FC<TimeRelationPickerProps> = ({
@@ -20,8 +21,9 @@ const TimeRelationPicker: React.FC<TimeRelationPickerProps> = ({
     isValid,
     handleChange,
     handleChangeTime,
+    showOnlyTodayTimes = false,
 }) => {
-    const { ANYTIME, BEFORE, AFTER, AT } = models.TimeRelation;
+    const { ANYTIME, BEFORE, AFTER, AT, BETWEEN } = models.TimeRelation;
 
     return (
         <Stack spacing={1} direction="row">
@@ -36,6 +38,7 @@ const TimeRelationPicker: React.FC<TimeRelationPickerProps> = ({
                     <MenuItem value={BEFORE}>{BEFORE}</MenuItem>
                     <MenuItem value={AT}>{AT}</MenuItem>
                     <MenuItem value={AFTER}>{AFTER}</MenuItem>
+                    <MenuItem value={BETWEEN}>{BETWEEN}</MenuItem>
                 </Select>
             </FormControl>
             {relation !== models.TimeRelation.ANYTIME && (
@@ -43,6 +46,7 @@ const TimeRelationPicker: React.FC<TimeRelationPickerProps> = ({
                     isValid={isValid}
                     onChange={handleChangeTime}
                     value={time}
+                    showOnlyTodayTimes={showOnlyTodayTimes}
                 />
             )}
         </Stack>
