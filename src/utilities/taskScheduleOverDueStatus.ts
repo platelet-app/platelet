@@ -12,9 +12,7 @@ const taskScheduleOverDueStatus = (schedule?: models.Schedule | null) => {
         return false;
     }
     const now = new Date();
-    const scheduleDate = new Date(schedule?.date ?? "");
-    scheduleDate.setUTCHours(parseInt(schedule.time?.split(":")[0] ?? "0"));
-    scheduleDate.setUTCMinutes(parseInt(schedule.time?.split(":")[1] ?? "0"));
+    const scheduleDate = new Date(schedule?.timePrimary ?? "");
     if (scheduleDate < now) {
         return true;
     }
