@@ -8,6 +8,7 @@ interface TaskInterface {
     timePickedUp?: string | null;
     timeRiderHome?: string | null;
     timeRejected?: string | null;
+    status?: string | null;
 }
 
 interface Assignee {
@@ -19,6 +20,9 @@ export default async function determineTaskStatus(
     task: TaskInterface,
     riderAssignees: Assignee[] | null = null
 ) {
+    if (task.status && task.status === models.TaskStatus.FUTURE) {
+        return models.TaskStatus.FUTURE;
+    }
     // sort out cancelled and rejected first
     if (!!task.timeCancelled) {
         return !!task.timePickedUp
