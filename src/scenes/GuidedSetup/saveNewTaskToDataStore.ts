@@ -1,4 +1,4 @@
-import { tasksStatus, userRoles } from "../../apiConsts";
+import { userRoles } from "../../apiConsts";
 import store from "../../redux/Store";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models";
@@ -9,8 +9,9 @@ import {
     Schedule,
     ScheduledDatePickerOption,
 } from "../sharedTaskComponents/PickUpAndDeliverSchedule";
+import taskScheduleDueStatus from "../../utilities/taskScheduleDueStatus";
 
-const convertScheduleToTaskData = (
+export const convertScheduleToTaskData = (
     schedule: Schedule | null | undefined
 ): models.Schedule | null => {
     if (!schedule) return null;
@@ -28,16 +29,16 @@ const convertScheduleToTaskData = (
     ) {
         scheduledDate = schedule?.customDate;
     }
-    const date = scheduledDate?.toISOString().split("T")[0] ?? null;
-    const timeDate = new Date();
     const hour = schedule?.time?.split(":")[0];
     const minute = schedule?.time?.split(":")[1];
-    timeDate.setHours(parseInt(hour ?? "0"));
-    timeDate.setMinutes(parseInt(minute ?? "0"));
+    if (scheduledDate) {
+        scheduledDate.setHours(parseInt(hour ?? "0"));
+        scheduledDate.setMinutes(parseInt(minute ?? "0"));
+    }
+    const date = scheduledDate?.toISOString() ?? null;
     return new models.Schedule({
-        date,
+        timePrimary: date,
         relation: schedule?.timeRelation ?? null,
-        time: schedule?.time ? timeDate.toISOString().split("T")[1] : null,
     });
 };
 
@@ -95,6 +96,10 @@ export async function saveNewTaskToDataStore(
     const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     const pickUpSchedule = convertScheduleToTaskData(data.schedule?.pickUp);
     const dropOffSchedule = convertScheduleToTaskData(data.schedule?.dropOff);
+    let taskDueStatus = true;
+    if (pickUpSchedule) {
+        taskDueStatus = taskScheduleDueStatus(pickUpSchedule, 0, 1);
+    }
     const newTask = await DataStore.save(
         new models.Task({
             ...rest,
@@ -104,7 +109,9 @@ export async function saveNewTaskToDataStore(
             createdBy: author,
             dropOffLocation,
             dropOffSchedule,
-            status: tasksStatus.new,
+            status: taskDueStatus
+                ? models.TaskStatus.NEW
+                : models.TaskStatus.FUTURE,
             tenantId,
             dateCreated: today.toISOString().split("T")[0],
         })
