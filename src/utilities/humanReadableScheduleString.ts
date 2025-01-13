@@ -4,8 +4,8 @@ import * as models from "../models";
 const humanReadableScheduleString = (schedule: models.Schedule) => {
     let result = "";
     if (!schedule) return "";
-    if (schedule.date) {
-        const date = new Date(schedule.date).toISOString().split("T")[0];
+    if (schedule.timePrimary) {
+        const date = new Date(schedule.timePrimary).toISOString().split("T")[0];
         result += moment(date).calendar(null, {
             lastDay: "[Yesterday]",
             sameDay: "[Today]",
@@ -25,15 +25,32 @@ const humanReadableScheduleString = (schedule: models.Schedule) => {
         case models.TimeRelation.AFTER:
             result += " after";
             break;
+        case models.TimeRelation.BETWEEN:
+            result += " between";
+            break;
         case models.TimeRelation.AT:
             result += " at";
             break;
     }
-    if (schedule.time && schedule.relation !== models.TimeRelation.ANYTIME) {
-        const time = new Date();
-        time.setHours(parseInt(schedule.time.split(":")[0]));
-        time.setMinutes(parseInt(schedule.time.split(":")[1]));
-        result += ` ${moment(time).format("HH:mm")}`;
+    if (
+        schedule.timePrimary &&
+        schedule.relation !== models.TimeRelation.ANYTIME
+    ) {
+        result += ` ${moment(schedule.timePrimary).format("HH:mm")}`;
+    }
+    if (
+        schedule.timeSecondary &&
+        schedule.timePrimary &&
+        schedule.relation === models.TimeRelation.BETWEEN
+    ) {
+        if (
+            new Date(schedule.timeSecondary).getDate() !==
+            new Date(schedule.timePrimary).getDate()
+        ) {
+            result += ` ${moment(schedule.timeSecondary).format("L")} `;
+        } else {
+            result += ` and ${moment(schedule.timeSecondary).format("HH:mm")}`;
+        }
     }
     return result;
 };
