@@ -200,6 +200,19 @@ const Topbar = ({
           <IconButton
             component="a"
             target="_blank"
+            href="https://github.com/platelet-app"
+          >
+            <Icon
+              size={"small"}
+              fontIconClass={"fa-brands fa-github"}
+              fontIconColor={themeMode === "dark" ? "white" : "#767676"}
+            />
+          </IconButton>
+        </ListItem>
+        <ListItem className={clsx(classes.listItem, "menu-item--no-dropdown")}>
+          <IconButton
+            component="a"
+            target="_blank"
             href="https://www.facebook.com/profile.php?id=61565880591401"
           >
             <Icon
