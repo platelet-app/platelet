@@ -15,6 +15,8 @@ import TimeRelationPicker from "./TimeRelationPicker";
 import { DatePicker } from "@mui/lab";
 import TaskScheduleIconText from "./TaskScheduleIconText";
 import moment from "moment";
+import { convertScheduleToTaskData } from "../GuidedSetup/saveNewTaskToDataStore";
+import { Schedule } from "./PickUpAndDeliverSchedule";
 
 const isValidTime = (time: string) => {
     const [hours, minutes] = time.split(":").map((value) => parseInt(value));
@@ -28,12 +30,6 @@ type TaskScheduleDetailsProps = {
     noWarning?: boolean;
 };
 
-type TaskScheduleDetailsState = {
-    time?: string | null;
-    timeRelation?: models.TimeRelation | null;
-    date?: Date | null;
-};
-
 const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
     schedule,
     onClear,
@@ -42,8 +38,9 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
 }) => {
     const [confirmClear, setConfirmClear] = React.useState(false);
     const [editMode, setEditMode] = React.useState(false);
-    const [scheduleState, setScheduleState] =
-        React.useState<TaskScheduleDetailsState | null>(null);
+    const [scheduleState, setScheduleState] = React.useState<Schedule | null>(
+        null
+    );
 
     const handleClear = () => {
         onClear();
@@ -54,12 +51,19 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
         const currentHour = new Date().getHours();
         const currentMinute = new Date().getMinutes();
         let defaultTime = "10:00";
+        let defaultSecondTime = "10:30";
         if (currentMinute > 30) {
             const paddedHour = (currentHour + 1).toString().padStart(2, "0");
             defaultTime = `${paddedHour}:00`;
+            defaultSecondTime = `${paddedHour}:30`;
         } else if (currentMinute > 0) {
             const paddedHour = currentHour.toString().padStart(2, "0");
+            const secondPaddedHour = new Date(new Date().getTime() + 30 * 60000)
+                .getHours()
+                .toString()
+                .padStart(2, "0");
             defaultTime = `${paddedHour}:30`;
+            defaultSecondTime = `${secondPaddedHour}:00`;
         }
 
         if (schedule) {
@@ -67,16 +71,20 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
                 time:
                     moment(schedule?.timePrimary).format("HH:mm") ||
                     defaultTime,
+                timeSecond:
+                    moment(schedule?.timeSecondary).format("HH:mm") ||
+                    defaultSecondTime,
                 timeRelation:
                     (schedule?.relation as models.TimeRelation | null) ??
                     models.TimeRelation.ANYTIME,
-                date: new Date(schedule?.timePrimary ?? ""),
+                customDate: new Date(schedule?.timePrimary ?? ""),
             });
         } else {
             setScheduleState({
                 time: defaultTime,
+                timeSecond: defaultSecondTime,
                 timeRelation: models.TimeRelation.ANYTIME,
-                date: new Date(),
+                customDate: new Date(),
             });
         }
         setEditMode(true);
@@ -84,22 +92,20 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
 
     const handleSaveEdit = () => {
         if (scheduleState) {
-            const { time, timeRelation, date } = scheduleState;
-            const timePrimaryDate = new Date(date ?? "");
-            timePrimaryDate.setHours(parseInt(time?.split(":")[0] ?? "0"));
-            timePrimaryDate.setMinutes(parseInt(time?.split(":")[1] ?? "0"));
-            const timePrimary = timePrimaryDate.toISOString();
-            let result = {};
-            result = { ...result, timePrimary, relation: timeRelation };
-            onChange(result);
-            setEditMode(false);
+            console.log("scheduleState", scheduleState);
+            const schedule = convertScheduleToTaskData(scheduleState);
+            console.log("schedule", schedule);
+            if (schedule) {
+                onChange(schedule);
+                setEditMode(false);
+            }
         }
     };
 
-    const handleChangeDate = (date: Date | null) => {
+    const handleChangeDate = (customDate: Date | null) => {
         setScheduleState((prevState) => {
             if (prevState) {
-                return { ...prevState, date };
+                return { ...prevState, customDate };
             }
             return prevState;
         });
@@ -164,22 +170,38 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
                     <DatePicker
                         inputFormat={"dd/MM/yyyy"}
                         disablePast
-                        value={new Date(scheduleState?.date ?? "")}
+                        value={new Date(scheduleState?.customDate ?? "")}
                         onChange={handleChangeDate}
                         renderInput={(params) => <TextField {...params} />}
                     />
-                    {scheduleState?.date && (
+                    {scheduleState?.customDate && (
                         <TimeRelationPicker
-                            time={scheduleState?.time?.substring(0, 5) ?? ""}
+                            timePrimary={
+                                scheduleState?.time?.substring(0, 5) ?? ""
+                            }
+                            timeSecondary={
+                                scheduleState?.timeSecond?.substring(0, 5) ?? ""
+                            }
                             relation={
                                 (scheduleState?.timeRelation as models.TimeRelation) ??
                                 models.TimeRelation.ANYTIME
                             }
                             isValid={isValidTime(scheduleState?.time ?? "")}
+                            isValidSecondary={isValidTime(
+                                scheduleState?.timeSecond ?? ""
+                            )}
                             handleChangeTime={(time: string) =>
                                 setScheduleState((prevState) => {
                                     if (prevState) {
                                         return { ...prevState, time };
+                                    }
+                                    return prevState;
+                                })
+                            }
+                            handleChangeSecondaryTime={(timeSecond: string) =>
+                                setScheduleState((prevState) => {
+                                    if (prevState) {
+                                        return { ...prevState, timeSecond };
                                     }
                                     return prevState;
                                 })

@@ -1,29 +1,47 @@
 import React from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+import { styled } from "@mui/styles";
 
 type TimePickerBasicProps = {
     value: string;
     onChange: (value: string) => void;
     isValid: boolean;
     showOnlyTodayTimes?: boolean;
-    startDate?: Date;
+    startValue?: string;
+    showPlusOneDay?: boolean;
 };
+
+const CustomTextField = styled(TextField)({
+    "& .MuiFormHelperText-root": {
+        position: "absolute",
+        top: "100%",
+    },
+});
 
 const TimePickerBasic: React.FC<TimePickerBasicProps> = ({
     value,
     onChange,
     isValid,
     showOnlyTodayTimes = false,
-    startDate,
+    startValue,
+    showPlusOneDay = false,
 }) => {
-    const timeOptions = generateTimeOptions(startDate, showOnlyTodayTimes);
+    console.log("TimePickerBasic", showOnlyTodayTimes);
+    const timeOptions = generateTimeOptions(startValue, showOnlyTodayTimes);
 
     const handleInputChange = (_: any, newInputValue: string) => {
         // Regular expression to allow only numbers and colons, with a maximum length of 5
         const validInput = newInputValue.replace(/[^0-9:]/g, "").slice(0, 5);
         onChange(validInput);
     };
+
+    let helperText = "";
+    if (showPlusOneDay) {
+        helperText = "+1 day";
+    } else if (!isValid) {
+        helperText = "Invalid time";
+    }
 
     return (
         <Autocomplete
@@ -41,22 +59,34 @@ const TimePickerBasic: React.FC<TimePickerBasicProps> = ({
                 }
             }}
             renderInput={(params) => (
-                <TextField
+                <CustomTextField
                     {...params}
-                    helperText={!isValid ? "Invalid time" : ""}
+                    helperText={helperText}
                     error={!isValid}
                     label="Time"
                     variant="outlined"
+                    sx={{
+                        helperText: {
+                            "& .MuiFormHelperText-root": {
+                                height: "0",
+                                marginTop: "0",
+                            },
+                        },
+                    }}
                 />
             )}
         />
     );
 };
 
-function generateTimeOptions(startTime?: Date, onlyToday?: boolean) {
+function generateTimeOptions(startTime?: string, onlyToday?: boolean) {
     const options = [];
     let currentHour = 0;
-    if (startTime) currentHour = new Date(startTime).getHours();
+    if (startTime) {
+        currentHour = parseInt(startTime.split(":")[0]);
+    } else if (onlyToday) {
+        currentHour = new Date().getHours();
+    }
     for (let hour = currentHour; hour < 24; hour++) {
         for (let minute = 0; minute < 60; minute += 30) {
             const timeString = `${hour.toString().padStart(2, "0")}:${minute
@@ -66,7 +96,7 @@ function generateTimeOptions(startTime?: Date, onlyToday?: boolean) {
         }
     }
     if (onlyToday) return options;
-    for (let hour = 0; hour < 24 - currentHour; hour++) {
+    for (let hour = 0; hour < 24 - (24 - currentHour); hour++) {
         for (let minute = 0; minute < 60; minute += 30) {
             const timeString = `${hour.toString().padStart(2, "0")}:${minute
                 .toString()
@@ -74,6 +104,7 @@ function generateTimeOptions(startTime?: Date, onlyToday?: boolean) {
             options.push(timeString);
         }
     }
+    console.log("options", options);
     return options;
 }
 

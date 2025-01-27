@@ -3,30 +3,42 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import * as models from "../../models";
-import { Stack } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import TimePickerBasic from "./TimePickerBasic";
+import { calculateBetweenIsOneDay } from "../../utilities/calculateBetweenIsOneDay";
 
 type TimeRelationPickerProps = {
     relation: models.TimeRelation;
-    time: string;
+    timePrimary: string;
+    timeSecondary?: string;
     isValid: boolean;
+    isValidSecondary: boolean;
     handleChange: (event: models.TimeRelation) => void;
     handleChangeTime: (time: string) => void;
+    handleChangeSecondaryTime: (time: string) => void;
     showOnlyTodayTimes?: boolean;
 };
 
 const TimeRelationPicker: React.FC<TimeRelationPickerProps> = ({
     relation,
-    time,
+    timePrimary,
+    timeSecondary,
     isValid,
+    isValidSecondary,
     handleChange,
     handleChangeTime,
+    handleChangeSecondaryTime,
     showOnlyTodayTimes = false,
 }) => {
     const { ANYTIME, BEFORE, AFTER, AT, BETWEEN } = models.TimeRelation;
 
+    const betweenIsNextDay = calculateBetweenIsOneDay(
+        timePrimary,
+        timeSecondary
+    );
+
     return (
-        <Stack spacing={1} direction="row">
+        <Stack spacing={1} direction="row" alignItems="center">
             <FormControl fullWidth>
                 <Select
                     value={relation}
@@ -45,8 +57,20 @@ const TimeRelationPicker: React.FC<TimeRelationPickerProps> = ({
                 <TimePickerBasic
                     isValid={isValid}
                     onChange={handleChangeTime}
-                    value={time}
+                    value={timePrimary}
                     showOnlyTodayTimes={showOnlyTodayTimes}
+                />
+            )}
+            {relation === models.TimeRelation.BETWEEN && (
+                <Typography>-</Typography>
+            )}
+            {relation === models.TimeRelation.BETWEEN && timeSecondary && (
+                <TimePickerBasic
+                    isValid={isValidSecondary}
+                    showPlusOneDay={betweenIsNextDay}
+                    onChange={handleChangeSecondaryTime}
+                    value={timeSecondary}
+                    startValue={timePrimary}
                 />
             )}
         </Stack>
