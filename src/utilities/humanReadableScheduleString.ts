@@ -1,19 +1,23 @@
 import moment from "moment";
 import * as models from "../models";
 
+const getDayString = (date: Date | string) => {
+    return moment(date).calendar(null, {
+        lastDay: "[Yesterday]",
+        sameDay: "[Today]",
+        nextDay: "[Tomorrow]",
+        lastWeek: "[last] dddd",
+        nextWeek: "dddd",
+        sameElse: "L",
+    });
+};
+
 const humanReadableScheduleString = (schedule: models.Schedule) => {
     let result = "";
     if (!schedule) return "";
     if (schedule.timePrimary) {
         const date = new Date(schedule.timePrimary).toISOString().split("T")[0];
-        result += moment(date).calendar(null, {
-            lastDay: "[Yesterday]",
-            sameDay: "[Today]",
-            nextDay: "[Tomorrow]",
-            lastWeek: "[last] dddd",
-            nextWeek: "dddd",
-            sameElse: "L",
-        });
+        result += getDayString(date);
     }
     switch (schedule.relation) {
         case models.TimeRelation.ANYTIME:
@@ -47,7 +51,19 @@ const humanReadableScheduleString = (schedule: models.Schedule) => {
             new Date(schedule.timeSecondary).getDate() !==
             new Date(schedule.timePrimary).getDate()
         ) {
-            result += ` ${moment(schedule.timeSecondary).format("L")} `;
+            let timeSecondaryDayString = getDayString(schedule.timeSecondary);
+            if (
+                ["Today", "Tomorrow", "Yesterday"].includes(
+                    timeSecondaryDayString
+                )
+            ) {
+                timeSecondaryDayString = timeSecondaryDayString.toLowerCase();
+            }
+
+            const secondaryTimeString = moment(schedule.timeSecondary).format(
+                "HH:mm"
+            );
+            result += ` and ${timeSecondaryDayString} at ${secondaryTimeString}`;
         } else {
             result += ` and ${moment(schedule.timeSecondary).format("HH:mm")}`;
         }
