@@ -10,12 +10,14 @@ import {
     ScheduledDatePickerOption,
 } from "../sharedTaskComponents/PickUpAndDeliverSchedule";
 import taskScheduleDueStatus from "../../utilities/taskScheduleDueStatus";
+import { calculateBetweenIsOneDay } from "../../utilities/calculateBetweenIsOneDay";
 
 export const convertScheduleToTaskData = (
     schedule: Schedule | null | undefined
 ): models.Schedule | null => {
     if (!schedule) return null;
     let scheduledDate: Date | null = null;
+    let scheduledDateSecond: Date | null = null;
     if (schedule?.selectionState === ScheduledDatePickerOption.TODAY) {
         scheduledDate = new Date();
     } else if (
@@ -23,10 +25,7 @@ export const convertScheduleToTaskData = (
     ) {
         scheduledDate = new Date();
         scheduledDate.setDate(scheduledDate.getDate() + 1);
-    } else if (
-        schedule?.selectionState === ScheduledDatePickerOption.CUSTOM &&
-        schedule?.customDate
-    ) {
+    } else if (schedule?.customDate) {
         scheduledDate = schedule?.customDate;
     }
     const hour = schedule?.time?.split(":")[0];
@@ -36,8 +35,30 @@ export const convertScheduleToTaskData = (
         scheduledDate.setMinutes(parseInt(minute ?? "0"));
     }
     const date = scheduledDate?.toISOString() ?? null;
+    let dateSecond: string | null = null;
+    if (
+        schedule.timeRelation === models.TimeRelation.BETWEEN &&
+        schedule.timeSecond
+    ) {
+        const hourSecond = schedule?.timeSecond?.split(":")[0];
+        const minuteSecond = schedule?.timeSecond?.split(":")[1];
+        if (scheduledDate) {
+            scheduledDateSecond = new Date(scheduledDate);
+        } else {
+            scheduledDateSecond = new Date();
+        }
+        if (scheduledDateSecond) {
+            scheduledDateSecond.setHours(parseInt(hourSecond ?? "0"));
+            scheduledDateSecond.setMinutes(parseInt(minuteSecond ?? "0"));
+        }
+        if (calculateBetweenIsOneDay(schedule.time, schedule.timeSecond)) {
+            scheduledDateSecond.setDate(scheduledDateSecond.getDate() + 1);
+        }
+        dateSecond = scheduledDateSecond?.toISOString() ?? null;
+    }
     return new models.Schedule({
         timePrimary: date,
+        timeSecondary: dateSecond,
         relation: schedule?.timeRelation ?? null,
     });
 };
