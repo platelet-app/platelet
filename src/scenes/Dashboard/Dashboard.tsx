@@ -112,6 +112,7 @@ function Dashboard() {
             models.TaskStatus.PICKED_UP,
             models.TaskStatus.DROPPED_OFF,
             models.TaskStatus.PENDING,
+            models.TaskStatus.FUTURE,
         ];
     } else if (dashboardTabIndex === 2) {
         excludeColumnList = [
