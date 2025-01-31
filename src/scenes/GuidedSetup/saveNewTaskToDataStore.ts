@@ -159,16 +159,18 @@ export async function saveNewTaskToDataStore(
         });
     }
 
-    DataStore.save(
-        new models.TaskAssignee({
-            task: newTask,
-            assignee: author,
-            role: userRoles.coordinator,
-            tenantId,
-        })
-    ).then((assignment) => {
-        store.dispatch(assigneeActions.addTaskAssignee(assignment));
-    });
+    if (newTask.status !== models.TaskStatus.FUTURE) {
+        DataStore.save(
+            new models.TaskAssignee({
+                task: newTask,
+                assignee: author,
+                role: userRoles.coordinator,
+                tenantId,
+            })
+        ).then((assignment) => {
+            store.dispatch(assigneeActions.addTaskAssignee(assignment));
+        });
+    }
 
     if (comment && comment.body) {
         DataStore.save(
