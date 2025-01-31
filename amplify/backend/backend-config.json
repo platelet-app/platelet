@@ -678,6 +678,22 @@
         }
       ]
     },
+    "AMPLIFY_function_plateletMoveFutureTasksToPending_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletMoveFutureTasksToPending"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletMoveFutureTasksToPending_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletMoveFutureTasksToPending"
+        }
+      ]
+    },
     "AMPLIFY_function_plateletProfilePictureResolver_deploymentBucketName": {
       "usedBy": [
         {
