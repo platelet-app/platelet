@@ -92,9 +92,7 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
 
     const handleSaveEdit = () => {
         if (scheduleState) {
-            console.log("scheduleState", scheduleState);
             const schedule = convertScheduleToTaskData(scheduleState);
-            console.log("schedule", schedule);
             if (schedule) {
                 onChange(schedule);
                 setEditMode(false);
@@ -185,6 +183,10 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
                             relation={
                                 (scheduleState?.timeRelation as models.TimeRelation) ??
                                 models.TimeRelation.ANYTIME
+                            }
+                            showOnlyTodayTimes={
+                                new Date(scheduleState.customDate).getDate() ===
+                                new Date().getDate()
                             }
                             isValid={isValidTime(scheduleState?.time ?? "")}
                             isValidSecondary={isValidTime(
