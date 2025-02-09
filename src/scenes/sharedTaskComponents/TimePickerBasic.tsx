@@ -6,10 +6,11 @@ import { styled } from "@mui/styles";
 type TimePickerBasicProps = {
     value: string;
     onChange: (value: string) => void;
-    isValid: boolean;
+    isValid?: boolean;
     showOnlyTodayTimes?: boolean;
     startValue?: string;
     showPlusOneDay?: boolean;
+    label?: string;
 };
 
 const CustomTextField = styled(TextField)({
@@ -26,8 +27,8 @@ const TimePickerBasic: React.FC<TimePickerBasicProps> = ({
     showOnlyTodayTimes = false,
     startValue,
     showPlusOneDay = false,
+    label = "Time",
 }) => {
-    console.log("TimePickerBasic", showOnlyTodayTimes);
     const timeOptions = generateTimeOptions(startValue, showOnlyTodayTimes);
 
     const handleInputChange = (_: any, newInputValue: string) => {
@@ -63,7 +64,7 @@ const TimePickerBasic: React.FC<TimePickerBasicProps> = ({
                     {...params}
                     helperText={helperText}
                     error={!isValid}
-                    label="Time"
+                    label={label}
                     variant="outlined"
                     sx={{
                         helperText: {

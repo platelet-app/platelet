@@ -5,8 +5,8 @@
  */
 
 export const calculateBetweenIsOneDay = (
-    timePrimary?: string,
-    timeSecondary?: string
+    timePrimary?: string | null,
+    timeSecondary?: string | null
 ) => {
     if (!timePrimary || !timeSecondary) {
         return false;

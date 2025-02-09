@@ -12,9 +12,9 @@ const getDayString = (date: Date | string) => {
     });
 };
 
-const humanReadableScheduleString = (schedule: models.Schedule) => {
-    let result = "";
+const humanReadableScheduleString = (schedule: models.Schedule | null) => {
     if (!schedule) return "";
+    let result = "";
     if (schedule.timePrimary) {
         const date = new Date(schedule.timePrimary).toISOString().split("T")[0];
         result += getDayString(date);

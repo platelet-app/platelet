@@ -10,9 +10,9 @@ import { calculateBetweenIsOneDay } from "../../utilities/calculateBetweenIsOneD
 type TimeRelationPickerProps = {
     relation: models.TimeRelation;
     timePrimary: string;
-    timeSecondary?: string;
+    timeSecondary?: string | null;
     isValid: boolean;
-    isValidSecondary: boolean;
+    isValidSecondary?: boolean;
     handleChange: (event: models.TimeRelation) => void;
     handleChangeTime: (time: string) => void;
     handleChangeSecondaryTime: (time: string) => void;
@@ -59,6 +59,7 @@ const TimeRelationPicker: React.FC<TimeRelationPickerProps> = ({
                     onChange={handleChangeTime}
                     value={timePrimary}
                     showOnlyTodayTimes={showOnlyTodayTimes}
+                    label="Time"
                 />
             )}
             {relation === models.TimeRelation.BETWEEN && (
@@ -71,6 +72,7 @@ const TimeRelationPicker: React.FC<TimeRelationPickerProps> = ({
                     onChange={handleChangeSecondaryTime}
                     value={timeSecondary}
                     startValue={timePrimary}
+                    label="End time"
                 />
             )}
         </Stack>
