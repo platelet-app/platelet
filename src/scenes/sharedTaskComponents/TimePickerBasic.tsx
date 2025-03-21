@@ -66,14 +66,6 @@ const TimePickerBasic: React.FC<TimePickerBasicProps> = ({
                     error={!isValid}
                     label={label}
                     variant="outlined"
-                    sx={{
-                        helperText: {
-                            "& .MuiFormHelperText-root": {
-                                height: "0",
-                                marginTop: "0",
-                            },
-                        },
-                    }}
                 />
             )}
         />
@@ -105,7 +97,6 @@ function generateTimeOptions(startTime?: string, onlyToday?: boolean) {
             options.push(timeString);
         }
     }
-    console.log("options", options);
     return options;
 }
 

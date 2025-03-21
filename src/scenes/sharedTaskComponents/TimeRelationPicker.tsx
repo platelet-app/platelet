@@ -65,16 +65,17 @@ const TimeRelationPicker: React.FC<TimeRelationPickerProps> = ({
             {relation === models.TimeRelation.BETWEEN && (
                 <Typography>-</Typography>
             )}
-            {relation === models.TimeRelation.BETWEEN && timeSecondary && (
-                <TimePickerBasic
-                    isValid={isValidSecondary}
-                    showPlusOneDay={betweenIsNextDay}
-                    onChange={handleChangeSecondaryTime}
-                    value={timeSecondary}
-                    startValue={timePrimary}
-                    label="End time"
-                />
-            )}
+            {relation === models.TimeRelation.BETWEEN &&
+                timeSecondary != null && (
+                    <TimePickerBasic
+                        isValid={isValidSecondary}
+                        showPlusOneDay={betweenIsNextDay}
+                        onChange={handleChangeSecondaryTime}
+                        value={timeSecondary}
+                        startValue={timePrimary}
+                        label="End time"
+                    />
+                )}
         </Stack>
     );
 };
