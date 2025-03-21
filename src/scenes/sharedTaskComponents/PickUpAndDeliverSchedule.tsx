@@ -186,9 +186,12 @@ const PickUpAndDeliverSchedule: React.FC<PickUpAndDeliverScheduleProps> = ({
         }
     };
 
-    const showOnlyTodayTimes =
+    let showOnlyTodayTimes =
         state?.selectionState === ScheduledDatePickerOption.TODAY ||
-        state?.customDate?.getDate() === new Date().getDate();
+        state?.selectionState !== ScheduledDatePickerOption.TOMORROW;
+    if (state?.selectionState === ScheduledDatePickerOption.CUSTOM)
+        showOnlyTodayTimes =
+            state?.customDate?.getDate() === new Date().getDate();
 
     return (
         <>
