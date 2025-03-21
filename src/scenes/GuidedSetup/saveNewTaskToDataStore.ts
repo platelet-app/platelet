@@ -84,6 +84,7 @@ export async function saveNewTaskToDataStore(
     authorId: string,
     rider = null
 ) {
+    debugger;
     if (!tenantId) {
         throw new Error("tenantId is required");
     }
@@ -94,8 +95,14 @@ export async function saveNewTaskToDataStore(
     if (!author) {
         throw new Error("Author not found");
     }
-    let { locations, deliverables, comment, establishmentLocation, ...rest } =
-        data;
+    let {
+        locations,
+        deliverables,
+        comment,
+        establishmentLocation,
+        schedule,
+        ...rest
+    } = data;
     // I don't know why id is defined on establishmentLocation but not on other locations
     if (establishmentLocation && establishmentLocation.listed === 0) {
         establishmentLocation = await DataStore.save(establishmentLocation);
@@ -115,8 +122,8 @@ export async function saveNewTaskToDataStore(
     // get the date today without time
     const date = new Date();
     const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    const pickUpSchedule = convertScheduleToTaskData(data.schedule?.pickUp);
-    const dropOffSchedule = convertScheduleToTaskData(data.schedule?.dropOff);
+    const pickUpSchedule = convertScheduleToTaskData(schedule?.pickUp);
+    const dropOffSchedule = convertScheduleToTaskData(schedule?.dropOff);
     let taskDueStatus = true;
     if (pickUpSchedule) {
         taskDueStatus = taskScheduleDueStatus(pickUpSchedule, 0, 1);
