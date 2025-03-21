@@ -31,8 +31,7 @@ describe("taskScheduleDueStatus", () => {
     test("return true if due in the next hour", () => {
         const schedule = new models.Schedule({
             relation: models.TimeRelation.BEFORE,
-            date: "2021-01-01",
-            time: "12:59:58.987Z",
+            timePrimary: "2021-01-01T12:59:58.987Z",
         });
         const result = taskScheduleDueStatus(schedule, 1);
         expect(result).toEqual(true);

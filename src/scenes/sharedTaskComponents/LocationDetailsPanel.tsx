@@ -595,7 +595,12 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     let contents = null;
     if (isFetching) {
         contents = (
-            <Skeleton variant={"rectangular"} width={"100%"} height={130} />
+            <Skeleton
+                data-testid="location-details-panel-skeleton"
+                variant={"rectangular"}
+                width={"100%"}
+                height={130}
+            />
         );
     } else if (hasFullPermissions || state) {
         contents = (

@@ -1,3 +1,4 @@
+import * as React from "react";
 import * as models from "../../../models";
 import { DataStore } from "aws-amplify";
 import ScheduledTaskOverview from "./ScheduledTaskOverview";
@@ -119,6 +120,39 @@ describe("ScheduledTaskOverview", () => {
                 screen.queryByTestId("scheduled-task-overview-skeleton")
             ).toBeNull();
         });
-        expect(screen.queryByRole("button")).toBeNull();
+        expect(screen.queryByRole("button", { name: "Edit" })).toBeNull();
+    });
+    test("show edit icons if an admin", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                displayName: "name",
+                roles: [models.Role.USER, models.Role.ADMIN],
+                username: "username",
+                cognitoId: "cognitoId",
+            })
+        );
+        const scheduledTask = await DataStore.save(
+            new models.ScheduledTask({
+                tenantId,
+                cronExpression: "0 18 * * *",
+                disabled: 0,
+            })
+        );
+        const preloadedState = {
+            tenantId,
+            whoami: { user: whoami },
+        };
+        render(<ScheduledTaskOverview scheduledTaskId={scheduledTask.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId("scheduled-task-overview-skeleton")
+            ).toBeNull();
+        });
+        expect(
+            screen.getByRole("button", { name: "Edit" })
+        ).toBeInTheDocument();
     });
 });

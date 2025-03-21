@@ -24,8 +24,7 @@ describe("taskScheduleOverDueStatus", () => {
     it("should return true if overdue", () => {
         const schedule = new models.Schedule({
             relation: models.TimeRelation.BEFORE,
-            date: "2022-01-01",
-            time: "10:00",
+            timePrimary: "2022-01-01T10:00:00.000Z",
         });
         const result = taskScheduleOverDueStatus(schedule);
         expect(result).toEqual(true);
@@ -33,8 +32,7 @@ describe("taskScheduleOverDueStatus", () => {
     it("should return false if not overdue", () => {
         const schedule = new models.Schedule({
             relation: models.TimeRelation.BEFORE,
-            date: "2199-01-01",
-            time: "10:00",
+            timePrimary: "2199-01-01T10:00:00.000Z",
         });
         const result = taskScheduleOverDueStatus(schedule);
         expect(result).toEqual(false);
