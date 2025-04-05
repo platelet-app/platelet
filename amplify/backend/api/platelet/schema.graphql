@@ -294,7 +294,7 @@ type Comment
 @auth(rules: [
   {allow: groups, groups: ["USER"], operations: [read]},
   {allow: owner, operations: [create, read, delete, update]},
-  {allow: groups, groups: ["ADMIN"], operations: [create, read, delete, update]},
+  {allow: groups, groups: ["ADMIN"], operations: [delete, read]},
 ])
 @model {
   id: ID!
@@ -303,13 +303,13 @@ type Comment
     @auth(rules: [
       {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
-      {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
+      {allow: groups, groups: ["ADMIN"], operations: [delete, read]},
     ])
   tenantId: ID! @index(name: "byTenantId")
     @auth(rules: [
       {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
-      {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
+      {allow: groups, groups: ["ADMIN"], operations: [delete, read]},
     ])
   body: String
   author: User @belongsTo
@@ -318,7 +318,7 @@ type Comment
     @auth(rules: [
       {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
-      {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
+      {allow: groups, groups: ["ADMIN"], operations: [delete, read]},
     ])
 }
 

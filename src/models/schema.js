@@ -1908,10 +1908,8 @@ export const schema = {
                                     "ADMIN"
                                 ],
                                 "operations": [
-                                    "create",
-                                    "read",
                                     "delete",
-                                    "update"
+                                    "read"
                                 ]
                             }
                         ]
