@@ -23,6 +23,15 @@ describe("humanReadableScheduleString", () => {
         expect(result).toEqual("Today at 12:00");
     });
 
+    it("shorten the string", () => {
+        const schedule = new models.Schedule({
+            timePrimary: isoDate,
+            relation: models.TimeRelation.AT,
+        });
+        const result = humanReadableScheduleString(schedule, true);
+        expect(result).toEqual("At 12:00");
+    });
+
     it("should describe a schedule tomorrow at anytime", () => {
         const date = new Date(isoDate);
         date.setDate(date.getDate() + 1);
