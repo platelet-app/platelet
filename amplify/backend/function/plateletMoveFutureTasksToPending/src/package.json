@@ -10,5 +10,8 @@
     "scripts": {
         "test": "jest test --watchAll --testTimeout=10000",
         "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand"
+    },
+    "dependencies": {
+        "lodash": "^4.17.21"
     }
 }

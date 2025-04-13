@@ -10,6 +10,7 @@ Amplify Params - DO NOT EDIT */
  */
 const { request, errorCheck } = require("/opt/appSyncRequest");
 const { updateTask } = require("/opt/graphql/mutations");
+const _ = require("lodash");
 
 const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
 
@@ -55,18 +56,45 @@ const getFutureTasks = async () => {
     return items.flat();
 };
 
-exports.handler = async (event) => {
-    console.log(`EVENT: ${JSON.stringify(event)}`);
-    const futureTasks = await getFutureTasks();
-    for (const task of futureTasks) {
-        if (task && task.pickUpSchedule) {
-            if (task.pickUpSchedule.timePrimary) {
-                const pickUpTime = new Date(task.pickUpSchedule.timePrimary);
+const processTask = async (task) => {
+    if (task && task.pickUpSchedule) {
+        if (task.pickUpSchedule.timePrimary) {
+            const pickUpTime = new Date(task.pickUpSchedule.timePrimary);
+            const now = new Date();
+            now.setDate(now.getDate() + 1);
+            if (pickUpTime < now) {
+                console.log(
+                    "Task is due to be picked up within 24 hours, moving to PENDING",
+                    task?.id
+                );
+                const variables = {
+                    input: {
+                        id: task.id,
+                        status: "PENDING",
+                        _version: task._version,
+                    },
+                };
+                const response = await request(
+                    {
+                        query: updateTask,
+                        variables,
+                    },
+                    GRAPHQL_ENDPOINT
+                );
+                const body = await response.json();
+                errorCheck(body);
+                console.log("Response:", body);
+            }
+        }
+    } else if (task && task.dropOffSchedule) {
+        if (task && task.dropOffSchedule) {
+            if (task.dropOffSchedule.timePrimary) {
+                const dropOffTime = new Date(task.dropOffSchedule.timePrimary);
                 const now = new Date();
                 now.setDate(now.getDate() + 1);
-                if (pickUpTime < now) {
+                if (dropOffTime < now) {
                     console.log(
-                        "Task is due to be picked up within 24 hours, moving to PENDING",
+                        "Task is due to be dropped off within 24 hours, moving to PENDING",
                         task?.id
                     );
                     const variables = {
@@ -88,39 +116,15 @@ exports.handler = async (event) => {
                     console.log("Response:", body);
                 }
             }
-        } else if (task && task.dropOffSchedule) {
-            if (task && task.dropOffSchedule) {
-                if (task.dropOffSchedule.timePrimary) {
-                    const dropOffTime = new Date(
-                        task.dropOffSchedule.timePrimary
-                    );
-                    const now = new Date();
-                    now.setDate(now.getDate() + 1);
-                    if (dropOffTime < now) {
-                        console.log(
-                            "Task is due to be dropped off within 24 hours, moving to PENDING",
-                            task?.id
-                        );
-                        const variables = {
-                            input: {
-                                id: task.id,
-                                status: "PENDING",
-                                _version: task._version,
-                            },
-                        };
-                        const response = await request(
-                            {
-                                query: updateTask,
-                                variables,
-                            },
-                            GRAPHQL_ENDPOINT
-                        );
-                        const body = await response.json();
-                        errorCheck(body);
-                        console.log("Response:", body);
-                    }
-                }
-            }
         }
+    }
+};
+
+exports.handler = async (event) => {
+    console.log(`EVENT: ${JSON.stringify(event)}`);
+    const futureTasks = await getFutureTasks();
+    const chunked = _.chunk(futureTasks, 10);
+    for (const chunk of chunked) {
+        await Promise.all(chunk.map((task) => processTask(task)));
     }
 };
