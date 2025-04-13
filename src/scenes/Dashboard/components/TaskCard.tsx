@@ -1,5 +1,4 @@
 import * as models from "../../../models";
-import ScheduleIcon from "@mui/icons-material/Schedule";
 import {
     AvatarGroup,
     Box,
@@ -17,7 +16,6 @@ import { makeStyles } from "tss-react/mui";
 import useTaskDeliverablesRedux from "../../../hooks/useTaskDeliverablesRedux";
 import useCommentsRedux from "../../../hooks/useCommentsRedux";
 import UserAvatar from "../../../components/UserAvatar";
-import TaskScheduleIconText from "../../sharedTaskComponents/TaskScheduleIconText";
 
 const colourBarPercent = "90%";
 
@@ -152,6 +150,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                     deliverables={deliverables}
                     priority={task.priority}
                     riderResponsibility={task.riderResponsibility}
+                    pickUpSchedule={task.pickUpSchedule}
+                    dropOffSchedule={task.dropOffSchedule}
                 />
                 <TaskCardLocationDetail
                     nullLocationText="No pick up address"
@@ -170,37 +170,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                     )}
                     {taskBadge}
                 </Stack>
-                {task.dropOffSchedule &&
-                    !task.pickUpSchedule &&
-                    !task.timePickedUp && (
-                        <Box
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 1,
-                            }}
-                        >
-                            <ScheduleIcon sx={{ color: "gray" }} />{" "}
-                            <span style={{ color: "gray" }}>++</span>
-                        </Box>
-                    )}
-                {task.pickUpSchedule && !task.timePickedUp && (
-                    <TaskScheduleIconText
-                        showWarning
-                        schedule={task.pickUpSchedule}
-                        appendText={task.dropOffSchedule ? "++" : ""}
-                        smallText
-                    />
-                )}
-                {task.dropOffSchedule &&
-                    !task.timeDroppedOff &&
-                    task.timePickedUp && (
-                        <TaskScheduleIconText
-                            showWarning
-                            schedule={task.dropOffSchedule}
-                            smallText
-                        />
-                    )}
             </Stack>
         </Paper>
     );
