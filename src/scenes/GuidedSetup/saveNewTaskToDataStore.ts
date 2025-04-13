@@ -5,10 +5,7 @@ import * as models from "../../models";
 import { convertListDataToObject } from "../../utilities";
 import _ from "lodash";
 import * as assigneeActions from "../../redux/taskAssignees/taskAssigneesActions";
-import {
-    Schedule,
-    ScheduledDatePickerOption,
-} from "../sharedTaskComponents/PickUpAndDeliverSchedule";
+import { Schedule } from "../sharedTaskComponents/PickUpAndDeliverSchedule";
 import taskScheduleDueStatus from "../../utilities/taskScheduleDueStatus";
 import { calculateBetweenIsOneDay } from "../../utilities/calculateBetweenIsOneDay";
 
@@ -16,20 +13,10 @@ export const convertScheduleToTaskData = (
     schedule: Schedule | null | undefined
 ): models.Schedule | null => {
     if (!schedule) return null;
-    let scheduledDate: Date | null = null;
-    let scheduledDateSecond: Date | null = null;
-    if (schedule?.selectionState === ScheduledDatePickerOption.TODAY) {
-        scheduledDate = new Date();
-    } else if (
-        schedule?.selectionState === ScheduledDatePickerOption.TOMORROW
-    ) {
-        scheduledDate = new Date();
-        scheduledDate.setDate(scheduledDate.getDate() + 1);
-    } else if (schedule?.customDate) {
-        scheduledDate = schedule?.customDate;
-    }
-    const hour = schedule?.time?.split(":")[0];
-    const minute = schedule?.time?.split(":")[1];
+    const scheduledDate = schedule.date;
+    let scheduledDateSecond = null;
+    const hour = schedule?.timePrimary?.split(":")[0];
+    const minute = schedule?.timePrimary?.split(":")[1];
     if (scheduledDate) {
         scheduledDate.setHours(parseInt(hour ?? "0"));
         scheduledDate.setMinutes(parseInt(minute ?? "0"));
@@ -38,10 +25,10 @@ export const convertScheduleToTaskData = (
     let dateSecond: string | null = null;
     if (
         schedule.timeRelation === models.TimeRelation.BETWEEN &&
-        schedule.timeSecond
+        schedule.timeSecondary
     ) {
-        const hourSecond = schedule?.timeSecond?.split(":")[0];
-        const minuteSecond = schedule?.timeSecond?.split(":")[1];
+        const hourSecond = schedule?.timeSecondary?.split(":")[0];
+        const minuteSecond = schedule?.timeSecondary?.split(":")[1];
         if (scheduledDate) {
             scheduledDateSecond = new Date(scheduledDate);
         } else {
@@ -51,7 +38,12 @@ export const convertScheduleToTaskData = (
             scheduledDateSecond.setHours(parseInt(hourSecond ?? "0"));
             scheduledDateSecond.setMinutes(parseInt(minuteSecond ?? "0"));
         }
-        if (calculateBetweenIsOneDay(schedule.time, schedule.timeSecond)) {
+        if (
+            calculateBetweenIsOneDay(
+                schedule.timePrimary,
+                schedule.timeSecondary
+            )
+        ) {
             scheduledDateSecond.setDate(scheduledDateSecond.getDate() + 1);
         }
         dateSecond = scheduledDateSecond?.toISOString() ?? null;
@@ -84,7 +76,6 @@ export async function saveNewTaskToDataStore(
     authorId: string,
     rider = null
 ) {
-    debugger;
     if (!tenantId) {
         throw new Error("tenantId is required");
     }
