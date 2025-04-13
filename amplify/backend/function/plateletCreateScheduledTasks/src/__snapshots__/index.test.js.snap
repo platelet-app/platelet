@@ -20,6 +20,16 @@ exports[`plateletCreateScheduledTasks create some scheduled tasks 1`] = `
                 id
                 tenantId
                 cronExpression
+                pickUpSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
+                dropOffSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
                 pickUpLocation {
                     id
                     listed
@@ -164,8 +174,18 @@ exports[`plateletCreateScheduledTasks create some scheduled tasks 1`] = `
             "archived": 0,
             "dateCreated": "2021-05-01",
             "dropOffLocationId": "newLocationId",
+            "dropOffSchedule": {
+              "relation": "BEFORE",
+              "timePrimary": "2021-05-01T23:00:00.000Z",
+              "timeSecondary": null,
+            },
             "establishmentLocationId": "establishmentLocationId",
             "pickUpLocationId": "pickUpLocationId",
+            "pickUpSchedule": {
+              "relation": "BETWEEN",
+              "timePrimary": "2021-05-01T23:00:00.000Z",
+              "timeSecondary": "2021-05-01T23:00:00.000Z",
+            },
             "priority": "MEDIUM",
             "requesterContact": {
               "name": "name",

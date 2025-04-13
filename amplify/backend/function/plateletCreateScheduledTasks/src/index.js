@@ -31,6 +31,16 @@ const listScheduledTasks = /* GraphQL */ `
                 id
                 tenantId
                 cronExpression
+                pickUpSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
+                dropOffSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
                 pickUpLocation {
                     id
                     listed
@@ -198,6 +208,8 @@ const createNewTask = async (scheduledTask) => {
         requesterContact,
         deliverables,
         tenantId,
+        pickUpSchedule,
+        dropOffSchedule,
     } = scheduledTask;
     let pickUpLocationId = null;
     let dropOffLocationId = null;
@@ -234,6 +246,8 @@ const createNewTask = async (scheduledTask) => {
             dropOffLocationId,
             establishmentLocationId,
             dateCreated,
+            pickUpSchedule,
+            dropOffSchedule,
             status: "PENDING",
             archived: 0,
         },

@@ -9,6 +9,16 @@ const mockScheduledTasks = [
             name: "name",
             telephoneNumber: "phone",
         },
+        pickUpSchedule: {
+            timePrimary: "2021-05-01T23:00:00.000Z",
+            timeSecondary: "2021-05-01T23:00:00.000Z",
+            relation: "BETWEEN",
+        },
+        dropOffSchedule: {
+            timePrimary: "2021-05-01T23:00:00.000Z",
+            timeSecondary: null,
+            relation: "BEFORE",
+        },
         establishmentLocation: {
             id: "establishmentLocationId",
             listed: 1,
