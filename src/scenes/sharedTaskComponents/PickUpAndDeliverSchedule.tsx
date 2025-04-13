@@ -5,16 +5,18 @@ import {
     Button,
     IconButton,
     Stack,
+    TextField,
     Tooltip,
     Typography,
     useMediaQuery,
 } from "@mui/material";
 import TimeRelationPicker from "./TimeRelationPicker";
-import ScheduledDatePicker from "./ScheduledDatePicker";
 import { useTheme } from "@mui/material/styles";
 import * as models from "../../models";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 import { calculateBetweenIsOneDay } from "../../utilities/calculateBetweenIsOneDay";
+import { DatePicker } from "@mui/lab";
+import moment from "moment";
 
 export enum ScheduledDatePickerOption {
     TODAY = "Today",
@@ -31,31 +33,54 @@ type PickUpAndDeliverScheduleProps = {
     handleOpen?: () => void;
 };
 
-const isValidTime = (time: string) => {
+const isValidTime = (time?: string | null) => {
+    if (!time) return false;
     const [hours, minutes] = time.split(":").map((value) => parseInt(value));
     return hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60;
 };
 
 export type Schedule = {
-    selectionState?: ScheduledDatePickerOption | null;
     timeRelation: models.TimeRelation;
-    time?: string;
-    timeSecond?: string;
-    customDate?: Date | null;
+    timePrimary?: string;
+    timeSecondary?: string | null;
+    date?: Date | null;
+};
+
+const calculateDefaultTimes = () => {
+    const currentHour = new Date().getHours();
+    const currentMinute = new Date().getMinutes();
+    let defaultTime = "10:00";
+    let defaultSecondTime = "10:00";
+    if (currentMinute > 30) {
+        const paddedHour = (currentHour + 1).toString().padStart(2, "0");
+        defaultTime = `${paddedHour}:00`;
+        defaultSecondTime = `${paddedHour}:30`;
+    } else if (currentMinute > 0) {
+        const paddedHour = currentHour.toString().padStart(2, "0");
+        const secondPaddedHour = new Date(new Date().getTime() + 60 * 60000)
+            .getHours()
+            .toString()
+            .padStart(2, "0");
+        defaultTime = `${paddedHour}:30`;
+        defaultSecondTime = `${secondPaddedHour}:00`;
+    }
+    return {
+        timePrimary: defaultTime,
+        timeSecondary: defaultSecondTime,
+    };
 };
 
 const humanReadableSchedule = (schedule: Schedule) => {
     let result = "";
-    switch (schedule.selectionState) {
-        case ScheduledDatePickerOption.TODAY:
-            result = "Today";
-            break;
-        case ScheduledDatePickerOption.TOMORROW:
-            result = "Tomorrow";
-            break;
-        case ScheduledDatePickerOption.CUSTOM:
-            result = schedule.customDate?.toDateString() ?? "";
-            break;
+    if (schedule.date) {
+        result = moment(schedule.date).calendar(null, {
+            sameDay: "[Today]",
+            nextDay: "[Tomorrow]",
+            nextWeek: "dddd",
+            lastDay: "[Yesterday]",
+            lastWeek: "[Last] dddd",
+            sameElse: "DD/MM/YYYY",
+        });
     }
     switch (schedule.timeRelation) {
         case models.TimeRelation.ANYTIME:
@@ -75,22 +100,22 @@ const humanReadableSchedule = (schedule: Schedule) => {
             break;
     }
     if (
-        schedule.time &&
+        schedule.timePrimary &&
         ![models.TimeRelation.ANYTIME, models.TimeRelation.BETWEEN].includes(
             schedule.timeRelation
         )
     ) {
-        result += ` ${schedule.time}`;
+        result += ` ${schedule.timePrimary}`;
     }
     if (
-        schedule.timeSecond &&
-        schedule.time &&
+        schedule.timeSecondary &&
+        schedule.timePrimary &&
         schedule.timeRelation === models.TimeRelation.BETWEEN
     ) {
-        result += ` ${schedule.time}`;
-        result += ` and ${schedule.timeSecond}`;
+        result += ` ${schedule.timePrimary}`;
+        result += ` and ${schedule.timeSecondary}`;
     }
-    return result;
+    return result + ".";
 };
 
 const PickUpAndDeliverSchedule: React.FC<PickUpAndDeliverScheduleProps> = ({
@@ -101,7 +126,15 @@ const PickUpAndDeliverSchedule: React.FC<PickUpAndDeliverScheduleProps> = ({
     handleClose,
     handleOpen,
 }) => {
-    const [state, setState] = React.useState<Schedule | null>(initialSchedule);
+    const defaultTimes = calculateDefaultTimes();
+    const [state, setState] = React.useState<Schedule | null>(
+        initialSchedule || {
+            date: new Date(),
+            timeRelation: models.TimeRelation.ANYTIME,
+            timePrimary: defaultTimes.timePrimary,
+            timeSecondary: defaultTimes.timeSecondary,
+        }
+    );
 
     const handleConfirm = () => {
         onConfirm(state);
@@ -125,7 +158,7 @@ const PickUpAndDeliverSchedule: React.FC<PickUpAndDeliverScheduleProps> = ({
     const handleChangeTime = (value: string) => {
         setState((prevState) => ({
             ...prevState,
-            time: value,
+            timePrimary: value,
             timeRelation:
                 prevState?.timeRelation || models.TimeRelation.ANYTIME,
         }));
@@ -134,7 +167,7 @@ const PickUpAndDeliverSchedule: React.FC<PickUpAndDeliverScheduleProps> = ({
     const handleChangeSecondaryTime = (value: string) => {
         setState((prevState) => ({
             ...prevState,
-            timeSecond: value,
+            timeSecondary: value,
             timeRelation:
                 prevState?.timeRelation || models.TimeRelation.ANYTIME,
         }));
@@ -143,55 +176,13 @@ const PickUpAndDeliverSchedule: React.FC<PickUpAndDeliverScheduleProps> = ({
     const handleSetCustomDate = (date: Date | null) => {
         setState((prevState) => ({
             ...prevState,
-            customDate: date,
+            date: date,
             timeRelation:
                 prevState?.timeRelation || models.TimeRelation.ANYTIME,
         }));
     };
 
-    const handleSetSelectionState = (selection: ScheduledDatePickerOption) => {
-        if (state?.selectionState === selection) {
-            setState(null);
-        } else {
-            const currentHour = new Date().getHours();
-            const currentMinute = new Date().getMinutes();
-            let defaultTime = "10:00";
-            let defaultSecondTime = "10:00";
-            if (currentMinute > 30) {
-                const paddedHour = (currentHour + 1)
-                    .toString()
-                    .padStart(2, "0");
-                defaultTime = `${paddedHour}:00`;
-                defaultSecondTime = `${paddedHour}:30`;
-            } else if (currentMinute > 0) {
-                const paddedHour = currentHour.toString().padStart(2, "0");
-                const secondPaddedHour = new Date(
-                    new Date().getTime() + 60 * 60000
-                )
-                    .getHours()
-                    .toString()
-                    .padStart(2, "0");
-                defaultTime = `${paddedHour}:30`;
-                defaultSecondTime = `${secondPaddedHour}:00`;
-            }
-            setState((prevState) => ({
-                ...prevState,
-                timeRelation:
-                    prevState?.timeRelation || models.TimeRelation.ANYTIME,
-                customDate: prevState?.customDate || new Date(),
-                time: prevState?.time || defaultTime,
-                timeSecond: prevState?.timeSecond || defaultSecondTime,
-                selectionState: selection,
-            }));
-        }
-    };
-
-    let showOnlyTodayTimes =
-        state?.selectionState === ScheduledDatePickerOption.TODAY ||
-        state?.selectionState !== ScheduledDatePickerOption.TOMORROW;
-    if (state?.selectionState === ScheduledDatePickerOption.CUSTOM)
-        showOnlyTodayTimes =
-            state?.customDate?.getDate() === new Date().getDate();
+    const showOnlyTodayTimes = state?.date?.getDate() === new Date().getDate();
 
     return (
         <>
@@ -214,8 +205,8 @@ const PickUpAndDeliverSchedule: React.FC<PickUpAndDeliverScheduleProps> = ({
                             {initialSchedule.timeRelation ===
                                 models.TimeRelation.BETWEEN &&
                                 calculateBetweenIsOneDay(
-                                    initialSchedule.time,
-                                    initialSchedule.timeSecond
+                                    initialSchedule.timePrimary,
+                                    initialSchedule.timeSecondary
                                 ) && (
                                     <span style={{ color: "grey" }}>
                                         {" "}
@@ -246,34 +237,30 @@ const PickUpAndDeliverSchedule: React.FC<PickUpAndDeliverScheduleProps> = ({
                 dialogTitle={title}
             >
                 <Stack sx={{ minWidth: 500 }} spacing={2}>
-                    <ScheduledDatePicker
-                        onSelectOption={handleSetSelectionState}
-                        option={state?.selectionState ?? null}
-                        onSelectCustomDate={(date) => handleSetCustomDate(date)}
-                        customDate={state?.customDate}
+                    <DatePicker
+                        inputFormat={"dd/MM/yyyy"}
+                        disablePast
+                        value={state?.date}
+                        onChange={(date) => handleSetCustomDate(date ?? null)}
+                        renderInput={(params) => <TextField {...params} />}
                     />
-                    {state?.selectionState && (
-                        <TimeRelationPicker
-                            showOnlyTodayTimes={showOnlyTodayTimes}
-                            timePrimary={state?.time ?? ""}
-                            timeSecondary={state?.timeSecond ?? ""}
-                            relation={
-                                state?.timeRelation ??
-                                models.TimeRelation.ANYTIME
-                            }
-                            isValid={isValidTime(state?.time ?? "")}
-                            isValidSecondary={isValidTime(
-                                state?.timeSecond ?? ""
-                            )}
-                            handleChange={(event) =>
-                                handleTimeRelationChange(event)
-                            }
-                            handleChangeTime={(time) => handleChangeTime(time)}
-                            handleChangeSecondaryTime={(time) =>
-                                handleChangeSecondaryTime(time)
-                            }
-                        />
-                    )}
+                    <TimeRelationPicker
+                        showOnlyTodayTimes={showOnlyTodayTimes}
+                        timePrimary={state?.timePrimary ?? ""}
+                        timeSecondary={state?.timeSecondary ?? ""}
+                        relation={
+                            state?.timeRelation ?? models.TimeRelation.ANYTIME
+                        }
+                        isValid={isValidTime(state?.timePrimary)}
+                        isValidSecondary={isValidTime(state?.timeSecondary)}
+                        handleChange={(event) =>
+                            handleTimeRelationChange(event)
+                        }
+                        handleChangeTime={(time) => handleChangeTime(time)}
+                        handleChangeSecondaryTime={(time) =>
+                            handleChangeSecondaryTime(time)
+                        }
+                    />
                 </Stack>
             </ConfirmationDialog>
         </>
