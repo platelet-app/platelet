@@ -52,11 +52,20 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
     let chips = [];
     if (pickUpSchedule) {
         let iconColor = "";
-        if (taskScheduleDueStatus(pickUpSchedule, 1)) {
-            iconColor = "orange";
-        }
-        if (taskScheduleOverDueStatus(pickUpSchedule)) {
-            iconColor = "red";
+        if (
+            [
+                models.TaskStatus.NEW,
+                models.TaskStatus.FUTURE,
+                models.TaskStatus.PENDING,
+                models.TaskStatus.ACTIVE,
+            ].includes(status as models.TaskStatus)
+        ) {
+            if (taskScheduleDueStatus(pickUpSchedule, 1)) {
+                iconColor = "orange";
+            }
+            if (taskScheduleOverDueStatus(pickUpSchedule)) {
+                iconColor = "red";
+            }
         }
         chips.push(
             <Chip
@@ -74,11 +83,21 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
     }
     if (dropOffSchedule) {
         let iconColor = "";
-        if (taskScheduleDueStatus(dropOffSchedule, 1)) {
-            iconColor = "orange";
-        }
-        if (taskScheduleOverDueStatus(dropOffSchedule)) {
-            iconColor = "red";
+        if (
+            [
+                models.TaskStatus.NEW,
+                models.TaskStatus.PENDING,
+                models.TaskStatus.FUTURE,
+                models.TaskStatus.ACTIVE,
+                models.TaskStatus.PICKED_UP,
+            ].includes(status as models.TaskStatus)
+        ) {
+            if (taskScheduleDueStatus(dropOffSchedule, 1)) {
+                iconColor = "orange";
+            }
+            if (taskScheduleOverDueStatus(dropOffSchedule)) {
+                iconColor = "red";
+            }
         }
         chips.push(
             <Chip
