@@ -28,6 +28,7 @@ type TaskScheduleDetailsProps = {
     onClear: () => void;
     onChange: (value: models.Schedule) => void;
     noWarning?: boolean;
+    hideDate?: boolean;
 };
 
 const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
@@ -35,6 +36,7 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
     onClear,
     onChange,
     noWarning = true,
+    hideDate = false,
 }) => {
     const [confirmClear, setConfirmClear] = React.useState(false);
     const [editMode, setEditMode] = React.useState(false);
@@ -80,11 +82,15 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
                 date: new Date(schedule?.timePrimary ?? ""),
             });
         } else {
+            let date = new Date();
+            if (hideDate) {
+                date = new Date("2099-01-01");
+            }
             setScheduleState({
                 timePrimary: defaultTime,
                 timeSecondary: defaultSecondTime,
                 timeRelation: models.TimeRelation.ANYTIME,
-                date: new Date(),
+                date,
             });
         }
         setEditMode(true);
@@ -165,13 +171,15 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
                 dialogTitle={"Edit schedule"}
             >
                 <Stack sx={{ minWidth: 500 }} spacing={2}>
-                    <DatePicker
-                        inputFormat={"dd/MM/yyyy"}
-                        disablePast
-                        value={new Date(scheduleState?.date ?? "")}
-                        onChange={handleChangeDate}
-                        renderInput={(params) => <TextField {...params} />}
-                    />
+                    {!hideDate && (
+                        <DatePicker
+                            inputFormat={"dd/MM/yyyy"}
+                            disablePast
+                            value={new Date(scheduleState?.date ?? "")}
+                            onChange={handleChangeDate}
+                            renderInput={(params) => <TextField {...params} />}
+                        />
+                    )}
                     {scheduleState?.date && (
                         <TimeRelationPicker
                             timePrimary={
@@ -187,8 +195,9 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
                                 models.TimeRelation.ANYTIME
                             }
                             showOnlyTodayTimes={
+                                !hideDate &&
                                 new Date(scheduleState.date).getDate() ===
-                                new Date().getDate()
+                                    new Date().getDate()
                             }
                             isValid={isValidTime(
                                 scheduleState?.timePrimary ?? ""

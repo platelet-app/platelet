@@ -93,6 +93,8 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     const initialSetEdit = useRef(false);
     const errorMessage = "Sorry, an error occurred";
 
+    const hideScheduleDate = taskModel.name === "ScheduledTask";
+
     const { state: task } = useModelSubscription(taskModel, taskId);
     const schedule =
         locationKey === "pickUpLocation"
@@ -200,9 +202,11 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     }, [state, isFetching, hasFullPermissions]);
 
     const handleClearSchedule = async () => {
-        const task = await DataStore.query(models.Task, taskId);
+        // @ts-ignore
+        const task = await DataStore.query(taskModel, taskId);
         if (!task) return;
         await DataStore.save(
+            // @ts-ignore
             models.Task.copyOf(task, (updated) => {
                 if (locationKey === "pickUpLocation") {
                     updated.pickUpSchedule = null;
@@ -214,9 +218,11 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     };
 
     const handleEditSchedule = async (newSchedule: models.Schedule) => {
-        const task = await DataStore.query(models.Task, taskId);
+        // @ts-ignore
+        const task = await DataStore.query(taskModel, taskId);
         if (!task) return;
         await DataStore.save(
+            // @ts-ignore
             models.Task.copyOf(task, (updated) => {
                 if (locationKey === "pickUpLocation") {
                     updated.pickUpSchedule = newSchedule;
@@ -667,6 +673,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                             onChange={handleEditSchedule}
                             schedule={schedule}
                             noWarning={noWarning}
+                            hideDate={hideScheduleDate}
                         />
                     </Stack>
                 </Paper>
