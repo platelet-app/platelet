@@ -22,10 +22,8 @@ import {
     NotesAndPriority,
 } from "./index";
 import { Paper, Stack } from "@mui/material";
-import {
-    convertScheduleToTaskData,
-    saveNewTaskToDataStore,
-} from "./saveNewTaskToDataStore";
+import { saveNewTaskToDataStore } from "./saveNewTaskToDataStore";
+import { convertScheduleToTaskData } from "../../utilities/convertScheduleToTaskData";
 import {
     getWhoami,
     guidedSetupOpenSelector,
