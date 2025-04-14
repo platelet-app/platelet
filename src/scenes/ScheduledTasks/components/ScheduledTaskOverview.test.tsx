@@ -5,6 +5,7 @@ import ScheduledTaskOverview from "./ScheduledTaskOverview";
 import { render } from "../../../test-utils";
 import userEvent from "@testing-library/user-event";
 import { screen, waitFor } from "@testing-library/react";
+import * as router from "react-router";
 const tenantId = "test-tenant";
 
 describe("ScheduledTaskOverview", () => {
@@ -154,5 +155,53 @@ describe("ScheduledTaskOverview", () => {
         expect(
             screen.getByRole("button", { name: "Edit" })
         ).toBeInTheDocument();
+    });
+    test("show schedule information", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                displayName: "name",
+                roles: [models.Role.USER, models.Role.ADMIN],
+                username: "username",
+                cognitoId: "cognitoId",
+            })
+        );
+        const scheduledTask = await DataStore.save(
+            new models.ScheduledTask({
+                tenantId,
+                cronExpression: "0 18 * * *",
+                disabled: 0,
+                pickUpSchedule: {
+                    timePrimary: "2023-10-10T18:00:00.000Z",
+                    timeSecondary: "2023-10-10T18:30:00.000Z",
+                    relation: models.TimeRelation.BETWEEN,
+                },
+                dropOffSchedule: {
+                    timePrimary: "2023-10-10T18:00:00.000Z",
+                    timeSecondary: null,
+                    relation: models.TimeRelation.BEFORE,
+                },
+            })
+        );
+        const preloadedState = {
+            tenantId,
+            whoami: { user: whoami },
+        };
+        render(
+            <ScheduledTaskOverview scheduledTaskId={scheduledTask.id} />,
+            {
+                preloadedState,
+            },
+            ["/scheduled/"]
+        );
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId("scheduled-task-overview-skeleton")
+            ).toBeNull();
+        });
+        expect(
+            screen.getByText("Between 18:00 and 18:30.")
+        ).toBeInTheDocument();
+        expect(screen.getByText("Before 18:00.")).toBeInTheDocument();
     });
 });
