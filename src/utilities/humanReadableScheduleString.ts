@@ -20,9 +20,6 @@ const humanReadableScheduleString = (
     let result = "";
     if (schedule.timePrimary) {
         const date = new Date(schedule.timePrimary);
-        if (date.getDate() !== new Date().getDate()) {
-            shortened = false;
-        }
         if (!shortened) {
             const dateString = date.toISOString().split("T")[0];
             result += getDayString(dateString);
@@ -97,7 +94,7 @@ const humanReadableScheduleString = (
             result += ` and ${moment(schedule.timeSecondary).format("HH:mm")}`;
         }
     }
-    return result;
+    return result + ".";
 };
 
 export default humanReadableScheduleString;

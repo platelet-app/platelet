@@ -20,7 +20,7 @@ describe("humanReadableScheduleString", () => {
             relation: models.TimeRelation.AT,
         });
         const result = humanReadableScheduleString(schedule);
-        expect(result).toEqual("Today at 12:00");
+        expect(result).toEqual("Today at 12:00.");
     });
 
     it("shorten the string", () => {
@@ -29,7 +29,7 @@ describe("humanReadableScheduleString", () => {
             relation: models.TimeRelation.AT,
         });
         const result = humanReadableScheduleString(schedule, true);
-        expect(result).toEqual("At 12:00");
+        expect(result).toEqual("At 12:00.");
     });
 
     it("should describe a schedule tomorrow at anytime", () => {
@@ -41,7 +41,7 @@ describe("humanReadableScheduleString", () => {
             relation: models.TimeRelation.ANYTIME,
         });
         const result = humanReadableScheduleString(schedule);
-        expect(result).toEqual("Tomorrow at any time");
+        expect(result).toEqual("Tomorrow at any time.");
     });
 
     it("should describe a schedule on a date between two times", () => {
@@ -58,7 +58,7 @@ describe("humanReadableScheduleString", () => {
         });
         const result = humanReadableScheduleString(schedule);
         expect(result).toMatchInlineSnapshot(
-            `"12/09/2021 between 12:00 and 13:00"`
+            `"12/09/2021 between 12:00 and 13:00."`
         );
     });
 
