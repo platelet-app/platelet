@@ -51,6 +51,14 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
 }) => {
     let chips = [];
     if (pickUpSchedule) {
+        let shortened = true;
+        if (pickUpSchedule.timePrimary) {
+            const date = new Date(pickUpSchedule.timePrimary);
+            if (date.getDate() !== new Date().getDate()) {
+                shortened = false;
+            }
+        }
+
         let iconColor = "";
         if (
             [
@@ -76,12 +84,19 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
                     },
                 }}
                 size="small"
-                label={humanReadableScheduleString(pickUpSchedule, true)}
+                label={humanReadableScheduleString(pickUpSchedule, shortened)}
                 icon={<ScheduleIcon />}
             />
         );
     }
     if (dropOffSchedule) {
+        let shortened = true;
+        if (dropOffSchedule.timePrimary) {
+            const date = new Date(dropOffSchedule.timePrimary);
+            if (date.getDate() !== new Date().getDate()) {
+                shortened = false;
+            }
+        }
         let iconColor = "";
         if (
             [
@@ -108,14 +123,9 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
                     },
                 }}
                 size="small"
-                label={humanReadableScheduleString(dropOffSchedule, true)}
+                label={humanReadableScheduleString(dropOffSchedule, shortened)}
                 icon={<ScheduleIcon />}
             />
-        );
-    }
-    if (status) {
-        chips.push(
-            <TaskStatusChip sx={styling} size="small" status={status} />
         );
     }
     if (priority) {

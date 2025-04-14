@@ -152,6 +152,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                     riderResponsibility={task.riderResponsibility}
                     pickUpSchedule={task.pickUpSchedule}
                     dropOffSchedule={task.dropOffSchedule}
+                    status={task.status as models.TaskStatus}
                 />
                 <TaskCardLocationDetail
                     nullLocationText="No pick up address"
