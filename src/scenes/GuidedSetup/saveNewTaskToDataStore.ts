@@ -7,53 +7,7 @@ import _ from "lodash";
 import * as assigneeActions from "../../redux/taskAssignees/taskAssigneesActions";
 import { Schedule } from "../sharedTaskComponents/PickUpAndDeliverSchedule";
 import taskScheduleDueStatus from "../../utilities/taskScheduleDueStatus";
-import { calculateBetweenIsOneDay } from "../../utilities/calculateBetweenIsOneDay";
-
-export const convertScheduleToTaskData = (
-    schedule: Schedule | null | undefined
-): models.Schedule | null => {
-    if (!schedule) return null;
-    const scheduledDate = schedule.date;
-    let scheduledDateSecond = null;
-    const hour = schedule?.timePrimary?.split(":")[0];
-    const minute = schedule?.timePrimary?.split(":")[1];
-    if (scheduledDate) {
-        scheduledDate.setHours(parseInt(hour ?? "0"));
-        scheduledDate.setMinutes(parseInt(minute ?? "0"));
-    }
-    const date = scheduledDate?.toISOString() ?? null;
-    let dateSecond: string | null = null;
-    if (
-        schedule.timeRelation === models.TimeRelation.BETWEEN &&
-        schedule.timeSecondary
-    ) {
-        const hourSecond = schedule?.timeSecondary?.split(":")[0];
-        const minuteSecond = schedule?.timeSecondary?.split(":")[1];
-        if (scheduledDate) {
-            scheduledDateSecond = new Date(scheduledDate);
-        } else {
-            scheduledDateSecond = new Date();
-        }
-        if (scheduledDateSecond) {
-            scheduledDateSecond.setHours(parseInt(hourSecond ?? "0"));
-            scheduledDateSecond.setMinutes(parseInt(minuteSecond ?? "0"));
-        }
-        if (
-            calculateBetweenIsOneDay(
-                schedule.timePrimary,
-                schedule.timeSecondary
-            )
-        ) {
-            scheduledDateSecond.setDate(scheduledDateSecond.getDate() + 1);
-        }
-        dateSecond = scheduledDateSecond?.toISOString() ?? null;
-    }
-    return new models.Schedule({
-        timePrimary: date,
-        timeSecondary: dateSecond,
-        relation: schedule?.timeRelation ?? null,
-    });
-};
+import { convertScheduleToTaskData } from "../../utilities/convertScheduleToTaskData";
 
 type Data = {
     locations: {
