@@ -5,6 +5,7 @@ import { Box, Typography } from "@mui/material";
 import taskScheduleDueStatus from "../../utilities/taskScheduleDueStatus";
 import taskScheduleOverDueStatus from "../../utilities/taskScheduleOverDueStatus";
 import humanReadableScheduleString from "../../utilities/humanReadableScheduleString";
+import { useLocation } from "react-router";
 
 type TaskScheduleIconTextProps = {
     schedule?: models.Schedule | null;
@@ -21,6 +22,12 @@ const TaskScheduleIconText: React.FC<TaskScheduleIconTextProps> = ({
     appendText = "",
     smallText = false,
 }) => {
+    let location = useLocation();
+    let shortened = false;
+    // Shorter way to check if looking at a recurring scheduled task
+    if (/scheduled/.test(location.pathname)) {
+        shortened = true;
+    }
     if (!schedule) return null;
     let iconColor = "";
     if (showWarning) {
@@ -31,6 +38,7 @@ const TaskScheduleIconText: React.FC<TaskScheduleIconTextProps> = ({
             iconColor = "red";
         }
     }
+
     return (
         <Box
             sx={{
@@ -49,7 +57,7 @@ const TaskScheduleIconText: React.FC<TaskScheduleIconTextProps> = ({
                     fontSize: smallText ? "0.9rem" : undefined,
                 }}
             >
-                {humanReadableScheduleString(schedule)}{" "}
+                {humanReadableScheduleString(schedule, shortened)}{" "}
                 <span
                     style={{
                         fontWeight: "normal",
