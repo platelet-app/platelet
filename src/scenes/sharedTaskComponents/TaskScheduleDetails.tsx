@@ -15,8 +15,8 @@ import TimeRelationPicker from "./TimeRelationPicker";
 import { DatePicker } from "@mui/lab";
 import TaskScheduleIconText from "./TaskScheduleIconText";
 import moment from "moment";
-import { convertScheduleToTaskData } from "../GuidedSetup/saveNewTaskToDataStore";
 import { Schedule } from "./PickUpAndDeliverSchedule";
+import { convertScheduleToTaskData } from "../../utilities/convertScheduleToTaskData";
 
 const isValidTime = (time: string) => {
     const [hours, minutes] = time.split(":").map((value) => parseInt(value));

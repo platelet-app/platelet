@@ -31,6 +31,7 @@ type PickUpAndDeliverScheduleProps = {
     open?: boolean;
     handleClose?: () => void;
     handleOpen?: () => void;
+    hideDate?: boolean;
 };
 
 const isValidTime = (time?: string | null) => {
@@ -81,24 +82,43 @@ const humanReadableSchedule = (schedule: Schedule) => {
             lastWeek: "[Last] dddd",
             sameElse: "DD/MM/YYYY",
         });
+        switch (schedule.timeRelation) {
+            case models.TimeRelation.ANYTIME:
+                result += " at any time";
+                break;
+            case models.TimeRelation.BEFORE:
+                result += " before";
+                break;
+            case models.TimeRelation.AFTER:
+                result += " after";
+                break;
+            case models.TimeRelation.AT:
+                result += " at";
+                break;
+            case models.TimeRelation.BETWEEN:
+                result += " between";
+                break;
+        }
+    } else {
+        switch (schedule.timeRelation) {
+            case models.TimeRelation.ANYTIME:
+                result += "At any time";
+                break;
+            case models.TimeRelation.BEFORE:
+                result += "Before";
+                break;
+            case models.TimeRelation.AFTER:
+                result += "After";
+                break;
+            case models.TimeRelation.AT:
+                result += "At";
+                break;
+            case models.TimeRelation.BETWEEN:
+                result += "Between";
+                break;
+        }
     }
-    switch (schedule.timeRelation) {
-        case models.TimeRelation.ANYTIME:
-            result += " at any time";
-            break;
-        case models.TimeRelation.BEFORE:
-            result += " before";
-            break;
-        case models.TimeRelation.AFTER:
-            result += " after";
-            break;
-        case models.TimeRelation.AT:
-            result += " at";
-            break;
-        case models.TimeRelation.BETWEEN:
-            result += " between";
-            break;
-    }
+
     if (
         schedule.timePrimary &&
         ![models.TimeRelation.ANYTIME, models.TimeRelation.BETWEEN].includes(
@@ -125,11 +145,12 @@ const PickUpAndDeliverSchedule: React.FC<PickUpAndDeliverScheduleProps> = ({
     open,
     handleClose,
     handleOpen,
+    hideDate = false,
 }) => {
     const defaultTimes = calculateDefaultTimes();
     const [state, setState] = React.useState<Schedule | null>(
         initialSchedule || {
-            date: new Date(),
+            date: hideDate ? null : new Date(),
             timeRelation: models.TimeRelation.ANYTIME,
             timePrimary: defaultTimes.timePrimary,
             timeSecondary: defaultTimes.timeSecondary,
@@ -195,7 +216,12 @@ const PickUpAndDeliverSchedule: React.FC<PickUpAndDeliverScheduleProps> = ({
                 {!initialSchedule && (
                     <>
                         <Typography>No scheduled set.</Typography>
-                        <Button onClick={handleOpen}>Add schedule</Button>
+                        <Button
+                            aria-label={`add ${title?.toLowerCase()}`}
+                            onClick={handleOpen}
+                        >
+                            Add schedule
+                        </Button>
                     </>
                 )}
                 {initialSchedule && (
@@ -237,13 +263,17 @@ const PickUpAndDeliverSchedule: React.FC<PickUpAndDeliverScheduleProps> = ({
                 dialogTitle={title}
             >
                 <Stack sx={{ minWidth: 500 }} spacing={2}>
-                    <DatePicker
-                        inputFormat={"dd/MM/yyyy"}
-                        disablePast
-                        value={state?.date}
-                        onChange={(date) => handleSetCustomDate(date ?? null)}
-                        renderInput={(params) => <TextField {...params} />}
-                    />
+                    {!hideDate && (
+                        <DatePicker
+                            inputFormat={"dd/MM/yyyy"}
+                            disablePast
+                            value={state?.date}
+                            onChange={(date) =>
+                                handleSetCustomDate(date ?? null)
+                            }
+                            renderInput={(params) => <TextField {...params} />}
+                        />
+                    )}
                     <TimeRelationPicker
                         showOnlyTodayTimes={showOnlyTodayTimes}
                         timePrimary={state?.timePrimary ?? ""}
