@@ -31,6 +31,7 @@ type TaskCardChipsProps = {
     showDeliverableIcons?: boolean;
     pickUpSchedule?: models.Schedule | APITypes.Schedule | null;
     dropOffSchedule?: models.Schedule | APITypes.Schedule | null;
+    hideStatus?: boolean;
 };
 
 const styling = {
@@ -48,6 +49,7 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
     pickUpSchedule,
     dropOffSchedule,
     showDeliverableIcons = false,
+    hideStatus = false,
 }) => {
     let chips = [];
     if (pickUpSchedule) {
@@ -126,6 +128,11 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
                 label={humanReadableScheduleString(dropOffSchedule, shortened)}
                 icon={<ScheduleIcon />}
             />
+        );
+    }
+    if (!hideStatus && status) {
+        chips.push(
+            <TaskStatusChip sx={styling} size="small" status={status} />
         );
     }
     if (priority) {

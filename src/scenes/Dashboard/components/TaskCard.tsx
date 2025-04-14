@@ -153,6 +153,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                     pickUpSchedule={task.pickUpSchedule}
                     dropOffSchedule={task.dropOffSchedule}
                     status={task.status as models.TaskStatus}
+                    hideStatus
                 />
                 <TaskCardLocationDetail
                     nullLocationText="No pick up address"
