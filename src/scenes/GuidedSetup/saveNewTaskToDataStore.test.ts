@@ -240,6 +240,83 @@ describe("saveNewTaskToDataStore", () => {
             id: expect.any(String),
         });
     });
+    test("save a new task with schedules but no specific date", async () => {
+        const author = new models.User({
+            name: "name",
+            displayName: "displayName",
+            tenantId,
+            username: "username",
+            roles: [models.Role.USER],
+            cognitoId: "cognitoId",
+        });
+
+        const pickUpSchedule = {
+            timeRelation: models.TimeRelation.BETWEEN,
+            timePrimary: "10:30",
+            timeSecondary: "11:30",
+            date: null,
+        };
+
+        const dropOffSchedule = {
+            timeRelation: models.TimeRelation.BETWEEN,
+            timePrimary: "10:30",
+            timeSecondary: "08:30",
+            date: null,
+        };
+
+        const mockPickUpSchedule = new models.Schedule({
+            relation: models.TimeRelation.BETWEEN,
+            timePrimary: "2099-01-01T10:30:00.000Z",
+            timeSecondary: "2099-01-01T11:30:00.000Z",
+        });
+        // it should set the timeSecondary to the next day on account of
+        // the secondary time being before the primary time
+        const mockDropOffSchedule = new models.Schedule({
+            relation: models.TimeRelation.BETWEEN,
+            timePrimary: "2099-01-01T10:30:00.000Z",
+            timeSecondary: "2099-01-02T08:30:00.000Z",
+        });
+
+        const { id: authorId } = await DataStore.save(author);
+        const saveSpy = jest.spyOn(DataStore, "save");
+
+        const data = {
+            locations: {
+                pickUpLocation: null,
+                dropOffLocation: null,
+            },
+            deliverables: {},
+            comment: { body: "" },
+            establishmentLocation: null,
+            schedule: { pickUp: pickUpSchedule, dropOff: dropOffSchedule },
+            requesterContact: {
+                name: "some name",
+                telephoneNumber: "01234567890",
+            },
+            timeOfCall: "2021-02-01T12:00:58.987Z",
+        };
+        const mockTask = new models.Task({
+            createdBy: author,
+            pickUpLocation: null,
+            dropOffLocation: null,
+            establishmentLocation: null,
+            pickUpSchedule: mockPickUpSchedule,
+            dropOffSchedule: mockDropOffSchedule,
+            timeOfCall: "2021-02-01T12:00:58.987Z",
+            requesterContact: {
+                name: "some name",
+                telephoneNumber: "01234567890",
+            },
+            status: models.TaskStatus.FUTURE,
+            dateCreated: new Date().toISOString().split("T")[0],
+            tenantId,
+        });
+        await saveNewTaskToDataStore(data, tenantId, authorId);
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...mockTask,
+            id: expect.any(String),
+        });
+    });
     test("save a new task with locations", async () => {
         const author = new models.User({
             name: "name",
