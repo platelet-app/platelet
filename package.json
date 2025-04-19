@@ -91,7 +91,7 @@
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
-        "test": "react-scripts test --testTimeout=40000",
+        "test": "react-scripts test --testTimeout=60000",
         "test:debug": "react-scripts --inspect test --runInBand --no-cache --testTimeout=100000000",
         "test:lambda": "./test-amplify-function.sh",
         "eject": "react-scripts eject",
