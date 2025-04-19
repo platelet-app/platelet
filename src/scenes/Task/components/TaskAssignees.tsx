@@ -16,6 +16,7 @@ type TaskAssigneesProps = {
     onChangeRiderUsingOwnVehicle?: () => void;
     usingOwnVehicle?: boolean;
     disableUsingOwnVehicleSwitch?: boolean;
+    taskStatus?: models.TaskStatus | null;
 };
 
 const TaskAssignees: React.FC<TaskAssigneesProps> = ({
@@ -25,6 +26,7 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = ({
     onChangeRiderUsingOwnVehicle = () => {},
     usingOwnVehicle = false,
     disableUsingOwnVehicleSwitch = false,
+    taskStatus = null,
 }) => {
     const whoami = useSelector(getWhoami);
     const [confirmRemoveId, setConfirmRemoveId] = React.useState<string | null>(
@@ -42,6 +44,11 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = ({
 
     const hasRiders = assignees.some((a) => a.role === userRoles.rider);
 
+    const dialogMessage =
+        taskStatus === models.TaskStatus.NEW
+            ? "This will remove the task from your dashboard and place it into PENDING."
+            : "This will remove the task from your dashboard.";
+
     const confirmationSelfDeleteDialog = (
         <ConfirmationDialog
             dialogTitle="Are you sure you want to unassign yourself?"
@@ -53,10 +60,7 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = ({
             }}
         >
             <Stack spacing={1} direction="column">
-                <Typography>
-                    This will remove the task from your dashboard and place it
-                    into PENDING.
-                </Typography>
+                <Typography>{dialogMessage}</Typography>
             </Stack>
         </ConfirmationDialog>
     );
