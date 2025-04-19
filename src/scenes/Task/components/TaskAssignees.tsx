@@ -54,8 +54,8 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = ({
         >
             <Stack spacing={1} direction="column">
                 <Typography>
-                    This will remove the task from your dashboard, but can be
-                    accessed again using the ALL view.
+                    This will remove the task from your dashboard and place it
+                    into PENDING.
                 </Typography>
             </Stack>
         </ConfirmationDialog>

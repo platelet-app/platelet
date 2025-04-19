@@ -18,7 +18,8 @@ interface Assignee {
 
 export default async function determineTaskStatus(
     task: TaskInterface,
-    riderAssignees: Assignee[] | null = null
+    riderAssignees: Assignee[] | null = null,
+    coordAssignees: Assignee[] | null = null
 ) {
     if (task.status && task.status === models.TaskStatus.FUTURE) {
         return models.TaskStatus.FUTURE;
@@ -58,9 +59,21 @@ export default async function determineTaskStatus(
             (a) => a.task && a.task.id === task.id
         );
     }
-    if (!isRiderAssigned) {
-        return models.TaskStatus.NEW;
-    } else {
-        return models.TaskStatus.ACTIVE;
+    if (coordAssignees === null) {
+        coordAssignees = (await DataStore.query(models.TaskAssignee, (a) =>
+            a.role("eq", models.Role.COORDINATOR)
+        )) as Assignee[];
     }
+    let isCoordAssigned = false;
+    if (task && task.id) {
+        isCoordAssigned = coordAssignees.some(
+            (a) => a.task && a.task.id === task.id
+        );
+    }
+    if (isRiderAssigned) {
+        return models.TaskStatus.ACTIVE;
+    } else if (isCoordAssigned) {
+        return models.TaskStatus.NEW;
+    }
+    return models.TaskStatus.PENDING;
 }
