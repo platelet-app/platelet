@@ -214,6 +214,11 @@ describe("GuidedSetup", () => {
                 },
             })
         );
+        await waitFor(() => {
+            expect(
+                screen.getByText("Saved to IN PROGRESS")
+            ).toBeInTheDocument();
+        });
     });
 
     test("setting the contact details and priority", async () => {

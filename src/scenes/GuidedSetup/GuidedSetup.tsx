@@ -31,10 +31,15 @@ import {
 } from "../../redux/Selectors";
 import { showHide } from "../../styles/common";
 import _ from "lodash";
-import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
+import {
+    displayErrorNotification,
+    displayInfoNotification,
+} from "../../redux/notifications/NotificationsActions";
 import { useCordovaBackButton } from "../../hooks/useCordovaBackButton";
 import { Schedule } from "../sharedTaskComponents/PickUpAndDeliverSchedule";
 import taskScheduleDueStatus from "../../utilities/taskScheduleDueStatus";
+import SaveToDashOrFutureButton from "./components/SaveToDashOrFutureButton";
+import { encodeUUID } from "../../utilities";
 
 type TabPanelProps = {
     children: React.ReactNode;
@@ -176,6 +181,9 @@ export const GuidedSetup = () => {
     const comment = useRef(defaultComment);
     const [timeOfCall, setTimeOfCall] = useState(new Date());
     const [timeOfCallInvalid, setTimeOfCallInvalid] = useState(false);
+    const [futureOrDash, setFutureOrDash] = useState<"future" | "new" | null>(
+        null
+    );
     const originalTimeOfCall = useRef<Date | null>(null);
     const dispatch = useDispatch();
     const locations = useRef<PickUpDropOffLocationsType>({
@@ -198,11 +206,24 @@ export const GuidedSetup = () => {
         useState(false);
     const whoami = useSelector(getWhoami);
 
-    let isDueInOneDay = false;
-    if (schedule.pickUp) {
-        const convertedSchedule = convertScheduleToTaskData(schedule.pickUp);
-        isDueInOneDay = !taskScheduleDueStatus(convertedSchedule, 0, 1);
-    }
+    useEffect(() => {
+        if (!schedule.pickUp) {
+            setFutureOrDash(null);
+            return;
+        }
+        if (futureOrDash) return;
+        if (schedule.pickUp) {
+            const convertedSchedule = convertScheduleToTaskData(
+                schedule.pickUp
+            );
+            const isDueInOneDay = !taskScheduleDueStatus(
+                convertedSchedule,
+                0,
+                1
+            );
+            if (isDueInOneDay) setFutureOrDash("future");
+        }
+    }, [schedule.pickUp, futureOrDash]);
 
     const handleChange = (_: any, newValue: number) => {
         setTabIndex(newValue);
@@ -252,10 +273,14 @@ export const GuidedSetup = () => {
 
     const handleSave = async () => {
         setIsPosting(true);
+        let status = models.TaskStatus.NEW;
+        if (futureOrDash === "future") status = models.TaskStatus.FUTURE;
+
         try {
-            await saveNewTaskToDataStore(
+            const result = await saveNewTaskToDataStore(
                 {
                     ...formValues,
+                    status,
                     schedule,
                     deliverables: deliverables.current,
                     locations: locations.current,
@@ -270,6 +295,12 @@ export const GuidedSetup = () => {
                 whoami && whoami.id
             );
             setEstablishmentSameAsPickup(initialEstablishmentSameAsPickUpState);
+            const message =
+                result.status === models.TaskStatus.NEW
+                    ? "Saved to IN PROGRESS"
+                    : "Saved to UPCOMING";
+            const viewLink = `/task/${encodeUUID(result.id)}`;
+            dispatch(displayInfoNotification(message, undefined, viewLink));
         } catch (e) {
             console.error(e);
             dispatch(displayErrorNotification("Sorry, something went wrong"));
@@ -528,15 +559,12 @@ export const GuidedSetup = () => {
                     <Button onClick={handleDiscard} disabled={isPosting}>
                         Discard
                     </Button>
-                    <Button
-                        data-cy="save-to-dash-button"
+                    <SaveToDashOrFutureButton
+                        onChange={setFutureOrDash}
+                        value={futureOrDash}
                         onClick={handleSave}
                         disabled={isPosting || !timeOfCall || timeOfCallInvalid}
-                        variant="contained"
-                        autoFocus
-                    >
-                        {isDueInOneDay ? "Save to future" : "Save to dashboard"}
-                    </Button>
+                    />
                 </Stack>
             </Stack>
             <ConfirmationDialog

@@ -56,7 +56,7 @@ const DashboardTabs = () => {
                         aria-label="Dashboard Pending"
                         onClick={() => handleChange(2)}
                         color={dashboardTabIndex === 2 ? "primary" : "default"}
-                        label="PENDING"
+                        label="UPCOMING"
                     />
                 </Badge>
             )}

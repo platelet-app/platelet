@@ -53,6 +53,7 @@ describe("saveNewTaskToDataStore", () => {
                 telephoneNumber: "01234567890",
             },
             timeOfCall: "2021-02-01T12:00:58.987Z",
+            status: models.TaskStatus.NEW,
         };
         const mockTask = new models.Task({
             createdBy: author,
@@ -121,6 +122,7 @@ describe("saveNewTaskToDataStore", () => {
                 telephoneNumber: "01234567890",
             },
             timeOfCall: "2021-02-01T12:00:58.987Z",
+            status: models.TaskStatus.NEW,
         };
         const mockTask = new models.Task({
             createdBy: author,
@@ -217,6 +219,7 @@ describe("saveNewTaskToDataStore", () => {
                 telephoneNumber: "01234567890",
             },
             timeOfCall: "2021-02-01T12:00:58.987Z",
+            status: models.TaskStatus.FUTURE,
         };
         const mockTask = new models.Task({
             createdBy: author,
@@ -294,6 +297,7 @@ describe("saveNewTaskToDataStore", () => {
                 telephoneNumber: "01234567890",
             },
             timeOfCall: "2021-02-01T12:00:58.987Z",
+            status: models.TaskStatus.FUTURE,
         };
         const mockTask = new models.Task({
             createdBy: author,
@@ -370,6 +374,7 @@ describe("saveNewTaskToDataStore", () => {
                 telephoneNumber: "01234567890",
             },
             timeOfCall: "2021-02-01T12:00:58.987Z",
+            status: models.TaskStatus.NEW,
         };
         const mockTask = new models.Task({
             createdBy: author,
@@ -432,6 +437,7 @@ describe("saveNewTaskToDataStore", () => {
                 telephoneNumber: "01234567890",
             },
             timeOfCall: "2021-02-01T12:00:58.987Z",
+            status: models.TaskStatus.NEW,
         };
         const mockTask = new models.Task({
             createdBy: author,

@@ -6,7 +6,6 @@ import { convertListDataToObject } from "../../utilities";
 import _ from "lodash";
 import * as assigneeActions from "../../redux/taskAssignees/taskAssigneesActions";
 import { Schedule } from "../sharedTaskComponents/PickUpAndDeliverSchedule";
-import taskScheduleDueStatus from "../../utilities/taskScheduleDueStatus";
 import { convertScheduleToTaskData } from "../../utilities/convertScheduleToTaskData";
 
 type Data = {
@@ -22,13 +21,13 @@ type Data = {
     schedule: { pickUp: Schedule | null; dropOff: Schedule | null };
     requesterContact: models.AddressAndContactDetails;
     timeOfCall: string;
+    status: models.TaskStatus;
 };
 
 export async function saveNewTaskToDataStore(
     data: Data,
     tenantId: string,
-    authorId: string,
-    rider = null
+    authorId: string
 ) {
     if (!tenantId) {
         throw new Error("tenantId is required");
@@ -69,10 +68,6 @@ export async function saveNewTaskToDataStore(
     const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     const pickUpSchedule = convertScheduleToTaskData(schedule?.pickUp);
     const dropOffSchedule = convertScheduleToTaskData(schedule?.dropOff);
-    let taskDueStatus = true;
-    if (pickUpSchedule) {
-        taskDueStatus = taskScheduleDueStatus(pickUpSchedule, 0, 1);
-    }
     const newTask = await DataStore.save(
         new models.Task({
             ...rest,
@@ -82,9 +77,6 @@ export async function saveNewTaskToDataStore(
             createdBy: author,
             dropOffLocation,
             dropOffSchedule,
-            status: taskDueStatus
-                ? models.TaskStatus.NEW
-                : models.TaskStatus.FUTURE,
             tenantId,
             dateCreated: today.toISOString().split("T")[0],
         })

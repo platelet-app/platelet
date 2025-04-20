@@ -46,7 +46,7 @@ const TaskAssignees: React.FC<TaskAssigneesProps> = ({
 
     const dialogMessage =
         taskStatus === models.TaskStatus.NEW
-            ? "This will remove the task from your dashboard and place it into PENDING."
+            ? "This will remove the task from your dashboard and place it into UPCOMING."
             : "This will remove the task from your dashboard.";
 
     const confirmationSelfDeleteDialog = (

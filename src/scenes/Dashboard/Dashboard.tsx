@@ -36,7 +36,7 @@ function AddClearFab() {
     const tabIndex = useSelector(dashboardTabIndexSelector);
     const items = selectedItems[tabIndex];
     const filterOn = !!dashboardFilter || !!dashboardFilteredUser;
-    const message = filterOn ? "Clear search" : "Create new";
+    const message = filterOn ? "Clear search" : "Create";
 
     function handleClick() {
         if (filterOn) {
