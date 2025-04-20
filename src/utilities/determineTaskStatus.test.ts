@@ -158,4 +158,42 @@ describe("determineTaskStatus", () => {
         const result = await determineTaskStatus(task);
         expect(result).toBe(models.TaskStatus.ACTIVE);
     });
+    test("future", async () => {
+        const task = await DataStore.save(
+            new models.Task({
+                tenantId,
+                dateCreated: "2023-10-01",
+                timeCancelled: null,
+                timeRejected: null,
+                timeDroppedOff: null,
+                timePickedUp: null,
+                timeRiderHome: null,
+                pickUpSchedule: {
+                    timePrimary: "2199-10-02T00:00:00Z",
+                    timeSecondary: null,
+                    relation: models.TimeRelation.BEFORE,
+                },
+            })
+        );
+        const result = await determineTaskStatus(task);
+        expect(result).toBe(models.TaskStatus.FUTURE);
+    });
+    test("pending 2", async () => {
+        const task = new models.Task({
+            tenantId,
+            dateCreated: "2023-10-01",
+            timeCancelled: null,
+            timeRejected: null,
+            timeDroppedOff: null,
+            timePickedUp: null,
+            timeRiderHome: null,
+            pickUpSchedule: {
+                timePrimary: "2021-10-02T00:00:00Z",
+                timeSecondary: null,
+                relation: models.TimeRelation.BEFORE,
+            },
+        });
+        const result = await determineTaskStatus(task);
+        expect(result).toBe(models.TaskStatus.PENDING);
+    });
 });

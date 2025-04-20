@@ -1,5 +1,6 @@
 import * as models from "../models";
 import { DataStore } from "aws-amplify";
+import taskScheduleDueStatus from "./taskScheduleDueStatus";
 
 interface TaskInterface {
     id: string;
@@ -9,6 +10,7 @@ interface TaskInterface {
     timeRiderHome?: string | null;
     timeRejected?: string | null;
     status?: string | null;
+    pickUpSchedule?: models.Schedule | null;
 }
 
 interface Assignee {
@@ -74,6 +76,14 @@ export default async function determineTaskStatus(
         return models.TaskStatus.ACTIVE;
     } else if (isCoordAssigned) {
         return models.TaskStatus.NEW;
+    }
+    if (task.pickUpSchedule) {
+        const isDueInOneDay = taskScheduleDueStatus(task.pickUpSchedule, 24);
+        if (isDueInOneDay) {
+            return models.TaskStatus.PENDING;
+        } else {
+            return models.TaskStatus.FUTURE;
+        }
     }
     return models.TaskStatus.PENDING;
 }
