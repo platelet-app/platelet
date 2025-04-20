@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "api": {
+      "platelet": [
+        "Query",
+        "Mutation"
+      ]
+    }
+  },
+  "lambdaLayers": [
+    {
+      "type": "ProjectLayer",
+      "resourceName": "plateletappSyncOperations",
+      "env": "rereer",
+      "version": "Always choose latest version",
+      "isLatestVersionSelected": true
+    }
+  ]
+}

@@ -31,6 +31,16 @@ const listScheduledTasks = /* GraphQL */ `
                 id
                 tenantId
                 cronExpression
+                pickUpSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
+                dropOffSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
                 pickUpLocation {
                     id
                     listed
@@ -189,6 +199,38 @@ const createUnlistedLocation = async (location) => {
     return body?.data?.createLocation?.id;
 };
 
+const createSchedule = (schedule) => {
+    if (!schedule) return null;
+    const { relation, timePrimary, timeSecondary } = schedule;
+    let timePrimaryResult = null;
+    let timeSecondaryResult = null;
+    let timePrimaryDate = new Date(timePrimary);
+    if (timePrimary) {
+        // we need timePrimary to start with today's date
+        // but use the hours and minutes saved on the server
+        const datePrimary = new Date();
+        datePrimary.setUTCHours(timePrimaryDate.getUTCHours());
+        datePrimary.setUTCMinutes(timePrimaryDate.getUTCMinutes());
+        timePrimaryResult = datePrimary.toISOString();
+    }
+    if (timeSecondary) {
+        // work out the difference between timeSecondary and timePrimary
+        const timeSecondaryDate = new Date(timeSecondary);
+        const difference =
+            timeSecondaryDate.getTime() - timePrimaryDate.getTime();
+        // add the difference to the new timePrimary that has today's date
+        // then if the timeSecondary is the next day, it'll be accounted for
+        const dateSecondaryUnixTime =
+            new Date(timePrimaryResult).getTime() + difference;
+        timeSecondaryResult = new Date(dateSecondaryUnixTime).toISOString();
+    }
+    return {
+        relation,
+        timePrimary: timePrimaryResult,
+        timeSecondary: timeSecondaryResult,
+    };
+};
+
 const createNewTask = async (scheduledTask) => {
     const {
         priority,
@@ -198,6 +240,8 @@ const createNewTask = async (scheduledTask) => {
         requesterContact,
         deliverables,
         tenantId,
+        pickUpSchedule,
+        dropOffSchedule,
     } = scheduledTask;
     let pickUpLocationId = null;
     let dropOffLocationId = null;
@@ -225,6 +269,12 @@ const createNewTask = async (scheduledTask) => {
 
     const currentDate = new Date();
     const dateCreated = currentDate.toISOString().split("T")[0];
+
+    const pickUpScheduleResult = createSchedule(pickUpSchedule);
+    const dropOffScheduleResult = createSchedule(dropOffSchedule);
+    console.log("PICK UP SCHEDULE", pickUpScheduleResult);
+    console.log("DROP OFF SCHEDULE", dropOffScheduleResult);
+
     const variables = {
         input: {
             priority,
@@ -234,6 +284,8 @@ const createNewTask = async (scheduledTask) => {
             dropOffLocationId,
             establishmentLocationId,
             dateCreated,
+            pickUpSchedule: pickUpScheduleResult,
+            dropOffSchedule: dropOffScheduleResult,
             status: "PENDING",
             archived: 0,
         },

@@ -165,7 +165,7 @@ describe("TaskAssignmentsPanel", () => {
         await waitFor(() => {
             expect(saveSpy).toHaveBeenNthCalledWith(4, {
                 ...mockTask,
-                status: models.TaskStatus.NEW,
+                status: models.TaskStatus.PENDING,
                 riderResponsibility: null,
                 isRiderUsingOwnVehicle: 0,
             });
@@ -478,6 +478,7 @@ describe("TaskAssignmentsPanel", () => {
         await saveCoordAssignments();
         const querySpy = jest.spyOn(DataStore, "query");
         const deleteSpy = jest.spyOn(DataStore, "delete");
+        const saveSpy = jest.spyOn(DataStore, "save");
         render(
             <>
                 <FakeDispatchComponent />
@@ -494,6 +495,13 @@ describe("TaskAssignmentsPanel", () => {
                 id: expect.any(String),
             })
         );
+
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenNthCalledWith(1, {
+                ...fakeTask1,
+                status: tasksStatus.pending,
+            });
+        });
     });
 
     it("deletes a rider assignment", async () => {
@@ -519,7 +527,7 @@ describe("TaskAssignmentsPanel", () => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 riderResponsibility: null,
-                status: tasksStatus.new,
+                status: tasksStatus.pending,
                 isRiderUsingOwnVehicle: 0,
             });
         });

@@ -90,6 +90,7 @@ describe("TaskContextMenu", () => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...task,
                 timeCancelled: null,
+                status: tasksStatus.pending,
             });
         });
     });
@@ -150,6 +151,7 @@ describe("TaskContextMenu", () => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...task,
                 timeRejected: null,
+                status: tasksStatus.pending,
             });
         });
     });

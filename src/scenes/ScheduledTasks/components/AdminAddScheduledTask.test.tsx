@@ -20,20 +20,7 @@ jest.mock("aws-amplify", () => {
 describe("AdminAddScheduledTask", () => {
     afterEach(async () => {
         jest.restoreAllMocks();
-        const users = await DataStore.query(models.User);
-        const scheduledTasks = await DataStore.query(models.ScheduledTask);
-        const locations = await DataStore.query(models.Location);
-        const deliverables = await DataStore.query(models.Deliverable);
-        const deliverableTypes = await DataStore.query(models.DeliverableType);
-        await Promise.all(
-            [
-                ...users,
-                ...locations,
-                ...scheduledTasks,
-                ...deliverables,
-                ...deliverableTypes,
-            ].map((item) => DataStore.delete(item))
-        );
+        await DataStore.clear();
     });
     test("add a new scheduled task", async () => {
         const whoami = await DataStore.save(
@@ -113,6 +100,8 @@ describe("AdminAddScheduledTask", () => {
             establishmentLocation: mockListedLocation,
             pickUpLocation: mockListedLocation2,
             dropOffLocation: mockListedLocation3,
+            pickUpSchedule: null,
+            dropOffSchedule: null,
             priority: models.Priority.HIGH,
             cronExpression: "0 18 * * *",
             createdBy: whoami,
@@ -167,7 +156,9 @@ describe("AdminAddScheduledTask", () => {
         userEvent.type(telephoneTextbox, "01234567890");
         expect(telephoneTextbox).toHaveValue("01234567890");
         userEvent.type(
-            screen.getAllByRole("textbox", { name: "Search locations..." })[0],
+            screen.getAllByRole("textbox", {
+                name: "Search locations...",
+            })[0],
             "Another Location"
         );
         userEvent.click(
@@ -178,7 +169,9 @@ describe("AdminAddScheduledTask", () => {
         ).toHaveLength(1);
         expect(screen.getByText("Another Location")).toBeInTheDocument();
         userEvent.type(
-            screen.getAllByRole("textbox", { name: "Search locations..." })[0],
+            screen.getAllByRole("textbox", {
+                name: "Search locations...",
+            })[0],
             "Third Location"
         );
         userEvent.click(
@@ -219,6 +212,186 @@ describe("AdminAddScheduledTask", () => {
             ...mockDeliverable2,
             id: expect.any(String),
             scheduledTask: { ...mockScheduledTask, id: expect.any(String) },
+        });
+    });
+    test("add a new scheduled task with schedule", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                displayName: "Test User",
+                roles: [models.Role.ADMIN],
+                username: "testuser",
+                cognitoId: "testuserid",
+            })
+        );
+        const mockListedLocation = await DataStore.save(
+            new models.Location({
+                tenantId,
+                name: "Test Location",
+                line1: "Test Line 1",
+                line2: "Test Line 2",
+                line3: "Test Line 3",
+                town: "Test Town",
+                county: "Test County",
+                postcode: "Test Postcode",
+                country: "Test Country",
+                listed: 1,
+                archived: 0,
+            })
+        );
+        const mockListedLocation2 = await DataStore.save(
+            new models.Location({
+                tenantId,
+                name: "Another Location",
+                line1: "Another Line 1",
+                line2: "Another Line 2",
+                line3: "Another Line 3",
+                town: "Another Town",
+                county: "Another County",
+                postcode: "Another Postcode",
+                country: "Another Country",
+                listed: 1,
+                archived: 0,
+            })
+        );
+        const mockListedLocation3 = await DataStore.save(
+            new models.Location({
+                tenantId,
+                name: "Third Location",
+                line1: "Third Line 1",
+                line2: "Third Line 2",
+                line3: "Third Line 3",
+                town: "Third Town",
+                county: "Third County",
+                postcode: "Third Postcode",
+                country: "Third Country",
+                listed: 1,
+                archived: 0,
+            })
+        );
+        const mockSchedule = new models.Schedule({
+            timePrimary: "2023-10-10T10:00:00.000Z",
+            timeSecondary: "2023-10-10T11:00:00.000Z",
+            relation: models.TimeRelation.BETWEEN,
+        });
+        const mockSchedule2 = new models.Schedule({
+            timePrimary: "2023-10-10T10:00:00.000Z",
+            timeSecondary: null,
+            relation: models.TimeRelation.AFTER,
+        });
+        const mockScheduledTask = new models.ScheduledTask({
+            tenantId,
+            requesterContact: {
+                name: "",
+                telephoneNumber: "",
+            },
+            establishmentLocation: mockListedLocation,
+            pickUpLocation: mockListedLocation2,
+            dropOffLocation: mockListedLocation3,
+            pickUpSchedule: mockSchedule,
+            dropOffSchedule: mockSchedule2,
+            priority: null,
+            cronExpression: "0 18 * * *",
+            createdBy: whoami,
+        });
+
+        const preloadedState = {
+            tenantId,
+            whoami: { user: whoami },
+        };
+
+        const saveSpy = jest.spyOn(DataStore, "save");
+
+        render(<AdminAddScheduledTask />, { preloadedState });
+        userEvent.type(
+            screen.getByRole("textbox", { name: "Select establishment" }),
+            "Test location"
+        );
+        userEvent.click(
+            await screen.findByRole("option", { name: "Test Location" })
+        );
+        expect(
+            screen.queryByRole("textbox", { name: "Select establishment" })
+        ).toBeNull();
+        expect(screen.getByText("Test Location")).toBeInTheDocument();
+        userEvent.type(
+            screen.getAllByRole("textbox", {
+                name: "Search locations...",
+            })[0],
+            "Another Location"
+        );
+        userEvent.click(
+            await screen.findByRole("option", { name: "Another Location" })
+        );
+
+        expect(await screen.findByText("Another Line 1")).toBeInTheDocument();
+        userEvent.type(
+            screen.getAllByRole("textbox", {
+                name: "Search locations...",
+            })[0],
+            "Third Location"
+        );
+        userEvent.click(
+            await screen.findByRole("option", { name: "Third Location" })
+        );
+        expect(screen.getByText("Third Location")).toBeInTheDocument();
+        userEvent.click(
+            screen.getByRole("button", { name: "add pick-up schedule" })
+        );
+        userEvent.click(
+            screen.getByRole("button", {
+                name: "ANYTIME",
+            })
+        );
+        userEvent.click(screen.getByRole("option", { name: "BETWEEN" }));
+        const textBox = screen.getAllByRole("textbox");
+        userEvent.clear(textBox[0]);
+        userEvent.type(textBox[0], "10:00");
+        userEvent.clear(textBox[1]);
+        userEvent.type(textBox[1], "11:00");
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(screen.queryByRole("button", { name: "OK" })).toBeNull();
+        });
+        expect(
+            screen.getByText("Between 10:00 and 11:00.")
+        ).toBeInTheDocument();
+        userEvent.click(
+            screen.getByRole("button", { name: "add drop-off schedule" })
+        );
+        userEvent.click(
+            screen.getByRole("button", {
+                name: "ANYTIME",
+            })
+        );
+        userEvent.click(screen.getByRole("option", { name: "AFTER" }));
+        const textBoxDropOff = screen.getAllByRole("textbox");
+        userEvent.clear(textBoxDropOff[0]);
+        userEvent.type(textBoxDropOff[0], "10:00");
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(screen.queryByRole("button", { name: "OK" })).toBeNull();
+        });
+        expect(screen.getByText("After 10:00.")).toBeInTheDocument();
+        const addButton = screen.getByRole("button", {
+            name: "Add scheduled task",
+        });
+        expect(addButton).toBeEnabled();
+        userEvent.click(addButton);
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockScheduledTask,
+                pickUpSchedule: {
+                    ...mockSchedule,
+                    timePrimary: expect.stringMatching(/10:00/),
+                    timeSecondary: expect.stringMatching(/11:00/),
+                },
+                dropOffSchedule: {
+                    ...mockSchedule2,
+                    timePrimary: expect.stringMatching(/10:00/),
+                },
+                id: expect.any(String),
+            });
         });
     });
     test("add a scheduled task with unlisted locations", async () => {
@@ -273,6 +446,8 @@ describe("AdminAddScheduledTask", () => {
             establishmentLocation: mockEstablishmentLocation,
             pickUpLocation: mockLocation,
             dropOffLocation: mockLocation2,
+            pickUpSchedule: null,
+            dropOffSchedule: null,
             cronExpression: "0 18 * * *",
             priority: null,
             requesterContact: {

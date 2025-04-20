@@ -16,6 +16,8 @@ import {
 } from "../../../redux/notifications/NotificationsActions";
 import { encodeUUID } from "../../../utilities";
 import Forbidden from "../../../ErrorComponents/Forbidden";
+import { Schedule } from "../../sharedTaskComponents/PickUpAndDeliverSchedule";
+import { convertScheduleToTaskData } from "../../../utilities/convertScheduleToTaskData";
 
 const initialState = {
     requesterContact: {
@@ -26,6 +28,10 @@ const initialState = {
     priority: null,
     pickUpLocation: null,
     dropOffLocation: null,
+    schedule: {
+        pickUp: null,
+        dropOff: null,
+    },
 };
 
 type StateType = {
@@ -37,6 +43,10 @@ type StateType = {
     priority: models.Priority | null;
     pickUpLocation: models.Location | null;
     dropOffLocation: models.Location | null;
+    schedule: {
+        pickUp: Schedule | null;
+        dropOff: Schedule | null;
+    };
 };
 
 const AdminAddScheduledTask: React.FC = () => {
@@ -101,6 +111,17 @@ const AdminAddScheduledTask: React.FC = () => {
         }));
     };
 
+    const handleScheduleChange = (
+        key: "pickUp" | "dropOff",
+        value: Schedule | null
+    ) => {
+        const schedule = { ...state.schedule, [key]: value };
+        setState((prevState) => ({
+            ...prevState,
+            schedule,
+        }));
+    };
+
     const handlePriorityChange = (value: models.Priority | null) => {
         setState((prevState) => ({
             ...prevState,
@@ -116,6 +137,7 @@ const AdminAddScheduledTask: React.FC = () => {
                 pickUpLocation,
                 dropOffLocation,
                 establishmentLocation,
+                schedule,
                 ...rest
             } = state;
             if (pickUpLocation?.listed === 0) {
@@ -142,6 +164,10 @@ const AdminAddScheduledTask: React.FC = () => {
                     })
                 );
             }
+            const pickUpSchedule = convertScheduleToTaskData(schedule?.pickUp);
+            const dropOffSchedule = convertScheduleToTaskData(
+                schedule?.dropOff
+            );
             const newScheduledTask = new models.ScheduledTask({
                 ...rest,
                 pickUpLocation,
@@ -149,6 +175,8 @@ const AdminAddScheduledTask: React.FC = () => {
                 establishmentLocation,
                 tenantId,
                 createdBy,
+                pickUpSchedule,
+                dropOffSchedule,
                 cronExpression: "0 18 * * *",
             });
             const result = await DataStore.save(newScheduledTask);
@@ -210,6 +238,8 @@ const AdminAddScheduledTask: React.FC = () => {
                     establishment={state.establishmentLocation}
                 />
                 <ScheduledTaskPickUpAndDropOffDetails
+                    initialSchedule={state.schedule}
+                    onChangeSchedule={handleScheduleChange}
                     reset={resetForms}
                     onChange={handleLocationChange}
                 />

@@ -2,6 +2,14 @@
 import { initSchema } from '@aws-amplify/datastore';
 import { schema } from './schema';
 
+const TimeRelation = {
+  "BEFORE": "BEFORE",
+  "AFTER": "AFTER",
+  "AT": "AT",
+  "ANYTIME": "ANYTIME",
+  "BETWEEN": "BETWEEN"
+};
+
 const DeliverableTypeIcon = {
   "BUG": "BUG",
   "CHILD": "CHILD",
@@ -19,7 +27,8 @@ const TaskStatus = {
   "REJECTED": "REJECTED",
   "ABANDONED": "ABANDONED",
   "COMPLETED": "COMPLETED",
-  "PENDING": "PENDING"
+  "PENDING": "PENDING",
+  "FUTURE": "FUTURE"
 };
 
 const Priority = {
@@ -49,7 +58,7 @@ const CommentVisibility = {
   "ME": "ME"
 };
 
-const { Tenant, User, PossibleRiderResponsibilities, Vehicle, VehicleAssignment, Location, Task, TaskAssignee, ScheduledTask, Comment, DeliverableType, Deliverable, RiderResponsibility, S3Object, AddressAndContactDetails, SendFeedback, Statistics } = initSchema(schema);
+const { Tenant, User, PossibleRiderResponsibilities, Vehicle, VehicleAssignment, Location, Task, TaskAssignee, ScheduledTask, Comment, DeliverableType, Deliverable, RiderResponsibility, S3Object, AddressAndContactDetails, Schedule, SendFeedback, Statistics } = initSchema(schema);
 
 export {
   Tenant,
@@ -65,6 +74,7 @@ export {
   DeliverableType,
   Deliverable,
   RiderResponsibility,
+  TimeRelation,
   DeliverableTypeIcon,
   TaskStatus,
   Priority,
@@ -73,6 +83,7 @@ export {
   CommentVisibility,
   S3Object,
   AddressAndContactDetails,
+  Schedule,
   SendFeedback,
   Statistics
 };

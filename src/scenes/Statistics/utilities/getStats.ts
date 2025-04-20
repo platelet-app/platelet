@@ -42,7 +42,7 @@ export default function getStats(data: Task[], whoamiId: string) {
     stats.common.TOTAL = myTasks.length;
     // get the status stats
     for (const status of Object.values(TaskStatus)) {
-        if (status === TaskStatus.PENDING) continue;
+        if ([TaskStatus.PENDING, TaskStatus.FUTURE].includes(status)) continue;
         stats.common[status] = myTasks.filter(
             (task) => task.status === status
         ).length;

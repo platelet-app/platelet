@@ -353,6 +353,7 @@ function TaskAssignmentsPanel(props) {
                                 }
                                 usingOwnVehicle={usingOwnVehicle}
                                 disableUsingOwnVehicleSwitch={isPostingVehicle}
+                                taskStatus={task?.status}
                             />
                             <Typography>Assign a user</Typography>
                             <UserRoleSelect

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import * as models from "../../models";
 import PropTypes from "prop-types";
 import { makeStyles } from "tss-react/mui";
 import AppBar from "@mui/material/AppBar";
@@ -22,20 +23,36 @@ import {
 } from "./index";
 import { Paper, Stack } from "@mui/material";
 import { saveNewTaskToDataStore } from "./saveNewTaskToDataStore";
+import { convertScheduleToTaskData } from "../../utilities/convertScheduleToTaskData";
 import {
     getWhoami,
     guidedSetupOpenSelector,
     tenantIdSelector,
 } from "../../redux/Selectors";
-import { commentVisibility } from "../../apiConsts";
 import { showHide } from "../../styles/common";
 import _ from "lodash";
-import { displayErrorNotification } from "../../redux/notifications/NotificationsActions";
+import {
+    displayErrorNotification,
+    displayInfoNotification,
+} from "../../redux/notifications/NotificationsActions";
 import { useCordovaBackButton } from "../../hooks/useCordovaBackButton";
+import { Schedule } from "../sharedTaskComponents/PickUpAndDeliverSchedule";
+import taskScheduleDueStatus from "../../utilities/taskScheduleDueStatus";
+import SaveToDashOrFutureButton from "./components/SaveToDashOrFutureButton";
+import { encodeUUID } from "../../utilities";
 
-const TabPanel = (props) => {
-    const { children, value, index, ...other } = props;
+type TabPanelProps = {
+    children: React.ReactNode;
+    index: number;
+    value: any;
+};
 
+const TabPanel: React.FC<TabPanelProps> = ({
+    children,
+    value,
+    index,
+    ...other
+}) => {
     return (
         <div
             role="tabpanel"
@@ -59,7 +76,7 @@ TabPanel.propTypes = {
     value: PropTypes.any.isRequired,
 };
 
-const a11yProps = (index) => {
+const a11yProps = (index: number) => {
     return {
         id: `simple-tab-${index}`,
         "aria-controls": `simple-tabpanel-${index}`,
@@ -116,6 +133,11 @@ const guidedSetupStyles = makeStyles()((theme) => ({
     },
 }));
 
+type DefaultValuesType = {
+    priority: models.Priority | null;
+    establishmentLocation: models.Location | null;
+};
+
 const defaultValues = {
     priority: null,
     establishmentLocation: null,
@@ -128,15 +150,25 @@ const defaultContact = {
 
 const defaultComment = {
     body: "",
-    visibility: commentVisibility.everyone,
+    visibility: models.CommentVisibility.EVERYONE,
 };
 
 const initialEstablishmentSameAsPickUpState = false;
 
+type PickUpDropOffLocationsType = {
+    pickUpLocation: models.Location | null;
+    dropOffLocation: models.Location | null;
+};
+
+type DeliverablesType = {
+    [key: string]: models.Deliverable;
+};
+
 export const GuidedSetup = () => {
     const { classes } = guidedSetupStyles();
     const [tabIndex, setTabIndex] = React.useState(0);
-    const [formValues, setFormValues] = useState(defaultValues);
+    const [formValues, setFormValues] =
+        useState<DefaultValuesType>(defaultValues);
     const [establishmentSameAsPickup, setEstablishmentSameAsPickup] = useState(
         initialEstablishmentSameAsPickUpState
     );
@@ -144,36 +176,71 @@ export const GuidedSetup = () => {
     const [isPosting, setIsPosting] = useState(false);
     const [reset, setReset] = useState(false);
     const guidedSetupOpen = useSelector(guidedSetupOpenSelector);
-    const deliverables = useRef({});
+    const deliverables = useRef<DeliverablesType>({});
     const requesterContact = useRef(defaultContact);
     const comment = useRef(defaultComment);
     const [timeOfCall, setTimeOfCall] = useState(new Date());
     const [timeOfCallInvalid, setTimeOfCallInvalid] = useState(false);
-    const originalTimeOfCall = useRef(null);
+    const [futureOrDash, setFutureOrDash] = useState<"future" | "new" | null>(
+        null
+    );
+    const originalTimeOfCall = useRef<Date | null>(null);
     const dispatch = useDispatch();
-    const locations = useRef({ pickUpLocation: null, dropOffLocation: null });
-    const [pickUpOverride, setPickUpOverride] = useState(null);
+    const locations = useRef<PickUpDropOffLocationsType>({
+        pickUpLocation: null,
+        dropOffLocation: null,
+    });
+
+    const [schedule, setSchedule] = useState<{
+        pickUp: Schedule | null;
+        dropOff: Schedule | null;
+    }>({
+        pickUp: null,
+        dropOff: null,
+    });
+
+    const [pickUpOverride, setPickUpOverride] =
+        useState<models.Location | null>(null);
     const { show, hide } = showHide().classes;
     const [discardConfirmationOpen, setDiscardConfirmationOpen] =
         useState(false);
     const whoami = useSelector(getWhoami);
 
-    const handleChange = (event, newValue) => {
+    useEffect(() => {
+        if (!schedule.pickUp) {
+            setFutureOrDash(null);
+            return;
+        }
+        if (futureOrDash) return;
+        if (schedule.pickUp) {
+            const convertedSchedule = convertScheduleToTaskData(
+                schedule.pickUp
+            );
+            const isDueInOneDay = !taskScheduleDueStatus(
+                convertedSchedule,
+                0,
+                1
+            );
+            if (isDueInOneDay) setFutureOrDash("future");
+        }
+    }, [schedule.pickUp, futureOrDash]);
+
+    const handleChange = (_: any, newValue: number) => {
         setTabIndex(newValue);
     };
 
-    const handleCallerContactChange = (value) => {
+    const handleCallerContactChange = (value: any) => {
         requesterContact.current = { ...requesterContact.current, ...value };
     };
 
-    const handlePriorityChange = (value) => {
+    const handlePriorityChange = (value: models.Priority | null) => {
         setFormValues((prevState) => ({
             ...prevState,
             priority: value,
         }));
     };
 
-    const handleEstablishmentChange = (value) => {
+    const handleEstablishmentChange = (value: models.Location) => {
         setFormValues((prevState) => ({
             ...prevState,
             establishmentLocation: value,
@@ -201,14 +268,20 @@ export const GuidedSetup = () => {
         dispatch(setGuidedSetupOpen(false));
         setEstablishmentSameAsPickup(initialEstablishmentSameAsPickUpState);
         setTabIndex(0);
+        setSchedule({ pickUp: null, dropOff: null });
     }, [dispatch]);
 
     const handleSave = async () => {
         setIsPosting(true);
+        let status = models.TaskStatus.NEW;
+        if (futureOrDash === "future") status = models.TaskStatus.FUTURE;
+
         try {
-            await saveNewTaskToDataStore(
+            const result = await saveNewTaskToDataStore(
                 {
                     ...formValues,
+                    status,
+                    schedule,
                     deliverables: deliverables.current,
                     locations: locations.current,
                     requesterContact: requesterContact.current,
@@ -222,6 +295,12 @@ export const GuidedSetup = () => {
                 whoami && whoami.id
             );
             setEstablishmentSameAsPickup(initialEstablishmentSameAsPickUpState);
+            const message =
+                result.status === models.TaskStatus.NEW
+                    ? "Saved to IN PROGRESS"
+                    : "Saved to UPCOMING";
+            const viewLink = `/task/${encodeUUID(result.id)}`;
+            dispatch(displayInfoNotification(message, undefined, viewLink));
         } catch (e) {
             console.error(e);
             dispatch(displayErrorNotification("Sorry, something went wrong"));
@@ -242,7 +321,9 @@ export const GuidedSetup = () => {
             !_.isEqual(comment.current.body, defaultComment.body) ||
             !_.isEmpty(deliverables.current) ||
             locations.current.pickUpLocation ||
-            locations.current.dropOffLocation
+            locations.current.dropOffLocation ||
+            schedule.pickUp ||
+            schedule.dropOff
         ) {
             setDiscardConfirmationOpen(true);
         } else {
@@ -256,27 +337,31 @@ export const GuidedSetup = () => {
         requesterContact,
         comment,
         onCloseForm,
+        schedule,
     ]);
 
     useCordovaBackButton(handleDiscard, guidedSetupOpen);
 
-    const handleCommentVisibilityChange = (value) => {
+    const handleCommentVisibilityChange = (value: models.CommentVisibility) => {
         comment.current = { ...comment.current, visibility: value };
     };
 
-    const handleCommentChange = (value) => {
+    const handleCommentChange = (value: string) => {
         comment.current = { ...comment.current, body: value };
     };
 
-    function setLocation(key, location) {
+    function setLocation(
+        key: keyof PickUpDropOffLocationsType,
+        location: models.Location
+    ) {
         locations.current[key] = location;
     }
 
-    const handleTimeOfCallChange = (value) => {
+    const handleTimeOfCallChange = (value: Date) => {
         setTimeOfCall(value);
     };
 
-    const handleDeliverablesChange = (value) => {
+    const handleDeliverablesChange = (value: models.Deliverable) => {
         if (!value || !value.id) {
             return;
         }
@@ -296,7 +381,7 @@ export const GuidedSetup = () => {
         }
     };
 
-    const handleDeliverablesDelete = (value) => {
+    const handleDeliverablesDelete = (value: string) => {
         if (!value) {
             return;
         }
@@ -319,8 +404,18 @@ export const GuidedSetup = () => {
         }
     }, [guidedSetupOpen]);
 
+    const handleChangeSchedule = (newSchedule: {
+        pickUp: Schedule | null;
+        dropOff: Schedule | null;
+    }) => {
+        setSchedule(newSchedule);
+    };
+
     return (
-        <Paper key={reset} className={classes.wrapper}>
+        <Paper
+            key={reset ? "guided-setup-reset" : "guided-setup-not-reset"}
+            className={classes.wrapper}
+        >
             <div className={classes.tabContent}>
                 <AppBar position="static" className={classes.appBar}>
                     <Tabs
@@ -372,7 +467,6 @@ export const GuidedSetup = () => {
                 <Box sx={{ padding: 1 }}>
                     <Box className={tabIndex === 0 ? show : hide}>
                         <CallerDetails
-                            values={formValues}
                             timeOfCall={timeOfCall}
                             establishmentSameAsPickup={
                                 establishmentSameAsPickup
@@ -406,6 +500,8 @@ export const GuidedSetup = () => {
                             onClearPickUpLocation={() => {
                                 locations.current.pickUpLocation = null;
                             }}
+                            onSetSchedule={handleChangeSchedule}
+                            schedule={schedule}
                         />
                     </Box>
                     <Box className={tabIndex === 2 ? show : hide}>
@@ -463,15 +559,12 @@ export const GuidedSetup = () => {
                     <Button onClick={handleDiscard} disabled={isPosting}>
                         Discard
                     </Button>
-                    <Button
-                        data-cy="save-to-dash-button"
+                    <SaveToDashOrFutureButton
+                        onChange={setFutureOrDash}
+                        value={futureOrDash}
                         onClick={handleSave}
                         disabled={isPosting || !timeOfCall || timeOfCallInvalid}
-                        variant="contained"
-                        autoFocus
-                    >
-                        Save to dashboard
-                    </Button>
+                    />
                 </Stack>
             </Stack>
             <ConfirmationDialog
@@ -490,10 +583,4 @@ export const GuidedSetup = () => {
             </ConfirmationDialog>
         </Paper>
     );
-};
-
-GuidedSetup.propTypes = {
-    open: PropTypes.bool,
-    onClose: PropTypes.func,
-    showPreview: PropTypes.bool,
 };

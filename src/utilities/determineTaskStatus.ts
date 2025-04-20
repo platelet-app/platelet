@@ -1,5 +1,6 @@
 import * as models from "../models";
 import { DataStore } from "aws-amplify";
+import taskScheduleDueStatus from "./taskScheduleDueStatus";
 
 interface TaskInterface {
     id: string;
@@ -8,6 +9,8 @@ interface TaskInterface {
     timePickedUp?: string | null;
     timeRiderHome?: string | null;
     timeRejected?: string | null;
+    status?: string | null;
+    pickUpSchedule?: models.Schedule | null;
 }
 
 interface Assignee {
@@ -17,8 +20,12 @@ interface Assignee {
 
 export default async function determineTaskStatus(
     task: TaskInterface,
-    riderAssignees: Assignee[] | null = null
+    riderAssignees: Assignee[] | null = null,
+    coordAssignees: Assignee[] | null = null
 ) {
+    if (task.status && task.status === models.TaskStatus.FUTURE) {
+        return models.TaskStatus.FUTURE;
+    }
     // sort out cancelled and rejected first
     if (!!task.timeCancelled) {
         return !!task.timePickedUp
@@ -54,9 +61,29 @@ export default async function determineTaskStatus(
             (a) => a.task && a.task.id === task.id
         );
     }
-    if (!isRiderAssigned) {
-        return models.TaskStatus.NEW;
-    } else {
-        return models.TaskStatus.ACTIVE;
+    if (coordAssignees === null) {
+        coordAssignees = (await DataStore.query(models.TaskAssignee, (a) =>
+            a.role("eq", models.Role.COORDINATOR)
+        )) as Assignee[];
     }
+    let isCoordAssigned = false;
+    if (task && task.id) {
+        isCoordAssigned = coordAssignees.some(
+            (a) => a.task && a.task.id === task.id
+        );
+    }
+    if (isRiderAssigned) {
+        return models.TaskStatus.ACTIVE;
+    } else if (isCoordAssigned) {
+        return models.TaskStatus.NEW;
+    }
+    if (task.pickUpSchedule) {
+        const isDueInOneDay = taskScheduleDueStatus(task.pickUpSchedule, 24);
+        if (isDueInOneDay) {
+            return models.TaskStatus.PENDING;
+        } else {
+            return models.TaskStatus.FUTURE;
+        }
+    }
+    return models.TaskStatus.PENDING;
 }

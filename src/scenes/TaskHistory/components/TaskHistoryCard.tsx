@@ -64,6 +64,8 @@ const TaskHistoryCard: React.FC<TaskHistoryCardProps> = ({ task }) => {
                     status={task.status}
                     priority={task.priority}
                     riderResponsibility={task.riderResponsibility}
+                    pickUpSchedule={task.pickUpSchedule}
+                    dropOffSchedule={task.dropOffSchedule}
                 />
                 <TaskCardLocationDetail
                     nullLocationText="No pick up address"
