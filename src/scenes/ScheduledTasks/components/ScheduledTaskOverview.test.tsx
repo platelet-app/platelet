@@ -199,9 +199,7 @@ describe("ScheduledTaskOverview", () => {
                 screen.queryByTestId("scheduled-task-overview-skeleton")
             ).toBeNull();
         });
-        expect(
-            screen.getByText("Between 18:00 and 18:30.")
-        ).toBeInTheDocument();
-        expect(screen.getByText("Before 18:00.")).toBeInTheDocument();
+        expect(screen.getByText("Between 18:00 and 18:30")).toBeInTheDocument();
+        expect(screen.getByText("Before 18:00")).toBeInTheDocument();
     });
 });
