@@ -87,7 +87,7 @@ async function addNewUser(newUser, tenantId, cognitoId) {
     return result.data.createUser;
 }
 
-async function createNewCognitoUser(newUser, tenantId) {
+async function createNewCognitoUser(newUser, isPaid) {
     const userPoolId = process.env.AUTH_PLATELET61A0AC07_USERPOOLID;
     const CognitoIdentityServiceProvider = aws.CognitoIdentityServiceProvider;
     const cognitoClient = new CognitoIdentityServiceProvider({
@@ -122,15 +122,21 @@ async function createNewCognitoUser(newUser, tenantId) {
                 ? newUser.roles
                 : ["USER"];
 
-        for (const role of roles) {
-            await cognitoClient
-                .adminAddUserToGroup({
-                    GroupName: role,
-                    UserPoolId: userPoolId,
-                    Username: newUser.username,
-                })
-                .promise();
+        if (isPaid) {
+            roles.push("PAID");
         }
+
+        await Promise.all(
+            roles.map(async (role) => {
+                await cognitoClient
+                    .adminAddUserToGroup({
+                        GroupName: role,
+                        UserPoolId: userPoolId,
+                        Username: newUser.username,
+                    })
+                    .promise();
+            })
+        );
 
         if (!cognitoResp.User) {
             throw new Error(
@@ -214,7 +220,9 @@ exports.handler = async (event) => {
     let newUser;
     let password;
     let cognitoId;
-    const newCognitoUser = await createNewCognitoUser(user, tenantId);
+    const callingUserGroups = event.identity.groups;
+    const isPaid = callingUserGroups.includes("PAID");
+    const newCognitoUser = await createNewCognitoUser(user, isPaid);
     password = newCognitoUser.password;
     cognitoId = newCognitoUser.cognitoId;
     try {
