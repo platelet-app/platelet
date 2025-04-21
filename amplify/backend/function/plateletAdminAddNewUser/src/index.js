@@ -119,7 +119,7 @@ async function createNewCognitoUser(newUser, isPaid) {
     try {
         const roles =
             newUser.roles && newUser.roles.includes("USER")
-                ? newUser.roles
+                ? [...newUser.roles]
                 : ["USER"];
 
         if (isPaid) {
