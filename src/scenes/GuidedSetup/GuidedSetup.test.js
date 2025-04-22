@@ -5,6 +5,7 @@ import { GuidedSetup } from "./GuidedSetup";
 import * as models from "../../models";
 import { DataStore, Geo } from "aws-amplify";
 import userEvent from "@testing-library/user-event";
+
 import {
     commentVisibility,
     priorities,
@@ -12,11 +13,23 @@ import {
     userRoles,
 } from "../../apiConsts";
 
+const mockAccessToken = {
+    payload: {
+        "cognito:groups": ["PAID"],
+    },
+};
+
 jest.mock("aws-amplify", () => {
     const Amplify = {
         ...jest.requireActual("aws-amplify"),
         Geo: {
             searchByText: () => Promise.resolve([]),
+        },
+        Auth: {
+            currentSession: () =>
+                Promise.resolve({
+                    getAccessToken: () => mockAccessToken,
+                }),
         },
     };
     return Amplify;

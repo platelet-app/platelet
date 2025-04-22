@@ -5,17 +5,31 @@ import ScheduledTaskOverview from "./ScheduledTaskOverview";
 import { render } from "../../../test-utils";
 import userEvent from "@testing-library/user-event";
 import { screen, waitFor } from "@testing-library/react";
-import * as router from "react-router";
 const tenantId = "test-tenant";
+
+const mockAccessToken = {
+    payload: {
+        "cognito:groups": ["PAID"],
+    },
+};
+
+jest.mock("aws-amplify", () => {
+    const Amplify = {
+        ...jest.requireActual("aws-amplify"),
+        Auth: {
+            currentSession: () =>
+                Promise.resolve({
+                    getAccessToken: () => mockAccessToken,
+                }),
+        },
+    };
+    return Amplify;
+});
 
 describe("ScheduledTaskOverview", () => {
     afterEach(async () => {
         jest.restoreAllMocks();
-        const scheduledTasks = await DataStore.query(models.ScheduledTask);
-        const users = await DataStore.query(models.User);
-        await Promise.all(
-            [...scheduledTasks, ...users].map((item) => DataStore.delete(item))
-        );
+        await DataStore.clear();
     });
     test("the enable and disable buttons", async () => {
         const whoami = await DataStore.save(
