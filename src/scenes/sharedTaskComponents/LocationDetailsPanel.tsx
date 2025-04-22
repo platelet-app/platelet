@@ -673,7 +673,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                             )}
                         </Stack>
                         {contents}
-                        {isPaid && (
+                        {(isPaid || schedule) && (
                             <TaskScheduleDetails
                                 onClear={handleClearSchedule}
                                 onChange={handleEditSchedule}
