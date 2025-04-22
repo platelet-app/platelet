@@ -9,7 +9,10 @@ import * as models from "../../models";
 import { API, DataStore, graphqlOperation } from "aws-amplify";
 import { PersistentModelConstructor } from "@aws-amplify/datastore";
 import _ from "lodash";
-import { dataStoreModelSyncedStatusSelector } from "../../redux/Selectors";
+import {
+    dataStoreModelSyncedStatusSelector,
+    getWhoami,
+} from "../../redux/Selectors";
 import GetError from "../../ErrorComponents/GetError";
 import EditModeToggleButton from "../../components/EditModeToggleButton";
 import * as mutations from "../../graphql/mutations";
@@ -24,6 +27,7 @@ import {
 } from "../../API";
 import TaskScheduleDetails from "./TaskScheduleDetails";
 import useModelSubscription from "../../hooks/useModelSubscription";
+import useIsPaidSubscription from "../../hooks/useIsPaidSubscription";
 
 export const protectedFields = [
     "id",
@@ -70,6 +74,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     // I have no idea why the imported selector is undefined here
     // @ts-ignore
     const tenantId = useSelector((state) => state.tenantId);
+    const isPaid = useIsPaidSubscription();
     const [state, setState] = useState<models.Location | null>(null);
     const [editMode, setEditMode] = useState(false);
     const [errorState, setErrorState] = useState(false);
@@ -668,13 +673,15 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                             )}
                         </Stack>
                         {contents}
-                        <TaskScheduleDetails
-                            onClear={handleClearSchedule}
-                            onChange={handleEditSchedule}
-                            schedule={schedule}
-                            noWarning={noWarning}
-                            hideDate={hideScheduleDate}
-                        />
+                        {isPaid && (
+                            <TaskScheduleDetails
+                                onClear={handleClearSchedule}
+                                onChange={handleEditSchedule}
+                                schedule={schedule}
+                                noWarning={noWarning}
+                                hideDate={hideScheduleDate}
+                            />
+                        )}
                     </Stack>
                 </Paper>
                 <ConfirmationDialog

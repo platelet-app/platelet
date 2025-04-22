@@ -7,6 +7,28 @@ import GuidedSetupDrawer from "./GuidedSetupDrawer";
 import _ from "lodash";
 import { DataStore } from "aws-amplify";
 
+const mockAccessToken = {
+    payload: {
+        "cognito:groups": ["PAID"],
+    },
+};
+
+jest.mock("aws-amplify", () => {
+    const Amplify = {
+        ...jest.requireActual("aws-amplify"),
+        Geo: {
+            searchByText: () => Promise.resolve([]),
+        },
+        Auth: {
+            currentSession: () =>
+                Promise.resolve({
+                    getAccessToken: () => mockAccessToken,
+                }),
+        },
+    };
+    return Amplify;
+});
+
 describe("DashboardDetailTabs", () => {
     test("in progress and completed tabs", () => {
         const preloadedState = {

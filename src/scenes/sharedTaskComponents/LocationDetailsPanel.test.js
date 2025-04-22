@@ -22,11 +22,23 @@ const finishLoading = async () => {
     });
 };
 
+const mockAccessToken = {
+    payload: {
+        "cognito:groups": ["PAID"],
+    },
+};
+
 jest.mock("aws-amplify", () => {
     const Amplify = {
         ...jest.requireActual("aws-amplify"),
         Geo: {
             searchByText: () => Promise.resolve([]),
+        },
+        Auth: {
+            currentSession: () =>
+                Promise.resolve({
+                    getAccessToken: () => mockAccessToken,
+                }),
         },
     };
     return Amplify;

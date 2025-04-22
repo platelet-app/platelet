@@ -94,7 +94,7 @@ const humanReadableScheduleString = (
             result += ` and ${moment(schedule.timeSecondary).format("HH:mm")}`;
         }
     }
-    return result + ".";
+    return result;
 };
 
 export default humanReadableScheduleString;

@@ -1,0 +1,22 @@
+#set ( $userGroups = $util.defaultIfNull($ctx.identity.claims.get("cognito:groups"), null) )
+#set ( $paidUser = $userGroups.contains("PAID") )
+
+#set( $task = $util.defaultIfNull( $ctx.info.variables, null) )
+
+#set ( $hasScheduleData = false )
+
+#if ( $task )
+    #if ( $util.isNull($task.pickUpSchedule) == false )
+         #set ( $hasScheduleData = true )
+    #elseif ( $util.isNull($task.dropOffSchedule) == false )
+         #set ( $hasScheduleData = true )
+    #end
+#end
+
+#if ( $paidUser )
+    $util.toJson({})
+#elseif ( !$hasScheduleData )
+    $util.toJson({})
+#else
+    $util.error("You cannot add schedule information without a paid subscription.", "NotAuthorizedError")
+#end
