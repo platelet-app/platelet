@@ -1028,6 +1028,18 @@ export const getTask = /* GraphQL */ `query GetTask($id: ID!) {
     status
     isRiderUsingOwnVehicle
     archived
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
     updatedAt
     _version
     _deleted
@@ -1546,6 +1558,18 @@ export const getScheduledTask = /* GraphQL */ `query GetScheduledTask($id: ID!) 
       __typename
     }
     disabled
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
     createdAt
     updatedAt
     _version

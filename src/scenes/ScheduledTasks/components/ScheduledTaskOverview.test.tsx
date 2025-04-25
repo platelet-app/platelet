@@ -1,3 +1,4 @@
+import * as React from "react";
 import * as models from "../../../models";
 import { DataStore } from "aws-amplify";
 import ScheduledTaskOverview from "./ScheduledTaskOverview";
@@ -6,14 +7,29 @@ import userEvent from "@testing-library/user-event";
 import { screen, waitFor } from "@testing-library/react";
 const tenantId = "test-tenant";
 
+const mockAccessToken = {
+    payload: {
+        "cognito:groups": ["PAID"],
+    },
+};
+
+jest.mock("aws-amplify", () => {
+    const Amplify = {
+        ...jest.requireActual("aws-amplify"),
+        Auth: {
+            currentSession: () =>
+                Promise.resolve({
+                    getAccessToken: () => mockAccessToken,
+                }),
+        },
+    };
+    return Amplify;
+});
+
 describe("ScheduledTaskOverview", () => {
     afterEach(async () => {
         jest.restoreAllMocks();
-        const scheduledTasks = await DataStore.query(models.ScheduledTask);
-        const users = await DataStore.query(models.User);
-        await Promise.all(
-            [...scheduledTasks, ...users].map((item) => DataStore.delete(item))
-        );
+        await DataStore.clear();
     });
     test("the enable and disable buttons", async () => {
         const whoami = await DataStore.save(
@@ -119,6 +135,85 @@ describe("ScheduledTaskOverview", () => {
                 screen.queryByTestId("scheduled-task-overview-skeleton")
             ).toBeNull();
         });
-        expect(screen.queryByRole("button")).toBeNull();
+        expect(screen.queryByRole("button", { name: "Edit" })).toBeNull();
+    });
+    test("show edit icons if an admin", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                displayName: "name",
+                roles: [models.Role.USER, models.Role.ADMIN],
+                username: "username",
+                cognitoId: "cognitoId",
+            })
+        );
+        const scheduledTask = await DataStore.save(
+            new models.ScheduledTask({
+                tenantId,
+                cronExpression: "0 18 * * *",
+                disabled: 0,
+            })
+        );
+        const preloadedState = {
+            tenantId,
+            whoami: { user: whoami },
+        };
+        render(<ScheduledTaskOverview scheduledTaskId={scheduledTask.id} />, {
+            preloadedState,
+        });
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId("scheduled-task-overview-skeleton")
+            ).toBeNull();
+        });
+        expect(
+            screen.getByRole("button", { name: "Edit" })
+        ).toBeInTheDocument();
+    });
+    test("show schedule information", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                displayName: "name",
+                roles: [models.Role.USER, models.Role.ADMIN],
+                username: "username",
+                cognitoId: "cognitoId",
+            })
+        );
+        const scheduledTask = await DataStore.save(
+            new models.ScheduledTask({
+                tenantId,
+                cronExpression: "0 18 * * *",
+                disabled: 0,
+                pickUpSchedule: {
+                    timePrimary: "2023-10-10T18:00:00.000Z",
+                    timeSecondary: "2023-10-10T18:30:00.000Z",
+                    relation: models.TimeRelation.BETWEEN,
+                },
+                dropOffSchedule: {
+                    timePrimary: "2023-10-10T18:00:00.000Z",
+                    timeSecondary: null,
+                    relation: models.TimeRelation.BEFORE,
+                },
+            })
+        );
+        const preloadedState = {
+            tenantId,
+            whoami: { user: whoami },
+        };
+        render(
+            <ScheduledTaskOverview scheduledTaskId={scheduledTask.id} />,
+            {
+                preloadedState,
+            },
+            ["/scheduled/"]
+        );
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId("scheduled-task-overview-skeleton")
+            ).toBeNull();
+        });
+        expect(screen.getByText("Between 18:00 and 18:30")).toBeInTheDocument();
+        expect(screen.getByText("Before 18:00")).toBeInTheDocument();
     });
 });

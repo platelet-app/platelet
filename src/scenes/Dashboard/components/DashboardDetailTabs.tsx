@@ -51,7 +51,7 @@ const DashboardDetailTabs: React.FC<DashboardDetailTabsProps> = ({
                 onClick={() => dispatch(setGuidedSetupOpen(true))}
             >
                 <AddIcon sx={{ mr: 1 }} />
-                Create New
+                Create
             </Fab>
         ) : (
             <Fab

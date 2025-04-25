@@ -82,6 +82,7 @@ const taskStatus = {
     ABANDONED: "red",
     REJECTED: "grey",
     PENDING: "lightblue",
+    FUTURE: "pink",
 };
 
 // left here for demo mode

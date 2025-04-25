@@ -13,7 +13,7 @@ type CallerDetailType = {
         establishmentSameAsPickup: boolean
     ) => void;
     timeOfCall: Date;
-    onChangeTimeOfCall: (timeOfCall: Date | null) => void;
+    onChangeTimeOfCall: (timeOfCall: Date) => void;
     onInvalidTimeOfCall: (error: any) => void;
 };
 
@@ -105,7 +105,9 @@ export const CallerDetails: React.FC<CallerDetailType> = ({
                     );
                 }}
                 value={timeOfCall}
-                onChange={onChangeTimeOfCall}
+                onChange={(v) => {
+                    if (v) onChangeTimeOfCall(v);
+                }}
                 onError={onInvalidTimeOfCall}
             />
             <EstablishmentDetails

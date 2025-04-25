@@ -719,7 +719,7 @@ describe("TaskActions", () => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeCancelled: null,
-                status: tasksStatus.new,
+                status: tasksStatus.pending,
             });
         });
     });
@@ -756,7 +756,7 @@ describe("TaskActions", () => {
             expect(saveSpy).toHaveBeenNthCalledWith(1, {
                 ...mockTask,
                 timeRejected: null,
-                status: tasksStatus.new,
+                status: tasksStatus.pending,
             });
         });
     });

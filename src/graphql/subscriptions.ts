@@ -1330,6 +1330,18 @@ export const onCreateTask = /* GraphQL */ `subscription OnCreateTask($filter: Mo
     status
     isRiderUsingOwnVehicle
     archived
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
     updatedAt
     _version
     _deleted
@@ -1494,6 +1506,18 @@ export const onUpdateTask = /* GraphQL */ `subscription OnUpdateTask($filter: Mo
     status
     isRiderUsingOwnVehicle
     archived
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
     updatedAt
     _version
     _deleted
@@ -1658,6 +1682,18 @@ export const onDeleteTask = /* GraphQL */ `subscription OnDeleteTask($filter: Mo
     status
     isRiderUsingOwnVehicle
     archived
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
     updatedAt
     _version
     _deleted
@@ -2011,6 +2047,18 @@ export const onCreateScheduledTask = /* GraphQL */ `subscription OnCreateSchedul
       __typename
     }
     disabled
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
     createdAt
     updatedAt
     _version
@@ -2155,6 +2203,18 @@ export const onUpdateScheduledTask = /* GraphQL */ `subscription OnUpdateSchedul
       __typename
     }
     disabled
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
     createdAt
     updatedAt
     _version
@@ -2299,6 +2359,18 @@ export const onDeleteScheduledTask = /* GraphQL */ `subscription OnDeleteSchedul
       __typename
     }
     disabled
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
     createdAt
     updatedAt
     _version

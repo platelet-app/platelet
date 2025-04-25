@@ -5,8 +5,16 @@ import { Stack, TextField } from "@mui/material";
 import { commentVisibility } from "../../../apiConsts";
 import CommentVisibilitySelector from "../../../components/CommentVisibilitySelector";
 import PrioritySelect from "../../sharedTaskComponents/PrioritySelect";
+import * as models from "../../../models";
 
-export const NotesAndPriority = ({
+type NotesAndPriorityProps = {
+    onChange: (value: string) => void;
+    priority: models.Priority | null;
+    handleVisibilityChange: (value: models.CommentVisibility) => void;
+    onChangePriority: (value: models.Priority | null) => void;
+};
+
+export const NotesAndPriority: React.FC<NotesAndPriorityProps> = ({
     onChange,
     priority,
     handleVisibilityChange,
@@ -14,7 +22,6 @@ export const NotesAndPriority = ({
 }) => {
     const { classes } = Styles();
     const [visibility, setVisibility] = useState(commentVisibility.everyone);
-
     return (
         <Stack direction="column" spacing={2} className={classes.block}>
             <Stack>
@@ -38,13 +45,15 @@ export const NotesAndPriority = ({
                     fullWidth
                     multiline
                     onChange={(e) => onChange(e.target.value)}
-                    className={classes.textField}
                     margin="normal"
                 />
             </Stack>
             <Stack>
                 <Typography variant="h6">What is the priority?</Typography>
-                <PrioritySelect value={priority} onSelect={onChangePriority} />
+                <PrioritySelect
+                    priority={priority}
+                    onSelect={onChangePriority}
+                />
             </Stack>
         </Stack>
     );

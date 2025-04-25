@@ -100,12 +100,22 @@ export const listTasksByTenantId = /* GraphQL */ `
                     town
                     postcode
                 }
+                pickUpSchedule {
+                    timePrimary
+                    timeSecondary
+                    relation
+                }
                 dropOffLocation {
                     ward
                     line1
                     name
                     town
                     postcode
+                }
+                dropOffSchedule {
+                    timePrimary
+                    timeSecondary
+                    relation
                 }
                 deliverables {
                     items {

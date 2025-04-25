@@ -9,7 +9,7 @@ import {
 import { CssBaseline } from "@mui/material";
 import { SnackbarProvider } from "notistack";
 import { Provider, useDispatch } from "react-redux";
-import { BrowserRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router-dom";
 import mediaQuery from "css-mediaquery";
 import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
@@ -130,13 +130,14 @@ function render(
             },
         }),
         ...renderOptions
-    } = {}
+    } = {},
+    initialEntries = ["/"]
 ) {
     sagaMiddleWare.run(rootSaga);
     function Wrapper(props) {
         return (
             <Provider store={store}>
-                <BrowserRouter>
+                <MemoryRouter initialEntries={initialEntries}>
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <ReactNotification />
                         <SnackbarProvider maxSnack={1}>
@@ -144,7 +145,7 @@ function render(
                             <SnackNotificationBar {...props} />
                         </SnackbarProvider>
                     </LocalizationProvider>
-                </BrowserRouter>
+                </MemoryRouter>
             </Provider>
         );
     }

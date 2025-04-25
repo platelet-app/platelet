@@ -1366,6 +1366,18 @@ export const createTask = /* GraphQL */ `mutation CreateTask(
     status
     isRiderUsingOwnVehicle
     archived
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
     updatedAt
     _version
     _deleted
@@ -1533,6 +1545,18 @@ export const updateTask = /* GraphQL */ `mutation UpdateTask(
     status
     isRiderUsingOwnVehicle
     archived
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
     updatedAt
     _version
     _deleted
@@ -1700,6 +1724,18 @@ export const deleteTask = /* GraphQL */ `mutation DeleteTask(
     status
     isRiderUsingOwnVehicle
     archived
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
     updatedAt
     _version
     _deleted
@@ -2057,6 +2093,18 @@ export const createScheduledTask = /* GraphQL */ `mutation CreateScheduledTask(
       __typename
     }
     disabled
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
     createdAt
     updatedAt
     _version
@@ -2202,6 +2250,18 @@ export const updateScheduledTask = /* GraphQL */ `mutation UpdateScheduledTask(
       __typename
     }
     disabled
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
     createdAt
     updatedAt
     _version
@@ -2347,6 +2407,18 @@ export const deleteScheduledTask = /* GraphQL */ `mutation DeleteScheduledTask(
       __typename
     }
     disabled
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
     createdAt
     updatedAt
     _version

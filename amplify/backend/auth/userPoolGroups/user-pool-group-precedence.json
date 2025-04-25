@@ -4,19 +4,23 @@
     "precedence": 1
   },
   {
-    "groupName": "ADMIN",
+    "groupName": "PAID",
     "precedence": 2
   },
   {
-    "groupName": "COORDINATOR",
+    "groupName": "ADMIN",
     "precedence": 3
   },
   {
-    "groupName": "RIDER",
+    "groupName": "COORDINATOR",
     "precedence": 4
   },
   {
-    "groupName": "USER",
+    "groupName": "RIDER",
     "precedence": 5
+  },
+  {
+    "groupName": "USER",
+    "precedence": 6
   }
 ]

@@ -118,7 +118,11 @@ const PendingTaskAcceptReject: React.FC<PendingTaskAcceptRejectProps> = ({
         }
     };
 
-    if (state?.status === models.TaskStatus.PENDING) {
+    if (
+        [models.TaskStatus.PENDING, models.TaskStatus.FUTURE].includes(
+            state?.status as models.TaskStatus
+        )
+    ) {
         return (
             <Stack sx={{ padding: 1 }} direction="row" spacing={1}>
                 <Button

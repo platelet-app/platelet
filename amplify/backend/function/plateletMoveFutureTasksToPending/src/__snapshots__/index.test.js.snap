@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`handler should move future tasks into pending if drop off is due within a day 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "query": "
+    query LIST_TASKS_BY_STATUS($status: TaskStatus!, $nextToken: String) {
+        tasksByStatus(status: $status, nextToken: $nextToken) {
+            items {
+                id
+                status
+                pickUpSchedule {
+                    timePrimary
+                }
+                dropOffSchedule {
+                    timePrimary
+                }
+                _version
+            }
+            nextToken
+        }
+    }
+",
+        "variables": Object {
+          "nextToken": null,
+          "status": "FUTURE",
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    Array [
+      Object {
+        "query": "updateTaskMutation",
+        "variables": Object {
+          "input": Object {
+            "_version": 1,
+            "id": "1",
+            "status": "PENDING",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Promise {},
+    },
+    Object {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;
+
+exports[`handler should move future tasks into pending if pick up is due within a day 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      Object {
+        "query": "
+    query LIST_TASKS_BY_STATUS($status: TaskStatus!, $nextToken: String) {
+        tasksByStatus(status: $status, nextToken: $nextToken) {
+            items {
+                id
+                status
+                pickUpSchedule {
+                    timePrimary
+                }
+                dropOffSchedule {
+                    timePrimary
+                }
+                _version
+            }
+            nextToken
+        }
+    }
+",
+        "variables": Object {
+          "nextToken": null,
+          "status": "FUTURE",
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    Array [
+      Object {
+        "query": "updateTaskMutation",
+        "variables": Object {
+          "input": Object {
+            "_version": 1,
+            "id": "1",
+            "status": "PENDING",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": Promise {},
+    },
+    Object {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;
