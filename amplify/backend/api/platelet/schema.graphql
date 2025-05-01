@@ -263,7 +263,15 @@ type Task
       {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read]},
     ])
   pickUpSchedule: Schedule
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+    ])
   dropOffSchedule: Schedule
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+    ])
 }
 
 type TaskAssignee
