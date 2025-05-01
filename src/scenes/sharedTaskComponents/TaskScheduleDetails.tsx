@@ -17,6 +17,7 @@ import TaskScheduleIconText from "./TaskScheduleIconText";
 import moment from "moment";
 import { Schedule } from "./PickUpAndDeliverSchedule";
 import { convertScheduleToTaskData } from "../../utilities/convertScheduleToTaskData";
+import useIsPaidSubscription from "../../hooks/useIsPaidSubscription";
 
 const isValidTime = (time: string) => {
     const [hours, minutes] = time.split(":").map((value) => parseInt(value));
@@ -43,6 +44,8 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
     const [scheduleState, setScheduleState] = React.useState<Schedule | null>(
         null
     );
+
+    const isPaid = useIsPaidSubscription();
 
     const handleClear = () => {
         onClear();
@@ -137,9 +140,11 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
                         <IconButton onClick={() => setConfirmClear(true)}>
                             <ClearIcon />
                         </IconButton>
-                        <IconButton onClick={handleSetEditMode}>
-                            <EditIcon />
-                        </IconButton>
+                        {isPaid && (
+                            <IconButton onClick={handleSetEditMode}>
+                                <EditIcon />
+                            </IconButton>
+                        )}
                     </Box>
                 </Stack>
             )}
