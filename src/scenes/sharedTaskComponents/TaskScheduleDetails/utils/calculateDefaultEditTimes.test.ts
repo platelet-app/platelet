@@ -6,7 +6,7 @@ describe("calculateDefaultEditTimes", () => {
         jest.useFakeTimers();
         jest.setSystemTime(new Date("2021-01-01T12:00:00Z"));
     });
-    test.only("calculate times when there is no current state", () => {
+    test("calculate times when there is no current state", () => {
         const result = calculateDefaultEditTimes(null, true);
         expect(result).toEqual({
             timePrimary: "12:30",
