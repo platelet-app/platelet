@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as models from "../../models";
+import * as models from "../../../models";
 import {
     Box,
     Button,
@@ -9,15 +9,15 @@ import {
     Typography,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import ConfirmationDialog from "../../components/ConfirmationDialog";
+import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import ClearIcon from "@mui/icons-material/Clear";
-import TimeRelationPicker from "./TimeRelationPicker";
+import TimeRelationPicker from "../TimeRelationPicker";
 import { DatePicker } from "@mui/lab";
-import TaskScheduleIconText from "./TaskScheduleIconText";
-import moment from "moment";
-import { Schedule } from "./PickUpAndDeliverSchedule";
-import { convertScheduleToTaskData } from "../../utilities/convertScheduleToTaskData";
-import useIsPaidSubscription from "../../hooks/useIsPaidSubscription";
+import TaskScheduleIconText from "../TaskScheduleIconText";
+import { Schedule } from "../PickUpAndDeliverSchedule";
+import { convertScheduleToTaskData } from "../../../utilities/convertScheduleToTaskData";
+import useIsPaidSubscription from "../../../hooks/useIsPaidSubscription";
+import calculateDefaultEditTimes from "./utils/calculateDefaultEditTimes";
 
 const isValidTime = (time: string) => {
     const [hours, minutes] = time.split(":").map((value) => parseInt(value));
@@ -32,7 +32,7 @@ type TaskScheduleDetailsProps = {
     hideDate?: boolean;
 };
 
-const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
+export const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
     schedule,
     onClear,
     onChange,
@@ -53,49 +53,7 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
     };
 
     const handleSetEditMode = () => {
-        const currentHour = new Date().getHours();
-        const currentMinute = new Date().getMinutes();
-        let defaultTime = "10:00";
-        let defaultSecondTime = "10:30";
-        if (currentMinute > 30) {
-            const paddedHour = (currentHour + 1).toString().padStart(2, "0");
-            defaultTime = `${paddedHour}:00`;
-            defaultSecondTime = `${paddedHour}:30`;
-        } else if (currentMinute > 0) {
-            const paddedHour = currentHour.toString().padStart(2, "0");
-            const secondPaddedHour = new Date(new Date().getTime() + 30 * 60000)
-                .getHours()
-                .toString()
-                .padStart(2, "0");
-            defaultTime = `${paddedHour}:30`;
-            defaultSecondTime = `${secondPaddedHour}:00`;
-        }
-
-        if (schedule) {
-            setScheduleState({
-                timePrimary:
-                    moment(schedule?.timePrimary).format("HH:mm") ||
-                    defaultTime,
-                timeSecondary:
-                    moment(schedule?.timeSecondary).format("HH:mm") ||
-                    defaultSecondTime,
-                timeRelation:
-                    (schedule?.relation as models.TimeRelation | null) ??
-                    models.TimeRelation.ANYTIME,
-                date: new Date(schedule?.timePrimary ?? ""),
-            });
-        } else {
-            let date = new Date();
-            if (hideDate) {
-                date = new Date("2099-01-01");
-            }
-            setScheduleState({
-                timePrimary: defaultTime,
-                timeSecondary: defaultSecondTime,
-                timeRelation: models.TimeRelation.ANYTIME,
-                date,
-            });
-        }
+        setScheduleState(calculateDefaultEditTimes(schedule, hideDate));
         setEditMode(true);
     };
 
@@ -250,5 +208,3 @@ const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
         </>
     );
 };
-
-export default TaskScheduleDetails;
