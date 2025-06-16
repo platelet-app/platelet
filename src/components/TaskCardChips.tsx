@@ -1,7 +1,6 @@
 import * as models from "../models";
 import * as APITypes from "../API";
 import { Chip, Grid, Tooltip } from "@mui/material";
-import ScheduleIcon from "@mui/icons-material/Schedule";
 import TaskStatusChip from "./TaskStatusChip";
 import DeliverableChip from "./DeliverableChip";
 import UserChip from "./UserChip";
@@ -9,6 +8,8 @@ import PriorityChip from "./PriorityChip";
 import humanReadableScheduleString from "../utilities/humanReadableScheduleString";
 import taskScheduleDueStatus from "../utilities/taskScheduleDueStatus";
 import taskScheduleOverDueStatus from "../utilities/taskScheduleOverDueStatus";
+import SystemUpdateAltIcon from "@mui/icons-material/SystemUpdateAlt";
+import UploadIcon from "@mui/icons-material/Upload";
 
 type TaskCardChipsProps = {
     assignees?:
@@ -87,7 +88,7 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
                 }}
                 size="small"
                 label={humanReadableScheduleString(pickUpSchedule, shortened)}
-                icon={<ScheduleIcon />}
+                icon={<UploadIcon />}
             />
         );
     }
@@ -126,7 +127,7 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
                 }}
                 size="small"
                 label={humanReadableScheduleString(dropOffSchedule, shortened)}
-                icon={<ScheduleIcon />}
+                icon={<SystemUpdateAltIcon />}
             />
         );
     }
