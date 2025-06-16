@@ -32,6 +32,17 @@ describe("humanReadableScheduleString", () => {
         expect(result).toEqual("At 12:00");
     });
 
+    it("shorten the string between", () => {
+        const timeSecondary = "2021-11-29T12:30:58.987Z";
+        const schedule = new models.Schedule({
+            timePrimary: isoDate,
+            timeSecondary,
+            relation: models.TimeRelation.BETWEEN,
+        });
+        const result = humanReadableScheduleString(schedule, true);
+        expect(result).toEqual("12:00 to 12:30");
+    });
+
     it("should describe a schedule tomorrow at anytime", () => {
         const date = new Date(isoDate);
         date.setDate(date.getDate() + 1);
