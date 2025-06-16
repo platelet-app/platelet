@@ -22,7 +22,7 @@ import {
     GetTaskQuery,
     UpdateLocationMutation,
 } from "../../API";
-import TaskScheduleDetails from "./TaskScheduleDetails";
+import { TaskScheduleDetails } from "./TaskScheduleDetails";
 import useModelSubscription from "../../hooks/useModelSubscription";
 import useIsPaidSubscription from "../../hooks/useIsPaidSubscription";
 

@@ -48,9 +48,7 @@ const humanReadableScheduleString = (
             }
             break;
         case models.TimeRelation.BETWEEN:
-            if (shortened) {
-                result += "Between";
-            } else {
+            if (!shortened) {
                 result += " between";
             }
             break;
@@ -62,11 +60,19 @@ const humanReadableScheduleString = (
             }
             break;
     }
+    let connector = "and";
+    if (shortened && schedule.relation === models.TimeRelation.BETWEEN) {
+        connector = "to";
+    }
     if (
         schedule.timePrimary &&
         schedule.relation !== models.TimeRelation.ANYTIME
     ) {
-        result += ` ${moment(schedule.timePrimary).format("HH:mm")}`;
+        if (shortened && schedule.relation === models.TimeRelation.BETWEEN) {
+            result += `${moment(schedule.timePrimary).format("HH:mm")}`;
+        } else {
+            result += ` ${moment(schedule.timePrimary).format("HH:mm")}`;
+        }
     }
     if (
         schedule.timeSecondary &&
@@ -89,9 +95,11 @@ const humanReadableScheduleString = (
             const secondaryTimeString = moment(schedule.timeSecondary).format(
                 "HH:mm"
             );
-            result += ` and ${timeSecondaryDayString} at ${secondaryTimeString}`;
+            result += ` ${connector} ${timeSecondaryDayString} at ${secondaryTimeString}`;
         } else {
-            result += ` and ${moment(schedule.timeSecondary).format("HH:mm")}`;
+            result += ` ${connector} ${moment(schedule.timeSecondary).format(
+                "HH:mm"
+            )}`;
         }
     }
     return result;

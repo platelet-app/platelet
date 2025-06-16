@@ -44,7 +44,14 @@ const dataStoreConflictHandler = async (
         newModel = models.Task.copyOf(newModel, (task) => {
             task.status = status;
         });
-        const { createdAt, updatedAt, tenantId, archived, ...rest } = newModel;
+        const {
+            createdAt,
+            updatedAt,
+            tenantId,
+            archived,
+            dateCompleted,
+            ...rest
+        } = newModel;
         return rest;
     } else if (
         modelConstructor ===
