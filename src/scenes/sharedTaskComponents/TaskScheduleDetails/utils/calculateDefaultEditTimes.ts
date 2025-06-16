@@ -32,13 +32,15 @@ const calculateDefaultEditTimes = (
             defaultSecondTime = `${paddedHour}:00`;
         } else if (currentMinute >= 0) {
             let secondaryDate = new Date(
-                new Date(schedule?.timePrimary).getTime() + 60 * 60000
+                new Date(schedule?.timePrimary).getTime() + 30 * 60000
             );
-            const secondPaddedHour = new Date(secondaryDate)
-                .getHours()
-                .toString()
-                .padStart(2, "0");
+            const secondHour = new Date(secondaryDate).getHours();
+            let secondPaddedHour = secondHour.toString().padStart(2, "0");
             defaultSecondTime = `${secondPaddedHour}:30`;
+            if (secondaryDate.getMinutes() > 30) {
+                secondPaddedHour = (secondHour + 1).toString().padStart(2, "0");
+                defaultSecondTime = `${secondPaddedHour}:00`;
+            }
         }
     }
 
