@@ -9,5 +9,8 @@
     },
     "scripts": {
         "test": "echo \"No test specified\""
+    },
+    "dependencies": {
+        "@aws-sdk/client-ses": "^3.830.0"
     }
 }
