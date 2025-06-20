@@ -1,0 +1,32 @@
+name: Manage tenant paid membership
+
+on:
+  workflow_dispatch:
+    inputs:
+      action_type:
+        description: 'Choose action: "add" to add users, "remove" to remove users.'
+        required: true
+        type: choice
+        options:
+          - 'add'
+          - 'remove'
+
+jobs:
+  manage-group:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+    steps:
+      - name: Add Users to PAID Group
+        if: github.event.inputs.action_type == 'add'
+        uses: platelet-app/pool-to-group-action
+        with:
+          pool-id: ${{ vars.POOL_ID }}
+          group: "PAID"
+          action: "add"
+      - name: Remove Users from PAID Group
+        if: github.event.inputs.action_type == 'remove'
+        uses: platelet-app/pool-to-group-action
+        with:
+          pool-id: ${{ vars.POOL_ID }}
+          group: "PAID"
+          action: "remove"
