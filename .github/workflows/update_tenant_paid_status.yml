@@ -10,11 +10,15 @@ on:
         options:
           - 'add'
           - 'remove'
+      target_environment:
+        description: 'Select the target environment.'
+        required: true
+        type: environment
 
 jobs:
   manage-group:
     runs-on: ubuntu-latest
-    environment: ${{ github.ref_name }}
+    environment: ${{ github.event.inputs.target_environment }}
     steps:
       - name: Add Users to PAID Group
         if: github.event.inputs.action_type == 'add'
