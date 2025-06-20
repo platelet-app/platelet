@@ -1,4 +1,4 @@
-import { DataStore } from "aws-amplify";
+import { Auth, DataStore } from "aws-amplify";
 import _ from "lodash";
 import * as models from "../models";
 
@@ -21,6 +21,10 @@ export default async function duplicateTask(
     if (!tenantId) throw new Error("tenantId must exist");
     if (!task) throw new Error("task must exist");
     if (!createdById) throw new Error("createdById must exist");
+    const user = await Auth.currentSession();
+    const accessToken = user.getAccessToken();
+    const groups = accessToken.payload["cognito:groups"];
+    const isPaid = groups.includes("PAID");
     let {
         id,
         updatedAt,
@@ -34,9 +38,17 @@ export default async function duplicateTask(
         establishmentLocation,
         dropOffLocation,
         pickUpLocation,
+        pickUpSchedule,
+        dropOffSchedule,
         createdBy,
         ...rest
     } = { ...task };
+
+    if (!isPaid) {
+        pickUpSchedule = null;
+        dropOffSchedule = null;
+    }
+
     const author = await DataStore.query(models.User, createdById);
     if (!author) throw new Error("author not found");
     if (pickUpLocation?.listed === 0) {

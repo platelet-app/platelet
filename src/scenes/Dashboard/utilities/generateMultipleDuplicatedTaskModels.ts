@@ -1,4 +1,4 @@
-import { DataStore } from "aws-amplify";
+import { Auth, DataStore } from "aws-amplify";
 import _ from "lodash";
 import * as models from "../../../models";
 
@@ -24,6 +24,12 @@ export default async function generateMultipleDuplicatedTaskModels(
     if (!whoamiId) throw new Error("whoamiId is required");
     const whoami = await DataStore.query(models.User, whoamiId);
     if (!whoami) throw new Error("author not found");
+
+    const user = await Auth.currentSession();
+    const accessToken = user.getAccessToken();
+    const groups = accessToken.payload["cognito:groups"];
+    const isPaid = groups.includes("PAID");
+
     const allAssignees = await DataStore.query(models.TaskAssignee);
     const deliverables = await DataStore.query(models.Deliverable);
     const date = new Date();
@@ -44,10 +50,17 @@ export default async function generateMultipleDuplicatedTaskModels(
                 riderResponsibility,
                 dropOffLocation,
                 pickUpLocation,
+                pickUpSchedule,
+                dropOffSchedule,
                 createdBy,
                 establishmentLocation,
                 ...rest
             } = { ...task };
+
+            if (!isPaid) {
+                pickUpSchedule = null;
+                dropOffSchedule = null;
+            }
 
             const locationModels = [];
 
