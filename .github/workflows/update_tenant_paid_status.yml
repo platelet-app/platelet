@@ -18,14 +18,14 @@ jobs:
     steps:
       - name: Add Users to PAID Group
         if: github.event.inputs.action_type == 'add'
-        uses: platelet-app/pool-to-group-action
+        uses: platelet-app/pool-to-group-action@master
         with:
           pool-id: ${{ vars.POOL_ID }}
           group: "PAID"
           action: "add"
       - name: Remove Users from PAID Group
         if: github.event.inputs.action_type == 'remove'
-        uses: platelet-app/pool-to-group-action
+        uses: platelet-app/pool-to-group-action@master
         with:
           pool-id: ${{ vars.POOL_ID }}
           group: "PAID"
