@@ -23,6 +23,10 @@ jobs:
       - name: Add Users to PAID Group
         if: github.event.inputs.action_type == 'add'
         uses: platelet-app/pool-to-group-action@master
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
         with:
           pool-id: ${{ vars.POOL_ID }}
           group: "PAID"
@@ -30,6 +34,10 @@ jobs:
       - name: Remove Users from PAID Group
         if: github.event.inputs.action_type == 'remove'
         uses: platelet-app/pool-to-group-action@master
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
         with:
           pool-id: ${{ vars.POOL_ID }}
           group: "PAID"
