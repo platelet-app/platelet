@@ -9,7 +9,10 @@ const taskScheduleDueStatus = (
         return false;
     }
     const now = new Date();
-    const scheduleDate = new Date(schedule?.timePrimary ?? "");
+    let scheduleDate = new Date(schedule?.timePrimary ?? "");
+    if (schedule?.timeSecondary) {
+        scheduleDate = new Date(schedule?.timeSecondary ?? "");
+    }
     if (
         [models.TimeRelation.ANYTIME, models.TimeRelation.AFTER].includes(
             schedule?.relation as models.TimeRelation
