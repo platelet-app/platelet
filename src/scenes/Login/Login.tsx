@@ -1,5 +1,5 @@
 import { Authenticator } from "@aws-amplify/ui-react";
-import { Auth, Hub } from "aws-amplify";
+import { Auth, DataStore, Hub } from "aws-amplify";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { initialiseApp } from "../../redux/initialise/initialiseActions";
@@ -27,16 +27,27 @@ const Login: React.FC<LoginProps> = ({ children }) => {
     const hubListener = React.useRef<null | (() => void)>(null);
     const dispatch = useDispatch();
     const isInit = React.useRef(false);
+    const isCleared = React.useRef(false);
+    const [clearingData, setClearingData] = React.useState(false);
 
     const initFunction = React.useCallback(async () => {
-        if (isInit.current) return;
+        if (isInit.current || clearingData) return;
         const user = await Auth.currentAuthenticatedUser().catch(() => null);
         if (user) {
             dispatch(initialiseApp());
             isInit.current = true;
         } else {
+            if (!isCleared.current) {
+                setClearingData(true);
+                console.log("Clearing DataStore");
+                await DataStore.stop();
+                await DataStore.clear();
+                setClearingData(false);
+                isCleared.current = true;
+            }
             hubListener.current = Hub.listen("auth", async (hubData) => {
                 if (hubData.payload.event === "signIn") {
+                    console.log("Initialising app");
                     dispatch(initialiseApp());
                     isInit.current = true;
                     if (hubListener.current)
@@ -44,7 +55,7 @@ const Login: React.FC<LoginProps> = ({ children }) => {
                 }
             });
         }
-    }, [dispatch]);
+    }, [dispatch, clearingData]);
 
     React.useEffect(() => {
         initFunction();
@@ -53,7 +64,8 @@ const Login: React.FC<LoginProps> = ({ children }) => {
         };
     }, [initFunction]);
 
-    const content = whoamiIsSet ? children : <Splash />;
+    let content: React.ReactNode = <Splash />;
+    if (whoamiIsSet && !clearingData) content = children;
 
     return (
         <Authenticator loginMechanisms={["email"]} components={components}>
