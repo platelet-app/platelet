@@ -46,7 +46,6 @@ const Login: React.FC<LoginProps> = ({ children }) => {
         if (!clearingData) return;
         const user = await Auth.currentAuthenticatedUser().catch(() => null);
         if (!user) {
-            setClearingData(true);
             console.log("Clearing DataStore");
             await DataStore.stop();
             await DataStore.clear();
