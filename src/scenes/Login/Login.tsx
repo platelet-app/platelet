@@ -34,7 +34,6 @@ const Login: React.FC<LoginProps> = ({ children }) => {
         if (user) {
             dispatch(initialiseApp());
             isInit.current = true;
-            setClearingData(false);
         }
     }, [dispatch, clearingData]);
 
