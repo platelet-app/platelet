@@ -24,11 +24,9 @@ const components = {
 const Login: React.FC<LoginProps> = ({ children }) => {
     const whoami = useSelector(getWhoami);
     const whoamiIsSet = !!whoami?.id;
-    const hubListener = React.useRef<null | (() => void)>(null);
     const dispatch = useDispatch();
     const isInit = React.useRef(false);
-    const isCleared = React.useRef(false);
-    const [clearingData, setClearingData] = React.useState(false);
+    const [clearingData, setClearingData] = React.useState(true);
 
     const initFunction = React.useCallback(async () => {
         if (isInit.current || clearingData) return;
@@ -36,36 +34,49 @@ const Login: React.FC<LoginProps> = ({ children }) => {
         if (user) {
             dispatch(initialiseApp());
             isInit.current = true;
-        } else {
-            if (!isCleared.current) {
-                setClearingData(true);
-                console.log("Clearing DataStore");
-                await DataStore.stop();
-                await DataStore.clear();
-                setClearingData(false);
-                isCleared.current = true;
-            }
-            hubListener.current = Hub.listen("auth", async (hubData) => {
-                if (hubData.payload.event === "signIn") {
-                    console.log("Initialising app");
-                    dispatch(initialiseApp());
-                    isInit.current = true;
-                    if (hubListener.current)
-                        Hub.remove("auth", hubListener.current);
-                }
-            });
+            setClearingData(false);
         }
     }, [dispatch, clearingData]);
 
     React.useEffect(() => {
         initFunction();
-        return () => {
-            if (hubListener.current) Hub.remove("auth", hubListener.current);
-        };
     }, [initFunction]);
 
+    const clearFunction = React.useCallback(async () => {
+        if (!clearingData) return;
+        const user = await Auth.currentAuthenticatedUser().catch(() => null);
+        if (!user) {
+            setClearingData(true);
+            console.log("Clearing DataStore");
+            await DataStore.stop();
+            await DataStore.clear();
+            setClearingData(false);
+        } else {
+            setClearingData(false);
+        }
+    }, [clearingData]);
+
+    React.useEffect(() => {
+        clearFunction();
+    }, [clearFunction]);
+
+    React.useEffect(() => {
+        const hubListener = (hubData: any) => {
+            if (hubData.payload.event === "signIn") {
+                console.log("Initialising app");
+                dispatch(initialiseApp());
+                isInit.current = true;
+                setClearingData(false);
+            }
+        };
+        Hub.listen("auth", hubListener);
+        return () => {
+            Hub.remove("auth", hubListener);
+        };
+    }, [dispatch]);
+
     let content: React.ReactNode = <Splash />;
-    if (whoamiIsSet && !clearingData) content = children;
+    if (whoamiIsSet) content = children;
 
     return (
         <Authenticator loginMechanisms={["email"]} components={components}>
