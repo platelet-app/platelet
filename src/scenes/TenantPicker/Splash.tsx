@@ -1,6 +1,9 @@
 import { Box, Grow } from "@mui/material";
+type SplashProps = {
+    animate?: boolean;
+};
 
-const Splash = () => {
+const Splash: React.FC<SplashProps> = ({ animate = false }) => {
     return (
         <Box
             sx={{
@@ -10,7 +13,7 @@ const Splash = () => {
                 transform: "translate(-50%, -50%)",
             }}
         >
-            <Grow in timeout={1000}>
+            <Grow in timeout={animate ? 1000 : 0}>
                 <img
                     width={400}
                     height={200}
