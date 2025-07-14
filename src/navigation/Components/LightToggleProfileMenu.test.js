@@ -29,8 +29,6 @@ describe("LightToggleProfileMenu", () => {
         render(<LightToggleProfileMenu />, { preloadedState });
         userEvent.click(screen.getByText("TU"));
         userEvent.click(screen.getByText("Logout"));
-        await waitFor(() => expect(amplify.DataStore.stop).toHaveBeenCalled());
-        await waitFor(() => expect(amplify.DataStore.clear).toHaveBeenCalled());
         await waitFor(() => expect(amplify.Auth.signOut).toHaveBeenCalled());
     });
     it("links to the user's profile", () => {

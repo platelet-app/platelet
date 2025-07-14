@@ -12,7 +12,7 @@ import {
 import { getApiControl } from "../Selectors";
 import { saveLogin } from "../../utilities";
 import { displayWarningNotification } from "../notifications/NotificationsActions";
-import { Auth, DataStore } from "aws-amplify";
+import { Auth } from "aws-amplify";
 import { GET_WHOAMI_FAILURE } from "../whoami/whoamiActions";
 
 function* login(action) {
@@ -52,13 +52,10 @@ function* logout(action) {
             yield call([channel, channel.postMessage], "logout");
         }
         yield call([localStorage, localStorage.removeItem], "userTenantId");
-        yield call([DataStore, DataStore.stop]);
-        yield call([DataStore, DataStore.clear]);
     } catch (error) {
         console.log(error);
     } finally {
-        // if DataStore fails to clear for some reason
-        // we still want to logout the user
+        // always log out and refresh
         yield call([Auth, Auth.signOut]);
         yield call([window, window.location.reload.bind(window.location)]);
     }

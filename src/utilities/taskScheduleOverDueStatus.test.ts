@@ -29,6 +29,15 @@ describe("taskScheduleOverDueStatus", () => {
         const result = taskScheduleOverDueStatus(schedule);
         expect(result).toEqual(true);
     });
+    it("should return true if overdue and between", () => {
+        const schedule = new models.Schedule({
+            relation: models.TimeRelation.BETWEEN,
+            timePrimary: "2022-01-01T09:00:00.000Z",
+            timeSecondary: "2022-01-01T10:00:00.000Z",
+        });
+        const result = taskScheduleOverDueStatus(schedule);
+        expect(result).toEqual(true);
+    });
     it("should return false if not overdue", () => {
         const schedule = new models.Schedule({
             relation: models.TimeRelation.BEFORE,

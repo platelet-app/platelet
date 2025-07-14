@@ -79,7 +79,7 @@ export const TenantListProvider: React.FC<TenantListProviderProps> = ({
     if (offline) {
         return <>{children}</>;
     } else if (isProcessing) {
-        return <Splash />;
+        return <Splash animate />;
     } else if (showList) {
         return <TenantList onComplete={handleListSetup} />;
     } else {

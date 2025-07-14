@@ -36,4 +36,13 @@ describe("taskScheduleDueStatus", () => {
         const result = taskScheduleDueStatus(schedule, 1);
         expect(result).toEqual(true);
     });
+    test("return true if due in the next hour with between", () => {
+        const schedule = new models.Schedule({
+            relation: models.TimeRelation.BETWEEN,
+            timePrimary: "2021-01-01T09:59:58.987Z",
+            timeSecondary: "2021-01-01T12:59:58.987Z",
+        });
+        const result = taskScheduleDueStatus(schedule, 1);
+        expect(result).toEqual(true);
+    });
 });

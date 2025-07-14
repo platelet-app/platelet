@@ -12,7 +12,10 @@ const taskScheduleOverDueStatus = (schedule?: models.Schedule | null) => {
         return false;
     }
     const now = new Date();
-    const scheduleDate = new Date(schedule?.timePrimary ?? "");
+    let scheduleDate = new Date(schedule?.timePrimary ?? "");
+    if (schedule?.timeSecondary) {
+        scheduleDate = new Date(schedule?.timeSecondary ?? "");
+    }
     if (scheduleDate < now) {
         return true;
     }
