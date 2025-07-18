@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import NavDrawerItems from "./NavDrawerItems";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -14,7 +14,7 @@ const useStyles = makeStyles()({
 });
 
 export default function MobileNavigationDrawer() {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
     const { classes } = useStyles();
 
     useCordovaBackButton(() => {

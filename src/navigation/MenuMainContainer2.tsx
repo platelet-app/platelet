@@ -1,29 +1,107 @@
-import React, { useEffect, useState } from "react";
-import "../index.css";
-import { useTheme } from "@mui/material/styles";
-import { makeStyles } from "tss-react/mui";
-import AppBar from "@mui/material/AppBar";
-import IconButton from "@mui/material/IconButton";
-import MainWindow from "./MainWindow";
-import { useDispatch, useSelector } from "react-redux";
-import { Box, Hidden, Stack } from "@mui/material";
-import TaskFilterTextField from "../components/TaskFilterTextfield";
-import LightToggleProfileMenu from "./Components/LightToggleProfileMenu";
+import * as React from 'react';
+import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import MuiDrawer from '@mui/material/Drawer';
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import CssBaseline from '@mui/material/CssBaseline';
+import IconButton from '@mui/material/IconButton';
+import { Hidden, Stack, useMediaQuery } from '@mui/material';
+import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
+import { clearDashboardFilter } from '../redux/dashboardFilter/DashboardFilterActions';
+import { menuIndexSelector, dashboardFilterTermSelector } from '../redux/Selectors';
+import { SidebarProvider, useSidebar } from './sidebar/SidebarProvider';
+import MainWindow from './MainWindow';
+import { Sidebar } from './sidebar/Sidebar';
+import TaskFilterTextField from '../components/TaskFilterTextfield';
+import DashboardDetailTabs from '../scenes/Dashboard/components/DashboardDetailTabs';
+import RoleViewSelect from '../scenes/Dashboard/components/RoleViewSelect';
+import LightToggleProfileMenu from './Components/LightToggleProfileMenu';
+import ForwardBackButtons from './ForwardBackButtons';
+import MobileNavigationDrawer from './MobileNavigationDrawer';
+import {
+    dashboardTabIndexSelector,
+} from "../redux/Selectors";
+
 import SearchIcon from "@mui/icons-material/Search";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { clearDashboardFilter } from "../redux/dashboardFilter/DashboardFilterActions";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import DashboardDetailTabs from "../scenes/Dashboard/components/DashboardDetailTabs";
-import MobileNavigationDrawer from "./MobileNavigationDrawer";
-import {
-    dashboardFilterTermSelector,
-    dashboardTabIndexSelector,
-    menuIndexSelector,
-} from "../redux/Selectors";
-import RoleViewSelect from "../scenes/Dashboard/components/RoleViewSelect";
-import ForwardBackButtons from "./ForwardBackButtons";
 
-const useStyles = makeStyles()((theme) => {
+const drawerWidth = 240;
+
+const openedMixin = (theme: Theme): CSSObject => ({
+  width: drawerWidth,
+  transition: theme.transitions.create('width', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.enteringScreen,
+  }),
+  overflowX: 'hidden',
+});
+
+const closedMixin = (theme: Theme): CSSObject => ({
+  transition: theme.transitions.create('width', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  overflowX: 'hidden',
+  width: `calc(${theme.spacing(7)} + 1px)`,
+  [theme.breakpoints.up('sm')]: {
+    width: `calc(${theme.spacing(8)} + 1px)`,
+  },
+});
+
+interface AppBarProps extends MuiAppBarProps {
+  open?: boolean;
+}
+
+const AppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== 'open',
+})<AppBarProps>(({ theme }) => ({
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(['width', 'margin'], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  variants: [
+    {
+      props: ({ open }: any) => open,
+      style: {
+        marginLeft: drawerWidth,
+        width: `calc(100% - ${drawerWidth}px)`,
+        transition: theme.transitions.create(['width', 'margin'], {
+          easing: theme.transitions.easing.sharp,
+          duration: theme.transitions.duration.enteringScreen,
+        }),
+      },
+    },
+  ],
+}));
+
+const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+  ({ theme }) => ({
+    width: drawerWidth,
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
+    boxSizing: 'border-box',
+    variants: [
+      {
+        props: ({ open }: any) => open,
+        style: {
+          ...openedMixin(theme),
+          '& .MuiDrawer-paper': openedMixin(theme),
+        },
+      },
+      {
+        props: ({ open }: any) => !open,
+        style: {
+          ...closedMixin(theme),
+          '& .MuiDrawer-paper': closedMixin(theme),
+        },
+      },
+    ],
+  }),
+);
+
+const useStyles2 = makeStyles()((theme) => {
     return {
         appBarComponents: {
             margin: "auto",
@@ -40,14 +118,15 @@ const useStyles = makeStyles()((theme) => {
     };
 });
 
-export function MenuMainContainer() {
-    const { classes } = useStyles();
-    const [searchMode, setSearchMode] = useState(false);
+export default function MenuMainContainer() {
+    const { classes } = useStyles2();
+    const [searchMode, setSearchMode] = React.useState(false);
     const dashboardTabIndex = useSelector(dashboardTabIndexSelector);
     const menuIndex = useSelector(menuIndexSelector);
     const currentFilter = useSelector(dashboardFilterTermSelector);
     const toggleIcon = searchMode ? <ArrowBackIcon /> : <SearchIcon />;
     const dispatch = useDispatch();
+    const {sidebarOpen} = useSidebar()
 
     const toggleSearchMode = () => {
         if (searchMode) dispatch(clearDashboardFilter());
@@ -73,21 +152,24 @@ export function MenuMainContainer() {
         [dispatch]
     );
 
-    useEffect(
+    React.useEffect(
         () => updateSearchMode(currentFilter, menuIndex, isSm),
         [currentFilter, isSm, menuIndex, updateSearchMode]
     );
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (!isSm && searchMode) setSearchMode(false);
     }, [isSm, searchMode]);
 
-    return (
-        <Box sx={{ display: 'flex' }}>
-            <AppBar
-                position={isSm ? "relative" : "sticky"}
-                className={classes.appBar}
-            >
+
+
+  return (
+    <SidebarProvider>
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar position={isSm ? "relative" : "sticky"}
+                className={classes.appBar} open={sidebarOpen}>
+
                 <Stack
                     direction="row"
                     alignItems="center"
@@ -152,8 +234,14 @@ export function MenuMainContainer() {
                         </>
                     )}
                 </Stack>
-            </AppBar>
-            <MainWindow />
-        </Box>
-    );
+      </AppBar>
+      <Drawer variant="permanent" open={sidebarOpen}>
+        <Sidebar/>
+      </Drawer>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <MainWindow />
+      </Box>
+    </Box>
+    </SidebarProvider>
+  );
 }

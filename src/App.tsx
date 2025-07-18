@@ -1,6 +1,5 @@
 import React from "react";
 import { APIProvider } from "@vis.gl/react-google-maps";
-import { MenuMainContainer } from "./navigation/MenuMainContainer";
 import "./index.css";
 import "./App.css";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -24,6 +23,7 @@ import SnackNotificationBar from "./components/SnackNotificationBar";
 import TenantListProvider from "./scenes/TenantPicker/TenantListProvider";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import * as Sentry from "@sentry/react";
+import MenuMainContainer from "./navigation/MenuMainContainer2";
 
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string;
 
