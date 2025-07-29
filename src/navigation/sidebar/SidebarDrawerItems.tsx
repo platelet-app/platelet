@@ -1,7 +1,13 @@
 import { FC } from "react";
 import { useSelector } from "react-redux";
 import { getWhoami } from "../../redux/Selectors";
-import { ListItemIcon, ListItemText, Divider, List, ListItemButton } from "@mui/material";
+import {
+    ListItemIcon,
+    ListItemText,
+    Divider,
+    List,
+    ListItemButton,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import * as models from "../../models";
@@ -156,4 +162,4 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
             </List>
         </div>
     );
-}
+};

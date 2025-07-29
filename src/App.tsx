@@ -23,7 +23,9 @@ import SnackNotificationBar from "./components/SnackNotificationBar";
 import TenantListProvider from "./scenes/TenantPicker/TenantListProvider";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import * as Sentry from "@sentry/react";
-import MenuMainContainer from "./navigation/MenuMainContainer2";
+// import MenuMainContainer from "./navigation/MenuMainContainer2";
+// import { SidebarProvider } from "./navigation/sidebar/SidebarProvider";
+import MenuMainContainer from "./navigation/MenuMainContainer3";
 
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string;
 
@@ -124,41 +126,32 @@ const App = (props: any) => {
         });
     }
 
-    if (process.env.REACT_APP_DEMO_MODE === "true") {
-        return (
-            <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
-                <StyledEngineProvider injectFirst>
-                    <ThemeProvider theme={theme}>
-                        <SnackbarProvider maxSnack={1}>
+    return (
+        <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
+            <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={theme}>
+                    <SnackbarProvider maxSnack={1}>
+                        {/* <SidebarProvider> */}
+                        <CssBaseline />
+                        {process.env.REACT_APP_DEMO_MODE === "true" ? (
                             <InitComponent>
-                                <CssBaseline />
                                 <MenuMainContainer />
                                 <SnackNotificationBar {...props} />
                             </InitComponent>
-                        </SnackbarProvider>
-                    </ThemeProvider>
-                </StyledEngineProvider>
-            </APIProvider>
-        );
-    } else {
-        return (
-            <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
-                <StyledEngineProvider injectFirst>
-                    <ThemeProvider theme={theme}>
-                        <SnackbarProvider maxSnack={1}>
+                        ) : (
                             <TenantListProvider>
                                 <Login>
-                                    <CssBaseline />
                                     <MenuMainContainer />
                                     <SnackNotificationBar {...props} />
                                 </Login>
                             </TenantListProvider>
-                        </SnackbarProvider>
-                    </ThemeProvider>
-                </StyledEngineProvider>
-            </APIProvider>
-        );
-    }
+                        )}
+                        {/* </SidebarProvider> */}
+                    </SnackbarProvider>
+                </ThemeProvider>
+            </StyledEngineProvider>
+        </APIProvider>
+    );
 };
 
 export default App;

@@ -1,13 +1,14 @@
 import { IconButton } from "@mui/material";
-import { useSidebar } from "./SidebarProvider";
 import MenuIcon from "@mui/icons-material/Menu";
 
-export const TopbarButton = () => {
-    const { toggleSidebar } = useSidebar();
+export interface TopbarButtonProps {
+    onClick: () => void;
+}
 
+export const TopbarButton: React.FC<TopbarButtonProps> = ({ onClick }) => {
     return (
-        <IconButton onClick={toggleSidebar} color="inherit" size="large">
+        <IconButton onClick={onClick} color="inherit" size="large">
             <MenuIcon />
         </IconButton>
     );
-}
+};
