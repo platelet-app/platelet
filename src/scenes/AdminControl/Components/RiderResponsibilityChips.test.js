@@ -45,6 +45,24 @@ describe("RiderResponsibilityChips", () => {
         ).toBeInTheDocument();
     });
 
+    test("delete a rider responsibility", async () => {
+        const resp = await DataStore.save(
+            new models.RiderResponsibility({
+                label: "rider-responsibility-1",
+            })
+        );
+        const deleteSpy = jest.spyOn(DataStore, "delete");
+        render(<RiderResponsibilityChips />);
+        expect(
+            await screen.findByText("rider-responsibility-1")
+        ).toBeInTheDocument();
+        userEvent.click(screen.getByText(resp.label));
+        userEvent.click(screen.getByRole("button", { name: "Delete" }));
+        userEvent.click(screen.getByRole("button", { name: "OK" }));
+        await waitFor(() => {
+            expect(deleteSpy).toHaveBeenCalledWith(resp);
+        });
+    });
     test("edit a rider responsibility", async () => {
         const resp = await DataStore.save(
             new models.RiderResponsibility({

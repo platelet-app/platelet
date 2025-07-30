@@ -1,10 +1,19 @@
 import { DataStore } from "aws-amplify";
-import { Box, Chip, Grid, TextField } from "@mui/material";
+import {
+    Box,
+    Button,
+    Chip,
+    Grid,
+    Stack,
+    TextField,
+    Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import * as models from "../../../models";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { useDispatch } from "react-redux";
+import { selectItem } from "../../../redux/selectionMode/selectionModeActions";
 
 export function RiderResponsibilityChips() {
     const [state, setState] = useState<models.RiderResponsibility[]>([]);
@@ -13,6 +22,7 @@ export function RiderResponsibilityChips() {
         null
     );
     const [errorState, setErrorState] = useState<Error | null>(null);
+    const [confirmDelete, setConfirmDelete] = useState(false);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -59,6 +69,22 @@ export function RiderResponsibilityChips() {
         }
     };
 
+    const handleDelete = async () => {
+        if (editItem) {
+            const existing = await DataStore.query(
+                models.RiderResponsibility,
+                editItem.id
+            );
+            if (!existing) {
+                throw new Error("Rider responsibility not found");
+            }
+            await DataStore.delete(existing);
+            setEditItem(null);
+            setConfirmDelete(false);
+            setInputValue("");
+        }
+    };
+
     if (errorState) {
         return <div>Sorry, something went wrong</div>;
     } else {
@@ -80,12 +106,34 @@ export function RiderResponsibilityChips() {
                     onCancel={() => setEditItem(null)}
                     open={!!editItem}
                 >
-                    <TextField
-                        value={inputValue}
-                        label="Label"
-                        inputProps={{ "aria-label": "edit label" }}
-                        onChange={(e) => setInputValue(e.target.value)}
-                    />
+                    <Stack
+                        spacing={2}
+                        alignItems="flex-start"
+                        direction="column"
+                    >
+                        <TextField
+                            value={inputValue}
+                            label="Label"
+                            inputProps={{ "aria-label": "edit label" }}
+                            onChange={(e) => setInputValue(e.target.value)}
+                        />
+                        <Button
+                            onClick={() => setConfirmDelete(true)}
+                            variant="outlined"
+                            color="error"
+                        >
+                            Delete
+                        </Button>
+                    </Stack>
+                </ConfirmationDialog>
+                <ConfirmationDialog
+                    onConfirmation={handleDelete}
+                    onCancel={() => setConfirmDelete(false)}
+                    open={confirmDelete}
+                >
+                    <Typography variant="h6">
+                        Are you sure you want to delete {editItem?.label}?
+                    </Typography>
                 </ConfirmationDialog>
             </Box>
         );
