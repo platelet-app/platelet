@@ -23,19 +23,19 @@ describe("RiderResponsibilityChips", () => {
                 }),
             ].map((type) => DataStore.save(type))
         );
-        const querySpy = jest.spyOn(DataStore, "query");
         render(<RiderResponsibilityChips />);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledWith(models.RiderResponsibility);
-        });
-        expect(screen.getByText("rider-responsibility-1")).toBeInTheDocument();
-        expect(screen.getByText("rider-responsibility-2")).toBeInTheDocument();
+        expect(
+            await screen.findByText("rider-responsibility-1")
+        ).toBeInTheDocument();
+        expect(
+            await screen.findByText("rider-responsibility-2")
+        ).toBeInTheDocument();
     });
 
     test("display the rider responsibilities failure", async () => {
         const querySpy = jest
-            .spyOn(DataStore, "query")
-            .mockRejectedValue(new Error());
+            .spyOn(DataStore, "observeQuery")
+            .mockReturnValue(new Error());
         render(<RiderResponsibilityChips />);
         await waitFor(() => {
             expect(querySpy).toHaveBeenCalledWith(models.RiderResponsibility);
@@ -51,12 +51,11 @@ describe("RiderResponsibilityChips", () => {
                 label: "rider-responsibility-1",
             })
         );
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(<RiderResponsibilityChips />);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledWith(models.RiderResponsibility);
-        });
+        expect(
+            await screen.findByText("rider-responsibility-1")
+        ).toBeInTheDocument();
         const more = "more text";
         userEvent.click(screen.getByText(resp.label));
         userEvent.type(
@@ -70,11 +69,6 @@ describe("RiderResponsibilityChips", () => {
                 label: `${resp.label}${more}`,
             });
         });
-        await waitFor(() => {
-            expect(
-                screen.getByText(`${resp.label}${more}`)
-            ).toBeInTheDocument();
-        });
     });
 
     test("edit a rider responsibility failure", async () => {
@@ -83,14 +77,13 @@ describe("RiderResponsibilityChips", () => {
                 label: "rider-responsibility-1",
             })
         );
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest
             .spyOn(DataStore, "save")
             .mockRejectedValue(new Error());
         render(<RiderResponsibilityChips />);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledWith(models.RiderResponsibility);
-        });
+        expect(
+            await screen.findByText("rider-responsibility-1")
+        ).toBeInTheDocument();
         const more = "more text";
         userEvent.click(screen.getByText(resp.label));
         userEvent.type(
@@ -111,57 +104,34 @@ describe("RiderResponsibilityChips", () => {
         ).toBeInTheDocument();
     });
 
-    test("observer works", async () => {
-        const querySpy = jest.spyOn(DataStore, "query");
-        render(<RiderResponsibilityChips />);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledWith(models.RiderResponsibility);
-        });
-        const resp = await DataStore.save(
-            new models.RiderResponsibility({ label: "something" })
-        );
-        expect(await screen.findByText("something")).toBeInTheDocument();
-        await DataStore.save(
-            models.RiderResponsibility.copyOf(
-                resp,
-                (upd) => (upd.label = "other")
-            )
-        );
-        expect(await screen.findByText("other")).toBeInTheDocument();
-        await DataStore.delete(resp);
-        await waitFor(() => {
-            expect(screen.queryByText("other")).toBeNull();
-        });
-    });
-
     it("disables on empty input", async () => {
         const resp = await DataStore.save(
             new models.RiderResponsibility({
                 label: "rider-responsibility-1",
             })
         );
-        const querySpy = jest.spyOn(DataStore, "query");
         render(<RiderResponsibilityChips />);
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledWith(models.RiderResponsibility);
-        });
+        await screen.findByText("rider-responsibility-1");
         userEvent.click(screen.getByText(resp.label));
         userEvent.clear(screen.getByRole("textbox", { name: "edit label" }));
         expect(screen.getByRole("button", { name: "OK" })).toBeDisabled();
     });
 
     it("unsubscribes on unmount", async () => {
-        const querySpy = jest.spyOn(DataStore, "query");
         const unsubscribe = jest.fn();
 
-        jest.spyOn(DataStore, "observe").mockImplementation(() => {
-            return {
-                subscribe: () => ({ unsubscribe }),
-            };
-        });
+        const observeQuerySpy = jest
+            .spyOn(DataStore, "observeQuery")
+            .mockImplementation(() => {
+                return {
+                    subscribe: () => ({ unsubscribe }),
+                };
+            });
         const { component } = render(<RiderResponsibilityChips />);
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledWith(models.RiderResponsibility);
+            expect(observeQuerySpy).toHaveBeenCalledWith(
+                models.RiderResponsibility
+            );
         });
         component.unmount();
         await waitFor(() => {

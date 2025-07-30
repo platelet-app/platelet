@@ -1,60 +1,36 @@
 import { DataStore } from "aws-amplify";
 import { Box, Chip, Grid, TextField } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as models from "../../../models";
-import { convertListDataToObject } from "../../../utilities";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { useDispatch } from "react-redux";
 
 export function RiderResponsibilityChips() {
-    const [state, setState] = useState({});
+    const [state, setState] = useState<models.RiderResponsibility[]>([]);
     const [inputValue, setInputValue] = useState("");
-    const [editItem, setEditItem] = useState(null);
-    const [errorState, setErrorState] = useState(null);
+    const [editItem, setEditItem] = useState<models.RiderResponsibility | null>(
+        null
+    );
+    const [errorState, setErrorState] = useState<Error | null>(null);
     const dispatch = useDispatch();
 
-    const observer = useRef({ unsubscribe: () => {} });
-
-    async function getResponsibilityChips() {
+    useEffect(() => {
         try {
-            const responsibilities = await DataStore.query(
+            const observer = DataStore.observeQuery(
                 models.RiderResponsibility
-            );
-            setState(convertListDataToObject(responsibilities));
-            observer.current = DataStore.observe(
-                models.RiderResponsibility
-            ).subscribe(({ element, opType }) => {
-                if (opType === "INSERT") {
-                    setState((prevState) => ({
-                        ...prevState,
-                        [element.id]: element,
-                    }));
-                } else if (opType === "UPDATE") {
-                    setState((prevState) => ({
-                        ...prevState,
-                        [element.id]: {
-                            ...prevState[element.id],
-                            ...element,
-                        },
-                    }));
-                } else if (opType === "DELETE") {
-                    setState((prevState) => {
-                        const { [element.id]: value, ...rest } = prevState;
-                        return rest;
-                    });
-                }
+            ).subscribe(({ items }) => {
+                setState(items);
             });
+            return observer.unsubscribe;
         } catch (error) {
-            console.log(error);
-            setErrorState(error);
+            if (error instanceof Error) {
+                setErrorState(error);
+            }
         }
-    }
+    }, []);
 
-    useEffect(() => getResponsibilityChips(), []);
-    useEffect(() => () => observer.current.unsubscribe(), []);
-
-    const handleClickChip = (item) => {
+    const handleClickChip = (item: models.RiderResponsibility) => {
         setEditItem(item);
         setInputValue(item.label);
     };
@@ -66,11 +42,13 @@ export function RiderResponsibilityChips() {
                     models.RiderResponsibility,
                     editItem.id
                 );
+                if (!existing) {
+                    throw new Error("Rider responsibility not found");
+                }
                 await DataStore.save(
-                    models.RiderResponsibility.copyOf(
-                        existing,
-                        (upd) => (upd.label = inputValue)
-                    )
+                    models.RiderResponsibility.copyOf(existing, (upd) => {
+                        upd.label = inputValue;
+                    })
                 );
                 setEditItem(null);
                 setInputValue("");
