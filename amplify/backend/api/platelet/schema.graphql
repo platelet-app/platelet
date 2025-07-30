@@ -406,14 +406,14 @@ enum DeliverableTypeIcon {
 type RiderResponsibility
 @auth(rules: [
   {allow: private, operations: [read]},
-  {allow: groups, groups: ["ADMIN"], operations: [create, read, update]},
+  {allow: groups, groups: ["ADMIN"], operations: [create, read, update, delete]},
 ])
 @model {
   id: ID!
   tenantId: ID! @index(name: "byTenantId")
     @auth(rules: [
       {allow: private, operations: [read]},
-      {allow: groups, groups: ["ADMIN"], operations: [create, read]},
+      {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
     ])
   label: String!
   disabled: Int @default(value: "0")
