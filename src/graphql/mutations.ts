@@ -3505,3 +3505,28 @@ export const resetUserPassword = /* GraphQL */ `mutation ResetUserPassword($user
   APITypes.ResetUserPasswordMutationVariables,
   APITypes.ResetUserPasswordMutation
 >;
+export const adminDeleteRiderResponsibility = /* GraphQL */ `mutation AdminDeleteRiderResponsibility($riderResponsibilityId: ID) {
+  adminDeleteRiderResponsibility(
+    riderResponsibilityId: $riderResponsibilityId
+  ) {
+    id
+    tenantId
+    label
+    disabled
+    possibleUsers {
+      nextToken
+      startedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.AdminDeleteRiderResponsibilityMutationVariables,
+  APITypes.AdminDeleteRiderResponsibilityMutation
+>;
