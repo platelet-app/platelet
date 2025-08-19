@@ -1,4 +1,4 @@
-import { DataStore } from "aws-amplify";
+import { API, DataStore, graphqlOperation } from "aws-amplify";
 import {
     Box,
     Button,
@@ -13,7 +13,7 @@ import * as models from "../../../models";
 import ConfirmationDialog from "../../../components/ConfirmationDialog";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { useDispatch } from "react-redux";
-import { selectItem } from "../../../redux/selectionMode/selectionModeActions";
+import * as mutations from "../../../graphql/mutations";
 
 export function RiderResponsibilityChips() {
     const [state, setState] = useState<models.RiderResponsibility[]>([]);
@@ -78,7 +78,11 @@ export function RiderResponsibilityChips() {
             if (!existing) {
                 throw new Error("Rider responsibility not found");
             }
-            await DataStore.delete(existing);
+            await API.graphql(
+                graphqlOperation(mutations.adminDeleteRiderResponsibility, {
+                    riderResponsibilityId: existing.id,
+                })
+            );
             setEditItem(null);
             setConfirmDelete(false);
             setInputValue("");
