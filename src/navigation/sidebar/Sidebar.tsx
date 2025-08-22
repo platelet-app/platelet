@@ -8,7 +8,6 @@ import {
     Theme,
     Box,
 } from "@mui/material";
-// import { useSidebar } from "./SidebarProvider";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { makeStyles } from "tss-react/mui";
 import { SidebarDrawerItems } from "./SidebarDrawerItems";
@@ -19,6 +18,9 @@ export const drawerWidth = 250;
 const useStyles = makeStyles()({
     list: {
         width: drawerWidth,
+    },
+    closedList: {
+        width: "100%",
     },
     topBox: {
         height: 58,
@@ -105,7 +107,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onClose, open }) => {
                     </IconButton>
                 </Box>
                 <SidebarDrawerItems
-                    className={classes.list}
+                    open={open}
+                    className={open ? classes.list : classes.closedList}
                     onSelect={onClose}
                 />
             </Stack>

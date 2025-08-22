@@ -21,6 +21,7 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 
 export interface SidebarDrawerItemsProps {
+    open?: boolean;
     className?: string;
     onSelect: () => void;
 }
@@ -41,12 +42,12 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     onClick={onSelect}
                     selected={menuIndex === "admin"}
                     component={Link}
-                    to={"/admin"}
+                    to="/admin"
                 >
                     <ListItemIcon>
                         <SupervisorAccountIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Admin"} />
+                    {props.open ? <ListItemText primary="Admin" /> : <></>}
                 </ListItemButton>
             );
         }
@@ -59,12 +60,12 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     onClick={onSelect}
                     selected={menuIndex === "history"}
                     component={Link}
-                    to={"/history"}
+                    to="/history"
                 >
                     <ListItemIcon>
                         <HistoryIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"History"} />
+                    {props.open ? <ListItemText primary="History" /> : <></>}
                 </ListItemButton>
             );
             statisticsLink = (
@@ -72,12 +73,12 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     onClick={onSelect}
                     selected={menuIndex === "statistics"}
                     component={Link}
-                    to={"/statistics"}
+                    to="/statistics"
                 >
                     <ListItemIcon>
                         <BarChartIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Statistics"} />
+                    {props.open ? <ListItemText primary="Statistics" /> : <></>}
                 </ListItemButton>
             );
             scheduledTasksLink = (
@@ -85,12 +86,12 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     onClick={onSelect}
                     selected={menuIndex === "scheduled"}
                     component={Link}
-                    to={"/scheduled"}
+                    to="/scheduled"
                 >
                     <ListItemIcon>
                         <CalendarMonthIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Scheduled"} />
+                    {props.open ? <ListItemText primary="Scheduled" /> : <></>}
                 </ListItemButton>
             );
         }
@@ -109,7 +110,7 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     <ListItemIcon>
                         <DashboardIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Dashboard"} />
+                    {props.open ? <ListItemText primary="Dashboard" /> : <></>}
                 </ListItemButton>
                 <ListItemButton
                     onClick={onSelect}
@@ -120,7 +121,7 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     <ListItemIcon>
                         <PeopleAltIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Users"} />
+                    {props.open ? <ListItemText primary="Users" /> : <></>}
                 </ListItemButton>
                 <ListItemButton
                     onClick={onSelect}
@@ -131,7 +132,7 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     <ListItemIcon>
                         <TwoWheelerIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Vehicles"} />
+                    {props.open ? <ListItemText primary="Vehicles" /> : <></>}
                 </ListItemButton>
                 <ListItemButton
                     onClick={onSelect}
@@ -142,7 +143,7 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     <ListItemIcon>
                         <LocationCityIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Locations"} />
+                    {props.open ? <ListItemText primary="Locations" /> : <></>}
                 </ListItemButton>
                 <ListItemButton
                     onClick={onSelect}
@@ -153,7 +154,7 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     <ListItemIcon>
                         <DescriptionIcon />
                     </ListItemIcon>
-                    <ListItemText primary={"Reports"} />
+                    {props.open ? <ListItemText primary="Reports" /> : <></>}
                 </ListItemButton>
                 {scheduledTasksLink}
                 {statisticsLink}

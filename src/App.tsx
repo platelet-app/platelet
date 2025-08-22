@@ -23,9 +23,7 @@ import SnackNotificationBar from "./components/SnackNotificationBar";
 import TenantListProvider from "./scenes/TenantPicker/TenantListProvider";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import * as Sentry from "@sentry/react";
-// import MenuMainContainer from "./navigation/MenuMainContainer2";
-// import { SidebarProvider } from "./navigation/sidebar/SidebarProvider";
-import MenuMainContainer from "./navigation/MenuMainContainer3";
+import { MenuMainContainer } from "./navigation/MenuMainContainer";
 
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string;
 
@@ -131,7 +129,6 @@ const App = (props: any) => {
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={theme}>
                     <SnackbarProvider maxSnack={1}>
-                        {/* <SidebarProvider> */}
                         <CssBaseline />
                         {process.env.REACT_APP_DEMO_MODE === "true" ? (
                             <InitComponent>
@@ -146,7 +143,6 @@ const App = (props: any) => {
                                 </Login>
                             </TenantListProvider>
                         )}
-                        {/* </SidebarProvider> */}
                     </SnackbarProvider>
                 </ThemeProvider>
             </StyledEngineProvider>
