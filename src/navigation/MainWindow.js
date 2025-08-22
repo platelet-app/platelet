@@ -33,10 +33,10 @@ const useStyles = makeStyles()((theme, { navIndex, guidedSetupOpen }) => ({
     root: {
         marginRight: guidedSetupOpen && navIndex === "dashboard" ? 0 : "auto",
         marginLeft: navIndex === "dashboard" ? 0 : 20,
-        paddingTop: 58,
+        paddingTop: 78,
         paddingBottom: 10,
         [theme.breakpoints.down("md")]: {
-            paddingTop: 5,
+            // paddingTop: 5,
             marginLeft: 0,
             marginRight: 0,
         },

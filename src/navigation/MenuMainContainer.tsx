@@ -22,6 +22,7 @@ import {
     dashboardTabIndexSelector,
     menuIndexSelector,
 } from "../redux/Selectors";
+import { useCordovaBackButton } from "../hooks/useCordovaBackButton";
 
 const useStyles2 = makeStyles()((theme) => {
     return {
@@ -78,6 +79,12 @@ export function MenuMainContainer() {
         if (searchMode) dispatch(clearDashboardFilter());
         setSearchMode(!searchMode);
     };
+
+    useCordovaBackButton(() => {
+        if (isXs) {
+            setOpen(false);
+        }
+    }, open);
 
     const handleDrawerOpen = () => {
         setOpen(true);

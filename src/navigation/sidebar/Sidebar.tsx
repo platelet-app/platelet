@@ -49,9 +49,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
     },
 });
 
-const Drawer = styled(MuiDrawer, {
-    shouldForwardProp: (prop) => prop !== "open" && prop !== "isXs",
-})<{
+const Drawer = styled(MuiDrawer)<{
     open: boolean;
     isXs: boolean;
 }>(({ theme, open, isXs }) => {
