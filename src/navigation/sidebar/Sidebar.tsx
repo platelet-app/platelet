@@ -1,17 +1,14 @@
 import {
     Stack,
-    IconButton,
     useMediaQuery,
     useTheme,
     styled,
     CSSObject,
     Theme,
-    Box,
+    Drawer as MuiDrawer,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { makeStyles } from "tss-react/mui";
 import { SidebarDrawerItems } from "./SidebarDrawerItems";
-import MuiDrawer from "@mui/material/Drawer";
 
 export const drawerWidth = 250;
 
@@ -22,9 +19,12 @@ const useStyles = makeStyles()({
     closedList: {
         width: "100%",
     },
-    topBox: {
-        height: 58,
-        alignContent: "center",
+    // topBox: {
+    //     height: 58,
+    //     alignContent: "center",
+    // },
+    stack: {
+        paddingTop: 58,
     },
 });
 
@@ -49,7 +49,9 @@ const closedMixin = (theme: Theme): CSSObject => ({
     },
 });
 
-const Drawer = styled(MuiDrawer)<{
+const Drawer = styled(MuiDrawer, {
+    shouldForwardProp: (prop) => prop !== "isXs",
+})<{
     open: boolean;
     isXs: boolean;
 }>(({ theme, open, isXs }) => {
@@ -59,10 +61,13 @@ const Drawer = styled(MuiDrawer)<{
     }
     // Only apply mini-variant styles for permanent drawer
     return {
+        display: "flex",
         width: drawerWidth,
         flexShrink: 0,
         whiteSpace: "nowrap",
         boxSizing: "border-box",
+        background: theme.palette.background.paper,
+        borderRight: 0,
         ...(open
             ? {
                   ...openedMixin(theme),
@@ -93,17 +98,27 @@ export const Sidebar: React.FC<SidebarProps> = ({ onClose, open }) => {
             onClose={isXs ? onClose : undefined}
             ModalProps={isXs ? { keepMounted: true } : undefined} // Better mobile performance
             isXs={isXs}
+            PaperProps={
+                !isXs
+                    ? {
+                          style: { borderRight: "0px", position: "relative" },
+                      }
+                    : {
+                          style: { background: theme.palette.background.paper },
+                      }
+            }
         >
             <Stack
                 direction="column"
                 alignItems="flex-end"
                 justifyContent="center"
+                className={classes.stack}
             >
-                <Box className={classes.topBox}>
+                {/* <Box className={classes.topBox}>
                     <IconButton onClick={onClose}>
                         <ArrowBackIcon />
                     </IconButton>
-                </Box>
+                </Box> */}
                 <SidebarDrawerItems
                     open={open}
                     className={open ? classes.list : classes.closedList}

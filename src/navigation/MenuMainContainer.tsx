@@ -1,13 +1,20 @@
 import * as React from "react";
-import { styled, useTheme } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
-import CssBaseline from "@mui/material/CssBaseline";
-import IconButton from "@mui/material/IconButton";
-import { drawerWidth, Sidebar } from "./sidebar/Sidebar";
+import {
+    styled,
+    useTheme,
+    Box,
+    AppBar as MuiAppBar,
+    AppBarProps as MuiAppBarProps,
+    CssBaseline,
+    IconButton,
+    Stack,
+    Hidden,
+    useMediaQuery,
+    Container,
+} from "@mui/material";
+import { Sidebar } from "./sidebar/Sidebar";
 import MainWindow from "./MainWindow";
 import { makeStyles } from "tss-react/mui";
-import { Stack, Hidden, useMediaQuery } from "@mui/material";
 import TaskFilterTextField from "../components/TaskFilterTextfield";
 import DashboardDetailTabs from "../scenes/Dashboard/components/DashboardDetailTabs";
 import RoleViewSelect from "../scenes/Dashboard/components/RoleViewSelect";
@@ -16,8 +23,7 @@ import ForwardBackButtons from "./ForwardBackButtons";
 import { TopbarButton } from "./sidebar/TopbarButton";
 import { clearDashboardFilter } from "../redux/dashboardFilter/DashboardFilterActions";
 import { useDispatch, useSelector } from "react-redux";
-import SearchIcon from "@mui/icons-material/Search";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Search, ArrowBack } from "@mui/icons-material";
 import {
     dashboardTabIndexSelector,
     menuIndexSelector,
@@ -47,17 +53,20 @@ interface AppBarProps extends MuiAppBarProps {
 }
 
 const AppBar = styled(MuiAppBar, {
-    shouldForwardProp: (prop) => prop !== "open",
+    shouldForwardProp: (prop) => prop !== "open" && prop !== "isXs",
 })<AppBarProps>(({ theme, open, isXs }) => ({
     zIndex: theme.zIndex.drawer + 1,
+    background: theme.palette.background.paper,
     transition: theme.transitions.create(["width", "margin"], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
+    boxShadow:
+        "0px 2px 0px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12)",
     ...(open &&
         !isXs && {
-            marginLeft: drawerWidth,
-            width: `calc(100% - ${drawerWidth}px)`,
+            // marginLeft: drawerWidth,
+            // width: `calc(100% - ${drawerWidth}px)`,
             transition: theme.transitions.create(["width", "margin"], {
                 easing: theme.transitions.easing.sharp,
                 duration: theme.transitions.duration.enteringScreen,
@@ -74,7 +83,7 @@ export function MenuMainContainer() {
     const [open, setOpen] = React.useState(false);
     const [searchMode, setSearchMode] = React.useState(false);
     const dispatch = useDispatch();
-    const toggleIcon = searchMode ? <ArrowBackIcon /> : <SearchIcon />;
+    const toggleIcon = searchMode ? <ArrowBack /> : <Search />;
     const toggleSearchMode = () => {
         if (searchMode) dispatch(clearDashboardFilter());
         setSearchMode(!searchMode);
@@ -103,7 +112,15 @@ export function MenuMainContainer() {
     };
 
     return (
-        <Box sx={{ display: "flex" }}>
+        <Box
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+                width: "100%",
+                padding: 0,
+            }}
+        >
             <CssBaseline />
             <AppBar position="fixed" open={open} isXs={isXs}>
                 <Stack
@@ -171,8 +188,18 @@ export function MenuMainContainer() {
                     )}
                 </Stack>
             </AppBar>
-            <Sidebar onClose={handleDrawerClose} open={open} />
-            <MainWindow />
+            <Container
+                style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    maxWidth: "100%",
+                    padding: 0,
+                }}
+            >
+                <Sidebar onClose={handleDrawerClose} open={open} />
+                <MainWindow />
+            </Container>
         </Box>
     );
 }

@@ -4,21 +4,22 @@ import { getWhoami } from "../../redux/Selectors";
 import {
     ListItemIcon,
     ListItemText,
-    Divider,
     List,
     ListItemButton,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
+import {
+    SupervisorAccount,
+    Dashboard,
+    LocationCity,
+    BarChart,
+    Description,
+    History,
+    CalendarMonth,
+    PeopleAlt,
+    TwoWheeler,
+} from "@mui/icons-material";
 import * as models from "../../models";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import LocationCityIcon from "@mui/icons-material/LocationCity";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import DescriptionIcon from "@mui/icons-material/Description";
-import HistoryIcon from "@mui/icons-material/History";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
 
 export interface SidebarDrawerItemsProps {
     open?: boolean;
@@ -45,7 +46,7 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     to="/admin"
                 >
                     <ListItemIcon>
-                        <SupervisorAccountIcon />
+                        <SupervisorAccount />
                     </ListItemIcon>
                     {props.open ? <ListItemText primary="Admin" /> : <></>}
                 </ListItemButton>
@@ -63,7 +64,7 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     to="/history"
                 >
                     <ListItemIcon>
-                        <HistoryIcon />
+                        <History />
                     </ListItemIcon>
                     {props.open ? <ListItemText primary="History" /> : <></>}
                 </ListItemButton>
@@ -76,7 +77,7 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     to="/statistics"
                 >
                     <ListItemIcon>
-                        <BarChartIcon />
+                        <BarChart />
                     </ListItemIcon>
                     {props.open ? <ListItemText primary="Statistics" /> : <></>}
                 </ListItemButton>
@@ -89,7 +90,7 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     to="/scheduled"
                 >
                     <ListItemIcon>
-                        <CalendarMonthIcon />
+                        <CalendarMonth />
                     </ListItemIcon>
                     {props.open ? <ListItemText primary="Scheduled" /> : <></>}
                 </ListItemButton>
@@ -99,8 +100,7 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
 
     return (
         <div className={props.className}>
-            <Divider />
-            <List component="nav">
+            <List component="nav" style={{ padding: 0 }}>
                 <ListItemButton
                     onClick={onSelect}
                     selected={menuIndex === "dashboard"}
@@ -108,7 +108,7 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     to="/"
                 >
                     <ListItemIcon>
-                        <DashboardIcon />
+                        <Dashboard />
                     </ListItemIcon>
                     {props.open ? <ListItemText primary="Dashboard" /> : <></>}
                 </ListItemButton>
@@ -119,7 +119,7 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     to="/users"
                 >
                     <ListItemIcon>
-                        <PeopleAltIcon />
+                        <PeopleAlt />
                     </ListItemIcon>
                     {props.open ? <ListItemText primary="Users" /> : <></>}
                 </ListItemButton>
@@ -130,7 +130,7 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     to="/vehicles"
                 >
                     <ListItemIcon>
-                        <TwoWheelerIcon />
+                        <TwoWheeler />
                     </ListItemIcon>
                     {props.open ? <ListItemText primary="Vehicles" /> : <></>}
                 </ListItemButton>
@@ -141,7 +141,7 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     to="/locations"
                 >
                     <ListItemIcon>
-                        <LocationCityIcon />
+                        <LocationCity />
                     </ListItemIcon>
                     {props.open ? <ListItemText primary="Locations" /> : <></>}
                 </ListItemButton>
@@ -152,7 +152,7 @@ export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
                     to="/reports"
                 >
                     <ListItemIcon>
-                        <DescriptionIcon />
+                        <Description />
                     </ListItemIcon>
                     {props.open ? <ListItemText primary="Reports" /> : <></>}
                 </ListItemButton>
