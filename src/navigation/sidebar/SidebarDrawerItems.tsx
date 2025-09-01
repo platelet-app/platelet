@@ -1,25 +1,35 @@
-import React from "react";
+import { FC } from "react";
 import { useSelector } from "react-redux";
-import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
-import TwoWheelerIcon from "@mui/icons-material/TwoWheeler";
-import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
+import { getWhoami } from "../../redux/Selectors";
+import {
+    ListItemIcon,
+    ListItemText,
+    List,
+    ListItemButton,
+} from "@mui/material";
 import { Link } from "react-router-dom";
-import Divider from "@mui/material/Divider";
-import * as models from "../models";
-import List from "@mui/material/List";
-import PropTypes from "prop-types";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import LocationCityIcon from "@mui/icons-material/LocationCity";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import DescriptionIcon from "@mui/icons-material/Description";
-import { getWhoami } from "../redux/Selectors";
-import HistoryIcon from "@mui/icons-material/History";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import {
+    SupervisorAccount,
+    Dashboard,
+    LocationCity,
+    BarChart,
+    Description,
+    History,
+    CalendarMonth,
+    PeopleAlt,
+    TwoWheeler,
+} from "@mui/icons-material";
+import * as models from "../../models";
 
-function NavDrawerItems(props) {
+export interface SidebarDrawerItemsProps {
+    open?: boolean;
+    className?: string;
+    onSelect: () => void;
+}
+
+export const SidebarDrawerItems: FC<SidebarDrawerItemsProps> = (props) => {
     const whoami = useSelector(getWhoami);
-    const menuIndex = useSelector((state) => state.menuIndex);
+    const menuIndex = useSelector<any>((state) => state.menuIndex);
     const onSelect = props.onSelect;
     let adminLink = <></>;
     let historyLink = <></>;
@@ -29,18 +39,17 @@ function NavDrawerItems(props) {
     if (whoami.roles) {
         if (whoami.roles.includes("ADMIN")) {
             adminLink = (
-                <ListItem
+                <ListItemButton
                     onClick={onSelect}
                     selected={menuIndex === "admin"}
                     component={Link}
-                    to={"/admin"}
-                    button
+                    to="/admin"
                 >
                     <ListItemIcon>
-                        <SupervisorAccountIcon />
+                        <SupervisorAccount />
                     </ListItemIcon>
-                    <ListItemText primary={"Admin"} />
-                </ListItem>
+                    {props.open ? <ListItemText primary="Admin" /> : <></>}
+                </ListItemButton>
             );
         }
         if (
@@ -48,114 +57,105 @@ function NavDrawerItems(props) {
             whoami.roles.includes(models.Role.COORDINATOR)
         ) {
             historyLink = (
-                <ListItem
+                <ListItemButton
                     onClick={onSelect}
                     selected={menuIndex === "history"}
                     component={Link}
-                    to={"/history"}
-                    button
+                    to="/history"
                 >
                     <ListItemIcon>
-                        <HistoryIcon />
+                        <History />
                     </ListItemIcon>
-                    <ListItemText primary={"History"} />
-                </ListItem>
+                    {props.open ? <ListItemText primary="History" /> : <></>}
+                </ListItemButton>
             );
             statisticsLink = (
-                <ListItem
+                <ListItemButton
                     onClick={onSelect}
                     selected={menuIndex === "statistics"}
                     component={Link}
-                    to={"/statistics"}
-                    button
+                    to="/statistics"
                 >
                     <ListItemIcon>
-                        <BarChartIcon />
+                        <BarChart />
                     </ListItemIcon>
-                    <ListItemText primary={"Statistics"} />
-                </ListItem>
+                    {props.open ? <ListItemText primary="Statistics" /> : <></>}
+                </ListItemButton>
             );
             scheduledTasksLink = (
-                <ListItem
+                <ListItemButton
                     onClick={onSelect}
                     selected={menuIndex === "scheduled"}
                     component={Link}
-                    to={"/scheduled"}
-                    button
+                    to="/scheduled"
                 >
                     <ListItemIcon>
-                        <CalendarMonthIcon />
+                        <CalendarMonth />
                     </ListItemIcon>
-                    <ListItemText primary={"Scheduled"} />
-                </ListItem>
+                    {props.open ? <ListItemText primary="Scheduled" /> : <></>}
+                </ListItemButton>
             );
         }
     }
 
     return (
         <div className={props.className}>
-            <Divider />
-            <List component="nav">
-                <ListItem
+            <List component="nav" style={{ padding: 0 }}>
+                <ListItemButton
                     onClick={onSelect}
                     selected={menuIndex === "dashboard"}
                     component={Link}
                     to="/"
-                    button
                 >
                     <ListItemIcon>
-                        <DashboardIcon />
+                        <Dashboard />
                     </ListItemIcon>
-                    <ListItemText primary={"Dashboard"} />
-                </ListItem>
-                <ListItem
+                    {props.open ? <ListItemText primary="Dashboard" /> : <></>}
+                </ListItemButton>
+                <ListItemButton
                     onClick={onSelect}
                     selected={menuIndex === "users"}
                     component={Link}
                     to="/users"
-                    button
                 >
                     <ListItemIcon>
-                        <PeopleAltIcon />
+                        <PeopleAlt />
                     </ListItemIcon>
-                    <ListItemText primary={"Users"} />
-                </ListItem>
-                <ListItem
+                    {props.open ? <ListItemText primary="Users" /> : <></>}
+                </ListItemButton>
+                <ListItemButton
                     onClick={onSelect}
                     selected={menuIndex === "vehicles"}
                     component={Link}
                     to="/vehicles"
-                    button
                 >
                     <ListItemIcon>
-                        <TwoWheelerIcon />
+                        <TwoWheeler />
                     </ListItemIcon>
-                    <ListItemText primary={"Vehicles"} />
-                </ListItem>
-                <ListItem
+                    {props.open ? <ListItemText primary="Vehicles" /> : <></>}
+                </ListItemButton>
+                <ListItemButton
                     onClick={onSelect}
                     selected={menuIndex === "locations"}
                     component={Link}
                     to="/locations"
-                    button
                 >
                     <ListItemIcon>
-                        <LocationCityIcon />
+                        <LocationCity />
                     </ListItemIcon>
-                    <ListItemText primary={"Locations"} />
-                </ListItem>
-                <ListItem
+                    {props.open ? <ListItemText primary="Locations" /> : <></>}
+                </ListItemButton>
+                <ListItemButton
                     onClick={onSelect}
                     selected={menuIndex === "reports"}
                     component={Link}
                     to="/reports"
-                    button
                 >
                     <ListItemIcon>
-                        <DescriptionIcon />
+                        <Description />
                     </ListItemIcon>
-                    <ListItemText primary={"Reports"} />
-                </ListItem>
+                    {props.open ? <ListItemText primary="Reports" /> : <></>}
+                </ListItemButton>
                 {scheduledTasksLink}
                 {statisticsLink}
                 {historyLink}
@@ -163,15 +163,4 @@ function NavDrawerItems(props) {
             </List>
         </div>
     );
-}
-
-NavDrawerItems.propTypes = {
-    onSelect: PropTypes.func,
-    className: PropTypes.string,
 };
-
-NavDrawerItems.defaultProps = {
-    onSelect: () => {},
-};
-
-export default NavDrawerItems;
