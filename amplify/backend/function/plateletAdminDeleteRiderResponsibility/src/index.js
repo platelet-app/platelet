@@ -110,7 +110,6 @@ const getPossibleRiderResponsibilities = async (id) => {
             GRAPHQL_ENDPOINT
         );
         const body = await response.json();
-        console.log(JSON.stringify(body));
         errorCheck(body);
         if (body?.data?.listPossibleRiderResponsibilities) {
             items.push(body?.data?.listPossibleRiderResponsibilities?.items);

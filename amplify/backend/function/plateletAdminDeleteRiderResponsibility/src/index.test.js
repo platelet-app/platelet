@@ -14,9 +14,10 @@ jest.mock(
     "/opt/graphql/mutations",
     () => {
         return {
+            deleteRiderResponsibilities: "deleteRiderResponsibilities",
+            deletePossibleRiderResponsibilities:
+                "deletePossibleRiderResponsibilities",
             deleteRiderResponsibility: "deleteRiderResponsibility",
-            deletePossibleRiderResponsibility:
-                "deletePossibleRiderResponsibility",
         };
     },
     { virtual: true }
@@ -47,6 +48,15 @@ const mockRiderResponsibility = {
     _lastChangedAt: 1620000000000,
 };
 
+const possibleRiderResponsibilitiesFakeDataWithToken = {
+    listPossibleRiderResponsibilities: {
+        items: [
+            { id: "someId3", _version: 3, _deleted: false },
+            { id: "someId4", _version: 4, _deleted: false },
+        ],
+        nextToken: "someToken",
+    },
+};
 const possibleRiderResponsibilitiesFakeData = {
     listPossibleRiderResponsibilities: {
         items: [
@@ -79,6 +89,20 @@ const possibleRiderResponsibilityDeleted2 = {
         _deleted: true,
     },
 };
+const possibleRiderResponsibilityDeleted3 = {
+    deleteRiderResponsibility: {
+        id: "someId3",
+        _version: 3,
+        _deleted: true,
+    },
+};
+const possibleRiderResponsibilityDeleted4 = {
+    deleteRiderResponsibility: {
+        id: "someId4",
+        _version: 4,
+        _deleted: true,
+    },
+};
 
 function setupFetchStub(data) {
     return function fetchStub(_url) {
@@ -94,7 +118,11 @@ function setupFetchStub(data) {
 }
 
 describe("index", () => {
-    test("delete a rider responsibility and associated possible rider responsibilities", () => {
+    beforeEach(() => {
+        jest.resetAllMocks();
+        jest.useFakeTimers();
+    });
+    test("delete a rider responsibility and associated possible rider responsibilities", async () => {
         appsyncModule.request
             .mockImplementationOnce(
                 setupFetchStub(possibleRiderResponsibilitiesFakeData)
@@ -113,5 +141,38 @@ describe("index", () => {
             arguments: { riderResponsibilityId: "someRiderRespId" },
         };
         handler(event);
+        await jest.runAllTimersAsync();
+        expect(appsyncModule.request).toMatchSnapshot();
+    });
+    test("paginated rider responsibilities", async () => {
+        appsyncModule.request
+            .mockImplementationOnce(
+                setupFetchStub(possibleRiderResponsibilitiesFakeDataWithToken)
+            )
+            .mockImplementationOnce(
+                setupFetchStub(possibleRiderResponsibilitiesFakeData)
+            )
+            .mockImplementationOnce(
+                setupFetchStub(possibleRiderResponsibilityDeleted)
+            )
+            .mockImplementationOnce(
+                setupFetchStub(possibleRiderResponsibilityDeleted2)
+            )
+            .mockImplementationOnce(
+                setupFetchStub(possibleRiderResponsibilityDeleted3)
+            )
+            .mockImplementationOnce(
+                setupFetchStub(possibleRiderResponsibilityDeleted4)
+            )
+            .mockImplementationOnce(setupFetchStub(fakeRiderResponsibility))
+            .mockImplementationOnce(
+                setupFetchStub({ ...fakeRiderResponsibility, _deleted: true })
+            );
+        const event = {
+            arguments: { riderResponsibilityId: "someRiderRespId" },
+        };
+        handler(event);
+        await jest.runAllTimersAsync();
+        expect(appsyncModule.request).toMatchSnapshot();
     });
 });
