@@ -13,7 +13,8 @@
     },
     "devDependencies": {
         "@types/aws-lambda": "^8.10.92",
-        "jest": "^30.0.5"
+        "jest": "^30.0.5",
+        "jest-fetch-mock": "^3.0.3"
     },
     "scripts": {
         "test": "jest test --watchAll --testTimeout=10000",
