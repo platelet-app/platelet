@@ -1,15 +1,15 @@
 import { screen, waitFor } from "@testing-library/react";
 import { render } from "../../../test-utils";
-import { DataStore } from "aws-amplify";
+import { API, DataStore, graphqlOperation } from "aws-amplify";
 import * as models from "../../../models";
 import { RiderResponsibilityChips } from "./RiderResponsibilityChips";
 import userEvent from "@testing-library/user-event";
+import { adminDeleteRiderResponsibility } from "../../../graphql/mutations";
 
 describe("RiderResponsibilityChips", () => {
     beforeEach(async () => {
         jest.restoreAllMocks();
-        const types = await DataStore.query(models.RiderResponsibility);
-        await Promise.all(types.map((type) => DataStore.delete(type)));
+        await DataStore.clear();
     });
 
     test("display the rider responsibilities", async () => {
@@ -51,7 +51,9 @@ describe("RiderResponsibilityChips", () => {
                 label: "rider-responsibility-1",
             })
         );
-        const deleteSpy = jest.spyOn(DataStore, "delete");
+        const deleteSpy = jest
+            .spyOn(API, "graphql")
+            .mockResolvedValue({ id: "something" });
         render(<RiderResponsibilityChips />);
         expect(
             await screen.findByText("rider-responsibility-1")
@@ -60,7 +62,11 @@ describe("RiderResponsibilityChips", () => {
         userEvent.click(screen.getByRole("button", { name: "Delete" }));
         userEvent.click(screen.getByRole("button", { name: "OK" }));
         await waitFor(() => {
-            expect(deleteSpy).toHaveBeenCalledWith(resp);
+            expect(deleteSpy).toHaveBeenCalledWith(
+                graphqlOperation(adminDeleteRiderResponsibility, {
+                    riderResponsibilityId: expect.any(String),
+                })
+            );
         });
     });
     test("edit a rider responsibility", async () => {
