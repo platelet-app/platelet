@@ -23,6 +23,7 @@ export function RiderResponsibilityChips() {
     );
     const [errorState, setErrorState] = useState<Error | null>(null);
     const [confirmDelete, setConfirmDelete] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -70,22 +71,30 @@ export function RiderResponsibilityChips() {
     };
 
     const handleDelete = async () => {
-        if (editItem) {
-            const existing = await DataStore.query(
-                models.RiderResponsibility,
-                editItem.id
-            );
-            if (!existing) {
-                throw new Error("Rider responsibility not found");
+        setConfirmDelete(false);
+        try {
+            if (editItem) {
+                setIsDeleting(true);
+                const existing = await DataStore.query(
+                    models.RiderResponsibility,
+                    editItem.id
+                );
+                if (!existing) {
+                    throw new Error("Rider responsibility not found");
+                }
+                await API.graphql(
+                    graphqlOperation(mutations.adminDeleteRiderResponsibility, {
+                        riderResponsibilityId: existing.id,
+                    })
+                );
+                setEditItem(null);
+                setInputValue("");
+                setIsDeleting(false);
             }
-            await API.graphql(
-                graphqlOperation(mutations.adminDeleteRiderResponsibility, {
-                    riderResponsibilityId: existing.id,
-                })
-            );
-            setEditItem(null);
-            setConfirmDelete(false);
-            setInputValue("");
+        } catch (e) {
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+            console.error(e);
+            setIsDeleting(false);
         }
     };
 
@@ -105,7 +114,7 @@ export function RiderResponsibilityChips() {
                     ))}
                 </Grid>
                 <ConfirmationDialog
-                    disabled={!!!inputValue}
+                    disabled={!!!inputValue || isDeleting}
                     onConfirmation={onSave}
                     onCancel={() => setEditItem(null)}
                     open={!!editItem}
@@ -116,12 +125,14 @@ export function RiderResponsibilityChips() {
                         direction="column"
                     >
                         <TextField
+                            disabled={isDeleting}
                             value={inputValue}
                             label="Label"
                             inputProps={{ "aria-label": "edit label" }}
                             onChange={(e) => setInputValue(e.target.value)}
                         />
                         <Button
+                            disabled={isDeleting}
                             onClick={() => setConfirmDelete(true)}
                             variant="outlined"
                             color="error"
