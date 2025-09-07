@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "api": {
+      "platelet": [
+        "Query",
+        "Mutation"
+      ]
+    },
+    "storage": {
+      "RiderResponsibility:@model(appsync)": [
+        "delete"
+      ]
+    }
+  },
+  "lambdaLayers": [
+    {
+      "type": "ProjectLayer",
+      "resourceName": "plateletappSyncOperations",
+      "env": "quack",
+      "version": "Always choose latest version",
+      "isLatestVersionSelected": true
+    }
+  ]
+}

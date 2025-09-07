@@ -5213,6 +5213,30 @@ export type ResetUserPasswordMutation = {
   } | null,
 };
 
+export type AdminDeleteRiderResponsibilityMutationVariables = {
+  riderResponsibilityId?: string | null,
+};
+
+export type AdminDeleteRiderResponsibilityMutation = {
+  adminDeleteRiderResponsibility?:  {
+    __typename: "RiderResponsibility",
+    id: string,
+    tenantId: string,
+    label: string,
+    disabled?: number | null,
+    possibleUsers?:  {
+      __typename: "ModelPossibleRiderResponsibilitiesConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
+  } | null,
+};
+
 export type GetTenantQueryVariables = {
   id: string,
 };

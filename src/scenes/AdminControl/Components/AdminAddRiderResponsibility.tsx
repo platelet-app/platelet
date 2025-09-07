@@ -10,7 +10,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { getWhoami, tenantIdSelector } from "../../../redux/Selectors";
 import Forbidden from "../../../ErrorComponents/Forbidden";
 import { createLoadingSelector } from "../../../redux/LoadingSelectors";
-import { userRoles } from "../../../apiConsts";
 
 const initialRiderResponsibilityState = {
     label: "",
@@ -55,7 +54,6 @@ function AdminAddRiderResponsibility() {
                 );
                 return;
             }
-
             await DataStore.save(
                 new models.RiderResponsibility({
                     ...state,
@@ -75,6 +73,7 @@ function AdminAddRiderResponsibility() {
     function verifyInput() {
         setInputVerified(!!state.label);
     }
+
     useEffect(verifyInput, [state]);
 
     if (whoamiFetching) {
@@ -82,11 +81,11 @@ function AdminAddRiderResponsibility() {
             <PaddedPaper>
                 <Skeleton
                     sx={{ height: 200, width: "100%" }}
-                    variant="rectangle"
+                    variant="rectangular"
                 />
             </PaddedPaper>
         );
-    } else if (!whoami.roles.includes(userRoles.admin)) {
+    } else if (!whoami.roles.includes(models.Role.ADMIN)) {
         return <Forbidden />;
     } else {
         return (
@@ -104,11 +103,13 @@ function AdminAddRiderResponsibility() {
                         return (
                             <TextFieldUncontrolled
                                 key={key}
-                                value={state[key]}
+                                value={state[key as keyof typeof fields]}
                                 fullWidth
-                                label={fields[key]}
+                                label={fields[key as keyof typeof fields]}
                                 id={key}
-                                onChange={(e) => {
+                                onChange={(
+                                    e: React.ChangeEvent<HTMLInputElement>
+                                ) => {
                                     setState((prevState) => ({
                                         ...prevState,
                                         [key]: e.target.value,
