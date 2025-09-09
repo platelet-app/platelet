@@ -8,8 +8,11 @@ const updatePendingTask = async (
     action: "accept" | "reject"
 ): Promise<{ task: models.Task; assignment: models.TaskAssignee }> => {
     const { id, status } = task;
-    if (status !== models.TaskStatus.PENDING) {
-        throw new Error(`Task ${id} is not pending`);
+    if (
+        status !== models.TaskStatus.PENDING &&
+        status !== models.TaskStatus.FUTURE
+    ) {
+        throw new Error(`Task ${id} is not pending or future`);
     }
     const existingTask = await DataStore.query(models.Task, id);
     if (!existingTask) {

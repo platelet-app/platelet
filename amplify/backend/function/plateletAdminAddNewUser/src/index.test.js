@@ -183,7 +183,9 @@ describe("plateletAdminAddNewUser", () => {
             awssdk.CognitoIdentityServiceProvider.prototype,
             "adminAddUserToGroup"
         );
+
         const mockEvent = {
+            identity: { groups: [] },
             arguments: {
                 name: "test user",
                 email: "test@taaaest.com",
@@ -239,9 +241,85 @@ describe("plateletAdminAddNewUser", () => {
         expect(cognitoGroupsSpy).toHaveBeenCalledWith({
             UserPoolId: "testPoolId",
             Username: username,
+            GroupName: "ADMIN",
+        });
+        expect(cognitoGroupsSpy).toHaveBeenCalledWith({
+            UserPoolId: "testPoolId",
+            Username: username,
             GroupName: "COORDINATOR",
         });
+        expect(cognitoGroupsSpy).not.toHaveBeenCalledWith({
+            UserPoolId: "testPoolId",
+            Username: username,
+            GroupName: "PAID",
+        });
         expect(appsyncModule.request).toMatchSnapshot();
+    });
+
+    test("add a new user in PAID group", async () => {
+        const cognitoSpy = jest.spyOn(
+            awssdk.CognitoIdentityServiceProvider.prototype,
+            "adminCreateUser"
+        );
+        const cognitoGroupsSpy = jest.spyOn(
+            awssdk.CognitoIdentityServiceProvider.prototype,
+            "adminAddUserToGroup"
+        );
+
+        const mockEvent = {
+            identity: { groups: ["PAID"] },
+            arguments: {
+                name: "test user",
+                email: "test@taaaest.com",
+                roles: ["USER", "COORDINATOR", "ADMIN"],
+                tenantId: "testTenantId",
+            },
+        };
+
+        appsyncModule.request
+            .mockResolvedValueOnce({
+                json: () => ({
+                    data: {
+                        listUsers: { items: [] },
+                    },
+                }),
+            })
+            .mockResolvedValueOnce({
+                json: () => ({
+                    data: {
+                        createUser: {
+                            id: "testUserId",
+                            username,
+                            _version: 1,
+                            roles: [],
+                        },
+                    },
+                }),
+            });
+
+        await handler(mockEvent);
+        expect(cognitoSpy).toHaveBeenCalledWith({
+            ForceAliasCreation: false,
+            UserAttributes: [
+                {
+                    Name: "email",
+                    Value: mockEvent.arguments.email,
+                },
+                {
+                    Name: "email_verified",
+                    Value: "true",
+                },
+            ],
+            UserPoolId: "testPoolId",
+            TemporaryPassword: expect.stringMatching(/^[\w+]{8}$/),
+            MessageAction: "SUPPRESS",
+            Username: username,
+        });
+        expect(cognitoGroupsSpy).toHaveBeenCalledWith({
+            UserPoolId: "testPoolId",
+            Username: username,
+            GroupName: "PAID",
+        });
     });
     test("add a new user with non-unique name", async () => {
         const cognitoSpy = jest.spyOn(
@@ -249,6 +327,7 @@ describe("plateletAdminAddNewUser", () => {
             "adminCreateUser"
         );
         const mockEvent = {
+            identity: { groups: [] },
             arguments: {
                 name: "Another Individual",
                 email: "test@test.com",
@@ -318,6 +397,7 @@ describe("plateletAdminAddNewUser", () => {
             "adminDeleteUser"
         );
         const mockEvent = {
+            identity: { groups: [] },
             arguments: {
                 name: "Another Individual",
                 email: "test@test.com",
@@ -361,6 +441,7 @@ describe("plateletAdminAddNewUser", () => {
             "adminDeleteUser"
         );
         const mockEvent = {
+            identity: { groups: [] },
             arguments: {
                 name: "Another Individual",
                 email: "test@test.com",
@@ -418,6 +499,7 @@ describe("plateletAdminAddNewUser", () => {
         );
         sendWelcomeEmail.sendWelcomeEmail.mockRejectedValue("Some error");
         const mockEvent = {
+            identity: { groups: [] },
             arguments: {
                 name: "Another Individual",
                 email: "test@test.com",
