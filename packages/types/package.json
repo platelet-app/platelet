@@ -13,14 +13,18 @@
     "license": "Apache-2.0",
     "author": "Theo Cranmore <theo@platelet.app>",
     "type": "commonjs",
-    "main": "index.js",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "codegen": "amplify codegen models --target typescript --model-schema ./amplify/backend/api/platelet/schema.graphql --output-dir models"
+        "build": "tsc"
     },
     "dependencies": {
         "esm": "^3.2.25"
     },
-    "devDependencies": {},
-    "module": "main.js"
+    "devDependencies": {
+        "typescript": "^4.8.3"
+    }
 }

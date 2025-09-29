@@ -68,6 +68,9 @@ jobs:
           cp -r src/models packages/types/src
           cp -r src/graphql packages/types/src
 
+      - name: Build types package
+        run: npm run build --workspace @platelet-app/types
+
       - name: Configure Git user
         run: |
           git config --global user.name 'github-actions[bot]'
