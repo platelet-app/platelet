@@ -46,14 +46,14 @@ jobs:
         run: npm install
 
       - name: Compile GraphQL Schema
-        run: npx @aws-amplify/cli api gql-compile
+        run: npx @aws-amplify/cli@12.4.0 api gql-compile
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
 
       - name: Generate models and types
-        run: npx @aws-amplify/cli codegen
+        run: npx @aws-amplify/cli@12.4.0 codegen
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
