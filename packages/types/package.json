@@ -1,6 +1,6 @@
 {
     "name": "@platelet-app/types",
-    "version": "1.0.0",
+    "version": "1.0.3",
     "description": "Types for the platelet.app project",
     "homepage": "https://github.com/platelet-app/platelet#readme",
     "bugs": {
