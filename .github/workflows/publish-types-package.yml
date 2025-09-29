@@ -49,6 +49,9 @@ jobs:
       - name: Copy schema to root
         run: cp amplify/backend/api/platelet/schema.graphql .
 
+      - name: Create amplify-meta.json file
+        run: echo '{}' >> amplify/backend/amplify-meta.json
+
       - name: gql compile
         run: amplify api gql-compile
 
