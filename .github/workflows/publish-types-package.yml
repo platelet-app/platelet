@@ -15,8 +15,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Check for schema changes
         id: check_changes
@@ -29,6 +27,7 @@ jobs:
 
   publish:
     name: Publish to NPM
+    environment: ${{ github.ref_name }}
     needs: check-for-schema-changes
     if: needs.check-for-schema-changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
@@ -46,11 +45,15 @@ jobs:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Copy schema to root
-        run: cp amplify/backend/api/platelet/schema.graphql .
+      - name: Pull Amplify environment
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        run: amplify pull --appId ${{ vars.AMPLIFY_APP_ID }} --envName ${{ vars.AMPLIFY_ENVIRONMENT_NAME }} -y
 
-      - name: Create amplify-meta.json file
-        run: echo '{}' >> amplify/backend/amplify-meta.json
+      - name: Undo any file changes made that are tracked in Git
+        run: git checkout .
 
       - name: gql compile
         run: amplify api gql-compile
