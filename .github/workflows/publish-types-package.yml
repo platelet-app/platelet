@@ -59,7 +59,9 @@ jobs:
         run: amplify api gql-compile
 
       - name: Generate models and types
-        run: amplify codegen && amplify codegen models
+        run: |
+          amplify codegen
+          amplify codegen models
 
       - name: Copy generated files
         run: |
