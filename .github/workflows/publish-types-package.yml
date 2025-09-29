@@ -24,7 +24,7 @@ jobs:
           if git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep -q "amplify/backend/api/platelet/schema.graphql"; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
-            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
   publish:
