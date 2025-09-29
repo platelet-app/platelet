@@ -46,7 +46,7 @@ jobs:
         run: cp amplify/backend/api/platelet/schema.graphql .
 
       - name: Generate models and types
-        run: npx @aws-amplify/cli codegen && npx @aws-amplify/cli codegen models
+        run: npx @aws-amplify/cli@12.4.0 codegen && npx @aws-amplify/cli@12.4.0 codegen models
 
       - name: Copy generated files
         run: |
