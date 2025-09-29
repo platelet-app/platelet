@@ -42,28 +42,21 @@ jobs:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Copy schema to root
+        run: cp amplify/backend/api/platelet/schema.graphql .
 
       - name: Compile GraphQL Schema
         run: npx @aws-amplify/cli api gql-compile
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
 
       - name: Generate models and types
-        run: npx @aws-amplify/cli@12.4.0 codegen
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: npx @aws-amplify/cli codegen && npx @aws-amplify/cli codegen models
 
       - name: Copy generated files
         run: |
-          mkdir -p packages/types/src/models
+          mkdir -p packages/types/src
           cp src/API.ts packages/types/src/
-          cp -r src/models/* packages/types/src/models/
+          cp -r src/models packages/types/src
+          cp -r src/graphql packages/types/src
 
       - name: Configure Git user
         run: |
@@ -73,7 +66,7 @@ jobs:
       - name: Increment version and publish
         run: |
           npm version patch --workspace @platelet-app/types -m "chore(release): publish models and types %s"
-          npm publish --workspace @platelet-app/types
+          npm publish --workspace @platelet-app/types --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
