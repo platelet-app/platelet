@@ -78,7 +78,22 @@ jobs:
 
       - name: Increment version and publish
         run: |
-          npm version patch --workspace @platelet-app/types -m "chore(release): publish models and types %s"
+          # Patch new version
+          npm version patch --workspace @platelet-app/types
+
+          # Get the new version number from the package.json
+          VERSION=$(node -p "require('./packages/types/package.json').version")
+
+          # Stage the changed files
+          git add packages/types/package.json package-lock.json
+
+          # Create the commit
+          git commit -m "chore(release): publish models and types v$VERSION"
+
+          # Create the tag
+          git tag "v$VERSION"
+
+          # Publish to npm
           npm publish --workspace @platelet-app/types --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
