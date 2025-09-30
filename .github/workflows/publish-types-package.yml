@@ -34,7 +34,7 @@ jobs:
     steps:
 
       - name: Install amplify CLI
-        run: npm install -g @aws-amplify/cli@12.4.0
+        run: npm install -g @aws-amplify/cli
 
       - name: Checkout code
         uses: actions/checkout@v4
