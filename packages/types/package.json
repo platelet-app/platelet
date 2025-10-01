@@ -1,0 +1,22 @@
+{
+    "name": "@platelet-app/types",
+    "version": "1.0.9",
+    "description": "Types for the platelet.app project",
+    "homepage": "https://platelet.app",
+    "bugs": {
+        "url": "https://github.com/platelet-app/platelet/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/platelet-app/platelet.git"
+    },
+    "license": "Apache-2.0",
+    "author": "Theo Cranmore <theo@platelet.app>",
+    "type": "module",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "cd ../.. && amplify api gql-compile && amplify codegen && cp src/API.ts packages/types/src && cd packages/types && tsc --project tsconfig.json",
+        "prepublishOnly": "npm run build && npm version patch"
+    }
+}
