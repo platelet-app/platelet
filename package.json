@@ -145,5 +145,8 @@
         "css-mediaquery": "^0.1.2",
         "cypress": "^9.0.0",
         "cypress-localstorage-commands": "^1.7.0"
-    }
+    },
+    "workspaces": [
+        "packages/*"
+    ]
 }
