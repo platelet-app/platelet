@@ -1,0 +1,22 @@
+{
+    "name": "@platelet-app/graphql",
+    "version": "1.0.7",
+    "description": "GraphQL operations for the platelet.app project",
+    "homepage": "https://platelet.app",
+    "bugs": {
+        "url": "https://github.com/platelet-app/platelet/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/platelet-app/platelet.git"
+    },
+    "license": "Apache-2.0",
+    "author": "Theo Cranmore <theo@platelet.app>",
+    "type": "module",
+    "main": "dist/graphql/index.js",
+    "types": "dist/graphql/index.d.ts",
+    "scripts": {
+        "build": "cd ../.. && amplify api gql-compile && amplify codegen && cd packages/graphql && tsc --project tsconfig.json",
+        "prepublishOnly": "npm run build && npm version patch"
+    }
+}
