@@ -1,8 +1,8 @@
 {
     "name": "@platelet-app/types",
-    "version": "1.0.6",
+    "version": "1.0.8",
     "description": "Types for the platelet.app project",
-    "homepage": "https://github.com/platelet-app/platelet#readme",
+    "homepage": "https://platelet.app",
     "bugs": {
         "url": "https://github.com/platelet-app/platelet/issues"
     },
@@ -12,17 +12,15 @@
     },
     "license": "Apache-2.0",
     "author": "Theo Cranmore <theo@platelet.app>",
-    "type": "commonjs",
+    "type": "module",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "files": [
         "dist"
     ],
     "scripts": {
-        "build": "tsc"
-    },
-    "dependencies": {
-        "esm": "^3.2.25"
+        "build": "amplify api gql-compile && amplify codegen && amplify codegen models && cp -r ../../src/models ../../src/API.ts src && tsc",
+        "prepublishOnly": "npm run build && npm version patch"
     },
     "devDependencies": {
         "typescript": "^4.8.3"

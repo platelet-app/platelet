@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
+        "@aws-amplify/cli": "^14.0.1",
         "@aws-amplify/ui-react": "^3.6.0",
         "@date-io/date-fns": "^2.11.0",
         "@date-io/moment": "^2.11.0",
@@ -14,6 +15,8 @@
         "@mui/material": "^5.0.3",
         "@mui/styled-engine-sc": "^5.0.3",
         "@mui/styles": "^5.0.1",
+        "@platelet-app/graphql": "^1.0.6",
+        "@platelet-app/types": "^1.0.7",
         "@reduxjs/toolkit": "^1.6.1",
         "@sentry/react": "^7.107.0",
         "@testing-library/react": "^12.1.2",
@@ -98,7 +101,8 @@
         "eject": "react-scripts eject",
         "preserve:static": "npm run build",
         "serve:static": "npx serve ./build  -p 3000",
-        "updateAppsyncOperations": "amplify api gql-compile && amplify codegen && babel --extensions \".ts\" src/graphql --config-file ./babel.config.json -d ./amplify/backend/function/plateletappSyncOperations/opt/graphql/"
+        "updateAppsyncOperations": "amplify api gql-compile && amplify codegen && babel --extensions \".ts\" src/graphql --config-file ./babel.config.json -d ./amplify/backend/function/plateletappSyncOperations/opt/graphql/",
+        "updateGraphqlPackage": "amplify api gql-compile && amplify codegen && babel --extensions \".ts\" src/graphql --config-file ./babel.config.json -d ./packages/graphql/"
     },
     "eslintConfig": {
         "extends": [
@@ -147,6 +151,6 @@
         "cypress-localstorage-commands": "^1.7.0"
     },
     "workspaces": [
-        "packages/types"
+        "packages/*"
     ]
 }
