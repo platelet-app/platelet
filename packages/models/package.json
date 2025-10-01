@@ -1,0 +1,22 @@
+{
+    "name": "@platelet-app/models",
+    "version": "1.0.1",
+    "description": "DataStore models for the platelet.app project",
+    "homepage": "https://platelet.app",
+    "bugs": {
+        "url": "https://github.com/platelet-app/platelet/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/platelet-app/platelet.git"
+    },
+    "license": "Apache-2.0",
+    "author": "Theo Cranmore <theo@platelet.app>",
+    "type": "module",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "cd ../.. && amplify api gql-compile && amplify codegen models && cd packages/models && cp ../../models/* dist",
+        "prepublishOnly": "npm version patch"
+    }
+}
