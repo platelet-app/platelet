@@ -14,11 +14,9 @@
     "author": "Theo Cranmore <theo@platelet.app>",
     "type": "module",
     "main": "dist/index.js",
-    "files": [
-        "dist"
-    ],
+    "types": "dist/index.d.ts",
     "scripts": {
-        "build": "amplify api gql-compile && amplify codegen && babel --extensions \".ts\" ../../src/graphql --config-file ./babel.config.json -d dist/",
+        "build": "cd ../.. && amplify api gql-compile && amplify codegen && cd packages/graphql && tsc --project tsconfig.json && babel --extensions \".ts\" ../../src/graphql --config-file ./babel.config.json -d dist/",
         "prepublishOnly": "npm run build && npm version patch"
     }
 }
