@@ -1,0 +1,90 @@
+
+name: Publish packages
+
+on:
+  push:
+    branches:
+      - feat/228
+
+jobs:
+  check-for-schema-changes:
+    name: Check for schema changes
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.check_changes.outputs.changed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for schema changes
+        id: check_changes
+        run: |
+          if git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | grep -q "amplify/backend/api/platelet/schema.graphql"; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+  publish:
+    name: Publish to NPM
+    environment: ${{ github.ref_name }}
+    needs: check-for-schema-changes
+    if: needs.check-for-schema-changes.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install amplify CLI
+        run: npm install -g @aws-amplify/cli
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+        # amplify codegen fails if this isn't done
+        # but we don't actually want to make packages from this environment
+      - name: Pull Amplify environment
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        run: amplify pull --appId ${{ vars.AMPLIFY_APP_ID }} --envName ${{ vars.AMPLIFY_ENVIRONMENT_NAME }} -y
+
+      - name: Undo any file changes made that are tracked in Git
+        run: git checkout .
+
+      - name: Publish types package
+        run: npm publish --workspace @platelet-app/types --access public
+
+      - name: Publish graphql package
+        run: npm publish --workspace @platelet-app/graphql --access public
+
+      - name: Publish models package
+        run: npm publish --workspace @platelet-app/models --access public
+
+      - name: Configure Git user
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Commit changes
+        run: |
+          # Get the new version number from the types package.json
+          VERSION=$(node -p "require('./packages/types/package.json').version")
+
+          # Stage the changed files
+          git add packages/
+
+          # Create the commit
+          git commit -m "chore(release): publish models and types v$VERSION"
+
+          # Create the tag
+          git tag "v$VERSION"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Push changes
+        run: git push --follow-tags
