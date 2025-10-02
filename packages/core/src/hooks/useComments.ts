@@ -9,7 +9,7 @@ export type CommentsState = {
     [key: string]: models.Comment;
 };
 
-const useComments = (parentId: string) => {
+export const useComments = (parentId: string) => {
     const [state, setState] = React.useState<CommentsState>({});
     const [isFetching, setIsFetching] = React.useState(false);
     const [error, setError] = React.useState<Error | null>(null);
@@ -64,5 +64,3 @@ const useComments = (parentId: string) => {
 
     return { state, setState, isFetching, error };
 };
-
-export default useComments;
