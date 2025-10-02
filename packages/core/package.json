@@ -18,5 +18,9 @@
     "scripts": {
         "build": "tsc --project tsconfig.json",
         "prepublishOnly": "npm run build && npm version patch"
+    },
+    "dependencies": {
+        "@platelet-app/models": "^1.1.1",
+        "aws-amplify": "^4.3.46"
     }
 }
