@@ -1,9 +1,9 @@
 import * as models from "@platelet-app/models";
 import { DataStore } from "aws-amplify";
 import React from "react";
-import convertModelListToTypedObject from "./utilities/convertModelListToTypedObject";
+import convertModelListToTypedObject from "./utilities/convertModelListToTypedObject.js";
 import { useSelector } from "react-redux";
-import { getWhoami } from "../selectors";
+import { getWhoami } from "../selectors.js";
 
 export type CommentsState = {
     [key: string]: models.Comment;

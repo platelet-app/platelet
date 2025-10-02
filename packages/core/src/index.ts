@@ -1,4 +1,4 @@
-import * as selectors from "./selectors";
+import * as selectors from "./selectors.js";
 
-export * from "./hooks";
+export * from "./hooks/index.js";
 export { selectors };
