@@ -1,0 +1,22 @@
+{
+    "name": "@platelet-app/core",
+    "version": "1.1.1",
+    "description": "Core functionality for the platelet.app project",
+    "homepage": "https://github.com/platelet-app/platelet#readme",
+    "bugs": {
+        "url": "https://github.com/platelet-app/platelet/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/platelet-app/platelet.git"
+    },
+    "license": "Apache-2.0",
+    "author": "Theo Cranmore <theo@platelet.app>",
+    "type": "module",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc --project tsconfig.json",
+        "prepublishOnly": "npm run build && npm version patch"
+    }
+}
