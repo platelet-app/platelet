@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import * as models from "@platelet-app/models";
 import { useSelector } from "react-redux";
-import { getRoleView, getWhoami, taskAssigneesSelector } from "./selectors";
+import { getRoleView, getWhoami, taskAssigneesSelector } from "../selectors.js";
 
-export function useAssignmentRole(taskId) {
+export function useAssignmentRole(taskId: string) {
     const taskAssignees = useSelector(taskAssigneesSelector);
     const whoami = useSelector(getWhoami);
     const [currentUserRole, setCurrentUserRole] = useState(models.Role.USER);
