@@ -103,7 +103,10 @@ async function getCurrentUserRolesFromCognito(username) {
         .adminListGroupsForUser({ UserPoolId: userPoolId, Username: username })
         .promise();
     console.log("User roles:", response);
-    return response.Groups.map((group) => group.GroupName);
+    // ignore PAID role
+    return response.Groups.map((group) => group.GroupName).filter(
+        (i) => i !== "PAID"
+    );
 }
 
 async function getCurrentUserData(userId) {
