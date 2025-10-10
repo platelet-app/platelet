@@ -7,7 +7,7 @@ const deleteComment = async (commentId: string, endpoint: string) => {
   const variables = {
     id: commentId,
   };
-  const response = request(
+  const response = await request(
     { query: mutations.deleteComment, variables },
     endpoint
   );

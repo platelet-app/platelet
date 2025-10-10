@@ -2,6 +2,7 @@
   "name": "delete-assignments",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "prebuild": "npm install",
@@ -12,9 +13,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@platelet-app/graphql": "^1.1.1",
-    "@platelet-app/lambda": "^1.1.2",
+    "@platelet-app/lambda": "^1.1.4",
     "@platelet-app/types": "^1.1.1",
-    "node-fetch": "^3.3.2",
     "p-all": "^5.0.1"
   }
 }

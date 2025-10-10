@@ -7,7 +7,7 @@ const deleteAssignment = async (assignmentId: string, endpoint: string) => {
   const variables = {
     id: assignmentId,
   };
-  const response = request(
+  const response = await request(
     { query: mutations.deleteTaskAssignee, variables },
     endpoint
   );
