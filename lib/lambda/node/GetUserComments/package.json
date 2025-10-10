@@ -1,0 +1,19 @@
+{
+  "name": "get-user-comments",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prebuild": "npm install",
+    "build": "tsc",
+    "package": "npm prune --production && cp -R node_modules lib/node_modules/"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@platelet-app/graphql": "^1.1.1",
+    "@platelet-app/lambda": "^1.1.2",
+    "@platelet-app/types": "^1.1.1",
+    "node-fetch": "^3.3.2"
+  }
+}
