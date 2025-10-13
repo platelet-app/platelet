@@ -1,9 +1,14 @@
-import { Sha256 } from "@aws-crypto/sha256-js";
-import { defaultProvider } from "@aws-sdk/credential-provider-node";
-import { SignatureV4 } from "@aws-sdk/signature-v4";
-import { HttpRequest } from "@aws-sdk/protocol-http";
+import awsCrypto from "@aws-crypto/sha256-js";
+import awsProvider from "@aws-sdk/credential-provider-node";
+import sig from "@aws-sdk/signature-v4";
+import http from "@aws-sdk/protocol-http";
 import { Request } from "node-fetch";
 import fetch from "node-fetch";
+
+const { Sha256 } = awsCrypto;
+const { defaultProvider } = awsProvider;
+const { SignatureV4 } = sig;
+const { HttpRequest } = http;
 
 export const request = async (
     queryDetails: { query: string; variables: any },
