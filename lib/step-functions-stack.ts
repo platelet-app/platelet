@@ -31,7 +31,6 @@ export class StepFunctionsStack extends cdk.Stack {
         environment: {
           REGION,
         },
-        logRetention: RetentionDays.TWO_WEEKS,
       }
     );
 
@@ -63,7 +62,6 @@ export class StepFunctionsStack extends cdk.Stack {
         environment: {
           REGION,
         },
-        logRetention: RetentionDays.TWO_WEEKS,
       }
     );
 
@@ -93,7 +91,6 @@ export class StepFunctionsStack extends cdk.Stack {
         environment: {
           REGION,
         },
-        logRetention: RetentionDays.TWO_WEEKS,
       }
     );
 
@@ -123,7 +120,6 @@ export class StepFunctionsStack extends cdk.Stack {
         environment: {
           REGION,
         },
-        logRetention: RetentionDays.TWO_WEEKS,
       }
     );
 
