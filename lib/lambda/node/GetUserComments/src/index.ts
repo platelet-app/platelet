@@ -29,8 +29,8 @@ const getUserComments = async (
 
 export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
   console.log("get user comments", event);
-  const { userId, graphQLEndpoint } = event;
+  const { userId, graphQLEndpoint, userPoolId } = event;
   const comments = await getUserComments(userId, graphQLEndpoint);
   console.log("Found comments", comments);
-  return { userId, graphQLEndpoint, comments };
+  return { userId, graphQLEndpoint, comments, userPoolId };
 };

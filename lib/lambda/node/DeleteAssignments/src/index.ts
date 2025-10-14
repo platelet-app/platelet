@@ -1,8 +1,8 @@
-import type { LambdaEvent } from "./interfaces.js";
+import type { LambdaEvent, LambdaReturn } from "./interfaces.js";
 import { request, errorCheck } from "@platelet-app/lambda";
 import type { TaskAssignee } from "@platelet-app/types";
 import pAll from "p-all";
-import { deleteTaskAssignee } from "./queries.js";
+import { mutations } from "@platelet-app/graphql";
 
 const deleteAssignment = async (assignment: TaskAssignee, endpoint: string) => {
   const variables = {
@@ -12,19 +12,22 @@ const deleteAssignment = async (assignment: TaskAssignee, endpoint: string) => {
     },
   };
   const response = await request(
-    { query: deleteTaskAssignee, variables },
+    { query: mutations.deleteTaskAssignee, variables },
     endpoint
   );
   const body = await response.json();
   errorCheck(body);
 };
 
-export const handler = async (event: LambdaEvent) => {
+export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
   console.log("delete ass", event);
-  const { graphQLEndpoint, userId, assignments } = event;
+  const { graphQLEndpoint, userId, assignments, userPoolId } = event;
+  const filterDeleted = assignments.filter((c) => !c._deleted);
+  console.log("Assignments:", assignments);
+  console.log("Filtered:", filterDeleted);
   await pAll(
     assignments.map((a) => () => deleteAssignment(a, graphQLEndpoint)),
     { concurrency: 10 }
   );
-  return { userId, graphQLEndpoint };
+  return { userId, graphQLEndpoint, userPoolId };
 };

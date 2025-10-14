@@ -139,6 +139,102 @@ export class StepFunctionsStack extends cdk.Stack {
       })
     );
 
+    const cleanVehicleAssignmentsFunction = new lambda.Function(
+      this,
+      "CleanVehicleAssignmentsFunction",
+      {
+        runtime: lambda.Runtime.NODEJS_22_X,
+        functionName: `platelet-sfn-clean-vehicle-assignments-${deployEnv}`,
+        handler: "index.handler",
+        code: lambda.Code.fromAsset(
+          "./lib/lambda/node/CleanVehicleAssignments/dist"
+        ),
+        timeout: cdk.Duration.seconds(180),
+        memorySize: 1024,
+        environment: {
+          REGION: "eu-west-1",
+        },
+      }
+    );
+
+    cleanVehicleAssignmentsFunction.role?.attachInlinePolicy(
+      new iam.Policy(this, "CleanVehicleAssignmentsFunctionPolicy", {
+        statements: [
+          new iam.PolicyStatement({
+            actions: ["appsync:GraphQL"],
+            resources: [
+              "arn:aws:appsync:eu-west-1:130063560692:apis/*/types/Mutation/fields/deleteVehicleAssignment",
+              "arn:aws:appsync:eu-west-1:130063560692:apis/*/types/Query/fields/getUser",
+            ],
+          }),
+        ],
+      })
+    );
+
+    const cleanPossibleRiderResponsibilitiesFunction = new lambda.Function(
+      this,
+      "CleanPossibleRiderResponsibilitiesFunction",
+      {
+        runtime: lambda.Runtime.NODEJS_22_X,
+        functionName: `platelet-sfn-clean-possible-rider-responsibilities-${deployEnv}`,
+        handler: "index.handler",
+        code: lambda.Code.fromAsset(
+          "./lib/lambda/node/CleanPossibleRiderResponsibilities/dist"
+        ),
+        timeout: cdk.Duration.seconds(180),
+        memorySize: 1024,
+        environment: {
+          REGION: "eu-west-1",
+        },
+      }
+    );
+
+    cleanPossibleRiderResponsibilitiesFunction.role?.attachInlinePolicy(
+      new iam.Policy(this, "CleanPossibleRiderResponsibilitiesFunctionPolicy", {
+        statements: [
+          new iam.PolicyStatement({
+            actions: ["appsync:GraphQL"],
+            resources: [
+              "arn:aws:appsync:eu-west-1:130063560692:apis/*/types/Mutation/fields/deletePossibleRiderResponsibilities",
+              "arn:aws:appsync:eu-west-1:130063560692:apis/*/types/Query/fields/getUser",
+            ],
+          }),
+        ],
+      })
+    );
+
+    const deleteUserFunction = new lambda.Function(this, "DeleteUserFunction", {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      functionName: `platelet-sfn-delete-user-${deployEnv}`,
+      handler: "index.handler",
+      code: lambda.Code.fromAsset("./lib/lambda/node/DeleteUser/dist"),
+      timeout: cdk.Duration.seconds(180),
+      memorySize: 1024,
+      environment: {
+        REGION: "eu-west-1",
+      },
+    });
+
+    deleteUserFunction.role?.attachInlinePolicy(
+      new iam.Policy(this, "DeleteUserFunctionPolicy", {
+        statements: [
+          new iam.PolicyStatement({
+            actions: [
+              "appsync:GraphQL",
+              "cognito-idp:AdminDeleteUser",
+              "cognito-idp:AdminDisableUser",
+              "cognito-idp:AdminGetUser",
+            ],
+            resources: [
+              "arn:aws:appsync:eu-west-1:130063560692:apis/*/types/Mutation/fields/deleteUser",
+              "arn:aws:appsync:eu-west-1:130063560692:apis/*/types/Query/fields/getUser",
+              "arn:aws:cognito-idp:*:130063560692:userpool/*",
+            ],
+          }),
+        ],
+      })
+    );
+
     this.deleteUserStateMachine = new sfn.StateMachine(
       this,
       `DeleteUserStateMachine-${deployEnv}`,
@@ -147,6 +243,7 @@ export class StepFunctionsStack extends cdk.Stack {
           payload: sfn.TaskInput.fromObject({
             userId: sfn.JsonPath.stringAt("$.userId"),
             graphQLEndpoint: sfn.JsonPath.stringAt("$.graphQLEndpoint"),
+            userPoolId: sfn.JsonPath.stringAt("$.userPoolId"),
           }),
           lambdaFunction: getUserCommentsFunction,
           outputPath: "$.Payload",
@@ -166,6 +263,24 @@ export class StepFunctionsStack extends cdk.Stack {
           .next(
             new tasks.LambdaInvoke(this, "DeleteAssignments", {
               lambdaFunction: deleteAssignmentsFunction,
+              outputPath: "$.Payload",
+            })
+          )
+          .next(
+            new tasks.LambdaInvoke(this, "CleanVehicleAssignments", {
+              lambdaFunction: cleanVehicleAssignmentsFunction,
+              outputPath: "$.Payload",
+            })
+          )
+          .next(
+            new tasks.LambdaInvoke(this, "CleanPossibleRiderResponsibilities", {
+              lambdaFunction: cleanPossibleRiderResponsibilitiesFunction,
+              outputPath: "$.Payload",
+            })
+          )
+          .next(
+            new tasks.LambdaInvoke(this, "DeleteUser", {
+              lambdaFunction: deleteUserFunction,
             })
           )
           .next(new sfn.Succeed(this, "User deleted")),

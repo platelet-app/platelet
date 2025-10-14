@@ -6,6 +6,7 @@ export const getUser = `query GetUser($id: ID!) {
       items {
           id
           _version
+          _deleted
       }
     }
   }
