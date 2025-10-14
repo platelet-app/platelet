@@ -1,5 +1,11 @@
 {
     "adminRoleNames": [
-        "<something>"
+        "StepFunctionsStack-dev-GetUserCommentsFunctionServi-1LOnrSNV4uPR",
+        "StepFunctionsStack-dev-DeleteAssignmentsFunctionSer-DhYHV8QdVNPS",
+        "StepFunctionsStack-dev-DeleteCommentsFunctionServic-Rw0GuyzucPHc",
+        "StepFunctionsStack-dev-GetUserAssignmentsFunctionSe-gAC83d5IdtDG",
+        "StepFunctionsStack-dev-DeleteUserFunctionServiceRol-IZS4RuROPjft",
+        "StepFunctionsStack-dev-CleanVehicleAssignmentsFunct-z15H3jB3Fxzy",
+        "StepFunctionsStack-dev-CleanPossibleRiderResponsibi-6eWiXM98K82v"
     ]
 }
