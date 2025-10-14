@@ -7,13 +7,13 @@
   "scripts": {
     "prebuild": "npm install",
     "build": "tsc",
-    "package": "npm prune --production && cp -R node_modules lib/node_modules/"
+    "package": "npm prune --production && rm -r dist/node_modules && cp -R node_modules dist/node_modules/ && cp package.json dist"
   },
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@platelet-app/graphql": "^1.1.1",
-    "@platelet-app/lambda": "^1.1.4",
-    "@platelet-app/types": "^1.1.1"
+    "@platelet-app/graphql": "^1.1.3",
+    "@platelet-app/lambda": "^1.1.5",
+    "@platelet-app/types": "^1.1.2"
   }
 }

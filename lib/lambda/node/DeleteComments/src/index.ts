@@ -1,24 +1,27 @@
-import { LambdaEvent } from "./interfaces";
-import { mutations } from "@platelet-app/graphql";
+import type { LambdaEvent } from "./interfaces.js";
 import { request, errorCheck } from "@platelet-app/lambda";
+import type { Comment } from "@platelet-app/types";
 import pAll from "p-all";
+import { deleteComment } from "./queries.js";
 
-const deleteComment = async (commentId: string, endpoint: string) => {
+const deleteCommentFunction = async (comment: Comment, endpoint: string) => {
   const variables = {
-    id: commentId,
+    input: {
+      id: comment.id,
+      _version: comment._version,
+    },
   };
-  const response = await request(
-    { query: mutations.deleteComment, variables },
-    endpoint
-  );
+  const response = await request({ query: deleteComment, variables }, endpoint);
   const body = await response.json();
   errorCheck(body);
 };
 
 export const handler = async (event: LambdaEvent) => {
-  const { graphQLEndpoint, commentIds } = event;
-  pAll(
-    commentIds.map((id) => () => deleteComment(id, graphQLEndpoint)),
+  console.log("delete comments", event);
+  const { userId, graphQLEndpoint, comments } = event;
+  await pAll(
+    comments.map((c) => () => deleteCommentFunction(c, graphQLEndpoint)),
     { concurrency: 10 }
   );
+  return { userId, graphQLEndpoint };
 };

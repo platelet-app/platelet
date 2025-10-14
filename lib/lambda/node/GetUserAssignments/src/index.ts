@@ -1,7 +1,7 @@
-import { LambdaEvent } from "./interfaces";
-import { queries } from "@platelet-app/graphql";
-import { TaskAssignee } from "@platelet-app/types";
+import type { LambdaEvent, LambdaReturn } from "./interfaces.js";
+import type { TaskAssignee } from "@platelet-app/types";
 import { request, errorCheck } from "@platelet-app/lambda";
+import { getUser } from "./queries.js";
 
 const getUserAssignments = async (
   userId: string,
@@ -14,10 +14,7 @@ const getUserAssignments = async (
       id: userId,
       nextToken,
     };
-    const response = await request(
-      { query: queries.getUser, variables },
-      endpoint
-    );
+    const response = await request({ query: getUser, variables }, endpoint);
     const body = await response.json();
     errorCheck(body);
     if (body?.data?.getUser?.assignments) {
@@ -30,7 +27,9 @@ const getUserAssignments = async (
   return items.flat();
 };
 
-export const handler = async (event: LambdaEvent): Promise<TaskAssignee[]> => {
-  const { graphQLEndpoint, userId } = event;
-  return getUserAssignments(userId, graphQLEndpoint);
+export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
+  const { userId, graphQLEndpoint } = event;
+  console.log("get user ass", event);
+  const assignments = await getUserAssignments(userId, graphQLEndpoint);
+  return { userId, graphQLEndpoint, assignments };
 };

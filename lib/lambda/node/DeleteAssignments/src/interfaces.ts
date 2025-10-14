@@ -1,4 +1,7 @@
+import type { TaskAssignee } from "@platelet-app/types";
+
 export interface LambdaEvent {
   graphQLEndpoint: string;
-  assignmentIds: string[];
+  userId: string;
+  assignments: TaskAssignee[];
 }

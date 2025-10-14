@@ -1,7 +1,7 @@
-import { LambdaEvent } from "./interfaces";
-import { queries } from "@platelet-app/graphql";
-import { Comment } from "@platelet-app/types";
+import type { LambdaEvent, LambdaReturn } from "./interfaces.js";
+import type { Comment } from "@platelet-app/types";
 import { request, errorCheck } from "@platelet-app/lambda";
+import { getUser } from "./queries.js";
 
 const getUserComments = async (
   userId: string,
@@ -14,10 +14,7 @@ const getUserComments = async (
       id: userId,
       nextToken,
     };
-    const response = await request(
-      { query: queries.getUser, variables },
-      endpoint
-    );
+    const response = await request({ query: getUser, variables }, endpoint);
     const body = await response.json();
     errorCheck(body);
     if (body?.data?.getUser?.comments) {
@@ -30,7 +27,10 @@ const getUserComments = async (
   return items.flat();
 };
 
-export const handler = async (event: LambdaEvent): Promise<Comment[]> => {
-  const { graphQLEndpoint, userId } = event;
-  return getUserComments(userId, graphQLEndpoint);
+export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
+  console.log("get user comments", event);
+  const { userId, graphQLEndpoint } = event;
+  const comments = await getUserComments(userId, graphQLEndpoint);
+  console.log("Found comments", comments);
+  return { userId, graphQLEndpoint, comments };
 };

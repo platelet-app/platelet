@@ -1,4 +1,7 @@
+import type { Comment } from "@platelet-app/types";
+
 export interface LambdaEvent {
   graphQLEndpoint: string;
-  commentIds: string[];
+  userId: string;
+  comments: Comment[];
 }
