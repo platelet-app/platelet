@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "tsc && npm-run-all build-*",
+    "build": "npm-run-all build-*",
     "build-get-user-comments": "cd GetUserComments && npm run build",
     "build-get-user-assignments": "cd GetUserAssignments && npm run build",
     "build-delete-comments": "cd DeleteComments && npm run build",
