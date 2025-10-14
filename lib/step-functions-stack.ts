@@ -8,6 +8,7 @@ import { Construct } from "constructs";
 
 interface StepFunctionsStackProps extends cdk.StackProps {
   deployEnv: string;
+  REGION: string;
 }
 
 export class StepFunctionsStack extends cdk.Stack {
@@ -15,7 +16,7 @@ export class StepFunctionsStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: StepFunctionsStackProps) {
     super(scope, id, props);
 
-    const { deployEnv } = props;
+    const { deployEnv, REGION } = props;
 
     const getUserCommentsFunction = new lambda.Function(
       this,
@@ -28,7 +29,7 @@ export class StepFunctionsStack extends cdk.Stack {
         timeout: cdk.Duration.seconds(180),
         memorySize: 1024,
         environment: {
-          REGION: "eu-west-1",
+          REGION,
         },
         logRetention: RetentionDays.TWO_WEEKS,
       }
@@ -60,7 +61,7 @@ export class StepFunctionsStack extends cdk.Stack {
         timeout: cdk.Duration.seconds(180),
         memorySize: 1024,
         environment: {
-          REGION: "eu-west-1",
+          REGION,
         },
         logRetention: RetentionDays.TWO_WEEKS,
       }
@@ -90,7 +91,7 @@ export class StepFunctionsStack extends cdk.Stack {
         timeout: cdk.Duration.seconds(180),
         memorySize: 1024,
         environment: {
-          REGION: "eu-west-1",
+          REGION,
         },
         logRetention: RetentionDays.TWO_WEEKS,
       }
@@ -120,7 +121,7 @@ export class StepFunctionsStack extends cdk.Stack {
         timeout: cdk.Duration.seconds(180),
         memorySize: 1024,
         environment: {
-          REGION: "eu-west-1",
+          REGION,
         },
         logRetention: RetentionDays.TWO_WEEKS,
       }
@@ -152,7 +153,7 @@ export class StepFunctionsStack extends cdk.Stack {
         timeout: cdk.Duration.seconds(180),
         memorySize: 1024,
         environment: {
-          REGION: "eu-west-1",
+          REGION,
         },
       }
     );
@@ -184,7 +185,7 @@ export class StepFunctionsStack extends cdk.Stack {
         timeout: cdk.Duration.seconds(180),
         memorySize: 1024,
         environment: {
-          REGION: "eu-west-1",
+          REGION,
         },
       }
     );
@@ -211,7 +212,7 @@ export class StepFunctionsStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(180),
       memorySize: 1024,
       environment: {
-        REGION: "eu-west-1",
+        REGION,
       },
     });
 

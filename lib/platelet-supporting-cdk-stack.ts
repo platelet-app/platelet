@@ -7,11 +7,12 @@ export class PlateletSupportingCdkStack extends cdk.Stack {
     super(scope, id, props);
 
     const deployEnv = process.env.DEPLOY_ENV || "dev";
+    const REGION = process.env.REGION || "eu-west-1";
 
     const stepFunctionsStack = new StepFunctionsStack(
       scope,
       `StepFunctionsStack-${deployEnv}`,
-      { deployEnv }
+      { deployEnv, REGION }
     );
   }
 }
