@@ -18,6 +18,8 @@ jobs:
         run: npm install
       - name: 'Build'
         run: npm run build
+      - name: 'Build lambda functions'
+        run: npm run build-functions
       - name: 'Bootstrap and deploy'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
