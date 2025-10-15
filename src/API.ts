@@ -1219,6 +1219,11 @@ export type SendFeedback = {
   successState?: boolean | null,
 };
 
+export type StateMachineExecution = {
+  __typename: "StateMachineExecution",
+  executionArn?: string | null,
+};
+
 export type ModelTenantFilterInput = {
   id?: ModelIDInput | null,
   name?: ModelStringInput | null,
@@ -5234,6 +5239,17 @@ export type AdminDeleteRiderResponsibilityMutation = {
     _version: number,
     _deleted?: boolean | null,
     _lastChangedAt: number,
+  } | null,
+};
+
+export type AdminDeleteUserMutationVariables = {
+  userId?: string | null,
+};
+
+export type AdminDeleteUserMutation = {
+  adminDeleteUser?:  {
+    __typename: "StateMachineExecution",
+    executionArn?: string | null,
   } | null,
 };
 

@@ -488,6 +488,11 @@ type SendFeedback {
   successState: Boolean
 }
 
+type StateMachineExecution {
+  executionArn: String
+  startDate: Int
+}
+
 type Mutation {
   registerUser(name: String, email: String, tenantId: ID, roles: [Role]): User @function(name: "plateletAdminAddNewUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   registerTenant(name: String, emailAddress: String, tenantName: String): Tenant @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: groups, groups: ["SUPER"]}])
@@ -497,6 +502,7 @@ type Mutation {
   updateUserEmail(userId: ID, emailAddress: AWSEmail): User @function(name: "plateletAdminChangeUserEmail-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   resetUserPassword(userId: ID): SendFeedback @function(name: "plateletAdminResetUserPassword-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   adminDeleteRiderResponsibility(riderResponsibilityId: ID): RiderResponsibility @function(name: "plateletAdminDeleteRiderResponsibility-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
+  adminDeleteUser(userId: ID): StateMachineExecution @function(name: "plateletAdminDeleteUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
 }
 
 type Statistics {

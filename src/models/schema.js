@@ -2648,6 +2648,25 @@ export const schema = {
                 }
             }
         },
+        "StateMachineExecution": {
+            "name": "StateMachineExecution",
+            "fields": {
+                "executionArn": {
+                    "name": "executionArn",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "startDate": {
+                    "name": "startDate",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                }
+            }
+        },
         "Statistics": {
             "name": "Statistics",
             "fields": {
@@ -2718,5 +2737,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.4",
-    "version": "d7d2d4025ea065d2c99af6d7845afd5e"
+    "version": "57f98d56d1a5e3073738fc6e78297f24"
 };
