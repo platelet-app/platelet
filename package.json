@@ -9,7 +9,7 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "deploy": "cd lib/lambda/node && npm run build && npm run package && cd ../../.. && cdk deploy --all"
+    "deploy": "cd lib/lambda/node && npm install && npm run build && npm run package && cd ../../.. && cdk deploy --all"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
