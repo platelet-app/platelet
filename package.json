@@ -10,7 +10,8 @@
     "test": "jest",
     "cdk": "cdk",
     "bootstrap": "cdk bootstrap",
-    "deploy": "cd lib/lambda/node && npm install && npm run build && npm run package && cd ../../.. && cdk deploy --all"
+    "build-functions": "cd lib/lambda/node && npm install && npm run build && npm run package && cd ../../..",
+    "deploy": "cdk deploy --all"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
