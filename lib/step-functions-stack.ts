@@ -5,17 +5,13 @@ import * as tasks from "aws-cdk-lib/aws-stepfunctions-tasks";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 
-interface StepFunctionsStackProps extends cdk.StackProps {
-  deployEnv: string;
-  REGION: string;
-}
-
 export class StepFunctionsStack extends cdk.Stack {
   public readonly deleteUserStateMachine: sfn.StateMachine;
-  constructor(scope: Construct, id: string, props: StepFunctionsStackProps) {
+  constructor(scope: Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props);
 
-    const { deployEnv, REGION } = props;
+    const deployEnv = process.env.DEPLOY_ENV || "dev";
+    const REGION = process.env.REGION || "eu-west-1";
 
     const getUserCommentsFunction = new lambda.Function(
       this,
