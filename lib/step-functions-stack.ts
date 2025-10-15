@@ -3,7 +3,6 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 import * as tasks from "aws-cdk-lib/aws-stepfunctions-tasks";
 import * as iam from "aws-cdk-lib/aws-iam";
-import { RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Construct } from "constructs";
 
 interface StepFunctionsStackProps extends cdk.StackProps {
