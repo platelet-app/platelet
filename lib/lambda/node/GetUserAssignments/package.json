@@ -7,7 +7,7 @@
   "scripts": {
     "prebuild": "npm install",
     "build": "tsc",
-    "package": "npm prune --production && rm -r dist/node_modules && cp -R node_modules dist/node_modules/ && cp package.json dist"
+    "package": "npm prune --omit=dev && rm -rf dist/node_modules && cp -R node_modules dist/node_modules/ && cp package.json dist"
   },
   "author": "",
   "license": "Apache-2.0",
