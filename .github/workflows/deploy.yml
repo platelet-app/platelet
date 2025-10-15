@@ -25,6 +25,6 @@ jobs:
           REGION: ${{ vars.AWS_REGION }}
           DEPLOY_ENV: ${{ github.ref_name }}
         run: |
-          npm run deploy
           npm run bootstrap
+          npm run deploy
 
