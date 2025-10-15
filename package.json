@@ -9,6 +9,7 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
+    "bootstrap": "cdk bootstrap",
     "deploy": "cd lib/lambda/node && npm install && npm run build && npm run package && cd ../../.. && cdk deploy --all"
   },
   "devDependencies": {
