@@ -28,5 +28,5 @@ jobs:
           DEPLOY_ENV: ${{ github.ref_name }}
         run: |
           npm run bootstrap
-          npm run deploy
+          npm run deploy --require-approval never
 
