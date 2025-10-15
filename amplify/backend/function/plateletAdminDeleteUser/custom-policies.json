@@ -1,0 +1,8 @@
+[
+    {
+        "Action": ["states:StartExecution"],
+        "Resource": [
+            "arn:aws:states:eu-west-1:130063560692:stateMachine:DeleteUserStateMachinedevD78A4000-L1Y8SISzg4aQ"
+        ]
+    }
+]

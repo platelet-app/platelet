@@ -3533,6 +3533,7 @@ export const adminDeleteRiderResponsibility = /* GraphQL */ `mutation AdminDelet
 export const adminDeleteUser = /* GraphQL */ `mutation AdminDeleteUser($userId: ID) {
   adminDeleteUser(userId: $userId) {
     executionArn
+    startDate
     __typename
   }
 }
