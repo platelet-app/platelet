@@ -227,57 +227,84 @@ export class StepFunctionsStack extends cdk.Stack {
       })
     );
 
+    const getUserCommentsTask = new tasks.LambdaInvoke(
+      this,
+      "GetUserComments",
+      {
+        payload: sfn.TaskInput.fromObject({
+          userId: sfn.JsonPath.stringAt("$.userId"),
+          graphQLEndpoint: sfn.JsonPath.stringAt("$.graphQLEndpoint"),
+          userPoolId: sfn.JsonPath.stringAt("$.userPoolId"),
+        }),
+        lambdaFunction: getUserCommentsFunction,
+        outputPath: "$.Payload",
+      }
+    );
+
+    const deleteCommentsTask = new tasks.LambdaInvoke(this, "DeleteComments", {
+      lambdaFunction: deleteCommentsFunction,
+      outputPath: "$.Payload",
+    });
+
+    const getUserAssignmentsTask = new tasks.LambdaInvoke(
+      this,
+      "GetUserAssignments",
+      {
+        lambdaFunction: getUserAssignmentsFunction,
+        outputPath: "$.Payload",
+      }
+    );
+
+    // Define the DeleteAssignments task and configure it to retry the whole flow
+    const deleteAssignmentsTask = new tasks.LambdaInvoke(
+      this,
+      "DeleteAssignments",
+      {
+        lambdaFunction: deleteAssignmentsFunction,
+        outputPath: "$.Payload",
+      }
+    );
+    const cleanVehicleAssignmentsTask = new tasks.LambdaInvoke(
+      this,
+      "CleanVehicleAssignments",
+      {
+        lambdaFunction: cleanVehicleAssignmentsFunction,
+        outputPath: "$.Payload",
+      }
+    );
+
+    const cleanPossibleRiderResponsibilitiesTask = new tasks.LambdaInvoke(
+      this,
+      "CleanPossibleRiderResponsibilities",
+      {
+        lambdaFunction: cleanPossibleRiderResponsibilitiesFunction,
+        outputPath: "$.Payload",
+      }
+    );
+
+    const deleteUserTask = new tasks.LambdaInvoke(this, "DeleteUser", {
+      lambdaFunction: deleteUserFunction,
+    });
+
+    const successState = new sfn.Succeed(this, "User deleted");
+
+    const definition = sfn.Chain.start(getUserCommentsTask)
+      .next(deleteCommentsTask)
+      .next(getUserAssignmentsTask)
+      .next(deleteAssignmentsTask)
+      .next(cleanVehicleAssignmentsTask)
+      .next(cleanPossibleRiderResponsibilitiesTask)
+      .next(deleteUserTask)
+      .next(successState);
+
     const deleteUserStateMachine = new sfn.StateMachine(
       this,
       `DeleteUserStateMachine-${deployEnv}`,
       {
-        definition: new tasks.LambdaInvoke(this, "GetUserComments", {
-          payload: sfn.TaskInput.fromObject({
-            userId: sfn.JsonPath.stringAt("$.userId"),
-            graphQLEndpoint: sfn.JsonPath.stringAt("$.graphQLEndpoint"),
-            userPoolId: sfn.JsonPath.stringAt("$.userPoolId"),
-          }),
-          lambdaFunction: getUserCommentsFunction,
-          outputPath: "$.Payload",
-        })
-          .next(
-            new tasks.LambdaInvoke(this, "DeleteComments", {
-              lambdaFunction: deleteCommentsFunction,
-              outputPath: "$.Payload",
-            })
-          )
-          .next(
-            new tasks.LambdaInvoke(this, "GetUserAssignments", {
-              lambdaFunction: getUserAssignmentsFunction,
-              outputPath: "$.Payload",
-            })
-          )
-          .next(
-            new tasks.LambdaInvoke(this, "DeleteAssignments", {
-              lambdaFunction: deleteAssignmentsFunction,
-              outputPath: "$.Payload",
-            })
-          )
-          .next(
-            new tasks.LambdaInvoke(this, "CleanVehicleAssignments", {
-              lambdaFunction: cleanVehicleAssignmentsFunction,
-              outputPath: "$.Payload",
-            })
-          )
-          .next(
-            new tasks.LambdaInvoke(this, "CleanPossibleRiderResponsibilities", {
-              lambdaFunction: cleanPossibleRiderResponsibilitiesFunction,
-              outputPath: "$.Payload",
-            })
-          )
-          .next(
-            new tasks.LambdaInvoke(this, "DeleteUser", {
-              lambdaFunction: deleteUserFunction,
-            })
-          )
-          .next(new sfn.Succeed(this, "User deleted")),
+        definition: definition,
       }
     );
+
     // save the state machine name to SSM to be accessed by plateletAdminDeleteUser lambda
     new ssm.StringParameter(this, "DeleteUserStateMachineArnSSMParam", {
       parameterName: `/platelet-supporting-cdk/${deployEnv}/DeleteUserStateMachineArn`,
