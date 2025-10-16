@@ -302,10 +302,14 @@
           "Statement": [
             {
               "Action": [
-                "states:StartExecution"
+                "states:StartExecution",
+                "ssm:GetParameter",
+                "ssm:GetParameters",
+                "ssm:GetParametersByPath"
               ],
               "Resource": [
-                "arn:aws:states:eu-west-1:130063560692:stateMachine:DeleteUserStateMachinedevD78A4000-L1Y8SISzg4aQ"
+                "arn:aws:states:eu-west-1:130063560692:stateMachine:*",
+                "arn:aws:ssm:eu-west-1:130063560692:parameter/platelet-supporting-cdk*"
               ],
               "Effect": "Allow"
             }
