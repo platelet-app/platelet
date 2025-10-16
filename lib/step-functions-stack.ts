@@ -279,9 +279,9 @@ export class StepFunctionsStack extends cdk.Stack {
       }
     );
     // save the state machine name to SSM to be accessed by plateletAdminDeleteUser lambda
-    new ssm.StringParameter(this, "DeleteUserStateMachineSSMParam", {
-      parameterName: `DeleteUserStateMachine-${deployEnv}`,
-      stringValue: deleteUserStateMachine.stateMachineName,
+    new ssm.StringParameter(this, "DeleteUserStateMachineArnSSMParam", {
+      parameterName: `DeleteUserStateMachineArn-${deployEnv}`,
+      stringValue: deleteUserStateMachine.stateMachineArn,
     });
   }
 }
