@@ -6,7 +6,6 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 
 export class StepFunctionsStack extends cdk.Stack {
-  public readonly deleteUserStateMachine: sfn.StateMachine;
   constructor(scope: Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props);
 
@@ -227,7 +226,7 @@ export class StepFunctionsStack extends cdk.Stack {
       })
     );
 
-    this.deleteUserStateMachine = new sfn.StateMachine(
+    const deleteUserStateMachine = new sfn.StateMachine(
       this,
       `DeleteUserStateMachine-${deployEnv}`,
       {
