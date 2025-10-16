@@ -49,7 +49,7 @@ const getPossibleRiderResponsibilities = async (
 
 export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
   console.log("clean possible rider responsibilities", event);
-  const { userId, graphQLEndpoint, userPoolId } = event;
+  const { userId, graphQLEndpoint, userPoolId, retryCount } = event;
   const resps = await getPossibleRiderResponsibilities(userId, graphQLEndpoint);
   console.log("Found possible rider responsibilities", resps);
   const filterDeleted = resps.filter((r) => !r._deleted);
@@ -60,5 +60,5 @@ export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
     ),
     { concurrency: 10 }
   );
-  return { userId, graphQLEndpoint, userPoolId };
+  return { userId, graphQLEndpoint, userPoolId, retryCount };
 };

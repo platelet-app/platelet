@@ -4,6 +4,7 @@ export interface LambdaEvent {
   graphQLEndpoint: string;
   userId: string;
   userPoolId: string;
+  retryCount: number;
 }
 
 export interface LambdaReturn {
@@ -11,4 +12,5 @@ export interface LambdaReturn {
   userId: string;
   comments: Comment[];
   userPoolId: string;
+  retryCount: number;
 }

@@ -21,7 +21,8 @@ const deleteAssignment = async (assignment: TaskAssignee, endpoint: string) => {
 
 export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
   console.log("delete ass", event);
-  const { graphQLEndpoint, userId, assignments, userPoolId } = event;
+  const { graphQLEndpoint, userId, assignments, userPoolId, retryCount } =
+    event;
   const filterDeleted = assignments.filter((c) => !c._deleted);
   console.log("Assignments:", assignments);
   console.log("Filtered:", filterDeleted);
@@ -29,5 +30,5 @@ export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
     assignments.map((a) => () => deleteAssignment(a, graphQLEndpoint)),
     { concurrency: 10 }
   );
-  return { userId, graphQLEndpoint, userPoolId };
+  return { userId, graphQLEndpoint, userPoolId, retryCount };
 };

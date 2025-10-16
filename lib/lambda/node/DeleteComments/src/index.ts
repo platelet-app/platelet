@@ -21,7 +21,7 @@ const deleteCommentFunction = async (comment: Comment, endpoint: string) => {
 
 export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
   console.log("delete comments", event);
-  const { userId, graphQLEndpoint, comments, userPoolId } = event;
+  const { userId, graphQLEndpoint, comments, userPoolId, retryCount } = event;
   const filterDeleted = comments.filter((c) => !c._deleted);
   console.log("Comments:", comments);
   console.log("Filtered:", filterDeleted);
@@ -29,5 +29,5 @@ export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
     filterDeleted.map((c) => () => deleteCommentFunction(c, graphQLEndpoint)),
     { concurrency: 10 }
   );
-  return { userId, graphQLEndpoint, userPoolId };
+  return { userId, graphQLEndpoint, userPoolId, retryCount };
 };

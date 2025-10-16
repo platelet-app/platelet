@@ -227,23 +227,67 @@ export class StepFunctionsStack extends cdk.Stack {
       })
     );
 
+    const RETRY_LIMIT = 3;
+
+    const retryCheckLambda = new lambda.Function(
+      this,
+      "DeleteUserStepFunctionRetryChecker",
+      {
+        runtime: lambda.Runtime.NODEJS_22_X,
+        functionName: `platelet-delete-user-stepfunction-retry-checker-${deployEnv}`,
+        handler: "index.handler",
+        code: lambda.Code.fromInline(
+          `
+          exports.handler = async function(event) {
+              let { userId, graphQLEndpoint, userPoolId, retryCount } = event;
+              console.log("Retry count:", retryCount)
+              if (!retryCount) {
+                  return {userId, graphQLEndpoint, userPoolId, retryCount: 1}
+              }
+              if (retryCount > ${RETRY_LIMIT}) {
+                  throw new Error("Retries exceeded")
+              }
+
+              retryCount += 1
+
+              return {userId, graphQLEndpoint, userPoolId, retryCount}
+          };
+          `
+        ),
+      }
+    );
+
+    const retryCheckLambdaTask = new tasks.LambdaInvoke(this, "RetryCheck", {
+      lambdaFunction: retryCheckLambda,
+      payload: sfn.TaskInput.fromObject({
+        userId: sfn.JsonPath.stringAt("$.userId"),
+        graphQLEndpoint: sfn.JsonPath.stringAt("$.graphQLEndpoint"),
+        userPoolId: sfn.JsonPath.stringAt("$.userPoolId"),
+        retryCount: sfn.JsonPath.stringAt("$.retryCount"),
+      }),
+      outputPath: "$.Payload",
+    });
+
     const getUserCommentsTask = new tasks.LambdaInvoke(
       this,
       "GetUserComments",
       {
-        payload: sfn.TaskInput.fromObject({
-          userId: sfn.JsonPath.stringAt("$.userId"),
-          graphQLEndpoint: sfn.JsonPath.stringAt("$.graphQLEndpoint"),
-          userPoolId: sfn.JsonPath.stringAt("$.userPoolId"),
-        }),
         lambdaFunction: getUserCommentsFunction,
         outputPath: "$.Payload",
       }
     );
+    getUserCommentsTask.addCatch(retryCheckLambdaTask, {
+      errors: ["AppsyncFailure"],
+      resultPath: sfn.JsonPath.DISCARD,
+    });
 
     const deleteCommentsTask = new tasks.LambdaInvoke(this, "DeleteComments", {
       lambdaFunction: deleteCommentsFunction,
       outputPath: "$.Payload",
+    });
+    deleteCommentsTask.addCatch(retryCheckLambdaTask, {
+      errors: ["AppsyncFailure"],
+      resultPath: sfn.JsonPath.DISCARD,
     });
 
     const getUserAssignmentsTask = new tasks.LambdaInvoke(
@@ -255,6 +299,11 @@ export class StepFunctionsStack extends cdk.Stack {
       }
     );
 
+    getUserAssignmentsTask.addCatch(retryCheckLambdaTask, {
+      errors: ["AppsyncFailure"],
+      resultPath: sfn.JsonPath.DISCARD,
+    });
+
     // Define the DeleteAssignments task and configure it to retry the whole flow
     const deleteAssignmentsTask = new tasks.LambdaInvoke(
       this,
@@ -264,6 +313,11 @@ export class StepFunctionsStack extends cdk.Stack {
         outputPath: "$.Payload",
       }
     );
+
+    deleteAssignmentsTask.addCatch(retryCheckLambdaTask, {
+      errors: ["AppsyncFailure"],
+      resultPath: sfn.JsonPath.DISCARD,
+    });
     const cleanVehicleAssignmentsTask = new tasks.LambdaInvoke(
       this,
       "CleanVehicleAssignments",
@@ -272,6 +326,10 @@ export class StepFunctionsStack extends cdk.Stack {
         outputPath: "$.Payload",
       }
     );
+    cleanVehicleAssignmentsTask.addCatch(retryCheckLambdaTask, {
+      errors: ["AppsyncFailure"],
+      resultPath: sfn.JsonPath.DISCARD,
+    });
 
     const cleanPossibleRiderResponsibilitiesTask = new tasks.LambdaInvoke(
       this,
@@ -281,14 +339,25 @@ export class StepFunctionsStack extends cdk.Stack {
         outputPath: "$.Payload",
       }
     );
+    cleanPossibleRiderResponsibilitiesTask.addCatch(retryCheckLambdaTask, {
+      errors: ["AppsyncFailure"],
+      resultPath: sfn.JsonPath.DISCARD,
+    });
 
     const deleteUserTask = new tasks.LambdaInvoke(this, "DeleteUser", {
       lambdaFunction: deleteUserFunction,
+      outputPath: "$.Payload",
+    });
+
+    deleteUserTask.addCatch(retryCheckLambdaTask, {
+      errors: ["AppsyncFailure"],
+      resultPath: sfn.JsonPath.DISCARD,
     });
 
     const successState = new sfn.Succeed(this, "User deleted");
 
-    const definition = sfn.Chain.start(getUserCommentsTask)
+    const definition = sfn.Chain.start(retryCheckLambdaTask)
+      .next(getUserCommentsTask)
       .next(deleteCommentsTask)
       .next(getUserAssignmentsTask)
       .next(deleteAssignmentsTask)

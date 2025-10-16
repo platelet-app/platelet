@@ -1,4 +1,4 @@
-import type { LambdaEvent } from "./interfaces.js";
+import type { LambdaEvent, LambdaReturn } from "./interfaces.js";
 import { request, errorCheck } from "@platelet-app/lambda";
 import { getUser } from "./queries.js";
 import { mutations } from "@platelet-app/graphql";
@@ -57,9 +57,10 @@ const getUserFunction = async (userId: string, endpoint: string) => {
   return body?.data?.getUser;
 };
 
-export const handler = async (event: LambdaEvent) => {
+export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
+  throw new Error("APIFailure");
   console.log("delete user", event);
-  const { graphQLEndpoint, userId, userPoolId } = event;
+  const { graphQLEndpoint, userId, userPoolId, retryCount } = event;
   const user = await getUserFunction(userId, graphQLEndpoint);
   if (!user.username) {
     throw new Error("No username found");
@@ -67,4 +68,5 @@ export const handler = async (event: LambdaEvent) => {
   await disableUserCognito(user.username, userPoolId);
   await deleteUserFunction(user, graphQLEndpoint);
   await deleteUserCognito(user.username, userPoolId);
+  return { graphQLEndpoint, userId, userPoolId, retryCount };
 };

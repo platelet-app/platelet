@@ -28,8 +28,8 @@ const getUserAssignments = async (
 };
 
 export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
-  const { userId, graphQLEndpoint, userPoolId } = event;
+  const { userId, graphQLEndpoint, userPoolId, retryCount } = event;
   console.log("get user ass", event);
   const assignments = await getUserAssignments(userId, graphQLEndpoint);
-  return { userId, graphQLEndpoint, assignments, userPoolId };
+  return { userId, graphQLEndpoint, assignments, userPoolId, retryCount };
 };

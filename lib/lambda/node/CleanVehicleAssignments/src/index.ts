@@ -49,7 +49,7 @@ const getVehicleAssignments = async (
 
 export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
   console.log("clean vehicle assignments", event);
-  const { userId, graphQLEndpoint, userPoolId } = event;
+  const { userId, graphQLEndpoint, userPoolId, retryCount } = event;
   const vehicleAssignments = await getVehicleAssignments(
     userId,
     graphQLEndpoint
@@ -62,5 +62,5 @@ export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
     ),
     { concurrency: 10 }
   );
-  return { userId, graphQLEndpoint, userPoolId };
+  return { userId, graphQLEndpoint, userPoolId, retryCount };
 };
