@@ -3,6 +3,7 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 import * as tasks from "aws-cdk-lib/aws-stepfunctions-tasks";
 import * as iam from "aws-cdk-lib/aws-iam";
+import * as ssm from "aws-cdk-lib/aws-ssm";
 import { Construct } from "constructs";
 
 export class StepFunctionsStack extends cdk.Stack {
@@ -277,5 +278,10 @@ export class StepFunctionsStack extends cdk.Stack {
           .next(new sfn.Succeed(this, "User deleted")),
       }
     );
+    // save the state machine name to SSM to be accessed by plateletAdminDeleteUser lambda
+    new ssm.StringParameter(this, "DeleteUserStateMachineSSMParam", {
+      parameterName: `DeleteUserStateMachine-${deployEnv}`,
+      stringValue: deleteUserStateMachine.stateMachineName,
+    });
   }
 }
