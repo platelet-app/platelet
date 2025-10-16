@@ -1222,7 +1222,7 @@ export type SendFeedback = {
 export type StateMachineExecution = {
   __typename: "StateMachineExecution",
   executionArn?: string | null,
-  startDate?: number | null,
+  startDate?: string | null,
 };
 
 export type ModelTenantFilterInput = {
@@ -5251,7 +5251,7 @@ export type AdminDeleteUserMutation = {
   adminDeleteUser?:  {
     __typename: "StateMachineExecution",
     executionArn?: string | null,
-    startDate?: number | null,
+    startDate?: string | null,
   } | null,
 };
 

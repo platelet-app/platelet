@@ -142,12 +142,12 @@ export declare const SendFeedback: (new (init: ModelInit<SendFeedback>) => SendF
 
 type EagerStateMachineExecution = {
   readonly executionArn?: string | null;
-  readonly startDate?: number | null;
+  readonly startDate?: string | null;
 }
 
 type LazyStateMachineExecution = {
   readonly executionArn?: string | null;
-  readonly startDate?: number | null;
+  readonly startDate?: string | null;
 }
 
 export declare type StateMachineExecution = LazyLoading extends LazyLoadingDisabled ? EagerStateMachineExecution : LazyStateMachineExecution

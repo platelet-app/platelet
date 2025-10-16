@@ -2661,7 +2661,7 @@ export const schema = {
                 "startDate": {
                     "name": "startDate",
                     "isArray": false,
-                    "type": "Int",
+                    "type": "String",
                     "isRequired": false,
                     "attributes": []
                 }
@@ -2737,5 +2737,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.4",
-    "version": "57f98d56d1a5e3073738fc6e78297f24"
+    "version": "131e524771bbce65ede4aec3de4f8676"
 };

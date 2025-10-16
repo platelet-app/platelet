@@ -490,7 +490,7 @@ type SendFeedback {
 
 type StateMachineExecution {
   executionArn: String
-  startDate: Int
+  startDate: String
 }
 
 type Mutation {
