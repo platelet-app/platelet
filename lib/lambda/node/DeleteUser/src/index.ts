@@ -58,7 +58,6 @@ const getUserFunction = async (userId: string, endpoint: string) => {
 };
 
 export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
-  throw new Error("APIFailure");
   console.log("delete user", event);
   const { graphQLEndpoint, userId, userPoolId, retryCount } = event;
   const user = await getUserFunction(userId, graphQLEndpoint);
