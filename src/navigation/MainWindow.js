@@ -1,4 +1,3 @@
-import React from "react";
 import "../index.css";
 import { Route, Switch, useLocation } from "react-router-dom";
 import Dashboard from "../scenes/Dashboard/Dashboard";
@@ -31,12 +30,17 @@ import ScheduledTaskOverviewRoute from "../scenes/ScheduledTasks/components/Sche
 
 const useStyles = makeStyles()((theme, { navIndex, guidedSetupOpen }) => ({
     root: {
+        [theme.breakpoints.up("sm")]: {
+            display: "flex",
+            flex: 1,
+        },
         marginRight: guidedSetupOpen && navIndex === "dashboard" ? 0 : "auto",
         marginLeft: navIndex === "dashboard" ? 0 : 20,
-        paddingTop: 20,
+        paddingTop: 78,
         paddingBottom: 10,
+        minWidth: 0,
         [theme.breakpoints.down("md")]: {
-            paddingTop: 5,
+            // paddingTop: 5,
             marginLeft: 0,
             marginRight: 0,
         },
@@ -57,7 +61,7 @@ export default function MainWindow(_props) {
     // whenever returning an item, set the MenuIndex to update the drawer menu
     return (
         <MainWindowContainer>
-            <main>
+            <main style={{ width: "100%" }}>
                 <Switch location={background || location}>
                     <Route
                         exact
