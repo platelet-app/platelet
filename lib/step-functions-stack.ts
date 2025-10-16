@@ -259,13 +259,12 @@ export class StepFunctionsStack extends cdk.Stack {
 
     const retryCheckLambdaTask = new tasks.LambdaInvoke(this, "RetryCheck", {
       lambdaFunction: retryCheckLambda,
-      payload: sfn.TaskInput.fromObject({
-        userId: sfn.JsonPath.stringAt("$.userId"),
-        graphQLEndpoint: sfn.JsonPath.stringAt("$.graphQLEndpoint"),
-        userPoolId: sfn.JsonPath.stringAt("$.userPoolId"),
-        retryCount: sfn.JsonPath.stringAt("$.retryCount"),
-      }),
+      payload: sfn.TaskInput.fromJsonPathAt("$"),
       outputPath: "$.Payload",
+    });
+
+    const waitBeforeRetry = new sfn.Wait(this, "RetryWait", {
+      time: sfn.WaitTime.duration(cdk.Duration.seconds(30)),
     });
 
     const getUserCommentsTask = new tasks.LambdaInvoke(
@@ -276,18 +275,10 @@ export class StepFunctionsStack extends cdk.Stack {
         outputPath: "$.Payload",
       }
     );
-    getUserCommentsTask.addCatch(retryCheckLambdaTask, {
-      errors: ["AppsyncFailure"],
-      resultPath: sfn.JsonPath.DISCARD,
-    });
 
     const deleteCommentsTask = new tasks.LambdaInvoke(this, "DeleteComments", {
       lambdaFunction: deleteCommentsFunction,
       outputPath: "$.Payload",
-    });
-    deleteCommentsTask.addCatch(retryCheckLambdaTask, {
-      errors: ["AppsyncFailure"],
-      resultPath: sfn.JsonPath.DISCARD,
     });
 
     const getUserAssignmentsTask = new tasks.LambdaInvoke(
@@ -299,11 +290,6 @@ export class StepFunctionsStack extends cdk.Stack {
       }
     );
 
-    getUserAssignmentsTask.addCatch(retryCheckLambdaTask, {
-      errors: ["AppsyncFailure"],
-      resultPath: sfn.JsonPath.DISCARD,
-    });
-
     // Define the DeleteAssignments task and configure it to retry the whole flow
     const deleteAssignmentsTask = new tasks.LambdaInvoke(
       this,
@@ -314,10 +300,6 @@ export class StepFunctionsStack extends cdk.Stack {
       }
     );
 
-    deleteAssignmentsTask.addCatch(retryCheckLambdaTask, {
-      errors: ["AppsyncFailure"],
-      resultPath: sfn.JsonPath.DISCARD,
-    });
     const cleanVehicleAssignmentsTask = new tasks.LambdaInvoke(
       this,
       "CleanVehicleAssignments",
@@ -326,10 +308,6 @@ export class StepFunctionsStack extends cdk.Stack {
         outputPath: "$.Payload",
       }
     );
-    cleanVehicleAssignmentsTask.addCatch(retryCheckLambdaTask, {
-      errors: ["AppsyncFailure"],
-      resultPath: sfn.JsonPath.DISCARD,
-    });
 
     const cleanPossibleRiderResponsibilitiesTask = new tasks.LambdaInvoke(
       this,
@@ -339,25 +317,31 @@ export class StepFunctionsStack extends cdk.Stack {
         outputPath: "$.Payload",
       }
     );
-    cleanPossibleRiderResponsibilitiesTask.addCatch(retryCheckLambdaTask, {
-      errors: ["AppsyncFailure"],
-      resultPath: sfn.JsonPath.DISCARD,
-    });
 
     const deleteUserTask = new tasks.LambdaInvoke(this, "DeleteUser", {
       lambdaFunction: deleteUserFunction,
       outputPath: "$.Payload",
     });
 
-    deleteUserTask.addCatch(retryCheckLambdaTask, {
+    const catchOptions = {
       errors: ["AppsyncFailure"],
       resultPath: sfn.JsonPath.DISCARD,
-    });
+    };
+
+    getUserCommentsTask.addCatch(waitBeforeRetry, catchOptions);
+    deleteCommentsTask.addCatch(waitBeforeRetry, catchOptions);
+    getUserAssignmentsTask.addCatch(waitBeforeRetry, catchOptions);
+    deleteAssignmentsTask.addCatch(waitBeforeRetry, catchOptions);
+    cleanVehicleAssignmentsTask.addCatch(waitBeforeRetry, catchOptions);
+    cleanPossibleRiderResponsibilitiesTask.addCatch(
+      waitBeforeRetry,
+      catchOptions
+    );
+    deleteUserTask.addCatch(waitBeforeRetry, catchOptions);
 
     const successState = new sfn.Succeed(this, "User deleted");
 
-    const definition = sfn.Chain.start(retryCheckLambdaTask)
-      .next(getUserCommentsTask)
+    const mainChain = sfn.Chain.start(getUserCommentsTask)
       .next(deleteCommentsTask)
       .next(getUserAssignmentsTask)
       .next(deleteAssignmentsTask)
@@ -365,6 +349,10 @@ export class StepFunctionsStack extends cdk.Stack {
       .next(cleanPossibleRiderResponsibilitiesTask)
       .next(deleteUserTask)
       .next(successState);
+
+    waitBeforeRetry.next(retryCheckLambdaTask);
+    retryCheckLambdaTask.next(mainChain);
+    const definition = sfn.Chain.start(retryCheckLambdaTask);
 
     const deleteUserStateMachine = new sfn.StateMachine(
       this,
