@@ -4,6 +4,7 @@ import sig from "@aws-sdk/signature-v4";
 import http from "@aws-sdk/protocol-http";
 import { Request } from "node-fetch";
 import fetch from "node-fetch";
+import { AppsyncFailure } from "./customErrors.js";
 
 const { Sha256 } = awsCrypto;
 const { defaultProvider } = awsProvider;
@@ -42,6 +43,6 @@ export const request = async (
 export const errorCheck = (body: any) => {
     if (body?.errors) {
         console.error(body?.errors);
-        throw new Error(body?.errors[0].message);
+        throw new AppsyncFailure(body?.errors[0].message);
     }
 };
