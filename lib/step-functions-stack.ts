@@ -216,11 +216,13 @@ export class StepFunctionsStack extends cdk.Stack {
               "cognito-idp:AdminDeleteUser",
               "cognito-idp:AdminDisableUser",
               "cognito-idp:AdminGetUser",
+              "s3:DeleteObject",
             ],
             resources: [
               "arn:aws:appsync:eu-west-1:130063560692:apis/*/types/Mutation/fields/deleteUser",
               "arn:aws:appsync:eu-west-1:130063560692:apis/*/types/Query/fields/getUser",
               "arn:aws:cognito-idp:*:130063560692:userpool/*",
+              "arn:aws:s3:*:130063560692:bucket/*/public/*",
             ],
           }),
         ],
