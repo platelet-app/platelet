@@ -6,6 +6,10 @@ export const getUser = `
       username
       createdAt
       updatedAt
+      profilePicture {
+          key
+          bucket
+      }
       _version
       _deleted
       _lastChangedAt
