@@ -1,0 +1,29 @@
+{
+  "name": "functions",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "npm-run-all build-*",
+    "build-get-user-comments": "cd GetUserComments && npm run build",
+    "build-get-user-assignments": "cd GetUserAssignments && npm run build",
+    "build-delete-comments": "cd DeleteComments && npm run build",
+    "build-delete-assignments": "cd DeleteAssignments && npm run build",
+    "build-delete-user": "cd DeleteUser && npm run build",
+    "build-clean-vehicle-assignments": "cd CleanVehicleAssignments && npm run build",
+    "build-clean-possible-rider-responsibilities": "cd CleanPossibleRiderResponsibilities && npm run build",
+    "package": "npm-run-all pk-*",
+    "pk-get-user-comments": "cd GetUserComments && npm run package",
+    "pk-get-user-assignments": "cd GetUserAssignments && npm run package",
+    "pk-delete-comments": "cd DeleteComments && npm run package",
+    "pk-delete-assignments": "cd DeleteAssignments && npm run package",
+    "pk-delete-user": "cd DeleteUser && npm run package",
+    "pk-clean-vehicle-assignments": "cd CleanVehicleAssignments && npm run package",
+    "pk-clean-possible-rider-responsibilities": "cd CleanPossibleRiderResponsibilities && npm run package"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}
