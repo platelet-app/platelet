@@ -3,9 +3,10 @@ name: Deploy supporting CDK
 on:
   push:
     branches:
-      - 'production'
-      - 'test'
+      - 'production/**'
+      - 'test/**'
       - 'dev'
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,13 +21,26 @@ jobs:
         run: npm run build
       - name: 'Build lambda functions'
         run: npm run build-functions
+      - name: 'Get Amplify outputs'
+        uses: duckbytes/amplify-get-outputs@master
+        with:
+          app-id: ${{ vars.AMPLIFY_APP_ID }}
+          env-name: ${{ vars.AMPLIFY_ENV_NAME || github.ref_name }}
+        id: amplify_outputs
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
       - name: 'Bootstrap and deploy'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          REGION: ${{ vars.AWS_REGION }}
           DEPLOY_ENV: ${{ github.ref_name }}
         run: |
           npm run bootstrap
-          npm run deploy -- --require-approval never
+          npm run deploy -- --require-approval never \
+          --context appsyncId=${{ steps.amplify_outputs.outputs.appsync_id }} \
+          userPoolId={{ steps.amplify_outputs.outputs.user_pool_id }} \
+          graphQLEndpoint={{ steps.amplify_outputs.outputs.graphql_endpoint }} \
+          bucketName={{ steps.amplify_outputs.outputs.bucket_name }}
 
