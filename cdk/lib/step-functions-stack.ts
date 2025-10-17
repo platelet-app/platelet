@@ -23,6 +23,14 @@ export class StepFunctionsStack extends cdk.Stack {
         const graphQLEndpoint = this.node.tryGetContext("graphQLEndpoint");
         const bucketName = this.node.tryGetContext("bucketName");
 
+        console.log(
+            "Got context",
+            appsyncId,
+            userPoolId,
+            graphQLEndpoint,
+            bucketName
+        );
+
         if (!appsyncId || !userPoolId || !graphQLEndpoint || !bucketName) {
             throw new Error("You must pass in all the context values");
         }
@@ -240,6 +248,7 @@ export class StepFunctionsStack extends cdk.Stack {
                 environment: {
                     REGION: this.region,
                     GRAPHQL_ENDPOINT: graphQLEndpoint,
+                    USER_POOL_ID: userPoolId,
                 },
             }
         );

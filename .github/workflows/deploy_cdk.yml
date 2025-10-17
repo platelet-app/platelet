@@ -7,14 +7,20 @@ on:
       - 'test/**'
       - 'dev'
 
+
+defaults:
+  run:
+    working-directory: cdk
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
     steps:
-      - name: 'Install CDK CLI'
-        run: npm install -g aws-cdk
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v3
+      - name: 'Install CDK CLI'
+        run: npm install -g aws-cdk
       - name: 'Install dependencies'
         run: npm install
       - name: 'Build'
@@ -23,24 +29,28 @@ jobs:
         run: npm run build-functions
       - name: 'Get Amplify outputs'
         uses: duckbytes/amplify-get-outputs@master
+        id: amplify_outputs
         with:
           app-id: ${{ vars.AMPLIFY_APP_ID }}
           env-name: ${{ vars.AMPLIFY_ENV_NAME || github.ref_name }}
-        id: amplify_outputs
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ vars.AWS_REGION }}
+      - name: 'Debug Amplify Outputs'
+        run: |
+          echo "AppSync ID: ${{ steps.amplify_outputs.outputs.appsync_id }}"
+          echo "User Pool ID: ${{ steps.amplify_outputs.outputs.user_pool_id }}"
       - name: 'Bootstrap and deploy'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          DEPLOY_ENV: ${{ github.ref_name }}
+          DEPLOY_ENV: ${{ vars.AMPLIFY_ENV_NAME }}
         run: |
-          npm run bootstrap
-          npm run deploy -- --require-approval never \
-          --context appsyncId=${{ steps.amplify_outputs.outputs.appsync_id }} \
-          userPoolId={{ steps.amplify_outputs.outputs.user_pool_id }} \
-          graphQLEndpoint={{ steps.amplify_outputs.outputs.graphql_endpoint }} \
-          bucketName={{ steps.amplify_outputs.outputs.bucket_name }}
+          CONTEXT_ARGS="--context appsyncId=${{ steps.amplify_outputs.outputs.appsync_id }} \
+                      --context userPoolId=${{ steps.amplify_outputs.outputs.user_pool_id }} \
+                      --context graphQLEndpoint=${{ steps.amplify_outputs.outputs.graphql_endpoint }} \
+                      --context bucketName=${{ steps.amplify_outputs.outputs.bucket_name }}"
+          npm run bootstrap -- $CONTEXT_ARGS
+          npm run deploy -- --require-approval never $CONTEXT_ARGS
 
