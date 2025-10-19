@@ -54,6 +54,17 @@ const disableUserCognito = async (username) => {
     return response;
 };
 
+const signOutUser = async (username) => {
+    const params = {
+        UserPoolId: process.env.AUTH_PLATELET61A0AC07_USERPOOLID,
+        Username: username,
+    };
+    const response = await cognitoClient
+        .adminUserGlobalSignOut(params)
+        .promise();
+    return response;
+};
+
 const cleanUpCogito = async (username) => {
     const params = {
         UserPoolId: process.env.AUTH_PLATELET61A0AC07_USERPOOLID,
@@ -66,11 +77,13 @@ const cleanUpCogito = async (username) => {
 exports.handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
     const { userId } = event.arguments;
+    // revoke all access first
     const user = await getUserDetails(userId);
     if (user.disabled === 1) {
         throw new Error("User is already disabled");
     }
     const { username } = user;
+    await signOutUser(username);
     const cognitoResponse = await disableUserCognito(username);
     try {
         const appSyncResponse = await disableUserAppSync(user);

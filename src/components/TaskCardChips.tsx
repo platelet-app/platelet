@@ -5,6 +5,11 @@ import TaskStatusChip from "./TaskStatusChip";
 import DeliverableChip from "./DeliverableChip";
 import UserChip from "./UserChip";
 import PriorityChip from "./PriorityChip";
+import humanReadableScheduleString from "../utilities/humanReadableScheduleString";
+import taskScheduleDueStatus from "../utilities/taskScheduleDueStatus";
+import taskScheduleOverDueStatus from "../utilities/taskScheduleOverDueStatus";
+import SystemUpdateAltIcon from "@mui/icons-material/SystemUpdateAlt";
+import UploadIcon from "@mui/icons-material/Upload";
 
 type TaskCardChipsProps = {
     assignees?:
@@ -25,6 +30,14 @@ type TaskCardChipsProps = {
         | null;
     limit?: number;
     showDeliverableIcons?: boolean;
+    pickUpSchedule?: models.Schedule | APITypes.Schedule | null;
+    dropOffSchedule?: models.Schedule | APITypes.Schedule | null;
+    hideStatus?: boolean;
+};
+
+const styling = {
+    cursor: "pointer",
+    maxWidth: 150,
 };
 
 const TaskCardChips: React.FC<TaskCardChipsProps> = ({
@@ -34,34 +47,103 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
     riderResponsibility,
     priority,
     limit,
+    pickUpSchedule,
+    dropOffSchedule,
     showDeliverableIcons = false,
+    hideStatus = false,
 }) => {
     let chips = [];
-    if (status) {
+    if (pickUpSchedule) {
+        let shortened = true;
+        if (pickUpSchedule.timePrimary) {
+            const date = new Date(pickUpSchedule.timePrimary);
+            if (date.getDate() !== new Date().getDate()) {
+                shortened = false;
+            }
+        }
+
+        let iconColor = "";
+        if (
+            [
+                models.TaskStatus.NEW,
+                models.TaskStatus.FUTURE,
+                models.TaskStatus.PENDING,
+                models.TaskStatus.ACTIVE,
+            ].includes(status as models.TaskStatus)
+        ) {
+            if (taskScheduleDueStatus(pickUpSchedule, 1)) {
+                iconColor = "orange";
+            }
+            if (taskScheduleOverDueStatus(pickUpSchedule)) {
+                iconColor = "red";
+            }
+        }
         chips.push(
-            <TaskStatusChip
-                sx={{ cursor: "pointer" }}
+            <Chip
+                sx={{
+                    ...styling,
+                    "& .MuiChip-icon": {
+                        color: iconColor,
+                    },
+                }}
                 size="small"
-                status={status}
+                label={humanReadableScheduleString(pickUpSchedule, shortened)}
+                icon={<UploadIcon />}
             />
+        );
+    }
+    if (dropOffSchedule) {
+        let shortened = true;
+        if (dropOffSchedule.timePrimary) {
+            const date = new Date(dropOffSchedule.timePrimary);
+            if (date.getDate() !== new Date().getDate()) {
+                shortened = false;
+            }
+        }
+        let iconColor = "";
+        if (
+            [
+                models.TaskStatus.NEW,
+                models.TaskStatus.PENDING,
+                models.TaskStatus.FUTURE,
+                models.TaskStatus.ACTIVE,
+                models.TaskStatus.PICKED_UP,
+            ].includes(status as models.TaskStatus)
+        ) {
+            if (taskScheduleDueStatus(dropOffSchedule, 1)) {
+                iconColor = "orange";
+            }
+            if (taskScheduleOverDueStatus(dropOffSchedule)) {
+                iconColor = "red";
+            }
+        }
+        chips.push(
+            <Chip
+                sx={{
+                    ...styling,
+                    "& .MuiChip-icon": {
+                        color: iconColor,
+                    },
+                }}
+                size="small"
+                label={humanReadableScheduleString(dropOffSchedule, shortened)}
+                icon={<SystemUpdateAltIcon />}
+            />
+        );
+    }
+    if (!hideStatus && status) {
+        chips.push(
+            <TaskStatusChip sx={styling} size="small" status={status} />
         );
     }
     if (priority) {
         chips.push(
-            <PriorityChip
-                sx={{ cursor: "pointer" }}
-                size="small"
-                priority={priority}
-            />
+            <PriorityChip sx={styling} size="small" priority={priority} />
         );
     }
     if (riderResponsibility) {
         chips.push(
-            <Chip
-                sx={{ cursor: "pointer" }}
-                size="small"
-                label={riderResponsibility}
-            />
+            <Chip sx={styling} size="small" label={riderResponsibility} />
         );
     }
     let assigneeChips: React.ReactElement[] = [];
@@ -70,7 +152,7 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
             if (assignment?.assignee) {
                 return (
                     <UserChip
-                        sx={{ cursor: "pointer" }}
+                        sx={styling}
                         size="small"
                         user={assignment?.assignee}
                     />
@@ -91,7 +173,7 @@ const TaskCardChips: React.FC<TaskCardChipsProps> = ({
             if (deliverable) {
                 return (
                     <DeliverableChip
-                        sx={{ cursor: "pointer" }}
+                        sx={styling}
                         showIcon={showDeliverableIcons}
                         deliverable={deliverable}
                     />

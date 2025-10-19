@@ -41,11 +41,12 @@
     "useDefault": "manual",
     "sharedId": "61a0ac07",
     "userPoolGroupList": [
-      "SUPER",
       "ADMIN",
       "COORDINATOR",
       "RIDER",
-      "USER"
+      "USER",
+      "PAID",
+      "SUPER"
     ],
     "usernameCaseSensitive": false,
     "authRoleArn": {

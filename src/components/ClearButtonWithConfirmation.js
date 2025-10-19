@@ -31,7 +31,12 @@ function ClearButtonWithConfirmation(props) {
                 {props.children}
             </ConfirmationDialog>
             <Button
-                sx={{ color: "red", borderColor: "red", width: "25%" }}
+                sx={{
+                    color: "red",
+                    borderColor: "red",
+                    width: "25%",
+                    "&:hover": { borderColor: "red" },
+                }}
                 disabled={props.disabled}
                 onClick={onClick}
                 variant={"outlined"}
@@ -46,7 +51,7 @@ function ClearButtonWithConfirmation(props) {
 ClearButtonWithConfirmation.propTypes = {
     disabled: PropTypes.bool,
     onClear: PropTypes.func,
-    children: PropTypes.node,
+    children: PropTypes.any,
 };
 
 ClearButtonWithConfirmation.defaultProps = {

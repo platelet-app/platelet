@@ -53,6 +53,7 @@ const useStyles = makeStyles()((theme) => {
         REJECTED: generateClass(theme, "REJECTED"),
         ABANDONED: generateClass(theme, "ABANDONED"),
         PENDING: generateClass(theme, "PENDING"),
+        FUTURE: generateClass(theme, "FUTURE"),
         divider: { width: "0%", margin: 4 },
         typography: { fontSize: "14px" },
         badgeCircle: {
@@ -149,6 +150,10 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                     deliverables={deliverables}
                     priority={task.priority}
                     riderResponsibility={task.riderResponsibility}
+                    pickUpSchedule={task.pickUpSchedule}
+                    dropOffSchedule={task.dropOffSchedule}
+                    status={task.status as models.TaskStatus}
+                    hideStatus
                 />
                 <TaskCardLocationDetail
                     nullLocationText="No pick up address"
@@ -159,7 +164,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                     nullLocationText="No delivery address"
                     location={task.dropOffLocation}
                 />
-                <Stack direction="row" spacing={2}>
+                <Stack direction="row" spacing={2} alignItems="flex-end">
                     {(task?.createdAt || task?.timeOfCall) && (
                         <TaskCardTimestamp
                             timestamp={task.createdAt || task.timeOfCall || ""}

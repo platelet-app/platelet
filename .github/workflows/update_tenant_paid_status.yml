@@ -1,0 +1,44 @@
+name: Manage tenant paid membership
+
+on:
+  workflow_dispatch:
+    inputs:
+      action_type:
+        description: 'Choose action: "add" to add users, "remove" to remove users.'
+        required: true
+        type: choice
+        options:
+          - 'add'
+          - 'remove'
+      target_environment:
+        description: 'Select the target environment.'
+        required: true
+        type: environment
+
+jobs:
+  manage-group:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.target_environment }}
+    steps:
+      - name: Add Users to PAID Group
+        if: github.event.inputs.action_type == 'add'
+        uses: platelet-app/pool-to-group-action@master
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        with:
+          pool-id: ${{ vars.POOL_ID }}
+          group: "PAID"
+          action: "add"
+      - name: Remove Users from PAID Group
+        if: github.event.inputs.action_type == 'remove'
+        uses: platelet-app/pool-to-group-action@master
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        with:
+          pool-id: ${{ vars.POOL_ID }}
+          group: "PAID"
+          action: "remove"

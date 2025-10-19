@@ -25,6 +25,25 @@ const FakeDispatchComponent = () => {
     return null;
 };
 
+const mockAccessToken = {
+    payload: {
+        "cognito:groups": ["PAID"],
+    },
+};
+
+jest.mock("aws-amplify", () => {
+    const Amplify = {
+        ...jest.requireActual("aws-amplify"),
+        Auth: {
+            currentSession: () =>
+                Promise.resolve({
+                    getAccessToken: () => mockAccessToken,
+                }),
+        },
+    };
+    return Amplify;
+});
+
 describe("TaskContextMenu", () => {
     const RealDate = Date;
     const isoDate = "2021-11-29T23:24:58.987Z";
@@ -90,6 +109,7 @@ describe("TaskContextMenu", () => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...task,
                 timeCancelled: null,
+                status: tasksStatus.pending,
             });
         });
     });
@@ -150,6 +170,7 @@ describe("TaskContextMenu", () => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...task,
                 timeRejected: null,
+                status: tasksStatus.pending,
             });
         });
     });
@@ -826,6 +847,87 @@ describe("TaskContextMenu", () => {
         ).toHaveAttribute("aria-disabled", "true");
     });
 
+    test.each`
+        action
+        ${"accept"} | ${"reject"}
+    `("accept or reject a future task and undo it", async ({ action }) => {
+        const task = await DataStore.save(
+            new models.Task({
+                status: models.TaskStatus.FUTURE,
+            })
+        );
+        const whoami = await DataStore.save(
+            new models.User({
+                displayName: "someone person",
+                roles: [models.Role.COORDINATOR],
+                tenantId,
+            })
+        );
+        const mockAssignment = new models.TaskAssignee({
+            assignee: whoami,
+            role: models.Role.COORDINATOR,
+            task,
+            tenantId,
+        });
+        const preloadedState = {
+            whoami: { user: whoami },
+            tenantId,
+        };
+        const saveSpy = jest.spyOn(DataStore, "save");
+        const deleteSpy = jest.spyOn(DataStore, "delete");
+        render(<TaskContextMenu task={task} assignedRiders={[]} />, {
+            preloadedState,
+        });
+        userEvent.click(screen.getByRole("button", { name: "task options" }));
+        if (action === "accept") {
+            userEvent.click(screen.getByRole("menuitem", { name: "Accept" }));
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledTimes(2);
+            });
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...task,
+                status: models.TaskStatus.NEW,
+            });
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockAssignment,
+                id: expect.any(String),
+            });
+            expect(screen.getByText("Task accepted")).toBeInTheDocument();
+        } else {
+            userEvent.click(screen.getByRole("menuitem", { name: "Reject" }));
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledTimes(2);
+            });
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...task,
+                status: models.TaskStatus.REJECTED,
+                timeRejected: isoDate,
+            });
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockAssignment,
+                id: expect.any(String),
+            });
+            expect(screen.getByText("Task rejected")).toBeInTheDocument();
+        }
+        userEvent.click(screen.getByRole("button", { name: "UNDO" }));
+        await waitFor(() => {
+            expect(saveSpy).toHaveBeenCalledTimes(3);
+        });
+        await waitFor(() => {
+            expect(deleteSpy).toHaveBeenCalledTimes(1);
+        });
+        const undoneTask = {
+            ...task,
+            status: models.TaskStatus.FUTURE,
+            timeRejected: null,
+        };
+        expect(saveSpy).toHaveBeenCalledWith(undoneTask);
+        expect(deleteSpy).toHaveBeenCalledWith({
+            ...mockAssignment,
+            id: expect.any(String),
+            task: undoneTask,
+        });
+    });
     test.each`
         action
         ${"accept"} | ${"reject"}

@@ -70,11 +70,28 @@ export const schema = {
                     "properties": {}
                 },
                 {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantName",
+                        "queryField": "getTenantByTenantName",
+                        "fields": [
+                            "name"
+                        ]
+                    }
+                },
+                {
                     "type": "auth",
                     "properties": {
                         "rules": [
                             {
                                 "allow": "private",
+                                "operations": [
+                                    "read"
+                                ]
+                            },
+                            {
+                                "allow": "private",
+                                "provider": "iam",
                                 "operations": [
                                     "read"
                                 ]
@@ -346,6 +363,13 @@ export const schema = {
                         "rules": [
                             {
                                 "allow": "private",
+                                "provider": "iam",
+                                "operations": [
+                                    "read"
+                                ]
+                            },
+                            {
+                                "allow": "private",
                                 "operations": [
                                     "read"
                                 ]
@@ -457,6 +481,14 @@ export const schema = {
                     "type": "auth",
                     "properties": {
                         "rules": [
+                            {
+                                "allow": "private",
+                                "provider": "iam",
+                                "operations": [
+                                    "read",
+                                    "delete"
+                                ]
+                            },
                             {
                                 "allow": "private",
                                 "operations": [
@@ -722,6 +754,14 @@ export const schema = {
                     "type": "auth",
                     "properties": {
                         "rules": [
+                            {
+                                "allow": "private",
+                                "provider": "iam",
+                                "operations": [
+                                    "read",
+                                    "delete"
+                                ]
+                            },
                             {
                                 "allow": "private",
                                 "operations": [
@@ -1298,6 +1338,24 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "pickUpSchedule": {
+                    "name": "pickUpSchedule",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "Schedule"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "dropOffSchedule": {
+                    "name": "dropOffSchedule",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "Schedule"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "updatedAt": {
                     "name": "updatedAt",
                     "isArray": false,
@@ -1510,6 +1568,14 @@ export const schema = {
                         "rules": [
                             {
                                 "allow": "private",
+                                "provider": "iam",
+                                "operations": [
+                                    "read",
+                                    "delete"
+                                ]
+                            },
+                            {
+                                "allow": "private",
                                 "operations": [
                                     "read"
                                 ]
@@ -1646,6 +1712,24 @@ export const schema = {
                     "name": "disabled",
                     "isArray": false,
                     "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "pickUpSchedule": {
+                    "name": "pickUpSchedule",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "Schedule"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "dropOffSchedule": {
+                    "name": "dropOffSchedule",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "Schedule"
+                    },
                     "isRequired": false,
                     "attributes": []
                 },
@@ -1860,6 +1944,14 @@ export const schema = {
                     "type": "auth",
                     "properties": {
                         "rules": [
+                            {
+                                "allow": "private",
+                                "provider": "iam",
+                                "operations": [
+                                    "read",
+                                    "delete"
+                                ]
+                            },
                             {
                                 "groupClaim": "cognito:groups",
                                 "provider": "userPools",
@@ -2315,6 +2407,16 @@ export const schema = {
         }
     },
     "enums": {
+        "TimeRelation": {
+            "name": "TimeRelation",
+            "values": [
+                "BEFORE",
+                "AFTER",
+                "AT",
+                "ANYTIME",
+                "BETWEEN"
+            ]
+        },
         "DeliverableTypeIcon": {
             "name": "DeliverableTypeIcon",
             "values": [
@@ -2336,7 +2438,8 @@ export const schema = {
                 "REJECTED",
                 "ABANDONED",
                 "COMPLETED",
-                "PENDING"
+                "PENDING",
+                "FUTURE"
             ]
         },
         "Priority": {
@@ -2505,6 +2608,34 @@ export const schema = {
                 }
             }
         },
+        "Schedule": {
+            "name": "Schedule",
+            "fields": {
+                "relation": {
+                    "name": "relation",
+                    "isArray": false,
+                    "type": {
+                        "enum": "TimeRelation"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "timePrimary": {
+                    "name": "timePrimary",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "timeSecondary": {
+                    "name": "timeSecondary",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": []
+                }
+            }
+        },
         "SendFeedback": {
             "name": "SendFeedback",
             "fields": {
@@ -2512,6 +2643,25 @@ export const schema = {
                     "name": "successState",
                     "isArray": false,
                     "type": "Boolean",
+                    "isRequired": false,
+                    "attributes": []
+                }
+            }
+        },
+        "StateMachineExecution": {
+            "name": "StateMachineExecution",
+            "fields": {
+                "executionArn": {
+                    "name": "executionArn",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "startDate": {
+                    "name": "startDate",
+                    "isArray": false,
+                    "type": "String",
                     "isRequired": false,
                     "attributes": []
                 }
@@ -2587,5 +2737,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.4",
-    "version": "e8a37f7291c48282a191ed3e232cee52"
+    "version": "131e524771bbce65ede4aec3de4f8676"
 };

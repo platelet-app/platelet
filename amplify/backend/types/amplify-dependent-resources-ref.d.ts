@@ -19,6 +19,7 @@ export type AmplifyDependentResourcesAttributes = {
     "userPoolGroups": {
       "ADMINGroupRole": "string",
       "COORDINATORGroupRole": "string",
+      "PAIDGroupRole": "string",
       "RIDERGroupRole": "string",
       "SUPERGroupRole": "string",
       "USERGroupRole": "string"
@@ -54,6 +55,20 @@ export type AmplifyDependentResourcesAttributes = {
       "Region": "string"
     },
     "plateletAdminChangeUserRoles": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
+    "plateletAdminDeleteRiderResponsibility": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
+    "plateletAdminDeleteUser": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",
@@ -106,6 +121,14 @@ export type AmplifyDependentResourcesAttributes = {
     },
     "plateletGetStatistics": {
       "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
+    "plateletMoveFutureTasksToPending": {
+      "Arn": "string",
+      "CloudWatchEventRule": "string",
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",
       "Name": "string",

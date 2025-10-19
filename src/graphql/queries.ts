@@ -2,7 +2,7 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-import * as APITypes from "../API";
+import * as APITypes from "../API.js";
 type GeneratedQuery<InputType, OutputType> = string & {
   __generatedQueryInput: InputType;
   __generatedQueryOutput: OutputType;
@@ -101,6 +101,41 @@ export const syncTenants = /* GraphQL */ `query SyncTenants(
 ` as GeneratedQuery<
   APITypes.SyncTenantsQueryVariables,
   APITypes.SyncTenantsQuery
+>;
+export const getTenantByTenantName = /* GraphQL */ `query GetTenantByTenantName(
+  $name: String!
+  $sortDirection: ModelSortDirection
+  $filter: ModelTenantFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  getTenantByTenantName(
+    name: $name
+    sortDirection: $sortDirection
+    filter: $filter
+    limit: $limit
+    nextToken: $nextToken
+  ) {
+    items {
+      id
+      name
+      referenceIdentifier
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      tenantAdminId
+      __typename
+    }
+    nextToken
+    startedAt
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.GetTenantByTenantNameQueryVariables,
+  APITypes.GetTenantByTenantNameQuery
 >;
 export const getUser = /* GraphQL */ `query GetUser($id: ID!) {
   getUser(id: $id) {
@@ -993,6 +1028,18 @@ export const getTask = /* GraphQL */ `query GetTask($id: ID!) {
     status
     isRiderUsingOwnVehicle
     archived
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
     updatedAt
     _version
     _deleted
@@ -1511,6 +1558,18 @@ export const getScheduledTask = /* GraphQL */ `query GetScheduledTask($id: ID!) 
       __typename
     }
     disabled
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
     createdAt
     updatedAt
     _version

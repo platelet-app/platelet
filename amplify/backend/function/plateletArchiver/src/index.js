@@ -21,7 +21,7 @@ const {
 const { request, errorCheck } = require("/opt/appSyncRequest");
 
 const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
-const DAYS_TO_ARCHIVE = 3;
+const DAYS_TO_ARCHIVE = 2;
 
 const query = /* GraphQL */ `
     query LIST_TASKS_BY_ARCHIVE_STATUS($archived: Int!, $nextToken: String) {

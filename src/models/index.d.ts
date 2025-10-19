@@ -2,6 +2,14 @@ import { ModelInit, MutableModel } from "@aws-amplify/datastore";
 // @ts-ignore
 import { LazyLoading, LazyLoadingDisabled, AsyncItem, AsyncCollection } from "@aws-amplify/datastore";
 
+export enum TimeRelation {
+  BEFORE = "BEFORE",
+  AFTER = "AFTER",
+  AT = "AT",
+  ANYTIME = "ANYTIME",
+  BETWEEN = "BETWEEN"
+}
+
 export enum DeliverableTypeIcon {
   BUG = "BUG",
   CHILD = "CHILD",
@@ -19,7 +27,8 @@ export enum TaskStatus {
   REJECTED = "REJECTED",
   ABANDONED = "ABANDONED",
   COMPLETED = "COMPLETED",
-  PENDING = "PENDING"
+  PENDING = "PENDING",
+  FUTURE = "FUTURE"
 }
 
 export enum Priority {
@@ -103,6 +112,22 @@ export declare type AddressAndContactDetails = LazyLoading extends LazyLoadingDi
 
 export declare const AddressAndContactDetails: (new (init: ModelInit<AddressAndContactDetails>) => AddressAndContactDetails)
 
+type EagerSchedule = {
+  readonly relation?: TimeRelation | keyof typeof TimeRelation | null;
+  readonly timePrimary?: string | null;
+  readonly timeSecondary?: string | null;
+}
+
+type LazySchedule = {
+  readonly relation?: TimeRelation | keyof typeof TimeRelation | null;
+  readonly timePrimary?: string | null;
+  readonly timeSecondary?: string | null;
+}
+
+export declare type Schedule = LazyLoading extends LazyLoadingDisabled ? EagerSchedule : LazySchedule
+
+export declare const Schedule: (new (init: ModelInit<Schedule>) => Schedule)
+
 type EagerSendFeedback = {
   readonly successState?: boolean | null;
 }
@@ -114,6 +139,20 @@ type LazySendFeedback = {
 export declare type SendFeedback = LazyLoading extends LazyLoadingDisabled ? EagerSendFeedback : LazySendFeedback
 
 export declare const SendFeedback: (new (init: ModelInit<SendFeedback>) => SendFeedback)
+
+type EagerStateMachineExecution = {
+  readonly executionArn?: string | null;
+  readonly startDate?: string | null;
+}
+
+type LazyStateMachineExecution = {
+  readonly executionArn?: string | null;
+  readonly startDate?: string | null;
+}
+
+export declare type StateMachineExecution = LazyLoading extends LazyLoadingDisabled ? EagerStateMachineExecution : LazyStateMachineExecution
+
+export declare const StateMachineExecution: (new (init: ModelInit<StateMachineExecution>) => StateMachineExecution)
 
 type EagerStatistics = {
   readonly numCancelled?: number | null;
@@ -460,6 +499,8 @@ type EagerTask = {
   readonly status?: TaskStatus | keyof typeof TaskStatus | null;
   readonly isRiderUsingOwnVehicle?: number | null;
   readonly archived?: number | null;
+  readonly pickUpSchedule?: Schedule | null;
+  readonly dropOffSchedule?: Schedule | null;
   readonly updatedAt?: string | null;
 }
 
@@ -490,6 +531,8 @@ type LazyTask = {
   readonly status?: TaskStatus | keyof typeof TaskStatus | null;
   readonly isRiderUsingOwnVehicle?: number | null;
   readonly archived?: number | null;
+  readonly pickUpSchedule?: Schedule | null;
+  readonly dropOffSchedule?: Schedule | null;
   readonly updatedAt?: string | null;
 }
 
@@ -539,6 +582,8 @@ type EagerScheduledTask = {
   readonly priority?: Priority | keyof typeof Priority | null;
   readonly deliverables?: (Deliverable | null)[] | null;
   readonly disabled?: number | null;
+  readonly pickUpSchedule?: Schedule | null;
+  readonly dropOffSchedule?: Schedule | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -555,6 +600,8 @@ type LazyScheduledTask = {
   readonly priority?: Priority | keyof typeof Priority | null;
   readonly deliverables: AsyncCollection<Deliverable>;
   readonly disabled?: number | null;
+  readonly pickUpSchedule?: Schedule | null;
+  readonly dropOffSchedule?: Schedule | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

@@ -14,11 +14,31 @@ const errorMessage = "Sorry, something went wrong";
 
 const tenantId = uuidv4();
 
+const finishLoading = async () => {
+    await waitFor(() => {
+        expect(
+            screen.queryByTestId("location-details-panel-skeleton")
+        ).toBeNull();
+    });
+};
+
+const mockAccessToken = {
+    payload: {
+        "cognito:groups": ["PAID"],
+    },
+};
+
 jest.mock("aws-amplify", () => {
     const Amplify = {
         ...jest.requireActual("aws-amplify"),
         Geo: {
             searchByText: () => Promise.resolve([]),
+        },
+        Auth: {
+            currentSession: () =>
+                Promise.resolve({
+                    getAccessToken: () => mockAccessToken,
+                }),
         },
     };
     return Amplify;
@@ -89,7 +109,6 @@ describe("LocationDetailsPanel", () => {
 
     it("renders the correct location name", async () => {
         const mockTask = new models.Task({ pickUpLocation: mockLocations[1] });
-        const querySpy = jest.spyOn(DataStore, "query");
         await DataStore.save(mockTask);
         const mockLocation = mockLocations[1];
         render(
@@ -100,45 +119,8 @@ describe("LocationDetailsPanel", () => {
             />,
             { preloadedState }
         );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
-        expect(querySpy).toHaveBeenNthCalledWith(1, models.Task, mockTask.id);
-        expect(screen.getByText(mockLocation.name)).toBeInTheDocument();
-        expect(screen.getByText(mockLocation.ward)).toBeInTheDocument();
-    });
-
-    it.each`
-        locationKey
-        ${"pickUpLocation"} | ${"dropOffLocation"}
-    `("expands the location details", async ({ locationKey }) => {
-        const mockLocation = mockLocations[0];
-        const task = new models.Task({ [locationKey]: mockLocation });
-        await DataStore.save(task);
-        const querySpy = jest.spyOn(DataStore, "query");
-        render(
-            <LocationDetailsPanel
-                taskModel={models.Task}
-                taskId={task.id}
-                locationKey={locationKey}
-            />,
-            { preloadedState }
-        );
-
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
-
-        userEvent.click(screen.getByText("Expand to see more"));
-        expect(screen.getByText(mockLocation.name)).toBeInTheDocument();
-        expect(screen.getByText(mockLocation.ward)).toBeInTheDocument();
-        expect(screen.getByText(mockLocation.line1)).toBeInTheDocument();
-        expect(screen.getByText(mockLocation.line2)).toBeInTheDocument();
-        expect(screen.getByText(mockLocation.town)).toBeInTheDocument();
-        expect(screen.getByText(mockLocation.county)).toBeInTheDocument();
-        expect(screen.getByText(mockLocation.country)).toBeInTheDocument();
-        expect(screen.getByText(mockLocation.postcode)).toBeInTheDocument();
-        expect(screen.getByText(mockLocation.contact.name)).toBeInTheDocument();
-        expect(
-            screen.getByText(mockLocation.contact.telephoneNumber)
-        ).toBeInTheDocument();
-        await DataStore.delete(task);
+        expect(await screen.findByText(mockLocation.name)).toBeInTheDocument();
+        expect(screen.getByText(RegExp(mockLocation.ward))).toBeInTheDocument();
     });
 
     test.each`
@@ -148,7 +130,7 @@ describe("LocationDetailsPanel", () => {
         const mockLocation = mockLocations[6];
         const task = new models.Task({});
         await DataStore.save(task);
-        const querySpy = jest.spyOn(DataStore, "query");
+        jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
             <LocationDetailsPanel
@@ -161,12 +143,11 @@ describe("LocationDetailsPanel", () => {
             }
         );
 
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
+        await finishLoading();
         userEvent.click(screen.getByRole("button", { name: "Open" }));
         expect(screen.getByText(mockLocation.name)).toBeInTheDocument();
         userEvent.type(screen.getByRole("textbox"), mockLocation.name);
         userEvent.click(await screen.findByText(mockLocation.name));
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(3));
         await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(1));
         expect(saveSpy).toHaveBeenCalledWith({
             ...task,
@@ -186,7 +167,6 @@ describe("LocationDetailsPanel", () => {
         const task = new models.Task({ [locationKey]: mockLocations[0] });
         await DataStore.save(task);
         const saveSpy = jest.spyOn(DataStore, "save");
-        const querySpy = jest.spyOn(DataStore, "query");
         const apiSpy = jest.spyOn(API, "graphql").mockResolvedValueOnce({
             data: {
                 getTask: { ...task, _version: 1 },
@@ -201,10 +181,7 @@ describe("LocationDetailsPanel", () => {
             />,
             { preloadedState }
         );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
-        expect(
-            screen.getAllByText(mockLocations[0].line1)[0]
-        ).toBeInTheDocument();
+        await screen.findByText(RegExp(mockLocations[0].line1));
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         userEvent.click(screen.getByRole("button", { name: "Clear" }));
         const okButton = screen.getByRole("button", { name: "OK" });
@@ -255,7 +232,6 @@ describe("LocationDetailsPanel", () => {
         const unlisted = await DataStore.save(unlistedLocation);
         const task = new models.Task({ [locationKey]: unlisted });
         await DataStore.save(task);
-        const querySpy = jest.spyOn(DataStore, "query");
         const apiSpy = jest
             .spyOn(API, "graphql")
             .mockResolvedValueOnce({
@@ -288,14 +264,10 @@ describe("LocationDetailsPanel", () => {
             />,
             { preloadedState }
         );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
-        expect(
-            screen.getAllByText(unlistedLocation.line1)[0]
-        ).toBeInTheDocument();
+        await screen.findByText(RegExp(unlistedLocation.line1));
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         userEvent.click(screen.getByRole("button", { name: "Clear" }));
         const okButton = screen.getByRole("button", { name: "OK" });
-        expect(okButton).toBeInTheDocument();
         expect(
             screen.getByRole("button", { name: "Cancel" })
         ).toBeInTheDocument();
@@ -363,7 +335,6 @@ describe("LocationDetailsPanel", () => {
             name: `${mockListedLocation.name} (edited)`,
         });
         await DataStore.save(task);
-        const querySpy = jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
             <LocationDetailsPanel
@@ -373,10 +344,7 @@ describe("LocationDetailsPanel", () => {
             />,
             { preloadedState }
         );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
-        expect(
-            screen.getAllByText(mockListedLocation.line1)[0]
-        ).toBeInTheDocument();
+        await screen.findByText(RegExp(mockListedLocation.line1));
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         userEvent.click(screen.getByText(mockListedLocation.line1));
         const textBox = screen.getByRole("textbox", { name: "Line one" });
@@ -417,7 +385,7 @@ describe("LocationDetailsPanel", () => {
             [locationKey]: fake,
         });
         await DataStore.save(mockTask);
-        const querySpy = jest.spyOn(DataStore, "query");
+        jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         render(
             <LocationDetailsPanel
@@ -427,7 +395,7 @@ describe("LocationDetailsPanel", () => {
             />,
             { preloadedState }
         );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
+        await finishLoading();
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         userEvent.click(screen.getByText(mockLocations[1].ward));
         const textBox = screen.getByRole("textbox", { name: "Ward" });
@@ -435,7 +403,6 @@ describe("LocationDetailsPanel", () => {
         expect(textBox).toHaveValue(mockLocations[1].ward);
         userEvent.type(textBox, " new data");
         userEvent.type(textBox, "{enter}");
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(3));
         await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(1));
         expect(saveSpy).toHaveBeenCalledWith({
             ...fakeModel,
@@ -454,7 +421,7 @@ describe("LocationDetailsPanel", () => {
                 listed: 0,
             });
             const fakeTaskModel = new models.Task({});
-            const querySpy = jest.spyOn(DataStore, "query");
+            jest.spyOn(DataStore, "query");
             const saveSpy = jest.spyOn(DataStore, "save");
             await DataStore.save(fakeTaskModel);
             render(
@@ -465,7 +432,7 @@ describe("LocationDetailsPanel", () => {
                 />,
                 { preloadedState }
             );
-            await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
+            await finishLoading();
             screen.getByText("Line one").click();
             const textBox = screen.getByRole("textbox", { name: "Line one" });
             expect(textBox).toBeInTheDocument();
@@ -513,8 +480,7 @@ describe("LocationDetailsPanel", () => {
             />,
             { preloadedState }
         );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
-        userEvent.click(screen.getByText("Expand to see more"));
+        await finishLoading();
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
         userEvent.click(screen.getByText(fakeModel.contact.name));
         const textBox = screen.getByRole("textbox", { name: "Name" });
@@ -547,7 +513,7 @@ describe("LocationDetailsPanel", () => {
                 tenantId,
             });
             await DataStore.save(fakeTask);
-            const querySpy = jest.spyOn(DataStore, "query");
+            jest.spyOn(DataStore, "query");
             const saveSpy = jest.spyOn(DataStore, "save");
             render(
                 <LocationDetailsPanel
@@ -557,8 +523,7 @@ describe("LocationDetailsPanel", () => {
                 />,
                 { preloadedState }
             );
-            await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
-            userEvent.click(screen.getByText("Expand to see more"));
+            await finishLoading();
             userEvent.click(screen.getByText("Name"));
             const textBox = screen.getAllByRole("textbox")[1];
             userEvent.type(textBox, "new data");
@@ -609,8 +574,7 @@ describe("LocationDetailsPanel", () => {
                 />,
                 { preloadedState }
             );
-            await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
-            userEvent.click(screen.getByText("Expand to see more"));
+            await finishLoading();
             userEvent.click(screen.getByText("Ward"));
             const textBox = screen.getAllByRole("textbox")[1];
             userEvent.type(textBox, "ward data");
@@ -669,7 +633,7 @@ describe("LocationDetailsPanel", () => {
             />
         );
 
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
+        await finishLoading();
         await DataStore.save(
             models.Task.copyOf(task, (upd) => (upd[locationKey] = mockLocation))
         );
@@ -700,7 +664,7 @@ describe("LocationDetailsPanel", () => {
             />
         );
 
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
+        await finishLoading();
         await DataStore.save(
             models.Location.copyOf(
                 mockLocation,
@@ -734,7 +698,7 @@ describe("LocationDetailsPanel", () => {
             />
         );
 
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
+        await finishLoading();
         await DataStore.save(
             models.Task.copyOf(task, (upd) => (upd[locationKey] = null))
         );
@@ -774,8 +738,7 @@ describe("LocationDetailsPanel", () => {
                 />,
                 { preloadedState }
             );
-            await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
-            userEvent.click(screen.getByText("Expand to see more"));
+            await finishLoading();
             userEvent.click(screen.getByText("Name"));
             const textBox2 = screen.getAllByRole("textbox")[1];
             userEvent.type(textBox2, fakeInputData);
@@ -837,7 +800,7 @@ describe("LocationDetailsPanel", () => {
             />,
             { preloadedState }
         );
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(1));
+        await finishLoading();
         expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
 
@@ -850,7 +813,7 @@ describe("LocationDetailsPanel", () => {
                     subscribe: () => ({ unsubscribe }),
                 };
             });
-        const querySpy = jest.spyOn(DataStore, "query");
+        jest.spyOn(DataStore, "query");
         amplify.DataStore.observe.mockReturnValue({
             subscribe: () => ({ unsubscribe }),
         });
@@ -871,14 +834,14 @@ describe("LocationDetailsPanel", () => {
             />
         );
         await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(1);
+            expect(screen.getByText("test location")).toBeInTheDocument();
         });
         await waitFor(() => {
-            expect(observeSpy).toHaveBeenCalledTimes(2);
+            expect(observeSpy).toHaveBeenCalledTimes(3);
         });
         expect(unsubscribe).toHaveBeenCalledTimes(0);
         component.unmount();
-        expect(unsubscribe).toHaveBeenCalledTimes(2);
+        expect(unsubscribe).toHaveBeenCalledTimes(3);
     });
 
     test("don't allow riders to edit", async () => {
@@ -1001,12 +964,9 @@ describe("LocationDetailsPanel", () => {
                 { preloadedState: preloadedState }
             );
             await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(1);
+                expect(screen.getByText("test location")).toBeInTheDocument();
             });
             userEvent.click(screen.getByRole("button", { name: "Edit" }));
-            await waitFor(() => {
-                expect(querySpy).toHaveBeenCalledTimes(2);
-            });
             userEvent.type(screen.getByRole("combobox"), "new preset");
             userEvent.click(await screen.findByText("preset"));
             const label =
@@ -1023,6 +983,7 @@ describe("LocationDetailsPanel", () => {
                     [locationKey]: mockPreset2,
                 });
             });
+            console.log(querySpy.mock.calls);
         }
     );
     test("online search when selecting a location", async () => {
@@ -1039,7 +1000,7 @@ describe("LocationDetailsPanel", () => {
 
         const task = new models.Task({});
         await DataStore.save(task);
-        const querySpy = jest.spyOn(DataStore, "query");
+        jest.spyOn(DataStore, "query");
         const saveSpy = jest.spyOn(DataStore, "save");
         jest.spyOn(Geo, "searchByText").mockResolvedValue([fakeOnlineLocation]);
         render(
@@ -1062,9 +1023,7 @@ describe("LocationDetailsPanel", () => {
             tenantId,
             town: "testMunicipality",
         });
-
-        render(<LocationDetailsPanel />, { preloadedState });
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(2));
+        await finishLoading();
         const textBox = screen.getByRole("combobox", {
             name: "Search locations...",
         });
@@ -1090,13 +1049,12 @@ describe("LocationDetailsPanel", () => {
             pickUpLocation: { ...mockLocation, id: expect.any(String) },
             id: expect.any(String),
         });
-        userEvent.click(screen.getByText("Expand to see more"));
         const { label, addressNumber, street, ...rest } = fakeOnlineLocation;
         expect(
-            screen.getByText(`${addressNumber} ${street}`)
+            screen.getByText(RegExp(`${addressNumber} ${street}`))
         ).toBeInTheDocument();
         for (const value of Object.values(rest)) {
-            expect(screen.getByText(value)).toBeInTheDocument();
+            expect(screen.getByText(RegExp(value))).toBeInTheDocument();
         }
     });
 });

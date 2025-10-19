@@ -1,36 +1,55 @@
 type Tenant
 @auth(rules: [
 {allow: private, operations: [read]},
+{allow: private, provider: iam, operations: [read]},
 ])
 @model {
   id: ID!
-  name: String!
+  name: String! @index(name: "byTenantName", queryField: "getTenantByTenantName")
   referenceIdentifier: String!
   admin: User! @hasOne
 }
 
 type User
 @auth(rules: [
+  {allow: private, provider: iam, operations: [read]},
   {allow: private, operations: [read]},
   {allow: owner, ownerField: "cognitoId", operations: [read, update]},
   {allow: groups, groups: ["ADMIN"], operations: [read, update]},
 ])
 @model {
   id: ID! @auth(rules: [
+    {allow: private, provider: iam, operations: [read]},
     {allow: private, operations: [read]},
     {allow: owner, ownerField: "cognitoId", operations: [read, update]},
     {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [read, update]},
   ])
-  username: String! @auth(rules: [{allow: private, operations: [read]}])
-  cognitoId: ID! @index(name: "byCognitoId", queryField: "getUserByCognitoId") @auth(rules: [{allow: private, operations: [read]}])
-  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
-  isPrimaryAdmin: Int @default(value: "0") @auth(rules: [{allow: private, operations: [read]}])
+  username: String! @auth(rules: [
+    {allow: private, provider: iam, operations: [read]},
+    {allow: private, operations: [read]}
+  ])
+  cognitoId: ID! @index(name: "byCognitoId", queryField: "getUserByCognitoId") @auth(rules: [
+    {allow: private, provider: iam, operations: [read]},
+    {allow: private, operations: [read]}
+  ])
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [
+    {allow: private, provider: iam, operations: [read]},
+    {allow: private, operations: [read, create]}
+  ])
+  isPrimaryAdmin: Int @default(value: "0") @auth(rules: [
+    {allow: private, provider: iam, operations: [read]},
+    {allow: private, operations: [read]}
+  ])
   contact: AddressAndContactDetails
   displayName: String!
   name: String
-  roles: [Role!]! @auth(rules: [{allow: private, operations: [read]}])
+  roles: [Role!]! @auth(rules: [
+    {allow: private, provider: iam, operations: [read]},
+    {allow: private, operations: [read]}
+  ])
   dateOfBirth: AWSDate
   riderResponsibility: String @auth(rules: [
+    {allow: private, provider: iam, operations: [read]},
     {allow: private, operations: [read]},
     {allow: owner, ownerField: "cognitoId", operations: [read, update, delete]},
     {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [read, update, delete]},
@@ -44,11 +63,15 @@ type User
   createdLocations: [Location] @hasMany
   createdVehicles: [Vehicle] @hasMany
   createdScheduledTasks: [ScheduledTask] @hasMany
-  disabled: Int @default(value: "0") @auth(rules: [{allow: private, operations: [read]}])
+  disabled: Int @default(value: "0") @auth(rules: [
+    {allow: private, provider: iam, operations: [read]},
+    {allow: private, operations: [read]}
+  ])
 }
 
 type PossibleRiderResponsibilities
 @auth(rules: [
+  {allow: private, provider: iam, operations: [read, delete]},
   {allow: private, operations: [read]},
   {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
 ])
@@ -90,6 +113,7 @@ type Vehicle
 
 type VehicleAssignment
 @auth(rules: [
+  {allow: private, provider: iam, operations: [read, delete]},
   {allow: private, operations: [read]},
   {allow: groups, groups: ["ADMIN", "COORDINATOR", "RIDER"], operations: [create, read, delete]},
 ])
@@ -158,6 +182,21 @@ type Location
       {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [create, read, delete]},
     ])
 }
+
+enum TimeRelation {
+  BEFORE
+  AFTER
+  AT
+  ANYTIME
+  BETWEEN
+}
+
+type Schedule {
+  relation: TimeRelation
+  timePrimary: AWSDateTime
+  timeSecondary: AWSDateTime
+}
+
 
 type Task
 @auth(rules: [
@@ -246,10 +285,21 @@ type Task
       {allow: private, operations: [read]},
       {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read]},
     ])
+  pickUpSchedule: Schedule
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+    ])
+  dropOffSchedule: Schedule
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
+    ])
 }
 
 type TaskAssignee
 @auth(rules: [
+  {allow: private, provider: iam, operations: [read, delete]},
   {allow: private, operations: [read]},
   {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, delete]},
 ])
@@ -260,10 +310,6 @@ type TaskAssignee
   task: Task! @belongsTo
   assignee: User! @belongsTo
   archived: Int @default(value: "0") @index(name: "byArchived")
-    @auth(rules: [
-      {allow: private, operations: [read]},
-      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, delete]},
-    ])
 }
 
 type ScheduledTask
@@ -286,11 +332,14 @@ type ScheduledTask
   priority: Priority
   deliverables: [Deliverable] @hasMany
   disabled: Int @default(value: "0")
+  pickUpSchedule: Schedule
+  dropOffSchedule: Schedule
 }
 
 
 type Comment
 @auth(rules: [
+  {allow: private, provider: iam, operations: [read, delete]},
   {allow: groups, groups: ["USER"], operations: [read]},
   {allow: owner, operations: [create, read, delete, update]},
   {allow: groups, groups: ["ADMIN"], operations: [create, read, delete, update]},
@@ -300,12 +349,14 @@ type Comment
   parentId: ID @index(name: "byParent")
   owner: String
     @auth(rules: [
+      {allow: private, provider: iam, operations: [read, delete]},
       {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
       {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
     ])
   tenantId: ID! @index(name: "byTenantId")
     @auth(rules: [
+      {allow: private, provider: iam, operations: [read, delete]},
       {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
       {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
@@ -315,6 +366,7 @@ type Comment
   visibility: CommentVisibility
   archived: Int @default(value: "0") @index(name: "byArchived")
     @auth(rules: [
+      {allow: private, provider: iam, operations: [read, delete]},
       {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
       {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
@@ -402,6 +454,7 @@ enum TaskStatus {
   ABANDONED
   COMPLETED
   PENDING
+  FUTURE
 }
 
 enum Priority {
@@ -435,6 +488,11 @@ type SendFeedback {
   successState: Boolean
 }
 
+type StateMachineExecution {
+  executionArn: String
+  startDate: String
+}
+
 type Mutation {
   registerUser(name: String, email: String, tenantId: ID, roles: [Role]): User @function(name: "plateletAdminAddNewUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   registerTenant(name: String, emailAddress: String, tenantName: String): Tenant @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: groups, groups: ["SUPER"]}])
@@ -443,6 +501,8 @@ type Mutation {
   enableUser(userId: ID): User @function(name: "plateletAdminEnableUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   updateUserEmail(userId: ID, emailAddress: AWSEmail): User @function(name: "plateletAdminChangeUserEmail-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   resetUserPassword(userId: ID): SendFeedback @function(name: "plateletAdminResetUserPassword-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
+  adminDeleteRiderResponsibility(riderResponsibilityId: ID): RiderResponsibility @function(name: "plateletAdminDeleteRiderResponsibility-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
+  adminDeleteUser(userId: ID): StateMachineExecution @function(name: "plateletAdminDeleteUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
 }
 
 type Statistics {

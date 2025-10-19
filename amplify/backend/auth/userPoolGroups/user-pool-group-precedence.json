@@ -1,22 +1,26 @@
 [
   {
-    "groupName": "SUPER",
+    "groupName": "ADMIN",
     "precedence": 1
   },
   {
-    "groupName": "ADMIN",
+    "groupName": "COORDINATOR",
     "precedence": 2
   },
   {
-    "groupName": "COORDINATOR",
+    "groupName": "RIDER",
     "precedence": 3
   },
   {
-    "groupName": "RIDER",
+    "groupName": "USER",
     "precedence": 4
   },
   {
-    "groupName": "USER",
+    "groupName": "PAID",
     "precedence": 5
+  },
+  {
+    "groupName": "SUPER",
+    "precedence": 6
   }
 ]

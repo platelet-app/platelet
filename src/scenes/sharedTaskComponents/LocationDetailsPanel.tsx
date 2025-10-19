@@ -22,6 +22,9 @@ import {
     GetTaskQuery,
     UpdateLocationMutation,
 } from "../../API";
+import { TaskScheduleDetails } from "./TaskScheduleDetails";
+import useModelSubscription from "../../hooks/useModelSubscription";
+import useIsPaidSubscription from "../../hooks/useIsPaidSubscription";
 
 export const protectedFields = [
     "id",
@@ -68,6 +71,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     // I have no idea why the imported selector is undefined here
     // @ts-ignore
     const tenantId = useSelector((state) => state.tenantId);
+    const isPaid = useIsPaidSubscription();
     const [state, setState] = useState<models.Location | null>(null);
     const [editMode, setEditMode] = useState(false);
     const [errorState, setErrorState] = useState(false);
@@ -90,6 +94,26 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     const locationObserver = useRef({ unsubscribe: () => {} });
     const initialSetEdit = useRef(false);
     const errorMessage = "Sorry, an error occurred";
+
+    const hideScheduleDate = taskModel.name === "ScheduledTask";
+
+    const { state: task } = useModelSubscription(taskModel, taskId);
+    const schedule =
+        locationKey === "pickUpLocation"
+            ? task?.pickUpSchedule || null
+            : task?.dropOffSchedule || null;
+
+    let noWarning = true;
+    if (taskModel.name === "Task") {
+        if (task && locationKey === "pickUpLocation") {
+            const t = task as models.Task;
+            noWarning = !!t.timePickedUp;
+        }
+        if (task && locationKey === "dropOffLocation") {
+            const t = task as models.Task;
+            noWarning = !!t.timeDroppedOff;
+        }
+    }
 
     const getLocation = React.useCallback(async () => {
         if (!loadedOnce.current) setIsFetching(true);
@@ -178,6 +202,38 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
             setEditMode(true);
         }
     }, [state, isFetching, hasFullPermissions]);
+
+    const handleClearSchedule = async () => {
+        // @ts-ignore
+        const task = await DataStore.query(taskModel, taskId);
+        if (!task) return;
+        await DataStore.save(
+            // @ts-ignore
+            models.Task.copyOf(task, (updated) => {
+                if (locationKey === "pickUpLocation") {
+                    updated.pickUpSchedule = null;
+                } else if (locationKey === "dropOffLocation") {
+                    updated.dropOffSchedule = null;
+                }
+            })
+        );
+    };
+
+    const handleEditSchedule = async (newSchedule: models.Schedule) => {
+        // @ts-ignore
+        const task = await DataStore.query(taskModel, taskId);
+        if (!task) return;
+        await DataStore.save(
+            // @ts-ignore
+            models.Task.copyOf(task, (updated) => {
+                if (locationKey === "pickUpLocation") {
+                    updated.pickUpSchedule = newSchedule;
+                } else if (locationKey === "dropOffLocation") {
+                    updated.dropOffSchedule = newSchedule;
+                }
+            })
+        );
+    };
 
     async function editPreset(additionalValues?: LocationType) {
         try {
@@ -547,7 +603,12 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     let contents = null;
     if (isFetching) {
         contents = (
-            <Skeleton variant={"rectangular"} width={"100%"} height={130} />
+            <Skeleton
+                data-testid="location-details-panel-skeleton"
+                variant={"rectangular"}
+                width={"100%"}
+                height={130}
+            />
         );
     } else if (hasFullPermissions || state) {
         contents = (
@@ -608,8 +669,19 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                                 />
                             )}
                         </Stack>
-                        <Divider />
                         {contents}
+                        {(isPaid || schedule) && (
+                            <>
+                                <Divider />
+                                <TaskScheduleDetails
+                                    onClear={handleClearSchedule}
+                                    onChange={handleEditSchedule}
+                                    schedule={schedule}
+                                    noWarning={noWarning}
+                                    hideDate={hideScheduleDate}
+                                />
+                            </>
+                        )}
                     </Stack>
                 </Paper>
                 <ConfirmationDialog

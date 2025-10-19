@@ -20,6 +20,16 @@ exports[`plateletCreateScheduledTasks create some scheduled tasks 1`] = `
                 id
                 tenantId
                 cronExpression
+                pickUpSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
+                dropOffSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
                 pickUpLocation {
                     id
                     listed
@@ -164,8 +174,246 @@ exports[`plateletCreateScheduledTasks create some scheduled tasks 1`] = `
             "archived": 0,
             "dateCreated": "2021-05-01",
             "dropOffLocationId": "newLocationId",
+            "dropOffSchedule": null,
             "establishmentLocationId": "establishmentLocationId",
             "pickUpLocationId": "pickUpLocationId",
+            "pickUpSchedule": null,
+            "priority": "MEDIUM",
+            "requesterContact": {
+              "name": "name",
+              "telephoneNumber": "phone",
+            },
+            "status": "PENDING",
+            "tenantId": "tenantId",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "createDeliverableQuery",
+        "variables": {
+          "input": {
+            "archived": 0,
+            "count": 1,
+            "deliverableTypeDeliverablesId": "deliverableTypeDeliverablesId",
+            "taskDeliverablesId": "newTaskId",
+            "tenantId": "tenantId",
+            "unit": "unit",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;
+
+exports[`plateletCreateScheduledTasks create some scheduled tasks and calculate schedule 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      {
+        "query": "
+    query ListScheduledTasks(
+        $filter: ModelScheduledTaskFilterInput
+        $limit: Int
+        $nextToken: String
+    ) {
+        listScheduledTasks(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                tenantId
+                cronExpression
+                pickUpSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
+                dropOffSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
+                pickUpLocation {
+                    id
+                    listed
+                    tenantId
+                    name
+                    contact {
+                        name
+                        telephoneNumber
+                        mobileNumber
+                        emailAddress
+                        ward
+                        line1
+                        line2
+                        line3
+                        town
+                        county
+                        state
+                        country
+                        postcode
+                        what3words
+                    }
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    tenantId
+                    name
+                    contact {
+                        name
+                        telephoneNumber
+                        mobileNumber
+                        emailAddress
+                        ward
+                        line1
+                        line2
+                        line3
+                        town
+                        county
+                        state
+                        country
+                        postcode
+                        what3words
+                    }
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                }
+                establishmentLocation {
+                    id
+                    listed
+                    name
+                    tenantId
+                }
+                deliverables {
+                    items {
+                        _deleted
+                        count
+                        deliverableTypeDeliverablesId
+                        unit
+                    }
+                }
+                requesterContact {
+                    name
+                    telephoneNumber
+                    mobileNumber
+                    emailAddress
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                }
+                priority
+                disabled
+            }
+            nextToken
+            startedAt
+        }
+    }
+",
+        "variables": {
+          "nextToken": null,
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "createLocationQuery",
+        "variables": {
+          "input": {
+            "archived": 0,
+            "contact": {
+              "name": "name",
+              "telephoneNumber": "phone",
+            },
+            "country": "country",
+            "county": "county",
+            "line1": "line1",
+            "line2": "line2",
+            "line3": "line3",
+            "listed": 0,
+            "name": undefined,
+            "postcode": "postcode",
+            "state": undefined,
+            "tenantId": "tenantId",
+            "town": "town",
+            "ward": undefined,
+            "what3words": "what3words",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "createTaskQuery",
+        "variables": {
+          "input": {
+            "archived": 0,
+            "dateCreated": "2021-05-01",
+            "dropOffLocationId": "newLocationId",
+            "dropOffSchedule": {
+              "relation": "BEFORE",
+              "timePrimary": "2021-05-01T23:00:00.000Z",
+              "timeSecondary": null,
+            },
+            "establishmentLocationId": "establishmentLocationId",
+            "pickUpLocationId": "pickUpLocationId",
+            "pickUpSchedule": {
+              "relation": "BETWEEN",
+              "timePrimary": "2021-05-01T10:00:00.000Z",
+              "timeSecondary": "2021-05-02T04:00:00.000Z",
+            },
             "priority": "MEDIUM",
             "requesterContact": {
               "name": "name",

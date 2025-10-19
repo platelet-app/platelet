@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Button, Stack } from "@mui/material";
 import * as models from "../../../models";
 import useModelSubscription from "../../../hooks/useModelSubscription";
@@ -19,6 +20,7 @@ const PendingTaskAcceptReject: React.FC<PendingTaskAcceptRejectProps> = ({
     const { state } = useModelSubscription<models.Task>(models.Task, taskId);
     const tenantId = useSelector(tenantIdSelector);
     const whoami = useSelector(getWhoami);
+    const statusBeforeAccepting = React.useRef<null | models.TaskStatus>(null);
 
     const dispatch = useDispatch();
 
@@ -29,9 +31,13 @@ const PendingTaskAcceptReject: React.FC<PendingTaskAcceptRejectProps> = ({
         try {
             const existingTask = await DataStore.query(models.Task, task.id);
             if (existingTask) {
+                let status = models.TaskStatus.PENDING;
+                if (statusBeforeAccepting.current) {
+                    status = statusBeforeAccepting.current;
+                }
                 await DataStore.save(
                     models.Task.copyOf(existingTask, (t) => {
-                        t.status = models.TaskStatus.PENDING;
+                        t.status = status;
                         t.timeRejected = null;
                     })
                 );
@@ -52,6 +58,10 @@ const PendingTaskAcceptReject: React.FC<PendingTaskAcceptRejectProps> = ({
     const handleReject = async () => {
         try {
             const existing = await DataStore.query(models.Task, taskId);
+            if (existing) {
+                statusBeforeAccepting.current =
+                    (existing.status as models.TaskStatus) || null;
+            }
             const assignee = await DataStore.query(models.User, whoami.id);
             const timeRejected = new Date().toISOString();
             if (existing && assignee) {
@@ -87,6 +97,10 @@ const PendingTaskAcceptReject: React.FC<PendingTaskAcceptRejectProps> = ({
     const handleAccept = async () => {
         try {
             const existing = await DataStore.query(models.Task, taskId);
+            if (existing) {
+                statusBeforeAccepting.current =
+                    (existing.status as models.TaskStatus) || null;
+            }
             const assignee = await DataStore.query(models.User, whoami.id);
             if (existing && assignee) {
                 const assignment = await DataStore.save(
@@ -118,7 +132,11 @@ const PendingTaskAcceptReject: React.FC<PendingTaskAcceptRejectProps> = ({
         }
     };
 
-    if (state?.status === models.TaskStatus.PENDING) {
+    if (
+        [models.TaskStatus.PENDING, models.TaskStatus.FUTURE].includes(
+            state?.status as models.TaskStatus
+        )
+    ) {
         return (
             <Stack sx={{ padding: 1 }} direction="row" spacing={1}>
                 <Button

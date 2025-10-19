@@ -18,6 +18,7 @@ import Skeleton from "@mui/material/Skeleton";
 import usePossibleRiderResponsibilities from "../../../hooks/usePossibleRiderResponsibilities";
 import EnableDisableUser from "./EnableDisableUser";
 import ResetUserPassword from "./ResetUserPassword";
+import DeleteUser from "./DeleteUser";
 
 const initialUserState = {
     id: "",
@@ -206,6 +207,7 @@ export default function UserDetail({ userId }) {
                             <Stack spacing={2} direction="row">
                                 <EnableDisableUser user={user} />
                                 <ResetUserPassword user={user} />
+                                <DeleteUser user={user} />
                             </Stack>
                         )}
                     </Stack>

@@ -17,6 +17,8 @@ export type ModelTenantConditionInput = {
   or?: Array< ModelTenantConditionInput | null > | null,
   not?: ModelTenantConditionInput | null,
   _deleted?: ModelBooleanInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   tenantAdminId?: ModelIDInput | null,
 };
 
@@ -282,6 +284,8 @@ export type Task = {
   status?: TaskStatus | null,
   isRiderUsingOwnVehicle?: number | null,
   archived?: number | null,
+  pickUpSchedule?: Schedule | null,
+  dropOffSchedule?: Schedule | null,
   updatedAt: string,
   _version: number,
   _deleted?: boolean | null,
@@ -355,6 +359,8 @@ export type ScheduledTask = {
   priority?: Priority | null,
   deliverables?: ModelDeliverableConnection | null,
   disabled?: number | null,
+  pickUpSchedule?: Schedule | null,
+  dropOffSchedule?: Schedule | null,
   createdAt: string,
   updatedAt: string,
   _version: number,
@@ -435,6 +441,22 @@ export enum DeliverableUnit {
 }
 
 
+export type Schedule = {
+  __typename: "Schedule",
+  relation?: TimeRelation | null,
+  timePrimary?: string | null,
+  timeSecondary?: string | null,
+};
+
+export enum TimeRelation {
+  BEFORE = "BEFORE",
+  AFTER = "AFTER",
+  AT = "AT",
+  ANYTIME = "ANYTIME",
+  BETWEEN = "BETWEEN",
+}
+
+
 export enum TaskStatus {
   NEW = "NEW",
   ACTIVE = "ACTIVE",
@@ -445,6 +467,7 @@ export enum TaskStatus {
   ABANDONED = "ABANDONED",
   COMPLETED = "COMPLETED",
   PENDING = "PENDING",
+  FUTURE = "FUTURE",
 }
 
 
@@ -573,6 +596,8 @@ export type ModelUserConditionInput = {
   or?: Array< ModelUserConditionInput | null > | null,
   not?: ModelUserConditionInput | null,
   _deleted?: ModelBooleanInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
 };
 
 export type ModelIntInput = {
@@ -628,6 +653,8 @@ export type ModelPossibleRiderResponsibilitiesConditionInput = {
   or?: Array< ModelPossibleRiderResponsibilitiesConditionInput | null > | null,
   not?: ModelPossibleRiderResponsibilitiesConditionInput | null,
   _deleted?: ModelBooleanInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   userPossibleRiderResponsibilitiesId?: ModelIDInput | null,
   riderResponsibilityPossibleUsersId?: ModelIDInput | null,
 };
@@ -670,6 +697,8 @@ export type ModelVehicleConditionInput = {
   or?: Array< ModelVehicleConditionInput | null > | null,
   not?: ModelVehicleConditionInput | null,
   _deleted?: ModelBooleanInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   userCreatedVehiclesId?: ModelIDInput | null,
 };
 
@@ -705,6 +734,8 @@ export type ModelVehicleAssignmentConditionInput = {
   or?: Array< ModelVehicleAssignmentConditionInput | null > | null,
   not?: ModelVehicleAssignmentConditionInput | null,
   _deleted?: ModelBooleanInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   userVehicleAssignmentsId?: ModelIDInput | null,
   vehicleAssignmentsId?: ModelIDInput | null,
 };
@@ -766,6 +797,8 @@ export type ModelLocationConditionInput = {
   or?: Array< ModelLocationConditionInput | null > | null,
   not?: ModelLocationConditionInput | null,
   _deleted?: ModelBooleanInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   userCreatedLocationsId?: ModelIDInput | null,
 };
 
@@ -820,8 +853,16 @@ export type CreateTaskInput = {
   status?: TaskStatus | null,
   isRiderUsingOwnVehicle?: number | null,
   archived?: number | null,
+  pickUpSchedule?: ScheduleInput | null,
+  dropOffSchedule?: ScheduleInput | null,
   _version?: number | null,
   userCreatedTasksId?: string | null,
+};
+
+export type ScheduleInput = {
+  relation?: TimeRelation | null,
+  timePrimary?: string | null,
+  timeSecondary?: string | null,
 };
 
 export type ModelTaskConditionInput = {
@@ -849,6 +890,7 @@ export type ModelTaskConditionInput = {
   or?: Array< ModelTaskConditionInput | null > | null,
   not?: ModelTaskConditionInput | null,
   _deleted?: ModelBooleanInput | null,
+  updatedAt?: ModelStringInput | null,
   userCreatedTasksId?: ModelIDInput | null,
 };
 
@@ -885,6 +927,8 @@ export type UpdateTaskInput = {
   status?: TaskStatus | null,
   isRiderUsingOwnVehicle?: number | null,
   archived?: number | null,
+  pickUpSchedule?: ScheduleInput | null,
+  dropOffSchedule?: ScheduleInput | null,
   _version?: number | null,
   userCreatedTasksId?: string | null,
 };
@@ -912,6 +956,8 @@ export type ModelTaskAssigneeConditionInput = {
   or?: Array< ModelTaskAssigneeConditionInput | null > | null,
   not?: ModelTaskAssigneeConditionInput | null,
   _deleted?: ModelBooleanInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   userAssignmentsId?: ModelIDInput | null,
   taskAssigneesId?: ModelIDInput | null,
 };
@@ -941,6 +987,8 @@ export type CreateScheduledTaskInput = {
   establishmentLocationId?: string | null,
   priority?: Priority | null,
   disabled?: number | null,
+  pickUpSchedule?: ScheduleInput | null,
+  dropOffSchedule?: ScheduleInput | null,
   _version?: number | null,
   userCreatedScheduledTasksId?: string | null,
 };
@@ -957,6 +1005,8 @@ export type ModelScheduledTaskConditionInput = {
   or?: Array< ModelScheduledTaskConditionInput | null > | null,
   not?: ModelScheduledTaskConditionInput | null,
   _deleted?: ModelBooleanInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   userCreatedScheduledTasksId?: ModelIDInput | null,
 };
 
@@ -970,6 +1020,8 @@ export type UpdateScheduledTaskInput = {
   establishmentLocationId?: string | null,
   priority?: Priority | null,
   disabled?: number | null,
+  pickUpSchedule?: ScheduleInput | null,
+  dropOffSchedule?: ScheduleInput | null,
   _version?: number | null,
   userCreatedScheduledTasksId?: string | null,
 };
@@ -1002,6 +1054,8 @@ export type ModelCommentConditionInput = {
   or?: Array< ModelCommentConditionInput | null > | null,
   not?: ModelCommentConditionInput | null,
   _deleted?: ModelBooleanInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   userCommentsId?: ModelIDInput | null,
 };
 
@@ -1049,6 +1103,8 @@ export type ModelDeliverableTypeConditionInput = {
   or?: Array< ModelDeliverableTypeConditionInput | null > | null,
   not?: ModelDeliverableTypeConditionInput | null,
   _deleted?: ModelBooleanInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
 };
 
 export type ModelDeliverableTypeIconInput = {
@@ -1100,6 +1156,8 @@ export type ModelDeliverableConditionInput = {
   or?: Array< ModelDeliverableConditionInput | null > | null,
   not?: ModelDeliverableConditionInput | null,
   _deleted?: ModelBooleanInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   taskDeliverablesId?: ModelIDInput | null,
   scheduledTaskDeliverablesId?: ModelIDInput | null,
   deliverableTypeDeliverablesId?: ModelIDInput | null,
@@ -1139,6 +1197,8 @@ export type ModelRiderResponsibilityConditionInput = {
   or?: Array< ModelRiderResponsibilityConditionInput | null > | null,
   not?: ModelRiderResponsibilityConditionInput | null,
   _deleted?: ModelBooleanInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
 };
 
 export type UpdateRiderResponsibilityInput = {
@@ -1159,10 +1219,18 @@ export type SendFeedback = {
   successState?: boolean | null,
 };
 
+export type StateMachineExecution = {
+  __typename: "StateMachineExecution",
+  executionArn?: string | null,
+  startDate?: string | null,
+};
+
 export type ModelTenantFilterInput = {
   id?: ModelIDInput | null,
   name?: ModelStringInput | null,
   referenceIdentifier?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   and?: Array< ModelTenantFilterInput | null > | null,
   or?: Array< ModelTenantFilterInput | null > | null,
   not?: ModelTenantFilterInput | null,
@@ -1177,6 +1245,12 @@ export type ModelTenantConnection = {
   startedAt?: number | null,
 };
 
+export enum ModelSortDirection {
+  ASC = "ASC",
+  DESC = "DESC",
+}
+
+
 export type ModelUserFilterInput = {
   id?: ModelIDInput | null,
   username?: ModelStringInput | null,
@@ -1189,6 +1263,8 @@ export type ModelUserFilterInput = {
   dateOfBirth?: ModelStringInput | null,
   riderResponsibility?: ModelStringInput | null,
   disabled?: ModelIntInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   and?: Array< ModelUserFilterInput | null > | null,
   or?: Array< ModelUserFilterInput | null > | null,
   not?: ModelUserFilterInput | null,
@@ -1202,15 +1278,11 @@ export type ModelUserConnection = {
   startedAt?: number | null,
 };
 
-export enum ModelSortDirection {
-  ASC = "ASC",
-  DESC = "DESC",
-}
-
-
 export type ModelPossibleRiderResponsibilitiesFilterInput = {
   id?: ModelIDInput | null,
   tenantId?: ModelIDInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   and?: Array< ModelPossibleRiderResponsibilitiesFilterInput | null > | null,
   or?: Array< ModelPossibleRiderResponsibilitiesFilterInput | null > | null,
   not?: ModelPossibleRiderResponsibilitiesFilterInput | null,
@@ -1228,6 +1300,8 @@ export type ModelVehicleFilterInput = {
   dateOfManufacture?: ModelStringInput | null,
   dateOfRegistration?: ModelStringInput | null,
   disabled?: ModelIntInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   and?: Array< ModelVehicleFilterInput | null > | null,
   or?: Array< ModelVehicleFilterInput | null > | null,
   not?: ModelVehicleFilterInput | null,
@@ -1238,6 +1312,8 @@ export type ModelVehicleFilterInput = {
 export type ModelVehicleAssignmentFilterInput = {
   id?: ModelIDInput | null,
   tenantId?: ModelIDInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   and?: Array< ModelVehicleAssignmentFilterInput | null > | null,
   or?: Array< ModelVehicleAssignmentFilterInput | null > | null,
   not?: ModelVehicleAssignmentFilterInput | null,
@@ -1264,6 +1340,8 @@ export type ModelLocationFilterInput = {
   disabled?: ModelIntInput | null,
   googleMapsPlaceId?: ModelStringInput | null,
   archived?: ModelIntInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   and?: Array< ModelLocationFilterInput | null > | null,
   or?: Array< ModelLocationFilterInput | null > | null,
   not?: ModelLocationFilterInput | null,
@@ -1293,6 +1371,7 @@ export type ModelTaskFilterInput = {
   status?: ModelTaskStatusInput | null,
   isRiderUsingOwnVehicle?: ModelIntInput | null,
   archived?: ModelIntInput | null,
+  updatedAt?: ModelStringInput | null,
   and?: Array< ModelTaskFilterInput | null > | null,
   or?: Array< ModelTaskFilterInput | null > | null,
   not?: ModelTaskFilterInput | null,
@@ -1315,6 +1394,8 @@ export type ModelTaskAssigneeFilterInput = {
   tenantId?: ModelIDInput | null,
   role?: ModelRoleInput | null,
   archived?: ModelIntInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   and?: Array< ModelTaskAssigneeFilterInput | null > | null,
   or?: Array< ModelTaskAssigneeFilterInput | null > | null,
   not?: ModelTaskAssigneeFilterInput | null,
@@ -1332,6 +1413,8 @@ export type ModelScheduledTaskFilterInput = {
   establishmentLocationId?: ModelIDInput | null,
   priority?: ModelPriorityInput | null,
   disabled?: ModelIntInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   and?: Array< ModelScheduledTaskFilterInput | null > | null,
   or?: Array< ModelScheduledTaskFilterInput | null > | null,
   not?: ModelScheduledTaskFilterInput | null,
@@ -1347,6 +1430,8 @@ export type ModelCommentFilterInput = {
   body?: ModelStringInput | null,
   visibility?: ModelCommentVisibilityInput | null,
   archived?: ModelIntInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   and?: Array< ModelCommentFilterInput | null > | null,
   or?: Array< ModelCommentFilterInput | null > | null,
   not?: ModelCommentFilterInput | null,
@@ -1362,6 +1447,8 @@ export type ModelDeliverableTypeFilterInput = {
   defaultUnit?: ModelDeliverableUnitInput | null,
   tags?: ModelStringInput | null,
   disabled?: ModelIntInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   and?: Array< ModelDeliverableTypeFilterInput | null > | null,
   or?: Array< ModelDeliverableTypeFilterInput | null > | null,
   not?: ModelDeliverableTypeFilterInput | null,
@@ -1382,6 +1469,8 @@ export type ModelDeliverableFilterInput = {
   unit?: ModelDeliverableUnitInput | null,
   orderInGrid?: ModelIntInput | null,
   archived?: ModelIntInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   and?: Array< ModelDeliverableFilterInput | null > | null,
   or?: Array< ModelDeliverableFilterInput | null > | null,
   not?: ModelDeliverableFilterInput | null,
@@ -1396,6 +1485,8 @@ export type ModelRiderResponsibilityFilterInput = {
   tenantId?: ModelIDInput | null,
   label?: ModelStringInput | null,
   disabled?: ModelIntInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
   and?: Array< ModelRiderResponsibilityFilterInput | null > | null,
   or?: Array< ModelRiderResponsibilityFilterInput | null > | null,
   not?: ModelRiderResponsibilityFilterInput | null,
@@ -1413,9 +1504,12 @@ export type ModelSubscriptionTenantFilterInput = {
   id?: ModelSubscriptionIDInput | null,
   name?: ModelSubscriptionStringInput | null,
   referenceIdentifier?: ModelSubscriptionStringInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionTenantFilterInput | null > | null,
   or?: Array< ModelSubscriptionTenantFilterInput | null > | null,
   _deleted?: ModelBooleanInput | null,
+  tenantAdminId?: ModelSubscriptionIDInput | null,
 };
 
 export type ModelSubscriptionIDInput = {
@@ -1459,9 +1553,20 @@ export type ModelSubscriptionUserFilterInput = {
   dateOfBirth?: ModelSubscriptionStringInput | null,
   riderResponsibility?: ModelSubscriptionStringInput | null,
   disabled?: ModelSubscriptionIntInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionUserFilterInput | null > | null,
   or?: Array< ModelSubscriptionUserFilterInput | null > | null,
   _deleted?: ModelBooleanInput | null,
+  userPossibleRiderResponsibilitiesId?: ModelSubscriptionIDInput | null,
+  userCommentsId?: ModelSubscriptionIDInput | null,
+  userAssignmentsId?: ModelSubscriptionIDInput | null,
+  userVehicleAssignmentsId?: ModelSubscriptionIDInput | null,
+  userCreatedTasksId?: ModelSubscriptionIDInput | null,
+  userCreatedLocationsId?: ModelSubscriptionIDInput | null,
+  userCreatedVehiclesId?: ModelSubscriptionIDInput | null,
+  userCreatedScheduledTasksId?: ModelSubscriptionIDInput | null,
+  cognitoId?: ModelStringInput | null,
 };
 
 export type ModelSubscriptionIntInput = {
@@ -1479,6 +1584,8 @@ export type ModelSubscriptionIntInput = {
 export type ModelSubscriptionPossibleRiderResponsibilitiesFilterInput = {
   id?: ModelSubscriptionIDInput | null,
   tenantId?: ModelSubscriptionIDInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionPossibleRiderResponsibilitiesFilterInput | null > | null,
   or?: Array< ModelSubscriptionPossibleRiderResponsibilitiesFilterInput | null > | null,
   _deleted?: ModelBooleanInput | null,
@@ -1493,14 +1600,19 @@ export type ModelSubscriptionVehicleFilterInput = {
   dateOfManufacture?: ModelSubscriptionStringInput | null,
   dateOfRegistration?: ModelSubscriptionStringInput | null,
   disabled?: ModelSubscriptionIntInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionVehicleFilterInput | null > | null,
   or?: Array< ModelSubscriptionVehicleFilterInput | null > | null,
   _deleted?: ModelBooleanInput | null,
+  vehicleAssignmentsId?: ModelSubscriptionIDInput | null,
 };
 
 export type ModelSubscriptionVehicleAssignmentFilterInput = {
   id?: ModelSubscriptionIDInput | null,
   tenantId?: ModelSubscriptionIDInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionVehicleAssignmentFilterInput | null > | null,
   or?: Array< ModelSubscriptionVehicleAssignmentFilterInput | null > | null,
   _deleted?: ModelBooleanInput | null,
@@ -1524,6 +1636,8 @@ export type ModelSubscriptionLocationFilterInput = {
   disabled?: ModelSubscriptionIntInput | null,
   googleMapsPlaceId?: ModelSubscriptionStringInput | null,
   archived?: ModelSubscriptionIntInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionLocationFilterInput | null > | null,
   or?: Array< ModelSubscriptionLocationFilterInput | null > | null,
   _deleted?: ModelBooleanInput | null,
@@ -1551,9 +1665,12 @@ export type ModelSubscriptionTaskFilterInput = {
   status?: ModelSubscriptionStringInput | null,
   isRiderUsingOwnVehicle?: ModelSubscriptionIntInput | null,
   archived?: ModelSubscriptionIntInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionTaskFilterInput | null > | null,
   or?: Array< ModelSubscriptionTaskFilterInput | null > | null,
   _deleted?: ModelBooleanInput | null,
+  taskAssigneesId?: ModelSubscriptionIDInput | null,
+  taskDeliverablesId?: ModelSubscriptionIDInput | null,
 };
 
 export type ModelSubscriptionTaskAssigneeFilterInput = {
@@ -1561,6 +1678,8 @@ export type ModelSubscriptionTaskAssigneeFilterInput = {
   tenantId?: ModelSubscriptionIDInput | null,
   role?: ModelSubscriptionStringInput | null,
   archived?: ModelSubscriptionIntInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionTaskAssigneeFilterInput | null > | null,
   or?: Array< ModelSubscriptionTaskAssigneeFilterInput | null > | null,
   _deleted?: ModelBooleanInput | null,
@@ -1575,9 +1694,12 @@ export type ModelSubscriptionScheduledTaskFilterInput = {
   establishmentLocationId?: ModelSubscriptionIDInput | null,
   priority?: ModelSubscriptionStringInput | null,
   disabled?: ModelSubscriptionIntInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionScheduledTaskFilterInput | null > | null,
   or?: Array< ModelSubscriptionScheduledTaskFilterInput | null > | null,
   _deleted?: ModelBooleanInput | null,
+  scheduledTaskDeliverablesId?: ModelSubscriptionIDInput | null,
 };
 
 export type ModelSubscriptionCommentFilterInput = {
@@ -1587,9 +1709,12 @@ export type ModelSubscriptionCommentFilterInput = {
   body?: ModelSubscriptionStringInput | null,
   visibility?: ModelSubscriptionStringInput | null,
   archived?: ModelSubscriptionIntInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionCommentFilterInput | null > | null,
   or?: Array< ModelSubscriptionCommentFilterInput | null > | null,
   _deleted?: ModelBooleanInput | null,
+  owner?: ModelStringInput | null,
 };
 
 export type ModelSubscriptionDeliverableTypeFilterInput = {
@@ -1600,9 +1725,12 @@ export type ModelSubscriptionDeliverableTypeFilterInput = {
   defaultUnit?: ModelSubscriptionStringInput | null,
   tags?: ModelSubscriptionStringInput | null,
   disabled?: ModelSubscriptionIntInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionDeliverableTypeFilterInput | null > | null,
   or?: Array< ModelSubscriptionDeliverableTypeFilterInput | null > | null,
   _deleted?: ModelBooleanInput | null,
+  deliverableTypeDeliverablesId?: ModelSubscriptionIDInput | null,
 };
 
 export type ModelSubscriptionDeliverableFilterInput = {
@@ -1612,6 +1740,8 @@ export type ModelSubscriptionDeliverableFilterInput = {
   unit?: ModelSubscriptionStringInput | null,
   orderInGrid?: ModelSubscriptionIntInput | null,
   archived?: ModelSubscriptionIntInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionDeliverableFilterInput | null > | null,
   or?: Array< ModelSubscriptionDeliverableFilterInput | null > | null,
   _deleted?: ModelBooleanInput | null,
@@ -1622,9 +1752,12 @@ export type ModelSubscriptionRiderResponsibilityFilterInput = {
   tenantId?: ModelSubscriptionIDInput | null,
   label?: ModelSubscriptionStringInput | null,
   disabled?: ModelSubscriptionIntInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionRiderResponsibilityFilterInput | null > | null,
   or?: Array< ModelSubscriptionRiderResponsibilityFilterInput | null > | null,
   _deleted?: ModelBooleanInput | null,
+  riderResponsibilityPossibleUsersId?: ModelSubscriptionIDInput | null,
 };
 
 export type CreateTenantMutationVariables = {
@@ -2970,6 +3103,18 @@ export type CreateTaskMutation = {
     status?: TaskStatus | null,
     isRiderUsingOwnVehicle?: number | null,
     archived?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -3136,6 +3281,18 @@ export type UpdateTaskMutation = {
     status?: TaskStatus | null,
     isRiderUsingOwnVehicle?: number | null,
     archived?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -3302,6 +3459,18 @@ export type DeleteTaskMutation = {
     status?: TaskStatus | null,
     isRiderUsingOwnVehicle?: number | null,
     archived?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -3655,6 +3824,18 @@ export type CreateScheduledTaskMutation = {
       startedAt?: number | null,
     } | null,
     disabled?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
     _version: number,
@@ -3799,6 +3980,18 @@ export type UpdateScheduledTaskMutation = {
       startedAt?: number | null,
     } | null,
     disabled?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
     _version: number,
@@ -3943,6 +4136,18 @@ export type DeleteScheduledTaskMutation = {
       startedAt?: number | null,
     } | null,
     disabled?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
     _version: number,
@@ -5014,6 +5219,42 @@ export type ResetUserPasswordMutation = {
   } | null,
 };
 
+export type AdminDeleteRiderResponsibilityMutationVariables = {
+  riderResponsibilityId?: string | null,
+};
+
+export type AdminDeleteRiderResponsibilityMutation = {
+  adminDeleteRiderResponsibility?:  {
+    __typename: "RiderResponsibility",
+    id: string,
+    tenantId: string,
+    label: string,
+    disabled?: number | null,
+    possibleUsers?:  {
+      __typename: "ModelPossibleRiderResponsibilitiesConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
+  } | null,
+};
+
+export type AdminDeleteUserMutationVariables = {
+  userId?: string | null,
+};
+
+export type AdminDeleteUserMutation = {
+  adminDeleteUser?:  {
+    __typename: "StateMachineExecution",
+    executionArn?: string | null,
+    startDate?: string | null,
+  } | null,
+};
+
 export type GetTenantQueryVariables = {
   id: string,
 };
@@ -5087,6 +5328,34 @@ export type SyncTenantsQueryVariables = {
 
 export type SyncTenantsQuery = {
   syncTenants?:  {
+    __typename: "ModelTenantConnection",
+    items:  Array< {
+      __typename: "Tenant",
+      id: string,
+      name: string,
+      referenceIdentifier: string,
+      createdAt: string,
+      updatedAt: string,
+      _version: number,
+      _deleted?: boolean | null,
+      _lastChangedAt: number,
+      tenantAdminId: string,
+    } | null >,
+    nextToken?: string | null,
+    startedAt?: number | null,
+  } | null,
+};
+
+export type GetTenantByTenantNameQueryVariables = {
+  name: string,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelTenantFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type GetTenantByTenantNameQuery = {
+  getTenantByTenantName?:  {
     __typename: "ModelTenantConnection",
     items:  Array< {
       __typename: "Tenant",
@@ -5965,6 +6234,18 @@ export type GetTaskQuery = {
     status?: TaskStatus | null,
     isRiderUsingOwnVehicle?: number | null,
     archived?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -6457,6 +6738,18 @@ export type GetScheduledTaskQuery = {
       startedAt?: number | null,
     } | null,
     disabled?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
     _version: number,
@@ -8305,6 +8598,18 @@ export type OnCreateTaskSubscription = {
     status?: TaskStatus | null,
     isRiderUsingOwnVehicle?: number | null,
     archived?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -8470,6 +8775,18 @@ export type OnUpdateTaskSubscription = {
     status?: TaskStatus | null,
     isRiderUsingOwnVehicle?: number | null,
     archived?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -8635,6 +8952,18 @@ export type OnDeleteTaskSubscription = {
     status?: TaskStatus | null,
     isRiderUsingOwnVehicle?: number | null,
     archived?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
     updatedAt: string,
     _version: number,
     _deleted?: boolean | null,
@@ -8984,6 +9313,18 @@ export type OnCreateScheduledTaskSubscription = {
       startedAt?: number | null,
     } | null,
     disabled?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
     _version: number,
@@ -9127,6 +9468,18 @@ export type OnUpdateScheduledTaskSubscription = {
       startedAt?: number | null,
     } | null,
     disabled?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
     _version: number,
@@ -9270,6 +9623,18 @@ export type OnDeleteScheduledTaskSubscription = {
       startedAt?: number | null,
     } | null,
     disabled?: number | null,
+    pickUpSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
+    dropOffSchedule?:  {
+      __typename: "Schedule",
+      relation?: TimeRelation | null,
+      timePrimary?: string | null,
+      timeSecondary?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
     _version: number,

@@ -202,6 +202,58 @@ const TaskContextMenu: React.FC<TaskContextMenuProps> = ({
         }
     }
 
+    async function undoUpdateFuture(
+        task: models.Task,
+        assignment: models.TaskAssignee
+    ) {
+        try {
+            const existingTask = await DataStore.query(models.Task, task.id);
+            if (existingTask) {
+                await DataStore.save(
+                    models.Task.copyOf(existingTask, (t) => {
+                        t.status = models.TaskStatus.FUTURE;
+                        t.timeRejected = null;
+                    })
+                );
+            }
+            const existingAssignment = await DataStore.query(
+                models.TaskAssignee,
+                assignment.id
+            );
+            if (existingAssignment) {
+                await DataStore.delete(existingAssignment);
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+        }
+    }
+
+    async function onUpdateFuture(
+        e: React.MouseEvent,
+        action: "accept" | "reject"
+    ) {
+        handleClose(e);
+        try {
+            if (task) {
+                const result = await updatePendingTask(
+                    task,
+                    whoami.id,
+                    tenantId,
+                    action
+                );
+                const message = action === "accept" ? "accepted" : "rejected";
+                dispatch(
+                    displayInfoNotification(`Task ${message}`, () => {
+                        undoUpdateFuture(result.task, result.assignment);
+                    })
+                );
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch(displayErrorNotification("Sorry, something went wrong"));
+        }
+    }
     async function undoUpdatePending(
         task: models.Task,
         assignment: models.TaskAssignee
@@ -281,6 +333,28 @@ const TaskContextMenu: React.FC<TaskContextMenuProps> = ({
             </MenuItem>,
             <MenuItem
                 key={generateKey("pending-copy")}
+                disabled={task === null}
+                onClick={copyToClipboard}
+            >
+                Copy to clipboard
+            </MenuItem>,
+        ];
+    } else if (task?.status === models.TaskStatus.FUTURE) {
+        menuItems = [
+            <MenuItem
+                key={generateKey("future-accept")}
+                onClick={(e) => onUpdateFuture(e, "accept")}
+            >
+                Accept
+            </MenuItem>,
+            <MenuItem
+                key={generateKey("future-reject")}
+                onClick={(e) => onUpdateFuture(e, "reject")}
+            >
+                Reject
+            </MenuItem>,
+            <MenuItem
+                key={generateKey("future-copy")}
                 disabled={task === null}
                 onClick={copyToClipboard}
             >

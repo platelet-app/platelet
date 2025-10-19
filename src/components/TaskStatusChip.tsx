@@ -13,6 +13,7 @@ const colors = {
     ABANDONED: red[700],
     REJECTED: grey[700],
     PENDING: blue[200],
+    FUTURE: grey[200],
 };
 
 const generateLabel = (status: models.TaskStatus | TaskStatus) => {

@@ -15,6 +15,7 @@ import { logoutUser } from "../../redux/login/LoginActions";
 import SyncStatusCircleLoader from "./SyncStatusCircleLoader";
 import UserFeedbackDialog from "./UserFeedbackDialog";
 import { useTheme, useMediaQuery } from "@mui/material";
+import { DataStore } from "aws-amplify";
 
 function LightToggleProfileMenu() {
     const whoami = useSelector(getWhoami);
@@ -24,6 +25,12 @@ function LightToggleProfileMenu() {
     const networkStatus = useSelector(networkStatusSelector);
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+
+    const handleDemoRefresh = async () => {
+        await DataStore.stop();
+        await DataStore.clear();
+        window.location.reload();
+    };
 
     return (
         <Stack
@@ -96,14 +103,26 @@ function LightToggleProfileMenu() {
                     >
                         Help
                     </MenuItem>
-                    <MenuItem
-                        onClick={() => {
-                            setAnchorElProfileMenu(null);
-                            dispatch(logoutUser());
-                        }}
-                    >
-                        Logout
-                    </MenuItem>
+                    {process.env.REACT_APP_DEMO_MODE !== "true" && (
+                        <MenuItem
+                            onClick={() => {
+                                setAnchorElProfileMenu(null);
+                                dispatch(logoutUser());
+                            }}
+                        >
+                            Logout
+                        </MenuItem>
+                    )}
+                    {process.env.REACT_APP_DEMO_MODE === "true" && (
+                        <MenuItem
+                            onClick={() => {
+                                setAnchorElProfileMenu(null);
+                                handleDemoRefresh();
+                            }}
+                        >
+                            Refresh Data
+                        </MenuItem>
+                    )}
                 </Menu>
             </React.Fragment>
             <UserFeedbackDialog

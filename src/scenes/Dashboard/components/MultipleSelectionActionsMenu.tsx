@@ -109,7 +109,9 @@ function MultipleSelectionActionsMenu() {
 
     const pendingValues: models.Task[] = Object.values(selectedItems);
     const isPendingActions = pendingValues.some((item) => {
-        return item.status === models.TaskStatus.PENDING;
+        return [models.TaskStatus.PENDING, models.TaskStatus.FUTURE].includes(
+            item.status as models.TaskStatus
+        );
     });
 
     function checkButtonDisabled(action: actions | dotActions) {
