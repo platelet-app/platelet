@@ -7,11 +7,6 @@ on:
       - 'test/**'
       - 'dev'
 
-
-defaults:
-  run:
-    working-directory: cdk
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -61,10 +56,10 @@ jobs:
         run: |
           ./scripts/get-cdk-roles.sh cdk/cdk-out.json > ./amplify/backend/api/platelet/custom-roles.json
       - name: "Commit changes"
-    - uses: EndBug/add-and-commit@v9
-      with:
-        add: './amplify/backend/api/platelet/custom-roles.json'
-        default_author: github_actor
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: './amplify/backend/api/platelet/custom-roles.json'
+          default_author: github_actor
       - name: 'Start Amplify build'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
