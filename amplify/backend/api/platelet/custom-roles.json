@@ -1,13 +1,13 @@
 
 {
     "adminRoleNames": [
-        "StepFunctionsStack-dev-CleanVehicleAssignmentsFunct-va63DLECH6ja",
-        "StepFunctionsStack-dev-DeleteAssignmentsFunctionSer-mLf2NUePwOgQ",
-        "StepFunctionsStack-dev-DeleteCommentsFunctionServic-2FvPxOyVr6QJ",
-        "StepFunctionsStack-dev-CleanPossibleRiderResponsibi-TJQASNdkssgp",
-        "StepFunctionsStack-dev-GetUserCommentsFunctionServi-OAMyIPIVKBG3",
-        "StepFunctionsStack-dev-DeleteUserFunctionServiceRol-MdU7qlV6DV21",
-        "StepFunctionsStack-dev-GetUserAssignmentsFunctionSe-uHtEsLDJeVUj",
+        "StepFunctionsStack-inger-CleanVehicleAssignmentsFun-lHFo4vPlhX1f",
+        "StepFunctionsStack-inger-DeleteAssignmentsFunctionS-UhqwDVUbWhOo",
+        "StepFunctionsStack-inger-DeleteCommentsFunctionServ-oaH5vRZWzCL6",
+        "StepFunctionsStack-inger-CleanPossibleRiderResponsi-9bDhkztp7BZ6",
+        "StepFunctionsStack-inger-GetUserCommentsFunctionSer-i4cQApGSmlva",
+        "StepFunctionsStack-inger-DeleteUserFunctionServiceR-EaWqq4r7gOkv",
+        "StepFunctionsStack-inger-GetUserAssignmentsFunction-sFC7lWd9XHqZ",
     ]
 }
 
