@@ -22,6 +22,7 @@ frontend:
         - npm install
     build:
       commands:
+        - npm run build --w packages
         - npm run build
   artifacts:
     baseDirectory: build
