@@ -1,0 +1,49 @@
+name: Do a manual amplify push (e.g. if amplify/cli.json is changed)
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: 'Select the target environment.'
+        required: true
+        type: environment
+
+jobs:
+  amplify-push:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.target_environment }}
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.inputs.target_environment }}
+      - name: 'Get Amplify outputs'
+        uses: duckbytes/amplify-get-outputs@master
+        id: amplify_outputs
+        with:
+          app-id: ${{ vars.AMPLIFY_APP_ID }}
+          branch-name: ${{ github.event.inputs.target_environment }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+      - name: 'Install Amplify CLI'
+        run: |
+           npm install -g @aws-amplify/cli
+      - name: 'Pull Amplify project'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        run: |
+          amplify pull --appId ${{ vars.AMPLIFY_APP_ID }} --envName ${{ steps.amplify_outputs.outputs.env_name }} -y
+      - name: 'Checkout amplify/cli.json'
+        run: |
+          git checkout amplify/cli.json amplify/backend/api/platelet/schema.graphql
+      - name: 'Push Amplify'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        run: |
+          amplify push -y
