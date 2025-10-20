@@ -9,12 +9,14 @@ on:
         type: environment
 
 jobs:
-  manage-group:
+  amplify-push:
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.target_environment }}
     steps:
       - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.inputs.target_environment }}
       - name: 'Get Amplify outputs'
         uses: duckbytes/amplify-get-outputs@master
         id: amplify_outputs
