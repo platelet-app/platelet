@@ -83,8 +83,10 @@ export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
         throw new Error("No username found");
     }
     await disableUserCognito(user.username, USER_POOL_ID);
+    if (user.profilePicture) {
+        await deleteProfilePicture(user.profilePicture);
+    }
     await deleteUserFunction(user, GRAPHQL_ENDPOINT);
     await deleteUserCognito(user.username, USER_POOL_ID);
-    await deleteProfilePicture(user.profilePicture);
     return { retryCount, userId };
 };
