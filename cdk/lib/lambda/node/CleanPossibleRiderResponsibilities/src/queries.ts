@@ -1,7 +1,7 @@
-export const getUser = `query GetUser($id: ID!) {
+export const getUser = `query GetUser($id: ID!, $nextToken: String) {
   getUser(id: $id) {
     id
-    possibleRiderResponsibilities {
+    possibleRiderResponsibilities(nextToken: $nextToken) {
       nextToken
       items {
           id
