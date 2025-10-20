@@ -8,6 +8,7 @@ type Tenant
   name: String! @index(name: "byTenantName", queryField: "getTenantByTenantName")
   referenceIdentifier: String!
   admin: User! @hasOne
+
 }
 
 type User
