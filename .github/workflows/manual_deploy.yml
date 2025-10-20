@@ -37,7 +37,7 @@ jobs:
           amplify pull --appId ${{ vars.AMPLIFY_APP_ID }} --envName ${{ steps.amplify_outputs.outputs.env_name }} -y
       - name: 'Checkout amplify/cli.json'
         run: |
-          git checkout amplify/cli.json
+          git checkout amplify/cli.json amplify/backend/api/platelet/schema.graphql
       - name: 'Push Amplify'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
