@@ -1,0 +1,39 @@
+name: Do a manual amplify push (e.g. if amplify/cli.json is changed)
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: 'Select the target environment.'
+        required: true
+        type: environment
+
+jobs:
+  manage-group:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.target_environment }}
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v3
+      - name: 'Get Amplify outputs'
+        uses: duckbytes/amplify-get-outputs@master
+        id: amplify_outputs
+        with:
+          app-id: ${{ vars.AMPLIFY_APP_ID }}
+          branch-name: ${{ github.ref_name }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+      - name: 'Install Amplify CLI'
+        run: |
+           npm install -g @aws-amplify/cli
+      - name: 'Pull Amplify project'
+        run: |
+          amplify pull --appId ${{ vars.AMPLIFY_APP_ID }} --envName ${{ steps.amplify_outputs.outputs.env_name }} -y
+      - name: 'Checkout amplify/cli.json'
+        run: |
+          git checkout amplify/cli.json
+      - name: 'Push Amplify'
+        run: |
+          amplify push -y
