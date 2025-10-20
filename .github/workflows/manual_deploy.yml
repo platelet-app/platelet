@@ -27,7 +27,7 @@ jobs:
           AWS_REGION: ${{ vars.AWS_REGION }}
       - name: 'Install Amplify CLI'
         run: |
-           npm install -g @aws-amplify/cli
+           npm install -g @aws-amplify/cli@12.12.4
       - name: 'Pull Amplify project'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
