@@ -49,12 +49,12 @@ export class StepFunctionsStack extends cdk.Stack {
         if (appsyncFields?.mutations || appsyncFields?.queries) {
             const queryResources = appsyncFields.queries?.map(
                 (query) =>
-                    `arn:aws:appsync:${this.region}:${this.account}:apis/${this.appsyncId}/types/Query/field/${query}`
+                    `arn:aws:appsync:${this.region}:${this.account}:apis/${this.appsyncId}/types/Query/fields/${query}`
             );
 
             const mutationResources = appsyncFields.mutations?.map(
                 (query) =>
-                    `arn:aws:appsync:${this.region}:${this.account}:apis/${this.appsyncId}/types/Mutation/field/${query}`
+                    `arn:aws:appsync:${this.region}:${this.account}:apis/${this.appsyncId}/types/Mutation/fields/${query}`
             );
             const appsyncResources = [
                 ...(queryResources || []),
