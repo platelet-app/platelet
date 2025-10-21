@@ -3,7 +3,7 @@
     "outDir": "./dist",
     "module": "nodenext",
     "target": "esnext",
-    "types": [],
+    "types": ["jest"],
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
@@ -17,7 +17,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-
   "include": [
       "src/**/*"
   ],
