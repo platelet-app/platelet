@@ -31,7 +31,7 @@ export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
     console.log("Assignments:", assignments);
     console.log("Filtered:", filterDeleted);
     await pAll(
-        assignments.map((a) => () => deleteAssignment(a, GRAPHQL_ENDPOINT)),
+        filterDeleted.map((a) => () => deleteAssignment(a, GRAPHQL_ENDPOINT)),
         { concurrency: 10 }
     );
     return { userId, retryCount };

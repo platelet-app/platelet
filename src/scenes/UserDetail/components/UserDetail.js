@@ -206,8 +206,8 @@ export default function UserDetail({ userId }) {
                         {user && isAdmin && (
                             <Stack spacing={2} direction="row">
                                 <EnableDisableUser user={user} />
-                                <ResetUserPassword user={user} />
                                 <DeleteUser user={user} />
+                                <ResetUserPassword user={user} />
                             </Stack>
                         )}
                     </Stack>
