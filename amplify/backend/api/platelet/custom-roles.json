@@ -1,13 +1,13 @@
 
 {
     "adminRoleNames": [
-        "StepFunctionsStack-mahali-CleanVehicleAssignmentsFu-YMEhHmFRYbBE",
-        "StepFunctionsStack-mahali-DeleteAssignmentsFunction-ha0YriajXfsp",
-        "StepFunctionsStack-mahali-DeleteCommentsFunctionSer-mwp3XhVakYt5",
-        "StepFunctionsStack-mahali-CleanPossibleRiderRespons-Cxh3lMLG7mv9",
-        "StepFunctionsStack-mahali-GetUserCommentsFunctionSe-Nc1xYDxwIngD",
-        "StepFunctionsStack-mahali-DeleteUserFunctionService-RsvPqAh5RISE",
-        "StepFunctionsStack-mahali-GetUserAssignmentsFunctio-PwNxmhZGDEH9",
+        "DeleteAssignmentsRole-role-mahalia",
+        "DeleteUserRole-role-mahalia",
+        "GetUserAssignmentsRole-role-mahalia",
+        "GetUserCommentsRole-role-mahalia",
+        "DeleteCommentsRole-role-mahalia",
+        "CleanPossibleRiderResponsibilitiesRole-role-mahalia",
+        "CleanVehicleAssignmentsRole-role-mahalia",
     ]
 }
 
