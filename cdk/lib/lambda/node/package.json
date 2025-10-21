@@ -8,7 +8,7 @@
         "build-get-user-assignments": "cd GetUserAssignments && npm run build && npm run test",
         "build-delete-comments": "cd DeleteComments && npm run build && npm run test",
         "build-delete-assignments": "cd DeleteAssignments && npm run build && npm run test",
-        "build-delete-user": "cd DeleteUser && npm run test && npm run test",
+        "build-delete-user": "cd DeleteUser && npm run build && npm run test",
         "build-clean-vehicle-assignments": "cd CleanVehicleAssignments && npm run build && npm run test",
         "build-clean-possible-rider-responsibilities": "cd CleanPossibleRiderResponsibilities && npm run build && npm run test",
         "package": "npm-run-all pk-*",
