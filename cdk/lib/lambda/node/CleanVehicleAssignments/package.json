@@ -5,7 +5,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "prebuild": "npm install",
+        "prebuild": "npm install --include=dev",
         "build": "tsc",
         "package": "npm prune --omit=dev && rm -rf dist/node_modules && cp -R node_modules dist/node_modules/ && cp package.json dist",
         "test": "NODE_OPTIONS='--experimental-vm-modules' jest",
