@@ -25,7 +25,7 @@ jobs:
     - name: Install dependencies
       run: npm ci
     - name: build graphql package
-      run: npm run build --workspace @platelet-app/graphql
+      run: npm run build:simple --workspace @platelet-app/graphql
     - name: Production Build
       run: npm run build
       env:
