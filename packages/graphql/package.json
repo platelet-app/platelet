@@ -18,6 +18,7 @@
     "scripts": {
         "sedQueries": "sed -i 's:import \\* as APITypes from \"../API\";:import \\* as APITypes from \"../API.js\";:g' ../../src/graphql/queries.ts ../../src/graphql/mutations.ts ../../src/graphql/subscriptions.ts",
         "build": "cd ../.. && amplify api gql-compile && amplify codegen && npm run sedQueries --workspace @platelet-app/graphql && cd packages/graphql && tsc --project tsconfig.json",
+        "build:simple": "tsc --project tsconfig.json",
         "prepublishOnly": "npm run build && npm version patch"
     }
 }
