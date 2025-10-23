@@ -235,7 +235,7 @@ export class DeleteUserStepFunction extends Construct {
             }
         );
         this.createLambdaStatement(deleteAssignmentsFunction, {
-            queries: ["deleteTaskAssignee"],
+            mutations: ["deleteTaskAssignee"],
         });
 
         const cleanVehicleAssignmentsFunction = new lambda.Function(
