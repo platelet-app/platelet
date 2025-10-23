@@ -7,7 +7,9 @@ const app = new cdk.App();
 
 const deployEnv = process.env.DEPLOY_ENV || "dev";
 
-new PlateletCdkStack(app, `PlateletCdkStack-${deployEnv}`, {
+const stackName = deployEnv.replace(/[^A-Za-z0-9-]/g, "-");
+
+new PlateletCdkStack(app, `PlateletCdkStack-${stackName}`, {
     env: { account: "130063560692", region: "eu-west-1" },
 });
 
