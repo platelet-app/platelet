@@ -35,17 +35,22 @@ export class DeleteUserStepFunction extends Construct {
     private graphQLEndpoint: string;
 
     private createLambdaStatement = (
-        lambdaFunction: cdk.aws_lambda.Function,
-        appsyncFields?: { queries?: string[]; mutations?: string[] }
+        lambdaFunction: cdk.aws_lambda.IFunction,
+        appsyncFields?: {
+            queries?: string[];
+            mutations?: string[];
+        }
     ) => {
-        const statement = new iam.PolicyStatement({
+        const loggingStatement = new iam.PolicyStatement({
             actions: [
                 "logs:CreateLogGroup",
                 "logs:CreateLogStream",
                 "logs:PutLogEvents",
             ],
-            resources: [lambdaFunction.functionArn],
+            resources: ["*"],
         });
+
+        let appsyncStatement;
 
         if (appsyncFields?.mutations || appsyncFields?.queries) {
             const queryResources = appsyncFields.queries?.map(
@@ -65,12 +70,28 @@ export class DeleteUserStepFunction extends Construct {
                 throw new Error("No appsync resources found");
             }
 
-            statement.addActions("appsync:GraphQL");
+            appsyncStatement = new iam.PolicyStatement();
+            appsyncStatement.addActions("appsync:GraphQL");
             for (const resource of appsyncResources) {
-                statement.addResources(resource);
+                appsyncStatement.addResources(resource);
             }
         }
-        return statement;
+        lambdaFunction.addToRolePolicy(loggingStatement);
+        if (appsyncStatement) {
+            lambdaFunction.addToRolePolicy(appsyncStatement);
+        }
+        if (lambdaFunction.role) {
+            NagSuppressions.addResourceSuppressions(
+                lambdaFunction.role,
+                [
+                    {
+                        id: "AwsSolutions-IAM5",
+                        reason: 'Wildcard is required for the "logs:CreateLogGroup" action to allow the Lambda service to create its log group upon first invocation. The wildcard is scoped to the specific function log group ARN.',
+                    },
+                ],
+                true
+            );
+        }
     };
 
     constructor(
@@ -141,11 +162,9 @@ export class DeleteUserStepFunction extends Construct {
             }
         );
 
-        getUserCommentsFunction.addToRolePolicy(
-            this.createLambdaStatement(getUserCommentsFunction, {
-                queries: ["getUser"],
-            })
-        );
+        this.createLambdaStatement(getUserCommentsFunction, {
+            queries: ["getUser"],
+        });
 
         const getUserAssignmentsFunction = new lambda.Function(
             this,
@@ -167,11 +186,9 @@ export class DeleteUserStepFunction extends Construct {
                 }),
             }
         );
-        getUserAssignmentsFunction.addToRolePolicy(
-            this.createLambdaStatement(getUserAssignmentsFunction, {
-                queries: ["getUser"],
-            })
-        );
+        this.createLambdaStatement(getUserAssignmentsFunction, {
+            queries: ["getUser"],
+        });
 
         const deleteCommentsFunction = new lambda.Function(
             this,
@@ -194,11 +211,9 @@ export class DeleteUserStepFunction extends Construct {
             }
         );
 
-        deleteCommentsFunction.addToRolePolicy(
-            this.createLambdaStatement(getUserAssignmentsFunction, {
-                queries: ["deleteComment"],
-            })
-        );
+        this.createLambdaStatement(deleteCommentsFunction, {
+            queries: ["deleteComment"],
+        });
 
         const deleteAssignmentsFunction = new lambda.Function(
             this,
@@ -220,11 +235,9 @@ export class DeleteUserStepFunction extends Construct {
                 }),
             }
         );
-        deleteAssignmentsFunction.addToRolePolicy(
-            this.createLambdaStatement(deleteAssignmentsFunction, {
-                queries: ["deleteTaskAssignee"],
-            })
-        );
+        this.createLambdaStatement(deleteAssignmentsFunction, {
+            queries: ["deleteTaskAssignee"],
+        });
 
         const cleanVehicleAssignmentsFunction = new lambda.Function(
             this,
@@ -252,12 +265,10 @@ export class DeleteUserStepFunction extends Construct {
                 ),
             }
         );
-        cleanVehicleAssignmentsFunction.addToRolePolicy(
-            this.createLambdaStatement(cleanVehicleAssignmentsFunction, {
-                queries: ["getUser"],
-                mutations: ["deleteVehicleAssignment"],
-            })
-        );
+        this.createLambdaStatement(cleanVehicleAssignmentsFunction, {
+            queries: ["getUser"],
+            mutations: ["deleteVehicleAssignment"],
+        });
 
         const cleanPossibleRiderResponsibilitiesFunction = new lambda.Function(
             this,
@@ -285,15 +296,10 @@ export class DeleteUserStepFunction extends Construct {
                 ),
             }
         );
-        cleanVehicleAssignmentsFunction.addToRolePolicy(
-            this.createLambdaStatement(
-                cleanPossibleRiderResponsibilitiesFunction,
-                {
-                    queries: ["getUser"],
-                    mutations: ["deletePossibleRiderResponsibilities"],
-                }
-            )
-        );
+        this.createLambdaStatement(cleanPossibleRiderResponsibilitiesFunction, {
+            queries: ["getUser"],
+            mutations: ["deletePossibleRiderResponsibilities"],
+        });
 
         const deleteUserFunction = new lambda.Function(
             this,
@@ -317,12 +323,10 @@ export class DeleteUserStepFunction extends Construct {
             }
         );
 
-        deleteUserFunction.addToRolePolicy(
-            this.createLambdaStatement(deleteUserFunction, {
-                queries: ["getUser"],
-                mutations: ["deleteUser"],
-            })
-        );
+        this.createLambdaStatement(deleteUserFunction, {
+            queries: ["getUser"],
+            mutations: ["deleteUser"],
+        });
         deleteUserFunction.role?.attachInlinePolicy(
             new iam.Policy(this, "DeleteUserCognitoPolicy", {
                 statements: [
@@ -388,10 +392,6 @@ export class DeleteUserStepFunction extends Construct {
                     assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
                 }),
             }
-        );
-
-        retryCheckFunction.addToRolePolicy(
-            this.createLambdaStatement(retryCheckFunction)
         );
 
         const retryCheckLambdaTask = new tasks.LambdaInvoke(
