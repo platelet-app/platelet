@@ -1,13 +1,3 @@
-
 {
-    "adminRoleNames": [
-        "DeleteAssignmentsRole-role-mahalia",
-        "DeleteUserRole-role-mahalia",
-        "GetUserAssignmentsRole-role-mahalia",
-        "GetUserCommentsRole-role-mahalia",
-        "DeleteCommentsRole-role-mahalia",
-        "CleanPossibleRiderResponsibilitiesRole-role-mahalia",
-        "CleanVehicleAssignmentsRole-role-mahalia",
-    ]
+    "adminRoleNames": []
 }
-
