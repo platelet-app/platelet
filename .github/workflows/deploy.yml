@@ -40,6 +40,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DEPLOY_ENV: ${{ github.ref_name }}
         run: |
           CONTEXT_ARGS="--context appsyncId=${{ steps.amplify_outputs.outputs.appsync_id }} \
                       --context userPoolId=${{ steps.amplify_outputs.outputs.user_pool_id }} \
