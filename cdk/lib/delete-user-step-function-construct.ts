@@ -5,8 +5,20 @@ import * as sfn from "aws-cdk-lib/aws-stepfunctions";
 import * as tasks from "aws-cdk-lib/aws-stepfunctions-tasks";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as ssm from "aws-cdk-lib/aws-ssm";
+import * as appsync from "aws-cdk-lib/aws-appsync";
+import * as cognito from "aws-cdk-lib/aws-cognito";
+import * as s3 from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
 import { NagSuppressions } from "cdk-nag";
+
+export interface DeleteUserStepFunctionProps {
+    userPoolId: string;
+    region: string;
+    appsyncId: string;
+    bucketName: string;
+    graphQLEndpoint: string;
+    amplifyEnv: string;
+}
 
 const getRoleArnNameOnly = (functionObject: lambda.Function) => {
     const lambdaRole = functionObject.role;
@@ -14,47 +26,35 @@ const getRoleArnNameOnly = (functionObject: lambda.Function) => {
     return cfnRole.attrArn;
 };
 
-export class StepFunctionsStack extends cdk.Stack {
-    private appsyncId: string;
-    private userPoolId: string;
-    private bucketName: string;
+export class DeleteUserStepFunction extends Construct {
+    private userPool: cdk.aws_cognito.IUserPool;
+    private bucket: cdk.aws_s3.IBucket;
+    private region: string;
+    private appsync: cdk.aws_appsync.IGraphqlApi;
+    private amplifyEnv: string;
     private graphQLEndpoint: string;
 
-    private createLambdaRole = (
-        name: string,
-        functionName: string,
+    private createLambdaStatement = (
+        lambdaFunction: cdk.aws_lambda.Function,
         appsyncFields?: { queries?: string[]; mutations?: string[] }
     ) => {
-        const deployEnv = process.env.DEPLOY_ENV || "dev";
-        const role = new iam.Role(this, name, {
-            assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
-            roleName: `${name}-role-${deployEnv}`,
-        });
-        const logGroupCreationPolicy = new iam.PolicyStatement({
-            actions: ["logs:CreateLogGroup"],
-            resources: [
-                `arn:aws:logs:${this.region}:${this.account}:log-group:/aws/lambda/${functionName}:*`,
+        const statement = new iam.PolicyStatement({
+            actions: [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
             ],
+            resources: [lambdaFunction.functionArn],
         });
-        role.addToPolicy(logGroupCreationPolicy);
-
-        const logStreamAndEventsPolicy = new iam.PolicyStatement({
-            actions: ["logs:CreateLogStream", "logs:PutLogEvents"],
-            resources: [
-                `arn:aws:logs:${this.region}:${this.account}:log-group:/aws/lambda/${functionName}`,
-            ],
-        });
-        role.addToPolicy(logStreamAndEventsPolicy);
 
         if (appsyncFields?.mutations || appsyncFields?.queries) {
             const queryResources = appsyncFields.queries?.map(
-                (query) =>
-                    `arn:aws:appsync:${this.region}:${this.account}:apis/${this.appsyncId}/types/Query/fields/${query}`
+                (query) => `${this.appsync.arn}/types/Query/fields/${query}`
             );
 
             const mutationResources = appsyncFields.mutations?.map(
-                (query) =>
-                    `arn:aws:appsync:${this.region}:${this.account}:apis/${this.appsyncId}/types/Mutation/fields/${query}`
+                (mutation) =>
+                    `${this.appsync.arn}/types/Mutation/fields/${mutation}`
             );
             const appsyncResources = [
                 ...(queryResources || []),
@@ -65,60 +65,66 @@ export class StepFunctionsStack extends cdk.Stack {
                 throw new Error("No appsync resources found");
             }
 
-            const appsyncPolicy = new iam.PolicyStatement({
-                actions: ["appsync:GraphQL"],
-                resources: appsyncResources,
-            });
-            role.addToPolicy(appsyncPolicy);
+            statement.addActions("appsync:GraphQL");
+            for (const resource of appsyncResources) {
+                statement.addResources(resource);
+            }
         }
-        NagSuppressions.addResourceSuppressions(
-            role,
-            [
-                {
-                    id: "AwsSolutions-IAM5",
-                    reason: 'Wildcard is required for the "logs:CreateLogGroup" action to allow the Lambda service to create its log group upon first invocation. The wildcard is scoped to the specific function log group ARN.',
-                },
-            ],
-            true
-        );
-        return role;
+        return statement;
     };
 
-    constructor(scope: Construct, id: string, props: cdk.StackProps) {
-        super(scope, id, props);
+    constructor(
+        scope: Construct,
+        id: string,
+        props: DeleteUserStepFunctionProps
+    ) {
+        super(scope, id);
 
-        const deployEnv = process.env.DEPLOY_ENV || "dev";
+        this.userPool = cognito.UserPool.fromUserPoolId(
+            this,
+            "AmplifyUserPool",
+            props.userPoolId
+        );
+        this.bucket = s3.Bucket.fromBucketName(
+            this,
+            "AmplifyBucket",
+            props.bucketName
+        );
+        this.appsync = appsync.GraphqlApi.fromGraphqlApiAttributes(
+            this,
+            "ExitingAppsync",
+            { graphqlApiId: props.appsyncId }
+        );
+        this.graphQLEndpoint = props.graphQLEndpoint;
 
-        this.appsyncId = this.node.tryGetContext("appsyncId");
-        this.userPoolId = this.node.tryGetContext("userPoolId");
-        this.graphQLEndpoint = this.node.tryGetContext("graphQLEndpoint");
-        this.bucketName = this.node.tryGetContext("bucketName");
+        this.amplifyEnv = props.amplifyEnv;
 
         console.log(
             "Got context",
-            this.appsyncId,
-            this.userPoolId,
-            this.graphQLEndpoint,
-            this.bucketName
+            props.appsyncId,
+            props.graphQLEndpoint,
+            props.bucketName,
+            props.amplifyEnv,
+            props.region,
+            props.userPoolId
         );
 
         if (
-            !this.appsyncId ||
-            !this.userPoolId ||
-            !this.graphQLEndpoint ||
-            !this.bucketName
+            !props.appsyncId ||
+            !props.graphQLEndpoint ||
+            !props.bucketName ||
+            !props.amplifyEnv ||
+            !props.region ||
+            !props.userPoolId
         ) {
             throw new Error("You must pass in all the context values");
         }
-
-        const getUserCommentsFunctionName = `platelet-sfn-get-user-comments-${deployEnv}`;
 
         const getUserCommentsFunction = new lambda.Function(
             this,
             "GetUserCommentsFunction",
             {
                 runtime: lambda.Runtime.NODEJS_22_X,
-                functionName: getUserCommentsFunctionName,
                 handler: "index.handler",
                 code: lambda.Code.fromAsset(
                     "./lib/lambda/node/GetUserComments/dist"
@@ -129,22 +135,23 @@ export class StepFunctionsStack extends cdk.Stack {
                     REGION: this.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
                 },
-                role: this.createLambdaRole(
-                    "GetUserCommentsRole",
-                    getUserCommentsFunctionName,
-                    { queries: ["getUser"] }
-                ),
+                role: new iam.Role(this, "GetUserCommentsFunctionRole", {
+                    assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+                }),
             }
         );
 
-        const getUserAssignmentsFunctionName = `platelet-sfn-get-user-assignments-${deployEnv}`;
+        getUserCommentsFunction.addToRolePolicy(
+            this.createLambdaStatement(getUserCommentsFunction, {
+                queries: ["getUser"],
+            })
+        );
 
         const getUserAssignmentsFunction = new lambda.Function(
             this,
             "GetUserAssignmentsFunction",
             {
                 runtime: lambda.Runtime.NODEJS_22_X,
-                functionName: getUserAssignmentsFunctionName,
                 handler: "index.handler",
                 code: lambda.Code.fromAsset(
                     "./lib/lambda/node/GetUserAssignments/dist"
@@ -155,22 +162,22 @@ export class StepFunctionsStack extends cdk.Stack {
                     REGION: this.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
                 },
-                role: this.createLambdaRole(
-                    "GetUserAssignmentsRole",
-                    getUserAssignmentsFunctionName,
-                    { queries: ["getUser"] }
-                ),
+                role: new iam.Role(this, "GetUserAssignmentsFunctionRole", {
+                    assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+                }),
             }
         );
-
-        const deleteCommentsFunctionName = `platelet-sfn-delete-comments-${deployEnv}`;
+        getUserAssignmentsFunction.addToRolePolicy(
+            this.createLambdaStatement(getUserAssignmentsFunction, {
+                queries: ["getUser"],
+            })
+        );
 
         const deleteCommentsFunction = new lambda.Function(
             this,
             "DeleteCommentsFunction",
             {
                 runtime: lambda.Runtime.NODEJS_22_X,
-                functionName: deleteCommentsFunctionName,
                 handler: "index.handler",
                 code: lambda.Code.fromAsset(
                     "./lib/lambda/node/DeleteComments/dist"
@@ -181,21 +188,23 @@ export class StepFunctionsStack extends cdk.Stack {
                     REGION: this.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
                 },
-                role: this.createLambdaRole(
-                    "DeleteCommentsRole",
-                    deleteCommentsFunctionName,
-                    { mutations: ["deleteComment"] }
-                ),
+                role: new iam.Role(this, "DeleteCommentsFunctionRole", {
+                    assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+                }),
             }
         );
-        const deleteAssignmentsFunctionName = `platelet-sfn-delete-assignments-${deployEnv}`;
+
+        deleteCommentsFunction.addToRolePolicy(
+            this.createLambdaStatement(getUserAssignmentsFunction, {
+                queries: ["deleteComment"],
+            })
+        );
 
         const deleteAssignmentsFunction = new lambda.Function(
             this,
             "DeleteAssignmentsFunction",
             {
                 runtime: lambda.Runtime.NODEJS_22_X,
-                functionName: deleteAssignmentsFunctionName,
                 handler: "index.handler",
                 code: lambda.Code.fromAsset(
                     "./lib/lambda/node/DeleteAssignments/dist"
@@ -206,22 +215,22 @@ export class StepFunctionsStack extends cdk.Stack {
                     REGION: this.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
                 },
-                role: this.createLambdaRole(
-                    "DeleteAssignmentsRole",
-                    deleteAssignmentsFunctionName,
-                    { mutations: ["deleteTaskAssignee"] }
-                ),
+                role: new iam.Role(this, "DeleteAssignmentsFunctionRole", {
+                    assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+                }),
             }
         );
-
-        const cleanVehicleAssignmentsFunctionName = `platelet-sfn-clean-vehicle-assignments-${deployEnv}`;
+        deleteAssignmentsFunction.addToRolePolicy(
+            this.createLambdaStatement(deleteAssignmentsFunction, {
+                queries: ["deleteTaskAssignee"],
+            })
+        );
 
         const cleanVehicleAssignmentsFunction = new lambda.Function(
             this,
             "CleanVehicleAssignmentsFunction",
             {
                 runtime: lambda.Runtime.NODEJS_22_X,
-                functionName: cleanVehicleAssignmentsFunctionName,
                 handler: "index.handler",
                 code: lambda.Code.fromAsset(
                     "./lib/lambda/node/CleanVehicleAssignments/dist"
@@ -232,25 +241,29 @@ export class StepFunctionsStack extends cdk.Stack {
                     REGION: this.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
                 },
-                role: this.createLambdaRole(
-                    "CleanVehicleAssignmentsRole",
-                    cleanVehicleAssignmentsFunctionName,
+                role: new iam.Role(
+                    this,
+                    "CleanVehicleAssignmentsFunctionRole",
                     {
-                        queries: ["getUser"],
-                        mutations: ["deleteVehicleAssignment"],
+                        assumedBy: new iam.ServicePrincipal(
+                            "lambda.amazonaws.com"
+                        ),
                     }
                 ),
             }
         );
-
-        const cleanPossibleRiderResponsibilitiesFunctionName = `platelet-sfn-clean-possible-rider-responsibilities-${deployEnv}`;
+        cleanVehicleAssignmentsFunction.addToRolePolicy(
+            this.createLambdaStatement(cleanVehicleAssignmentsFunction, {
+                queries: ["getUser"],
+                mutations: ["deleteVehicleAssignment"],
+            })
+        );
 
         const cleanPossibleRiderResponsibilitiesFunction = new lambda.Function(
             this,
             "CleanPossibleRiderResponsibilitiesFunction",
             {
                 runtime: lambda.Runtime.NODEJS_22_X,
-                functionName: cleanPossibleRiderResponsibilitiesFunctionName,
                 handler: "index.handler",
                 code: lambda.Code.fromAsset(
                     "./lib/lambda/node/CleanPossibleRiderResponsibilities/dist"
@@ -261,72 +274,32 @@ export class StepFunctionsStack extends cdk.Stack {
                     REGION: this.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
                 },
-                role: this.createLambdaRole(
-                    "CleanPossibleRiderResponsibilitiesRole",
-                    cleanPossibleRiderResponsibilitiesFunctionName,
+                role: new iam.Role(
+                    this,
+                    "CleanPossibleRiderResponsibilitiesFunctionRole",
                     {
-                        queries: ["getUser"],
-                        mutations: ["deletePossibleRiderResponsibilities"],
+                        assumedBy: new iam.ServicePrincipal(
+                            "lambda.amazonaws.com"
+                        ),
                     }
                 ),
             }
         );
-
-        const deleteUserFunctionName = `platelet-sfn-delete-user-${deployEnv}`;
-
-        const deleteUserFunctionRole = this.createLambdaRole(
-            "DeleteUserRole",
-            deleteUserFunctionName,
-            {
-                queries: ["getUser"],
-                mutations: ["deleteUser"],
-            }
-        );
-        deleteUserFunctionRole.attachInlinePolicy(
-            new iam.Policy(this, "DeleteUserCognitoPolicy", {
-                statements: [
-                    new iam.PolicyStatement({
-                        actions: [
-                            "cognito-idp:AdminDeleteUser",
-                            "cognito-idp:AdminDisableUser",
-                            "cognito-idp:AdminGetUser",
-                        ],
-                        resources: [
-                            `arn:aws:cognito-idp:${this.region}:${this.account}:userpool/${this.userPoolId}`,
-                        ],
-                    }),
-                ],
-            })
-        );
-
-        const deleteUserS3Policy = new iam.Policy(this, "DeleteUserS3Policy", {
-            statements: [
-                new iam.PolicyStatement({
-                    actions: ["s3:DeleteObject"],
-                    resources: [`arn:aws:s3:::${this.bucketName}/public/*`],
-                }),
-            ],
-        });
-
-        NagSuppressions.addResourceSuppressions(
-            deleteUserS3Policy,
-            [
+        cleanVehicleAssignmentsFunction.addToRolePolicy(
+            this.createLambdaStatement(
+                cleanPossibleRiderResponsibilitiesFunction,
                 {
-                    id: "AwsSolutions-IAM5",
-                    reason: "Wildcard is required in S3 policy so any profile picture can be deleted",
-                },
-            ],
-            true
+                    queries: ["getUser"],
+                    mutations: ["deletePossibleRiderResponsibilities"],
+                }
+            )
         );
-
-        deleteUserFunctionRole.attachInlinePolicy(deleteUserS3Policy);
 
         const deleteUserFunction = new lambda.Function(
             this,
             "DeleteUserFunction",
             {
                 runtime: lambda.Runtime.NODEJS_22_X,
-                functionName: deleteUserFunctionName,
                 handler: "index.handler",
                 code: lambda.Code.fromAsset(
                     "./lib/lambda/node/DeleteUser/dist"
@@ -336,22 +309,62 @@ export class StepFunctionsStack extends cdk.Stack {
                 environment: {
                     REGION: this.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
-                    USER_POOL_ID: this.userPoolId,
+                    USER_POOL_ID: this.userPool.userPoolId,
                 },
-                role: deleteUserFunctionRole,
+                role: new iam.Role(this, "DeleteUserFunctionRole", {
+                    assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+                }),
             }
         );
 
-        const RETRY_LIMIT = 3;
+        deleteUserFunction.addToRolePolicy(
+            this.createLambdaStatement(deleteUserFunction, {
+                queries: ["getUser"],
+                mutations: ["deleteUser"],
+            })
+        );
+        deleteUserFunction.role?.attachInlinePolicy(
+            new iam.Policy(this, "DeleteUserCognitoPolicy", {
+                statements: [
+                    new iam.PolicyStatement({
+                        actions: [
+                            "cognito-idp:AdminDeleteUser",
+                            "cognito-idp:AdminDisableUser",
+                            "cognito-idp:AdminGetUser",
+                        ],
+                        resources: [this.userPool.userPoolArn],
+                    }),
+                ],
+            })
+        );
 
-        const retryCheckFunctionName = `platelet-delete-user-stepfunction-retry-checker-${deployEnv}`;
+        deleteUserFunction.addToRolePolicy(
+            new iam.PolicyStatement({
+                actions: ["s3:DeleteObject"],
+                resources: [`${this.bucket.bucketArn}/public/*`],
+            })
+        );
+
+        if (deleteUserFunction.role) {
+            NagSuppressions.addResourceSuppressions(
+                deleteUserFunction.role,
+                [
+                    {
+                        id: "AwsSolutions-IAM5",
+                        reason: "Wildcard is required in S3 policy so any profile picture can be deleted",
+                    },
+                ],
+                true
+            );
+        }
+
+        const RETRY_LIMIT = 3;
 
         const retryCheckFunction = new lambda.Function(
             this,
             "DeleteUserStepFunctionRetryChecker",
             {
                 runtime: lambda.Runtime.NODEJS_22_X,
-                functionName: retryCheckFunctionName,
                 handler: "index.handler",
                 code: lambda.Code.fromInline(
                     `
@@ -371,11 +384,14 @@ export class StepFunctionsStack extends cdk.Stack {
           };
           `
                 ),
-                role: this.createLambdaRole(
-                    "DeleteUserStepFunctionRetryCheckerRole",
-                    retryCheckFunctionName
-                ),
+                role: new iam.Role(this, "RetriesRole", {
+                    assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+                }),
             }
+        );
+
+        retryCheckFunction.addToRolePolicy(
+            this.createLambdaStatement(retryCheckFunction)
         );
 
         const retryCheckLambdaTask = new tasks.LambdaInvoke(
@@ -485,7 +501,7 @@ export class StepFunctionsStack extends cdk.Stack {
 
         const deleteUserStateMachine = new sfn.StateMachine(
             this,
-            `DeleteUserStateMachine-${deployEnv}`,
+            `DeleteUserStateMachine`,
             {
                 definition: definition,
                 logs: {
@@ -493,8 +509,7 @@ export class StepFunctionsStack extends cdk.Stack {
                         this,
                         "DeleteUserSFLogGroup",
                         {
-                            logGroupName: `/aws/stepfunctions/delete-user-sfn-${deployEnv}`,
-                            removalPolicy: cdk.RemovalPolicy.DESTROY, // Adjust as needed
+                            removalPolicy: cdk.RemovalPolicy.DESTROY,
                         }
                     ),
                     level: sfn.LogLevel.ALL,
@@ -516,7 +531,7 @@ export class StepFunctionsStack extends cdk.Stack {
 
         // save the state machine name to SSM to be accessed by plateletAdminDeleteUser lambda
         new ssm.StringParameter(this, "DeleteUserStateMachineArnSSMParam", {
-            parameterName: `/platelet-supporting-cdk/${deployEnv}/DeleteUserStateMachineArn`,
+            parameterName: `/platelet-supporting-cdk/${this.amplifyEnv}/DeleteUserStateMachineArn`,
             stringValue: deleteUserStateMachine.stateMachineArn,
         });
 
