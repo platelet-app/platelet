@@ -29,7 +29,6 @@ const getRoleArnNameOnly = (functionObject: lambda.Function) => {
 export class DeleteUserStepFunction extends Construct {
     private userPool: cdk.aws_cognito.IUserPool;
     private bucket: cdk.aws_s3.IBucket;
-    private region: string;
     private appsync: cdk.aws_appsync.IGraphqlApi;
     private amplifyEnv: string;
     private graphQLEndpoint: string;
@@ -153,7 +152,7 @@ export class DeleteUserStepFunction extends Construct {
                 timeout: cdk.Duration.seconds(180),
                 memorySize: 1024,
                 environment: {
-                    REGION: this.region,
+                    REGION: props.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
                 },
                 role: new iam.Role(this, "GetUserCommentsFunctionRole", {
@@ -178,7 +177,7 @@ export class DeleteUserStepFunction extends Construct {
                 timeout: cdk.Duration.seconds(180),
                 memorySize: 1024,
                 environment: {
-                    REGION: this.region,
+                    REGION: props.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
                 },
                 role: new iam.Role(this, "GetUserAssignmentsFunctionRole", {
@@ -202,7 +201,7 @@ export class DeleteUserStepFunction extends Construct {
                 timeout: cdk.Duration.seconds(180),
                 memorySize: 1024,
                 environment: {
-                    REGION: this.region,
+                    REGION: props.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
                 },
                 role: new iam.Role(this, "DeleteCommentsFunctionRole", {
@@ -227,7 +226,7 @@ export class DeleteUserStepFunction extends Construct {
                 timeout: cdk.Duration.seconds(180),
                 memorySize: 1024,
                 environment: {
-                    REGION: this.region,
+                    REGION: props.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
                 },
                 role: new iam.Role(this, "DeleteAssignmentsFunctionRole", {
@@ -251,7 +250,7 @@ export class DeleteUserStepFunction extends Construct {
                 timeout: cdk.Duration.seconds(180),
                 memorySize: 1024,
                 environment: {
-                    REGION: this.region,
+                    REGION: props.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
                 },
                 role: new iam.Role(
@@ -282,7 +281,7 @@ export class DeleteUserStepFunction extends Construct {
                 timeout: cdk.Duration.seconds(180),
                 memorySize: 1024,
                 environment: {
-                    REGION: this.region,
+                    REGION: props.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
                 },
                 role: new iam.Role(
@@ -313,7 +312,7 @@ export class DeleteUserStepFunction extends Construct {
                 timeout: cdk.Duration.seconds(180),
                 memorySize: 1024,
                 environment: {
-                    REGION: this.region,
+                    REGION: props.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
                     USER_POOL_ID: this.userPool.userPoolId,
                 },
