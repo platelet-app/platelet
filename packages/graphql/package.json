@@ -1,0 +1,24 @@
+{
+    "name": "@platelet-app/graphql",
+    "version": "1.1.5",
+    "description": "GraphQL operations for the platelet.app project",
+    "homepage": "https://platelet.app",
+    "bugs": {
+        "url": "https://github.com/platelet-app/platelet/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/platelet-app/platelet.git"
+    },
+    "license": "Apache-2.0",
+    "author": "Theo Cranmore <theo@platelet.app>",
+    "type": "module",
+    "main": "dist/graphql/index.js",
+    "types": "dist/graphql/index.d.ts",
+    "scripts": {
+        "sedQueries": "sed -i 's:import \\* as APITypes from \"../API\";:import \\* as APITypes from \"../API.js\";:g' ../../src/graphql/queries.ts ../../src/graphql/mutations.ts ../../src/graphql/subscriptions.ts",
+        "build": "cd ../.. && amplify api gql-compile && amplify codegen && npm run sedQueries --workspace @platelet-app/graphql && cd packages/graphql && tsc --project tsconfig.json",
+        "build:simple": "tsc --project tsconfig.json",
+        "prepublishOnly": "npm run build && npm version patch"
+    }
+}

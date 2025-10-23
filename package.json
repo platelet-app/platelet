@@ -14,6 +14,7 @@
         "@mui/material": "^5.0.3",
         "@mui/styled-engine-sc": "^5.0.3",
         "@mui/styles": "^5.0.1",
+        "@platelet-app/graphql": "^1.1.5",
         "@reduxjs/toolkit": "^1.6.1",
         "@sentry/react": "^7.107.0",
         "@testing-library/react": "^12.1.2",
@@ -145,5 +146,8 @@
         "css-mediaquery": "^0.1.2",
         "cypress": "^9.0.0",
         "cypress-localstorage-commands": "^1.7.0"
-    }
+    },
+    "workspaces": [
+        "packages/*"
+    ]
 }

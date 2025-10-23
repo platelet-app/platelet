@@ -363,6 +363,13 @@ export const schema = {
                         "rules": [
                             {
                                 "allow": "private",
+                                "provider": "iam",
+                                "operations": [
+                                    "read"
+                                ]
+                            },
+                            {
+                                "allow": "private",
                                 "operations": [
                                     "read"
                                 ]
@@ -474,6 +481,14 @@ export const schema = {
                     "type": "auth",
                     "properties": {
                         "rules": [
+                            {
+                                "allow": "private",
+                                "provider": "iam",
+                                "operations": [
+                                    "read",
+                                    "delete"
+                                ]
+                            },
                             {
                                 "allow": "private",
                                 "operations": [
@@ -739,6 +754,14 @@ export const schema = {
                     "type": "auth",
                     "properties": {
                         "rules": [
+                            {
+                                "allow": "private",
+                                "provider": "iam",
+                                "operations": [
+                                    "read",
+                                    "delete"
+                                ]
+                            },
                             {
                                 "allow": "private",
                                 "operations": [
@@ -1545,6 +1568,14 @@ export const schema = {
                         "rules": [
                             {
                                 "allow": "private",
+                                "provider": "iam",
+                                "operations": [
+                                    "read",
+                                    "delete"
+                                ]
+                            },
+                            {
+                                "allow": "private",
                                 "operations": [
                                     "read"
                                 ]
@@ -1913,6 +1944,14 @@ export const schema = {
                     "type": "auth",
                     "properties": {
                         "rules": [
+                            {
+                                "allow": "private",
+                                "provider": "iam",
+                                "operations": [
+                                    "read",
+                                    "delete"
+                                ]
+                            },
                             {
                                 "groupClaim": "cognito:groups",
                                 "provider": "userPools",
@@ -2609,6 +2648,25 @@ export const schema = {
                 }
             }
         },
+        "StateMachineExecution": {
+            "name": "StateMachineExecution",
+            "fields": {
+                "executionArn": {
+                    "name": "executionArn",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "startDate": {
+                    "name": "startDate",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                }
+            }
+        },
         "Statistics": {
             "name": "Statistics",
             "fields": {
@@ -2679,5 +2737,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.4",
-    "version": "d7d2d4025ea065d2c99af6d7845afd5e"
+    "version": "131e524771bbce65ede4aec3de4f8676"
 };

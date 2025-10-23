@@ -1,10 +1,6 @@
 name: Update tenant API
 
 on:
-  push:
-    branches:
-      - 'production/**'
-      - 'test/**'
   workflow_dispatch:
     inputs:
       wait_for_amplify:
