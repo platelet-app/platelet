@@ -1,13 +1,13 @@
 
 {
     "adminRoleNames": [
-        "PlateletCdkStack-DeleteUserStepFunctionCleanPossibl-aCcOzg5cotce",
-        "PlateletCdkStack-DeleteUserStepFunctionGetUserComme-C1NsjTFDiQYU",
-        "PlateletCdkStack-DeleteUserStepFunctionDeleteCommen-eZg8AUZwOy2g",
-        "PlateletCdkStack-DeleteUserStepFunctionDeleteAssign-LTTkLfttXiXK",
-        "PlateletCdkStack-DeleteUserStepFunctionDeleteUserFu-eKD84npsPZo6",
-        "PlateletCdkStack-DeleteUserStepFunctionGetUserAssig-PAWsUaGZkSse",
-        "PlateletCdkStack-DeleteUserStepFunctionCleanVehicle-cGvTkBPMfeAG",
+        "PlateletCdkStack-producti-DeleteUserStepFunctionCle-5wjBlMqn3iQt",
+        "PlateletCdkStack-producti-DeleteUserStepFunctionGet-zCh5rsTwakO5",
+        "PlateletCdkStack-producti-DeleteUserStepFunctionDel-3yKNWQrg4ljj",
+        "PlateletCdkStack-producti-DeleteUserStepFunctionDel-9OaUjDk7OXbX",
+        "PlateletCdkStack-producti-DeleteUserStepFunctionDel-M2ASHMHu8yvc",
+        "PlateletCdkStack-producti-DeleteUserStepFunctionGet-tLP2BDjNuuMi",
+        "PlateletCdkStack-producti-DeleteUserStepFunctionCle-vDS60ESdJZZ8",
     ]
 }
 
