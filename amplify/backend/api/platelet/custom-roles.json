@@ -1,12 +1,3 @@
 {
-    "adminRoleNames": [
-        "StepFunctionsStack-dev-CleanPossibleRiderResponsibi-TJQASNdkssgp",
-        "StepFunctionsStack-dev-CleanVehicleAssignmentsFunct-va63DLECH6ja",
-        "StepFunctionsStack-dev-DeleteAssignmentsFunctionSer-mLf2NUePwOgQ",
-        "StepFunctionsStack-dev-DeleteCommentsFunctionServic-2FvPxOyVr6QJ",
-        "StepFunctionsStack-dev-DeleteUserFunctionServiceRol-MdU7qlV6DV21",
-        "StepFunctionsStack-dev-DeleteUserStateMachinedevRol-8A5rRFfXpdpD",
-        "StepFunctionsStack-dev-GetUserAssignmentsFunctionSe-uHtEsLDJeVUj",
-        "StepFunctionsStack-dev-GetUserCommentsFunctionServi-OAMyIPIVKBG3"
-    ]
+    "adminRoleNames": []
 }
