@@ -1,4 +1,4 @@
-name: Deploy supporting CDK
+name: Deploy CDK and Amplify
 
 on:
   push:
