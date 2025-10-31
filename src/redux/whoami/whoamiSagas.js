@@ -50,8 +50,9 @@ function* whoamiObserver(action) {
             // log them out
             if (result.disabled) {
                 yield put(logoutUser());
+            } else {
+                yield put(getWhoamiSuccess(result));
             }
-            yield put(getWhoamiSuccess(result));
         }
     } finally {
         console.log("stopping whoami observer");
@@ -207,9 +208,10 @@ function* getWhoami() {
                     // if the user is disabled log them out
                     if (user.disabled) {
                         yield put(logoutUser());
+                    } else {
+                        yield put(getWhoamiSuccess(user));
+                        yield put(initWhoamiObserver(user.id));
                     }
-                    yield put(getWhoamiSuccess(user));
-                    yield put(initWhoamiObserver(user.id));
                 }
                 yield put(setTenantId(tenantId));
             } else {
