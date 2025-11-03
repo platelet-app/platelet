@@ -363,37 +363,8 @@ export const schema = {
                         "rules": [
                             {
                                 "allow": "private",
-                                "provider": "iam",
                                 "operations": [
                                     "read"
-                                ]
-                            },
-                            {
-                                "allow": "private",
-                                "operations": [
-                                    "read"
-                                ]
-                            },
-                            {
-                                "provider": "userPools",
-                                "ownerField": "cognitoId",
-                                "allow": "owner",
-                                "operations": [
-                                    "read",
-                                    "update"
-                                ],
-                                "identityClaim": "cognito:username"
-                            },
-                            {
-                                "groupClaim": "cognito:groups",
-                                "provider": "userPools",
-                                "allow": "groups",
-                                "groups": [
-                                    "ADMIN"
-                                ],
-                                "operations": [
-                                    "read",
-                                    "update"
                                 ]
                             }
                         ]
