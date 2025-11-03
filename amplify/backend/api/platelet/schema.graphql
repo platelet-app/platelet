@@ -15,15 +15,11 @@ type User
 @auth(rules: [
   {allow: private, provider: iam, operations: [read]},
   {allow: private, operations: [read]},
-  {allow: owner, ownerField: "cognitoId", operations: [read, update]},
-  {allow: groups, groups: ["ADMIN"], operations: [read, update]},
 ])
 @model {
   id: ID! @auth(rules: [
     {allow: private, provider: iam, operations: [read]},
     {allow: private, operations: [read]},
-    {allow: owner, ownerField: "cognitoId", operations: [read, update]},
-    {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [read, update]},
   ])
   username: String! @auth(rules: [
     {allow: private, provider: iam, operations: [read]},
@@ -35,20 +31,40 @@ type User
   ])
   tenantId: ID! @index(name: "byTenantId") @auth(rules: [
     {allow: private, provider: iam, operations: [read]},
-    {allow: private, operations: [read, create]}
+    {allow: private, operations: [read]}
   ])
   isPrimaryAdmin: Int @default(value: "0") @auth(rules: [
     {allow: private, provider: iam, operations: [read]},
     {allow: private, operations: [read]}
   ])
-  contact: AddressAndContactDetails
-  displayName: String!
-  name: String
+  contact: AddressAndContactDetails @auth(rules: [
+    {allow: private, provider: iam, operations: [read]},
+    {allow: private, operations: [read]},
+    {allow: groups, groups: ["ADMIN"], operations: [read, update]},
+    {allow: owner, ownerField: "cognitoId", operations: [read, update]},
+  ])
+  displayName: String! @auth(rules: [
+    {allow: private, provider: iam, operations: [read]},
+    {allow: private, operations: [read]},
+    {allow: groups, groups: ["ADMIN"], operations: [read, update]},
+    {allow: owner, ownerField: "cognitoId", operations: [read, update]},
+  ])
+  name: String @auth(rules: [
+    {allow: private, provider: iam, operations: [read]},
+    {allow: private, operations: [read]},
+    {allow: groups, groups: ["ADMIN"], operations: [read, update]},
+    {allow: owner, ownerField: "cognitoId", operations: [read, update]},
+  ])
   roles: [Role!]! @auth(rules: [
     {allow: private, provider: iam, operations: [read]},
     {allow: private, operations: [read]}
   ])
-  dateOfBirth: AWSDate
+  dateOfBirth: AWSDate @auth(rules: [
+    {allow: private, provider: iam, operations: [read]},
+    {allow: private, operations: [read]},
+    {allow: groups, groups: ["ADMIN"], operations: [read, update]},
+    {allow: owner, ownerField: "cognitoId", operations: [read, update]},
+  ])
   riderResponsibility: String @auth(rules: [
     {allow: private, provider: iam, operations: [read]},
     {allow: private, operations: [read]},
@@ -56,7 +72,12 @@ type User
     {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [read, update, delete]},
   ])
   possibleRiderResponsibilities: [PossibleRiderResponsibilities] @hasMany
-  profilePicture: S3Object
+  profilePicture: S3Object @auth(rules: [
+    {allow: private, provider: iam, operations: [read]},
+    {allow: private, operations: [read]},
+    {allow: groups, groups: ["ADMIN"], operations: [read, update]},
+    {allow: owner, ownerField: "cognitoId", operations: [read, update]},
+  ])
   comments: [Comment] @hasMany
   assignments: [TaskAssignee] @hasMany
   vehicleAssignments: [VehicleAssignment] @hasMany
@@ -64,10 +85,7 @@ type User
   createdLocations: [Location] @hasMany
   createdVehicles: [Vehicle] @hasMany
   createdScheduledTasks: [ScheduledTask] @hasMany
-  disabled: Int @default(value: "0") @auth(rules: [
-    {allow: private, provider: iam, operations: [read]},
-    {allow: private, operations: [read]}
-  ])
+  disabled: Int @default(value: "0")
 }
 
 type PossibleRiderResponsibilities
