@@ -17,6 +17,7 @@ import { NotFound } from "http-errors";
 import { userRoles } from "../../apiConsts";
 import { eventChannel } from "redux-saga";
 import dataStoreConflictHandler from "./dataStoreConflictHandler";
+import { logoutUser } from "../login/LoginActions";
 
 const fakeUser = {
     id: "offline",
@@ -45,7 +46,13 @@ function* whoamiObserver(action) {
     try {
         while (true) {
             const result = yield take(channel);
-            yield put(getWhoamiSuccess(result));
+            // if the subscription indicates the user has been disabled
+            // log them out
+            if (result.disabled) {
+                yield put(logoutUser());
+            } else {
+                yield put(getWhoamiSuccess(result));
+            }
         }
     } finally {
         console.log("stopping whoami observer");
@@ -197,8 +204,14 @@ function* getWhoami() {
                         throw new NotFound("Could not find logged in user");
                     }
                 } else {
-                    yield put(getWhoamiSuccess(result[0]));
-                    yield put(initWhoamiObserver(result[0].id));
+                    const [user] = result;
+                    // if the user is disabled log them out
+                    if (user.disabled) {
+                        yield put(logoutUser());
+                    } else {
+                        yield put(getWhoamiSuccess(user));
+                        yield put(initWhoamiObserver(user.id));
+                    }
                 }
                 yield put(setTenantId(tenantId));
             } else {
