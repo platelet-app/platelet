@@ -211,7 +211,7 @@ export class DeleteUserStepFunction extends Construct {
         );
 
         this.createLambdaStatement(deleteCommentsFunction, {
-            mutations: ["deleteComment"],
+            mutations: ["deleteComment", "updateComment"],
         });
 
         const deleteAssignmentsFunction = new lambda.Function(
