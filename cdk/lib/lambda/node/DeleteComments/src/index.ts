@@ -21,6 +21,23 @@ const deleteCommentFunction = async (comment: Comment, endpoint: string) => {
     errorCheck(body);
 };
 
+const cleanCommentBodyFunction = async (comment: Comment, endpoint: string) => {
+    const variables = {
+        input: {
+            id: comment.id,
+            _version: comment._version,
+            body: "",
+        },
+    };
+    const response = await request(
+        { query: mutations.updateComment, variables },
+        endpoint
+    );
+    const body = await response.json();
+    errorCheck(body);
+    return body.data;
+};
+
 export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
     console.log("delete comments", event);
     const { userId, comments, retryCount } = event;
@@ -30,8 +47,20 @@ export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
     const filterDeleted = comments.filter((c) => !c._deleted);
     console.log("Comments:", comments);
     console.log("Filtered:", filterDeleted);
+
+    const commentsCleaned = (
+        await pAll(
+            filterDeleted.map(
+                (c) => () => cleanCommentBodyFunction(c, GRAPHQL_ENDPOINT)
+            ),
+            { concurrency: 10 }
+        )
+    ).flat();
+
+    console.log("Cleaned:", commentsCleaned);
+
     await pAll(
-        filterDeleted.map(
+        commentsCleaned.map(
             (c) => () => deleteCommentFunction(c, GRAPHQL_ENDPOINT)
         ),
         { concurrency: 10 }

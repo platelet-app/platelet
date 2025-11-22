@@ -37,9 +37,20 @@ fakeComments.push({
     _deleted: true,
 });
 
+const fakeUpdatedComments = fakeComments.map((c) => ({
+    ...c,
+    _version: c._version + 1,
+}));
+
 describe("DeleteComments", () => {
     test("delete some comments", async () => {
-        lambda.request.mockImplementation(setupFetchStub({}));
+        lambda.request
+            .mockImplementationOnce(setupFetchStub(fakeUpdatedComments[0]))
+            .mockImplementationOnce(setupFetchStub(fakeUpdatedComments[1]))
+            .mockImplementationOnce(setupFetchStub(fakeUpdatedComments[2]))
+            .mockImplementationOnce(setupFetchStub(fakeUpdatedComments[3]))
+            .mockImplementationOnce(setupFetchStub(fakeUpdatedComments[4]))
+            .mockImplementation(setupFetchStub({}));
         await handler({
             userId: "test",
             retryCount: 1,

@@ -1,7 +1,272 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DeleteComments delete some comments 1`] = `
 [
+  [
+    {
+      "query": "mutation UpdateComment(
+  $input: UpdateCommentInput!
+  $condition: ModelCommentConditionInput
+) {
+  updateComment(input: $input, condition: $condition) {
+    id
+    parentId
+    owner
+    tenantId
+    body
+    author {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    visibility
+    archived
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userCommentsId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 2,
+          "body": "",
+          "id": 0,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation UpdateComment(
+  $input: UpdateCommentInput!
+  $condition: ModelCommentConditionInput
+) {
+  updateComment(input: $input, condition: $condition) {
+    id
+    parentId
+    owner
+    tenantId
+    body
+    author {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    visibility
+    archived
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userCommentsId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 2,
+          "body": "",
+          "id": 1,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation UpdateComment(
+  $input: UpdateCommentInput!
+  $condition: ModelCommentConditionInput
+) {
+  updateComment(input: $input, condition: $condition) {
+    id
+    parentId
+    owner
+    tenantId
+    body
+    author {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    visibility
+    archived
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userCommentsId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 2,
+          "body": "",
+          "id": 2,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation UpdateComment(
+  $input: UpdateCommentInput!
+  $condition: ModelCommentConditionInput
+) {
+  updateComment(input: $input, condition: $condition) {
+    id
+    parentId
+    owner
+    tenantId
+    body
+    author {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    visibility
+    archived
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userCommentsId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 2,
+          "body": "",
+          "id": 3,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation UpdateComment(
+  $input: UpdateCommentInput!
+  $condition: ModelCommentConditionInput
+) {
+  updateComment(input: $input, condition: $condition) {
+    id
+    parentId
+    owner
+    tenantId
+    body
+    author {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    visibility
+    archived
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userCommentsId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 2,
+          "body": "",
+          "id": 4,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
   [
     {
       "query": "mutation DeleteComment(
@@ -47,7 +312,7 @@ exports[`DeleteComments delete some comments 1`] = `
 ",
       "variables": {
         "input": {
-          "_version": 2,
+          "_version": 3,
           "id": 0,
         },
       },
@@ -99,7 +364,7 @@ exports[`DeleteComments delete some comments 1`] = `
 ",
       "variables": {
         "input": {
-          "_version": 2,
+          "_version": 3,
           "id": 1,
         },
       },
@@ -151,7 +416,7 @@ exports[`DeleteComments delete some comments 1`] = `
 ",
       "variables": {
         "input": {
-          "_version": 2,
+          "_version": 3,
           "id": 2,
         },
       },
@@ -203,7 +468,7 @@ exports[`DeleteComments delete some comments 1`] = `
 ",
       "variables": {
         "input": {
-          "_version": 2,
+          "_version": 3,
           "id": 3,
         },
       },
@@ -255,7 +520,7 @@ exports[`DeleteComments delete some comments 1`] = `
 ",
       "variables": {
         "input": {
-          "_version": 2,
+          "_version": 3,
           "id": 4,
         },
       },
