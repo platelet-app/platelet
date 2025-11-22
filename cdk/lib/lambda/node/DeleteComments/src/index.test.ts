@@ -38,8 +38,10 @@ fakeComments.push({
 });
 
 const fakeUpdatedComments = fakeComments.map((c) => ({
-    ...c,
-    _version: c._version + 1,
+    updateComment: {
+        ...c,
+        _version: c._version + 1,
+    },
 }));
 
 describe("DeleteComments", () => {
