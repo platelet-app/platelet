@@ -35,7 +35,7 @@ const cleanCommentBodyFunction = async (comment: Comment, endpoint: string) => {
     );
     const body = await response.json();
     errorCheck(body);
-    return body.data;
+    return body?.data?.updateComment;
 };
 
 export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
