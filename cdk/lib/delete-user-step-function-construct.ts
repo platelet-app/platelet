@@ -10,6 +10,7 @@ import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
 import { NagSuppressions } from "cdk-nag";
+import { createLambdaStatement, getRoleArnNameOnly } from "./utils";
 
 export interface DeleteUserStepFunctionProps {
     userPoolId: string;
@@ -18,13 +19,8 @@ export interface DeleteUserStepFunctionProps {
     bucketName: string;
     graphQLEndpoint: string;
     amplifyEnv: string;
+    retryFunction: lambda.Function;
 }
-
-const getRoleArnNameOnly = (functionObject: lambda.Function) => {
-    const lambdaRole = functionObject.role;
-    const cfnRole = lambdaRole?.node.defaultChild as iam.CfnRole;
-    return cfnRole.attrArn;
-};
 
 export class DeleteUserStepFunction extends Construct {
     private userPool: cdk.aws_cognito.IUserPool;
@@ -32,66 +28,6 @@ export class DeleteUserStepFunction extends Construct {
     private appsync: cdk.aws_appsync.IGraphqlApi;
     private amplifyEnv: string;
     private graphQLEndpoint: string;
-
-    private createLambdaStatement = (
-        lambdaFunction: cdk.aws_lambda.IFunction,
-        appsyncFields?: {
-            queries?: string[];
-            mutations?: string[];
-        }
-    ) => {
-        const loggingStatement = new iam.PolicyStatement({
-            actions: [
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:PutLogEvents",
-            ],
-            resources: ["*"],
-        });
-
-        let appsyncStatement;
-
-        if (appsyncFields?.mutations || appsyncFields?.queries) {
-            const queryResources = appsyncFields.queries?.map(
-                (query) => `${this.appsync.arn}/types/Query/fields/${query}`
-            );
-
-            const mutationResources = appsyncFields.mutations?.map(
-                (mutation) =>
-                    `${this.appsync.arn}/types/Mutation/fields/${mutation}`
-            );
-            const appsyncResources = [
-                ...(queryResources || []),
-                ...(mutationResources || []),
-            ];
-
-            if (appsyncResources.length === 0) {
-                throw new Error("No appsync resources found");
-            }
-
-            appsyncStatement = new iam.PolicyStatement();
-            appsyncStatement.addActions("appsync:GraphQL");
-            for (const resource of appsyncResources) {
-                appsyncStatement.addResources(resource);
-            }
-        }
-        lambdaFunction.addToRolePolicy(loggingStatement);
-        if (appsyncStatement) {
-            lambdaFunction.addToRolePolicy(appsyncStatement);
-        }
-        if (lambdaFunction.role) {
-            NagSuppressions.addResourceSuppressions(
-                lambdaFunction.role,
-                [
-                    {
-                        id: "AwsSolutions-IAM5",
-                        reason: 'Wildcard is required for the "logs:CreateLogGroup" action to allow the Lambda service to create its log group upon first invocation. The wildcard is scoped to the specific function log group ARN.',
-                    },
-                ],
-                true
-            );
-        }
-    };
 
     constructor(
         scope: Construct,
@@ -161,7 +97,7 @@ export class DeleteUserStepFunction extends Construct {
             }
         );
 
-        this.createLambdaStatement(getUserCommentsFunction, {
+        createLambdaStatement(getUserCommentsFunction, this.appsync.arn, {
             queries: ["getUser"],
         });
 
@@ -185,7 +121,7 @@ export class DeleteUserStepFunction extends Construct {
                 }),
             }
         );
-        this.createLambdaStatement(getUserAssignmentsFunction, {
+        createLambdaStatement(getUserAssignmentsFunction, this.appsync.arn, {
             queries: ["getUser"],
         });
 
@@ -210,7 +146,7 @@ export class DeleteUserStepFunction extends Construct {
             }
         );
 
-        this.createLambdaStatement(deleteCommentsFunction, {
+        createLambdaStatement(deleteCommentsFunction, this.appsync.arn, {
             mutations: ["deleteComment", "updateComment"],
         });
 
@@ -234,7 +170,7 @@ export class DeleteUserStepFunction extends Construct {
                 }),
             }
         );
-        this.createLambdaStatement(deleteAssignmentsFunction, {
+        createLambdaStatement(deleteAssignmentsFunction, this.appsync.arn, {
             mutations: ["deleteTaskAssignee"],
         });
 
@@ -264,10 +200,14 @@ export class DeleteUserStepFunction extends Construct {
                 ),
             }
         );
-        this.createLambdaStatement(cleanVehicleAssignmentsFunction, {
-            queries: ["getUser"],
-            mutations: ["deleteVehicleAssignment"],
-        });
+        createLambdaStatement(
+            cleanVehicleAssignmentsFunction,
+            this.appsync.arn,
+            {
+                queries: ["getUser"],
+                mutations: ["deleteVehicleAssignment"],
+            }
+        );
 
         const cleanPossibleRiderResponsibilitiesFunction = new lambda.Function(
             this,
@@ -295,10 +235,14 @@ export class DeleteUserStepFunction extends Construct {
                 ),
             }
         );
-        this.createLambdaStatement(cleanPossibleRiderResponsibilitiesFunction, {
-            queries: ["getUser"],
-            mutations: ["deletePossibleRiderResponsibilities"],
-        });
+        createLambdaStatement(
+            cleanPossibleRiderResponsibilitiesFunction,
+            this.appsync.arn,
+            {
+                queries: ["getUser"],
+                mutations: ["deletePossibleRiderResponsibilities"],
+            }
+        );
 
         const deleteUserFunction = new lambda.Function(
             this,
@@ -322,7 +266,7 @@ export class DeleteUserStepFunction extends Construct {
             }
         );
 
-        this.createLambdaStatement(deleteUserFunction, {
+        createLambdaStatement(deleteUserFunction, this.appsync.arn, {
             queries: ["getUser"],
             mutations: ["deleteUser"],
         });
