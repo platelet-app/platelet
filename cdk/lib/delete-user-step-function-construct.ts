@@ -305,43 +305,11 @@ export class DeleteUserStepFunction extends Construct {
             );
         }
 
-        const RETRY_LIMIT = 3;
-
-        const retryCheckFunction = new lambda.Function(
-            this,
-            "DeleteUserStepFunctionRetryChecker",
-            {
-                runtime: lambda.Runtime.NODEJS_22_X,
-                handler: "index.handler",
-                code: lambda.Code.fromInline(
-                    `
-          exports.handler = async function(event) {
-              let { userId, graphQLEndpoint, userPoolId, retryCount } = event;
-              console.log("Retry count:", retryCount)
-              if (!retryCount) {
-                  return {userId, graphQLEndpoint, userPoolId, retryCount: 1}
-              }
-              if (retryCount > ${RETRY_LIMIT}) {
-                  throw new Error("Retries exceeded")
-              }
-
-              retryCount += 1
-
-              return {userId, graphQLEndpoint, userPoolId, retryCount}
-          };
-          `
-                ),
-                role: new iam.Role(this, "RetriesRole", {
-                    assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
-                }),
-            }
-        );
-
         const retryCheckLambdaTask = new tasks.LambdaInvoke(
             this,
             "RetryCheck",
             {
-                lambdaFunction: retryCheckFunction,
+                lambdaFunction: props.retryFunction,
                 payload: sfn.TaskInput.fromJsonPathAt("$"),
                 outputPath: "$.Payload",
             }

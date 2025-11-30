@@ -1,6 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { DeleteUserStepFunction } from "./delete-user-step-function-construct";
+import { RetryFunctionConstruct } from "./retry-function-construct";
 
 export class PlateletCdkStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: cdk.StackProps) {
@@ -11,6 +12,11 @@ export class PlateletCdkStack extends cdk.Stack {
         const bucketName = this.node.tryGetContext("bucketName");
         const amplifyEnv = this.node.tryGetContext("amplifyEnv");
 
+        const retryConstructInstance = new RetryFunctionConstruct(
+            this,
+            "RetryFunction"
+        );
+
         new DeleteUserStepFunction(this, "DeleteUserStepFunction", {
             appsyncId,
             userPoolId,
@@ -18,6 +24,7 @@ export class PlateletCdkStack extends cdk.Stack {
             bucketName,
             region: this.region,
             amplifyEnv,
+            retryFunction: retryConstructInstance.retryFunction,
         });
     }
 }
