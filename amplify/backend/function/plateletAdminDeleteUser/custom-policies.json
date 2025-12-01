@@ -6,9 +6,6 @@
             "ssm:GetParameters",
             "ssm:GetParametersByPath"
         ],
-        "Resource": [
-            "arn:aws:states:eu-west-1:130063560692:stateMachine:*",
-            "arn:aws:ssm:eu-west-1:130063560692:parameter/platelet-supporting-cdk*"
-        ]
+        "Resource": []
     }
 ]

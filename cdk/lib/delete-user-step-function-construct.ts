@@ -441,38 +441,53 @@ export class DeleteUserStepFunction extends Construct {
         );
 
         // save the state machine name to SSM to be accessed by plateletAdminDeleteUser lambda
-        new ssm.StringParameter(this, "DeleteUserStateMachineArnSSMParam", {
-            parameterName: `/platelet-supporting-cdk/${this.amplifyEnv}/DeleteUserStateMachineArn`,
-            stringValue: deleteUserStateMachine.stateMachineArn,
-        });
+        const deleteUserStateMachineArnSSMParam = new ssm.StringParameter(
+            this,
+            "DeleteUserStateMachineArnSSMParam",
+            {
+                parameterName: `/platelet-supporting-cdk/${this.amplifyEnv}/DeleteUserStateMachineArn`,
+                stringValue: deleteUserStateMachine.stateMachineArn,
+            }
+        );
 
         // output role names needed for custom-roles.json
-        new cdk.CfnOutput(this, "GetUserCommentsRoleOutput", {
+        new cdk.CfnOutput(this, "AdminRoleNamesGetUserCommentsRoleOutput", {
             value: getRoleArnNameOnly(getUserCommentsFunction),
         });
-        new cdk.CfnOutput(this, "DeleteCommentsRoleOutput", {
+        new cdk.CfnOutput(this, "AdminRoleNamesDeleteCommentsRoleOutput", {
             value: getRoleArnNameOnly(deleteCommentsFunction),
         });
-        new cdk.CfnOutput(this, "GetUserAssignmentsRoleOutput", {
+        new cdk.CfnOutput(this, "AdminRoleNamesGetUserAssignmentsRoleOutput", {
             value: getRoleArnNameOnly(getUserAssignmentsFunction),
         });
-        new cdk.CfnOutput(this, "DeleteAssignmentsRoleOutput", {
+        new cdk.CfnOutput(this, "AdminRoleNamesDeleteAssignmentsRoleOutput", {
             value: getRoleArnNameOnly(deleteAssignmentsFunction),
-        });
-        new cdk.CfnOutput(this, "CleanVehicleAssignmentsRoleOutput", {
-            value: getRoleArnNameOnly(cleanVehicleAssignmentsFunction),
         });
         new cdk.CfnOutput(
             this,
-            "CleanPossibleRiderResponsibilitiesRoleOutput",
+            "AdminRoleNamesCleanVehicleAssignmentsRoleOutput",
+            {
+                value: getRoleArnNameOnly(cleanVehicleAssignmentsFunction),
+            }
+        );
+        new cdk.CfnOutput(
+            this,
+            "AdminRoleNamesCleanPossibleRiderResponsibilitiesRoleOutput",
             {
                 value: getRoleArnNameOnly(
                     cleanPossibleRiderResponsibilitiesFunction
                 ),
             }
         );
-        new cdk.CfnOutput(this, "DeleteUserRoleOutput", {
+        new cdk.CfnOutput(this, "AdminRoleNamesDeleteUserRoleOutput", {
             value: getRoleArnNameOnly(deleteUserFunction),
+        });
+
+        new cdk.CfnOutput(this, "DeleteUserStateMachineArnOutput", {
+            value: deleteUserStateMachine.stateMachineArn,
+        });
+        new cdk.CfnOutput(this, "DeleteUserStateMachineArnSSMParamArnOutput", {
+            value: deleteUserStateMachineArnSSMParam.parameterArn,
         });
     }
 }
