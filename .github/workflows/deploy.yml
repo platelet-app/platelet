@@ -52,12 +52,12 @@ jobs:
           npm run deploy -- --require-approval never $CONTEXT_ARGS --outputs-file cdk-out.json
       - name: "Write lambda function roles to custom-roles.json"
         run: |
-          ./scripts/get-cdk-roles.sh cdk/cdk-out.json > ./amplify/backend/api/platelet/custom-roles.json
+          ./scripts/get-cdk-roles.sh cdk/cdk-out.json
       - name: "Commit changes"
         id: 'commit_changes'
         uses: EndBug/add-and-commit@v9
         with:
-          add: './amplify/backend/api/platelet/custom-roles.json'
+          add: './amplify'
           default_author: github_actor
       - name: 'Start Amplify build'
         env:

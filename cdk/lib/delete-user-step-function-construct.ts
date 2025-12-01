@@ -10,6 +10,7 @@ import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
 import { NagSuppressions } from "cdk-nag";
+import { createLambdaStatement, getRoleArnNameOnly } from "./utils";
 
 export interface DeleteUserStepFunctionProps {
     userPoolId: string;
@@ -18,13 +19,8 @@ export interface DeleteUserStepFunctionProps {
     bucketName: string;
     graphQLEndpoint: string;
     amplifyEnv: string;
+    retryFunction: lambda.Function;
 }
-
-const getRoleArnNameOnly = (functionObject: lambda.Function) => {
-    const lambdaRole = functionObject.role;
-    const cfnRole = lambdaRole?.node.defaultChild as iam.CfnRole;
-    return cfnRole.attrArn;
-};
 
 export class DeleteUserStepFunction extends Construct {
     private userPool: cdk.aws_cognito.IUserPool;
@@ -32,66 +28,6 @@ export class DeleteUserStepFunction extends Construct {
     private appsync: cdk.aws_appsync.IGraphqlApi;
     private amplifyEnv: string;
     private graphQLEndpoint: string;
-
-    private createLambdaStatement = (
-        lambdaFunction: cdk.aws_lambda.IFunction,
-        appsyncFields?: {
-            queries?: string[];
-            mutations?: string[];
-        }
-    ) => {
-        const loggingStatement = new iam.PolicyStatement({
-            actions: [
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:PutLogEvents",
-            ],
-            resources: ["*"],
-        });
-
-        let appsyncStatement;
-
-        if (appsyncFields?.mutations || appsyncFields?.queries) {
-            const queryResources = appsyncFields.queries?.map(
-                (query) => `${this.appsync.arn}/types/Query/fields/${query}`
-            );
-
-            const mutationResources = appsyncFields.mutations?.map(
-                (mutation) =>
-                    `${this.appsync.arn}/types/Mutation/fields/${mutation}`
-            );
-            const appsyncResources = [
-                ...(queryResources || []),
-                ...(mutationResources || []),
-            ];
-
-            if (appsyncResources.length === 0) {
-                throw new Error("No appsync resources found");
-            }
-
-            appsyncStatement = new iam.PolicyStatement();
-            appsyncStatement.addActions("appsync:GraphQL");
-            for (const resource of appsyncResources) {
-                appsyncStatement.addResources(resource);
-            }
-        }
-        lambdaFunction.addToRolePolicy(loggingStatement);
-        if (appsyncStatement) {
-            lambdaFunction.addToRolePolicy(appsyncStatement);
-        }
-        if (lambdaFunction.role) {
-            NagSuppressions.addResourceSuppressions(
-                lambdaFunction.role,
-                [
-                    {
-                        id: "AwsSolutions-IAM5",
-                        reason: 'Wildcard is required for the "logs:CreateLogGroup" action to allow the Lambda service to create its log group upon first invocation. The wildcard is scoped to the specific function log group ARN.',
-                    },
-                ],
-                true
-            );
-        }
-    };
 
     constructor(
         scope: Construct,
@@ -161,7 +97,7 @@ export class DeleteUserStepFunction extends Construct {
             }
         );
 
-        this.createLambdaStatement(getUserCommentsFunction, {
+        createLambdaStatement(getUserCommentsFunction, this.appsync.arn, {
             queries: ["getUser"],
         });
 
@@ -185,7 +121,7 @@ export class DeleteUserStepFunction extends Construct {
                 }),
             }
         );
-        this.createLambdaStatement(getUserAssignmentsFunction, {
+        createLambdaStatement(getUserAssignmentsFunction, this.appsync.arn, {
             queries: ["getUser"],
         });
 
@@ -210,7 +146,7 @@ export class DeleteUserStepFunction extends Construct {
             }
         );
 
-        this.createLambdaStatement(deleteCommentsFunction, {
+        createLambdaStatement(deleteCommentsFunction, this.appsync.arn, {
             mutations: ["deleteComment", "updateComment"],
         });
 
@@ -234,7 +170,7 @@ export class DeleteUserStepFunction extends Construct {
                 }),
             }
         );
-        this.createLambdaStatement(deleteAssignmentsFunction, {
+        createLambdaStatement(deleteAssignmentsFunction, this.appsync.arn, {
             mutations: ["deleteTaskAssignee"],
         });
 
@@ -264,10 +200,14 @@ export class DeleteUserStepFunction extends Construct {
                 ),
             }
         );
-        this.createLambdaStatement(cleanVehicleAssignmentsFunction, {
-            queries: ["getUser"],
-            mutations: ["deleteVehicleAssignment"],
-        });
+        createLambdaStatement(
+            cleanVehicleAssignmentsFunction,
+            this.appsync.arn,
+            {
+                queries: ["getUser"],
+                mutations: ["deleteVehicleAssignment"],
+            }
+        );
 
         const cleanPossibleRiderResponsibilitiesFunction = new lambda.Function(
             this,
@@ -295,10 +235,14 @@ export class DeleteUserStepFunction extends Construct {
                 ),
             }
         );
-        this.createLambdaStatement(cleanPossibleRiderResponsibilitiesFunction, {
-            queries: ["getUser"],
-            mutations: ["deletePossibleRiderResponsibilities"],
-        });
+        createLambdaStatement(
+            cleanPossibleRiderResponsibilitiesFunction,
+            this.appsync.arn,
+            {
+                queries: ["getUser"],
+                mutations: ["deletePossibleRiderResponsibilities"],
+            }
+        );
 
         const deleteUserFunction = new lambda.Function(
             this,
@@ -322,7 +266,7 @@ export class DeleteUserStepFunction extends Construct {
             }
         );
 
-        this.createLambdaStatement(deleteUserFunction, {
+        createLambdaStatement(deleteUserFunction, this.appsync.arn, {
             queries: ["getUser"],
             mutations: ["deleteUser"],
         });
@@ -361,43 +305,11 @@ export class DeleteUserStepFunction extends Construct {
             );
         }
 
-        const RETRY_LIMIT = 3;
-
-        const retryCheckFunction = new lambda.Function(
-            this,
-            "DeleteUserStepFunctionRetryChecker",
-            {
-                runtime: lambda.Runtime.NODEJS_22_X,
-                handler: "index.handler",
-                code: lambda.Code.fromInline(
-                    `
-          exports.handler = async function(event) {
-              let { userId, graphQLEndpoint, userPoolId, retryCount } = event;
-              console.log("Retry count:", retryCount)
-              if (!retryCount) {
-                  return {userId, graphQLEndpoint, userPoolId, retryCount: 1}
-              }
-              if (retryCount > ${RETRY_LIMIT}) {
-                  throw new Error("Retries exceeded")
-              }
-
-              retryCount += 1
-
-              return {userId, graphQLEndpoint, userPoolId, retryCount}
-          };
-          `
-                ),
-                role: new iam.Role(this, "RetriesRole", {
-                    assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
-                }),
-            }
-        );
-
         const retryCheckLambdaTask = new tasks.LambdaInvoke(
             this,
             "RetryCheck",
             {
-                lambdaFunction: retryCheckFunction,
+                lambdaFunction: props.retryFunction,
                 payload: sfn.TaskInput.fromJsonPathAt("$"),
                 outputPath: "$.Payload",
             }
@@ -529,38 +441,53 @@ export class DeleteUserStepFunction extends Construct {
         );
 
         // save the state machine name to SSM to be accessed by plateletAdminDeleteUser lambda
-        new ssm.StringParameter(this, "DeleteUserStateMachineArnSSMParam", {
-            parameterName: `/platelet-supporting-cdk/${this.amplifyEnv}/DeleteUserStateMachineArn`,
-            stringValue: deleteUserStateMachine.stateMachineArn,
-        });
+        const deleteUserStateMachineArnSSMParam = new ssm.StringParameter(
+            this,
+            "DeleteUserStateMachineArnSSMParam",
+            {
+                parameterName: `/platelet-supporting-cdk/${this.amplifyEnv}/DeleteUserStateMachineArn`,
+                stringValue: deleteUserStateMachine.stateMachineArn,
+            }
+        );
 
         // output role names needed for custom-roles.json
-        new cdk.CfnOutput(this, "GetUserCommentsRoleOutput", {
+        new cdk.CfnOutput(this, "AdminRoleNamesGetUserCommentsRoleOutput", {
             value: getRoleArnNameOnly(getUserCommentsFunction),
         });
-        new cdk.CfnOutput(this, "DeleteCommentsRoleOutput", {
+        new cdk.CfnOutput(this, "AdminRoleNamesDeleteCommentsRoleOutput", {
             value: getRoleArnNameOnly(deleteCommentsFunction),
         });
-        new cdk.CfnOutput(this, "GetUserAssignmentsRoleOutput", {
+        new cdk.CfnOutput(this, "AdminRoleNamesGetUserAssignmentsRoleOutput", {
             value: getRoleArnNameOnly(getUserAssignmentsFunction),
         });
-        new cdk.CfnOutput(this, "DeleteAssignmentsRoleOutput", {
+        new cdk.CfnOutput(this, "AdminRoleNamesDeleteAssignmentsRoleOutput", {
             value: getRoleArnNameOnly(deleteAssignmentsFunction),
-        });
-        new cdk.CfnOutput(this, "CleanVehicleAssignmentsRoleOutput", {
-            value: getRoleArnNameOnly(cleanVehicleAssignmentsFunction),
         });
         new cdk.CfnOutput(
             this,
-            "CleanPossibleRiderResponsibilitiesRoleOutput",
+            "AdminRoleNamesCleanVehicleAssignmentsRoleOutput",
+            {
+                value: getRoleArnNameOnly(cleanVehicleAssignmentsFunction),
+            }
+        );
+        new cdk.CfnOutput(
+            this,
+            "AdminRoleNamesCleanPossibleRiderResponsibilitiesRoleOutput",
             {
                 value: getRoleArnNameOnly(
                     cleanPossibleRiderResponsibilitiesFunction
                 ),
             }
         );
-        new cdk.CfnOutput(this, "DeleteUserRoleOutput", {
+        new cdk.CfnOutput(this, "AdminRoleNamesDeleteUserRoleOutput", {
             value: getRoleArnNameOnly(deleteUserFunction),
+        });
+
+        new cdk.CfnOutput(this, "DeleteUserStateMachineArnOutput", {
+            value: deleteUserStateMachine.stateMachineArn,
+        });
+        new cdk.CfnOutput(this, "DeleteUserStateMachineArnSSMParamArnOutput", {
+            value: deleteUserStateMachineArnSSMParam.parameterArn,
         });
     }
 }
