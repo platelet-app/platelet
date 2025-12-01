@@ -7,7 +7,7 @@ const app = new cdk.App();
 
 const deployEnv = process.env.DEPLOY_ENV || "dev";
 
-const awsAccountNumber = process.env.AWS_ACCOUNT_NUMBER;
+const awsAccountNumber = process.env.AWS_ACCOUNT_ID;
 
 const stackName = deployEnv.replace(/[^A-Za-z0-9-]/g, "-");
 
