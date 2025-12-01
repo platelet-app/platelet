@@ -1,0 +1,401 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`DeleteAssignments delete some assignments 1`] = `
+[
+  [
+    {
+      "query": "mutation DeleteTaskAssignee(
+  $input: DeleteTaskAssigneeInput!
+  $condition: ModelTaskAssigneeConditionInput
+) {
+  deleteTaskAssignee(input: $input, condition: $condition) {
+    id
+    tenantId
+    role
+    task {
+      id
+      tenantId
+      createdAt
+      dateCreated
+      dateCompleted
+      timeOfCall
+      timePickedUp
+      timePickedUpSenderName
+      timeDroppedOff
+      timeDroppedOffRecipientName
+      timeCancelled
+      timeRejected
+      timeRiderHome
+      pickUpLocationId
+      dropOffLocationId
+      establishmentLocationId
+      riderResponsibility
+      priority
+      status
+      isRiderUsingOwnVehicle
+      archived
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedTasksId
+      __typename
+    }
+    assignee {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    archived
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userAssignmentsId
+    taskAssigneesId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 2,
+          "id": 0,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation DeleteTaskAssignee(
+  $input: DeleteTaskAssigneeInput!
+  $condition: ModelTaskAssigneeConditionInput
+) {
+  deleteTaskAssignee(input: $input, condition: $condition) {
+    id
+    tenantId
+    role
+    task {
+      id
+      tenantId
+      createdAt
+      dateCreated
+      dateCompleted
+      timeOfCall
+      timePickedUp
+      timePickedUpSenderName
+      timeDroppedOff
+      timeDroppedOffRecipientName
+      timeCancelled
+      timeRejected
+      timeRiderHome
+      pickUpLocationId
+      dropOffLocationId
+      establishmentLocationId
+      riderResponsibility
+      priority
+      status
+      isRiderUsingOwnVehicle
+      archived
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedTasksId
+      __typename
+    }
+    assignee {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    archived
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userAssignmentsId
+    taskAssigneesId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 2,
+          "id": 1,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation DeleteTaskAssignee(
+  $input: DeleteTaskAssigneeInput!
+  $condition: ModelTaskAssigneeConditionInput
+) {
+  deleteTaskAssignee(input: $input, condition: $condition) {
+    id
+    tenantId
+    role
+    task {
+      id
+      tenantId
+      createdAt
+      dateCreated
+      dateCompleted
+      timeOfCall
+      timePickedUp
+      timePickedUpSenderName
+      timeDroppedOff
+      timeDroppedOffRecipientName
+      timeCancelled
+      timeRejected
+      timeRiderHome
+      pickUpLocationId
+      dropOffLocationId
+      establishmentLocationId
+      riderResponsibility
+      priority
+      status
+      isRiderUsingOwnVehicle
+      archived
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedTasksId
+      __typename
+    }
+    assignee {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    archived
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userAssignmentsId
+    taskAssigneesId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 2,
+          "id": 2,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation DeleteTaskAssignee(
+  $input: DeleteTaskAssigneeInput!
+  $condition: ModelTaskAssigneeConditionInput
+) {
+  deleteTaskAssignee(input: $input, condition: $condition) {
+    id
+    tenantId
+    role
+    task {
+      id
+      tenantId
+      createdAt
+      dateCreated
+      dateCompleted
+      timeOfCall
+      timePickedUp
+      timePickedUpSenderName
+      timeDroppedOff
+      timeDroppedOffRecipientName
+      timeCancelled
+      timeRejected
+      timeRiderHome
+      pickUpLocationId
+      dropOffLocationId
+      establishmentLocationId
+      riderResponsibility
+      priority
+      status
+      isRiderUsingOwnVehicle
+      archived
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedTasksId
+      __typename
+    }
+    assignee {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    archived
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userAssignmentsId
+    taskAssigneesId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 2,
+          "id": 3,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation DeleteTaskAssignee(
+  $input: DeleteTaskAssigneeInput!
+  $condition: ModelTaskAssigneeConditionInput
+) {
+  deleteTaskAssignee(input: $input, condition: $condition) {
+    id
+    tenantId
+    role
+    task {
+      id
+      tenantId
+      createdAt
+      dateCreated
+      dateCompleted
+      timeOfCall
+      timePickedUp
+      timePickedUpSenderName
+      timeDroppedOff
+      timeDroppedOffRecipientName
+      timeCancelled
+      timeRejected
+      timeRiderHome
+      pickUpLocationId
+      dropOffLocationId
+      establishmentLocationId
+      riderResponsibility
+      priority
+      status
+      isRiderUsingOwnVehicle
+      archived
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedTasksId
+      __typename
+    }
+    assignee {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    archived
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userAssignmentsId
+    taskAssigneesId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 2,
+          "id": 4,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+]
+`;

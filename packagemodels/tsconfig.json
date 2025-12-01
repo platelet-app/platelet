@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "declaration": true,
+    "outDir": "./dist",
+    "rootDir": "../../src/models",
+    "esModuleInterop": true,
+    "moduleResolution": "node"
+  },
+  "include": [
+    "../../src/models/**/*.ts",
+  ]
+}

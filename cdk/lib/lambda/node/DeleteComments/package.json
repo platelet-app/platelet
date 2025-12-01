@@ -1,0 +1,28 @@
+{
+    "name": "delete-comments",
+    "version": "1.0.0",
+    "type": "module",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "prebuild": "npm install --include=dev",
+        "build": "tsc",
+        "package": "npm prune --omit=dev && rm -rf dist/node_modules && cp -R node_modules dist/node_modules/ && cp package.json dist",
+        "test": "NODE_OPTIONS='--experimental-vm-modules' jest",
+        "test:watch": "NODE_OPTIONS='--experimental-vm-modules' jest --watch"
+    },
+    "author": "",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "@platelet-app/graphql": "^1.1.5",
+        "@platelet-app/lambda": "^1.1.9",
+        "@platelet-app/types": "^1.1.2",
+        "p-all": "^5.0.1"
+    },
+    "devDependencies": {
+        "@types/jest": "^30.0.0",
+        "jest": "^30.2.0",
+        "lodash": "^4.17.21",
+        "ts-jest": "^29.4.5"
+    }
+}

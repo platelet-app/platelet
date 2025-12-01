@@ -2,7 +2,7 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-import * as APITypes from "../API";
+import * as APITypes from "../API.js";
 type GeneratedMutation<InputType, OutputType> = string & {
   __generatedMutationInput: InputType;
   __generatedMutationOutput: OutputType;
@@ -3529,4 +3529,15 @@ export const adminDeleteRiderResponsibility = /* GraphQL */ `mutation AdminDelet
 ` as GeneratedMutation<
   APITypes.AdminDeleteRiderResponsibilityMutationVariables,
   APITypes.AdminDeleteRiderResponsibilityMutation
+>;
+export const adminDeleteUser = /* GraphQL */ `mutation AdminDeleteUser($userId: ID) {
+  adminDeleteUser(userId: $userId) {
+    executionArn
+    startDate
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.AdminDeleteUserMutationVariables,
+  APITypes.AdminDeleteUserMutation
 >;
