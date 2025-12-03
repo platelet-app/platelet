@@ -14,6 +14,7 @@
     "author": "",
     "license": "Apache-2.0",
     "dependencies": {
+        "@aws-sdk/client-s3": "^3.943.0",
         "@platelet-app/graphql": "^1.1.5",
         "@platelet-app/lambda": "^1.1.9",
         "@platelet-app/types": "^1.1.2"
