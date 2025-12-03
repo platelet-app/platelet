@@ -1,0 +1,700 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`CleanVehicleAssignments clean some vehicle assignments 1`] = `
+[
+  [
+    {
+      "query": "query GetUser($id: ID!, $nextToken: String) {
+  getUser(id: $id) {
+    id
+    vehicleAssignments(nextToken: $nextToken) {
+      nextToken
+      items {
+          id
+          _version
+          _deleted
+      }
+    }
+  }
+}",
+      "variables": {
+        "id": "test",
+        "nextToken": null,
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "query GetUser($id: ID!, $nextToken: String) {
+  getUser(id: $id) {
+    id
+    vehicleAssignments(nextToken: $nextToken) {
+      nextToken
+      items {
+          id
+          _version
+          _deleted
+      }
+    }
+  }
+}",
+      "variables": {
+        "id": "test",
+        "nextToken": "something",
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation DeleteVehicleAssignment(
+  $input: DeleteVehicleAssignmentInput!
+  $condition: ModelVehicleAssignmentConditionInput
+) {
+  deleteVehicleAssignment(input: $input, condition: $condition) {
+    id
+    tenantId
+    vehicle {
+      id
+      tenantId
+      name
+      manufacturer
+      model
+      dateOfManufacture
+      dateOfRegistration
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedVehiclesId
+      __typename
+    }
+    assignee {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userVehicleAssignmentsId
+    vehicleAssignmentsId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 2,
+          "id": 0,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation DeleteVehicleAssignment(
+  $input: DeleteVehicleAssignmentInput!
+  $condition: ModelVehicleAssignmentConditionInput
+) {
+  deleteVehicleAssignment(input: $input, condition: $condition) {
+    id
+    tenantId
+    vehicle {
+      id
+      tenantId
+      name
+      manufacturer
+      model
+      dateOfManufacture
+      dateOfRegistration
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedVehiclesId
+      __typename
+    }
+    assignee {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userVehicleAssignmentsId
+    vehicleAssignmentsId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 2,
+          "id": 1,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation DeleteVehicleAssignment(
+  $input: DeleteVehicleAssignmentInput!
+  $condition: ModelVehicleAssignmentConditionInput
+) {
+  deleteVehicleAssignment(input: $input, condition: $condition) {
+    id
+    tenantId
+    vehicle {
+      id
+      tenantId
+      name
+      manufacturer
+      model
+      dateOfManufacture
+      dateOfRegistration
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedVehiclesId
+      __typename
+    }
+    assignee {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userVehicleAssignmentsId
+    vehicleAssignmentsId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 2,
+          "id": 2,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation DeleteVehicleAssignment(
+  $input: DeleteVehicleAssignmentInput!
+  $condition: ModelVehicleAssignmentConditionInput
+) {
+  deleteVehicleAssignment(input: $input, condition: $condition) {
+    id
+    tenantId
+    vehicle {
+      id
+      tenantId
+      name
+      manufacturer
+      model
+      dateOfManufacture
+      dateOfRegistration
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedVehiclesId
+      __typename
+    }
+    assignee {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userVehicleAssignmentsId
+    vehicleAssignmentsId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 2,
+          "id": 3,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation DeleteVehicleAssignment(
+  $input: DeleteVehicleAssignmentInput!
+  $condition: ModelVehicleAssignmentConditionInput
+) {
+  deleteVehicleAssignment(input: $input, condition: $condition) {
+    id
+    tenantId
+    vehicle {
+      id
+      tenantId
+      name
+      manufacturer
+      model
+      dateOfManufacture
+      dateOfRegistration
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedVehiclesId
+      __typename
+    }
+    assignee {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userVehicleAssignmentsId
+    vehicleAssignmentsId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 2,
+          "id": 4,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation DeleteVehicleAssignment(
+  $input: DeleteVehicleAssignmentInput!
+  $condition: ModelVehicleAssignmentConditionInput
+) {
+  deleteVehicleAssignment(input: $input, condition: $condition) {
+    id
+    tenantId
+    vehicle {
+      id
+      tenantId
+      name
+      manufacturer
+      model
+      dateOfManufacture
+      dateOfRegistration
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedVehiclesId
+      __typename
+    }
+    assignee {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userVehicleAssignmentsId
+    vehicleAssignmentsId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 1,
+          "id": 5,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation DeleteVehicleAssignment(
+  $input: DeleteVehicleAssignmentInput!
+  $condition: ModelVehicleAssignmentConditionInput
+) {
+  deleteVehicleAssignment(input: $input, condition: $condition) {
+    id
+    tenantId
+    vehicle {
+      id
+      tenantId
+      name
+      manufacturer
+      model
+      dateOfManufacture
+      dateOfRegistration
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedVehiclesId
+      __typename
+    }
+    assignee {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userVehicleAssignmentsId
+    vehicleAssignmentsId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 1,
+          "id": 6,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation DeleteVehicleAssignment(
+  $input: DeleteVehicleAssignmentInput!
+  $condition: ModelVehicleAssignmentConditionInput
+) {
+  deleteVehicleAssignment(input: $input, condition: $condition) {
+    id
+    tenantId
+    vehicle {
+      id
+      tenantId
+      name
+      manufacturer
+      model
+      dateOfManufacture
+      dateOfRegistration
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedVehiclesId
+      __typename
+    }
+    assignee {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userVehicleAssignmentsId
+    vehicleAssignmentsId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 1,
+          "id": 7,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation DeleteVehicleAssignment(
+  $input: DeleteVehicleAssignmentInput!
+  $condition: ModelVehicleAssignmentConditionInput
+) {
+  deleteVehicleAssignment(input: $input, condition: $condition) {
+    id
+    tenantId
+    vehicle {
+      id
+      tenantId
+      name
+      manufacturer
+      model
+      dateOfManufacture
+      dateOfRegistration
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedVehiclesId
+      __typename
+    }
+    assignee {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userVehicleAssignmentsId
+    vehicleAssignmentsId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 1,
+          "id": 8,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation DeleteVehicleAssignment(
+  $input: DeleteVehicleAssignmentInput!
+  $condition: ModelVehicleAssignmentConditionInput
+) {
+  deleteVehicleAssignment(input: $input, condition: $condition) {
+    id
+    tenantId
+    vehicle {
+      id
+      tenantId
+      name
+      manufacturer
+      model
+      dateOfManufacture
+      dateOfRegistration
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedVehiclesId
+      __typename
+    }
+    assignee {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userVehicleAssignmentsId
+    vehicleAssignmentsId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 1,
+          "id": 9,
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+]
+`;

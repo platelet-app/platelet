@@ -2,6 +2,7 @@ import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { DeleteUserStepFunction } from "./delete-user-step-function-construct";
 import { RetryFunctionConstruct } from "./retry-function-construct";
+import { UserTakeOutDataStepFunction } from "./user-take-out-data-step-function-construct";
 
 export class PlateletCdkStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: cdk.StackProps) {
@@ -20,6 +21,15 @@ export class PlateletCdkStack extends cdk.Stack {
         new DeleteUserStepFunction(this, "DeleteUserStepFunction", {
             appsyncId,
             userPoolId,
+            graphQLEndpoint,
+            bucketName,
+            region: this.region,
+            amplifyEnv,
+            retryFunction: retryConstructInstance.retryFunction,
+        });
+
+        new UserTakeOutDataStepFunction(this, "UserTakeOutDataStepFunction", {
+            appsyncId,
             graphQLEndpoint,
             bucketName,
             region: this.region,
