@@ -13,7 +13,7 @@
         "build-clean-possible-rider-responsibilities": "cd CleanPossibleRiderResponsibilities && npm run build && npm run test",
         "build-get-take-out-user-comments": "cd GetTakeOutUserComments && npm run build",
         "build-get-take-out-vehicle-assignments": "cd GetTakeOutVehicleAssignments && npm run build",
-        "build-get-take-out-user-assignments": "cd GetTakeOutUserComments && npm run build",
+        "build-get-take-out-user-assignments": "cd GetTakeOutUserAssignments && npm run build",
         "build-get-take-out-possible-rider-responsibilities": "cd GetTakeOutPossibleRiderResponsibilities && npm run build",
         "package": "npm-run-all pk-*",
         "pk-get-user-comments": "cd GetUserComments && npm run package",
@@ -25,7 +25,7 @@
         "pk-clean-possible-rider-responsibilities": "cd CleanPossibleRiderResponsibilities && npm run package",
         "pk-get-take-out-user-comments": "cd GetTakeOutUserComments && npm run package",
         "pk-get-take-out-vehicle-assignments": "cd GetTakeOutVehicleAssignments && npm run package",
-        "pk-get-take-out-user-assignments": "cd GetTakeOutUserComments && npm run package",
+        "pk-get-take-out-user-assignments": "cd GetTakeOutUserAssignments && npm run package",
         "pk-get-take-out-possible-rider-responsibilities": "cd GetTakeOutPossibleRiderResponsibilities && npm run package"
     },
     "keywords": [],
