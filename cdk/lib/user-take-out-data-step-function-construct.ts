@@ -323,20 +323,54 @@ export class UserTakeOutDataStepFunction extends Construct {
         );
 
         // save the state machine name to SSM to be accessed by plateletUserTakeOutData lambda
-        new ssm.StringParameter(this, "UserTakeOutDataMachineArnSSMParam", {
-            parameterName: `/platelet-supporting-cdk/${this.amplifyEnv}/UserTakeOutDataStateMachineArn`,
-            stringValue: userTakeOutDataStateMachine.stateMachineArn,
-        });
+        const userTakeOutDataMachineArnSSMParam = new ssm.StringParameter(
+            this,
+            "UserTakeOutDataMachineArnSSMParam",
+            {
+                parameterName: `/platelet-supporting-cdk/${this.amplifyEnv}/UserTakeOutDataStateMachineArn`,
+                stringValue: userTakeOutDataStateMachine.stateMachineArn,
+            }
+        );
 
         // output role names needed for custom-roles.json
-        new cdk.CfnOutput(this, "GetUserCommentsTakeOutRoleOutput", {
-            value: getRoleArnNameOnly(getUserCommentsFunction),
+        new cdk.CfnOutput(
+            this,
+            "AdminRoleNamesGetUserCommentsTakeOutRoleOutput",
+            {
+                value: getRoleArnNameOnly(getUserCommentsFunction),
+            }
+        );
+        new cdk.CfnOutput(
+            this,
+            "AdminRoleNamesGetUserAssignmentsTakeOutRoleOutput",
+            {
+                value: getRoleArnNameOnly(getUserAssignmentsFunction),
+            }
+        );
+        new cdk.CfnOutput(
+            this,
+            "AdminRoleNamesGetUserVehicleAssignmentsTakeOutRoleOutput",
+            {
+                value: getRoleArnNameOnly(getUserVehicleAssignmentsFunction),
+            }
+        );
+        new cdk.CfnOutput(
+            this,
+            "AdminRoleNamesFinishAndSendUserTakeOutDataFunctionRole",
+            {
+                value: getRoleArnNameOnly(finishAndSendUserDataFunction),
+            }
+        );
+
+        new cdk.CfnOutput(this, "TakeOutUserDataStateMachineArnOutput", {
+            value: userTakeOutDataStateMachine.stateMachineArn,
         });
-        new cdk.CfnOutput(this, "GetUserAssignmentsTakeOutRoleOutput", {
-            value: getRoleArnNameOnly(getUserAssignmentsFunction),
-        });
-        new cdk.CfnOutput(this, "GetUserVehicleAssignmentsTakeOutRoleOutput", {
-            value: getRoleArnNameOnly(getUserVehicleAssignmentsFunction),
-        });
+        new cdk.CfnOutput(
+            this,
+            "TakeOutUserDataStateMachineArnSSMParamArnOutput",
+            {
+                value: userTakeOutDataMachineArnSSMParam.parameterArn,
+            }
+        );
     }
 }
