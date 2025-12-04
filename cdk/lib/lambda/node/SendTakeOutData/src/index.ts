@@ -1,57 +1,71 @@
 import type { LambdaEvent, LambdaReturn } from "./interfaces.js";
 import { request, errorCheck } from "@platelet-app/lambda";
 import { getUser } from "./queries.js";
-import { mutations } from "@platelet-app/graphql";
-import type { User, S3Object } from "@platelet-app/types";
+import type { S3Object, User } from "@platelet-app/types";
 import {
-    AdminDeleteUserCommand,
-    AdminDisableUserCommand,
-    CognitoIdentityProviderClient,
-} from "@aws-sdk/client-cognito-identity-provider";
-import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
+    S3Client,
+    DeleteObjectCommand,
+    PutObjectCommand,
+    GetObjectCommand,
+    ListObjectsV2Command,
+    type ListObjectsV2CommandOutput,
+} from "@aws-sdk/client-s3";
 
-const USER_POOL_ID = process.env.USER_POOL_ID;
+const TAKE_OUT_BUCKET = process.env.TAKE_OUT_BUCKET;
 const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT;
+const REGION = process.env.REGION;
 
-const disableUserCognito = async (username: string, userPoolId: string) => {
-    const params = {
-        UserPoolId: userPoolId,
-        Username: username,
-    };
-
-    const config = {};
-    const client = new CognitoIdentityProviderClient(config);
-    const command = new AdminDisableUserCommand(params);
-    await client.send(command);
-};
-
-const deleteUserCognito = async (username: string, userPoolId: string) => {
-    const params = {
-        UserPoolId: userPoolId,
-        Username: username,
-    };
-    const config = {};
-    const client = new CognitoIdentityProviderClient(config);
-    const command = new AdminDeleteUserCommand(params);
-    await client.send(command);
-};
-
-const deleteUserFunction = async (user: User, endpoint: string) => {
-    const variables = {
-        input: {
-            id: user.id,
-            _version: user._version,
-        },
-    };
-    const response = await request(
-        { query: mutations.deleteUser, variables },
-        endpoint
+const writeToBucket = async (data: User, key: string) => {
+    const json = JSON.stringify(data);
+    const s3Client = new S3Client({ region: REGION || "eu-west-1" });
+    await s3Client.send(
+        new PutObjectCommand({
+            Bucket: TAKE_OUT_BUCKET,
+            Body: json,
+            Key: key,
+        })
     );
-    const body = await response.json();
-    errorCheck(body);
 };
 
-const deleteProfilePicture = async (item: S3Object) => {
+const getProfilePictures = async (item: S3Object) => {
+    const s3Client = new S3Client({ region: REGION || "eu-west-1" });
+
+    const input = {
+        Bucket: item.bucket,
+        Prefix: item.key,
+    };
+    if (!input.Prefix || input.Prefix.length === 0) {
+        throw new Error("Prefix is missing!");
+    }
+    const command = new ListObjectsV2Command(input);
+    return await s3Client.send(command);
+};
+
+const writeProfilePictures = async (
+    pictures: ListObjectsV2CommandOutput,
+    bucket: string,
+    userId: string
+) => {
+    const s3Client = new S3Client({ region: REGION || "eu-west-1" });
+    for (const pic of pictures.Contents || []) {
+        const input = {
+            Bucket: bucket,
+            Key: pic.Key,
+        };
+        const result = await s3Client.send(new GetObjectCommand(input));
+        if (result.Body) {
+            await s3Client.send(
+                new PutObjectCommand({
+                    Bucket: TAKE_OUT_BUCKET,
+                    Body: result.Body,
+                    Key: `${userId}/${pic.Key}`,
+                })
+            );
+        }
+    }
+};
+
+const deleteTakeOutFile = async (item: S3Object) => {
     const config = {};
     const client = new S3Client(config);
     const input = {
@@ -73,20 +87,20 @@ const getUserFunction = async (userId: string, endpoint: string) => {
 };
 
 export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
-    console.log("delete user", event);
+    console.log("send take out data", event);
     const { userId, retryCount } = event;
-    if (!GRAPHQL_ENDPOINT || !USER_POOL_ID) {
+    if (!GRAPHQL_ENDPOINT) {
         throw new Error("Missing env variables");
     }
     const user = await getUserFunction(userId, GRAPHQL_ENDPOINT);
-    if (!user.username) {
-        throw new Error("No username found");
+    writeToBucket(user, `${userId}/user.json`);
+    if (user?.profilePicture) {
+        const pictures = await getProfilePictures(user.profilePicture);
+        await writeProfilePictures(
+            pictures,
+            user.profilePicture.bucket,
+            userId
+        );
     }
-    await disableUserCognito(user.username, USER_POOL_ID);
-    if (user.profilePicture) {
-        await deleteProfilePicture(user.profilePicture);
-    }
-    await deleteUserFunction(user, GRAPHQL_ENDPOINT);
-    await deleteUserCognito(user.username, USER_POOL_ID);
     return { retryCount, userId };
 };

@@ -192,6 +192,64 @@ export class UserTakeOutDataStepFunction extends Construct {
             }
         );
 
+        const finishAndSendUserDataFunction = new lambda.Function(
+            this,
+            "FinishAndSendUserTakeOutDataFunction",
+            {
+                runtime: lambda.Runtime.NODEJS_22_X,
+                handler: "index.handler",
+                code: lambda.Code.fromAsset(
+                    "./lib/lambda/node/SendTakeOutData/dist"
+                ),
+                timeout: cdk.Duration.seconds(180),
+                environment: {
+                    REGION: props.region,
+                    GRAPHQL_ENDPOINT: this.graphQLEndpoint,
+                    TAKE_OUT_BUCKET: takeOutBucket.bucketName,
+                },
+                role: new iam.Role(
+                    this,
+                    "FinishAndSendUserTakeOutDataFunctionRole",
+                    {
+                        assumedBy: new iam.ServicePrincipal(
+                            "lambda.amazonaws.com"
+                        ),
+                    }
+                ),
+            }
+        );
+
+        createLambdaStatement(finishAndSendUserDataFunction, this.appsync.arn, {
+            queries: ["getUser"],
+        });
+
+        finishAndSendUserDataFunction.addToRolePolicy(
+            new iam.PolicyStatement({
+                actions: ["s3:GetObject"],
+                resources: [`${this.bucket.bucketArn}/public/*`],
+            })
+        );
+
+        finishAndSendUserDataFunction.addToRolePolicy(
+            new iam.PolicyStatement({
+                actions: ["s3:WriteObject"],
+                resources: [takeOutBucket.bucketArn],
+            })
+        );
+
+        if (finishAndSendUserDataFunction.role) {
+            NagSuppressions.addResourceSuppressions(
+                finishAndSendUserDataFunction.role,
+                [
+                    {
+                        id: "AwsSolutions-IAM5",
+                        reason: "Wildcard is required in S3 policy so any profile picture can be queried",
+                    },
+                ],
+                true
+            );
+        }
+
         const getUserCommentsTask = new tasks.LambdaInvoke(
             this,
             "GetUserCommentsTakeOutTask",
