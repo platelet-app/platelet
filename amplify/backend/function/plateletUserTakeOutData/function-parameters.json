@@ -1,0 +1,10 @@
+{
+  "lambdaLayers": [],
+  "permissions": {
+    "api": {
+      "platelet": [
+        "Query"
+      ]
+    }
+  }
+}
