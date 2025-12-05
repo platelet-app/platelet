@@ -487,6 +487,21 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "plateletUserTakeOutData": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "plateletappSyncOperations": {
       "build": true,
       "providerPlugin": "awscloudformation",
