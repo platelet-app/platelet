@@ -9,10 +9,20 @@ Amplify Params - DO NOT EDIT */ /**
 
 import { SFNClient, StartExecutionCommand } from "@aws-sdk/client-sfn";
 import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
-import { getUser } from "@platelet-app/graphql";
 import { request, errorCheck } from "@platelet-app/lambda";
 
 const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
+
+const getUser = `query GetUser($id: ID!) {
+  getUser(id: $id) {
+    id
+    _version
+    _deleted
+    _lastChangedAt
+    __typename
+  }
+}
+`;
 
 const getStateMachineArn = async (envName) => {
     const client = new SSMClient();
@@ -82,10 +92,6 @@ export const handler = async (event) => {
     }
 
     const user = await getUserFunction(userId);
-
-    if (user.isPrimaryAdmin) {
-        throw new Error("Cannot delete the primary admin");
-    }
 
     if (user._deleted) {
         throw new Error("User not found");
