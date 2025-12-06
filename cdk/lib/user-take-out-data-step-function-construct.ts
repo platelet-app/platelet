@@ -17,7 +17,6 @@ export interface UserTakeOutDataStepFunctionProps {
     bucketName: string;
     graphQLEndpoint: string;
     amplifyEnv: string;
-    retryFunction: lambda.Function;
 }
 
 export class UserTakeOutDataStepFunction extends Construct {
@@ -332,16 +331,6 @@ export class UserTakeOutDataStepFunction extends Construct {
             }
         );
 
-        const retryCheckLambdaTask = new tasks.LambdaInvoke(
-            this,
-            "RetryCheckTakeOut",
-            {
-                lambdaFunction: props.retryFunction,
-                payload: sfn.TaskInput.fromJsonPathAt("$"),
-                outputPath: "$.Payload",
-            }
-        );
-
         getUserCommentsTask.addRetry(retryConfig);
         getUserAssignmentsTask.addRetry(retryConfig);
         getUserVehicleAssignmentsTask.addRetry(retryConfig);
@@ -357,8 +346,7 @@ export class UserTakeOutDataStepFunction extends Construct {
             .next(finishAndSendUserDataTask)
             .next(successState);
 
-        const definition = sfn.Chain.start(retryCheckLambdaTask);
-        retryCheckLambdaTask.next(mainChain);
+        const definition = sfn.Chain.start(mainChain);
 
         const userTakeOutDataStateMachine = new sfn.StateMachine(
             this,

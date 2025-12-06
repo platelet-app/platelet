@@ -34,7 +34,6 @@ export class PlateletCdkStack extends cdk.Stack {
             bucketName,
             region: this.region,
             amplifyEnv,
-            retryFunction: retryConstructInstance.retryFunction,
         });
     }
 }
