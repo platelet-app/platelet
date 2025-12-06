@@ -1,12 +1,15 @@
 import type { LambdaEvent, LambdaReturn } from "./interfaces.js";
-import { request, errorCheck } from "@platelet-app/lambda";
+import {
+    request,
+    errorCheck,
+    getUserProfilePictures,
+} from "@platelet-app/lambda";
 import { getUser } from "./queries.js";
 import type { S3Object, User } from "@platelet-app/types";
 import {
     S3Client,
     DeleteObjectCommand,
     PutObjectCommand,
-    ListObjectsV2Command,
     type ListObjectsV2CommandOutput,
     CopyObjectCommand,
 } from "@aws-sdk/client-s3";
@@ -25,20 +28,6 @@ const writeToBucket = async (data: User, key: string) => {
             Key: key,
         })
     );
-};
-
-const getProfilePictures = async (item: S3Object) => {
-    const s3Client = new S3Client({ region: REGION || "eu-west-1" });
-    const Prefix = item.key.split(".")[0];
-    const input = {
-        Bucket: item.bucket,
-        Prefix,
-    };
-    if (!input.Prefix || input.Prefix.length === 0) {
-        throw new Error("Prefix is missing!");
-    }
-    const command = new ListObjectsV2Command(input);
-    return await s3Client.send(command);
 };
 
 const writeProfilePictures = async (
@@ -87,7 +76,7 @@ export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
     const user = await getUserFunction(userId, GRAPHQL_ENDPOINT);
     writeToBucket(user, `${userId}/user.json`);
     if (user?.profilePicture) {
-        const pictures = await getProfilePictures(user.profilePicture);
+        const pictures = await getUserProfilePictures(user.profilePicture);
         await writeProfilePictures(
             pictures,
             user.profilePicture.bucket,
