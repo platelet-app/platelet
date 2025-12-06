@@ -282,13 +282,7 @@ export class UserTakeOutDataStepFunction extends Construct {
         }
 
         const retryConfig = {
-            errors: [
-                "Lambda.ServiceException",
-                "Lambda.AWSLambdaException",
-                "Lambda.SdkClientException",
-                "States.TaskFailed",
-                "AppsyncFailure",
-            ],
+            errors: ["AppsyncFailure"],
             maxAttempts: 3,
             interval: cdk.Duration.seconds(10),
             backoffRate: 2,
