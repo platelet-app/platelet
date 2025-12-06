@@ -29,10 +29,10 @@ const writeToBucket = async (data: User, key: string) => {
 
 const getProfilePictures = async (item: S3Object) => {
     const s3Client = new S3Client({ region: REGION || "eu-west-1" });
-
+    const Prefix = item.key.split(".")[0];
     const input = {
         Bucket: item.bucket,
-        Prefix: item.key,
+        Prefix,
     };
     if (!input.Prefix || input.Prefix.length === 0) {
         throw new Error("Prefix is missing!");
