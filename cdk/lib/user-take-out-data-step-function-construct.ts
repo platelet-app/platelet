@@ -372,7 +372,7 @@ export class UserTakeOutDataStepFunction extends Construct {
                 logs: {
                     destination: new logs.LogGroup(
                         this,
-                        "DeleteUserSFLogGroup",
+                        "TakeOutDataSFLogGroup",
                         {
                             removalPolicy: cdk.RemovalPolicy.DESTROY,
                         }
