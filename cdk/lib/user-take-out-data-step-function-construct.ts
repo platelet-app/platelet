@@ -287,7 +287,7 @@ export class UserTakeOutDataStepFunction extends Construct {
             this,
             "GetUserVehicleAssignmentsTakeOutTask",
             {
-                lambdaFunction: getUserCommentsFunction,
+                lambdaFunction: getUserVehicleAssignmentsFunction,
                 outputPath: "$.Payload",
             }
         );
@@ -295,7 +295,24 @@ export class UserTakeOutDataStepFunction extends Construct {
             this,
             "GetUserPossibleRiderResponsibilitiesTakeOutTask",
             {
-                lambdaFunction: getUserCommentsFunction,
+                lambdaFunction: getUserPossibleRiderResponsibilitiesFunction,
+                outputPath: "$.Payload",
+            }
+        );
+        const getUserAssignmentsTask = new tasks.LambdaInvoke(
+            this,
+            "GetUserAssignmentsTakeOutTask",
+            {
+                lambdaFunction: getUserAssignmentsFunction,
+                outputPath: "$.Payload",
+            }
+        );
+
+        const finishAndSendUserDataTask = new tasks.LambdaInvoke(
+            this,
+            "FinishAndSendUserDataTakeOutTask",
+            {
+                lambdaFunction: finishAndSendUserDataFunction,
                 outputPath: "$.Payload",
             }
         );
@@ -312,7 +329,9 @@ export class UserTakeOutDataStepFunction extends Construct {
 
         const mainChain = sfn.Chain.start(getUserCommentsTask)
             .next(getUserVehicleAssignmentsTask)
-            .next(getUserPossibleRiderResponsibilitiesTask);
+            .next(getUserPossibleRiderResponsibilitiesTask)
+            .next(getUserAssignmentsTask)
+            .next(finishAndSendUserDataTask);
 
         const definition = sfn.Chain.start(retryCheckLambdaTask);
         retryCheckLambdaTask.next(mainChain);
