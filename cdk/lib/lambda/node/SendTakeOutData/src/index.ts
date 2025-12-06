@@ -6,9 +6,9 @@ import {
     S3Client,
     DeleteObjectCommand,
     PutObjectCommand,
-    GetObjectCommand,
     ListObjectsV2Command,
     type ListObjectsV2CommandOutput,
+    CopyObjectCommand,
 } from "@aws-sdk/client-s3";
 
 const TAKE_OUT_BUCKET = process.env.TAKE_OUT_BUCKET;
@@ -43,25 +43,17 @@ const getProfilePictures = async (item: S3Object) => {
 
 const writeProfilePictures = async (
     pictures: ListObjectsV2CommandOutput,
-    bucket: string,
+    sourceBucket: string,
     userId: string
 ) => {
     const s3Client = new S3Client({ region: REGION || "eu-west-1" });
     for (const pic of pictures.Contents || []) {
-        const input = {
-            Bucket: bucket,
-            Key: pic.Key,
-        };
-        const result = await s3Client.send(new GetObjectCommand(input));
-        if (result.Body) {
-            await s3Client.send(
-                new PutObjectCommand({
-                    Bucket: TAKE_OUT_BUCKET,
-                    Body: result.Body,
-                    Key: `${userId}/${pic.Key}`,
-                })
-            );
-        }
+        const command = new CopyObjectCommand({
+            CopySource: `/${sourceBucket}/${pic.Key}`,
+            Bucket: TAKE_OUT_BUCKET,
+            Key: `${userId}/${pic.Key}`,
+        });
+        await s3Client.send(command);
     }
 };
 
