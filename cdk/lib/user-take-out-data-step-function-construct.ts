@@ -333,11 +333,33 @@ export class UserTakeOutDataStepFunction extends Construct {
             }
         );
 
+        const waitBeforeRetry = new sfn.Wait(this, "RetryWait", {
+            time: sfn.WaitTime.duration(cdk.Duration.seconds(30)),
+        });
+
+        const catchOptions = {
+            errors: ["AppsyncFailure"],
+            resultPath: sfn.JsonPath.DISCARD,
+        };
+        const successState = new sfn.Succeed(this, "Takeout completed");
+
+        getUserCommentsTask.addCatch(waitBeforeRetry, catchOptions);
+        getUserVehicleAssignmentsTask.addCatch(waitBeforeRetry, catchOptions);
+        getUserPossibleRiderResponsibilitiesTask.addCatch(
+            waitBeforeRetry,
+            catchOptions
+        );
+        getUserAssignmentsTask.addCatch(waitBeforeRetry, catchOptions);
+        finishAndSendUserDataTask.addCatch(waitBeforeRetry, catchOptions);
+
         const mainChain = sfn.Chain.start(getUserCommentsTask)
             .next(getUserVehicleAssignmentsTask)
             .next(getUserPossibleRiderResponsibilitiesTask)
             .next(getUserAssignmentsTask)
-            .next(finishAndSendUserDataTask);
+            .next(finishAndSendUserDataTask)
+            .next(successState);
+
+        waitBeforeRetry.next(retryCheckLambdaTask);
 
         const definition = sfn.Chain.start(retryCheckLambdaTask);
         retryCheckLambdaTask.next(mainChain);
