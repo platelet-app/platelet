@@ -281,6 +281,19 @@ export class UserTakeOutDataStepFunction extends Construct {
             );
         }
 
+        const retryConfig = {
+            errors: [
+                "Lambda.ServiceException",
+                "Lambda.AWSLambdaException",
+                "Lambda.SdkClientException",
+                "States.TaskFailed",
+                "AppsyncFailure",
+            ],
+            maxAttempts: 3,
+            interval: cdk.Duration.seconds(10),
+            backoffRate: 2,
+        };
+
         const getUserCommentsTask = new tasks.LambdaInvoke(
             this,
             "GetUserCommentsTakeOutTask",
@@ -289,6 +302,7 @@ export class UserTakeOutDataStepFunction extends Construct {
                 outputPath: "$.Payload",
             }
         );
+
         const getUserVehicleAssignmentsTask = new tasks.LambdaInvoke(
             this,
             "GetUserVehicleAssignmentsTakeOutTask",
@@ -297,6 +311,7 @@ export class UserTakeOutDataStepFunction extends Construct {
                 outputPath: "$.Payload",
             }
         );
+
         const getUserPossibleRiderResponsibilitiesTask = new tasks.LambdaInvoke(
             this,
             "GetUserPossibleRiderResponsibilitiesTakeOutTask",
@@ -333,24 +348,13 @@ export class UserTakeOutDataStepFunction extends Construct {
             }
         );
 
-        const waitBeforeRetry = new sfn.Wait(this, "RetryWait", {
-            time: sfn.WaitTime.duration(cdk.Duration.seconds(30)),
-        });
+        getUserCommentsTask.addRetry(retryConfig);
+        getUserAssignmentsTask.addRetry(retryConfig);
+        getUserVehicleAssignmentsTask.addRetry(retryConfig);
+        getUserPossibleRiderResponsibilitiesTask.addRetry(retryConfig);
+        finishAndSendUserDataTask.addRetry(retryConfig);
 
-        const catchOptions = {
-            errors: ["AppsyncFailure"],
-            resultPath: sfn.JsonPath.DISCARD,
-        };
         const successState = new sfn.Succeed(this, "Takeout completed");
-
-        getUserCommentsTask.addCatch(waitBeforeRetry, catchOptions);
-        getUserVehicleAssignmentsTask.addCatch(waitBeforeRetry, catchOptions);
-        getUserPossibleRiderResponsibilitiesTask.addCatch(
-            waitBeforeRetry,
-            catchOptions
-        );
-        getUserAssignmentsTask.addCatch(waitBeforeRetry, catchOptions);
-        finishAndSendUserDataTask.addCatch(waitBeforeRetry, catchOptions);
 
         const mainChain = sfn.Chain.start(getUserCommentsTask)
             .next(getUserVehicleAssignmentsTask)
@@ -358,8 +362,6 @@ export class UserTakeOutDataStepFunction extends Construct {
             .next(getUserAssignmentsTask)
             .next(finishAndSendUserDataTask)
             .next(successState);
-
-        waitBeforeRetry.next(retryCheckLambdaTask);
 
         const definition = sfn.Chain.start(retryCheckLambdaTask);
         retryCheckLambdaTask.next(mainChain);
