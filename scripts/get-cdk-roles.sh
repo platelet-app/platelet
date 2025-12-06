@@ -46,8 +46,8 @@ echo "
             \"ssm:GetParametersByPath\"
         ],
         \"Resource\": [
-            $DELETE_USER_STATE_MACHINE_ARN,
-            $DELETE_USER_STATE_MACHINE_ARN_SSM_PARAM_ARN
+            $USER_TAKE_OUT_DATA_STATE_MACHINE_ARN,
+            $USER_TAKE_OUT_DATA_STATE_MACHINE_ARN_SSM_PARAM_ARN
         ]
     }
 ]" > "./amplify/backend/function/plateletUserTakeOutData/custom-policies.json"
