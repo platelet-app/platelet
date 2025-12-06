@@ -8,8 +8,8 @@
             "ssm:GetParametersByPath"
         ],
         "Resource": [
-            "arn:aws:states:eu-west-1:130063560692:stateMachine:DeleteUserStepFunctionDeleteUserStateMachine9FDD566C-oNGl0ORVrEr8",
-            "arn:aws:ssm:eu-west-1:130063560692:parameter/platelet-supporting-cdk/mahalia/DeleteUserStateMachineArn"
+            "arn:aws:states:eu-west-1:130063560692:stateMachine:UserTakeOutDataStepFunctionUserTakeOutDataStateMachineCC811049-EnN9TUrSJTG7",
+            "arn:aws:ssm:eu-west-1:130063560692:parameter/platelet-supporting-cdk/mahalia/UserTakeOutDataStateMachineArn"
         ]
     }
 ]
