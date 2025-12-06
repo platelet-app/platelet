@@ -386,6 +386,15 @@ export class UserTakeOutDataStepFunction extends Construct {
         );
         new cdk.CfnOutput(
             this,
+            "AdminRoleNamesGetUserPossibleRiderResponsibilitiesTakeOutRoleOutput",
+            {
+                value: getRoleArnNameOnly(
+                    getUserPossibleRiderResponsibilitiesFunction
+                ),
+            }
+        );
+        new cdk.CfnOutput(
+            this,
             "AdminRoleNamesGetUserAssignmentsTakeOutRoleOutput",
             {
                 value: getRoleArnNameOnly(getUserAssignmentsFunction),
