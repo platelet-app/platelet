@@ -69,7 +69,7 @@ function AboutPlatelet() {
             <br />
             <br />
             Platelet Dispatch has been used to record over{" "}
-            <span className={classes.subText}> 20,000 consignments </span>
+            <span className={classes.subText}> 36,000 consignments </span>
             for the blood bikes so far.
           </Typography>
         </Grid>
