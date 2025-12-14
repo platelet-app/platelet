@@ -141,7 +141,7 @@ export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
             userId
         );
     }
-    await sendEmail(user?.emailAddress, user?.name, user.id);
+    await sendEmail(user?.contact?.emailAddress, user?.name, user.id);
     await deleteTakeOutFile(user.id);
     return { retryCount, userId };
 };
