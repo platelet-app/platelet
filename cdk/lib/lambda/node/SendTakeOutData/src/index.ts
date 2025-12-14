@@ -17,6 +17,7 @@ import {
     GetObjectCommand,
     ListObjectsV2Command,
 } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 import { PassThrough } from "stream";
 import { Upload } from "@aws-sdk/lib-storage";
@@ -110,7 +111,7 @@ const zipFiles = async (userId: string) => {
         }
     }
 
-    archive.finalize();
+    await archive.finalize();
     await uploadPromise;
 
     return zipFileName;
@@ -143,48 +144,56 @@ const getUserFunction = async (
     return body?.data?.getUser;
 };
 
-function getS3File(item: string) {
+function getS3File(key: string) {
     const s3Client = new S3Client({ region: REGION || "eu-west-1" });
     const input = {
         Bucket: TAKE_OUT_BUCKET,
-        Key: item,
+        Key: key,
     };
     const command = new GetObjectCommand(input);
     return s3Client.send(command);
 }
+
+const generatePresignedLink = async (key: string) => {
+    const s3Client = new S3Client({ region: REGION || "eu-west-1" });
+    const input = {
+        Bucket: TAKE_OUT_BUCKET,
+        Key: key,
+    };
+    const command = new GetObjectCommand(input);
+    return await getSignedUrl(s3Client, command, {
+        expiresIn: 3600,
+    });
+};
 
 const sendEmail = async (
     emailAddress: string,
     recipientName: string,
     attachmentKey: string
 ) => {
+    console.log("wowowow", attachmentKey, TAKE_OUT_BUCKET);
+
+    const presignedUrl = generatePresignedLink(attachmentKey);
+
+    console.log(presignedUrl);
+
     const html = `
 <p>
     Dear ${recipientName}
 </p>
 <p>
-    Please find attached your requested take out data.
+    Please find attached your requested take out data. ${presignedUrl}
 </p>
 <p>
     Thank you.
 </p>
 `;
 
-    console.log("wowowow", attachmentKey, TAKE_OUT_BUCKET);
-
-    const file = await getS3File(attachmentKey);
-    const content = await file.Body?.transformToString();
     var mailOptions = {
         from: "noreply@platelet.app",
         subject: "Your requested take out data",
         html,
         to: emailAddress,
-        attachments: [
-            {
-                filename: `${recipientName} - takeout.zip`,
-                content,
-            },
-        ],
     };
 
     console.log("Creating SES transporter");
