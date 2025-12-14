@@ -196,7 +196,7 @@ const sendEmail = async (
 
 export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
     console.log("send take out data", event);
-    const { userId, retryCount } = event;
+    const { userId } = event;
     if (!GRAPHQL_ENDPOINT) {
         throw new Error("Missing env variables");
     }
@@ -213,5 +213,5 @@ export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
     const zipFile = await zipFiles(user?.id);
     await sendEmail(user?.contact?.emailAddress, user?.name, zipFile);
     //await deleteTakeOutFile(user.id);
-    return { retryCount, userId };
+    return { userId };
 };

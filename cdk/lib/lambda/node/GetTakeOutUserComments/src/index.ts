@@ -46,12 +46,12 @@ const writeToBucket = async (data: Comment[], key: string) => {
 
 export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
     console.log("get user comments", event);
-    const { userId, retryCount } = event;
+    const { userId } = event;
     if (!GRAPHQL_ENDPOINT) {
         throw new Error("Missing env variables");
     }
     const comments = await getUserComments(userId, GRAPHQL_ENDPOINT);
     console.log("Found comments", comments);
     await writeToBucket(comments, `${userId}/comments.json`);
-    return { userId, retryCount };
+    return { userId };
 };

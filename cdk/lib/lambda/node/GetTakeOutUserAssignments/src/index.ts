@@ -46,11 +46,11 @@ const writeToBucket = async (data: TaskAssignee[], key: string) => {
 
 export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
     console.log("get user ass", event);
-    const { userId, retryCount } = event;
+    const { userId } = event;
     if (!GRAPHQL_ENDPOINT) {
         throw new Error("Missing env variables");
     }
     const assignments = await getUserAssignments(userId, GRAPHQL_ENDPOINT);
     await writeToBucket(assignments, `${userId}/assignments.json`);
-    return { userId, retryCount };
+    return { userId };
 };

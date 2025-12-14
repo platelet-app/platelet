@@ -46,7 +46,7 @@ const writeToBucket = async (data: VehicleAssignment[], key: string) => {
 
 export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
     console.log("clean vehicle assignments", event);
-    const { userId, retryCount } = event;
+    const { userId } = event;
     if (!GRAPHQL_ENDPOINT) {
         throw new Error("Missing env variables");
     }
@@ -60,5 +60,5 @@ export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
         `${userId}/vehicle_assignments.json`
     );
 
-    return { userId, retryCount };
+    return { userId };
 };
