@@ -7,6 +7,7 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 import * as appsync from "aws-cdk-lib/aws-appsync";
 import * as s3 from "aws-cdk-lib/aws-s3";
+import * as ses from "aws-cdk-lib/aws-ses";
 import { Construct } from "constructs";
 import { createLambdaStatement, getRoleArnNameOnly } from "./utils";
 import { NagSuppressions } from "cdk-nag";
@@ -24,6 +25,7 @@ export class UserTakeOutDataStepFunction extends Construct {
     private appsync: cdk.aws_appsync.IGraphqlApi;
     private amplifyEnv: string;
     private graphQLEndpoint: string;
+    private sesIdentity: cdk.aws_ses.IEmailIdentity;
 
     constructor(
         scope: Construct,
@@ -36,6 +38,11 @@ export class UserTakeOutDataStepFunction extends Construct {
             this,
             "AmplifyBucket",
             props.bucketName
+        );
+        this.sesIdentity = ses.EmailIdentity.fromEmailIdentityName(
+            this,
+            "TakeOutSESEmailIdentity",
+            "platelet.app"
         );
         this.appsync = appsync.GraphqlApi.fromGraphqlApiAttributes(
             this,
@@ -221,6 +228,13 @@ export class UserTakeOutDataStepFunction extends Construct {
         createLambdaStatement(finishAndSendUserDataFunction, this.appsync.arn, {
             queries: ["getUser"],
         });
+
+        finishAndSendUserDataFunction.addToRolePolicy(
+            new iam.PolicyStatement({
+                actions: ["ses:SendRawEmail"],
+                resources: [this.sesIdentity.emailIdentityArn],
+            })
+        );
 
         finishAndSendUserDataFunction.addToRolePolicy(
             new iam.PolicyStatement({
