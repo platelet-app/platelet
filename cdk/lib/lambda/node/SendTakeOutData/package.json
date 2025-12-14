@@ -15,12 +15,15 @@
     "license": "Apache-2.0",
     "dependencies": {
         "@aws-sdk/client-s3": "^3.911.0",
+        "@aws-sdk/client-sesv2": "^3.950.0",
         "@platelet-app/graphql": "^1.1.5",
-        "@platelet-app/lambda": "^1.1.10",
-        "@platelet-app/types": "^1.1.2"
+        "@platelet-app/lambda": "^1.1.11",
+        "@platelet-app/types": "^1.1.2",
+        "nodemailer": "^7.0.11"
     },
     "devDependencies": {
         "@types/jest": "^30.0.0",
+        "@types/nodemailer": "^7.0.4",
         "jest": "^30.2.0",
         "ts-jest": "^29.4.5"
     }
