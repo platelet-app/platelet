@@ -6,7 +6,7 @@ import {
     errorCheck,
     getUserProfilePictures,
 } from "@platelet-app/lambda";
-import { getUser } from "./queries.js";
+import { queries } from "@platelet-app/graphql";
 import type { User } from "@platelet-app/types";
 import {
     S3Client,
