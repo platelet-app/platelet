@@ -127,11 +127,17 @@ const deleteTakeOutFile = async (key: string) => {
     await client.send(command);
 };
 
-const getUserFunction = async (userId: string, endpoint: string) => {
+const getUserFunction = async (
+    userId: string,
+    endpoint: string
+): Promise<User> => {
     const variables = {
         id: userId,
     };
-    const response = await request({ query: getUser, variables }, endpoint);
+    const response = await request(
+        { query: queries.getUser, variables },
+        endpoint
+    );
     const body = await response.json();
     errorCheck(body);
     return body?.data?.getUser;
@@ -173,7 +179,6 @@ const sendEmail = async (
         subject: "Your requested take out data",
         html,
         to: emailAddress,
-        // bcc: Any BCC address you want here in an array,
         attachments: [
             {
                 filename: "An Attachment.pdf",
@@ -191,7 +196,7 @@ const sendEmail = async (
     });
 
     // send email
-    transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
 };
 
 export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
@@ -211,7 +216,9 @@ export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
         );
     }
     const zipFile = await zipFiles(user?.id);
-    await sendEmail(user?.contact?.emailAddress, user?.name, zipFile);
+    if (user?.name && user?.contact?.emailAddress) {
+        await sendEmail(user?.contact?.emailAddress, user?.name, zipFile);
+    }
     //await deleteTakeOutFile(user.id);
     return { userId };
 };
