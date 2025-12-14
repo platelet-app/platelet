@@ -179,13 +179,13 @@ const sendEmail = async (
 
     const html = `
 <p>
-    Dear ${recipientName}
+    Dear ${recipientName},
 </p>
 <p>
-    Please find attached your requested take out data. ${presignedUrl}
+    Please use <a href=${presignedUrl}>this link</a> to download your take out data.
 </p>
 <p>
-    Thank you.
+    Thank you for using Platelet Dispatch.
 </p>
 `;
 
