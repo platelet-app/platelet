@@ -181,7 +181,7 @@ const sendEmail = async (
         to: emailAddress,
         attachments: [
             {
-                filename: "An Attachment.pdf",
+                filename: `${recipientName} - takeout.zip`,
                 content,
             },
         ],
