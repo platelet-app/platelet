@@ -94,7 +94,9 @@ const zipFiles = async (userId: string) => {
                 });
                 const response = await s3Client.send(command);
                 if (response.Body) {
-                    archive.append(response.Body, { name: filename });
+                    archive.append(await response.Body.transformToString(), {
+                        name: filename.Key || "",
+                    });
                 } else {
                     throw new Error("No body found!");
                 }
