@@ -1,4 +1,5 @@
 import type { LambdaEvent, LambdaReturn } from "./interfaces.js";
+import archiver from "archiver";
 import nodemailer from "nodemailer";
 import {
     request,
@@ -14,8 +15,11 @@ import {
     type ListObjectsV2CommandOutput,
     CopyObjectCommand,
     GetObjectCommand,
+    ListObjectsV2Command,
 } from "@aws-sdk/client-s3";
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
+import { PassThrough } from "stream";
+import { Upload } from "@aws-sdk/lib-storage";
 
 const TAKE_OUT_BUCKET = process.env.TAKE_OUT_BUCKET;
 const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT;
@@ -33,6 +37,16 @@ const writeToBucket = async (data: User, key: string) => {
     );
 };
 
+export const listTakeOutFiles = async (prefix: string) => {
+    const s3Client = new S3Client({ region: REGION || "eu-west-1" });
+    const input = {
+        Bucket: TAKE_OUT_BUCKET,
+        Prefix: prefix,
+    };
+    const command = new ListObjectsV2Command(input);
+    return await s3Client.send(command);
+};
+
 const writeProfilePictures = async (
     pictures: ListObjectsV2CommandOutput,
     sourceBucket: string,
@@ -47,6 +61,57 @@ const writeProfilePictures = async (
         });
         await s3Client.send(command);
     }
+};
+
+const zipFiles = async (userId: string) => {
+    const archive = archiver("zip", { zlib: { level: 9 } });
+    const passThrough = new PassThrough();
+
+    archive.pipe(passThrough);
+
+    const zipFileName = `${userId}.zip`;
+
+    const uploadParams = {
+        Bucket: TAKE_OUT_BUCKET || "",
+        Key: zipFileName,
+        Body: passThrough,
+        ContentType: "application/zip",
+    };
+
+    const s3Client = new S3Client({ region: REGION || "eu-west-1" });
+    const uploader = new Upload({ client: s3Client, params: uploadParams });
+    const uploadPromise = uploader.done();
+
+    const listFiles = await listTakeOutFiles(`${userId}/`);
+    const filenames = listFiles.Contents;
+
+    if (filenames) {
+        for (const filename of filenames) {
+            try {
+                const command = new GetObjectCommand({
+                    Bucket: TAKE_OUT_BUCKET,
+                    Key: filename.Key,
+                });
+                const response = await s3Client.send(command);
+                if (response.Body) {
+                    archive.append(response.Body, { name: filename });
+                } else {
+                    throw new Error("No body found!");
+                }
+            } catch (error) {
+                console.warn(
+                    `Error streaming file ${filename}: ${JSON.stringify(
+                        error
+                    )}. Continuing anyway.`
+                );
+            }
+        }
+    }
+
+    archive.finalize();
+    await uploadPromise;
+
+    return zipFileName;
 };
 
 const deleteTakeOutFile = async (key: string) => {
@@ -97,6 +162,8 @@ const sendEmail = async (
 </p>
 `;
 
+    console.log("wowowow", attachmentKey, TAKE_OUT_BUCKET);
+
     const file = await getS3File(attachmentKey);
     const content = await file.Body?.transformToString();
     var mailOptions = {
@@ -141,7 +208,8 @@ export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
             userId
         );
     }
-    await sendEmail(user?.contact?.emailAddress, user?.name, `${user?.id}/`);
-    await deleteTakeOutFile(user.id);
+    const zipFile = await zipFiles(user?.id);
+    await sendEmail(user?.contact?.emailAddress, user?.name, zipFile);
+    //await deleteTakeOutFile(user.id);
     return { retryCount, userId };
 };
