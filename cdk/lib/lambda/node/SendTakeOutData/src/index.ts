@@ -1,4 +1,5 @@
 import type { LambdaEvent, LambdaReturn } from "./interfaces.js";
+import pAll from "p-all";
 import archiver from "archiver";
 import nodemailer from "nodemailer";
 import {
@@ -117,15 +118,24 @@ const zipFiles = async (userId: string) => {
     return zipFileName;
 };
 
-const deleteTakeOutFile = async (key: string) => {
-    const config = {};
-    const client = new S3Client(config);
-    const input = {
-        Bucket: TAKE_OUT_BUCKET,
-        Key: key,
-    };
-    const command = new DeleteObjectCommand(input);
-    await client.send(command);
+const deleteTakeOutFile = async (prefix: string) => {
+    const client = new S3Client({ region: REGION || "eu-west-1" });
+    const listFiles = await listTakeOutFiles(`${prefix}/`);
+
+    const filenames = listFiles.Contents;
+    if (filenames) {
+        await pAll(
+            filenames.map((item) => () => {
+                const input = {
+                    Bucket: TAKE_OUT_BUCKET,
+                    Key: item.Key,
+                };
+                const command = new DeleteObjectCommand(input);
+                return client.send(command);
+            }),
+            { concurrency: 10 }
+        );
+    }
 };
 
 const getUserFunction = async (
@@ -211,6 +221,6 @@ export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
     if (user?.name && user?.contact?.emailAddress) {
         await sendEmail(user?.contact?.emailAddress, user?.name, zipFile);
     }
-    //await deleteTakeOutFile(user.id);
+    await deleteTakeOutFile(user.id);
     return { userId };
 };
