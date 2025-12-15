@@ -256,7 +256,7 @@ export class UserTakeOutDataStepFunction extends Construct {
         );
         finishAndSendUserDataFunction.addToRolePolicy(
             new iam.PolicyStatement({
-                actions: ["s3:GetObject"],
+                actions: ["s3:GetObject", "s3:DeleteObject"],
                 resources: [`${takeOutBucket.bucketArn}/*`],
             })
         );
