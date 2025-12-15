@@ -162,7 +162,8 @@ const generatePresignedLink = async (key: string) => {
     };
     const command = new GetObjectCommand(input);
     return await getSignedUrl(s3Client, command, {
-        expiresIn: 3600,
+        // 1 day
+        expiresIn: 3600 * 24,
     });
 };
 
@@ -179,6 +180,9 @@ const sendEmail = async (
 </p>
 <p>
     Please use <a href=${presignedUrl}>this link</a> to download your take out data.
+</p>
+<p>
+    <b>This link will expire one day from now.</b>
 </p>
 <p>
     Thank you for using Platelet Dispatch.
