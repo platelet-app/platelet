@@ -1,4 +1,4 @@
-import type { LambdaEvent, LambdaReturn } from "./interfaces.js";
+import type { LambdaEvent } from "./interfaces.js";
 import pAll from "p-all";
 import archiver from "archiver";
 import nodemailer from "nodemailer";
