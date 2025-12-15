@@ -171,7 +171,7 @@ const sendEmail = async (
     recipientName: string,
     attachmentKey: string
 ) => {
-    const presignedUrl = generatePresignedLink(attachmentKey);
+    const presignedUrl = await generatePresignedLink(attachmentKey);
 
     const html = `
 <p>
