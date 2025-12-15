@@ -7,7 +7,6 @@ import {
     errorCheck,
     getUserProfilePictures,
 } from "@platelet-app/lambda";
-import { queries } from "@platelet-app/graphql";
 import type { User } from "@platelet-app/types";
 import {
     S3Client,
@@ -22,6 +21,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 import { PassThrough, Readable } from "stream";
 import { Upload } from "@aws-sdk/lib-storage";
+import { getUser } from "./queries.js";
 
 const TAKE_OUT_BUCKET = process.env.TAKE_OUT_BUCKET;
 const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT;
@@ -145,10 +145,7 @@ const getUserFunction = async (
     const variables = {
         id: userId,
     };
-    const response = await request(
-        { query: queries.getUser, variables },
-        endpoint
-    );
+    const response = await request({ query: getUser, variables }, endpoint);
     const body = await response.json();
     errorCheck(body);
     return body?.data?.getUser;
