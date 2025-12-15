@@ -144,16 +144,6 @@ const getUserFunction = async (
     return body?.data?.getUser;
 };
 
-function getS3File(key: string) {
-    const s3Client = new S3Client({ region: REGION || "eu-west-1" });
-    const input = {
-        Bucket: TAKE_OUT_BUCKET,
-        Key: key,
-    };
-    const command = new GetObjectCommand(input);
-    return s3Client.send(command);
-}
-
 const generatePresignedLink = async (key: string) => {
     const s3Client = new S3Client({ region: REGION || "eu-west-1" });
     const input = {
@@ -171,11 +161,7 @@ const sendEmail = async (
     recipientName: string,
     attachmentKey: string
 ) => {
-    console.log("wowowow", attachmentKey, TAKE_OUT_BUCKET);
-
     const presignedUrl = generatePresignedLink(attachmentKey);
-
-    console.log(presignedUrl);
 
     const html = `
 <p>
@@ -197,14 +183,11 @@ const sendEmail = async (
     };
 
     console.log("Creating SES transporter");
-    // create Nodemailer SES transporter
-    //
     const sesClient = new SESv2Client({ region: REGION || "eu-west-1" });
     var transporter = nodemailer.createTransport({
         SES: { sesClient, SendEmailCommand },
     });
 
-    // send email
     await transporter.sendMail(mailOptions);
 };
 
