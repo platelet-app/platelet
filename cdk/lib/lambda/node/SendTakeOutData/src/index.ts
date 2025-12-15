@@ -20,7 +20,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
-import { PassThrough } from "stream";
+import { PassThrough, Readable } from "stream";
 import { Upload } from "@aws-sdk/lib-storage";
 
 const TAKE_OUT_BUCKET = process.env.TAKE_OUT_BUCKET;
@@ -96,7 +96,7 @@ const zipFiles = async (userId: string) => {
                 });
                 const response = await s3Client.send(command);
                 if (response.Body) {
-                    archive.append(await response.Body.transformToString(), {
+                    archive.append(response.Body as Readable, {
                         name: filename.Key || "",
                     });
                 } else {
@@ -226,5 +226,4 @@ export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
         await sendEmail(user?.contact?.emailAddress, user?.name, zipFile);
     }
     await deleteTakeOutFile(user.id);
-    return { userId };
 };
