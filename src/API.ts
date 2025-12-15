@@ -7271,6 +7271,18 @@ export type SendUserFeedbackQuery = {
   } | null,
 };
 
+export type UserTakeOutDataQueryVariables = {
+  userId?: string | null,
+};
+
+export type UserTakeOutDataQuery = {
+  userTakeOutData?:  {
+    __typename: "StateMachineExecution",
+    executionArn?: string | null,
+    startDate?: string | null,
+  } | null,
+};
+
 export type OnCreateTenantSubscriptionVariables = {
   filter?: ModelSubscriptionTenantFilterInput | null,
 };
