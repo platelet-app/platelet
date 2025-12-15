@@ -19,6 +19,7 @@ import usePossibleRiderResponsibilities from "../../../hooks/usePossibleRiderRes
 import EnableDisableUser from "./EnableDisableUser";
 import ResetUserPassword from "./ResetUserPassword";
 import DeleteUser from "./DeleteUser";
+import TakeOutUserData from "./TakeOutUserData";
 
 const initialUserState = {
     id: "",
@@ -208,6 +209,7 @@ export default function UserDetail({ userId }) {
                                 <EnableDisableUser user={user} />
                                 <DeleteUser user={user} />
                                 <ResetUserPassword user={user} />
+                                <TakeOutUserData user={user} />
                             </Stack>
                         )}
                     </Stack>
