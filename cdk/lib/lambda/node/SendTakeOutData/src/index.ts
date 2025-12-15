@@ -205,7 +205,7 @@ const sendEmail = async (
     await transporter.sendMail(mailOptions);
 };
 
-export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
+export const handler = async (event: LambdaEvent) => {
     console.log("send take out data", event);
     const { userId } = event;
     if (!GRAPHQL_ENDPOINT) {
