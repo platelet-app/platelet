@@ -17,6 +17,7 @@ const getUser = `query GetUser($id: ID!) {
   getUser(id: $id) {
     id
     _version
+    cognitoId
     _deleted
     _lastChangedAt
     __typename
@@ -33,8 +34,6 @@ const getStateMachineArn = async (envName) => {
     const command = new GetParameterCommand(params);
     try {
         const response = await client.send(command);
-
-        // The value is nested under Parameter.Value
         return response.Parameter?.Value;
     } catch (error) {
         if (error.name === "ParameterNotFound") {
@@ -85,6 +84,11 @@ const startStepFunctionExecution = async (input) => {
 
 export const handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
+    const { claims } = event.requestContext.authorizer.claims;
+    let authorized = false;
+    if (claims["cognito:groups"].includes("ADMIN")) {
+        authorized = true;
+    }
     const { userId } = event.arguments;
 
     if (!userId) {
@@ -93,8 +97,16 @@ export const handler = async (event) => {
 
     const user = await getUserFunction(userId);
 
-    if (user._deleted) {
+    if (!user || user._deleted) {
         throw new Error("User not found");
+    }
+
+    if (claims.sub === user.cognitoId) {
+        authorized = true;
+    }
+
+    if (!authorized) {
+        throw new Error("You can't request for another user");
     }
 
     const sfnParams = {
