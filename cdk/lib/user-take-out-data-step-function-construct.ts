@@ -253,13 +253,11 @@ export class UserTakeOutDataStepFunction extends Construct {
                 effect: iam.Effect.DENY,
                 actions: ["s3:ListBucket"],
                 resources: [this.bucket.bucketArn],
-                conditions: [
-                    {
-                        StringNotEquals: {
-                            "s3:prefix": "public/",
-                        },
+                conditions: {
+                    StringNotEquals: {
+                        "s3:prefix": "public/",
                     },
-                ],
+                },
             })
         );
         finishAndSendUserDataFunction.addToRolePolicy(
