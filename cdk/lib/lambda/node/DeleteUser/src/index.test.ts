@@ -3,6 +3,9 @@ import { jest, expect } from "@jest/globals";
 jest.unstable_mockModule("@platelet-app/lambda", () => ({
     request: jest.fn(),
     errorCheck: jest.fn(),
+    getUserProfilePictures: jest.fn().mockResolvedValue({
+        Contents: [{ Key: "test-key" }, { Key: "test-key2" }],
+    }),
 }));
 
 jest.unstable_mockModule("@aws-sdk/client-cognito-identity-provider", () => {
@@ -19,7 +22,7 @@ jest.unstable_mockModule("@aws-sdk/client-cognito-identity-provider", () => {
 });
 
 jest.unstable_mockModule("@aws-sdk/client-s3", () => {
-    const mockSend = jest.fn().mockResolvedValue({});
+    const mockSend = jest.fn().mockResolvedValueOnce({});
     const MockS3Client = jest.fn(() => ({
         send: mockSend,
     }));
@@ -95,13 +98,19 @@ describe("DeleteUser", () => {
               ],
             ]
         `);
-        expect(s3.mockSend).toHaveBeenCalledTimes(1);
+        expect(s3.mockSend).toHaveBeenCalledTimes(2);
         expect(s3.DeleteObjectCommand.mock.calls).toMatchInlineSnapshot(`
             [
               [
                 {
                   "Bucket": "some-bucket",
-                  "Key": "some-key",
+                  "Key": "test-key",
+                },
+              ],
+              [
+                {
+                  "Bucket": "some-bucket",
+                  "Key": "test-key2",
                 },
               ],
             ]

@@ -86,7 +86,6 @@ export class DeleteUserStepFunction extends Construct {
                     "./lib/lambda/node/GetUserComments/dist"
                 ),
                 timeout: cdk.Duration.seconds(180),
-                memorySize: 1024,
                 environment: {
                     REGION: props.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
@@ -111,7 +110,6 @@ export class DeleteUserStepFunction extends Construct {
                     "./lib/lambda/node/GetUserAssignments/dist"
                 ),
                 timeout: cdk.Duration.seconds(180),
-                memorySize: 1024,
                 environment: {
                     REGION: props.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
@@ -135,7 +133,6 @@ export class DeleteUserStepFunction extends Construct {
                     "./lib/lambda/node/DeleteComments/dist"
                 ),
                 timeout: cdk.Duration.seconds(180),
-                memorySize: 1024,
                 environment: {
                     REGION: props.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
@@ -160,7 +157,6 @@ export class DeleteUserStepFunction extends Construct {
                     "./lib/lambda/node/DeleteAssignments/dist"
                 ),
                 timeout: cdk.Duration.seconds(180),
-                memorySize: 1024,
                 environment: {
                     REGION: props.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
@@ -184,7 +180,6 @@ export class DeleteUserStepFunction extends Construct {
                     "./lib/lambda/node/CleanVehicleAssignments/dist"
                 ),
                 timeout: cdk.Duration.seconds(180),
-                memorySize: 1024,
                 environment: {
                     REGION: props.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
@@ -219,7 +214,6 @@ export class DeleteUserStepFunction extends Construct {
                     "./lib/lambda/node/CleanPossibleRiderResponsibilities/dist"
                 ),
                 timeout: cdk.Duration.seconds(180),
-                memorySize: 1024,
                 environment: {
                     REGION: props.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
@@ -254,7 +248,6 @@ export class DeleteUserStepFunction extends Construct {
                     "./lib/lambda/node/DeleteUser/dist"
                 ),
                 timeout: cdk.Duration.seconds(180),
-                memorySize: 1024,
                 environment: {
                     REGION: props.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
@@ -291,7 +284,26 @@ export class DeleteUserStepFunction extends Construct {
                 resources: [`${this.bucket.bucketArn}/public/*`],
             })
         );
-
+        deleteUserFunction.addToRolePolicy(
+            new iam.PolicyStatement({
+                actions: ["s3:ListBucket"],
+                resources: [this.bucket.bucketArn],
+            })
+        );
+        deleteUserFunction.addToRolePolicy(
+            new iam.PolicyStatement({
+                effect: iam.Effect.DENY,
+                actions: ["s3:ListBucket"],
+                resources: [this.bucket.bucketArn],
+                conditions: [
+                    {
+                        StringNotEquals: {
+                            "s3:prefix": "public/",
+                        },
+                    },
+                ],
+            })
+        );
         if (deleteUserFunction.role) {
             NagSuppressions.addResourceSuppressions(
                 deleteUserFunction.role,

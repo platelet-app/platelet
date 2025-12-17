@@ -1,5 +1,10 @@
 import type { LambdaEvent, LambdaReturn } from "./interfaces.js";
-import { request, errorCheck } from "@platelet-app/lambda";
+import pAll from "p-all";
+import {
+    request,
+    errorCheck,
+    getUserProfilePictures,
+} from "@platelet-app/lambda";
 import { getUser } from "./queries.js";
 import { mutations } from "@platelet-app/graphql";
 import type { User, S3Object } from "@platelet-app/types";
@@ -12,6 +17,7 @@ import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 const USER_POOL_ID = process.env.USER_POOL_ID;
 const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT;
+const REGION = process.env.REGION;
 
 const disableUserCognito = async (username: string, userPoolId: string) => {
     const params = {
@@ -52,14 +58,21 @@ const deleteUserFunction = async (user: User, endpoint: string) => {
 };
 
 const deleteProfilePicture = async (item: S3Object) => {
-    const config = {};
-    const client = new S3Client(config);
-    const input = {
-        Bucket: item.bucket,
-        Key: item.key,
-    };
-    const command = new DeleteObjectCommand(input);
-    await client.send(command);
+    const client = new S3Client({ region: REGION || "eu-west-1" });
+    const pictures = await getUserProfilePictures(item);
+    if (pictures?.Contents) {
+        await pAll(
+            pictures?.Contents.map((pic) => () => {
+                const input = {
+                    Bucket: item.bucket,
+                    Key: pic.Key,
+                };
+                const command = new DeleteObjectCommand(input);
+                return client.send(command);
+            }),
+            { concurrency: 10 }
+        );
+    }
 };
 
 const getUserFunction = async (userId: string, endpoint: string) => {
