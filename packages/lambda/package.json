@@ -21,10 +21,13 @@
     ],
     "scripts": {
         "build": "tsc --project tsconfig.json",
-        "prepublishOnly": "npm run build && npm version patch"
+        "prepublishOnly": "npm run build && npm version patch",
+        "test": "NODE_OPTIONS='--experimental-vm-modules' jest",
+        "test:watch": "NODE_OPTIONS='--experimental-vm-modules' jest --watch"
     },
     "dependencies": {
         "@aws-crypto/sha256-js": "^1.0.0-alpha.0",
+        "@aws-sdk/client-s3": "^3.954.0",
         "@aws-sdk/client-ses": "^3.946.0",
         "@aws-sdk/credential-provider-node": "^3.6.1",
         "@aws-sdk/protocol-http": "^3.6.1",
@@ -32,5 +35,11 @@
         "@platelet-app/types": "^1.1.2",
         "@types/node-fetch": "^2.6.13",
         "node-fetch": "^2.6.7"
+    },
+    "devDependencies": {
+        "@types/jest": "^29.5.12",
+        "aws-sdk-client-mock": "^4.1.0",
+        "jest": "^30.2.0",
+        "ts-jest": "^29.4.6"
     }
 }
