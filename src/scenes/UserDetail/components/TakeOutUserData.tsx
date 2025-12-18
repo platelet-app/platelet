@@ -98,10 +98,10 @@ It could take up to an hour to arrive.
                     <Typography whiteSpace="pre-line">{message}</Typography>
                 </DialogContent>
                 <DialogActions>
-                    <Button disabled={isPosting} onClick={handleCancel}>
-                        Cancel
+                    <Button onClick={handleCancel}>Cancel</Button>
+                    <Button disabled={isPosting} onClick={handleTakeOutData}>
+                        Send my data
                     </Button>
-                    <Button onClick={handleTakeOutData}>Send my data</Button>
                 </DialogActions>
             </RoundedDialog>
         </>
