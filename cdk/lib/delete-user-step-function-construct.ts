@@ -296,7 +296,7 @@ export class DeleteUserStepFunction extends Construct {
                 actions: ["s3:ListBucket"],
                 resources: [this.bucket.bucketArn],
                 conditions: {
-                    StringNotEquals: {
+                    StringEquals: {
                         "s3:prefix": "public/",
                     },
                 },
