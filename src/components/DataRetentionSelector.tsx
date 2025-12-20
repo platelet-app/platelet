@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, TextField, MenuItem } from "@mui/material";
+import { Stack, TextField, MenuItem } from "@mui/material";
 
 export enum TimeUnit {
     DAYS = "days",
@@ -43,36 +43,32 @@ const DataRetentionSelector: React.FC<DataRetentionSelectorProps> = ({
     };
 
     return (
-        <Grid container spacing={2} alignItems="center">
-            <Grid item xs={6}>
-                <TextField
-                    fullWidth
-                    label="Retention Time"
-                    type="number"
-                    value={value.value}
-                    onChange={handleValueChange}
-                    disabled={disabled}
-                    inputProps={{
-                        min: 0,
-                    }}
-                />
-            </Grid>
-            <Grid item xs={6}>
-                <TextField
-                    fullWidth
-                    select
-                    label="Unit"
-                    value={value.unit}
-                    onChange={handleUnitChange}
-                    disabled={disabled}
-                >
-                    <MenuItem value={TimeUnit.DAYS}>Days</MenuItem>
-                    <MenuItem value={TimeUnit.WEEKS}>Weeks</MenuItem>
-                    <MenuItem value={TimeUnit.MONTHS}>Months</MenuItem>
-                    <MenuItem value={TimeUnit.YEARS}>Years</MenuItem>
-                </TextField>
-            </Grid>
-        </Grid>
+        <Stack direction="row" spacing={2} alignItems="center">
+            <TextField
+                label="Retention Time"
+                type="number"
+                value={value.value}
+                onChange={handleValueChange}
+                disabled={disabled}
+                inputProps={{
+                    min: 1,
+                }}
+                sx={{ flex: 1 }}
+            />
+            <TextField
+                select
+                label="Unit"
+                value={value.unit}
+                onChange={handleUnitChange}
+                disabled={disabled}
+                sx={{ flex: 1 }}
+            >
+                <MenuItem value={TimeUnit.DAYS}>Days</MenuItem>
+                <MenuItem value={TimeUnit.WEEKS}>Weeks</MenuItem>
+                <MenuItem value={TimeUnit.MONTHS}>Months</MenuItem>
+                <MenuItem value={TimeUnit.YEARS}>Years</MenuItem>
+            </TextField>
+        </Stack>
     );
 };
 

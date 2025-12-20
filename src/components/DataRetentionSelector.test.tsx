@@ -78,11 +78,11 @@ describe("DataRetentionSelector", () => {
         expect(unitSelect).toBeDisabled();
     });
 
-    test("does not allow negative values", () => {
+    test("minimum allowed value is 1", () => {
         const onChange = jest.fn();
         render(<DataRetentionSelector value={defaultValue} onChange={onChange} />);
 
         const valueInput = screen.getByLabelText("Retention Time");
-        expect(valueInput).toHaveAttribute("min", "0");
+        expect(valueInput).toHaveAttribute("min", "1");
     });
 });

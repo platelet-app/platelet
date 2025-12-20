@@ -13,7 +13,6 @@ import { DeliverableTypeChips } from "./Components/DeliverableTypeChips";
 export function AdminControl() {
     return (
         <Stack spacing={2}>
-            <AdminDataRetention />
             <AdminAddDeliverableType />
             <DeliverableTypeChips />
             <AdminAddRiderResponsibility />
@@ -21,6 +20,7 @@ export function AdminControl() {
             <AdminAddUser />
             <AdminAddVehicle />
             <AdminAddLocation />
+            <AdminDataRetention />
         </Stack>
     );
 }

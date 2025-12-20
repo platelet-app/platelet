@@ -32,12 +32,37 @@ describe("AdminDataRetention", () => {
                 "Determine how long data should be retained before automatic deletion"
             )
         ).toBeInTheDocument();
-        expect(screen.getByLabelText("Retention Time")).toHaveValue(30);
+        expect(
+            screen.getByLabelText(
+                "Retain data indefinitely (no automatic deletion)"
+            )
+        ).toBeChecked();
+        expect(screen.queryByLabelText("Retention Time")).toBeNull();
+    });
+
+    test("allows toggling indefinite retention", () => {
+        render(<AdminDataRetention />, { preloadedState });
+
+        const checkbox = screen.getByLabelText(
+            "Retain data indefinitely (no automatic deletion)"
+        );
+        expect(checkbox).toBeChecked();
+
+        userEvent.click(checkbox);
+
+        expect(checkbox).not.toBeChecked();
+        expect(screen.getByLabelText("Retention Time")).toBeInTheDocument();
         expect(screen.getByLabelText("Unit")).toBeInTheDocument();
     });
 
     test("allows changing retention time value", () => {
         render(<AdminDataRetention />, { preloadedState });
+
+        // Uncheck indefinite retention first
+        const checkbox = screen.getByLabelText(
+            "Retain data indefinitely (no automatic deletion)"
+        );
+        userEvent.click(checkbox);
 
         const valueInput = screen.getByLabelText("Retention Time");
         userEvent.clear(valueInput);
@@ -48,6 +73,12 @@ describe("AdminDataRetention", () => {
 
     test("allows changing time unit", () => {
         render(<AdminDataRetention />, { preloadedState });
+
+        // Uncheck indefinite retention first
+        const checkbox = screen.getByLabelText(
+            "Retain data indefinitely (no automatic deletion)"
+        );
+        userEvent.click(checkbox);
 
         const unitSelect = screen.getByLabelText("Unit");
         userEvent.click(unitSelect);
@@ -66,6 +97,34 @@ describe("AdminDataRetention", () => {
 
         userEvent.click(saveButton);
         // Button should be clickable without errors
+    });
+
+    test("shows warning dialog for short retention periods", async () => {
+        render(<AdminDataRetention />, { preloadedState });
+
+        // Uncheck indefinite retention
+        const checkbox = screen.getByLabelText(
+            "Retain data indefinitely (no automatic deletion)"
+        );
+        userEvent.click(checkbox);
+
+        // Set a short retention period (5 days)
+        const valueInput = screen.getByLabelText("Retention Time");
+        userEvent.clear(valueInput);
+        userEvent.type(valueInput, "5");
+
+        // Click save
+        const saveButton = screen.getByRole("button", {
+            name: "Save retention settings",
+        });
+        userEvent.click(saveButton);
+
+        // Warning dialog should appear
+        await waitFor(() => {
+            expect(
+                screen.getByText("Short Retention Period Warning")
+            ).toBeInTheDocument();
+        });
     });
 
     test("displays forbidden message if user is not admin", () => {

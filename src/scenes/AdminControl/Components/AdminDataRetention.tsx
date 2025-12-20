@@ -1,4 +1,11 @@
-import { Button, Skeleton, Stack, Typography } from "@mui/material";
+import {
+    Button,
+    Checkbox,
+    FormControlLabel,
+    Skeleton,
+    Stack,
+    Typography,
+} from "@mui/material";
 import { makeStyles } from "tss-react/mui";
 import React, { useState } from "react";
 import { PaddedPaper } from "../../../styles/common";
@@ -12,6 +19,7 @@ import DataRetentionSelector, {
     TimeUnit,
 } from "../../../components/DataRetentionSelector";
 import { displayInfoNotification } from "../../../redux/notifications/NotificationsActions";
+import ConfirmationDialog from "../../../components/ConfirmationDialog";
 
 const initialDataRetentionState: DataRetentionValue = {
     value: 30,
@@ -29,6 +37,8 @@ function AdminDataRetention() {
     const [state, setState] = useState<DataRetentionValue>(
         initialDataRetentionState
     );
+    const [noRetention, setNoRetention] = useState(true);
+    const [showWarningDialog, setShowWarningDialog] = useState(false);
     const loadingSelector = createLoadingSelector(["GET_WHOAMI"]);
     const whoamiFetching = useSelector(loadingSelector);
     const [isPosting, setIsPosting] = useState(false);
@@ -36,19 +46,57 @@ function AdminDataRetention() {
     const { classes } = useStyles();
     const whoami = useSelector(getWhoami);
 
-    function handleSave() {
+    // Calculate total days for comparison
+    const getTotalDays = (value: number, unit: TimeUnit): number => {
+        switch (unit) {
+            case TimeUnit.DAYS:
+                return value;
+            case TimeUnit.WEEKS:
+                return value * 7;
+            case TimeUnit.MONTHS:
+                return value * 30;
+            case TimeUnit.YEARS:
+                return value * 365;
+            default:
+                return value;
+        }
+    };
+
+    function handleSaveConfirmed() {
         setIsPosting(true);
         // Simulate async operation for better UX
         setTimeout(() => {
             // TODO: Implement actual save logic with DataStore or API
-            console.log("Saving data retention settings:", state);
-            dispatch(
-                displayInfoNotification(
-                    `Data retention set to ${state.value} ${state.unit}`
-                )
-            );
+            if (noRetention) {
+                console.log("Saving data retention settings: indefinite");
+                dispatch(
+                    displayInfoNotification(
+                        "Data retention set to indefinite (no automatic deletion)"
+                    )
+                );
+            } else {
+                console.log("Saving data retention settings:", state);
+                dispatch(
+                    displayInfoNotification(
+                        `Data retention set to ${state.value} ${state.unit}`
+                    )
+                );
+            }
             setIsPosting(false);
+            setShowWarningDialog(false);
         }, 500);
+    }
+
+    function handleSave() {
+        // Check if retention is enabled and less than 7 days
+        if (!noRetention) {
+            const totalDays = getTotalDays(state.value, state.unit);
+            if (totalDays < 7) {
+                setShowWarningDialog(true);
+                return;
+            }
+        }
+        handleSaveConfirmed();
     }
 
     if (whoamiFetching) {
@@ -63,13 +111,16 @@ function AdminDataRetention() {
     } else if (!whoami.roles.includes(models.Role.ADMIN)) {
         return <Forbidden />;
     } else {
+        const totalDays = !noRetention
+            ? getTotalDays(state.value, state.unit)
+            : 0;
         return (
             <PaddedPaper>
                 <Stack
                     className={classes.root}
                     direction={"column"}
                     justifyContent={"flex-start"}
-                    alignItems={"top"}
+                    alignItems={"flex-start"}
                     spacing={3}
                 >
                     <Typography variant={"h5"}>
@@ -84,15 +135,50 @@ function AdminDataRetention() {
                         Determine how long data should be retained before
                         automatic deletion
                     </Typography>
-                    <DataRetentionSelector
-                        value={state}
-                        onChange={setState}
-                        disabled={isPosting}
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={noRetention}
+                                onChange={(e) =>
+                                    setNoRetention(e.target.checked)
+                                }
+                                disabled={isPosting}
+                            />
+                        }
+                        label="Retain data indefinitely (no automatic deletion)"
                     />
-                    <Button disabled={isPosting} onClick={handleSave}>
+                    {!noRetention && (
+                        <DataRetentionSelector
+                            value={state}
+                            onChange={setState}
+                            disabled={isPosting}
+                        />
+                    )}
+                    <Button
+                        disabled={isPosting}
+                        onClick={handleSave}
+                        sx={{ alignSelf: "flex-start" }}
+                    >
                         Save retention settings
                     </Button>
                 </Stack>
+                <ConfirmationDialog
+                    open={showWarningDialog}
+                    onCancel={() => setShowWarningDialog(false)}
+                    onConfirmation={handleSaveConfirmed}
+                    dialogTitle="Short Retention Period Warning"
+                >
+                    <Typography>
+                        You are setting a very short data retention period of{" "}
+                        <strong>
+                            {totalDays} day{totalDays !== 1 ? "s" : ""}
+                        </strong>
+                        . All data older than this will be automatically deleted.
+                    </Typography>
+                    <Typography sx={{ marginTop: 2 }}>
+                        Are you sure you want to proceed with this setting?
+                    </Typography>
+                </ConfirmationDialog>
             </PaddedPaper>
         );
     }
