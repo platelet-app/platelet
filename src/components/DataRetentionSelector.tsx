@@ -26,12 +26,13 @@ const DataRetentionSelector: React.FC<DataRetentionSelectorProps> = ({
 }) => {
     const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = parseInt(event.target.value, 10);
-        if (newValue >= 0 || event.target.value === "") {
-            onChange({
-                ...value,
-                value: newValue || 0,
-            });
+        if (isNaN(newValue) && event.target.value !== "") {
+            return;
         }
+        onChange({
+            ...value,
+            value: isNaN(newValue) ? 0 : newValue,
+        });
     };
 
     const handleUnitChange = (event: React.ChangeEvent<HTMLInputElement>) => {

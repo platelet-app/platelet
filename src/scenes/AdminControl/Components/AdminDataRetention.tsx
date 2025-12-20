@@ -38,14 +38,17 @@ function AdminDataRetention() {
 
     function handleSave() {
         setIsPosting(true);
-        // TODO: Implement actual save logic with DataStore or API
-        console.log("Saving data retention settings:", state);
-        dispatch(
-            displayInfoNotification(
-                `Data retention set to ${state.value} ${state.unit}`
-            )
-        );
-        setIsPosting(false);
+        // Simulate async operation for better UX
+        setTimeout(() => {
+            // TODO: Implement actual save logic with DataStore or API
+            console.log("Saving data retention settings:", state);
+            dispatch(
+                displayInfoNotification(
+                    `Data retention set to ${state.value} ${state.unit}`
+                )
+            );
+            setIsPosting(false);
+        }, 500);
     }
 
     if (whoamiFetching) {
