@@ -31,7 +31,7 @@ const DataRetentionSelector: React.FC<DataRetentionSelectorProps> = ({
         }
         onChange({
             ...value,
-            value: isNaN(newValue) ? 0 : newValue,
+            value: isNaN(newValue) ? 1 : Math.max(1, newValue),
         });
     };
 

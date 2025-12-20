@@ -47,6 +47,10 @@ function AdminDataRetention() {
     const whoami = useSelector(getWhoami);
 
     // Calculate total days for comparison
+    // Note: This uses approximate values for simplicity:
+    // - Months are assumed to be 30 days
+    // - Years are assumed to be 365 days
+    // For precise calculations, backend should use actual calendar dates
     const getTotalDays = (value: number, unit: TimeUnit): number => {
         switch (unit) {
             case TimeUnit.DAYS:
@@ -54,9 +58,9 @@ function AdminDataRetention() {
             case TimeUnit.WEEKS:
                 return value * 7;
             case TimeUnit.MONTHS:
-                return value * 30;
+                return value * 30; // Approximate
             case TimeUnit.YEARS:
-                return value * 365;
+                return value * 365; // Approximate, not accounting for leap years
             default:
                 return value;
         }
