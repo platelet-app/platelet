@@ -1,6 +1,6 @@
 import { Button, Skeleton, Stack, Typography } from "@mui/material";
 import { makeStyles } from "tss-react/mui";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { PaddedPaper } from "../../../styles/common";
 import { useDispatch, useSelector } from "react-redux";
 import { getWhoami } from "../../../redux/Selectors";
@@ -37,20 +37,15 @@ function AdminDataRetention() {
     const whoami = useSelector(getWhoami);
 
     function handleSave() {
-        try {
-            setIsPosting(true);
-            // TODO: Implement actual save logic with DataStore or API
-            console.log("Saving data retention settings:", state);
-            dispatch(
-                displayInfoNotification(
-                    `Data retention set to ${state.value} ${state.unit}`
-                )
-            );
-            setIsPosting(false);
-        } catch (error) {
-            console.log("error saving data retention settings:", error);
-            setIsPosting(false);
-        }
+        setIsPosting(true);
+        // TODO: Implement actual save logic with DataStore or API
+        console.log("Saving data retention settings:", state);
+        dispatch(
+            displayInfoNotification(
+                `Data retention set to ${state.value} ${state.unit}`
+            )
+        );
+        setIsPosting(false);
     }
 
     if (whoamiFetching) {
