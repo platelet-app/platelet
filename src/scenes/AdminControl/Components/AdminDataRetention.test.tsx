@@ -84,7 +84,8 @@ describe("AdminDataRetention", () => {
         userEvent.click(unitSelect);
         userEvent.click(screen.getByText("Weeks"));
 
-        expect(screen.getByLabelText("Unit")).toHaveTextContent("Weeks");
+        // Check that the unit field now displays "Weeks"
+        expect(unitSelect).toHaveTextContent("Weeks");
     });
 
     test("save button is enabled and clickable", () => {

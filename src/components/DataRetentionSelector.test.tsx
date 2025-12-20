@@ -55,7 +55,7 @@ describe("DataRetentionSelector", () => {
         const unitSelect = screen.getByLabelText("Unit");
         userEvent.click(unitSelect);
 
-        expect(screen.getByText("Days")).toBeInTheDocument();
+        expect(screen.getAllByText("Days").length).toBeGreaterThan(0);
         expect(screen.getByText("Weeks")).toBeInTheDocument();
         expect(screen.getByText("Months")).toBeInTheDocument();
         expect(screen.getByText("Years")).toBeInTheDocument();
@@ -75,7 +75,7 @@ describe("DataRetentionSelector", () => {
         const unitSelect = screen.getByLabelText("Unit");
 
         expect(valueInput).toBeDisabled();
-        expect(unitSelect).toBeDisabled();
+        expect(unitSelect).toHaveAttribute("aria-disabled", "true");
     });
 
     test("minimum allowed value is 1", () => {

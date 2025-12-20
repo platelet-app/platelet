@@ -45,6 +45,7 @@ const DataRetentionSelector: React.FC<DataRetentionSelectorProps> = ({
     return (
         <Stack direction="row" spacing={2} alignItems="center">
             <TextField
+                id="retention-time"
                 label="Retention Time"
                 type="number"
                 value={value.value}
@@ -56,6 +57,7 @@ const DataRetentionSelector: React.FC<DataRetentionSelectorProps> = ({
                 sx={{ flex: 1 }}
             />
             <TextField
+                id="retention-unit"
                 select
                 label="Unit"
                 value={value.unit}
