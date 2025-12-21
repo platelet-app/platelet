@@ -22,12 +22,11 @@
  * - Or open Cypress UI: npx cypress open
  */
 
-import { aliasMutation } from "../utils/graphql-test-utils";
 
 const Auth = require("aws-amplify").Auth;
 const Amplify = require("aws-amplify").Amplify;
 const API = require("aws-amplify").API;
-const Storage = require("aws-amplify").Storage;
+
 
 const userPoolId = Cypress.env("userPoolId");
 const clientId = Cypress.env("clientId");
