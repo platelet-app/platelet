@@ -46,6 +46,11 @@ const awsconfig = {
 
 Amplify.configure(awsconfig);
 
+// Configuration constants for test execution
+const DELETION_INITIAL_WAIT = 10000; // Initial wait for deletion to start (ms)
+const DELETION_MAX_RETRIES = 30; // Maximum retries for checking deletion completion
+const DELETION_RETRY_INTERVAL = 5000; // Time between retry attempts (ms)
+
 describe("User Deletion End-to-End Test", () => {
     let testUserId;
     let testUserCognitoId;
@@ -58,7 +63,6 @@ describe("User Deletion End-to-End Test", () => {
     let createdTaskId;
     let createdVehicleId;
     let riderResponsibilityId;
-    let profilePictureKey;
 
     before(() => {
         cy.signIn("ADMIN");
@@ -136,8 +140,15 @@ describe("User Deletion End-to-End Test", () => {
             const uploadURL = response.data.profilePictureUploadURL;
             expect(uploadURL).to.exist;
             
-            // Create a simple blob to upload as profile picture
-            const blob = new Blob(["test profile picture content"], {
+            // Create a simple test image blob (1x1 pixel PNG)
+            // This is a minimal valid PNG file
+            const base64PNG = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+            const binaryString = atob(base64PNG);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            const blob = new Blob([bytes], {
                 type: "image/png",
             });
             
@@ -152,7 +163,6 @@ describe("User Deletion End-to-End Test", () => {
             });
         }).then((uploadResponse) => {
             expect(uploadResponse.status).to.equal(200);
-            profilePictureKey = `profile-pictures/${testUserId}`;
             cy.log("Uploaded profile picture");
         });
     });
@@ -511,9 +521,9 @@ describe("User Deletion End-to-End Test", () => {
         `;
 
         // Poll for deletion completion
-        cy.wait(10000); // Initial wait for step function to start
+        cy.wait(DELETION_INITIAL_WAIT); // Initial wait for step function to start
 
-        const checkUserDeleted = (retries = 0, maxRetries = 30) => {
+        const checkUserDeleted = (retries = 0) => {
             cy.then(() => {
                 return API.graphql({
                     query: getUserQuery,
@@ -529,13 +539,13 @@ describe("User Deletion End-to-End Test", () => {
                 ) {
                     // User is deleted
                     cy.log("User successfully deleted from DynamoDB");
-                } else if (retries < maxRetries) {
+                } else if (retries < DELETION_MAX_RETRIES) {
                     // Wait and retry
-                    cy.wait(5000);
-                    checkUserDeleted(retries + 1, maxRetries);
+                    cy.wait(DELETION_RETRY_INTERVAL);
+                    checkUserDeleted(retries + 1);
                 } else {
                     throw new Error(
-                        "User deletion from DynamoDB did not complete in expected time"
+                        `User deletion from DynamoDB did not complete within expected time (${DELETION_MAX_RETRIES} retries)`
                     );
                 }
             });
