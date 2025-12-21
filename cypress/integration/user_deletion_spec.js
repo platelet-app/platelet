@@ -1,3 +1,27 @@
+/**
+ * End-to-End Test for User Deletion
+ * 
+ * This test suite validates the complete user deletion workflow including:
+ * 1. Creating a test user with registerUser mutation
+ * 2. Uploading a profile picture for the user
+ * 3. Creating associated data (comments, task assignments, vehicle assignments, rider responsibilities)
+ * 4. Disabling the user (required before deletion)
+ * 5. Deleting the user using adminDeleteUser mutation
+ * 6. Verifying complete deletion from DynamoDB (user and all associated data)
+ * 7. Verifying deletion from Cognito
+ * 
+ * Prerequisites:
+ * - An admin user account with proper credentials configured in Cypress environment
+ * - AWS AppSync GraphQL endpoint configured
+ * - Cognito user pool configured
+ * - Proper tenant ID configured
+ * 
+ * To run this test:
+ * - Ensure all environment variables are set in cypress.env.json or CI/CD
+ * - Run: npx cypress run --spec "cypress/integration/user_deletion_spec.js"
+ * - Or open Cypress UI: npx cypress open
+ */
+
 import { aliasMutation } from "../utils/graphql-test-utils";
 
 const Auth = require("aws-amplify").Auth;
