@@ -1,6 +1,6 @@
 /**
  * End-to-End Test for User Deletion
- * 
+ *
  * This test suite validates the complete user deletion workflow including:
  * 1. Creating a test user with registerUser mutation
  * 2. Uploading a profile picture for the user
@@ -9,24 +9,26 @@
  * 5. Deleting the user using adminDeleteUser mutation
  * 6. Verifying complete deletion from DynamoDB (user and all associated data)
  * 7. Verifying deletion from Cognito
- * 
+ *
  * Prerequisites:
  * - An admin user account with proper credentials configured in Cypress environment
  * - AWS AppSync GraphQL endpoint configured
  * - Cognito user pool configured
  * - Proper tenant ID configured
- * 
+ *
  * To run this test:
  * - Ensure all environment variables are set in cypress.env.json or CI/CD
  * - Run: npx cypress run --spec "cypress/integration/user_deletion_spec.js"
  * - Or open Cypress UI: npx cypress open
  */
 
+const { graphqlOperation } = require("aws-amplify");
+
+const { queries, mutations } = require("@platelet-app/graphql");
 
 const Auth = require("aws-amplify").Auth;
 const Amplify = require("aws-amplify").Amplify;
 const API = require("aws-amplify").API;
-
 
 const userPoolId = Cypress.env("userPoolId");
 const clientId = Cypress.env("clientId");
@@ -34,6 +36,7 @@ const tenantId = Cypress.env("tenantId");
 const endpoint = Cypress.env("appsyncGraphqlEndpoint");
 const region = Cypress.env("appsyncRegion");
 const authType = Cypress.env("appsyncAuthenticationType");
+const bucket = Cypress.env("bucket");
 
 const awsconfig = {
     aws_user_pools_id: userPoolId,
@@ -41,6 +44,8 @@ const awsconfig = {
     aws_appsync_graphqlEndpoint: endpoint,
     aws_appsync_region: region,
     aws_appsync_authenticationType: authType,
+    aws_user_files_s3_bucket: bucket,
+    aws_user_files_s3_bucket_region: region,
 };
 
 Amplify.configure(awsconfig);
@@ -80,9 +85,9 @@ describe("User Deletion End-to-End Test", () => {
         cy.saveLocalStorage();
     });
 
-    it("should create a test user", () => {
+    it.only("should create a test user", () => {
         const timestamp = Date.now();
-        testUserEmail = `test-delete-${timestamp}@example.com`;
+        testUserEmail = `test-delete-${timestamp}@platelet.app`;
         testUserName = `Test User ${timestamp}`;
 
         const registerUserMutation = `
@@ -119,51 +124,83 @@ describe("User Deletion End-to-End Test", () => {
         });
     });
 
-    it("should upload a profile picture for the test user", () => {
+    it.only("should upload a profile picture for the test user", () => {
         // First, get the upload URL
-        const getUploadURLQuery = `
-            query ProfilePictureUploadURL($userId: ID!) {
-                profilePictureUploadURL(userId: $userId)
-            }
-        `;
 
         cy.then(() => {
+            cy.log("yayay");
             return API.graphql({
-                query: getUploadURLQuery,
+                query: queries.profilePictureUploadURL,
                 variables: {
                     userId: testUserId,
                 },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             });
-        }).then((response) => {
-            const uploadURL = response.data.profilePictureUploadURL;
-            expect(uploadURL).to.exist;
-            
-            // Create a simple test image blob (1x1 pixel PNG)
-            // This is a minimal valid PNG file
-            const base64PNG = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
-            const binaryString = atob(base64PNG);
-            const bytes = new Uint8Array(binaryString.length);
-            for (let i = 0; i < binaryString.length; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            const blob = new Blob([bytes], {
-                type: "image/png",
+        })
+            .then((response) => {
+                const uploadURL = response.data.profilePictureUploadURL;
+                cy.log(uploadURL);
+                expect(uploadURL).to.exist;
+
+                // Create a simple test image blob (1x1 pixel PNG)
+                // This is a minimal valid PNG file
+                const base64PNG =
+                    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+                const binaryString = atob(base64PNG);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const blob = new Blob([bytes], {
+                    type: "image/png",
+                });
+
+                // Upload the file directly to the pre-signed URL
+                return cy
+                    .request({
+                        method: "PUT",
+                        url: uploadURL,
+                        body: blob,
+                        headers: {
+                            "Content-Type": "image/png",
+                        },
+                    })
+                    .then(() => {
+                        const userInput = {
+                            id: testUserId,
+                            _version: 1,
+                            profilePicture: {
+                                key: `public/${testUserId}.jpg`,
+                                bucket,
+                                region,
+                            },
+                        };
+                        cy.log(userInput);
+                        API.graphql(
+                            graphqlOperation(mutations.updateUser, {
+                                input: userInput,
+                            })
+                        );
+                        API.graphql(
+                            graphqlOperation(queries.profilePictureURL, {
+                                userId: testUserId,
+                                width: 300,
+                                height: 300,
+                            })
+                        );
+                        API.graphql(
+                            graphqlOperation(queries.profilePictureURL, {
+                                userId: testUserId,
+                                width: 128,
+                                height: 128,
+                            })
+                        );
+                    });
+            })
+            .then((uploadResponse) => {
+                expect(uploadResponse.status).to.equal(200);
+                cy.log("Uploaded profile picture");
             });
-            
-            // Upload the file directly to the pre-signed URL
-            return cy.request({
-                method: "PUT",
-                url: uploadURL,
-                body: blob,
-                headers: {
-                    "Content-Type": "image/png",
-                },
-            });
-        }).then((uploadResponse) => {
-            expect(uploadResponse.status).to.equal(200);
-            cy.log("Uploaded profile picture");
-        });
     });
 
     it("should create a task for testing assignments", () => {
