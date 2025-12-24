@@ -5,5 +5,8 @@
         "componentFolder": "src"
     },
     "viewportWidth": 1280,
-    "viewportHeight": 800
+    "viewportHeight": 800,
+    "defaultCommandTimeout": 10000,
+    "requestTimeout": 10000,
+    "responseTimeout": 30000
 }
