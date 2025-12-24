@@ -203,24 +203,45 @@ describe("User Deletion End-to-End Test", () => {
             });
     });
 
-    it("should create a task for testing assignments", () => {
+    it("should get or create a task for testing assignments", () => {
         cy.then(() => {
             return API.graphql({
-                query: mutations.createTask,
+                query: queries.listTasks,
                 variables: {
-                    input: {
-                        tenantId: tenantId,
-                        dateCreated: new Date().toISOString().split("T")[0],
-                        status: "NEW",
+                    filter: {
+                        tenantId: { eq: tenantId },
+                        status: { eq: "NEW" },
                     },
+                    limit: 1,
                 },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             });
         }).then((response) => {
-            expect(response.data.createTask).to.not.be.null;
-            createdTaskId = response.data.createTask.id;
-            expect(createdTaskId).to.exist;
-            cy.log("Created task with ID:", createdTaskId);
+            if (
+                response.data.listTasks.items &&
+                response.data.listTasks.items.length > 0
+            ) {
+                createdTaskId = response.data.listTasks.items[0].id;
+                cy.log("Using existing task:", createdTaskId);
+            } else {
+                // Create a new task if none exists
+                return API.graphql({
+                    query: mutations.createTask,
+                    variables: {
+                        input: {
+                            tenantId: tenantId,
+                            dateCreated: new Date().toISOString().split("T")[0],
+                            status: "NEW",
+                        },
+                    },
+                    authMode: "AMAZON_COGNITO_USER_POOLS",
+                }).then((createResponse) => {
+                    expect(createResponse.data.createTask).to.not.be.null;
+                    createdTaskId = createResponse.data.createTask.id;
+                    expect(createdTaskId).to.exist;
+                    cy.log("Created task with ID:", createdTaskId);
+                });
+            }
         });
     });
 
@@ -246,23 +267,43 @@ describe("User Deletion End-to-End Test", () => {
         });
     });
 
-    it("should create a vehicle for testing vehicle assignments", () => {
+    it("should get or create a vehicle for testing vehicle assignments", () => {
         cy.then(() => {
             return API.graphql({
-                query: mutations.createVehicle,
+                query: queries.listVehicles,
                 variables: {
-                    input: {
-                        tenantId: tenantId,
-                        name: "Test Vehicle for Deletion",
+                    filter: {
+                        tenantId: { eq: tenantId },
                     },
+                    limit: 1,
                 },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             });
         }).then((response) => {
-            expect(response.data.createVehicle).to.not.be.null;
-            createdVehicleId = response.data.createVehicle.id;
-            expect(createdVehicleId).to.exist;
-            cy.log("Created vehicle with ID:", createdVehicleId);
+            if (
+                response.data.listVehicles.items &&
+                response.data.listVehicles.items.length > 0
+            ) {
+                createdVehicleId = response.data.listVehicles.items[0].id;
+                cy.log("Using existing vehicle:", createdVehicleId);
+            } else {
+                // Create a new vehicle if none exists
+                return API.graphql({
+                    query: mutations.createVehicle,
+                    variables: {
+                        input: {
+                            tenantId: tenantId,
+                            name: "Test Vehicle for Deletion",
+                        },
+                    },
+                    authMode: "AMAZON_COGNITO_USER_POOLS",
+                }).then((createResponse) => {
+                    expect(createResponse.data.createVehicle).to.not.be.null;
+                    createdVehicleId = createResponse.data.createVehicle.id;
+                    expect(createdVehicleId).to.exist;
+                    cy.log("Created vehicle with ID:", createdVehicleId);
+                });
+            }
         });
     });
 
