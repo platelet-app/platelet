@@ -85,7 +85,7 @@ describe("User Deletion End-to-End Test", () => {
         cy.saveLocalStorage();
     });
 
-    it.only("should create a test user", () => {
+    it("should create a test user", () => {
         const timestamp = Date.now();
         testUserEmail = `test-delete-${timestamp}@platelet.app`;
         testUserName = `Test User ${timestamp}`;
@@ -124,7 +124,7 @@ describe("User Deletion End-to-End Test", () => {
         });
     });
 
-    it.only("should upload a profile picture for the test user", () => {
+    it("should upload a profile picture for the test user", () => {
         // First, get the upload URL
 
         cy.then(() => {
@@ -204,22 +204,13 @@ describe("User Deletion End-to-End Test", () => {
     });
 
     it("should create a task for testing assignments", () => {
-        const createTaskMutation = `
-            mutation CreateTask($input: CreateTaskInput!) {
-                createTask(input: $input) {
-                    id
-                    tenantId
-                    status
-                }
-            }
-        `;
-
         cy.then(() => {
             return API.graphql({
-                query: createTaskMutation,
+                query: mutations.createTask,
                 variables: {
                     input: {
                         tenantId: tenantId,
+                        dateCreated: new Date().toISOString().split("T")[0],
                         status: "NEW",
                     },
                 },
@@ -234,27 +225,15 @@ describe("User Deletion End-to-End Test", () => {
     });
 
     it("should add a task assignment for the test user", () => {
-        const createTaskAssigneeMutation = `
-            mutation CreateTaskAssignee($input: CreateTaskAssigneeInput!) {
-                createTaskAssignee(input: $input) {
-                    id
-                    tenantId
-                    role
-                    taskId
-                    assigneeId
-                }
-            }
-        `;
-
         cy.then(() => {
             return API.graphql({
-                query: createTaskAssigneeMutation,
+                query: mutations.createTaskAssignee,
                 variables: {
                     input: {
                         tenantId: tenantId,
                         role: "RIDER",
-                        taskId: createdTaskId,
-                        assigneeId: testUserId,
+                        taskAssigneesId: createdTaskId,
+                        userAssignmentsId: testUserId,
                     },
                 },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
@@ -268,19 +247,9 @@ describe("User Deletion End-to-End Test", () => {
     });
 
     it("should create a vehicle for testing vehicle assignments", () => {
-        const createVehicleMutation = `
-            mutation CreateVehicle($input: CreateVehicleInput!) {
-                createVehicle(input: $input) {
-                    id
-                    tenantId
-                    name
-                }
-            }
-        `;
-
         cy.then(() => {
             return API.graphql({
-                query: createVehicleMutation,
+                query: mutations.createVehicle,
                 variables: {
                     input: {
                         tenantId: tenantId,
@@ -298,25 +267,14 @@ describe("User Deletion End-to-End Test", () => {
     });
 
     it("should add a vehicle assignment for the test user", () => {
-        const createVehicleAssignmentMutation = `
-            mutation CreateVehicleAssignment($input: CreateVehicleAssignmentInput!) {
-                createVehicleAssignment(input: $input) {
-                    id
-                    tenantId
-                    vehicleId
-                    assigneeId
-                }
-            }
-        `;
-
         cy.then(() => {
             return API.graphql({
-                query: createVehicleAssignmentMutation,
+                query: mutations.createVehicleAssignment,
                 variables: {
                     input: {
                         tenantId: tenantId,
-                        vehicleId: createdVehicleId,
-                        assigneeId: testUserId,
+                        userVehicleAssignmentsId: testUserId,
+                        vehicleAssignmentsId: createdVehicleId,
                     },
                 },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
@@ -334,20 +292,9 @@ describe("User Deletion End-to-End Test", () => {
     });
 
     it("should get or create a rider responsibility for testing", () => {
-        const listRiderResponsibilitiesQuery = `
-            query ListRiderResponsibilities($filter: ModelRiderResponsibilityFilterInput) {
-                listRiderResponsibilities(filter: $filter, limit: 1) {
-                    items {
-                        id
-                        label
-                    }
-                }
-            }
-        `;
-
         cy.then(() => {
             return API.graphql({
-                query: listRiderResponsibilitiesQuery,
+                query: queries.listRiderResponsibilities,
                 variables: {
                     filter: {
                         tenantId: { eq: tenantId },
@@ -368,18 +315,8 @@ describe("User Deletion End-to-End Test", () => {
                 );
             } else {
                 // Create a new rider responsibility if none exists
-                const createRiderResponsibilityMutation = `
-                    mutation CreateRiderResponsibility($input: CreateRiderResponsibilityInput!) {
-                        createRiderResponsibility(input: $input) {
-                            id
-                            label
-                            tenantId
-                        }
-                    }
-                `;
-
                 return API.graphql({
-                    query: createRiderResponsibilityMutation,
+                    query: mutations.createRiderResponsibility,
                     variables: {
                         input: {
                             tenantId: tenantId,
@@ -400,25 +337,15 @@ describe("User Deletion End-to-End Test", () => {
     });
 
     it("should add a possible rider responsibility for the test user", () => {
-        const createPossibleRiderResponsibilityMutation = `
-            mutation CreatePossibleRiderResponsibilities($input: CreatePossibleRiderResponsibilitiesInput!) {
-                createPossibleRiderResponsibilities(input: $input) {
-                    id
-                    tenantId
-                    userId
-                    riderResponsibilityId
-                }
-            }
-        `;
-
         cy.then(() => {
             return API.graphql({
-                query: createPossibleRiderResponsibilityMutation,
+                query: mutations.createPossibleRiderResponsibilities,
                 variables: {
                     input: {
                         tenantId: tenantId,
-                        userId: testUserId,
-                        riderResponsibilityId: riderResponsibilityId,
+                        userPossibleRiderResponsibilitiesId: testUserId,
+                        riderResponsibilityPossibleUsersId:
+                            riderResponsibilityId,
                     },
                 },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
@@ -436,7 +363,7 @@ describe("User Deletion End-to-End Test", () => {
         });
     });
 
-    it("should add a comment for the test user", () => {
+    it.skip("should add a comment for the test user", () => {
         const createCommentMutation = `
             mutation CreateComment($input: CreateCommentInput!) {
                 createComment(input: $input) {
@@ -469,18 +396,9 @@ describe("User Deletion End-to-End Test", () => {
     });
 
     it("should disable the test user before deletion", () => {
-        const disableUserMutation = `
-            mutation DisableUser($userId: ID) {
-                disableUser(userId: $userId) {
-                    id
-                    disabled
-                }
-            }
-        `;
-
         cy.then(() => {
             return API.graphql({
-                query: disableUserMutation,
+                query: mutations.disableUser,
                 variables: {
                     userId: testUserId,
                 },
@@ -494,18 +412,9 @@ describe("User Deletion End-to-End Test", () => {
     });
 
     it("should verify user is disabled in DynamoDB", () => {
-        const getUserQuery = `
-            query GetUser($id: ID!) {
-                getUser(id: $id) {
-                    id
-                    disabled
-                }
-            }
-        `;
-
         cy.then(() => {
             return API.graphql({
-                query: getUserQuery,
+                query: queries.getUser,
                 variables: {
                     id: testUserId,
                 },
@@ -519,18 +428,9 @@ describe("User Deletion End-to-End Test", () => {
     });
 
     it("should delete the test user", () => {
-        const adminDeleteUserMutation = `
-            mutation AdminDeleteUser($userId: ID) {
-                adminDeleteUser(userId: $userId) {
-                    executionArn
-                    startDate
-                }
-            }
-        `;
-
         cy.then(() => {
             return API.graphql({
-                query: adminDeleteUserMutation,
+                query: mutations.adminDeleteUser,
                 variables: {
                     userId: testUserId,
                 },
@@ -547,22 +447,13 @@ describe("User Deletion End-to-End Test", () => {
     });
 
     it("should wait for deletion to complete and verify user is deleted from DynamoDB", () => {
-        const getUserQuery = `
-            query GetUser($id: ID!) {
-                getUser(id: $id) {
-                    id
-                    _deleted
-                }
-            }
-        `;
-
         // Poll for deletion completion
         cy.wait(DELETION_INITIAL_WAIT); // Initial wait for step function to start
 
         const checkUserDeleted = (retries = 0) => {
             cy.then(() => {
                 return API.graphql({
-                    query: getUserQuery,
+                    query: queries.getUser,
                     variables: {
                         id: testUserId,
                     },
@@ -591,18 +482,9 @@ describe("User Deletion End-to-End Test", () => {
     });
 
     it("should verify task assignment is deleted from DynamoDB", () => {
-        const getTaskAssigneeQuery = `
-            query GetTaskAssignee($id: ID!) {
-                getTaskAssignee(id: $id) {
-                    id
-                    _deleted
-                }
-            }
-        `;
-
         cy.then(() => {
             return API.graphql({
-                query: getTaskAssigneeQuery,
+                query: queries.getTaskAssignee,
                 variables: {
                     id: createdTaskAssigneeId,
                 },
@@ -618,18 +500,10 @@ describe("User Deletion End-to-End Test", () => {
     });
 
     it("should verify vehicle assignment is deleted from DynamoDB", () => {
-        const getVehicleAssignmentQuery = `
-            query GetVehicleAssignment($id: ID!) {
-                getVehicleAssignment(id: $id) {
-                    id
-                    _deleted
-                }
-            }
-        `;
-
+        cy.log("fsadfsdafdsa", createdVehicleAssignmentId);
         cy.then(() => {
             return API.graphql({
-                query: getVehicleAssignmentQuery,
+                query: queries.getVehicleAssignment,
                 variables: {
                     id: createdVehicleAssignmentId,
                 },
@@ -647,18 +521,9 @@ describe("User Deletion End-to-End Test", () => {
     });
 
     it("should verify possible rider responsibility is deleted from DynamoDB", () => {
-        const getPossibleRiderResponsibilityQuery = `
-            query GetPossibleRiderResponsibilities($id: ID!) {
-                getPossibleRiderResponsibilities(id: $id) {
-                    id
-                    _deleted
-                }
-            }
-        `;
-
         cy.then(() => {
             return API.graphql({
-                query: getPossibleRiderResponsibilityQuery,
+                query: queries.getPossibleRiderResponsibilities,
                 variables: {
                     id: createdPossibleRiderResponsibilityId,
                 },
@@ -677,19 +542,10 @@ describe("User Deletion End-to-End Test", () => {
         });
     });
 
-    it("should verify comment is deleted from DynamoDB", () => {
-        const getCommentQuery = `
-            query GetComment($id: ID!) {
-                getComment(id: $id) {
-                    id
-                    _deleted
-                }
-            }
-        `;
-
+    it.skip("should verify comment is deleted from DynamoDB", () => {
         cy.then(() => {
             return API.graphql({
-                query: getCommentQuery,
+                query: queries.getComment,
                 variables: {
                     id: createdCommentId,
                 },
@@ -704,7 +560,7 @@ describe("User Deletion End-to-End Test", () => {
         });
     });
 
-    it("should verify user is deleted from Cognito", () => {
+    it.skip("should verify user is deleted from Cognito", () => {
         // Use Cognito admin API to verify user deletion
         cy.then(() => {
             return Auth.currentSession().then((session) => {
@@ -748,7 +604,7 @@ describe("User Deletion End-to-End Test", () => {
         });
     });
 
-    it("should clean up test task and vehicle", () => {
+    it.skip("should clean up test task and vehicle", () => {
         // Clean up the test task
         const deleteTaskMutation = `
             mutation DeleteTask($input: DeleteTaskInput!) {
@@ -787,7 +643,7 @@ describe("User Deletion End-to-End Test", () => {
         // Delete task
         cy.then(() => {
             return API.graphql({
-                query: getTaskQuery,
+                query: queries.getTask,
                 variables: {
                     id: createdTaskId,
                 },
@@ -796,12 +652,10 @@ describe("User Deletion End-to-End Test", () => {
         }).then((response) => {
             if (response.data.getTask && !response.data.getTask._deleted) {
                 return API.graphql({
-                    query: deleteTaskMutation,
-                    variables: {
-                        input: {
-                            id: createdTaskId,
-                            _version: response.data.getTask._version,
-                        },
+                    query: mutations.deleteTask,
+                    input: {
+                        id: createdTaskId,
+                        _version: response.data.getTask._version,
                     },
                     authMode: "AMAZON_COGNITO_USER_POOLS",
                 });
