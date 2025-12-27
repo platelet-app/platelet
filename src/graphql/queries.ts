@@ -2124,3 +2124,14 @@ export const sendUserFeedback = /* GraphQL */ `query SendUserFeedback($emailAddr
   APITypes.SendUserFeedbackQueryVariables,
   APITypes.SendUserFeedbackQuery
 >;
+export const userTakeOutData = /* GraphQL */ `query UserTakeOutData($userId: ID) {
+  userTakeOutData(userId: $userId) {
+    executionArn
+    startDate
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.UserTakeOutDataQueryVariables,
+  APITypes.UserTakeOutDataQuery
+>;
