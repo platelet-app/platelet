@@ -28,6 +28,12 @@ jobs:
     - name: Create empty aws-exports file
       run: touch src/aws-exports.js
 
+    - name: build graphql package
+      run: npm run build:simple --workspace @platelet-app/graphql
+
+    - name: build models package
+      run: npm run build --workspace @platelet-app/models
+
     - name: Run the tests
       run: npm test -- --coverage --silent
     - name: Upload coverage to Codecov

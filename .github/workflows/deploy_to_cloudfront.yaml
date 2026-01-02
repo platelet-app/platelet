@@ -26,6 +26,8 @@ jobs:
       run: npm ci
     - name: build graphql package
       run: npm run build:simple --workspace @platelet-app/graphql
+    - name: build models package
+      run: npm run build --workspace @platelet-app/models
     - name: Production Build
       run: npm run build
       env:
