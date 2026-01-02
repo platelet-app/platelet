@@ -73,7 +73,6 @@ Comprehensive end-to-end test for the user deletion workflow. This test:
 1. Creates a test user using the `registerUser` mutation
 2. Uploads a profile picture for the user
 3. Creates associated data:
-   - Comments
    - Task assignments
    - Vehicle assignments
    - Possible rider responsibilities
@@ -81,11 +80,11 @@ Comprehensive end-to-end test for the user deletion workflow. This test:
 5. Deletes the user using `adminDeleteUser` mutation
 6. Verifies complete deletion from DynamoDB:
    - User record
-   - All associated comments
    - All task assignments
    - All vehicle assignments
    - All possible rider responsibilities
-7. Verifies deletion from Cognito
+
+Note: Comments are not created because they can only be created by the registered user.
 
 **Important:** This test requires admin-level credentials and will create and delete real data in your test environment.
 
