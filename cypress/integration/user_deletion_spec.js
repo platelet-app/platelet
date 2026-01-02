@@ -128,7 +128,6 @@ describe("User Deletion End-to-End Test", () => {
         // First, get the upload URL
 
         cy.then(() => {
-            cy.log("yayay");
             return API.graphql({
                 query: queries.profilePictureUploadURL,
                 variables: {
@@ -139,7 +138,6 @@ describe("User Deletion End-to-End Test", () => {
         })
             .then((response) => {
                 const uploadURL = response.data.profilePictureUploadURL;
-                cy.log(uploadURL);
                 expect(uploadURL).to.exist;
 
                 // Create a simple test image blob (1x1 pixel PNG)
@@ -541,7 +539,6 @@ describe("User Deletion End-to-End Test", () => {
     });
 
     it("should verify vehicle assignment is deleted from DynamoDB", () => {
-        cy.log("fsadfsdafdsa", createdVehicleAssignmentId);
         cy.then(() => {
             return API.graphql({
                 query: queries.getVehicleAssignment,
