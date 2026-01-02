@@ -12,6 +12,9 @@ jobs:
         node-version: [14.x]
 
     steps:
+    - name: Install amplify
+      run: |
+        npm install -g @aws-amplify/cli @babel/cli --unsafe-perm=true
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
