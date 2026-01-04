@@ -1,39 +1,50 @@
 import { jest, expect } from "@jest/globals";
+import { PassThrough } from "node:stream";
+import { mockClient } from "aws-sdk-client-mock";
+import {
+    S3Client,
+    DeleteObjectCommand,
+    ListObjectsV2Command,
+    GetObjectCommand,
+} from "@aws-sdk/client-s3";
 
-jest.unstable_mockModule("@platelet-app/lambda", () => ({
-    request: jest.fn(),
-    errorCheck: jest.fn(),
+import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
+
+// Create the mock instance
+const s3Mock = mockClient(S3Client);
+const sesMock = mockClient(SESv2Client);
+
+jest.unstable_mockModule("@platelet-app/lambda", async () => {
+    return {
+        getUserProfilePictures: jest.fn(),
+        request: jest.fn(),
+        errorCheck: jest.fn(),
+    };
+});
+
+const lambda = await import("@platelet-app/lambda");
+
+jest.unstable_mockModule("archiver", () => {
+    const mockArchive = {
+        pipe: jest.fn(),
+        append: jest.fn(),
+        finalize: jest.fn().mockResolvedValue(undefined),
+        on: jest.fn(),
+    };
+    return {
+        default: jest.fn(() => mockArchive),
+    };
+});
+
+jest.unstable_mockModule("@aws-sdk/lib-storage", () => ({
+    Upload: jest.fn().mockImplementation(() => ({
+        done: jest.fn().mockResolvedValue({ Location: "mock-location" }),
+    })),
 }));
 
-jest.unstable_mockModule("@aws-sdk/client-cognito-identity-provider", () => {
-    const mockSend = jest.fn().mockResolvedValue({});
-    const MockCognitoIdentityProviderClient = jest.fn(() => ({
-        send: mockSend,
-    }));
-    return {
-        CognitoIdentityProviderClient: MockCognitoIdentityProviderClient,
-        AdminDisableUserCommand: jest.fn(),
-        AdminDeleteUserCommand: jest.fn(),
-        mockSend, // Export mockSend to assert on tests
-    };
-});
+const archiver = (await import("archiver")).default;
+const { Upload } = await import("@aws-sdk/lib-storage");
 
-jest.unstable_mockModule("@aws-sdk/client-s3", () => {
-    const mockSend = jest.fn().mockResolvedValue({});
-    const MockS3Client = jest.fn(() => ({
-        send: mockSend,
-    }));
-    return {
-        DeleteObjectCommand: jest.fn(),
-        S3Client: MockS3Client,
-        mockSend, // Export mockSend to assert on tests
-    };
-});
-
-// must be imported before the handler
-const cognito = await import("@aws-sdk/client-cognito-identity-provider");
-const s3 = await import("@aws-sdk/client-s3");
-const lambda = await import("@platelet-app/lambda");
 // import handler
 const { handler } = await import("./index.js");
 
@@ -52,59 +63,95 @@ function setupFetchStub(data: any): () => Promise<Response> {
 
 const fakeUser = {
     getUser: {
-        id: "test",
+        id: "test-user-id",
         _version: 10,
         username: "some-username",
+        name: "Some Name",
+        contact: {
+            emailAddress: "test@platelet.app",
+        },
         profilePicture: {
-            key: "some-key",
-            bucket: "some-bucket",
+            key: "public/some-key.jpg",
+            bucket: "some-user-bucket",
         },
     },
 };
 
-describe("DeleteUser", () => {
-    test("delete a user", async () => {
+describe("SendTakeOutData", () => {
+    beforeEach(() => {
+        s3Mock.reset();
+        jest.clearAllMocks();
+    });
+
+    test("send take out data", async () => {
+        const mockArchiveInstance = archiver();
+
+        sesMock.on(SendEmailCommand).resolves({});
+
+        s3Mock.on(DeleteObjectCommand).resolves({});
         lambda.request
             .mockImplementationOnce(setupFetchStub(fakeUser))
             .mockImplementation(setupFetchStub({}));
-        await handler({
-            userId: "test",
-            retryCount: 1,
+
+        lambda.getUserProfilePictures.mockImplementationOnce(() => ({
+            Contents: [
+                { Key: "public/some-key.jpg" },
+                { Key: "public/some-key-128x128.jpg" },
+            ],
+        }));
+
+        s3Mock.on(ListObjectsV2Command).resolves({
+            Contents: [
+                { Key: "test-user-id/public/some-key.jpg" },
+                { Key: "test-user-id/public/some-key-128x128.jpg" },
+                { Key: "test-user-id/user.json" },
+            ],
         });
-        expect(lambda.request.mock.calls).toMatchSnapshot();
-        expect(cognito.mockSend).toHaveBeenCalledTimes(2);
-        expect(cognito.AdminDisableUserCommand.mock.calls)
-            .toMatchInlineSnapshot(`
-            [
-              [
-                {
-                  "UserPoolId": "some_pool",
-                  "Username": "some-username",
+
+        s3Mock.on(GetObjectCommand).resolves({
+            Body: new PassThrough(),
+        });
+
+        await handler({ userId: "test" });
+
+        expect(archiver).toHaveBeenCalledWith("zip", { zlib: { level: 9 } });
+
+        expect(mockArchiveInstance.append).toHaveBeenCalledTimes(3);
+
+        expect(mockArchiveInstance.append).toHaveBeenCalledWith(
+            expect.any(PassThrough),
+            { name: "test-user-id/public/some-key.jpg" }
+        );
+        expect(mockArchiveInstance.append).toHaveBeenCalledWith(
+            expect.any(PassThrough),
+            { name: "test-user-id/public/some-key-128x128.jpg" }
+        );
+        expect(mockArchiveInstance.append).toHaveBeenCalledWith(
+            expect.any(PassThrough),
+            { name: "test-user-id/user.json" }
+        );
+
+        expect(mockArchiveInstance.finalize).toHaveBeenCalled();
+
+        expect(Upload).toHaveBeenCalledWith(
+            expect.objectContaining({
+                params: expect.objectContaining({
+                    Key: "test-user-id.zip",
+                    ContentType: "application/zip",
+                    Body: expect.any(PassThrough),
+                }),
+            })
+        );
+
+        expect(s3Mock.calls().map((i) => i.args[0])).toMatchSnapshot();
+        console.log(sesMock.calls()[0].args[0].input);
+        expect(sesMock.calls()[0].args[0].input).toEqual(
+            expect.objectContaining({
+                Destination: {
+                    ToAddresses: ["test@platelet.app"],
                 },
-              ],
-            ]
-        `);
-        expect(cognito.AdminDeleteUserCommand.mock.calls)
-            .toMatchInlineSnapshot(`
-            [
-              [
-                {
-                  "UserPoolId": "some_pool",
-                  "Username": "some-username",
-                },
-              ],
-            ]
-        `);
-        expect(s3.mockSend).toHaveBeenCalledTimes(1);
-        expect(s3.DeleteObjectCommand.mock.calls).toMatchInlineSnapshot(`
-            [
-              [
-                {
-                  "Bucket": "some-bucket",
-                  "Key": "some-key",
-                },
-              ],
-            ]
-        `);
+                FromEmailAddress: "noreply@platelet.app",
+            })
+        );
     });
 });

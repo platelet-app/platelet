@@ -1,10 +1,14 @@
 import _ from "lodash";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { jest, expect } from "@jest/globals";
+import { mockClient } from "aws-sdk-client-mock";
 
 jest.unstable_mockModule("@platelet-app/lambda", () => ({
     request: jest.fn(),
     errorCheck: jest.fn(),
 }));
+
+const s3Mock = mockClient(S3Client);
 
 // must be imported before the handler
 const lambda = await import("@platelet-app/lambda");
@@ -50,13 +54,24 @@ const fakeData2 = {
     },
 };
 
-describe("CleanVehicleAssignments", () => {
-    test("clean some vehicle assignments", async () => {
+describe("GetTakeOutVehicleAssignments", () => {
+    test("take out some vehicle assignments", async () => {
+        s3Mock.on(PutObjectCommand).resolves({});
         lambda.request
             .mockImplementationOnce(setupFetchStub(fakeData))
             .mockImplementationOnce(setupFetchStub(fakeData2))
             .mockImplementation(setupFetchStub({}));
-        await handler({ userId: "test", retryCount: 1 });
+        await handler({ userId: "test-user-id" });
         expect(lambda.request.mock.calls).toMatchSnapshot();
+        expect(s3Mock.calls()[0].args[0].input).toEqual(
+            expect.objectContaining({
+                Body: JSON.stringify([
+                    ...fakeVehicleAssignments1,
+                    ...fakeVehicleAssignments2,
+                ]),
+                Bucket: "some-takeout-bucket",
+                Key: "test-user-id/vehicle_assignments.json",
+            })
+        );
     });
 });

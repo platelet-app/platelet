@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`GetUserAssignments get user assginments 1`] = `
+exports[`TakeOutGetUserAssignments get user assginments 1`] = `
 [
   [
     {
@@ -13,12 +13,16 @@ exports[`GetUserAssignments get user assginments 1`] = `
           id
           _version
           _deleted
+          role
+          task {
+              id
+          }
       }
     }
   }
 }",
       "variables": {
-        "id": "test",
+        "id": "test-user-id",
         "nextToken": null,
       },
     },
@@ -35,12 +39,16 @@ exports[`GetUserAssignments get user assginments 1`] = `
           id
           _version
           _deleted
+          role
+          task {
+              id
+          }
       }
     }
   }
 }",
       "variables": {
-        "id": "test",
+        "id": "test-user-id",
         "nextToken": "something",
       },
     },
