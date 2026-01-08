@@ -40,7 +40,7 @@ exports[`sendWelcomeEmail should send a welcome email 1`] = `
                       "Charset": "UTF-8",
                       "Data": "
                     <p>
-                        Welcome to https://test.com, Test User!
+                        Welcome to https://dispatch.platelet.app, Test User!
                     </p>
                     <p>
                         An admin has created your account for you with a temporary password.
@@ -61,7 +61,7 @@ exports[`sendWelcomeEmail should send a welcome email 1`] = `
                     },
                     "Text": {
                       "Charset": "UTF-8",
-                      "Data": "Welcome to https://test.com, Test User!
+                      "Data": "Welcome to https://dispatch.platelet.app, Test User!
                     An admin has created your account for you. A temporary password has been generated for you.
                     Username: test@test.com
                     Password: testpassword
@@ -75,10 +75,10 @@ exports[`sendWelcomeEmail should send a welcome email 1`] = `
                   },
                 },
                 "ReplyToAddresses": [
-                  "welcome@test.com",
+                  "noreply@platelet.app",
                 ],
-                "ReturnPath": "welcome@test.com",
-                "Source": "welcome@test.com",
+                "ReturnPath": "noreply@platelet.app",
+                "Source": "noreply@platelet.app",
               },
             ],
           ],
