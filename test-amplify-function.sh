@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#set -e
+set -e
 
 cd amplify/backend/function
 
@@ -16,7 +16,7 @@ for dir in */ ; do
         else
             yarn --frozen-lockfile
         fi
-        yarn run test --watchAll=false
+        yarn run test --watchAll=false --passWithNoTests
         cd ..
     fi
     if [ -d 'opt' ];
@@ -27,7 +27,7 @@ for dir in */ ; do
         else
             yarn --frozen-lockfile
         fi
-        yarn run test --watchAll=false
+        yarn run test --watchAll=false --passWithNoTests
     fi
     cd ..
 done
