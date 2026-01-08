@@ -39,27 +39,6 @@ exports[`plateletAdminDisableUser disable a user 1`] = `
 }
 `;
 
-exports[`plateletAdminDisableUser disable a user 2`] = `
-[MockFunction] {
-  "calls": [
-    [
-      {
-        "UserPoolId": "somePoolId",
-        "Username": "username",
-      },
-    ],
-  ],
-  "results": [
-    {
-      "type": "return",
-      "value": {
-        "promise": [Function],
-      },
-    },
-  ],
-}
-`;
-
 exports[`plateletAdminDisableUser disable a user appsync failure 1`] = `
 [MockFunction] {
   "calls": [
@@ -94,48 +73,6 @@ exports[`plateletAdminDisableUser disable a user appsync failure 1`] = `
     {
       "type": "return",
       "value": Promise {},
-    },
-  ],
-}
-`;
-
-exports[`plateletAdminDisableUser disable a user appsync failure 2`] = `
-[MockFunction] {
-  "calls": [
-    [
-      {
-        "UserPoolId": "somePoolId",
-        "Username": "username",
-      },
-    ],
-  ],
-  "results": [
-    {
-      "type": "return",
-      "value": {
-        "promise": [Function],
-      },
-    },
-  ],
-}
-`;
-
-exports[`plateletAdminDisableUser disable a user appsync failure 3`] = `
-[MockFunction] {
-  "calls": [
-    [
-      {
-        "UserPoolId": "somePoolId",
-        "Username": "username",
-      },
-    ],
-  ],
-  "results": [
-    {
-      "type": "return",
-      "value": {
-        "promise": [Function],
-      },
     },
   ],
 }

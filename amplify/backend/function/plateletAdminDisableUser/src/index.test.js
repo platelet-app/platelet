@@ -70,9 +70,21 @@ describe("plateletAdminDisableUser", () => {
             .mockReturnValue({
                 promise: () => Promise.resolve(),
             });
+        const cognitoSignOutUserSpy = jest
+            .spyOn(cognitoIdentityServiceProvider, "adminUserGlobalSignOut")
+            .mockReturnValue({
+                promise: () => Promise.resolve(),
+            });
         await indexModule.handler({ arguments: { userId: "userId" } });
         expect(appsyncModule.request).toMatchSnapshot();
-        expect(cognitoDisableUserSpy).toMatchSnapshot();
+        expect(cognitoDisableUserSpy).toHaveBeenCalledWith({
+            UserPoolId: "somePoolId",
+            Username: "username",
+        });
+        expect(cognitoSignOutUserSpy).toHaveBeenCalledWith({
+            UserPoolId: "somePoolId",
+            Username: "username",
+        });
     });
     test("disable a user appsync failure", async () => {
         appsyncModule.request
@@ -84,21 +96,30 @@ describe("plateletAdminDisableUser", () => {
                 }),
             })
             .mockRejectedValueOnce(new Error("error"));
-        const cognitoDisableUserSpy = jest
-            .spyOn(cognitoIdentityServiceProvider, "adminDisableUser")
-            .mockReturnValue({
-                promise: () => Promise.resolve(),
-            });
+        jest.spyOn(
+            cognitoIdentityServiceProvider,
+            "adminDisableUser"
+        ).mockReturnValue({
+            promise: () => Promise.resolve(),
+        });
         const cognitoEnableUserSpy = jest
             .spyOn(cognitoIdentityServiceProvider, "adminEnableUser")
             .mockReturnValue({
                 promise: () => Promise.resolve(),
             });
+        jest.spyOn(
+            cognitoIdentityServiceProvider,
+            "adminUserGlobalSignOut"
+        ).mockReturnValue({
+            promise: () => Promise.resolve(),
+        });
         await expect(
             indexModule.handler({ arguments: { userId: "userId" } })
         ).rejects.toThrow();
         expect(appsyncModule.request).toMatchSnapshot();
-        expect(cognitoDisableUserSpy).toMatchSnapshot();
-        expect(cognitoEnableUserSpy).toMatchSnapshot();
+        expect(cognitoEnableUserSpy).toHaveBeenCalledWith({
+            UserPoolId: "somePoolId",
+            Username: "username",
+        });
     });
 });

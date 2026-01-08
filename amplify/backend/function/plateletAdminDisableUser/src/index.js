@@ -91,6 +91,7 @@ exports.handler = async (event) => {
         console.log(`APPSYNC RESPONSE: ${JSON.stringify(appSyncResponse)}`);
         return appSyncResponse;
     } catch (error) {
+        console.log("ERROR", error);
         await cleanUpCogito(username);
         throw error;
     }
