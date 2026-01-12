@@ -21,7 +21,7 @@ jobs:
         run: npm install
       - name: 'Install Amplify dependencies'
         working-directory: amplify/backend
-        run: yarn
+        run: yarn --frozen-lockfile
       - name: 'Test cdk functions'
         run: ./test-cdk-functions.sh
       - name: 'Test amplify functions'
