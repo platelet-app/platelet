@@ -84,7 +84,7 @@ const startStepFunctionExecution = async (input) => {
 
 export const handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
-    const { claims } = event.requestContext.authorizer.claims;
+    const { claims } = event.identity;
     let authorized = false;
     if (claims["cognito:groups"].includes("ADMIN")) {
         authorized = true;
