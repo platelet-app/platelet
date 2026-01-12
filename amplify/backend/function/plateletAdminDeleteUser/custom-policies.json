@@ -1,1 +1,15 @@
-[]
+
+[
+    {
+        "Action": [
+            "states:StartExecution",
+            "ssm:GetParameter",
+            "ssm:GetParameters",
+            "ssm:GetParametersByPath"
+        ],
+        "Resource": [
+            "arn:aws:states:eu-west-1:130063560692:stateMachine:DeleteUserStepFunctionDeleteUserStateMachine9FDD566C-oNGl0ORVrEr8",
+            "arn:aws:ssm:eu-west-1:130063560692:parameter/platelet-supporting-cdk/mahalia/DeleteUserStateMachineArn"
+        ]
+    }
+]
