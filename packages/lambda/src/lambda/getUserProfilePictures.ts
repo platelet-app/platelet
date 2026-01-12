@@ -13,8 +13,8 @@ export const getUserProfilePictures = async (item: S3Object) => {
     if (!input.Prefix || input.Prefix.length === 0) {
         throw new Error("Prefix is missing!");
     }
-    if (input.Prefix === "public/") {
-        throw new Error("Cannot take out all public files!");
+    if (input.Prefix === "public/" || !input.Prefix.startsWith("public/")) {
+        throw new Error("Incorrect prefix!");
     }
     const command = new ListObjectsV2Command(input);
     return await s3Client.send(command);
