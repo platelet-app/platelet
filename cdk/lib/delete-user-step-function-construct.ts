@@ -290,7 +290,18 @@ export class DeleteUserStepFunction extends Construct {
                 resources: [this.bucket.bucketArn],
             })
         );
-
+        deleteUserFunction.addToRolePolicy(
+            new iam.PolicyStatement({
+                effect: iam.Effect.DENY,
+                actions: ["s3:ListBucket"],
+                resources: [this.bucket.bucketArn],
+                conditions: {
+                    StringEquals: {
+                        "s3:prefix": "public/",
+                    },
+                },
+            })
+        );
         if (deleteUserFunction.role) {
             NagSuppressions.addResourceSuppressions(
                 deleteUserFunction.role,
