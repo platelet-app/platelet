@@ -19,6 +19,17 @@ jobs:
       - name: 'Install dependencies'
         working-directory: cdk
         run: npm install
+      - name: 'Install Amplify dependencies'
+        working-directory: amplify/backend
+        run: yarn --frozen-lockfile
+      - name: 'Test cdk functions'
+        run: ./test-cdk-functions.sh
+      - name: 'Test amplify functions'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        run: ./test-amplify-functions.sh
       - name: 'Build'
         working-directory: cdk
         run: npm run build

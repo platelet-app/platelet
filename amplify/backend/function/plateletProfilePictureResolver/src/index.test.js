@@ -28,6 +28,27 @@ const event = {
     },
 };
 
+jest.mock("@aws-sdk/credential-provider-node", () => ({
+    defaultProvider: () => async () => ({
+        accessKeyId: "test-key",
+        secretAccessKey: "test-secret",
+    }),
+}));
+
+jest.mock("@aws-sdk/signature-v4", () => ({
+    SignatureV4: class {
+        async sign(request) {
+            return {
+                ...request,
+                headers: {
+                    ...request.headers,
+                    Authorization: "Signed-Header",
+                },
+            };
+        }
+    },
+}));
+
 const beginString = `https://s3.${process.env.REGION}.amazonaws.com/${process.env.STORAGE_PLATELETSTORAGE_BUCKETNAME}/`;
 
 describe("plateletProfilePictureResolver", () => {
