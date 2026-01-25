@@ -208,6 +208,50 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "plateletAdminDeleteRiderResponsibility": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        },
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "plateletappSyncOperations"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "plateletAdminDeleteUser": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        },
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "platelet61a0ac07"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "plateletAdminDisableUser": {
       "build": true,
       "dependsOn": [
@@ -443,6 +487,21 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "plateletUserTakeOutData": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "plateletappSyncOperations": {
       "build": true,
       "providerPlugin": "awscloudformation",
@@ -563,6 +622,38 @@
         {
           "category": "function",
           "resourceName": "plateletAdminChangeUserRoles"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminDeleteRiderResponsibility_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminDeleteRiderResponsibility"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminDeleteRiderResponsibility_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminDeleteRiderResponsibility"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminDeleteUser_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminDeleteUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletAdminDeleteUser_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletAdminDeleteUser"
         }
       ]
     },

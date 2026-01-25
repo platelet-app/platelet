@@ -2,10 +2,11 @@
     "version": "1.0.0",
     "description": "",
     "devDependencies": {
-        "jest": "^29.7.0"
+        "jest": "^29.7.0",
+        "node-fetch": "^2.6.1"
     },
     "scripts": {
-        "test": "jest test --watchAll --testTimeout=10000"
+        "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest test --watchAll --testTimeout=10000"
     },
     "jest": {
         "modulePaths": [

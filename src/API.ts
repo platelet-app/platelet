@@ -1219,6 +1219,12 @@ export type SendFeedback = {
   successState?: boolean | null,
 };
 
+export type StateMachineExecution = {
+  __typename: "StateMachineExecution",
+  executionArn?: string | null,
+  startDate?: string | null,
+};
+
 export type ModelTenantFilterInput = {
   id?: ModelIDInput | null,
   name?: ModelStringInput | null,
@@ -5213,6 +5219,42 @@ export type ResetUserPasswordMutation = {
   } | null,
 };
 
+export type AdminDeleteRiderResponsibilityMutationVariables = {
+  riderResponsibilityId?: string | null,
+};
+
+export type AdminDeleteRiderResponsibilityMutation = {
+  adminDeleteRiderResponsibility?:  {
+    __typename: "RiderResponsibility",
+    id: string,
+    tenantId: string,
+    label: string,
+    disabled?: number | null,
+    possibleUsers?:  {
+      __typename: "ModelPossibleRiderResponsibilitiesConnection",
+      nextToken?: string | null,
+      startedAt?: number | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+    _version: number,
+    _deleted?: boolean | null,
+    _lastChangedAt: number,
+  } | null,
+};
+
+export type AdminDeleteUserMutationVariables = {
+  userId?: string | null,
+};
+
+export type AdminDeleteUserMutation = {
+  adminDeleteUser?:  {
+    __typename: "StateMachineExecution",
+    executionArn?: string | null,
+    startDate?: string | null,
+  } | null,
+};
+
 export type GetTenantQueryVariables = {
   id: string,
 };
@@ -7226,6 +7268,18 @@ export type SendUserFeedbackQuery = {
   sendUserFeedback?:  {
     __typename: "SendFeedback",
     successState?: boolean | null,
+  } | null,
+};
+
+export type UserTakeOutDataQueryVariables = {
+  userId?: string | null,
+};
+
+export type UserTakeOutDataQuery = {
+  userTakeOutData?:  {
+    __typename: "StateMachineExecution",
+    executionArn?: string | null,
+    startDate?: string | null,
   } | null,
 };
 

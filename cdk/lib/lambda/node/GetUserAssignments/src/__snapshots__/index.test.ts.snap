@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`GetUserAssignments get user assginments 1`] = `
+[
+  [
+    {
+      "query": "query GetUser($id: ID!, $nextToken: String) {
+  getUser(id: $id) {
+    id
+    assignments(nextToken: $nextToken) {
+      nextToken
+      items {
+          id
+          _version
+          _deleted
+      }
+    }
+  }
+}",
+      "variables": {
+        "id": "test",
+        "nextToken": null,
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "query GetUser($id: ID!, $nextToken: String) {
+  getUser(id: $id) {
+    id
+    assignments(nextToken: $nextToken) {
+      nextToken
+      items {
+          id
+          _version
+          _deleted
+      }
+    }
+  }
+}",
+      "variables": {
+        "id": "test",
+        "nextToken": "something",
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+]
+`;

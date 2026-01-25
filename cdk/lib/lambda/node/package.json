@@ -1,0 +1,39 @@
+{
+    "name": "functions",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+        "build": "npm-run-all build-*",
+        "build-get-user-comments": "cd GetUserComments && npm run build && npm run test",
+        "build-get-user-assignments": "cd GetUserAssignments && npm run build && npm run test",
+        "build-delete-comments": "cd DeleteComments && npm run build && npm run test",
+        "build-delete-assignments": "cd DeleteAssignments && npm run build && npm run test",
+        "build-delete-user": "cd DeleteUser && npm run build && npm run test",
+        "build-clean-vehicle-assignments": "cd CleanVehicleAssignments && npm run build && npm run test",
+        "build-clean-possible-rider-responsibilities": "cd CleanPossibleRiderResponsibilities && npm run build && npm run test",
+        "build-get-take-out-user-comments": "cd GetTakeOutUserComments && npm run build",
+        "build-get-take-out-vehicle-assignments": "cd GetTakeOutVehicleAssignments && npm run build",
+        "build-get-take-out-user-assignments": "cd GetTakeOutUserAssignments && npm run build",
+        "build-get-take-out-possible-rider-responsibilities": "cd GetTakeOutPossibleRiderResponsibilities && npm run build",
+        "build-send-take-out-data": "cd SendTakeOutData && npm run build",
+        "package": "npm-run-all pk-*",
+        "pk-get-user-comments": "cd GetUserComments && npm run package",
+        "pk-get-user-assignments": "cd GetUserAssignments && npm run package",
+        "pk-delete-comments": "cd DeleteComments && npm run package",
+        "pk-delete-assignments": "cd DeleteAssignments && npm run package",
+        "pk-delete-user": "cd DeleteUser && npm run package",
+        "pk-clean-vehicle-assignments": "cd CleanVehicleAssignments && npm run package",
+        "pk-clean-possible-rider-responsibilities": "cd CleanPossibleRiderResponsibilities && npm run package",
+        "pk-get-take-out-user-comments": "cd GetTakeOutUserComments && npm run package",
+        "pk-get-take-out-vehicle-assignments": "cd GetTakeOutVehicleAssignments && npm run package",
+        "pk-get-take-out-user-assignments": "cd GetTakeOutUserAssignments && npm run package",
+        "pk-get-take-out-possible-rider-responsibilities": "cd GetTakeOutPossibleRiderResponsibilities && npm run package",
+        "pk-send-take-out-data": "cd SendTakeOutData && npm run package"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "npm-run-all": "^4.1.5"
+    }
+}

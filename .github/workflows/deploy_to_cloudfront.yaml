@@ -1,0 +1,61 @@
+name: Cloudfront builds
+
+on:
+  push:
+    branches:
+      - test.platelet.app
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    strategy:
+      matrix:
+        node-version: [20.x]
+    steps:
+    - name: Install amplify
+      run: |
+        npm install -g @aws-amplify/cli @babel/cli --unsafe-perm=true
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: create empty aws-exports file
+      run: touch src/aws-exports.js
+    - name: Install dependencies
+      run: npm ci
+    - name: build graphql package
+      run: npm run build:simple --workspace @platelet-app/graphql
+    - name: build models package
+      run: npm run build --workspace @platelet-app/models
+    - name: Production Build
+      run: npm run build
+      env:
+        REACT_APP_TENANT_GRAPHQL_ENDPOINT: ${{ vars.API_URL }}
+        REACT_APP_TENANT_GRAPHQL_API_KEY: ${{ secrets.API_KEY }}
+        REACT_APP_GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+        CI: false
+        GENERATE_SOURCEMAP: false
+    - name: NPM test
+      run: npm test -- --silent
+    - name: Deploy to S3
+      uses: jakejarvis/s3-sync-action@master
+      with:
+        args: --acl public-read --delete
+      env:
+        AWS_S3_BUCKET: ${{ vars.AWS_S3_BUCKET }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ${{ vars.AWS_REGION }}
+        SOURCE_DIR: "build"
+    - name: invalidate
+      uses: chetan/invalidate-cloudfront-action@v2
+      env:
+        DISTRIBUTION: ${{ vars.DISTRIBUTION }}
+        PATHS: '/*'
+        AWS_REGION: ${{ vars.AWS_REGION }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

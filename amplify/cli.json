@@ -11,7 +11,8 @@
       "showfieldauthnotification": false,
       "transformerversion": 2,
       "suppressschemamigrationprompt": true,
-      "securityEnhancementNotification": false
+      "securityEnhancementNotification": false,
+      "subscriptionsInheritPrimaryAuth": true
     },
     "frontend-ios": {
       "enablexcodeintegration": true

@@ -2,7 +2,7 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-import * as APITypes from "../API";
+import * as APITypes from "../API.js";
 type GeneratedQuery<InputType, OutputType> = string & {
   __generatedQueryInput: InputType;
   __generatedQueryOutput: OutputType;
@@ -2123,4 +2123,15 @@ export const sendUserFeedback = /* GraphQL */ `query SendUserFeedback($emailAddr
 ` as GeneratedQuery<
   APITypes.SendUserFeedbackQueryVariables,
   APITypes.SendUserFeedbackQuery
+>;
+export const userTakeOutData = /* GraphQL */ `query UserTakeOutData($userId: ID) {
+  userTakeOutData(userId: $userId) {
+    executionArn
+    startDate
+    __typename
+  }
+}
+` as GeneratedQuery<
+  APITypes.UserTakeOutDataQueryVariables,
+  APITypes.UserTakeOutDataQuery
 >;

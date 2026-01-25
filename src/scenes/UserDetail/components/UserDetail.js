@@ -18,6 +18,8 @@ import Skeleton from "@mui/material/Skeleton";
 import usePossibleRiderResponsibilities from "../../../hooks/usePossibleRiderResponsibilities";
 import EnableDisableUser from "./EnableDisableUser";
 import ResetUserPassword from "./ResetUserPassword";
+import DeleteUser from "./DeleteUser";
+import TakeOutUserData from "./TakeOutUserData";
 
 const initialUserState = {
     id: "",
@@ -114,6 +116,22 @@ export default function UserDetail({ userId }) {
             });
     }
 
+    let actionButtons = [];
+
+    if (isAdmin) {
+        actionButtons = [
+            <EnableDisableUser user={user} />,
+            <DeleteUser user={user} />,
+            <ResetUserPassword user={user} />,
+        ];
+    }
+
+    if (isAdmin || user?.id === whoami?.id) {
+        actionButtons.push(<TakeOutUserData user={user} />);
+    }
+
+    const buttonsShown = actionButtons.length > 0;
+
     if (isFetching) {
         return (
             <Stack
@@ -201,11 +219,10 @@ export default function UserDetail({ userId }) {
                                 setUser({ ...user, roles })
                             }
                         />
-                        {user && isAdmin && <Divider />}
-                        {user && isAdmin && (
+                        {buttonsShown && <Divider />}
+                        {buttonsShown && (
                             <Stack spacing={2} direction="row">
-                                <EnableDisableUser user={user} />
-                                <ResetUserPassword user={user} />
+                                {actionButtons}
                             </Stack>
                         )}
                     </Stack>

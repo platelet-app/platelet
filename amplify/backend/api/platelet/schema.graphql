@@ -8,36 +8,63 @@ type Tenant
   name: String! @index(name: "byTenantName", queryField: "getTenantByTenantName")
   referenceIdentifier: String!
   admin: User! @hasOne
+
 }
 
 type User
 @auth(rules: [
   {allow: private, operations: [read]},
-  {allow: owner, ownerField: "cognitoId", operations: [read, update]},
-  {allow: groups, groups: ["ADMIN"], operations: [read, update]},
 ])
 @model {
   id: ID! @auth(rules: [
     {allow: private, operations: [read]},
-    {allow: owner, ownerField: "cognitoId", operations: [read, update]},
-    {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [read, update]},
   ])
-  username: String! @auth(rules: [{allow: private, operations: [read]}])
-  cognitoId: ID! @index(name: "byCognitoId", queryField: "getUserByCognitoId") @auth(rules: [{allow: private, operations: [read]}])
-  tenantId: ID! @index(name: "byTenantId") @auth(rules: [{allow: private, operations: [read, create]}])
-  isPrimaryAdmin: Int @default(value: "0") @auth(rules: [{allow: private, operations: [read]}])
-  contact: AddressAndContactDetails
-  displayName: String!
-  name: String
-  roles: [Role!]! @auth(rules: [{allow: private, operations: [read]}])
-  dateOfBirth: AWSDate
+  username: String! @auth(rules: [
+    {allow: private, operations: [read]}
+  ])
+  cognitoId: ID! @index(name: "byCognitoId", queryField: "getUserByCognitoId") @auth(rules: [
+    {allow: private, operations: [read]}
+  ])
+  tenantId: ID! @index(name: "byTenantId") @auth(rules: [
+    {allow: private, operations: [read]}
+  ])
+  isPrimaryAdmin: Int @default(value: "0") @auth(rules: [
+    {allow: private, operations: [read]}
+  ])
+  contact: AddressAndContactDetails @auth(rules: [
+    {allow: private, operations: [read]},
+    {allow: groups, groups: ["ADMIN"], operations: [read, update]},
+    {allow: owner, ownerField: "cognitoId", operations: [read, update]},
+  ])
+  displayName: String! @auth(rules: [
+    {allow: private, operations: [read]},
+    {allow: groups, groups: ["ADMIN"], operations: [read, update]},
+    {allow: owner, ownerField: "cognitoId", operations: [read, update]},
+  ])
+  name: String @auth(rules: [
+    {allow: private, operations: [read]},
+    {allow: groups, groups: ["ADMIN"], operations: [read, update]},
+    {allow: owner, ownerField: "cognitoId", operations: [read, update]},
+  ])
+  roles: [Role!]! @auth(rules: [
+    {allow: private, operations: [read]}
+  ])
+  dateOfBirth: AWSDate @auth(rules: [
+    {allow: private, operations: [read]},
+    {allow: groups, groups: ["ADMIN"], operations: [read, update]},
+    {allow: owner, ownerField: "cognitoId", operations: [read, update]},
+  ])
   riderResponsibility: String @auth(rules: [
     {allow: private, operations: [read]},
     {allow: owner, ownerField: "cognitoId", operations: [read, update, delete]},
     {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [read, update, delete]},
   ])
   possibleRiderResponsibilities: [PossibleRiderResponsibilities] @hasMany
-  profilePicture: S3Object
+  profilePicture: S3Object @auth(rules: [
+    {allow: private, operations: [read]},
+    {allow: groups, groups: ["ADMIN"], operations: [read, update]},
+    {allow: owner, ownerField: "cognitoId", operations: [read, update]},
+  ])
   comments: [Comment] @hasMany
   assignments: [TaskAssignee] @hasMany
   vehicleAssignments: [VehicleAssignment] @hasMany
@@ -45,11 +72,12 @@ type User
   createdLocations: [Location] @hasMany
   createdVehicles: [Vehicle] @hasMany
   createdScheduledTasks: [ScheduledTask] @hasMany
-  disabled: Int @default(value: "0") @auth(rules: [{allow: private, operations: [read]}])
+  disabled: Int @default(value: "0")
 }
 
 type PossibleRiderResponsibilities
 @auth(rules: [
+  {allow: private, provider: iam, operations: [read, delete]},
   {allow: private, operations: [read]},
   {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
 ])
@@ -91,6 +119,7 @@ type Vehicle
 
 type VehicleAssignment
 @auth(rules: [
+  {allow: private, provider: iam, operations: [read, delete]},
   {allow: private, operations: [read]},
   {allow: groups, groups: ["ADMIN", "COORDINATOR", "RIDER"], operations: [create, read, delete]},
 ])
@@ -276,6 +305,7 @@ type Task
 
 type TaskAssignee
 @auth(rules: [
+  {allow: private, provider: iam, operations: [read, delete]},
   {allow: private, operations: [read]},
   {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, delete]},
 ])
@@ -286,10 +316,6 @@ type TaskAssignee
   task: Task! @belongsTo
   assignee: User! @belongsTo
   archived: Int @default(value: "0") @index(name: "byArchived")
-    @auth(rules: [
-      {allow: private, operations: [read]},
-      {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, delete]},
-    ])
 }
 
 type ScheduledTask
@@ -319,6 +345,7 @@ type ScheduledTask
 
 type Comment
 @auth(rules: [
+  {allow: private, provider: iam, operations: [read, delete]},
   {allow: groups, groups: ["USER"], operations: [read]},
   {allow: owner, operations: [create, read, delete, update]},
   {allow: groups, groups: ["ADMIN"], operations: [create, read, delete, update]},
@@ -328,12 +355,14 @@ type Comment
   parentId: ID @index(name: "byParent")
   owner: String
     @auth(rules: [
+      {allow: private, provider: iam, operations: [read, delete]},
       {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
       {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
     ])
   tenantId: ID! @index(name: "byTenantId")
     @auth(rules: [
+      {allow: private, provider: iam, operations: [read, delete]},
       {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
       {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
@@ -343,6 +372,7 @@ type Comment
   visibility: CommentVisibility
   archived: Int @default(value: "0") @index(name: "byArchived")
     @auth(rules: [
+      {allow: private, provider: iam, operations: [read, delete]},
       {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
       {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
@@ -464,6 +494,11 @@ type SendFeedback {
   successState: Boolean
 }
 
+type StateMachineExecution {
+  executionArn: String
+  startDate: String
+}
+
 type Mutation {
   registerUser(name: String, email: String, tenantId: ID, roles: [Role]): User @function(name: "plateletAdminAddNewUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   registerTenant(name: String, emailAddress: String, tenantName: String): Tenant @function(name: "plateletAddNewTenant-${env}") @auth(rules: [{allow: groups, groups: ["SUPER"]}])
@@ -472,6 +507,8 @@ type Mutation {
   enableUser(userId: ID): User @function(name: "plateletAdminEnableUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   updateUserEmail(userId: ID, emailAddress: AWSEmail): User @function(name: "plateletAdminChangeUserEmail-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   resetUserPassword(userId: ID): SendFeedback @function(name: "plateletAdminResetUserPassword-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
+  adminDeleteRiderResponsibility(riderResponsibilityId: ID): RiderResponsibility @function(name: "plateletAdminDeleteRiderResponsibility-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
+  adminDeleteUser(userId: ID): StateMachineExecution @function(name: "plateletAdminDeleteUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
 }
 
 type Statistics {
@@ -490,4 +527,5 @@ type Query {
   profilePictureUploadURL(userId: ID!): AWSURL @function(name: "plateletProfilePictureUploadURLResolver-${env}") @auth(rules: [{allow: private}])
   profilePictureURL(userId: ID!, width: Int, height: Int): AWSURL @function(name: "plateletProfilePictureResolver-${env}") @auth(rules: [{allow: private}])
   sendUserFeedback(emailAddress: AWSEmail, body: String): SendFeedback @function(name: "plateletSendUserFeedback-${env}") @auth(rules: [{allow: private}])
+  userTakeOutData(userId: ID): StateMachineExecution @function(name: "plateletUserTakeOutData-${env}") @auth(rules: [{allow: groups, groups: ["USER"]}])
 }

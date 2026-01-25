@@ -1,0 +1,111 @@
+name: Deploy CDK and Amplify
+
+on:
+  push:
+    branches:
+      - 'production/**'
+      - 'test/**'
+      - 'dev'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v3
+      - name: 'Install CDK CLI'
+        run: npm install -g aws-cdk
+      - name: 'Install dependencies'
+        working-directory: cdk
+        run: npm install
+      - name: 'Install Amplify dependencies'
+        working-directory: amplify/backend
+        run: yarn --frozen-lockfile
+      - name: 'Test cdk functions'
+        run: ./test-cdk-functions.sh
+      - name: 'Test amplify functions'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        run: ./test-amplify-functions.sh
+      - name: 'Build'
+        working-directory: cdk
+        run: npm run build
+      - name: 'Build lambda functions'
+        working-directory: cdk
+        run: npm run build-functions
+      - name: 'Get Amplify outputs'
+        uses: duckbytes/amplify-get-outputs@master
+        id: amplify_outputs
+        with:
+          app-id: ${{ vars.AMPLIFY_APP_ID }}
+          branch-name: ${{ github.ref_name }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+      - name: 'Bootstrap and deploy'
+        working-directory: cdk
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DEPLOY_ENV: ${{ github.ref_name }}
+          AWS_ACCOUNT_NUMBER: ${{ vars.AWS_ACCOUNT_NUMBER }}
+        run: |
+          CONTEXT_ARGS="--context appsyncId=${{ steps.amplify_outputs.outputs.appsync_id }} \
+                      --context userPoolId=${{ steps.amplify_outputs.outputs.user_pool_id }} \
+                      --context amplifyEnv=${{ steps.amplify_outputs.outputs.env_name }} \
+                      --context graphQLEndpoint=${{ steps.amplify_outputs.outputs.graphql_endpoint }} \
+                      --context bucketName=${{ steps.amplify_outputs.outputs.bucket_name }}"
+          npm run bootstrap -- $CONTEXT_ARGS
+          npm run deploy -- --require-approval never $CONTEXT_ARGS --outputs-file cdk-out.json
+      - name: "Write lambda function roles to custom-roles.json"
+        run: |
+          ./scripts/get-cdk-roles.sh cdk/cdk-out.json
+      - name: "Commit changes"
+        id: 'commit_changes'
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: './amplify'
+          default_author: github_actor
+      - name: 'Start Amplify build'
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        run: |
+          aws amplify start-job --app-id ${{ vars.AMPLIFY_APP_ID }} --branch-name ${{ github.ref_name }} --job-type RELEASE --commit-id ${{ steps.commit_changes.outputs.commit_long_sha || github.sha }}
+      - name: Wait for Amplify to finish remote build
+        uses: duckbytes/amplify-build-status@master
+        with:
+          app-id: ${{ vars.AMPLIFY_APP_ID }}
+          branch-name: ${{ github.ref_name }}
+          commit-id: ${{ steps.commit_changes.outputs.commit_long_sha || github.sha }}
+          wait: true
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+      - name: Install Amplify CLI and pull project
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        run: |
+          npm install -g @aws-amplify/cli @babel/cli --unsafe-perm=true
+          npm install --save-dev @babel/plugin-transform-modules-commonjs
+          amplify pull --appId ${{ vars.AMPLIFY_APP_ID }} --envName ${{ steps.amplify_outputs.outputs.env_name }} -y
+          babel --plugins @babel/plugin-transform-modules-commonjs src/aws-exports.js > src/aws-exports-es5.js
+      - name: Update the tenant API
+        uses: platelet-app/update-tenant-api-action@main
+        with:
+          awsEnvName: ${{ steps.amplify_outputs.outputs.env_name }}
+          awsExportsFilepath: ${{ github.workspace }}/src/aws-exports-es5.js
+          awsAccessKeyId: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          awsRegion: ${{ vars.AWS_REGION }}
+          apiURL: ${{ vars.API_URL }}
+          amplifyEnvName: ${{ steps.amplify_outputs.outputs.env_name }}
+          tenantName: ${{ vars.TENANT_NAME }}

@@ -719,6 +719,57 @@ describe("UserDetail", () => {
         await screen.findByText("displayName");
         expect(screen.queryByRole("button")).toBeNull();
     });
+    test("show take out button if an admin", async () => {
+        const whoami = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER, models.Role.ADMIN],
+                username: "username",
+                displayName: "displayName",
+            })
+        );
+        const user = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+                username: "username",
+                displayName: "displayName",
+                disabled: 1,
+            })
+        );
+        const preloadedState = {
+            whoami: { user: whoami },
+            tenantId,
+        };
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        await screen.findByText("displayName");
+        expect(
+            screen.getByRole("button", { name: "Take out data" })
+        ).toBeInTheDocument();
+    });
+    test("show take out button if it is your own user", async () => {
+        const user = await DataStore.save(
+            new models.User({
+                tenantId,
+                cognitoId: "cognitoId",
+                roles: [models.Role.USER],
+                username: "username",
+                displayName: "displayName",
+                disabled: 1,
+            })
+        );
+        const preloadedState = {
+            whoami: { user },
+            tenantId,
+        };
+        render(<UserDetail userId={user.id} />, { preloadedState });
+        await screen.findByText("displayName");
+        expect(
+            screen.getByRole("button", { name: "Take out data" })
+        ).toBeInTheDocument();
+    });
     test("enable a user", async () => {
         const whoami = await DataStore.save(
             new models.User({

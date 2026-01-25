@@ -1,0 +1,252 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`index delete a rider responsibility and associated possible rider responsibilities 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      {
+        "query": "listPossibleRiderResponsibilities",
+        "variables": {
+          "filter": {
+            "_deleted": {
+              "ne": true,
+            },
+            "riderResponsibilityPossibleUsersId": {
+              "eq": "someRiderRespId",
+            },
+          },
+          "nextToken": null,
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "deletePossibleRiderResponsibilities",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "id": "someId1",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "deletePossibleRiderResponsibilities",
+        "variables": {
+          "input": {
+            "_version": 10,
+            "id": "someId2",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "
+    query GetRiderResponsibility($id: ID!) {
+        getRiderResponsibility(id: $id) {
+            id
+            _version
+            _deleted
+        }
+    }
+",
+        "variables": {
+          "id": "someRiderRespId",
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "deleteRiderResponsibility",
+        "variables": {
+          "input": {
+            "_version": 5,
+            "id": "someRiderRespId",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;
+
+exports[`index paginated rider responsibilities 1`] = `
+[MockFunction] {
+  "calls": [
+    [
+      {
+        "query": "listPossibleRiderResponsibilities",
+        "variables": {
+          "filter": {
+            "_deleted": {
+              "ne": true,
+            },
+            "riderResponsibilityPossibleUsersId": {
+              "eq": "someRiderRespId",
+            },
+          },
+          "nextToken": null,
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "listPossibleRiderResponsibilities",
+        "variables": {
+          "filter": {
+            "_deleted": {
+              "ne": true,
+            },
+            "riderResponsibilityPossibleUsersId": {
+              "eq": "someRiderRespId",
+            },
+          },
+          "nextToken": "someToken",
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "deletePossibleRiderResponsibilities",
+        "variables": {
+          "input": {
+            "_version": 3,
+            "id": "someId3",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "deletePossibleRiderResponsibilities",
+        "variables": {
+          "input": {
+            "_version": 4,
+            "id": "someId4",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "deletePossibleRiderResponsibilities",
+        "variables": {
+          "input": {
+            "_version": 1,
+            "id": "someId1",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "deletePossibleRiderResponsibilities",
+        "variables": {
+          "input": {
+            "_version": 10,
+            "id": "someId2",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "
+    query GetRiderResponsibility($id: ID!) {
+        getRiderResponsibility(id: $id) {
+            id
+            _version
+            _deleted
+        }
+    }
+",
+        "variables": {
+          "id": "someRiderRespId",
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+    [
+      {
+        "query": "deleteRiderResponsibility",
+        "variables": {
+          "input": {
+            "_version": 5,
+            "id": "someRiderRespId",
+          },
+        },
+      },
+      "https://api.example.com/graphql",
+    ],
+  ],
+  "results": [
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+    {
+      "type": "return",
+      "value": Promise {},
+    },
+  ],
+}
+`;

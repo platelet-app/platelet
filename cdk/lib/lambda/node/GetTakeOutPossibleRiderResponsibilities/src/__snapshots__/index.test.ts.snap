@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`TakeOutGetPossibleRiderResponsibilities get rider responsibilities 1`] = `
+[
+  [
+    {
+      "query": "query GetUser($id: ID!, $nextToken: String) {
+  getUser(id: $id) {
+    id
+    possibleRiderResponsibilities(nextToken: $nextToken) {
+      nextToken
+      items {
+          id
+          _version
+      }
+    }
+  }
+}",
+      "variables": {
+        "id": "test",
+        "nextToken": null,
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "query GetUser($id: ID!, $nextToken: String) {
+  getUser(id: $id) {
+    id
+    possibleRiderResponsibilities(nextToken: $nextToken) {
+      nextToken
+      items {
+          id
+          _version
+      }
+    }
+  }
+}",
+      "variables": {
+        "id": "test",
+        "nextToken": "something",
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+]
+`;

@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`GetTakeOutVehicleAssignments take out some vehicle assignments 1`] = `
+[
+  [
+    {
+      "query": "query GetUser($id: ID!, $nextToken: String) {
+  getUser(id: $id) {
+    id
+    vehicleAssignments(nextToken: $nextToken) {
+      nextToken
+      items {
+          id
+          _version
+          _deleted
+      }
+    }
+  }
+}",
+      "variables": {
+        "id": "test-user-id",
+        "nextToken": null,
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "query GetUser($id: ID!, $nextToken: String) {
+  getUser(id: $id) {
+    id
+    vehicleAssignments(nextToken: $nextToken) {
+      nextToken
+      items {
+          id
+          _version
+          _deleted
+      }
+    }
+  }
+}",
+      "variables": {
+        "id": "test-user-id",
+        "nextToken": "something",
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+]
+`;

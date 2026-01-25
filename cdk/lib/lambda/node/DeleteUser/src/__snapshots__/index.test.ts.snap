@@ -1,0 +1,132 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`DeleteUser delete a user 1`] = `
+[
+  [
+    {
+      "query": "
+  query GetUser($id: ID!) {
+    getUser(id: $id) {
+      id
+      disabled
+      username
+      createdAt
+      updatedAt
+      profilePicture {
+          key
+          bucket
+      }
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+  }
+",
+      "variables": {
+        "id": "test",
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation DeleteUser(
+  $input: DeleteUserInput!
+  $condition: ModelUserConditionInput
+) {
+  deleteUser(input: $input, condition: $condition) {
+    id
+    username
+    cognitoId
+    tenantId
+    isPrimaryAdmin
+    contact {
+      name
+      telephoneNumber
+      mobileNumber
+      emailAddress
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      __typename
+    }
+    displayName
+    name
+    roles
+    dateOfBirth
+    riderResponsibility
+    possibleRiderResponsibilities {
+      nextToken
+      startedAt
+      __typename
+    }
+    profilePicture {
+      bucket
+      key
+      region
+      __typename
+    }
+    comments {
+      nextToken
+      startedAt
+      __typename
+    }
+    assignments {
+      nextToken
+      startedAt
+      __typename
+    }
+    vehicleAssignments {
+      nextToken
+      startedAt
+      __typename
+    }
+    createdTasks {
+      nextToken
+      startedAt
+      __typename
+    }
+    createdLocations {
+      nextToken
+      startedAt
+      __typename
+    }
+    createdVehicles {
+      nextToken
+      startedAt
+      __typename
+    }
+    createdScheduledTasks {
+      nextToken
+      startedAt
+      __typename
+    }
+    disabled
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "_version": 10,
+          "id": "test",
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+]
+`;
