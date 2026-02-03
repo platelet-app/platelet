@@ -2,7 +2,7 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-import * as APITypes from "../API.js";
+import * as APITypes from "../API";
 type GeneratedMutation<InputType, OutputType> = string & {
   __generatedMutationInput: InputType;
   __generatedMutationOutput: OutputType;
@@ -28,6 +28,7 @@ export const createTenant = /* GraphQL */ `mutation CreateTenant(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -68,6 +69,7 @@ export const updateTenant = /* GraphQL */ `mutation UpdateTenant(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -108,6 +110,7 @@ export const deleteTenant = /* GraphQL */ `mutation DeleteTenant(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -207,6 +210,7 @@ export const createUser = /* GraphQL */ `mutation CreateUser(
       __typename
     }
     disabled
+    isBeingDeleted
     createdAt
     updatedAt
     _version
@@ -298,6 +302,7 @@ export const updateUser = /* GraphQL */ `mutation UpdateUser(
       __typename
     }
     disabled
+    isBeingDeleted
     createdAt
     updatedAt
     _version
@@ -389,6 +394,7 @@ export const deleteUser = /* GraphQL */ `mutation DeleteUser(
       __typename
     }
     disabled
+    isBeingDeleted
     createdAt
     updatedAt
     _version
@@ -420,6 +426,7 @@ export const createPossibleRiderResponsibilities = /* GraphQL */ `mutation Creat
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -472,6 +479,7 @@ export const updatePossibleRiderResponsibilities = /* GraphQL */ `mutation Updat
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -524,6 +532,7 @@ export const deletePossibleRiderResponsibilities = /* GraphQL */ `mutation Delet
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -576,6 +585,7 @@ export const createVehicle = /* GraphQL */ `mutation CreateVehicle(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -631,6 +641,7 @@ export const updateVehicle = /* GraphQL */ `mutation UpdateVehicle(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -686,6 +697,7 @@ export const deleteVehicle = /* GraphQL */ `mutation DeleteVehicle(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -758,6 +770,7 @@ export const createVehicleAssignment = /* GraphQL */ `mutation CreateVehicleAssi
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -815,6 +828,7 @@ export const updateVehicleAssignment = /* GraphQL */ `mutation UpdateVehicleAssi
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -872,6 +886,7 @@ export const deleteVehicleAssignment = /* GraphQL */ `mutation DeleteVehicleAssi
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -912,6 +927,7 @@ export const createLocation = /* GraphQL */ `mutation CreateLocation(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1018,6 +1034,7 @@ export const updateLocation = /* GraphQL */ `mutation UpdateLocation(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1124,6 +1141,7 @@ export const deleteLocation = /* GraphQL */ `mutation DeleteLocation(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1231,6 +1249,7 @@ export const createTask = /* GraphQL */ `mutation CreateTask(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1410,6 +1429,7 @@ export const updateTask = /* GraphQL */ `mutation UpdateTask(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1589,6 +1609,7 @@ export const deleteTask = /* GraphQL */ `mutation DeleteTask(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1797,6 +1818,7 @@ export const createTaskAssignee = /* GraphQL */ `mutation CreateTaskAssignee(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1868,6 +1890,7 @@ export const updateTaskAssignee = /* GraphQL */ `mutation UpdateTaskAssignee(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1939,6 +1962,7 @@ export const deleteTaskAssignee = /* GraphQL */ `mutation DeleteTaskAssignee(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1980,6 +2004,7 @@ export const createScheduledTask = /* GraphQL */ `mutation CreateScheduledTask(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -2137,6 +2162,7 @@ export const updateScheduledTask = /* GraphQL */ `mutation UpdateScheduledTask(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -2294,6 +2320,7 @@ export const deleteScheduledTask = /* GraphQL */ `mutation DeleteScheduledTask(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -2454,6 +2481,7 @@ export const createComment = /* GraphQL */ `mutation CreateComment(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -2498,6 +2526,7 @@ export const updateComment = /* GraphQL */ `mutation UpdateComment(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -2542,6 +2571,7 @@ export const deleteComment = /* GraphQL */ `mutation DeleteComment(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -3086,6 +3116,7 @@ export const registerUser = /* GraphQL */ `mutation RegisterUser(
       __typename
     }
     disabled
+    isBeingDeleted
     createdAt
     updatedAt
     _version
@@ -3123,6 +3154,7 @@ export const registerTenant = /* GraphQL */ `mutation RegisterTenant(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -3219,6 +3251,7 @@ export const updateUserRoles = /* GraphQL */ `mutation UpdateUserRoles($userId: 
       __typename
     }
     disabled
+    isBeingDeleted
     createdAt
     updatedAt
     _version
@@ -3307,6 +3340,7 @@ export const disableUser = /* GraphQL */ `mutation DisableUser($userId: ID) {
       __typename
     }
     disabled
+    isBeingDeleted
     createdAt
     updatedAt
     _version
@@ -3395,6 +3429,7 @@ export const enableUser = /* GraphQL */ `mutation EnableUser($userId: ID) {
       __typename
     }
     disabled
+    isBeingDeleted
     createdAt
     updatedAt
     _version
@@ -3483,6 +3518,7 @@ export const updateUserEmail = /* GraphQL */ `mutation UpdateUserEmail($userId: 
       __typename
     }
     disabled
+    isBeingDeleted
     createdAt
     updatedAt
     _version

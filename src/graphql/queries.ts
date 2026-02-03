@@ -2,7 +2,7 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-import * as APITypes from "../API.js";
+import * as APITypes from "../API";
 type GeneratedQuery<InputType, OutputType> = string & {
   __generatedQueryInput: InputType;
   __generatedQueryOutput: OutputType;
@@ -25,6 +25,7 @@ export const getTenant = /* GraphQL */ `query GetTenant($id: ID!) {
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -213,6 +214,7 @@ export const getUser = /* GraphQL */ `query GetUser($id: ID!) {
       __typename
     }
     disabled
+    isBeingDeleted
     createdAt
     updatedAt
     _version
@@ -240,6 +242,7 @@ export const listUsers = /* GraphQL */ `query ListUsers(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -277,6 +280,7 @@ export const syncUsers = /* GraphQL */ `query SyncUsers(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -316,6 +320,7 @@ export const getUserByCognitoId = /* GraphQL */ `query GetUserByCognitoId(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -348,6 +353,7 @@ export const getPossibleRiderResponsibilities = /* GraphQL */ `query GetPossible
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -461,6 +467,7 @@ export const getVehicle = /* GraphQL */ `query GetVehicle($id: ID!) {
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -600,6 +607,7 @@ export const getVehicleAssignment = /* GraphQL */ `query GetVehicleAssignment($i
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -701,6 +709,7 @@ export const getLocation = /* GraphQL */ `query GetLocation($id: ID!) {
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -893,6 +902,7 @@ export const getTask = /* GraphQL */ `query GetTask($id: ID!) {
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1343,6 +1353,7 @@ export const getTaskAssignee = /* GraphQL */ `query GetTaskAssignee($id: ID!) {
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1445,6 +1456,7 @@ export const getScheduledTask = /* GraphQL */ `query GetScheduledTask($id: ID!) 
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1672,6 +1684,7 @@ export const getComment = /* GraphQL */ `query GetComment($id: ID!) {
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version

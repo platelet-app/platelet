@@ -73,6 +73,7 @@ type User
   createdVehicles: [Vehicle] @hasMany
   createdScheduledTasks: [ScheduledTask] @hasMany
   disabled: Int @default(value: "0")
+  isBeingDeleted: Int @default(value: "0")
 }
 
 type PossibleRiderResponsibilities

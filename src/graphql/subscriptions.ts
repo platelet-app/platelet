@@ -2,7 +2,7 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-import * as APITypes from "../API.js";
+import * as APITypes from "../API";
 type GeneratedSubscription<InputType, OutputType> = string & {
   __generatedSubscriptionInput: InputType;
   __generatedSubscriptionOutput: OutputType;
@@ -25,6 +25,7 @@ export const onCreateTenant = /* GraphQL */ `subscription OnCreateTenant($filter
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -62,6 +63,7 @@ export const onUpdateTenant = /* GraphQL */ `subscription OnUpdateTenant($filter
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -99,6 +101,7 @@ export const onDeleteTenant = /* GraphQL */ `subscription OnDeleteTenant($filter
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -198,6 +201,7 @@ export const onCreateUser = /* GraphQL */ `subscription OnCreateUser(
       __typename
     }
     disabled
+    isBeingDeleted
     createdAt
     updatedAt
     _version
@@ -289,6 +293,7 @@ export const onUpdateUser = /* GraphQL */ `subscription OnUpdateUser(
       __typename
     }
     disabled
+    isBeingDeleted
     createdAt
     updatedAt
     _version
@@ -380,6 +385,7 @@ export const onDeleteUser = /* GraphQL */ `subscription OnDeleteUser(
       __typename
     }
     disabled
+    isBeingDeleted
     createdAt
     updatedAt
     _version
@@ -410,6 +416,7 @@ export const onCreatePossibleRiderResponsibilities = /* GraphQL */ `subscription
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -461,6 +468,7 @@ export const onUpdatePossibleRiderResponsibilities = /* GraphQL */ `subscription
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -512,6 +520,7 @@ export const onDeletePossibleRiderResponsibilities = /* GraphQL */ `subscription
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -561,6 +570,7 @@ export const onCreateVehicle = /* GraphQL */ `subscription OnCreateVehicle($filt
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -613,6 +623,7 @@ export const onUpdateVehicle = /* GraphQL */ `subscription OnUpdateVehicle($filt
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -665,6 +676,7 @@ export const onDeleteVehicle = /* GraphQL */ `subscription OnDeleteVehicle($filt
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -736,6 +748,7 @@ export const onCreateVehicleAssignment = /* GraphQL */ `subscription OnCreateVeh
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -792,6 +805,7 @@ export const onUpdateVehicleAssignment = /* GraphQL */ `subscription OnUpdateVeh
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -848,6 +862,7 @@ export const onDeleteVehicleAssignment = /* GraphQL */ `subscription OnDeleteVeh
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -885,6 +900,7 @@ export const onCreateLocation = /* GraphQL */ `subscription OnCreateLocation($fi
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -988,6 +1004,7 @@ export const onUpdateLocation = /* GraphQL */ `subscription OnUpdateLocation($fi
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1091,6 +1108,7 @@ export const onDeleteLocation = /* GraphQL */ `subscription OnDeleteLocation($fi
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1195,6 +1213,7 @@ export const onCreateTask = /* GraphQL */ `subscription OnCreateTask($filter: Mo
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1371,6 +1390,7 @@ export const onUpdateTask = /* GraphQL */ `subscription OnUpdateTask($filter: Mo
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1547,6 +1567,7 @@ export const onDeleteTask = /* GraphQL */ `subscription OnDeleteTask($filter: Mo
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1754,6 +1775,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `subscription OnCreateTaskAssi
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1824,6 +1846,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `subscription OnUpdateTaskAssi
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1894,6 +1917,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `subscription OnDeleteTaskAssi
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -1934,6 +1958,7 @@ export const onCreateScheduledTask = /* GraphQL */ `subscription OnCreateSchedul
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -2090,6 +2115,7 @@ export const onUpdateScheduledTask = /* GraphQL */ `subscription OnUpdateSchedul
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -2246,6 +2272,7 @@ export const onDeleteScheduledTask = /* GraphQL */ `subscription OnDeleteSchedul
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -2406,6 +2433,7 @@ export const onCreateComment = /* GraphQL */ `subscription OnCreateComment(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -2450,6 +2478,7 @@ export const onUpdateComment = /* GraphQL */ `subscription OnUpdateComment(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
@@ -2494,6 +2523,7 @@ export const onDeleteComment = /* GraphQL */ `subscription OnDeleteComment(
       dateOfBirth
       riderResponsibility
       disabled
+      isBeingDeleted
       createdAt
       updatedAt
       _version
