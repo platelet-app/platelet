@@ -4,6 +4,8 @@ import Papa from "papaparse";
 import getTasksByTenantId from "./getTasksByTenantId";
 import { Task, Role, CommentVisibility, TaskAssignee } from "../../../API";
 
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
 const isDateValid = (date: Date): boolean => {
     const newDate = new Date(date);
     return !isNaN(newDate.getTime());
@@ -295,18 +297,15 @@ export default async function generateReportBasic(
     }
     const actualEndDate = endDate ? new Date(endDate) : null;
     const actualStartDate = startDate ? new Date(startDate) : null;
-    const startDateCopy = actualStartDate ? new Date(actualStartDate) : null;
-    const endDateCopy = actualEndDate ? new Date(actualEndDate) : null;
     if (actualStartDate) {
         actualStartDate.setUTCHours(0, 0, 0, 0);
-        // sometimes changing the time changes the date, so we set it back
-        if (startDateCopy) actualStartDate.setDate(startDateCopy.getDate());
     }
     // if we use ALL we are using graphql and createdAt, so we add a day to the end date
     // and set the time to 00
     if (actualEndDate) {
         actualEndDate.setUTCHours(0, 0, 0, 0);
-        if (endDateCopy) actualEndDate.setDate(endDateCopy.getDate() + 1);
+        // Add one day to include tasks created on the end date
+        actualEndDate.setTime(actualEndDate.getTime() + ONE_DAY_MS);
     }
     console.log("get tasks", actualStartDate, actualEndDate);
     if (
