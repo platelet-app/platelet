@@ -13,6 +13,7 @@ Amplify Params - DO NOT EDIT */
 import { request, errorCheck } from "@platelet-app/lambda";
 import { SFNClient, StartExecutionCommand } from "@aws-sdk/client-sfn";
 import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
+import { mutations } from "@platelet-app/graphql";
 
 const GRAPHQL_ENDPOINT = process.env.API_PLATELET_GRAPHQLAPIENDPOINTOUTPUT;
 const USER_POOL_ID = process.env.AUTH_PLATELET61A0AC07_USERPOOLID;
@@ -89,6 +90,20 @@ const startStepFunctionExecution = async (input) => {
     );
 };
 
+const markUserBeingDeleted = async (user) => {
+    const variables = {
+        id: user.id,
+        _version: user._version,
+        isBeingDeleted: 1,
+    };
+    const response = await request(
+        { query: mutations.updateUser, variables },
+        GRAPHQL_ENDPOINT
+    );
+    const body = await response.json();
+    errorCheck(body);
+};
+
 export const handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
     const { userId } = event.arguments;
@@ -106,6 +121,12 @@ export const handler = async (event) => {
     if (user._deleted) {
         throw new Error("User not found");
     }
+
+    if (user.isBeingDeleted) {
+        throw new Error("User is already being deleted");
+    }
+
+    await markUserBeingDeleted(user);
 
     const sfnParams = {
         userId,
