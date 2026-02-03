@@ -4,6 +4,8 @@ import Papa from "papaparse";
 import getTasksByTenantId from "./getTasksByTenantId";
 import { Task, Role, CommentVisibility, TaskAssignee } from "../../../API";
 
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
 const isDateValid = (date: Date): boolean => {
     const newDate = new Date(date);
     return !isNaN(newDate.getTime());
@@ -302,8 +304,8 @@ export default async function generateReportBasic(
     // and set the time to 00
     if (actualEndDate) {
         actualEndDate.setUTCHours(0, 0, 0, 0);
-        // Add one day (24 hours in milliseconds)
-        actualEndDate.setTime(actualEndDate.getTime() + 24 * 60 * 60 * 1000);
+        // Add one day to include tasks created on the end date
+        actualEndDate.setTime(actualEndDate.getTime() + ONE_DAY_MS);
     }
     console.log("get tasks", actualStartDate, actualEndDate);
     if (
