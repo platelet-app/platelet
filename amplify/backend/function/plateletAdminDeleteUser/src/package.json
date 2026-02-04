@@ -6,11 +6,14 @@
     "main": "index.js",
     "license": "Apache-2.0",
     "devDependencies": {
+        "@aws-sdk/client-sfn": "^3.983.0",
+        "@aws-sdk/client-ssm": "^3.983.0",
         "@types/aws-lambda": "^8.10.92",
         "jest": "^30.2.0"
     },
     "dependencies": {
-        "@platelet-app/lambda": "^1.1.5"
+        "@platelet-app/lambda": "^1.1.5",
+        "babel-jest": "^30.2.0"
     },
     "scripts": {
         "test": "jest test --watchAll --testTimeout=10000",
