@@ -1,0 +1,6 @@
+{
+    "operation": "GetItem",
+    "key": {
+        "id": $util.dynamodb.toDynamoDBJson($ctx.args.input.userPossibleRiderResponsibilitiesId)
+    }
+}
