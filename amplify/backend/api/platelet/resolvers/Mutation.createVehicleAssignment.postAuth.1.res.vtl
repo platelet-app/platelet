@@ -6,7 +6,7 @@
 #set( $user = $ctx.result )
 
 #if( $util.isNull($user) == false )
-    #if( $user.isBeingDeleted == 1 )
+    #if( $user.isBeingDeleted )
         $util.error("The user cannot be found", "NotFoundError")
     #else
         $util.toJson({})
