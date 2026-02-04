@@ -23,4 +23,18 @@ export const override = (resources: AmplifyApiGraphQlResourceStackTemplate) => {
         "TaskAssignee", // <== The model that this resolver falls within
         "UserTable" // <== The new datasource that you want to use
     );
+    // prevent a user being assigned to a vehicle if they are being deleted
+    overrideDataSourceByFileName(
+        resources,
+        "Mutation.createVehicleAssignment.postAuth.1", // <== The name of your file (without the extension)
+        "VehicleAssignment", // <== The model that this resolver falls within
+        "UserTable" // <== The new datasource that you want to use
+    );
+    // prevent a user being assigned a possible rider responsibility if they are being deleted
+    overrideDataSourceByFileName(
+        resources,
+        "Mutation.createPossibleRiderResponsibilities.postAuth.1", // <== The name of your file (without the extension)
+        "PossibleRiderResponsibilities", // <== The model that this resolver falls within
+        "UserTable" // <== The new datasource that you want to use
+    );
 };
