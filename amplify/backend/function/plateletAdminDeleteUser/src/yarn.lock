@@ -2415,6 +2415,11 @@
   resolved "https://registry.npmjs.org/@pkgr/core/-/core-0.2.9.tgz"
   integrity sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA==
 
+"@platelet-app/graphql@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@platelet-app/graphql/-/graphql-1.1.5.tgz#57ab5545845f185d9d142708518f445b72bd4a10"
+  integrity sha512-6U63XIFLiXdZ9W9JvrqNxIHtKQ1/bQV5/57w5o1meZTNjQC8m6oVC16FUYSa0KUnqhCZYwFlJL35QU9raChmwg==
+
 "@platelet-app/lambda@^1.1.5":
   version "1.1.13"
   resolved "https://registry.npmjs.org/@platelet-app/lambda/-/lambda-1.1.13.tgz"
