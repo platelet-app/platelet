@@ -1,5 +1,5 @@
 import { AmplifyApiGraphQlResourceStackTemplate } from "@aws-amplify/cli-extensibility-helper";
-import { overrideDataSourceByFileName } from "./overrideHelpers"; // <<== the helper file in this repo
+import { overrideDataSourceByFileName } from "./overrideHelpers";
 
 export const override = (resources: AmplifyApiGraphQlResourceStackTemplate) => {
     // prevent an assignment being made on a task if it is archived
