@@ -14,7 +14,7 @@ for dir in */ ; do
         then
             npm ci
         else
-            yarn --frozen-lockfile
+            yarn --frozen-lockfile --production=false
         fi
         yarn run test --watchAll=false --passWithNoTests
         cd ..
