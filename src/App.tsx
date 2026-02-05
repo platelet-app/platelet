@@ -1,6 +1,5 @@
 import React from "react";
 import { APIProvider } from "@vis.gl/react-google-maps";
-import { MenuMainContainer } from "./navigation/MenuMainContainer";
 import "./index.css";
 import "./App.css";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -24,6 +23,7 @@ import SnackNotificationBar from "./components/SnackNotificationBar";
 import TenantListProvider from "./scenes/TenantPicker/TenantListProvider";
 import { initialiseApp } from "./redux/initialise/initialiseActions";
 import * as Sentry from "@sentry/react";
+import { MenuMainContainer } from "./navigation/MenuMainContainer";
 
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string;
 
@@ -124,41 +124,30 @@ const App = (props: any) => {
         });
     }
 
-    if (process.env.REACT_APP_DEMO_MODE === "true") {
-        return (
-            <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
-                <StyledEngineProvider injectFirst>
-                    <ThemeProvider theme={theme}>
-                        <SnackbarProvider maxSnack={1}>
+    return (
+        <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
+            <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={theme}>
+                    <SnackbarProvider maxSnack={1}>
+                        <CssBaseline />
+                        {process.env.REACT_APP_DEMO_MODE === "true" ? (
                             <InitComponent>
-                                <CssBaseline />
                                 <MenuMainContainer />
                                 <SnackNotificationBar {...props} />
                             </InitComponent>
-                        </SnackbarProvider>
-                    </ThemeProvider>
-                </StyledEngineProvider>
-            </APIProvider>
-        );
-    } else {
-        return (
-            <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
-                <StyledEngineProvider injectFirst>
-                    <ThemeProvider theme={theme}>
-                        <SnackbarProvider maxSnack={1}>
+                        ) : (
                             <TenantListProvider>
                                 <Login>
-                                    <CssBaseline />
                                     <MenuMainContainer />
                                     <SnackNotificationBar {...props} />
                                 </Login>
                             </TenantListProvider>
-                        </SnackbarProvider>
-                    </ThemeProvider>
-                </StyledEngineProvider>
-            </APIProvider>
-        );
-    }
+                        )}
+                    </SnackbarProvider>
+                </ThemeProvider>
+            </StyledEngineProvider>
+        </APIProvider>
+    );
 };
 
 export default App;
