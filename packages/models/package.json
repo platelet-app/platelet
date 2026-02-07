@@ -15,6 +15,9 @@
     "type": "module",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
     "scripts": {
         "build": "cd ../.. && amplify api gql-compile && amplify codegen models && cd packages/models && mkdir -p dist && cp ../../src/models/* dist",
         "prepublishOnly": "npm version patch"
