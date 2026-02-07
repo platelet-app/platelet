@@ -14,7 +14,7 @@
     "author": "Theo Cranmore <theo@platelet.app>",
     "license": "Apache-2.0",
     "dependencies": {
-        "@platelet-app/graphql": "^1.1.7",
+        "@platelet-app/graphql": "^1.1.8",
         "@platelet-app/lambda": "^1.1.13",
         "@platelet-app/types": "^1.1.3"
     },
