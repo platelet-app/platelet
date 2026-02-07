@@ -317,7 +317,7 @@ export const schema = {
                 "isBeingDeleted": {
                     "name": "isBeingDeleted",
                     "isArray": false,
-                    "type": "Int",
+                    "type": "Boolean",
                     "isRequired": false,
                     "attributes": []
                 },
@@ -2715,5 +2715,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.4",
-    "version": "8ec88e67a83d5ce047e942a07c613c22"
+    "version": "ea23c7472135f07a7efd4966b35c2d76"
 };
