@@ -229,6 +229,7 @@ export class DeleteUserStepFunction extends Construct {
                 ),
             }
         );
+
         createLambdaStatement(
             cleanPossibleRiderResponsibilitiesFunction,
             this.appsync.arn,
@@ -237,6 +238,30 @@ export class DeleteUserStepFunction extends Construct {
                 mutations: ["deletePossibleRiderResponsibilities"],
             }
         );
+
+        const onUserDeleteFailureFunction = new lambda.Function(
+            this,
+            "DeleteUserOnFailure",
+            {
+                runtime: lambda.Runtime.NODEJS_22_X,
+                handler: "index.handler",
+                code: lambda.Code.fromAsset(
+                    "./lib/lambda/node/DeleteUserOnFailure/dist"
+                ),
+                timeout: cdk.Duration.seconds(180),
+                environment: {
+                    GRAPHQL_ENDPOINT: this.graphQLEndpoint,
+                },
+                role: new iam.Role(this, "DeleteUserOnFailureFunctionRole", {
+                    assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+                }),
+            }
+        );
+
+        createLambdaStatement(onUserDeleteFailureFunction, this.appsync.arn, {
+            queries: ["getUser"],
+            mutations: ["updateUser"],
+        });
 
         const deleteUserFunction = new lambda.Function(
             this,
