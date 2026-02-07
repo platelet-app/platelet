@@ -282,7 +282,7 @@ type EagerUser = {
   readonly createdVehicles?: (Vehicle | null)[] | null;
   readonly createdScheduledTasks?: (ScheduledTask | null)[] | null;
   readonly disabled?: number | null;
-  readonly isBeingDeleted?: number | null;
+  readonly isBeingDeleted?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -309,7 +309,7 @@ type LazyUser = {
   readonly createdVehicles: AsyncCollection<Vehicle>;
   readonly createdScheduledTasks: AsyncCollection<ScheduledTask>;
   readonly disabled?: number | null;
-  readonly isBeingDeleted?: number | null;
+  readonly isBeingDeleted?: boolean | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
