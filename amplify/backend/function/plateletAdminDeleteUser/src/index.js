@@ -92,9 +92,11 @@ const startStepFunctionExecution = async (input) => {
 
 const markUserBeingDeleted = async (user) => {
     const variables = {
-        id: user.id,
-        _version: user._version,
-        isBeingDeleted: 1,
+        input: {
+            id: user.id,
+            _version: user._version,
+            isBeingDeleted: 1,
+        },
     };
     const response = await request(
         { query: mutations.updateUser, variables },
