@@ -251,6 +251,7 @@ export class DeleteUserStepFunction extends Construct {
                 timeout: cdk.Duration.seconds(180),
                 environment: {
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
+                    REGION: props.region,
                 },
                 role: new iam.Role(this, "DeleteUserOnFailureFunctionRole", {
                     assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
@@ -269,7 +270,7 @@ export class DeleteUserStepFunction extends Construct {
             {
                 lambdaFunction: onUserDeleteFailureFunction,
                 outputPath: "$.Payload",
-                payload: sfn.TaskInput.fromJsonPathAt('$'), // Pass the entire state to the error handler
+                payload: sfn.TaskInput.fromJsonPathAt("$"), // Pass the entire state to the error handler
             }
         );
 
