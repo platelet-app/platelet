@@ -42,8 +42,8 @@ export const handler = async (event: LambdaEvent) => {
         throw new Error("Missing env variables");
     }
     const user = await getUserFunction(userId, GRAPHQL_ENDPOINT);
-    if (!user.username) {
-        throw new Error("No username found");
+    if (!user) {
+        throw new Error("No user found!");
     }
     await setUserNotBeingDeleted(user, GRAPHQL_ENDPOINT);
 };
