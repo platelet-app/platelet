@@ -16,7 +16,6 @@ import { DatePicker } from "@mui/lab";
 import TaskScheduleIconText from "../TaskScheduleIconText";
 import { Schedule } from "../PickUpAndDeliverSchedule";
 import { convertScheduleToTaskData } from "../../../utilities/convertScheduleToTaskData";
-import useIsPaidSubscription from "../../../hooks/useIsPaidSubscription";
 import calculateDefaultEditTimes from "./utils/calculateDefaultEditTimes";
 
 const isValidTime = (time: string) => {
@@ -44,8 +43,6 @@ export const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
     const [scheduleState, setScheduleState] = React.useState<Schedule | null>(
         null
     );
-
-    const isPaid = useIsPaidSubscription();
 
     const handleClear = () => {
         onClear();
@@ -98,11 +95,9 @@ export const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
                         <IconButton onClick={() => setConfirmClear(true)}>
                             <ClearIcon />
                         </IconButton>
-                        {isPaid && (
-                            <IconButton onClick={handleSetEditMode}>
-                                <EditIcon />
-                            </IconButton>
-                        )}
+                        <IconButton onClick={handleSetEditMode}>
+                            <EditIcon />
+                        </IconButton>
                     </Box>
                 </Stack>
             )}

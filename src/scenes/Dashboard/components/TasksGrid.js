@@ -9,7 +9,6 @@ import { useSelector } from "react-redux";
 import { Divider, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import * as models from "../../../models";
-import useIsPaidSubscription from "../../../hooks/useIsPaidSubscription";
 
 const getColumnTitle = (key) => {
     if (key.includes(models.TaskStatus.DROPPED_OFF))
@@ -50,7 +49,6 @@ const useStyles = makeStyles()((theme) => ({
 
 function TasksGrid(props) {
     const { classes } = useStyles();
-    const isPaid = useIsPaidSubscription();
     const dashboardFilteredUser = useSelector(dashboardFilteredUserSelector);
 
     const theme = useTheme();
@@ -72,11 +70,8 @@ function TasksGrid(props) {
         [models.TaskStatus.ABANDONED],
         [models.TaskStatus.REJECTED],
         [models.TaskStatus.PENDING],
+        [models.TaskStatus.FUTURE],
     ];
-
-    if (isPaid) {
-        columns.push([models.TaskStatus.FUTURE]);
-    }
 
     const columnCount = columns.filter(
         (column) => _.intersection(excludeList, column).length === 0
