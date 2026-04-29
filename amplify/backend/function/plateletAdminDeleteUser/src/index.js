@@ -95,7 +95,7 @@ const markUserBeingDeleted = async (user) => {
         input: {
             id: user.id,
             _version: user._version,
-            isBeingDeleted: 1,
+            isBeingDeleted: true,
         },
     };
     const response = await request(
