@@ -3,6 +3,7 @@ import { Construct } from "constructs";
 import { DeleteUserStepFunction } from "./delete-user-step-function-construct";
 import { RetryFunctionConstruct } from "./retry-function-construct";
 import { UserTakeOutDataStepFunction } from "./user-take-out-data-step-function-construct";
+import { CypressTestRole } from "./cypress-test-role-construct";
 
 export class PlateletCdkStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: cdk.StackProps) {
@@ -34,6 +35,10 @@ export class PlateletCdkStack extends cdk.Stack {
             bucketName,
             region: this.region,
             amplifyEnv,
+        });
+
+        new CypressTestRole(this, "CypressTestRole", {
+            appsyncId,
         });
     }
 }
