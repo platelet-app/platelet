@@ -203,3 +203,45 @@ Cypress.Commands.add("addSingleTask", () => {
     cy.get("[data-cy=create-task-button]").click();
     cy.get("[data-cy=save-to-dash-button]").click();
 });
+
+const API = require("aws-amplify").API;
+
+/**
+ * Execute a GraphQL query or mutation via Cognito user pool auth.
+ * Returns a Cypress chainable that resolves to the full API response.
+ * GraphQL errors cause the promise to reject — use .catch() or wrap in
+ * cy.then(() => promise.catch(e => e)) to inspect errors.
+ */
+Cypress.Commands.add("cognitoGraphqlRequest", (query, variables) => {
+    return cy.then(() =>
+        API.graphql({
+            query,
+            variables,
+            authMode: "AMAZON_COGNITO_USER_POOLS",
+        })
+    );
+});
+
+/**
+ * Execute a GraphQL mutation signed with AWS IAM credentials via cy.task.
+ * Use this when the operation requires IAM permissions not available to
+ * Cognito-authenticated users (e.g. setting isBeingDeleted on a User).
+ *
+ * Credentials are resolved from the standard AWS chain (AWS_ACCESS_KEY_ID env
+ * vars, ~/.aws/credentials profiles, AWS SSO, etc.) — no cypress.env.json
+ * entries required. The caller must have appsync:GraphQL permission on the API.
+ *
+ * Returns a Cypress chainable that resolves to the raw AppSync JSON response
+ * ({ data, errors }). Errors are surfaced in the response rather than thrown.
+ */
+Cypress.Commands.add("iamGraphqlMutation", (query, variables) => {
+    return cy.task("iamGraphqlMutation", { query, variables });
+});
+
+/**
+ * Execute a GraphQL query signed with AWS IAM credentials via cy.task.
+ * Same behaviour as iamGraphqlMutation but semantically for read operations.
+ */
+Cypress.Commands.add("iamGraphqlRequest", (query, variables) => {
+    return cy.task("iamGraphqlRequest", { query, variables });
+});
