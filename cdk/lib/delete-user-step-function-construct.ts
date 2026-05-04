@@ -459,16 +459,10 @@ export class DeleteUserStepFunction extends Construct {
 
         waitBeforeRetry.next(retryCheckLambdaTask);
         retryCheckLambdaTask.next(mainChain);
+
         // The overall definition of the state machine.
         // It starts with retryCheckLambdaTask, which is a State and can have an addCatch.
         const definition = retryCheckLambdaTask;
-
-        // Add a global catch to the starting state of the state machine.
-        // This catches any error that propagates up from the entire workflow.
-        definition.addCatch(onUserDeleteFailureTask, {
-            errors: [sfn.Errors.ALL], // Catch any error that occurs in the state machine
-            resultPath: "$.error", // Store error details in the state for the failure lambda
-        });
 
         // Ensure that after the failure lambda is invoked, the state machine explicitly fails.
         onUserDeleteFailureTask.next(finalFailureState);
