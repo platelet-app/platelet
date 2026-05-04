@@ -16,6 +16,12 @@ export const override = (resources: AmplifyApiGraphQlResourceStackTemplate) => {
         "Comment", // <== The model that this resolver falls within
         "UserTable" // <== The new datasource that you want to use
     );
+    overrideDataSourceByFileName(
+        resources,
+        "Mutation.createComment.postAuth.1",
+        "Comment",
+        "UserTable"
+    );
     // prevent a user being assigned to a task if they are being deleted
     overrideDataSourceByFileName(
         resources,
