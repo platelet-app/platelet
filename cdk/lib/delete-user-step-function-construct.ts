@@ -542,6 +542,9 @@ export class DeleteUserStepFunction extends Construct {
                 ),
             }
         );
+        new cdk.CfnOutput(this, "AdminRoleNamesDeleteUserOnFailure", {
+            value: getRoleArnNameOnly(onUserDeleteFailureFunction),
+        });
         new cdk.CfnOutput(this, "AdminRoleNamesDeleteUserRoleOutput", {
             value: getRoleArnNameOnly(deleteUserFunction),
         });
