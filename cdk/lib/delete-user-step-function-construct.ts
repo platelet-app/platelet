@@ -431,7 +431,7 @@ export class DeleteUserStepFunction extends Construct {
         });
 
         const catchOptions = {
-            errors: [sfn.Errors.ALL],
+            errors: ["AppsyncFailure"],
             resultPath: sfn.JsonPath.DISCARD,
         };
 
