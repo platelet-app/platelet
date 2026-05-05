@@ -522,6 +522,7 @@ type Statistics {
   numPickedUp: Int
   numNew: Int
   numTest: Int
+
 }
 
 type Query {
