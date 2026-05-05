@@ -77,6 +77,14 @@ const createVehicleAssignmentMutation = /* GraphQL */ `
     }
 `;
 
+const createCommentMutation = /* GraphQL */ `
+    mutation CreateComment($input: CreateCommentInput!) {
+        createComment(input: $input) {
+            id
+        }
+    }
+`;
+
 const createPossibleRiderResponsibilitiesMutation = /* GraphQL */ `
     mutation CreatePossibleRiderResponsibilities($input: CreatePossibleRiderResponsibilitiesInput!) {
         createPossibleRiderResponsibilities(input: $input) {
@@ -216,6 +224,28 @@ describe("isBeingDeleted access denial", () => {
             }).catch((err) => err)
         ).then((result) => {
             expect(result.errors, "createVehicleAssignment should return errors").to.exist;
+            const error = result.errors[0];
+            expect(error.errorType).to.equal("NotFoundError");
+            expect(error.message).to.equal("The user cannot be found");
+        });
+    });
+
+    it("denies createComment when the author user isBeingDeleted", () => {
+        cy.then(() =>
+            API.graphql({
+                query: createCommentMutation,
+                variables: {
+                    input: {
+                        tenantId,
+                        userCommentsId: testUserId,
+                        body: "test comment",
+                        visibility: "EVERYONE",
+                    },
+                },
+                authMode: "AMAZON_COGNITO_USER_POOLS",
+            }).catch((err) => err)
+        ).then((result) => {
+            expect(result.errors, "createComment should return errors").to.exist;
             const error = result.errors[0];
             expect(error.errorType).to.equal("NotFoundError");
             expect(error.message).to.equal("The user cannot be found");
