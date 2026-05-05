@@ -129,7 +129,7 @@ Cypress.Commands.add("signIn", (role) => {
 
         cy.then(() =>
             API.graphql({
-                query: getUserByCognitoIdQuery,
+                query: queries.getUserByCognitoId,
                 variables: { cognitoId: cognitoUser.attributes.sub },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
@@ -218,16 +218,7 @@ Cypress.Commands.add("addSingleTask", () => {
 });
 
 const API = require("aws-amplify").API;
-
-const getUserByCognitoIdQuery = /* GraphQL */ `
-    query GetUserByCognitoId($cognitoId: ID!) {
-        getUserByCognitoId(cognitoId: $cognitoId) {
-            items {
-                tenantId
-            }
-        }
-    }
-`;
+const { queries } = require("@platelet-app/graphql");
 
 /**
  * Execute a GraphQL query or mutation via Cognito user pool auth.

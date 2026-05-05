@@ -23,6 +23,7 @@
 const Amplify = require("aws-amplify").Amplify;
 const API = require("aws-amplify").API;
 const Auth = require("aws-amplify").Auth;
+const { mutations, queries } = require("@platelet-app/graphql");
 
 const userPoolId = Cypress.env("userPoolId");
 const clientId = Cypress.env("clientId");
@@ -36,52 +37,6 @@ Amplify.configure({
     aws_appsync_region: region,
     aws_appsync_authenticationType: "AMAZON_COGNITO_USER_POOLS",
 });
-
-const getUserByCognitoIdQuery = /* GraphQL */ `
-    query GetUserByCognitoId($cognitoId: ID!) {
-        getUserByCognitoId(cognitoId: $cognitoId) {
-            items {
-                id
-            }
-        }
-    }
-`;
-
-const createCommentMutation = /* GraphQL */ `
-    mutation CreateComment($input: CreateCommentInput!) {
-        createComment(input: $input) {
-            id
-            _version
-        }
-    }
-`;
-
-const updateCommentMutation = /* GraphQL */ `
-    mutation UpdateComment($input: UpdateCommentInput!) {
-        updateComment(input: $input) {
-            id
-            _version
-            body
-        }
-    }
-`;
-
-const deleteCommentMutation = /* GraphQL */ `
-    mutation DeleteComment($input: DeleteCommentInput!) {
-        deleteComment(input: $input) {
-            id
-        }
-    }
-`;
-
-const getCommentQuery = /* GraphQL */ `
-    query GetComment($id: ID!) {
-        getComment(id: $id) {
-            id
-            _version
-        }
-    }
-`;
 
 describe("comment edit/delete permissions", () => {
     let riderUserId;
@@ -122,7 +77,7 @@ describe("comment edit/delete permissions", () => {
         cy.then(() => Auth.currentAuthenticatedUser())
             .then((cognitoUser) => {
                 return API.graphql({
-                    query: getUserByCognitoIdQuery,
+                    query: queries.getUserByCognitoId,
                     variables: {
                         cognitoId: cognitoUser.attributes.sub,
                     },
@@ -139,7 +94,7 @@ describe("comment edit/delete permissions", () => {
     it("RIDER creates comment A", () => {
         cy.then(() =>
             API.graphql({
-                query: createCommentMutation,
+                query: mutations.createComment,
                 variables: {
                     input: {
                         tenantId: Cypress.env("tenantId"),
@@ -164,7 +119,7 @@ describe("comment edit/delete permissions", () => {
     it("RIDER (owner) can edit their own comment", () => {
         cy.then(() =>
             API.graphql({
-                query: updateCommentMutation,
+                query: mutations.updateComment,
                 variables: {
                     input: {
                         id: commentAId,
@@ -190,7 +145,7 @@ describe("comment edit/delete permissions", () => {
 
         cy.then(() =>
             API.graphql({
-                query: updateCommentMutation,
+                query: mutations.updateComment,
                 variables: {
                     input: {
                         id: commentAId,
@@ -212,7 +167,7 @@ describe("comment edit/delete permissions", () => {
         // (i.e. if the schema has not yet been updated to deny ADMIN updates).
         cy.then(() =>
             API.graphql({
-                query: getCommentQuery,
+                query: queries.getComment,
                 variables: { id: commentAId },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
@@ -222,7 +177,7 @@ describe("comment edit/delete permissions", () => {
 
         cy.then(() =>
             API.graphql({
-                query: deleteCommentMutation,
+                query: mutations.deleteComment,
                 variables: {
                     input: { id: commentAId, _version: commentAVersion },
                 },
@@ -240,7 +195,7 @@ describe("comment edit/delete permissions", () => {
         cy.then(() => Auth.currentAuthenticatedUser())
             .then((cognitoUser) => {
                 return API.graphql({
-                    query: getUserByCognitoIdQuery,
+                    query: queries.getUserByCognitoId,
                     variables: {
                         cognitoId: cognitoUser.attributes.sub,
                     },
@@ -257,7 +212,7 @@ describe("comment edit/delete permissions", () => {
     it("ADMIN can create their own comment", () => {
         cy.then(() =>
             API.graphql({
-                query: createCommentMutation,
+                query: mutations.createComment,
                 variables: {
                     input: {
                         tenantId: Cypress.env("tenantId"),
@@ -280,7 +235,7 @@ describe("comment edit/delete permissions", () => {
     it("ADMIN can edit their own comment", () => {
         cy.then(() =>
             API.graphql({
-                query: updateCommentMutation,
+                query: mutations.updateComment,
                 variables: {
                     input: {
                         id: commentCId,
@@ -302,7 +257,7 @@ describe("comment edit/delete permissions", () => {
     it("ADMIN can delete their own comment", () => {
         cy.then(() =>
             API.graphql({
-                query: deleteCommentMutation,
+                query: mutations.deleteComment,
                 variables: {
                     input: { id: commentCId, _version: commentCVersion },
                 },
@@ -321,7 +276,7 @@ describe("comment edit/delete permissions", () => {
 
         cy.then(() =>
             API.graphql({
-                query: createCommentMutation,
+                query: mutations.createComment,
                 variables: {
                     input: {
                         tenantId: Cypress.env("tenantId"),
@@ -346,7 +301,7 @@ describe("comment edit/delete permissions", () => {
 
         cy.then(() =>
             API.graphql({
-                query: updateCommentMutation,
+                query: mutations.updateComment,
                 variables: {
                     input: {
                         id: commentBId,
@@ -366,7 +321,7 @@ describe("comment edit/delete permissions", () => {
     it("a different normal user (COORDINATOR) cannot delete another user's comment", () => {
         cy.then(() =>
             API.graphql({
-                query: deleteCommentMutation,
+                query: mutations.deleteComment,
                 variables: {
                     input: { id: commentBId, _version: commentBVersion },
                 },
@@ -386,7 +341,7 @@ describe("comment edit/delete permissions", () => {
 
         cy.then(() =>
             API.graphql({
-                query: deleteCommentMutation,
+                query: mutations.deleteComment,
                 variables: {
                     input: { id: commentBId, _version: commentBVersion },
                 },
