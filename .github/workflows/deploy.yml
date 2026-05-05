@@ -109,3 +109,18 @@ jobs:
           apiURL: ${{ vars.API_URL }}
           amplifyEnvName: ${{ steps.amplify_outputs.outputs.env_name }}
           tenantName: ${{ vars.TENANT_NAME }}
+      - name: Run Cypress tests
+        if: ${{ vars.CYPRESS_ADMIN_USERNAME != '' }
+        env:
+          CYPRESS_adminusername: ${{ vars.CYPRESS_ADMIN_USERNAME }}
+          CYPRESS_adminpassword: ${{ secrets.CYPRESS_ADMIN_PASSWORD }}
+          CYPRESS_riderusername: ${{ vars.CYPRESS_RIDER_USERNAME }}
+          CYPRESS_riderpassword: ${{ secrets.CYPRESS_RIDER_PASSWORD }}
+          CYPRESS_coordusername: ${{ vars.CYPRESS_COORD_USERNAME }}
+          CYPRESS_coordpassword: ${{ secrets.CYPRESS_COORD_PASSWORD }}
+          CYPRESS_userPoolId: ${{ steps.amplify_outputs.outputs.user_pool_id }}
+          CYPRESS_clientId: ${{ steps.amplify_outputs.outputs.client_id }}
+          CYPRESS_appsyncGraphqlEndpoint: ${{ steps.amplify_outputs.outputs.graphql_endpoint }}
+          CYPRESS_appsyncRegion: ${{ vars.AWS_REGION }}
+          CYPRESS_appsyncAuthenticationType: AMAZON_COGNITO_USER_POOLS
+        run: npx cypress run --config video=false
