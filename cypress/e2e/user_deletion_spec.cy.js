@@ -32,7 +32,6 @@ const API = require("aws-amplify").API;
 
 const userPoolId = Cypress.env("userPoolId");
 const clientId = Cypress.env("clientId");
-const tenantId = Cypress.env("tenantId");
 const endpoint = Cypress.env("appsyncGraphqlEndpoint");
 const region = Cypress.env("appsyncRegion");
 const authType = Cypress.env("appsyncAuthenticationType");
@@ -90,26 +89,13 @@ describe("User Deletion End-to-End Test", () => {
         testUserEmail = `test-delete-${timestamp}@platelet.app`;
         testUserName = `Test User ${timestamp}`;
 
-        const registerUserMutation = `
-            mutation RegisterUser($name: String, $email: String, $tenantId: ID, $roles: [Role]) {
-                registerUser(name: $name, email: $email, tenantId: $tenantId, roles: $roles) {
-                    id
-                    username
-                    cognitoId
-                    displayName
-                    roles
-                    tenantId
-                }
-            }
-        `;
-
         cy.then(() => {
             return API.graphql({
-                query: registerUserMutation,
+                query: mutations.registerUser,
                 variables: {
                     name: testUserName,
                     email: testUserEmail,
-                    tenantId: tenantId,
+                    tenantId: Cypress.env("tenantId"),
                     roles: ["RIDER", "USER"],
                 },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
@@ -186,7 +172,7 @@ describe("User Deletion End-to-End Test", () => {
                 query: queries.listTasks,
                 variables: {
                     filter: {
-                        tenantId: { eq: tenantId },
+                        tenantId: { eq: Cypress.env("tenantId") },
                         status: { eq: "NEW" },
                     },
                     limit: 1,
@@ -206,7 +192,7 @@ describe("User Deletion End-to-End Test", () => {
                     query: mutations.createTask,
                     variables: {
                         input: {
-                            tenantId: tenantId,
+                            tenantId: Cypress.env("tenantId"),
                             dateCreated: new Date().toISOString().split("T")[0],
                             status: "NEW",
                         },
@@ -228,7 +214,7 @@ describe("User Deletion End-to-End Test", () => {
                 query: mutations.createTaskAssignee,
                 variables: {
                     input: {
-                        tenantId: tenantId,
+                        tenantId: Cypress.env("tenantId"),
                         role: "RIDER",
                         taskAssigneesId: createdTaskId,
                         userAssignmentsId: testUserId,
@@ -250,7 +236,7 @@ describe("User Deletion End-to-End Test", () => {
                 query: queries.listVehicles,
                 variables: {
                     filter: {
-                        tenantId: { eq: tenantId },
+                        tenantId: { eq: Cypress.env("tenantId") },
                     },
                     limit: 1,
                 },
@@ -269,7 +255,7 @@ describe("User Deletion End-to-End Test", () => {
                     query: mutations.createVehicle,
                     variables: {
                         input: {
-                            tenantId: tenantId,
+                            tenantId: Cypress.env("tenantId"),
                             name: "Test Vehicle for Deletion",
                         },
                     },
@@ -290,7 +276,7 @@ describe("User Deletion End-to-End Test", () => {
                 query: mutations.createVehicleAssignment,
                 variables: {
                     input: {
-                        tenantId: tenantId,
+                        tenantId: Cypress.env("tenantId"),
                         userVehicleAssignmentsId: testUserId,
                         vehicleAssignmentsId: createdVehicleId,
                     },
@@ -315,7 +301,7 @@ describe("User Deletion End-to-End Test", () => {
                 query: queries.listRiderResponsibilities,
                 variables: {
                     filter: {
-                        tenantId: { eq: tenantId },
+                        tenantId: { eq: Cypress.env("tenantId") },
                     },
                 },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
@@ -337,7 +323,7 @@ describe("User Deletion End-to-End Test", () => {
                     query: mutations.createRiderResponsibility,
                     variables: {
                         input: {
-                            tenantId: tenantId,
+                            tenantId: Cypress.env("tenantId"),
                             label: "Test Responsibility",
                         },
                     },
@@ -360,7 +346,7 @@ describe("User Deletion End-to-End Test", () => {
                 query: mutations.createPossibleRiderResponsibilities,
                 variables: {
                     input: {
-                        tenantId: tenantId,
+                        tenantId: Cypress.env("tenantId"),
                         userPossibleRiderResponsibilitiesId: testUserId,
                         riderResponsibilityPossibleUsersId:
                             riderResponsibilityId,
@@ -382,23 +368,12 @@ describe("User Deletion End-to-End Test", () => {
     });
 
     it.skip("should add a comment for the test user", () => {
-        const createCommentMutation = `
-            mutation CreateComment($input: CreateCommentInput!) {
-                createComment(input: $input) {
-                    id
-                    tenantId
-                    parentId
-                    body
-                }
-            }
-        `;
-
         cy.then(() => {
             return API.graphql({
-                query: createCommentMutation,
+                query: mutations.createComment,
                 variables: {
                     input: {
-                        tenantId: tenantId,
+                        tenantId: Cypress.env("tenantId"),
                         parentId: createdTaskId,
                         body: "Test comment from user to be deleted",
                     },
@@ -581,25 +556,13 @@ describe("User Deletion End-to-End Test", () => {
         // Use Cognito admin API to verify user deletion
         cy.then(() => {
             return Auth.currentSession().then((session) => {
-                const idToken = session.getIdToken().getJwtToken();
+                session.getIdToken().getJwtToken();
 
                 // We need to use a Lambda function or admin credentials to check Cognito
                 // Since we can't directly call Cognito admin APIs from the browser,
                 // we'll verify by trying to get the user through AppSync which should fail
-                const getUserByCognitoIdQuery = `
-                    query GetUserByCognitoId($cognitoId: ID!) {
-                        getUserByCognitoId(cognitoId: $cognitoId) {
-                            items {
-                                id
-                                cognitoId
-                                _deleted
-                            }
-                        }
-                    }
-                `;
-
                 return API.graphql({
-                    query: getUserByCognitoIdQuery,
+                    query: queries.getUserByCognitoId,
                     variables: {
                         cognitoId: testUserCognitoId,
                     },
@@ -622,41 +585,6 @@ describe("User Deletion End-to-End Test", () => {
     });
 
     it.skip("should clean up test task and vehicle", () => {
-        // Clean up the test task
-        const deleteTaskMutation = `
-            mutation DeleteTask($input: DeleteTaskInput!) {
-                deleteTask(input: $input) {
-                    id
-                }
-            }
-        `;
-
-        const deleteVehicleMutation = `
-            mutation DeleteVehicle($input: DeleteVehicleInput!) {
-                deleteVehicle(input: $input) {
-                    id
-                }
-            }
-        `;
-
-        const getTaskQuery = `
-            query GetTask($id: ID!) {
-                getTask(id: $id) {
-                    id
-                    _version
-                }
-            }
-        `;
-
-        const getVehicleQuery = `
-            query GetVehicle($id: ID!) {
-                getVehicle(id: $id) {
-                    id
-                    _version
-                }
-            }
-        `;
-
         // Delete task
         cy.then(() => {
             return API.graphql({
@@ -682,7 +610,7 @@ describe("User Deletion End-to-End Test", () => {
         // Delete vehicle
         cy.then(() => {
             return API.graphql({
-                query: getVehicleQuery,
+                query: queries.getVehicle,
                 variables: {
                     id: createdVehicleId,
                 },
@@ -694,7 +622,7 @@ describe("User Deletion End-to-End Test", () => {
                 !response.data.getVehicle._deleted
             ) {
                 return API.graphql({
-                    query: deleteVehicleMutation,
+                    query: mutations.deleteVehicle,
                     variables: {
                         input: {
                             id: createdVehicleId,
