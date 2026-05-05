@@ -2,7 +2,6 @@ import * as cdk from "aws-cdk-lib";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as appsync from "aws-cdk-lib/aws-appsync";
 import { Construct } from "constructs";
-import { NagSuppressions } from "cdk-nag";
 
 export interface CypressTestRoleProps {
     appsyncId: string;
@@ -41,17 +40,6 @@ export class CypressTestRole extends Construct {
                 actions: ["appsync:GraphQL"],
                 resources: [`${api.arn}/types/Mutation/fields/updateUser`],
             })
-        );
-
-        NagSuppressions.addResourceSuppressions(
-            this.role,
-            [
-                {
-                    id: "AwsSolutions-IAM5",
-                    reason: "Role policy is already scoped to a specific AppSync field — no wildcards used.",
-                },
-            ],
-            true
         );
 
         const cfnRole = this.role.node.defaultChild as iam.CfnRole;
