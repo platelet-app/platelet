@@ -15,6 +15,7 @@
 
 const Amplify = require("aws-amplify").Amplify;
 const API = require("aws-amplify").API;
+const { mutations, queries } = require("@platelet-app/graphql");
 
 const userPoolId = Cypress.env("userPoolId");
 const clientId = Cypress.env("clientId");
@@ -28,86 +29,6 @@ Amplify.configure({
     aws_appsync_region: region,
     aws_appsync_authenticationType: "AMAZON_COGNITO_USER_POOLS",
 });
-
-// Minimal inline mutations — only request the fields we actually need.
-
-const registerUserMutation = /* GraphQL */ `
-    mutation RegisterUser($name: String, $email: String, $tenantId: ID, $roles: [Role]) {
-        registerUser(name: $name, email: $email, tenantId: $tenantId, roles: $roles) {
-            id
-            cognitoId
-        }
-    }
-`;
-
-const getUserQuery = /* GraphQL */ `
-    query GetUser($id: ID!) {
-        getUser(id: $id) {
-            id
-            _version
-            isBeingDeleted
-        }
-    }
-`;
-
-const updateUserMutation = /* GraphQL */ `
-    mutation UpdateUser($input: UpdateUserInput!) {
-        updateUser(input: $input) {
-            id
-            _version
-            isBeingDeleted
-        }
-    }
-`;
-
-const createTaskAssigneeMutation = /* GraphQL */ `
-    mutation CreateTaskAssignee($input: CreateTaskAssigneeInput!) {
-        createTaskAssignee(input: $input) {
-            id
-        }
-    }
-`;
-
-const createVehicleAssignmentMutation = /* GraphQL */ `
-    mutation CreateVehicleAssignment($input: CreateVehicleAssignmentInput!) {
-        createVehicleAssignment(input: $input) {
-            id
-        }
-    }
-`;
-
-const createCommentMutation = /* GraphQL */ `
-    mutation CreateComment($input: CreateCommentInput!) {
-        createComment(input: $input) {
-            id
-        }
-    }
-`;
-
-const createPossibleRiderResponsibilitiesMutation = /* GraphQL */ `
-    mutation CreatePossibleRiderResponsibilities($input: CreatePossibleRiderResponsibilitiesInput!) {
-        createPossibleRiderResponsibilities(input: $input) {
-            id
-        }
-    }
-`;
-
-const disableUserMutation = /* GraphQL */ `
-    mutation DisableUser($userId: ID) {
-        disableUser(userId: $userId) {
-            id
-            disabled
-        }
-    }
-`;
-
-const adminDeleteUserMutation = /* GraphQL */ `
-    mutation AdminDeleteUser($userId: ID) {
-        adminDeleteUser(userId: $userId) {
-            executionArn
-        }
-    }
-`;
 
 // Placeholder UUID used for relationship fields in mutations that will be
 // rejected before AppSync ever reads those related records.
@@ -139,7 +60,7 @@ describe("isBeingDeleted access denial", () => {
 
         cy.then(() =>
             API.graphql({
-                query: registerUserMutation,
+                query: mutations.registerUser,
                 variables: {
                     name: `Test Being-Deleted User ${timestamp}`,
                     email: `test-being-deleted-${timestamp}@platelet.app`,
@@ -159,7 +80,7 @@ describe("isBeingDeleted access denial", () => {
     it("fetches the user version for optimistic concurrency", () => {
         cy.then(() =>
             API.graphql({
-                query: getUserQuery,
+                query: queries.getUser,
                 variables: { id: testUserId },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
@@ -172,7 +93,7 @@ describe("isBeingDeleted access denial", () => {
     });
 
     it("sets isBeingDeleted = true via IAM credentials", () => {
-        cy.iamGraphqlMutation(updateUserMutation, {
+        cy.iamGraphqlMutation(mutations.updateUser, {
             input: {
                 id: testUserId,
                 _version: testUserVersion,
@@ -189,7 +110,7 @@ describe("isBeingDeleted access denial", () => {
     it("denies createTaskAssignee when the assignee user isBeingDeleted", () => {
         cy.then(() =>
             API.graphql({
-                query: createTaskAssigneeMutation,
+                query: mutations.createTaskAssignee,
                 variables: {
                     input: {
                         tenantId: Cypress.env("tenantId"),
@@ -211,7 +132,7 @@ describe("isBeingDeleted access denial", () => {
     it("denies createVehicleAssignment when the assignee user isBeingDeleted", () => {
         cy.then(() =>
             API.graphql({
-                query: createVehicleAssignmentMutation,
+                query: mutations.createVehicleAssignment,
                 variables: {
                     input: {
                         tenantId: Cypress.env("tenantId"),
@@ -232,7 +153,7 @@ describe("isBeingDeleted access denial", () => {
     it("denies createComment when the author user isBeingDeleted", () => {
         cy.then(() =>
             API.graphql({
-                query: createCommentMutation,
+                query: mutations.createComment,
                 variables: {
                     input: {
                         tenantId: Cypress.env("tenantId"),
@@ -254,7 +175,7 @@ describe("isBeingDeleted access denial", () => {
     it("denies createPossibleRiderResponsibilities when the user isBeingDeleted", () => {
         cy.then(() =>
             API.graphql({
-                query: createPossibleRiderResponsibilitiesMutation,
+                query: mutations.createPossibleRiderResponsibilities,
                 variables: {
                     input: {
                         tenantId: Cypress.env("tenantId"),
@@ -274,7 +195,7 @@ describe("isBeingDeleted access denial", () => {
 
     it("cleans up: resets isBeingDeleted, disables, and deletes the test user", () => {
         // Reset the flag so the standard delete flow can proceed
-        cy.iamGraphqlMutation(updateUserMutation, {
+        cy.iamGraphqlMutation(mutations.updateUser, {
             input: {
                 id: testUserId,
                 _version: testUserVersion,
@@ -288,7 +209,7 @@ describe("isBeingDeleted access denial", () => {
         // Disable is required before adminDeleteUser
         cy.then(() =>
             API.graphql({
-                query: disableUserMutation,
+                query: mutations.disableUser,
                 variables: { userId: testUserId },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
@@ -300,7 +221,7 @@ describe("isBeingDeleted access denial", () => {
         // Kick off async deletion — no need to wait for the step function
         cy.then(() =>
             API.graphql({
-                query: adminDeleteUserMutation,
+                query: mutations.adminDeleteUser,
                 variables: { userId: testUserId },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })

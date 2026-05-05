@@ -12,6 +12,7 @@
 const Amplify = require("aws-amplify").Amplify;
 const API = require("aws-amplify").API;
 const Auth = require("aws-amplify").Auth;
+const { mutations, queries } = require("@platelet-app/graphql");
 
 const userPoolId = Cypress.env("userPoolId");
 const clientId = Cypress.env("clientId");
@@ -25,69 +26,6 @@ Amplify.configure({
     aws_appsync_region: region,
     aws_appsync_authenticationType: "AMAZON_COGNITO_USER_POOLS",
 });
-
-const getUserByCognitoIdQuery = /* GraphQL */ `
-    query GetUserByCognitoId($cognitoId: ID!) {
-        getUserByCognitoId(cognitoId: $cognitoId) {
-            items {
-                id
-            }
-        }
-    }
-`;
-
-const registerUserMutation = /* GraphQL */ `
-    mutation RegisterUser(
-        $name: String
-        $email: String
-        $tenantId: ID
-        $roles: [Role]
-    ) {
-        registerUser(
-            name: $name
-            email: $email
-            tenantId: $tenantId
-            roles: $roles
-        ) {
-            id
-            cognitoId
-        }
-    }
-`;
-
-const createCommentMutation = /* GraphQL */ `
-    mutation CreateComment($input: CreateCommentInput!) {
-        createComment(input: $input) {
-            id
-            _version
-        }
-    }
-`;
-
-const deleteCommentMutation = /* GraphQL */ `
-    mutation DeleteComment($input: DeleteCommentInput!) {
-        deleteComment(input: $input) {
-            id
-        }
-    }
-`;
-
-const disableUserMutation = /* GraphQL */ `
-    mutation DisableUser($userId: ID) {
-        disableUser(userId: $userId) {
-            id
-            disabled
-        }
-    }
-`;
-
-const adminDeleteUserMutation = /* GraphQL */ `
-    mutation AdminDeleteUser($userId: ID) {
-        adminDeleteUser(userId: $userId) {
-            executionArn
-        }
-    }
-`;
 
 describe("createComment access control", () => {
     let otherUserId;
@@ -116,7 +54,7 @@ describe("createComment access control", () => {
 
         cy.then(() =>
             API.graphql({
-                query: registerUserMutation,
+                query: mutations.registerUser,
                 variables: {
                     name: `Test Comment Author User ${timestamp}`,
                     email: `test-comment-author-${timestamp}@platelet.app`,
@@ -138,7 +76,7 @@ describe("createComment access control", () => {
             .then((cognitoUser) => {
                 const cognitoId = cognitoUser.attributes.sub;
                 return API.graphql({
-                    query: getUserByCognitoIdQuery,
+                    query: queries.getUserByCognitoId,
                     variables: {
                         cognitoId,
                     },
@@ -150,7 +88,7 @@ describe("createComment access control", () => {
                     response.data.getUserByCognitoId.items[0].id;
                 expect(adminUserId).to.exist;
                 return API.graphql({
-                    query: createCommentMutation,
+                    query: mutations.createComment,
                     variables: {
                         input: {
                             tenantId: Cypress.env("tenantId"),
@@ -174,7 +112,7 @@ describe("createComment access control", () => {
     it("denies createComment when userCommentsId belongs to a different user than the caller", () => {
         cy.then(() =>
             API.graphql({
-                query: createCommentMutation,
+                query: mutations.createComment,
                 variables: {
                     input: {
                         tenantId: Cypress.env("tenantId"),
@@ -199,7 +137,7 @@ describe("createComment access control", () => {
     it("cleans up: deletes the test comment and the other user", () => {
         cy.then(() =>
             API.graphql({
-                query: deleteCommentMutation,
+                query: mutations.deleteComment,
                 variables: { input: { id: createdCommentId, _version: createdCommentVersion } },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
@@ -210,7 +148,7 @@ describe("createComment access control", () => {
 
         cy.then(() =>
             API.graphql({
-                query: disableUserMutation,
+                query: mutations.disableUser,
                 variables: { userId: otherUserId },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
@@ -221,7 +159,7 @@ describe("createComment access control", () => {
 
         cy.then(() =>
             API.graphql({
-                query: adminDeleteUserMutation,
+                query: mutations.adminDeleteUser,
                 variables: { userId: otherUserId },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
