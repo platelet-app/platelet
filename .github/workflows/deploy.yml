@@ -112,6 +112,9 @@ jobs:
       - name: Run Cypress tests
         if: ${{ vars.CYPRESS_ADMIN_USERNAME != '' }}
         env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
           CYPRESS_adminusername: ${{ vars.CYPRESS_ADMIN_USERNAME }}
           CYPRESS_adminpassword: ${{ secrets.CYPRESS_ADMIN_PASSWORD }}
           CYPRESS_riderusername: ${{ vars.CYPRESS_RIDER_USERNAME }}
