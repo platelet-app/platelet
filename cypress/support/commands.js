@@ -126,6 +126,19 @@ Cypress.Commands.add("signIn", (role) => {
             `CognitoIdentityServiceProvider.${cognitoUser.pool.clientId}.LastAuthUser`,
             cognitoUser.username
         );
+
+        cy.then(() =>
+            API.graphql({
+                query: getUserByCognitoIdQuery,
+                variables: { cognitoId: cognitoUser.attributes.sub },
+                authMode: "AMAZON_COGNITO_USER_POOLS",
+            })
+        ).then((response) => {
+            const items = response.data.getUserByCognitoId.items;
+            if (items.length > 0) {
+                Cypress.env("tenantId", items[0].tenantId);
+            }
+        });
     });
     cy.saveLocalStorage();
 });
@@ -205,6 +218,16 @@ Cypress.Commands.add("addSingleTask", () => {
 });
 
 const API = require("aws-amplify").API;
+
+const getUserByCognitoIdQuery = /* GraphQL */ `
+    query GetUserByCognitoId($cognitoId: ID!) {
+        getUserByCognitoId(cognitoId: $cognitoId) {
+            items {
+                tenantId
+            }
+        }
+    }
+`;
 
 /**
  * Execute a GraphQL query or mutation via Cognito user pool auth.

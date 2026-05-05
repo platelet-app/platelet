@@ -18,7 +18,6 @@ const API = require("aws-amplify").API;
 
 const userPoolId = Cypress.env("userPoolId");
 const clientId = Cypress.env("clientId");
-const tenantId = Cypress.env("tenantId");
 const endpoint = Cypress.env("appsyncGraphqlEndpoint");
 const region = Cypress.env("appsyncRegion");
 
@@ -144,7 +143,7 @@ describe("isBeingDeleted access denial", () => {
                 variables: {
                     name: `Test Being-Deleted User ${timestamp}`,
                     email: `test-being-deleted-${timestamp}@platelet.app`,
-                    tenantId,
+                    tenantId: Cypress.env("tenantId"),
                     roles: ["RIDER", "USER"],
                 },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
@@ -193,7 +192,7 @@ describe("isBeingDeleted access denial", () => {
                 query: createTaskAssigneeMutation,
                 variables: {
                     input: {
-                        tenantId,
+                        tenantId: Cypress.env("tenantId"),
                         role: "RIDER",
                         taskAssigneesId: DUMMY_ID,
                         userAssignmentsId: testUserId,
@@ -215,7 +214,7 @@ describe("isBeingDeleted access denial", () => {
                 query: createVehicleAssignmentMutation,
                 variables: {
                     input: {
-                        tenantId,
+                        tenantId: Cypress.env("tenantId"),
                         userVehicleAssignmentsId: testUserId,
                         vehicleAssignmentsId: DUMMY_ID,
                     },
@@ -236,7 +235,7 @@ describe("isBeingDeleted access denial", () => {
                 query: createCommentMutation,
                 variables: {
                     input: {
-                        tenantId,
+                        tenantId: Cypress.env("tenantId"),
                         userCommentsId: testUserId,
                         body: "test comment",
                         visibility: "EVERYONE",
@@ -258,7 +257,7 @@ describe("isBeingDeleted access denial", () => {
                 query: createPossibleRiderResponsibilitiesMutation,
                 variables: {
                     input: {
-                        tenantId,
+                        tenantId: Cypress.env("tenantId"),
                         userPossibleRiderResponsibilitiesId: testUserId,
                         riderResponsibilityPossibleUsersId: DUMMY_ID,
                     },
