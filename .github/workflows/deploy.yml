@@ -110,6 +110,8 @@ jobs:
 #           apiURL: ${{ vars.API_URL }}
 #           amplifyEnvName: ${{ steps.amplify_outputs.outputs.env_name }}
 #           tenantName: ${{ vars.TENANT_NAME }}
+      - name: npm install
+        run: npm install
       - name: Run Cypress tests
         if: ${{ vars.CYPRESS_ADMIN_USERNAME != '' }}
         env:
@@ -124,6 +126,4 @@ jobs:
           CYPRESS_appsyncGraphqlEndpoint: ${{ steps.amplify_outputs.outputs.graphql_endpoint }}
           CYPRESS_appsyncRegion: ${{ vars.AWS_REGION }}
           CYPRESS_appsyncAuthenticationType: AMAZON_COGNITO_USER_POOLS
-        run:
-          npm install
-          npx cypress run
+        run: npx cypress run
