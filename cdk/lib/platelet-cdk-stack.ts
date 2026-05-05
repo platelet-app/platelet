@@ -37,8 +37,10 @@ export class PlateletCdkStack extends cdk.Stack {
             amplifyEnv,
         });
 
-        new CypressTestRole(this, "CypressTestRole", {
-            appsyncId,
-        });
+        if (this.node.tryGetContext("createCypressTestingRole") === "true") {
+            new CypressTestRole(this, "CypressTestRole", {
+                appsyncId,
+            });
+        }
     }
 }
