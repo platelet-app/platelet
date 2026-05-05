@@ -12,7 +12,8 @@
       "transformerversion": 2,
       "suppressschemamigrationprompt": true,
       "securityEnhancementNotification": false,
-      "subscriptionsInheritPrimaryAuth": true
+      "subscriptionsInheritPrimaryAuth": true,
+      "populateOwnerFieldForStaticGroupAuth": true
     },
     "frontend-ios": {
       "enablexcodeintegration": true
