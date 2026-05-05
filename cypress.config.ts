@@ -91,6 +91,9 @@ async function executeIamGraphqlRequest({
 export default defineConfig({
     allowCypressEnv: true,
     video: false,
+    defaultCommandTimeout: 10000,
+    requestTimeout: 10000,
+    responseTimeout: 30000,
     e2e: {
         setupNodeEvents(on, config) {
             const resolvedRoleArn =
