@@ -112,6 +112,8 @@ jobs:
 #           tenantName: ${{ vars.TENANT_NAME }}
       - name: npm install
         run: npm install
+      - name: build graphql package
+        run: npm run build:simple --workspace @platelet-app/graphql
       - name: Run Cypress tests
         if: ${{ vars.CYPRESS_ADMIN_USERNAME != '' }}
         env:
