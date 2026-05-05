@@ -146,7 +146,7 @@
         "@welldone-software/why-did-you-render": "^6.2.3",
         "canvas": "^2.11.2",
         "css-mediaquery": "^0.1.2",
-        "cypress": "^9.0.0",
+        "cypress": "^15.14.2",
         "cypress-localstorage-commands": "^1.7.0"
     },
     "workspaces": [
