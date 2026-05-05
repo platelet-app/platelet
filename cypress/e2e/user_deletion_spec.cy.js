@@ -125,80 +125,59 @@ describe("User Deletion End-to-End Test", () => {
     });
 
     it("should upload a profile picture for the test user", () => {
-        // First, get the upload URL
+        let uploadURL;
 
-        cy.then(() => {
-            return API.graphql({
+        // 1x1 pixel PNG — built synchronously before the command queue starts
+        const base64PNG =
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+        const binaryString = atob(base64PNG);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        const blob = new Blob([bytes], { type: "image/png" });
+
+        // Step 1: get pre-signed upload URL
+        cy.then(() =>
+            API.graphql({
                 query: queries.profilePictureUploadURL,
-                variables: {
-                    userId: testUserId,
-                },
+                variables: { userId: testUserId },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
-            });
-        })
-            .then((response) => {
-                const uploadURL = response.data.profilePictureUploadURL;
-                expect(uploadURL).to.exist;
-
-                // Create a simple test image blob (1x1 pixel PNG)
-                // This is a minimal valid PNG file
-                const base64PNG =
-                    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
-                const binaryString = atob(base64PNG);
-                const bytes = new Uint8Array(binaryString.length);
-                for (let i = 0; i < binaryString.length; i++) {
-                    bytes[i] = binaryString.charCodeAt(i);
-                }
-                const blob = new Blob([bytes], {
-                    type: "image/png",
-                });
-
-                // Upload the file directly to the pre-signed URL
-                return cy
-                    .request({
-                        method: "PUT",
-                        url: uploadURL,
-                        body: blob,
-                        headers: {
-                            "Content-Type": "image/png",
-                        },
-                    })
-                    .then(() => {
-                        const userInput = {
-                            id: testUserId,
-                            _version: 1,
-                            profilePicture: {
-                                key: `public/${testUserId}.jpg`,
-                                bucket,
-                                region,
-                            },
-                        };
-                        cy.log(userInput);
-                        API.graphql(
-                            graphqlOperation(mutations.updateUser, {
-                                input: userInput,
-                            })
-                        );
-                        API.graphql(
-                            graphqlOperation(queries.profilePictureURL, {
-                                userId: testUserId,
-                                width: 300,
-                                height: 300,
-                            })
-                        );
-                        API.graphql(
-                            graphqlOperation(queries.profilePictureURL, {
-                                userId: testUserId,
-                                width: 128,
-                                height: 128,
-                            })
-                        );
-                    });
             })
-            .then((uploadResponse) => {
-                expect(uploadResponse.status).to.equal(200);
-                cy.log("Uploaded profile picture");
-            });
+        ).then((response) => {
+            uploadURL = response.data.profilePictureUploadURL;
+            expect(uploadURL).to.exist;
+        });
+
+        // Step 2: PUT the image (uploadURL set by step 1 before this executes)
+        cy.then(() =>
+            cy.request({
+                method: "PUT",
+                url: uploadURL,
+                body: blob,
+                headers: { "Content-Type": "image/png" },
+            })
+        ).then((response) => {
+            expect(response.status).to.equal(200);
+            cy.log("Uploaded profile picture");
+        });
+
+        // Step 3: link the uploaded image to the user record (fire-and-forget)
+        cy.then(() =>
+            API.graphql(
+                graphqlOperation(mutations.updateUser, {
+                    input: {
+                        id: testUserId,
+                        _version: 1,
+                        profilePicture: {
+                            key: `public/${testUserId}.jpg`,
+                            bucket,
+                            region,
+                        },
+                    },
+                })
+            )
+        );
     });
 
     it("should get or create a task for testing assignments", () => {
