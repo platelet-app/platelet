@@ -126,6 +126,7 @@ jobs:
           CYPRESS_riderpassword: ${{ secrets.CYPRESS_RIDER_PASSWORD }}
           CYPRESS_coordusername: ${{ vars.CYPRESS_COORD_USERNAME }}
           CYPRESS_coordpassword: ${{ secrets.CYPRESS_COORD_PASSWORD }}
+          CYPRESS_bucket: ${{ steps.amplify_outputs.outputs.bucket_name }}
           CYPRESS_userPoolId: ${{ steps.amplify_outputs.outputs.user_pool_id }}
           CYPRESS_clientId: ${{ steps.amplify_outputs.outputs.client_id }}
           CYPRESS_appsyncGraphqlEndpoint: ${{ steps.amplify_outputs.outputs.graphql_endpoint }}
