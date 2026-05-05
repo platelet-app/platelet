@@ -110,7 +110,7 @@ jobs:
           amplifyEnvName: ${{ steps.amplify_outputs.outputs.env_name }}
           tenantName: ${{ vars.TENANT_NAME }}
       - name: Run Cypress tests
-        if: ${{ vars.CYPRESS_ADMIN_USERNAME != '' }
+        if: ${{ vars.CYPRESS_ADMIN_USERNAME != '' }}
         env:
           CYPRESS_adminusername: ${{ vars.CYPRESS_ADMIN_USERNAME }}
           CYPRESS_adminpassword: ${{ secrets.CYPRESS_ADMIN_PASSWORD }}
