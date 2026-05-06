@@ -6,6 +6,10 @@ import { SignatureV4 } from "@aws-sdk/signature-v4";
 import { HttpRequest } from "@aws-sdk/protocol-http";
 import { Sha256 } from "@aws-crypto/sha256-js";
 import { STSClient, AssumeRoleCommand } from "@aws-sdk/client-sts";
+import {
+    CognitoIdentityProviderClient,
+    AdminSetUserPasswordCommand,
+} from "@aws-sdk/client-cognito-identity-provider";
 import fetch from "node-fetch";
 
 function getCypressTestRoleArnFromCdkOutputs(): string | null {
@@ -132,6 +136,32 @@ export default defineConfig({
                         query,
                         variables,
                     });
+                },
+
+                async cognitoAdminSetUserPassword({
+                    username,
+                    password,
+                }: {
+                    username: string;
+                    password: string;
+                }) {
+                    const region = config.env.appsyncRegion as string;
+                    const credentials = resolvedRoleArn
+                        ? await assumeTestRole(region, resolvedRoleArn)
+                        : defaultProvider();
+                    const client = new CognitoIdentityProviderClient({
+                        region,
+                        credentials,
+                    });
+                    await client.send(
+                        new AdminSetUserPasswordCommand({
+                            UserPoolId: config.env.userPoolId as string,
+                            Username: username,
+                            Password: password,
+                            Permanent: true,
+                        })
+                    );
+                    return null;
                 },
             });
 

@@ -143,6 +143,32 @@ Cypress.Commands.add("signIn", (role) => {
     cy.saveLocalStorage();
 });
 
+/**
+ * Sign in as any Cognito user given explicit credentials.
+ * Use this when tests need to act as a non-fixture user (e.g. a freshly
+ * registered test user). Signs out any current session first, then signs in
+ * and persists the tokens so subsequent API calls use this identity.
+ * Call cy.signIn("ADMIN") afterwards to restore the admin session.
+ */
+Cypress.Commands.add("signInWithCredentials", (username, password) => {
+    cy.then(() => Auth.signOut().catch(() => {}));
+    cy.then(() => Auth.signIn(username, password)).then((cognitoUser) => {
+        const idToken = cognitoUser.signInUserSession.idToken.jwtToken;
+        const accessToken = cognitoUser.signInUserSession.accessToken.jwtToken;
+
+        const makeKey = (name) =>
+            `CognitoIdentityServiceProvider.${cognitoUser.pool.clientId}.${cognitoUser.username}.${name}`;
+
+        cy.setLocalStorage(makeKey("accessToken"), accessToken);
+        cy.setLocalStorage(makeKey("idToken"), idToken);
+        cy.setLocalStorage(
+            `CognitoIdentityServiceProvider.${cognitoUser.pool.clientId}.LastAuthUser`,
+            cognitoUser.username
+        );
+    });
+    cy.saveLocalStorage();
+});
+
 Cypress.Commands.add("clearTasks", (status) => {
     // iterate through all tasks and mark them cancelled
     cy.visit("/");

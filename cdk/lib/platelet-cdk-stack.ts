@@ -10,6 +10,7 @@ export class PlateletCdkStack extends cdk.Stack {
         super(scope, id, props);
         const appsyncId = this.node.tryGetContext("appsyncId");
         const userPoolId = this.node.tryGetContext("userPoolId");
+        const userPoolArn = this.node.tryGetContext("userPoolArn");
         const graphQLEndpoint = this.node.tryGetContext("graphQLEndpoint");
         const bucketName = this.node.tryGetContext("bucketName");
         const amplifyEnv = this.node.tryGetContext("amplifyEnv");
@@ -40,6 +41,7 @@ export class PlateletCdkStack extends cdk.Stack {
         if (this.node.tryGetContext("createCypressTestingRole") === "true") {
             new CypressTestRole(this, "CypressTestRole", {
                 appsyncId,
+                userPoolArn,
             });
         }
     }
