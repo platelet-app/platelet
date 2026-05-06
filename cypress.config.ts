@@ -318,7 +318,6 @@ export default defineConfig({
                     const endpoint = config.env
                         .appsyncGraphqlEndpoint as string;
                     const userPoolId = config.env.userPoolId as string;
-                    const tenantId = config.env.tenantId as string;
                     const timestamp = Date.now();
 
                     const coordPassword = `CoordTest${timestamp}!A`;
@@ -332,7 +331,7 @@ export default defineConfig({
                             {
                                 name: `Test Coordinator ${timestamp}`,
                                 email: `test-coord-${timestamp}@platelet.app`,
-                                tenantId,
+                                tenantId: Cypress.env("tenantId"),
                                 roles: ["COORDINATOR", "USER"],
                             }
                         ),
@@ -343,7 +342,7 @@ export default defineConfig({
                             {
                                 name: `Test Rider ${timestamp}`,
                                 email: `test-rider-${timestamp}@platelet.app`,
-                                tenantId,
+                                tenantId: Cypress.env("tenantId"),
                                 roles: ["RIDER", "USER"],
                             }
                         ),
