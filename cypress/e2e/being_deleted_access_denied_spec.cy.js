@@ -13,6 +13,9 @@
  *   - createLocation                      (postAuth.1: checks userCreatedLocationsId)
  *   - createVehicle                       (postAuth.1: checks userCreatedVehiclesId)
  *   - createScheduledTask                 (postAuth.1: checks userCreatedScheduledTasksId)
+ *
+ * Setup creates a shared task, vehicle, and rider responsibility so that all
+ * mutations have real related records rather than placeholder IDs.
  */
 
 const Amplify = require("aws-amplify").Amplify;
@@ -32,10 +35,6 @@ Amplify.configure({
     aws_appsync_authenticationType: "AMAZON_COGNITO_USER_POOLS",
 });
 
-// Placeholder UUID for relationship fields in mutations that will be rejected
-// before AppSync reads those related records, or for orphaned-reference tests.
-const DUMMY_ID = "00000000-0000-0000-0000-000000000000";
-
 const graphql = (query, variables) =>
     API.graphql({ query, variables, authMode: "AMAZON_COGNITO_USER_POOLS" });
 
@@ -44,6 +43,11 @@ describe("isBeingDeleted access denial", () => {
     let testUserVersion;
     let testUserUsername;
     let testUserPassword;
+
+    // Shared records created in setup — used as relationship targets in all tests
+    let sharedTaskId, sharedTaskVersion;
+    let sharedVehicleId, sharedVehicleVersion;
+    let sharedRiderResponsibilityId, sharedRiderResponsibilityVersion;
 
     // IDs + versions for cleanup of records created in the success tests
     let createdCommentId, createdCommentVersion;
@@ -116,6 +120,65 @@ describe("isBeingDeleted access denial", () => {
         );
     });
 
+    it("creates a shared task for assignment tests", () => {
+        cy.then(() =>
+            graphql(mutations.createTask, {
+                input: {
+                    tenantId: Cypress.env("tenantId"),
+                    dateCreated: new Date().toISOString().split("T")[0],
+                    status: "NEW",
+                },
+            })
+        ).then((response) => {
+            expect(response.errors, "createTask setup should not error").to.be
+                .undefined;
+            sharedTaskId = response.data.createTask.id;
+            sharedTaskVersion = response.data.createTask._version;
+            expect(sharedTaskId).to.exist;
+            cy.log("Created shared task:", sharedTaskId);
+        });
+    });
+
+    it("creates a shared vehicle for assignment tests", () => {
+        cy.then(() =>
+            graphql(mutations.createVehicle, {
+                input: {
+                    tenantId: Cypress.env("tenantId"),
+                    name: "Shared Test Vehicle (being-deleted spec)",
+                },
+            })
+        ).then((response) => {
+            expect(response.errors, "createVehicle setup should not error").to.be
+                .undefined;
+            sharedVehicleId = response.data.createVehicle.id;
+            sharedVehicleVersion = response.data.createVehicle._version;
+            expect(sharedVehicleId).to.exist;
+            cy.log("Created shared vehicle:", sharedVehicleId);
+        });
+    });
+
+    it("creates a shared rider responsibility for assignment tests", () => {
+        cy.then(() =>
+            graphql(mutations.createRiderResponsibility, {
+                input: {
+                    tenantId: Cypress.env("tenantId"),
+                    label: "Test Responsibility (being-deleted spec)",
+                },
+            })
+        ).then((response) => {
+            expect(
+                response.errors,
+                "createRiderResponsibility setup should not error"
+            ).to.be.undefined;
+            sharedRiderResponsibilityId =
+                response.data.createRiderResponsibility.id;
+            sharedRiderResponsibilityVersion =
+                response.data.createRiderResponsibility._version;
+            expect(sharedRiderResponsibilityId).to.exist;
+            cy.log("Created shared rider responsibility:", sharedRiderResponsibilityId);
+        });
+    });
+
     // -----------------------------------------------------------------------
     // Success checks — user is NOT being deleted
     // -----------------------------------------------------------------------
@@ -149,7 +212,7 @@ describe("isBeingDeleted access denial", () => {
                 input: {
                     tenantId: Cypress.env("tenantId"),
                     role: "RIDER",
-                    taskAssigneesId: DUMMY_ID,
+                    taskAssigneesId: sharedTaskId,
                     userAssignmentsId: testUserId,
                 },
             })
@@ -169,7 +232,7 @@ describe("isBeingDeleted access denial", () => {
                 input: {
                     tenantId: Cypress.env("tenantId"),
                     userVehicleAssignmentsId: testUserId,
-                    vehicleAssignmentsId: DUMMY_ID,
+                    vehicleAssignmentsId: sharedVehicleId,
                 },
             })
         ).then((response) => {
@@ -191,7 +254,7 @@ describe("isBeingDeleted access denial", () => {
                 input: {
                     tenantId: Cypress.env("tenantId"),
                     userPossibleRiderResponsibilitiesId: testUserId,
-                    riderResponsibilityPossibleUsersId: DUMMY_ID,
+                    riderResponsibilityPossibleUsersId: sharedRiderResponsibilityId,
                 },
             })
         ).then((response) => {
@@ -312,7 +375,7 @@ describe("isBeingDeleted access denial", () => {
                 input: {
                     tenantId: Cypress.env("tenantId"),
                     role: "RIDER",
-                    taskAssigneesId: DUMMY_ID,
+                    taskAssigneesId: sharedTaskId,
                     userAssignmentsId: testUserId,
                 },
             }).catch((err) => err)
@@ -334,7 +397,7 @@ describe("isBeingDeleted access denial", () => {
                 input: {
                     tenantId: Cypress.env("tenantId"),
                     userVehicleAssignmentsId: testUserId,
-                    vehicleAssignmentsId: DUMMY_ID,
+                    vehicleAssignmentsId: sharedVehicleId,
                 },
             }).catch((err) => err)
         ).then((result) => {
@@ -375,7 +438,7 @@ describe("isBeingDeleted access denial", () => {
                 input: {
                     tenantId: Cypress.env("tenantId"),
                     userPossibleRiderResponsibilitiesId: testUserId,
-                    riderResponsibilityPossibleUsersId: DUMMY_ID,
+                    riderResponsibilityPossibleUsersId: sharedRiderResponsibilityId,
                 },
             }).catch((err) => err)
         ).then((result) => {
@@ -546,11 +609,38 @@ describe("isBeingDeleted access denial", () => {
             }).catch(() => {})
         );
         cy.then(() =>
+            graphql(mutations.updateTask, {
+                input: {
+                    id: sharedTaskId,
+                    _version: sharedTaskVersion,
+                    status: "CANCELLED",
+                    archived: 1,
+                },
+            }).catch(() => {})
+        );
+        cy.then(() =>
             graphql(mutations.updateVehicle, {
                 input: {
                     id: createdVehicleId,
                     _version: createdVehicleVersion,
                     disabled: 1,
+                },
+            }).catch(() => {})
+        );
+        cy.then(() =>
+            graphql(mutations.updateVehicle, {
+                input: {
+                    id: sharedVehicleId,
+                    _version: sharedVehicleVersion,
+                    disabled: 1,
+                },
+            }).catch(() => {})
+        );
+        cy.then(() =>
+            graphql(mutations.deleteRiderResponsibility, {
+                input: {
+                    id: sharedRiderResponsibilityId,
+                    _version: sharedRiderResponsibilityVersion,
                 },
             }).catch(() => {})
         );

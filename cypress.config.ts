@@ -13,7 +13,10 @@ import {
     InitiateAuthCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import fetch from "node-fetch";
-import { mutations as gqlMutations } from "@platelet-app/graphql";
+import {
+    mutations as gqlMutations,
+    queries as gqlQueries,
+} from "@platelet-app/graphql";
 
 function getCypressTestRoleArnFromCdkOutputs(): string | null {
     const cdkOutPath = path.join(__dirname, "cdk/cdk-out.json");
@@ -120,6 +123,11 @@ async function adminSetUserPassword({
             Permanent: true,
         })
     );
+}
+
+function jwtSub(token: string): string {
+    const payload = token.split(".")[1];
+    return JSON.parse(Buffer.from(payload, "base64url").toString("utf8")).sub;
 }
 
 async function executeCognitoGraphqlRequest(
@@ -320,6 +328,26 @@ export default defineConfig({
                     const userPoolId = config.env.userPoolId as string;
                     const timestamp = Date.now();
 
+                    let tenantId = config.env.tenantId as string | undefined;
+                    if (!tenantId) {
+                        const cognitoId = jwtSub(adminToken);
+                        const selfResp = await executeCognitoGraphqlRequest(
+                            endpoint,
+                            adminToken,
+                            gqlQueries.getUserByCognitoId,
+                            { cognitoId }
+                        );
+                        const items = (
+                            selfResp.data?.getUserByCognitoId as any
+                        )?.items;
+                        tenantId = items?.[0]?.tenantId;
+                        if (!tenantId) {
+                            throw new Error(
+                                `createFixtureUsers: could not resolve tenantId from admin user record. errors: ${JSON.stringify(selfResp.errors)}`
+                            );
+                        }
+                    }
+
                     const coordPassword = `CoordTest${timestamp}!A`;
                     const riderPassword = `RiderTest${timestamp}!A`;
 
@@ -331,7 +359,7 @@ export default defineConfig({
                             {
                                 name: `Test Coordinator ${timestamp}`,
                                 email: `test-coord-${timestamp}@platelet.app`,
-                                tenantId: Cypress.env("tenantId"),
+                                tenantId,
                                 roles: ["COORDINATOR", "USER"],
                             }
                         ),
@@ -342,7 +370,7 @@ export default defineConfig({
                             {
                                 name: `Test Rider ${timestamp}`,
                                 email: `test-rider-${timestamp}@platelet.app`,
-                                tenantId: Cypress.env("tenantId"),
+                                tenantId,
                                 roles: ["RIDER", "USER"],
                             }
                         ),
