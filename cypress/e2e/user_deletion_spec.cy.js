@@ -22,8 +22,6 @@
  * - Or open Cypress UI: npx cypress open
  */
 
-const { graphqlOperation } = require("aws-amplify");
-
 const { queries, mutations } = require("@platelet-app/graphql");
 
 const Auth = require("aws-amplify").Auth;
@@ -59,6 +57,8 @@ describe("User Deletion End-to-End Test", () => {
     let testUserCognitoId;
     let testUserEmail;
     let testUserName;
+    let testUserUsername;
+    let testUserPassword;
     let createdCommentId;
     let createdTaskAssigneeId;
     let createdVehicleAssignmentId;
@@ -88,6 +88,7 @@ describe("User Deletion End-to-End Test", () => {
         const timestamp = Date.now();
         testUserEmail = `test-delete-${timestamp}@platelet.app`;
         testUserName = `Test User ${timestamp}`;
+        testUserPassword = `TestDel${timestamp}!A`;
 
         cy.then(() => {
             return API.graphql({
@@ -104,13 +105,27 @@ describe("User Deletion End-to-End Test", () => {
             expect(response.data.registerUser).to.not.be.null;
             testUserId = response.data.registerUser.id;
             testUserCognitoId = response.data.registerUser.cognitoId;
+            testUserUsername = response.data.registerUser.username;
             expect(testUserId).to.exist;
             expect(testUserCognitoId).to.exist;
+            expect(testUserUsername).to.exist;
             cy.log("Created user with ID:", testUserId);
         });
     });
 
+    it("should set a permanent password for the test user", () => {
+        cy.task("cognitoAdminSetUserPassword", {
+            username: testUserUsername,
+            password: testUserPassword,
+        });
+    });
+
     it("should upload a profile picture for the test user", () => {
+        if (!bucket) {
+            cy.log("Skipping profile picture upload — bucket not configured");
+            return;
+        }
+
         let uploadURL;
 
         // 1x1 pixel PNG — built synchronously before the command queue starts
@@ -150,8 +165,9 @@ describe("User Deletion End-to-End Test", () => {
 
         // Step 3: link the uploaded image to the user record (fire-and-forget)
         cy.then(() =>
-            API.graphql(
-                graphqlOperation(mutations.updateUser, {
+            API.graphql({
+                query: mutations.updateUser,
+                variables: {
                     input: {
                         id: testUserId,
                         _version: 1,
@@ -161,8 +177,11 @@ describe("User Deletion End-to-End Test", () => {
                             region,
                         },
                     },
-                })
-            )
+                },
+                authMode: "AMAZON_COGNITO_USER_POOLS",
+            }).catch((err) => {
+                cy.log("Profile picture link failed (non-fatal):", err?.message ?? err);
+            })
         );
     });
 
@@ -367,15 +386,19 @@ describe("User Deletion End-to-End Test", () => {
         });
     });
 
-    it.skip("should add a comment for the test user", () => {
+    it("should add a comment for the test user", () => {
+        // Sign in as the test user so the postAuth resolver allows the comment
+        cy.signInWithCredentials(testUserUsername, testUserPassword);
+
         cy.then(() => {
             return API.graphql({
                 query: mutations.createComment,
                 variables: {
                     input: {
                         tenantId: Cypress.env("tenantId"),
-                        parentId: createdTaskId,
+                        userCommentsId: testUserId,
                         body: "Test comment from user to be deleted",
+                        visibility: "EVERYONE",
                     },
                 },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
@@ -386,6 +409,9 @@ describe("User Deletion End-to-End Test", () => {
             expect(createdCommentId).to.exist;
             cy.log("Created comment with ID:", createdCommentId);
         });
+
+        // Restore admin session for the remaining tests
+        cy.signIn("ADMIN");
     });
 
     it("should disable the test user before deletion", () => {
@@ -534,7 +560,7 @@ describe("User Deletion End-to-End Test", () => {
         });
     });
 
-    it.skip("should verify comment is deleted from DynamoDB", () => {
+    it("should verify comment is deleted from DynamoDB", () => {
         cy.then(() => {
             return API.graphql({
                 query: queries.getComment,
