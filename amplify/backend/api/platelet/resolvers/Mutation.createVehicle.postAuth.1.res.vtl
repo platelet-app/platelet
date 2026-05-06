@@ -1,0 +1,18 @@
+## Raise a GraphQL field error in case of a datasource invocation error
+#if($ctx.error)
+    $util.error($ctx.error.message, $ctx.error.type)
+#end
+
+## createdBy is optional — if not set, nothing to check
+#if( $util.isNull($ctx.args.input.userCreatedVehiclesId) )
+    $util.toJson({})
+#else
+    #set( $user = $ctx.result )
+    #if( $util.isNull($user) )
+        $util.error("The user cannot be found", "NotFoundError")
+    #elseif( $user.isBeingDeleted )
+        $util.error("The user cannot be found", "NotFoundError")
+    #else
+        $util.toJson({})
+    #end
+#end

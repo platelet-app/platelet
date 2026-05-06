@@ -16,6 +16,7 @@ export const override = (resources: AmplifyApiGraphQlResourceStackTemplate) => {
         "Comment", // <== The model that this resolver falls within
         "UserTable" // <== The new datasource that you want to use
     );
+    // prevent a comment being created by a user who is being deleted
     overrideDataSourceByFileName(
         resources,
         "Mutation.createComment.postAuth.1",
@@ -42,5 +43,33 @@ export const override = (resources: AmplifyApiGraphQlResourceStackTemplate) => {
         "Mutation.createPossibleRiderResponsibilities.postAuth.1", // <== The name of your file (without the extension)
         "PossibleRiderResponsibilities", // <== The model that this resolver falls within
         "UserTable" // <== The new datasource that you want to use
+    );
+    // prevent a task being created by a user who is being deleted
+    overrideDataSourceByFileName(
+        resources,
+        "Mutation.createTask.postAuth.1",
+        "Task",
+        "UserTable"
+    );
+    // prevent a location being created by a user who is being deleted
+    overrideDataSourceByFileName(
+        resources,
+        "Mutation.createLocation.postAuth.1",
+        "Location",
+        "UserTable"
+    );
+    // prevent a vehicle being created by a user who is being deleted
+    overrideDataSourceByFileName(
+        resources,
+        "Mutation.createVehicle.postAuth.1",
+        "Vehicle",
+        "UserTable"
+    );
+    // prevent a task being created by a user who is being deleted
+    overrideDataSourceByFileName(
+        resources,
+        "Mutation.createScheduledTask.postAuth.1",
+        "ScheduledTask",
+        "UserTable"
     );
 };
