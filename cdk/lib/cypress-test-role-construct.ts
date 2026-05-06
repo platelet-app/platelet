@@ -44,10 +44,14 @@ export class CypressTestRole extends Construct {
         );
 
         // Needed to set a permanent password on freshly-registered test users
-        // so Cypress can sign in as them without the FORCE_CHANGE_PASSWORD challenge.
+        // so Cypress can sign in as them without the FORCE_CHANGE_PASSWORD challenge,
+        // and to verify user deletion from Cognito.
         this.role.addToPolicy(
             new iam.PolicyStatement({
-                actions: ["cognito-idp:AdminSetUserPassword"],
+                actions: [
+                    "cognito-idp:AdminSetUserPassword",
+                    "cognito-idp:AdminGetUser",
+                ],
                 resources: [props.userPoolArn],
             })
         );
