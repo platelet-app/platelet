@@ -9,8 +9,12 @@
  *   - createPossibleRiderResponsibilities (postAuth.1: checks userPossibleRiderResponsibilitiesId)
  *
  * The isBeingDeleted flag cannot be set via Cognito auth because the User model
- * only grants Cognito users read access. It must be set via IAM credentials,
- * which requires awsAccessKeyId and awsSecretAccessKey in cypress.env.json.
+ * only grants Cognito users read access. It must be set via IAM credentials.
+ * Credentials are resolved automatically from the standard AWS provider chain
+ * (environment variables, ~/.aws/credentials, instance metadata, etc.).
+ * If a CDK-deployed Cypress test role is available (detected from cdk/cdk-out.json
+ * or the awsRoleArn Cypress env var), it will be assumed automatically — no manual
+ * awsAccessKeyId / awsSecretAccessKey entries in cypress.env.json are required.
  */
 
 const Amplify = require("aws-amplify").Amplify;
