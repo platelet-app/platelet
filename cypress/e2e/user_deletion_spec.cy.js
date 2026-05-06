@@ -578,36 +578,13 @@ describe("User Deletion End-to-End Test", () => {
         });
     });
 
-    it.skip("should verify user is deleted from Cognito", () => {
-        // Use Cognito admin API to verify user deletion
-        cy.then(() => {
-            return Auth.currentSession().then((session) => {
-                session.getIdToken().getJwtToken();
-
-                // We need to use a Lambda function or admin credentials to check Cognito
-                // Since we can't directly call Cognito admin APIs from the browser,
-                // we'll verify by trying to get the user through AppSync which should fail
-                return API.graphql({
-                    query: queries.getUserByCognitoId,
-                    variables: {
-                        cognitoId: testUserCognitoId,
-                    },
-                    authMode: "AMAZON_COGNITO_USER_POOLS",
-                });
-            });
-        }).then((response) => {
-            // User should not be found or should be marked as deleted
-            const items = response.data.getUserByCognitoId.items;
-            if (items && items.length > 0) {
-                expect(items[0]._deleted).to.equal(true);
-            } else {
-                // No items found is also acceptable
-                expect(items).to.have.length(0);
+    it("should verify user is deleted from Cognito", () => {
+        cy.task("cognitoAdminGetUser", { username: testUserUsername }).then(
+            (result) => {
+                expect(result.exists).to.equal(false);
+                cy.log("Verified user is deleted from Cognito");
             }
-            cy.log(
-                "Verified user is deleted from Cognito (no active user found)"
-            );
-        });
+        );
     });
 
     it.skip("should clean up test task and vehicle", () => {

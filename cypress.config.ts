@@ -9,6 +9,7 @@ import { STSClient, AssumeRoleCommand } from "@aws-sdk/client-sts";
 import {
     CognitoIdentityProviderClient,
     AdminSetUserPasswordCommand,
+    AdminGetUserCommand,
     InitiateAuthCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import fetch from "node-fetch";
@@ -273,6 +274,32 @@ export default defineConfig({
                         region: config.env.appsyncRegion as string,
                         roleArn: resolvedRoleArn,
                     }).then(() => null);
+                },
+
+                async cognitoAdminGetUser({ username }: { username: string }) {
+                    const region = config.env.appsyncRegion as string;
+                    const userPoolId = config.env.userPoolId as string;
+                    const credentials = resolvedRoleArn
+                        ? await assumeTestRole(region, resolvedRoleArn)
+                        : defaultProvider();
+                    const client = new CognitoIdentityProviderClient({
+                        region,
+                        credentials,
+                    });
+                    try {
+                        await client.send(
+                            new AdminGetUserCommand({
+                                UserPoolId: userPoolId,
+                                Username: username,
+                            })
+                        );
+                        return { exists: true };
+                    } catch (err: any) {
+                        if (err.name === "UserNotFoundException") {
+                            return { exists: false };
+                        }
+                        throw err;
+                    }
                 },
 
                 async createFixtureUsers({
