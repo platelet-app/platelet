@@ -104,29 +104,16 @@ DataStore.configure({
 });
 
 Cypress.Commands.add("signIn", (role) => {
-    let username = Cypress.env("adminusername");
-    let password = Cypress.env("adminpassword");
-    if (role === "RIDER") {
-        username = Cypress.env("riderusername");
-        password = Cypress.env("riderpassword");
-    } else if (role === "COORDINATOR") {
-        username = Cypress.env("coordusername");
-        password = Cypress.env("coordpassword");
-    }
-    cy.then(() => Auth.signIn(username, password)).then((cognitoUser) => {
-        const idToken = cognitoUser.signInUserSession.idToken.jwtToken;
-        const accessToken = cognitoUser.signInUserSession.accessToken.jwtToken;
-
+    const completeSignIn = (cognitoUser) => {
         const makeKey = (name) =>
             `CognitoIdentityServiceProvider.${cognitoUser.pool.clientId}.${cognitoUser.username}.${name}`;
 
-        cy.setLocalStorage(makeKey("accessToken"), accessToken);
-        cy.setLocalStorage(makeKey("idToken"), idToken);
+        cy.setLocalStorage(makeKey("accessToken"), cognitoUser.signInUserSession.accessToken.jwtToken);
+        cy.setLocalStorage(makeKey("idToken"), cognitoUser.signInUserSession.idToken.jwtToken);
         cy.setLocalStorage(
             `CognitoIdentityServiceProvider.${cognitoUser.pool.clientId}.LastAuthUser`,
             cognitoUser.username
         );
-
         cy.then(() =>
             API.graphql({
                 query: queries.getUserByCognitoId,
@@ -139,7 +126,21 @@ Cypress.Commands.add("signIn", (role) => {
                 Cypress.env("tenantId", items[0].tenantId);
             }
         });
-    });
+    };
+
+    if (role === "RIDER" || role === "COORDINATOR") {
+        cy.task("getFixtureUsers").then((users) => {
+            const { username, password } =
+                role === "COORDINATOR" ? users.coord : users.rider;
+            return Auth.signIn(username, password);
+        }).then(completeSignIn);
+    } else {
+        // ADMIN
+        cy.then(() =>
+            Auth.signIn(Cypress.env("adminusername"), Cypress.env("adminpassword"))
+        ).then(completeSignIn);
+    }
+
     cy.saveLocalStorage();
 });
 
