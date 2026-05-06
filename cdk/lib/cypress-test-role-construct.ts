@@ -5,6 +5,7 @@ import { Construct } from "constructs";
 
 export interface CypressTestRoleProps {
     appsyncId: string;
+    userPoolArn: string;
 }
 
 /**
@@ -34,11 +35,20 @@ export class CypressTestRole extends Construct {
             assumedBy: new iam.AccountPrincipal(cdk.Stack.of(this).account),
         });
 
-        // Scoped to the single AppSync mutation the tests require.
+        // Scoped to the AppSync mutations the tests require.
         this.role.addToPolicy(
             new iam.PolicyStatement({
                 actions: ["appsync:GraphQL"],
                 resources: [`${api.arn}/types/Mutation/fields/updateUser`],
+            })
+        );
+
+        // Needed to set a permanent password on freshly-registered test users
+        // so Cypress can sign in as them without the FORCE_CHANGE_PASSWORD challenge.
+        this.role.addToPolicy(
+            new iam.PolicyStatement({
+                actions: ["cognito-idp:AdminSetUserPassword"],
+                resources: [props.userPoolArn],
             })
         );
 
