@@ -1,17 +1,30 @@
-// ***********************************************************
-// This example support/e2e.ts is processed and
-// loaded automatically before your test files.
-//
-// This is a great place to put global configuration and
-// behavior that modifies Cypress.
-//
-// You can change the location of this file or turn off
-// automatically serving support files with the
-// 'supportFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/configuration
-// ***********************************************************
+import "./commands";
 
-// Import commands.js using ES2015 syntax:
-import './commands'
+const Auth = require("aws-amplify").Auth;
+
+// Before each spec, ensure the shared RIDER and COORDINATOR fixture users exist.
+// The createFixtureUsers task caches on first call and returns immediately for
+// subsequent specs in the same run, so the Auth.signIn here only hits the network once.
+before(() => {
+    cy.task("getFixtureUsers").then((users) => {
+        if (users) return; // already created — skip the sign-in round-trip
+
+        cy.then(() =>
+            Auth.signIn(
+                Cypress.env("adminusername"),
+                Cypress.env("adminpassword")
+            )
+        )
+            .then((cognitoUser: any) => {
+                const adminToken =
+                    cognitoUser.signInUserSession.idToken.jwtToken;
+                const refreshToken =
+                    cognitoUser.signInUserSession.refreshToken.token;
+                return cy.task("createFixtureUsers", {
+                    adminToken,
+                    refreshToken,
+                });
+            })
+            .then(() => Auth.signOut().catch(() => {}));
+    });
+});
