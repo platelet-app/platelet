@@ -126,6 +126,7 @@
         ]
     },
     "devDependencies": {
+        "@aws-sdk/client-cognito-identity-provider": "^3.186.0",
         "@babel/cli": "^7.23.4",
         "@babel/core": "^7.23.7",
         "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
