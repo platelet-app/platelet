@@ -265,7 +265,19 @@
                 "cognito-sync:List*",
                 "iam:ListOpenIdConnectProviders",
                 "iam:ListRoles",
-                "sns:ListPlatformApplications"
+                "sns:ListPlatformApplications",
+                "cognito-idp:ForgotPassword",
+                "cognito-idp:UpdateAuthEventFeedback",
+                "cognito-idp:UpdateResourceServer",
+                "cognito-idp:UpdateUserPoolClient",
+                "cognito-idp:AdminUpdateUserAttributes",
+                "cognito-idp:UpdateUserAttributes",
+                "cognito-idp:UpdateUserPoolDomain",
+                "cognito-idp:UpdateIdentityProvider",
+                "cognito-idp:UpdateGroup",
+                "cognito-idp:AdminUpdateAuthEventFeedback",
+                "cognito-idp:UpdateDeviceStatus",
+                "cognito-idp:UpdateUserPool"
               ],
               "Resource": [
                 {

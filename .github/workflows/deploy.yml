@@ -56,9 +56,11 @@ jobs:
         run: |
           CONTEXT_ARGS="--context appsyncId=${{ steps.amplify_outputs.outputs.appsync_id }} \
                       --context userPoolId=${{ steps.amplify_outputs.outputs.user_pool_id }} \
+                      --context userPoolArn=${{ steps.amplify_outputs.outputs.user_pool_arn }} \
                       --context amplifyEnv=${{ steps.amplify_outputs.outputs.env_name }} \
                       --context graphQLEndpoint=${{ steps.amplify_outputs.outputs.graphql_endpoint }} \
-                      --context bucketName=${{ steps.amplify_outputs.outputs.bucket_name }}"
+                      --context bucketName=${{ steps.amplify_outputs.outputs.bucket_name }} \
+                      --context createCypressTestingRole=${{ startsWith(github.ref_name, 'testing/') }} "
           npm run bootstrap -- $CONTEXT_ARGS
           npm run deploy -- --require-approval never $CONTEXT_ARGS --outputs-file cdk-out.json
       - name: "Write lambda function roles to custom-roles.json"
@@ -109,3 +111,22 @@ jobs:
           apiURL: ${{ vars.API_URL }}
           amplifyEnvName: ${{ steps.amplify_outputs.outputs.env_name }}
           tenantName: ${{ vars.TENANT_NAME }}
+      - name: npm install
+        run: npm install
+      - name: build graphql package
+        run: npm run build:simple --workspace @platelet-app/graphql
+      - name: Run Cypress tests
+        if: ${{ vars.CYPRESS_ADMIN_USERNAME != '' }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          CYPRESS_adminusername: ${{ vars.CYPRESS_ADMIN_USERNAME }}
+          CYPRESS_adminpassword: ${{ secrets.CYPRESS_ADMIN_PASSWORD }}
+          CYPRESS_bucket: ${{ steps.amplify_outputs.outputs.bucket_name }}
+          CYPRESS_userPoolId: ${{ steps.amplify_outputs.outputs.user_pool_id }}
+          CYPRESS_clientId: ${{ steps.amplify_outputs.outputs.client_id }}
+          CYPRESS_appsyncGraphqlEndpoint: ${{ steps.amplify_outputs.outputs.graphql_endpoint }}
+          CYPRESS_appsyncRegion: ${{ vars.AWS_REGION }}
+          CYPRESS_appsyncAuthenticationType: AMAZON_COGNITO_USER_POOLS
+        run: npx cypress run --config video=false

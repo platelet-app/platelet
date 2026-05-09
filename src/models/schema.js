@@ -314,6 +314,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "isBeingDeleted": {
+                    "name": "isBeingDeleted",
+                    "isArray": false,
+                    "type": "Boolean",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -2708,5 +2715,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.4",
-    "version": "131e524771bbce65ede4aec3de4f8676"
+    "version": "ea23c7472135f07a7efd4966b35c2d76"
 };

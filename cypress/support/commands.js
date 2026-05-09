@@ -104,15 +104,55 @@ DataStore.configure({
 });
 
 Cypress.Commands.add("signIn", (role) => {
-    let username = Cypress.env("adminusername");
-    let password = Cypress.env("adminpassword");
-    if (role === "RIDER") {
-        username = Cypress.env("riderusername");
-        password = Cypress.env("riderpassword");
-    } else if (role === "COORDINATOR") {
-        username = Cypress.env("coordusername");
-        password = Cypress.env("coordpassword");
+    const completeSignIn = (cognitoUser) => {
+        const makeKey = (name) =>
+            `CognitoIdentityServiceProvider.${cognitoUser.pool.clientId}.${cognitoUser.username}.${name}`;
+
+        cy.setLocalStorage(makeKey("accessToken"), cognitoUser.signInUserSession.accessToken.jwtToken);
+        cy.setLocalStorage(makeKey("idToken"), cognitoUser.signInUserSession.idToken.jwtToken);
+        cy.setLocalStorage(
+            `CognitoIdentityServiceProvider.${cognitoUser.pool.clientId}.LastAuthUser`,
+            cognitoUser.username
+        );
+        cy.then(() =>
+            API.graphql({
+                query: queries.getUserByCognitoId,
+                variables: { cognitoId: cognitoUser.attributes.sub },
+                authMode: "AMAZON_COGNITO_USER_POOLS",
+            })
+        ).then((response) => {
+            const items = response.data.getUserByCognitoId.items;
+            if (items.length > 0) {
+                Cypress.env("tenantId", items[0].tenantId);
+            }
+        });
+    };
+
+    if (role === "RIDER" || role === "COORDINATOR") {
+        cy.task("getFixtureUsers").then((users) => {
+            const { username, password } =
+                role === "COORDINATOR" ? users.coord : users.rider;
+            return Auth.signIn(username, password);
+        }).then(completeSignIn);
+    } else {
+        // ADMIN
+        cy.then(() =>
+            Auth.signIn(Cypress.env("adminusername"), Cypress.env("adminpassword"))
+        ).then(completeSignIn);
     }
+
+    cy.saveLocalStorage();
+});
+
+/**
+ * Sign in as any Cognito user given explicit credentials.
+ * Use this when tests need to act as a non-fixture user (e.g. a freshly
+ * registered test user). Signs out any current session first, then signs in
+ * and persists the tokens so subsequent API calls use this identity.
+ * Call cy.signIn("ADMIN") afterwards to restore the admin session.
+ */
+Cypress.Commands.add("signInWithCredentials", (username, password) => {
+    cy.then(() => Auth.signOut().catch(() => {}));
     cy.then(() => Auth.signIn(username, password)).then((cognitoUser) => {
         const idToken = cognitoUser.signInUserSession.idToken.jwtToken;
         const accessToken = cognitoUser.signInUserSession.accessToken.jwtToken;
@@ -202,4 +242,47 @@ Cypress.Commands.add("addSingleTask", () => {
     cy.get(".MuiPaper-root").should("be.visible");
     cy.get("[data-cy=create-task-button]").click();
     cy.get("[data-cy=save-to-dash-button]").click();
+});
+
+const API = require("aws-amplify").API;
+const { queries } = require("@platelet-app/graphql");
+
+/**
+ * Execute a GraphQL query or mutation via Cognito user pool auth.
+ * Returns a Cypress chainable that resolves to the full API response.
+ * GraphQL errors cause the promise to reject — use .catch() or wrap in
+ * cy.then(() => promise.catch(e => e)) to inspect errors.
+ */
+Cypress.Commands.add("cognitoGraphqlRequest", (query, variables) => {
+    return cy.then(() =>
+        API.graphql({
+            query,
+            variables,
+            authMode: "AMAZON_COGNITO_USER_POOLS",
+        })
+    );
+});
+
+/**
+ * Execute a GraphQL mutation signed with AWS IAM credentials via cy.task.
+ * Use this when the operation requires IAM permissions not available to
+ * Cognito-authenticated users (e.g. setting isBeingDeleted on a User).
+ *
+ * Credentials are resolved from the standard AWS chain (AWS_ACCESS_KEY_ID env
+ * vars, ~/.aws/credentials profiles, AWS SSO, etc.) — no cypress.env.json
+ * entries required. The caller must have appsync:GraphQL permission on the API.
+ *
+ * Returns a Cypress chainable that resolves to the raw AppSync JSON response
+ * ({ data, errors }). Errors are surfaced in the response rather than thrown.
+ */
+Cypress.Commands.add("iamGraphqlMutation", (query, variables) => {
+    return cy.task("iamGraphqlMutation", { query, variables });
+});
+
+/**
+ * Execute a GraphQL query signed with AWS IAM credentials via cy.task.
+ * Same behaviour as iamGraphqlMutation but semantically for read operations.
+ */
+Cypress.Commands.add("iamGraphqlRequest", (query, variables) => {
+    return cy.task("iamGraphqlRequest", { query, variables });
 });
