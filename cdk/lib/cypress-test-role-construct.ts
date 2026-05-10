@@ -51,6 +51,7 @@ export class CypressTestRole extends Construct {
                 actions: [
                     "cognito-idp:AdminSetUserPassword",
                     "cognito-idp:AdminGetUser",
+                    "cognito-idp:AdminListGroupsForUser",
                 ],
                 resources: [props.userPoolArn],
             })
