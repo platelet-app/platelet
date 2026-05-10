@@ -10,7 +10,7 @@ import {
     CognitoIdentityProviderClient,
     AdminSetUserPasswordCommand,
     AdminGetUserCommand,
-    InitiateAuthCommand,
+    AdminListGroupsForUserCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import fetch from "node-fetch";
 import {
@@ -172,67 +172,37 @@ export default defineConfig({
                 coord: FixtureUser;
                 rider: FixtureUser;
             } | null = null;
-            let storedRefreshToken: string | null = null;
+            let storedAdminToken: string | null = null;
 
             on("after:run", async () => {
-                if (!fixtureUsers || !storedRefreshToken) return;
-                try {
-                    const region = config.env.appsyncRegion as string;
-                    const endpoint = config.env
-                        .appsyncGraphqlEndpoint as string;
-
-                    // Refresh tokens are valid 30 days — no new app client needed.
-                    const { AuthenticationResult } =
-                        await new CognitoIdentityProviderClient({
-                            region,
-                        }).send(
-                            new InitiateAuthCommand({
-                                AuthFlow: "REFRESH_TOKEN_AUTH",
-                                ClientId: config.env.clientId as string,
-                                AuthParameters: {
-                                    REFRESH_TOKEN: storedRefreshToken,
-                                },
-                            })
+                if (!fixtureUsers || !storedAdminToken) return;
+                const endpoint = config.env.appsyncGraphqlEndpoint as string;
+                for (const user of [fixtureUsers.coord, fixtureUsers.rider]) {
+                    try {
+                        await executeCognitoGraphqlRequest(
+                            endpoint,
+                            storedAdminToken,
+                            gqlMutations.disableUser,
+                            { userId: user.id }
                         );
-                    const idToken = AuthenticationResult?.IdToken;
-                    if (!idToken)
-                        throw new Error("Failed to refresh admin token");
-
-                    for (const user of [
-                        fixtureUsers.coord,
-                        fixtureUsers.rider,
-                    ]) {
-                        try {
-                            await executeCognitoGraphqlRequest(
-                                endpoint,
-                                idToken,
-                                gqlMutations.disableUser,
-                                { userId: user.id }
-                            );
-                            await executeCognitoGraphqlRequest(
-                                endpoint,
-                                idToken,
-                                gqlMutations.adminDeleteUser,
-                                { userId: user.id }
-                            );
-                            console.log(
-                                `[Cypress] Cleaned up fixture user ${user.id}`
-                            );
-                        } catch (err) {
-                            console.error(
-                                `[Cypress] Failed to clean up fixture user ${user.id}:`,
-                                err
-                            );
-                        }
+                        await executeCognitoGraphqlRequest(
+                            endpoint,
+                            storedAdminToken,
+                            gqlMutations.adminDeleteUser,
+                            { userId: user.id }
+                        );
+                        console.log(
+                            `[Cypress] Cleaned up fixture user ${user.id}`
+                        );
+                    } catch (err) {
+                        console.error(
+                            `[Cypress] Failed to clean up fixture user ${user.id}:`,
+                            err
+                        );
                     }
-                    fixtureUsers = null;
-                    storedRefreshToken = null;
-                } catch (err) {
-                    console.error(
-                        "[Cypress] Fixture user teardown failed:",
-                        err
-                    );
                 }
+                fixtureUsers = null;
+                storedAdminToken = null;
             });
 
             on("task", {
@@ -310,16 +280,35 @@ export default defineConfig({
                     }
                 },
 
+                async cognitoAdminListGroupsForUser({
+                    username,
+                }: {
+                    username: string;
+                }) {
+                    const region = config.env.appsyncRegion as string;
+                    const userPoolId = config.env.userPoolId as string;
+                    const credentials = resolvedRoleArn
+                        ? await assumeTestRole(region, resolvedRoleArn)
+                        : defaultProvider();
+                    const client = new CognitoIdentityProviderClient({
+                        region,
+                        credentials,
+                    });
+                    const result = await client.send(
+                        new AdminListGroupsForUserCommand({
+                            UserPoolId: userPoolId,
+                            Username: username,
+                        })
+                    );
+                    return (result.Groups ?? []).map((g) => g.GroupName);
+                },
+
                 async createFixtureUsers({
                     adminToken,
-                    refreshToken,
                 }: {
                     adminToken: string;
-                    refreshToken: string;
                 }) {
-                    // Always keep the freshest refresh token for after:run cleanup.
-                    storedRefreshToken = refreshToken;
-
+                    storedAdminToken = adminToken;
                     if (fixtureUsers) return fixtureUsers;
 
                     const region = config.env.appsyncRegion as string;

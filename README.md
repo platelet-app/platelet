@@ -33,3 +33,5 @@ It can be deployed to AWS using Amplify or can be used fully offline with no onl
 If you're interested in developing on Platelet please take a look at [CONTRIBUTING](CONTRIBUTING.md).
 
 For set up instructions, look at [SETTING UP](SETTING_UP.md).
+
+For documentation on CI/CD piplines see [PIPLINES](PIPLINES.MD)
