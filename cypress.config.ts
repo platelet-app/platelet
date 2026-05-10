@@ -10,6 +10,7 @@ import {
     CognitoIdentityProviderClient,
     AdminSetUserPasswordCommand,
     AdminGetUserCommand,
+    AdminListGroupsForUserCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import fetch from "node-fetch";
 import {
@@ -277,6 +278,29 @@ export default defineConfig({
                         }
                         throw err;
                     }
+                },
+
+                async cognitoAdminListGroupsForUser({
+                    username,
+                }: {
+                    username: string;
+                }) {
+                    const region = config.env.appsyncRegion as string;
+                    const userPoolId = config.env.userPoolId as string;
+                    const credentials = resolvedRoleArn
+                        ? await assumeTestRole(region, resolvedRoleArn)
+                        : defaultProvider();
+                    const client = new CognitoIdentityProviderClient({
+                        region,
+                        credentials,
+                    });
+                    const result = await client.send(
+                        new AdminListGroupsForUserCommand({
+                            UserPoolId: userPoolId,
+                            Username: username,
+                        })
+                    );
+                    return (result.Groups ?? []).map((g) => g.GroupName);
                 },
 
                 async createFixtureUsers({
