@@ -1,6 +1,15 @@
+
 [
-  {
-    "Action": [],
-    "Resource": []
-  }
+    {
+        "Action": [
+            "states:StartExecution",
+            "ssm:GetParameter",
+            "ssm:GetParameters",
+            "ssm:GetParametersByPath"
+        ],
+        "Resource": [
+            "arn:aws:states:eu-west-1:130063560692:stateMachine:UserTakeOutDataStepFunctionUserTakeOutDataStateMachineCC811049-EnN9TUrSJTG7",
+            "arn:aws:ssm:eu-west-1:130063560692:parameter/platelet-supporting-cdk/mahalia/UserTakeOutDataStateMachineArn"
+        ]
+    }
 ]
