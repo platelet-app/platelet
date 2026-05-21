@@ -68,9 +68,9 @@ jobs:
           ./scripts/get-cdk-roles.sh cdk/cdk-out.json
       - name: "Commit changes"
         id: 'commit_changes'
-        uses: EndBug/add-and-commit@v9
+        uses: EndBug/add-and-commit@v10
         with:
-          add: './amplify/*custom-{roles,policies}.json'
+          add: ['./amplify/\*custom-roles.json', './amplify/\*custom-policies.json']
           default_author: github_actor
       - name: 'Start Amplify build'
         env:
