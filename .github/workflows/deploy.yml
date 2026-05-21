@@ -130,4 +130,4 @@ jobs:
           CYPRESS_appsyncGraphqlEndpoint: ${{ steps.amplify_outputs.outputs.graphql_endpoint }}
           CYPRESS_appsyncRegion: ${{ vars.AWS_REGION }}
           CYPRESS_appsyncAuthenticationType: AMAZON_COGNITO_USER_POOLS
-        run: npx cypress run --config video=false
+        run: npx cypress run
