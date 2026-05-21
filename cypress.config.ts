@@ -265,13 +265,13 @@ export default defineConfig({
                         credentials,
                     });
                     try {
-                        await client.send(
+                        const result = await client.send(
                             new AdminGetUserCommand({
                                 UserPoolId: userPoolId,
                                 Username: username,
                             })
                         );
-                        return { exists: true };
+                        return { exists: true, enabled: result.Enabled ?? true };
                     } catch (err: any) {
                         if (err.name === "UserNotFoundException") {
                             return { exists: false };
