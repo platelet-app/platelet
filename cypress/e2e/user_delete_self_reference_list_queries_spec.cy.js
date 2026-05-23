@@ -25,7 +25,6 @@ describe("user deletion with self-referencing records", () => {
     let testUserId;
     let testUserUsername;
     let testUserPassword;
-    let createdTaskId;
 
     before(() => {
         cy.signIn("ADMIN");
@@ -97,8 +96,7 @@ describe("user deletion with self-referencing records", () => {
             expect(response.errors, "createTask should not return errors").to.be
                 .undefined;
             expect(response.data.createTask).to.not.be.null;
-            createdTaskId = response.data.createTask.id;
-            expect(createdTaskId).to.exist;
+            expect(response.data.createTask.id).to.exist;
         });
 
         cy.signIn("ADMIN");
@@ -131,7 +129,7 @@ describe("user deletion with self-referencing records", () => {
 
         cy.wait(DELETION_INITIAL_WAIT);
         cy.then(async () => {
-            for (let retries = 0; retries <= DELETION_MAX_RETRIES; retries++) {
+            for (let retries = 0; retries < DELETION_MAX_RETRIES; retries++) {
                 const response = await API.graphql({
                     query: queries.getUser,
                     variables: { id: testUserId },
@@ -144,15 +142,12 @@ describe("user deletion with self-referencing records", () => {
                 if (!response.data.getUser || response.data.getUser._deleted) {
                     return;
                 }
-
-                if (retries === DELETION_MAX_RETRIES) {
-                    throw new Error(
-                        `Timed out waiting for user deletion after ${DELETION_MAX_RETRIES} retries`
-                    );
-                }
-
                 await Cypress.Promise.delay(DELETION_RETRY_INTERVAL);
             }
+
+            throw new Error(
+                `Timed out waiting for user deletion after ${DELETION_MAX_RETRIES} retries`
+            );
         });
 
         cy.then(() =>
