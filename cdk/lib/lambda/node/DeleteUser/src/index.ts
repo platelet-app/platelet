@@ -92,6 +92,9 @@ export const handler = async (event: LambdaEvent): Promise<LambdaReturn> => {
         throw new Error("Missing env variables");
     }
     const user = await getUserFunction(userId, GRAPHQL_ENDPOINT);
+    if (!user) {
+        throw new Error("User not found");
+    }
     if (!user.username) {
         throw new Error("No username found");
     }

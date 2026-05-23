@@ -262,7 +262,7 @@ export class UserTakeOutDataStepFunction extends Construct {
         );
         finishAndSendUserDataFunction.addToRolePolicy(
             new iam.PolicyStatement({
-                actions: ["s3:ListBucket", "s3:PutObject"],
+                actions: ["s3:ListBucket"],
                 resources: [takeOutBucket.bucketArn],
             })
         );
@@ -272,6 +272,13 @@ export class UserTakeOutDataStepFunction extends Construct {
                 resources: [`${takeOutBucket.bucketArn}/*`],
             })
         );
+        finishAndSendUserDataFunction.addToRolePolicy(
+            new iam.PolicyStatement({
+                actions: ["s3:PutObject"],
+                resources: [`${takeOutBucket.bucketArn}/*`],
+            })
+        );
+
         getUserPossibleRiderResponsibilitiesFunction.addToRolePolicy(
             new iam.PolicyStatement({
                 actions: ["s3:PutObject"],
@@ -292,13 +299,6 @@ export class UserTakeOutDataStepFunction extends Construct {
             })
         );
         getUserVehicleAssignmentsFunction.addToRolePolicy(
-            new iam.PolicyStatement({
-                actions: ["s3:PutObject"],
-                resources: [`${takeOutBucket.bucketArn}/*`],
-            })
-        );
-
-        finishAndSendUserDataFunction.addToRolePolicy(
             new iam.PolicyStatement({
                 actions: ["s3:PutObject"],
                 resources: [`${takeOutBucket.bucketArn}/*`],
