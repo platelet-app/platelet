@@ -128,7 +128,7 @@ const deleteTakeOutFile = async (prefix: string) => {
                     Key: item.Key,
                 };
                 const command = new DeleteObjectCommand(input);
-                return client.send(command);
+                return s3Client.send(command);
             }),
             { concurrency: 10 }
         );
