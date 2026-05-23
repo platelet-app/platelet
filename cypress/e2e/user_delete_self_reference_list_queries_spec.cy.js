@@ -129,14 +129,15 @@ describe("user deletion with self-referencing records", () => {
             expect(response.data.adminDeleteUser.executionArn).to.exist;
         });
 
-        const waitForUserDeletion = (retries = 0) => {
-            cy.then(() =>
-                API.graphql({
+        cy.wait(DELETION_INITIAL_WAIT);
+        cy.then(async () => {
+            for (let retries = 0; retries <= DELETION_MAX_RETRIES; retries++) {
+                const response = await API.graphql({
                     query: queries.getUser,
                     variables: { id: testUserId },
                     authMode: "AMAZON_COGNITO_USER_POOLS",
-                })
-            ).then((response) => {
+                });
+
                 expect(response.errors, "getUser should not return errors").to.be
                     .undefined;
 
@@ -144,19 +145,15 @@ describe("user deletion with self-referencing records", () => {
                     return;
                 }
 
-                if (retries >= DELETION_MAX_RETRIES) {
+                if (retries === DELETION_MAX_RETRIES) {
                     throw new Error(
                         `Timed out waiting for user deletion after ${DELETION_MAX_RETRIES} retries`
                     );
                 }
 
-                cy.wait(DELETION_RETRY_INTERVAL);
-                waitForUserDeletion(retries + 1);
-            });
-        };
-
-        cy.wait(DELETION_INITIAL_WAIT);
-        waitForUserDeletion();
+                await Cypress.Promise.delay(DELETION_RETRY_INTERVAL);
+            }
+        });
 
         cy.then(() =>
             API.graphql({
