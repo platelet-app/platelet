@@ -46,11 +46,12 @@ describe("user deletion with self-referencing records", () => {
     });
 
     it("creates records across user relations, deletes the user, and lists related models without API errors", () => {
-        const uniqueSuffix = `${Date.now()}-${Cypress._.random(100000, 999999)}`;
+        const randomToken = `${Cypress._.random(1000000000, 9999999999)}${Cypress._.random(1000000000, 9999999999)}`;
+        const uniqueSuffix = `${Date.now()}-${randomToken}`;
         const tenantId = Cypress.env("tenantId");
         const dateCreated = new Date().toISOString().split("T")[0];
 
-        testUserPassword = `SelfRef${Date.now()}!A`;
+        testUserPassword = `SelfRef!${randomToken}aA`;
 
         cy.then(() =>
             API.graphql({
