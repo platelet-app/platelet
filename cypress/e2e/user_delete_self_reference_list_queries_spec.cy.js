@@ -17,9 +17,9 @@ Amplify.configure({
     aws_appsync_authenticationType: authType,
 });
 
-const DELETION_INITIAL_WAIT = 10000;
+const DELETION_INITIAL_WAIT_MS = 10000;
 const DELETION_MAX_RETRIES = 30;
-const DELETION_RETRY_INTERVAL = 5000;
+const DELETION_RETRY_INTERVAL_MS = 5000;
 
 describe("user deletion with self-referencing records", () => {
     let testUserId;
@@ -127,7 +127,7 @@ describe("user deletion with self-referencing records", () => {
             expect(response.data.adminDeleteUser.executionArn).to.exist;
         });
 
-        cy.wait(DELETION_INITIAL_WAIT);
+        cy.wait(DELETION_INITIAL_WAIT_MS);
         cy.then(async () => {
             for (let retries = 0; retries < DELETION_MAX_RETRIES; retries++) {
                 const response = await API.graphql({
@@ -142,11 +142,14 @@ describe("user deletion with self-referencing records", () => {
                 if (!response.data.getUser || response.data.getUser._deleted) {
                     return;
                 }
-                await Cypress.Promise.delay(DELETION_RETRY_INTERVAL);
+                await Cypress.Promise.delay(DELETION_RETRY_INTERVAL_MS);
             }
 
+            const totalWaitMs =
+                DELETION_INITIAL_WAIT_MS +
+                DELETION_MAX_RETRIES * DELETION_RETRY_INTERVAL_MS;
             throw new Error(
-                `Timed out waiting for user deletion after ${DELETION_MAX_RETRIES} retries`
+                `Timed out waiting for user deletion after ${DELETION_MAX_RETRIES} retries (~${totalWaitMs}ms total wait)`
             );
         });
 
