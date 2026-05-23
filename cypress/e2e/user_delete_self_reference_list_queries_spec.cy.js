@@ -45,7 +45,7 @@ describe("user deletion with self-referencing records", () => {
         cy.saveLocalStorage();
     });
 
-    it("creates a user, creates a self-referencing task, deletes the user, and lists related models without API errors", () => {
+    it("creates records across user relations, deletes the user, and lists related models without API errors", () => {
         const uniqueSuffix = `${Date.now()}-${Cypress._.random(100000, 999999)}`;
         const tenantId = Cypress.env("tenantId");
         const dateCreated = new Date().toISOString().split("T")[0];
@@ -101,7 +101,86 @@ describe("user deletion with self-referencing records", () => {
             expect(response.data.createTask.id).to.exist;
         });
 
+        cy.then(() =>
+            API.graphql({
+                query: mutations.createComment,
+                variables: {
+                    input: {
+                        tenantId,
+                        userCommentsId: testUserId,
+                        body: "self-reference relation test comment",
+                        visibility: "EVERYONE",
+                    },
+                },
+                authMode: "AMAZON_COGNITO_USER_POOLS",
+            })
+        ).then((response) => {
+            expect(response.errors, "createComment should not return errors").to
+                .be.undefined;
+            expect(response.data.createComment).to.not.be.null;
+            expect(response.data.createComment.id).to.exist;
+        });
+
         cy.signIn("ADMIN");
+
+        cy.then(() =>
+            API.graphql({
+                query: mutations.createLocation,
+                variables: {
+                    input: {
+                        tenantId,
+                        userCreatedLocationsId: testUserId,
+                        name: `Self Ref Location ${uniqueSuffix}`,
+                    },
+                },
+                authMode: "AMAZON_COGNITO_USER_POOLS",
+            })
+        ).then((response) => {
+            expect(response.errors, "createLocation should not return errors").to
+                .be.undefined;
+            expect(response.data.createLocation).to.not.be.null;
+            expect(response.data.createLocation.id).to.exist;
+        });
+
+        cy.then(() =>
+            API.graphql({
+                query: mutations.createVehicle,
+                variables: {
+                    input: {
+                        tenantId,
+                        userCreatedVehiclesId: testUserId,
+                        name: `Self Ref Vehicle ${uniqueSuffix}`,
+                    },
+                },
+                authMode: "AMAZON_COGNITO_USER_POOLS",
+            })
+        ).then((response) => {
+            expect(response.errors, "createVehicle should not return errors").to
+                .be.undefined;
+            expect(response.data.createVehicle).to.not.be.null;
+            expect(response.data.createVehicle.id).to.exist;
+        });
+
+        cy.then(() =>
+            API.graphql({
+                query: mutations.createScheduledTask,
+                variables: {
+                    input: {
+                        tenantId,
+                        userCreatedScheduledTasksId: testUserId,
+                        cronExpression: "0 12 * * *",
+                    },
+                },
+                authMode: "AMAZON_COGNITO_USER_POOLS",
+            })
+        ).then((response) => {
+            expect(
+                response.errors,
+                "createScheduledTask should not return errors"
+            ).to.be.undefined;
+            expect(response.data.createScheduledTask).to.not.be.null;
+            expect(response.data.createScheduledTask.id).to.exist;
+        });
 
         cy.then(() =>
             API.graphql({
@@ -193,6 +272,52 @@ describe("user deletion with self-referencing records", () => {
                 "listTasksByTenantId should not return errors"
             ).to.be.undefined;
             expect(response.data.listTasksByTenantId).to.exist;
+        });
+
+        cy.then(() =>
+            API.graphql({
+                query: queries.listLocations,
+                authMode: "AMAZON_COGNITO_USER_POOLS",
+            })
+        ).then((response) => {
+            expect(response.errors, "listLocations should not return errors").to
+                .be.undefined;
+            expect(response.data.listLocations).to.exist;
+        });
+
+        cy.then(() =>
+            API.graphql({
+                query: queries.listVehicles,
+                authMode: "AMAZON_COGNITO_USER_POOLS",
+            })
+        ).then((response) => {
+            expect(response.errors, "listVehicles should not return errors").to
+                .be.undefined;
+            expect(response.data.listVehicles).to.exist;
+        });
+
+        cy.then(() =>
+            API.graphql({
+                query: queries.listScheduledTasks,
+                authMode: "AMAZON_COGNITO_USER_POOLS",
+            })
+        ).then((response) => {
+            expect(
+                response.errors,
+                "listScheduledTasks should not return errors"
+            ).to.be.undefined;
+            expect(response.data.listScheduledTasks).to.exist;
+        });
+
+        cy.then(() =>
+            API.graphql({
+                query: queries.listComments,
+                authMode: "AMAZON_COGNITO_USER_POOLS",
+            })
+        ).then((response) => {
+            expect(response.errors, "listComments should not return errors").to.be
+                .undefined;
+            expect(response.data.listComments).to.exist;
         });
     });
 });
