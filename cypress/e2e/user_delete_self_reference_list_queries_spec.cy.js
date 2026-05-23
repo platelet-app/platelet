@@ -17,6 +17,8 @@ Amplify.configure({
     aws_appsync_authenticationType: authType,
 });
 
+// User deletion is asynchronous (Step Functions + backend cleanup), so allow
+// an initial delay plus retry window (~160 seconds total worst-case).
 const DELETION_INITIAL_WAIT_MS = 10000;
 const DELETION_MAX_RETRIES = 30;
 const DELETION_RETRY_INTERVAL_MS = 5000;
@@ -129,7 +131,11 @@ describe("user deletion with self-referencing records", () => {
 
         cy.wait(DELETION_INITIAL_WAIT_MS);
         cy.then(async () => {
-            for (let attempt = 0; attempt < DELETION_MAX_RETRIES; attempt++) {
+            for (
+                let attemptNumber = 1;
+                attemptNumber <= DELETION_MAX_RETRIES;
+                attemptNumber++
+            ) {
                 const response = await API.graphql({
                     query: queries.getUser,
                     variables: { id: testUserId },
@@ -149,7 +155,7 @@ describe("user deletion with self-referencing records", () => {
                 DELETION_INITIAL_WAIT_MS +
                 DELETION_MAX_RETRIES * DELETION_RETRY_INTERVAL_MS;
             throw new Error(
-                `Timed out waiting for user deletion after ${DELETION_MAX_RETRIES} retries (~${totalWaitMs}ms total wait)`
+                `Timed out waiting for user deletion after ${DELETION_MAX_RETRIES} attempts (~${totalWaitMs}ms total wait)`
             );
         });
 
