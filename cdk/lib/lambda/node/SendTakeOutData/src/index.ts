@@ -27,9 +27,10 @@ const TAKE_OUT_BUCKET = process.env.TAKE_OUT_BUCKET;
 const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT;
 const REGION = process.env.REGION;
 
+const s3Client = new S3Client({ region: REGION || "eu-west-1" });
+
 const writeToBucket = async (data: User, key: string) => {
     const json = JSON.stringify(data);
-    const s3Client = new S3Client({ region: REGION || "eu-west-1" });
     await s3Client.send(
         new PutObjectCommand({
             Bucket: TAKE_OUT_BUCKET,
@@ -40,7 +41,6 @@ const writeToBucket = async (data: User, key: string) => {
 };
 
 export const listTakeOutFiles = async (prefix: string) => {
-    const s3Client = new S3Client({ region: REGION || "eu-west-1" });
     const input = {
         Bucket: TAKE_OUT_BUCKET,
         Prefix: prefix,
@@ -54,7 +54,6 @@ const writeProfilePictures = async (
     sourceBucket: string,
     userId: string
 ) => {
-    const s3Client = new S3Client({ region: REGION || "eu-west-1" });
     for (const pic of pictures.Contents || []) {
         const command = new CopyObjectCommand({
             CopySource: `/${sourceBucket}/${pic.Key}`,
@@ -80,7 +79,6 @@ const zipFiles = async (userId: string) => {
         ContentType: "application/zip",
     };
 
-    const s3Client = new S3Client({ region: REGION || "eu-west-1" });
     const uploader = new Upload({ client: s3Client, params: uploadParams });
     const uploadPromise = uploader.done();
 
@@ -119,7 +117,6 @@ const zipFiles = async (userId: string) => {
 };
 
 const deleteTakeOutFile = async (prefix: string) => {
-    const client = new S3Client({ region: REGION || "eu-west-1" });
     const listFiles = await listTakeOutFiles(`${prefix}/`);
 
     const filenames = listFiles.Contents;
@@ -152,7 +149,6 @@ const getUserFunction = async (
 };
 
 const generatePresignedLink = async (key: string) => {
-    const s3Client = new S3Client({ region: REGION || "eu-west-1" });
     const input = {
         Bucket: TAKE_OUT_BUCKET,
         Key: key,
