@@ -132,9 +132,9 @@ describe("user deletion with self-referencing records", () => {
         cy.wait(DELETION_INITIAL_WAIT_MS);
         cy.then(async () => {
             for (
-                let attemptNumber = 1;
-                attemptNumber <= DELETION_MAX_RETRIES;
-                attemptNumber++
+                let attempt = 1;
+                attempt <= DELETION_MAX_RETRIES;
+                attempt++
             ) {
                 const response = await API.graphql({
                     query: queries.getUser,
@@ -155,7 +155,7 @@ describe("user deletion with self-referencing records", () => {
                 DELETION_INITIAL_WAIT_MS +
                 DELETION_MAX_RETRIES * DELETION_RETRY_INTERVAL_MS;
             throw new Error(
-                `Timed out waiting for user deletion after ${DELETION_MAX_RETRIES} attempts (up to ~${totalWaitMs}ms total wait)`
+                `Timed out waiting for user deletion after ${DELETION_MAX_RETRIES} attempts (~${totalWaitMs}ms total wait)`
             );
         });
 
