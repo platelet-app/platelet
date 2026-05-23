@@ -44,18 +44,18 @@ describe("user deletion with self-referencing records", () => {
     });
 
     it("creates a user, creates a self-referencing task, deletes the user, and lists related models without API errors", () => {
-        const timestamp = Date.now();
+        const uniqueSuffix = `${Date.now()}-${Cypress._.random(100000, 999999)}`;
         const tenantId = Cypress.env("tenantId");
         const dateCreated = new Date().toISOString().split("T")[0];
 
-        testUserPassword = `SelfRef${timestamp}!A`;
+        testUserPassword = `SelfRef${Date.now()}!A`;
 
         cy.then(() =>
             API.graphql({
                 query: mutations.registerUser,
                 variables: {
-                    name: `Self Ref User ${timestamp}`,
-                    email: `self-ref-${timestamp}@platelet.app`,
+                    name: `Self Ref User ${uniqueSuffix}`,
+                    email: `self-ref-${uniqueSuffix}@platelet.app`,
                     tenantId,
                     roles: ["RIDER", "USER"],
                 },
@@ -87,7 +87,7 @@ describe("user deletion with self-referencing records", () => {
                         userCreatedTasksId: testUserId,
                         dateCreated,
                         status: "NEW",
-                        timeOfCall: new Date(timestamp).toISOString(),
+                        timeOfCall: new Date().toISOString(),
                     },
                 },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
@@ -129,7 +129,7 @@ describe("user deletion with self-referencing records", () => {
 
         cy.wait(DELETION_INITIAL_WAIT_MS);
         cy.then(async () => {
-            for (let retries = 0; retries < DELETION_MAX_RETRIES; retries++) {
+            for (let attempt = 0; attempt < DELETION_MAX_RETRIES; attempt++) {
                 const response = await API.graphql({
                     query: queries.getUser,
                     variables: { id: testUserId },
