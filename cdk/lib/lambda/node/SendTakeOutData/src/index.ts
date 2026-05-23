@@ -176,7 +176,7 @@ const sendEmail = async (
     Dear ${recipientName},
 </p>
 <p>
-    Please use <a href=${presignedUrl}>this link</a> to download your take out data.
+    Please use <a href="${presignedUrl}">this link</a> to download your take out data.
 </p>
 <p>
     <b>This link will expire one day from now.</b>
@@ -186,7 +186,7 @@ const sendEmail = async (
 </p>
 `;
 
-    var mailOptions = {
+    const mailOptions = {
         from: "noreply@platelet.app",
         subject: "Your requested take out data",
         html,
@@ -195,7 +195,7 @@ const sendEmail = async (
 
     console.log("Creating SES transporter");
     const sesClient = new SESv2Client({ region: REGION || "eu-west-1" });
-    var transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
         SES: { sesClient, SendEmailCommand },
     });
 
@@ -209,7 +209,7 @@ export const handler = async (event: LambdaEvent) => {
         throw new Error("Missing env variables");
     }
     const user = await getUserFunction(userId, GRAPHQL_ENDPOINT);
-    writeToBucket(user, `${userId}/user.json`);
+    await writeToBucket(user, `${userId}/user.json`);
     if (user?.profilePicture) {
         const pictures = await getUserProfilePictures(user.profilePicture);
         await writeProfilePictures(

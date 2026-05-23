@@ -262,7 +262,7 @@ export class UserTakeOutDataStepFunction extends Construct {
         );
         finishAndSendUserDataFunction.addToRolePolicy(
             new iam.PolicyStatement({
-                actions: ["s3:ListBucket", "s3:PutObject"],
+                actions: ["s3:ListBucket"],
                 resources: [takeOutBucket.bucketArn],
             })
         );
