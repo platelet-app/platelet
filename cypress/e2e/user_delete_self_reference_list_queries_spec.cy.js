@@ -232,7 +232,7 @@ describe("user deletion with self-referencing records", () => {
                 DELETION_INITIAL_WAIT_MS +
                 DELETION_MAX_RETRIES * DELETION_RETRY_INTERVAL_MS;
             throw new Error(
-                `Timed out waiting for user deletion after ${DELETION_MAX_RETRIES} attempts (~${totalWaitMs}ms total wait)`
+                `Timed out waiting for user deletion for userId=${testUserId}, username=${testUserUsername} after ${DELETION_MAX_RETRIES} attempts (~${totalWaitMs}ms total wait)`
             );
         });
 
