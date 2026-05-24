@@ -66,6 +66,22 @@ const fakeUser = {
 };
 
 describe("DeleteUser", () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    test("throws User not found when user does not exist", async () => {
+        lambda.request.mockImplementationOnce(
+            setupFetchStub({ getUser: null })
+        );
+        await expect(
+            handler({ userId: "test", retryCount: 1 })
+        ).rejects.toThrow("User not found");
+        expect(cognito.mockSend).not.toHaveBeenCalled();
+        expect(s3.mockSend).not.toHaveBeenCalled();
+        expect(lambda.request).toHaveBeenCalledTimes(1);
+    });
+
     test("delete a user", async () => {
         lambda.request
             .mockImplementationOnce(setupFetchStub(fakeUser))
