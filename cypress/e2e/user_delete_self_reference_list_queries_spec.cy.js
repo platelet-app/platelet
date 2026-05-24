@@ -23,6 +23,13 @@ const DELETION_INITIAL_WAIT_MS = 10000;
 const DELETION_MAX_RETRIES = 30;
 const DELETION_RETRY_INTERVAL_MS = 5000;
 const DAILY_NOON_CRON_EXPRESSION = "0 12 * * *";
+const assertNoGraphqlErrors = (response, operationName) => {
+    const errors = response?.errors ?? [];
+    expect(
+        errors,
+        `${operationName} should return no GraphQL errors`
+    ).to.have.length(0);
+};
 
 describe("user deletion with self-referencing records", () => {
     let testUserId;
@@ -68,8 +75,7 @@ describe("user deletion with self-referencing records", () => {
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
         ).then((response) => {
-            expect(response.errors, "registerUser should not return errors").to.be
-                .undefined;
+            assertNoGraphqlErrors(response, "registerUser");
             expect(response.data.registerUser).to.not.be.null;
             testUserId = response.data.registerUser.id;
             testUserUsername = response.data.registerUser.username;
@@ -99,8 +105,7 @@ describe("user deletion with self-referencing records", () => {
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
         ).then((response) => {
-            expect(response.errors, "createTask should not return errors").to.be
-                .undefined;
+            assertNoGraphqlErrors(response, "createTask");
             expect(response.data.createTask).to.not.be.null;
             expect(response.data.createTask.id).to.exist;
         });
@@ -119,8 +124,7 @@ describe("user deletion with self-referencing records", () => {
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
         ).then((response) => {
-            expect(response.errors, "createComment should not return errors").to
-                .be.undefined;
+            assertNoGraphqlErrors(response, "createComment");
             expect(response.data.createComment).to.not.be.null;
             expect(response.data.createComment.id).to.exist;
         });
@@ -140,8 +144,7 @@ describe("user deletion with self-referencing records", () => {
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
         ).then((response) => {
-            expect(response.errors, "createLocation should not return errors").to
-                .be.undefined;
+            assertNoGraphqlErrors(response, "createLocation");
             expect(response.data.createLocation).to.not.be.null;
             expect(response.data.createLocation.id).to.exist;
         });
@@ -159,8 +162,7 @@ describe("user deletion with self-referencing records", () => {
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
         ).then((response) => {
-            expect(response.errors, "createVehicle should not return errors").to
-                .be.undefined;
+            assertNoGraphqlErrors(response, "createVehicle");
             expect(response.data.createVehicle).to.not.be.null;
             expect(response.data.createVehicle.id).to.exist;
         });
@@ -178,10 +180,7 @@ describe("user deletion with self-referencing records", () => {
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
         ).then((response) => {
-            expect(
-                response.errors,
-                "createScheduledTask should not return errors"
-            ).to.be.undefined;
+            assertNoGraphqlErrors(response, "createScheduledTask");
             expect(response.data.createScheduledTask).to.not.be.null;
             expect(response.data.createScheduledTask.id).to.exist;
         });
@@ -193,8 +192,7 @@ describe("user deletion with self-referencing records", () => {
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
         ).then((response) => {
-            expect(response.errors, "disableUser should not return errors").to.be
-                .undefined;
+            assertNoGraphqlErrors(response, "disableUser");
             expect(response.data.disableUser.disabled).to.equal(1);
         });
 
@@ -205,10 +203,7 @@ describe("user deletion with self-referencing records", () => {
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
         ).then((response) => {
-            expect(
-                response.errors,
-                "adminDeleteUser should not return errors"
-            ).to.be.undefined;
+            assertNoGraphqlErrors(response, "adminDeleteUser");
             expect(response.data.adminDeleteUser.executionArn).to.exist;
         });
 
@@ -225,8 +220,7 @@ describe("user deletion with self-referencing records", () => {
                     authMode: "AMAZON_COGNITO_USER_POOLS",
                 });
 
-                expect(response.errors, "getUser should not return errors").to.be
-                    .undefined;
+                assertNoGraphqlErrors(response, "getUser");
 
                 if (!response.data.getUser || response.data.getUser._deleted) {
                     return;
@@ -248,8 +242,7 @@ describe("user deletion with self-referencing records", () => {
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
         ).then((response) => {
-            expect(response.errors, "listUsers should not return errors").to.be
-                .undefined;
+            assertNoGraphqlErrors(response, "listUsers");
             expect(response.data.listUsers).to.exist;
         });
 
@@ -259,8 +252,7 @@ describe("user deletion with self-referencing records", () => {
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
         ).then((response) => {
-            expect(response.errors, "listTasks should not return errors").to.be
-                .undefined;
+            assertNoGraphqlErrors(response, "listTasks");
             expect(response.data.listTasks).to.exist;
         });
 
@@ -271,10 +263,7 @@ describe("user deletion with self-referencing records", () => {
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
         ).then((response) => {
-            expect(
-                response.errors,
-                "listTasksByTenantId should not return errors"
-            ).to.be.undefined;
+            assertNoGraphqlErrors(response, "listTasksByTenantId");
             expect(response.data.listTasksByTenantId).to.exist;
         });
 
@@ -284,8 +273,7 @@ describe("user deletion with self-referencing records", () => {
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
         ).then((response) => {
-            expect(response.errors, "listLocations should not return errors").to
-                .be.undefined;
+            assertNoGraphqlErrors(response, "listLocations");
             expect(response.data.listLocations).to.exist;
         });
 
@@ -295,8 +283,7 @@ describe("user deletion with self-referencing records", () => {
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
         ).then((response) => {
-            expect(response.errors, "listVehicles should not return errors").to
-                .be.undefined;
+            assertNoGraphqlErrors(response, "listVehicles");
             expect(response.data.listVehicles).to.exist;
         });
 
@@ -306,10 +293,7 @@ describe("user deletion with self-referencing records", () => {
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
         ).then((response) => {
-            expect(
-                response.errors,
-                "listScheduledTasks should not return errors"
-            ).to.be.undefined;
+            assertNoGraphqlErrors(response, "listScheduledTasks");
             expect(response.data.listScheduledTasks).to.exist;
         });
 
@@ -319,8 +303,7 @@ describe("user deletion with self-referencing records", () => {
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
         ).then((response) => {
-            expect(response.errors, "listComments should not return errors").to.be
-                .undefined;
+            assertNoGraphqlErrors(response, "listComments");
             expect(response.data.listComments).to.exist;
         });
     });
