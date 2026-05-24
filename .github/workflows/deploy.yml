@@ -11,6 +11,9 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name }}
+    strategy:
+      matrix:
+        node-version: [20.x]
     steps:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v3
