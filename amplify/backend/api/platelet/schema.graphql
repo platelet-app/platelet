@@ -349,7 +349,7 @@ type Comment
   {allow: private, provider: iam, operations: [read, delete]},
   {allow: groups, groups: ["USER"], operations: [read]},
   {allow: owner, operations: [create, read, delete, update]},
-  {allow: groups, groups: ["ADMIN"], operations: [create, read, delete, update]},
+  {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
 ])
 @model {
   id: ID!
@@ -522,6 +522,7 @@ type Statistics {
   numPickedUp: Int
   numNew: Int
   numTest: Int
+
 }
 
 type Query {
