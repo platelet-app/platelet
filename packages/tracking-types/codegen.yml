@@ -1,0 +1,21 @@
+overwrite: true
+schema:
+  - ../../cdk-platform/schema/tracking.graphql
+  - ../../cdk-platform/appsync.graphql
+
+config:
+  scalars:
+    AWSJSON: string
+    AWSDate: string
+    AWSTime: string
+    AWSDateTime: string
+    AWSTimestamp: number
+    AWSEmail: string
+    AWSURL: string
+    AWSPhone: string
+    AWSIPAddress: string
+
+generates:
+  dist/index.d.ts:
+    plugins:
+      - typescript
