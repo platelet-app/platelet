@@ -1,0 +1,18 @@
+type Location {
+  town: String
+  postCode: String
+}
+
+type TrackingInfo {
+  id: ID!
+  pickUpTime: AWSDateTime
+  dropOffTime: AWSDateTime
+  tenantName: String!
+  tenantWebsite: AWSURL
+  pickUpLocation: Location
+  dropOffLocation: Location
+}
+
+type Query {
+  getTracking(token: String!): TrackingInfo
+}
