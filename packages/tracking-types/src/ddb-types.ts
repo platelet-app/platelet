@@ -18,4 +18,5 @@ export type TaskDdbRecord = {
 export type TokenDdbRecord = {
     pk: string;
     TaskId: string;
+    ExpiresAt: number;
 };
