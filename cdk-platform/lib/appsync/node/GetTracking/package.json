@@ -1,0 +1,29 @@
+{
+  "name": "gettracking",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/platelet-app/platelet#readme",
+  "bugs": {
+    "url": "https://github.com/platelet-app/platelet/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/platelet-app/platelet.git"
+  },
+  "license": "Apache-2.0",
+  "author": "Theo Cranmore <theo@platelet.app>",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "@aws-appsync/utils": "^2.1.1",
+    "@aws-sdk/client-dynamodb": "^3.1053.0",
+    "@aws-sdk/lib-dynamodb": "^3.1053.0",
+    "@platelet-app/tracking-types": "^1.0.7"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.161"
+  }
+}
