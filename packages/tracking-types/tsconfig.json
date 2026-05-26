@@ -3,6 +3,7 @@
     "target": "esnext",
     "module": "nodenext",
     "declaration": true,
+    "emitDeclarationOnly": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "esModuleInterop": true,
@@ -10,6 +11,6 @@
     "skipLibCheck": true
   },
   "include": [
-    "src/**/*.d.ts"
+    "src/**/*.ts"
   ]
 }

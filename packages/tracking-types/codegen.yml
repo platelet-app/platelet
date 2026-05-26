@@ -16,6 +16,6 @@ config:
     AWSIPAddress: string
 
 generates:
-  dist/index.d.ts:
+  src/graphql-types.ts:
     plugins:
       - typescript
