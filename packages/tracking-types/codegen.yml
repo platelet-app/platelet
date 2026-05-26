@@ -1,7 +1,7 @@
 overwrite: true
 schema:
   - ../../cdk-platform/schema/tracking.graphql
-  - ../../cdk-platform/appsync.graphql
+  - ./appsync.graphql
 
 config:
   scalars:
