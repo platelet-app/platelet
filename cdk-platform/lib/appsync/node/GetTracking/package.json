@@ -21,7 +21,7 @@
     "@aws-appsync/utils": "^2.1.1",
     "@aws-sdk/client-dynamodb": "^3.1053.0",
     "@aws-sdk/lib-dynamodb": "^3.1053.0",
-    "@platelet-app/tracking-types": "^1.0.7"
+    "@platelet-app/tracking-types": "^1.0.8"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.161"

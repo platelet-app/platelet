@@ -19,7 +19,7 @@
     },
     "dependencies": {
         "@aws-appsync/utils": "^2.1.1",
-        "@platelet-app/tracking-types": "^1.0.7"
+        "@platelet-app/tracking-types": "^1.0.8"
     },
     "devDependencies": {
         "@types/aws-lambda": "^8.10.161"
