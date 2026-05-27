@@ -13,6 +13,7 @@ type Tenant
 
 type User
 @auth(rules: [
+  {allow: private, provider: iam, operations: [read, delete]},
   {allow: private, operations: [read]},
 ])
 @model {
