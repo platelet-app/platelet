@@ -15,7 +15,6 @@ export class TrackingAppSyncConstruct extends Construct {
         props: TrackingAppSyncConstructProps
     ) {
         super(scope, id);
-        // makes a GraphQL API
         const api = new appsync.GraphqlApi(this, "tracking-api", {
             name: "external-users-tracking-api",
             schema: appsync.SchemaFile.fromAsset("schema/tracking.graphql"),
@@ -67,29 +66,26 @@ export class TrackingAppSyncConstruct extends Construct {
             typeName: "Query",
             fieldName: "getTracking",
             code: appsync.Code.fromInline(`
-          export function request(ctx) {
-          return {};
-          }
+              export function request(ctx) {
+                  return {};
+              }
 
-          export function response(ctx) {
-          return ctx.prev.result;
-          }
-  `),
+              export function response(ctx) {
+                  return ctx.prev.result;
+              }
+       `),
             runtime: appsync.FunctionRuntime.JS_1_0_0,
             pipelineConfig: [getTrackingAppSyncFunction, resolveTaskInfo],
         });
 
-        // Prints out URL
         new cdk.CfnOutput(this, "GraphQLAPIURL", {
             value: api.graphqlUrl,
         });
 
-        // Prints out the AppSync GraphQL API key to the terminal
         new cdk.CfnOutput(this, "GraphQLAPIKey", {
             value: api.apiKey || "",
         });
 
-        // Prints out the stack region to the terminal
         new cdk.CfnOutput(this, "Stack Region", {
             value: props.region,
         });
