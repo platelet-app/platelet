@@ -8,6 +8,7 @@ export interface TrackingAppSyncConstructProps {
 }
 
 export class TrackingAppSyncConstruct extends Construct {
+    public trackingTable: cdk.aws_dynamodb.Table;
     constructor(
         scope: Construct,
         id: string,
@@ -20,16 +21,12 @@ export class TrackingAppSyncConstruct extends Construct {
             schema: appsync.SchemaFile.fromAsset("schema/tracking.graphql"),
         });
 
-        const trackingDdbTable = new dynamodb.Table(
-            this,
-            "tracking-info-table",
-            {
-                partitionKey: {
-                    name: "pk",
-                    type: dynamodb.AttributeType.STRING,
-                },
-            }
-        );
+        this.trackingTable = new dynamodb.Table(this, "tracking-info-table", {
+            partitionKey: {
+                name: "pk",
+                type: dynamodb.AttributeType.STRING,
+            },
+        });
 
         const getTrackingAppSyncFunction = new appsync.AppsyncFunction(
             this,
@@ -39,7 +36,7 @@ export class TrackingAppSyncConstruct extends Construct {
                 api,
                 dataSource: api.addDynamoDbDataSource(
                     "table-for-tracking",
-                    trackingDdbTable
+                    this.trackingTable
                 ),
                 code: appsync.Code.fromAsset(
                     "./lib/appsync/node/GetTracking/dist/index.js"
@@ -56,7 +53,7 @@ export class TrackingAppSyncConstruct extends Construct {
                 api,
                 dataSource: api.addDynamoDbDataSource(
                     "table-for-tracking-resolve",
-                    trackingDdbTable
+                    this.trackingTable
                 ),
                 code: appsync.Code.fromAsset(
                     "./lib/appsync/node/ResolveTaskInfo/dist/index.js"
