@@ -10,7 +10,7 @@ import { Alias } from "aws-cdk-lib/aws-kms";
 
 export interface TrackingSQSConstructProps {
     region: string;
-    alertsEmail: string;
+    alertsEmail?: string;
 }
 
 export class TrackingSQSConstruct extends Construct {
@@ -60,10 +60,11 @@ export class TrackingSQSConstruct extends Construct {
             masterKey: snsKey,
         });
 
-        // Subscribe your email (replace with yours!)
-        alertTopic.addSubscription(
-            new subscriptions.EmailSubscription(props.alertsEmail)
-        );
+        if (props.alertsEmail) {
+            alertTopic.addSubscription(
+                new subscriptions.EmailSubscription(props.alertsEmail)
+            );
+        }
 
         // ====================================================================
         // 4. CloudWatch Alarm → Send email when DLQ has messages
