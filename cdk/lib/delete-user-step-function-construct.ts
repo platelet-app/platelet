@@ -15,7 +15,7 @@ import * as events_targets from "aws-cdk-lib/aws-events-targets";
 import { Construct } from "constructs";
 import { NagSuppressions } from "cdk-nag";
 import { createLambdaStatement, getRoleArnNameOnly } from "./utils";
-import { Alias, Key } from "aws-cdk-lib/aws-kms";
+import { Alias } from "aws-cdk-lib/aws-kms";
 
 export interface DeleteUserStepFunctionProps {
     userPoolId: string;
@@ -495,7 +495,6 @@ export class DeleteUserStepFunction extends Construct {
                     level: sfn.LogLevel.ALL,
                 },
                 tracingEnabled: true,
-                timeout: cdk.Duration.hours(1),
             }
         );
 

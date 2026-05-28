@@ -408,7 +408,6 @@ export class UserTakeOutDataStepFunction extends Construct {
                     level: sfn.LogLevel.ALL,
                 },
                 tracingEnabled: true,
-                timeout: cdk.Duration.hours(1),
             }
         );
 
