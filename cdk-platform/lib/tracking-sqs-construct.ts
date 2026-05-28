@@ -6,6 +6,7 @@ import * as cloudwatch from "aws-cdk-lib/aws-cloudwatch";
 import * as cloudwatch_actions from "aws-cdk-lib/aws-cloudwatch-actions";
 import * as sns from "aws-cdk-lib/aws-sns";
 import * as subscriptions from "aws-cdk-lib/aws-sns-subscriptions";
+import { Alias } from "aws-cdk-lib/aws-kms";
 
 export interface TrackingSQSConstructProps {
     region: string;
@@ -47,8 +48,16 @@ export class TrackingSQSConstruct extends Construct {
         // 3. SNS Topic to get notified when messages land in DLQ
         // ====================================================================
 
+        const snsKey = Alias.fromAliasName(
+            this,
+            "TrackingSQSTopic",
+            "alias/aws/sns"
+        );
+
         const alertTopic = new sns.Topic(this, "SqsFailureAlertTopic", {
             topicName: "sqs-failure-alerts",
+            enforceSSL: true,
+            masterKey: snsKey,
         });
 
         // Subscribe your email (replace with yours!)
