@@ -8,9 +8,14 @@ import * as ssm from "aws-cdk-lib/aws-ssm";
 import * as appsync from "aws-cdk-lib/aws-appsync";
 import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as s3 from "aws-cdk-lib/aws-s3";
+import * as sns from "aws-cdk-lib/aws-sns";
+import * as sns_subscriptions from "aws-cdk-lib/aws-sns-subscriptions";
+import * as events from "aws-cdk-lib/aws-events";
+import * as events_targets from "aws-cdk-lib/aws-events-targets";
 import { Construct } from "constructs";
 import { NagSuppressions } from "cdk-nag";
 import { createLambdaStatement, getRoleArnNameOnly } from "./utils";
+import { Alias } from "aws-cdk-lib/aws-kms";
 
 export interface DeleteUserStepFunctionProps {
     userPoolId: string;
@@ -20,6 +25,7 @@ export interface DeleteUserStepFunctionProps {
     graphQLEndpoint: string;
     amplifyEnv: string;
     retryFunction: lambda.Function;
+    alertEmail?: string;
 }
 
 export class DeleteUserStepFunction extends Construct {
@@ -502,6 +508,36 @@ export class DeleteUserStepFunction extends Construct {
             ],
             true
         );
+
+        const snsKey = Alias.fromAliasName(
+            this,
+            "DeleteUserTopicKey",
+            "alias/aws/sns"
+        );
+
+        if (props.alertEmail) {
+            const failureAlertTopic = new sns.Topic(
+                this,
+                "DeleteUserFailureAlertTopic",
+                { enforceSSL: true, masterKey: snsKey }
+            );
+            failureAlertTopic.addSubscription(
+                new sns_subscriptions.EmailSubscription(props.alertEmail)
+            );
+            new events.Rule(this, "DeleteUserStateMachineFailureRule", {
+                eventPattern: {
+                    source: ["aws.states"],
+                    detailType: ["Step Functions Execution Status Change"],
+                    detail: {
+                        stateMachineArn: [
+                            deleteUserStateMachine.stateMachineArn,
+                        ],
+                        status: ["FAILED", "TIMED_OUT", "ABORTED"],
+                    },
+                },
+                targets: [new events_targets.SnsTopic(failureAlertTopic)],
+            });
+        }
 
         // save the state machine name to SSM to be accessed by plateletAdminDeleteUser lambda
         const deleteUserStateMachineArnSSMParam = new ssm.StringParameter(
