@@ -57,6 +57,9 @@ The GraphQL endpoint for the tenant API. This can be acquired from the AWS conso
 `TENANT_NAME`:
 The name of the current tenant being deployed to. This is what will be displayed to users when selecting their tenant at initial setup.
 
+`ALERT_EMAIL`:
+Optional email address to receive alerts on.
+
 ### Updating the tenant API
 
 Attach this policy to the AWS account to give access to the tenant API:
