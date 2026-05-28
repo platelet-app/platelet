@@ -15,6 +15,7 @@ import * as events_targets from "aws-cdk-lib/aws-events-targets";
 import { Construct } from "constructs";
 import { NagSuppressions } from "cdk-nag";
 import { createLambdaStatement, getRoleArnNameOnly } from "./utils";
+import { Alias, Key } from "aws-cdk-lib/aws-kms";
 
 export interface DeleteUserStepFunctionProps {
     userPoolId: string;
@@ -509,11 +510,17 @@ export class DeleteUserStepFunction extends Construct {
             true
         );
 
+        const snsKey = Alias.fromAliasName(
+            this,
+            "DeleteUserTopicKey",
+            "alias/aws/sns"
+        );
+
         if (props.alertEmail) {
             const failureAlertTopic = new sns.Topic(
                 this,
                 "DeleteUserFailureAlertTopic",
-                { enforceSSL: true }
+                { enforceSSL: true, masterKey: snsKey }
             );
             failureAlertTopic.addSubscription(
                 new sns_subscriptions.EmailSubscription(props.alertEmail)
