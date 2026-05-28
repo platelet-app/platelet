@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib/core';
-import { CdkPlatformStack } from '../lib/cdk-platform-stack';
+import { PlateletCdkPlatformStack } from '../lib/cdk-platform-stack';
 
 const app = new cdk.App();
-new CdkPlatformStack(app, 'CdkPlatformStack', {
+new PlateletCdkPlatformStack(app, 'PlateletCdkPlatformStack', {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */
