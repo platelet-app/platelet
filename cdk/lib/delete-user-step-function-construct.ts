@@ -512,7 +512,8 @@ export class DeleteUserStepFunction extends Construct {
         if (props.alertEmail) {
             const failureAlertTopic = new sns.Topic(
                 this,
-                "DeleteUserFailureAlertTopic"
+                "DeleteUserFailureAlertTopic",
+                { enforceSSL: true }
             );
             failureAlertTopic.addSubscription(
                 new sns_subscriptions.EmailSubscription(props.alertEmail)
