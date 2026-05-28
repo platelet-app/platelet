@@ -88,13 +88,6 @@ export const schema = {
                                 "operations": [
                                     "read"
                                 ]
-                            },
-                            {
-                                "allow": "private",
-                                "provider": "iam",
-                                "operations": [
-                                    "read"
-                                ]
                             }
                         ]
                     }
@@ -461,14 +454,6 @@ export const schema = {
                         "rules": [
                             {
                                 "allow": "private",
-                                "provider": "iam",
-                                "operations": [
-                                    "read",
-                                    "delete"
-                                ]
-                            },
-                            {
-                                "allow": "private",
                                 "operations": [
                                     "read"
                                 ]
@@ -732,14 +717,6 @@ export const schema = {
                     "type": "auth",
                     "properties": {
                         "rules": [
-                            {
-                                "allow": "private",
-                                "provider": "iam",
-                                "operations": [
-                                    "read",
-                                    "delete"
-                                ]
-                            },
                             {
                                 "allow": "private",
                                 "operations": [
@@ -1546,14 +1523,6 @@ export const schema = {
                         "rules": [
                             {
                                 "allow": "private",
-                                "provider": "iam",
-                                "operations": [
-                                    "read",
-                                    "delete"
-                                ]
-                            },
-                            {
-                                "allow": "private",
                                 "operations": [
                                     "read"
                                 ]
@@ -1922,14 +1891,6 @@ export const schema = {
                     "type": "auth",
                     "properties": {
                         "rules": [
-                            {
-                                "allow": "private",
-                                "provider": "iam",
-                                "operations": [
-                                    "read",
-                                    "delete"
-                                ]
-                            },
                             {
                                 "groupClaim": "cognito:groups",
                                 "provider": "userPools",
