@@ -14,6 +14,7 @@ export class PlateletCdkStack extends cdk.Stack {
         const graphQLEndpoint = this.node.tryGetContext("graphQLEndpoint");
         const bucketName = this.node.tryGetContext("bucketName");
         const amplifyEnv = this.node.tryGetContext("amplifyEnv");
+        const alertEmail = this.node.tryGetContext("alertEmail");
 
         const retryConstructInstance = new RetryFunctionConstruct(
             this,
@@ -28,6 +29,7 @@ export class PlateletCdkStack extends cdk.Stack {
             region: this.region,
             amplifyEnv,
             retryFunction: retryConstructInstance.retryFunction,
+            alertEmail,
         });
 
         new UserTakeOutDataStepFunction(this, "UserTakeOutDataStepFunction", {
@@ -36,6 +38,7 @@ export class PlateletCdkStack extends cdk.Stack {
             bucketName,
             region: this.region,
             amplifyEnv,
+            alertEmail,
         });
 
         if (this.node.tryGetContext("createCypressTestingRole") === "true") {
