@@ -36,8 +36,12 @@ const writeRecord = async (data: Task) => {
 
 export const handler: SQSHandler = async (event: SQSEvent) => {
     const actions = event.Records.map((record) => async () => {
-        const body = JSON.parse(record?.body) as Task;
-        await writeRecord(body);
+        const body = JSON.parse(record?.body);
+        if (body?.operation) {
+            if (body?.operation === "UPDATE_TRACKING") {
+                await writeRecord(body as Task);
+            }
+        }
     });
 
     await pAll(actions, { concurrency: 10 });
