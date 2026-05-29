@@ -1,20 +1,30 @@
 {
-  "name": "trackingsqsconsumer",
-  "version": "1.0.0",
-  "description": "",
-  "homepage": "https://github.com/platelet-app/platelet#readme",
-  "bugs": {
-    "url": "https://github.com/platelet-app/platelet/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/platelet-app/platelet.git"
-  },
-  "license": "Apache-2.0",
-  "author": "Theo Cranmore <theo@platelet.app>",
-  "type": "module",
-  "main": "index.js",
-  "scripts": {
-    "test": "jest"
-  }
+    "name": "trackingsqsconsumer",
+    "version": "1.0.0",
+    "description": "",
+    "homepage": "https://github.com/platelet-app/platelet#readme",
+    "bugs": {
+        "url": "https://github.com/platelet-app/platelet/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/platelet-app/platelet.git"
+    },
+    "license": "Apache-2.0",
+    "author": "Theo Cranmore <theo@platelet.app>",
+    "type": "module",
+    "main": "index.js",
+    "scripts": {
+        "test": "jest",
+        "build": "tsc"
+    },
+    "dependencies": {
+        "@aws-sdk/client-dynamodb": "^3.1056.0",
+        "@aws-sdk/lib-dynamodb": "^3.1056.0",
+        "lodash": "^4.18.1",
+        "p-all": "^5.0.1"
+    },
+    "devDependencies": {
+        "@types/node": "^25.9.1"
+    }
 }

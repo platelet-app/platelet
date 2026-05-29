@@ -102,7 +102,7 @@ export class TrackingSQSConstruct extends Construct {
                 ),
                 environment: {
                     REGION: props.region,
-                    DYNAMODB_TABLE: props.ddbTableName,
+                    TABLE_NAME: props.ddbTableName,
                 },
                 role: lambdaRole,
             }
