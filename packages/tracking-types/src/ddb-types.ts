@@ -5,14 +5,13 @@ export type LocationDdb = {
 
 export type TaskDdbRecord = {
     pk: string;
-    sk: string;
-    PickUpTime: string;
-    PickUpLocation: LocationDdb;
-    DropOffTime: string;
-    DropOffLocation: LocationDdb;
-    TenantName: string;
-    TenantWebsite: string;
-    ExpiresAt: number;
+    PickUpTime?: string | null;
+    PickUpLocation?: LocationDdb | null;
+    DropOffTime?: string | null;
+    DropOffLocation?: LocationDdb | null;
+    TenantName?: string | null;
+    TenantWebsite?: string | null;
+    ExpiresAt: number | null;
 };
 
 export type TokenDdbRecord = {
