@@ -1,4 +1,5 @@
 import { Construct } from "constructs";
+import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as sqs from "aws-cdk-lib/aws-sqs";
 import { Duration, RemovalPolicy } from "aws-cdk-lib";
 import * as iam from "aws-cdk-lib/aws-iam";
@@ -7,14 +8,15 @@ import * as cloudwatch_actions from "aws-cdk-lib/aws-cloudwatch-actions";
 import * as sns from "aws-cdk-lib/aws-sns";
 import * as subscriptions from "aws-cdk-lib/aws-sns-subscriptions";
 import { Alias } from "aws-cdk-lib/aws-kms";
+import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 
 export interface TrackingSQSConstructProps {
     region: string;
+    ddbTableName: string;
     alertsEmail?: string;
 }
 
 export class TrackingSQSConstruct extends Construct {
-    public readonly standardQueue: sqs.Queue;
     constructor(
         scope: Construct,
         id: string,
@@ -33,7 +35,7 @@ export class TrackingSQSConstruct extends Construct {
         });
 
         // Main Standard Queue
-        this.standardQueue = new sqs.Queue(this, "TrackingQueue", {
+        const standardQueue = new sqs.Queue(this, "TrackingQueue", {
             queueName: "platelet-tracking-queue",
             visibilityTimeout: Duration.minutes(5), // Consumer has 5 min to process
             receiveMessageWaitTime: Duration.seconds(20),
@@ -82,25 +84,33 @@ export class TrackingSQSConstruct extends Construct {
 
         dlqAlarm.addAlarmAction(new cloudwatch_actions.SnsAction(alertTopic));
 
-        // ====================================================================
-        // 5. Example IAM Policy (if a Lambda wants to send/receive)
-        // ====================================================================
-
-        const lambdaRoleExample = new iam.Role(
-            this,
-            "LambdaExecutionRoleExample",
-            {
-                assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
-            }
-        );
-
-        // Grant send permission to both queues
-        this.standardQueue.grantSendMessages(lambdaRoleExample);
+        const lambdaRole = new iam.Role(this, "LambdaExecutionRole", {
+            assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+        });
 
         // Grant consume permission
-        this.standardQueue.grantConsumeMessages(lambdaRoleExample);
+        standardQueue.grantConsumeMessages(lambdaRole);
 
-        // Also allow reading DLQ (for debugging)
-        standardDlq.grantConsumeMessages(lambdaRoleExample);
+        const lambdaSQSConsumer = new lambda.Function(
+            this,
+            "TrackingSQSConsumer",
+            {
+                runtime: lambda.Runtime.NODEJS_24_X,
+                handler: "index.handler",
+                code: lambda.Code.fromAsset(
+                    "./lib/lambda/node/TrackingSQSConsumer/dist"
+                ),
+                environment: {
+                    REGION: props.region,
+                    DYNAMODB_TABLE: props.ddbTableName,
+                },
+                role: lambdaRole,
+            }
+        );
+        lambdaSQSConsumer.addEventSource(
+            new SqsEventSource(standardQueue, {
+                batchSize: 10,
+            })
+        );
     }
 }
