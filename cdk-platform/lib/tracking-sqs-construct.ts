@@ -1,4 +1,5 @@
 import { Construct } from "constructs";
+import * as ssm from "aws-cdk-lib/aws-ssm";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as sqs from "aws-cdk-lib/aws-sqs";
 import { Duration, RemovalPolicy } from "aws-cdk-lib";
@@ -112,5 +113,11 @@ export class TrackingSQSConstruct extends Construct {
                 batchSize: 10,
             })
         );
+
+        // save SQS name to SSM to be accessed by dynamodb streams on Amplify
+        new ssm.StringParameter(this, "SQSNameSSMParam", {
+            parameterName: `/platelet-platform-cdk/TrackingQueueName`,
+            stringValue: standardQueue.queueName,
+        });
     }
 }
