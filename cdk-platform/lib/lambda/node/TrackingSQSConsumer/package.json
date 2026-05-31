@@ -21,10 +21,12 @@
     "dependencies": {
         "@aws-sdk/client-dynamodb": "^3.1056.0",
         "@aws-sdk/lib-dynamodb": "^3.1056.0",
+        "aws-lambda": "^1.0.7",
         "lodash": "^4.18.1",
         "p-all": "^5.0.1"
     },
     "devDependencies": {
+        "@types/aws-lambda": "^8.10.161",
         "@types/node": "^25.9.1"
     }
 }
