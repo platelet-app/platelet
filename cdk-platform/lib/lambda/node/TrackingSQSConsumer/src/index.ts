@@ -7,7 +7,11 @@ import type {
 } from "@platelet-app/tracking-types";
 
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import {
+    PutCommand,
+    DynamoDBDocumentClient,
+    DeleteCommand,
+} from "@aws-sdk/lib-dynamodb";
 import { sendPlateletEmail } from "@platelet-app/lambda";
 import { generateEmailTemplate } from "./generateEmailTemplate.js";
 
@@ -81,6 +85,22 @@ const writeTrackingRecord = async (taskId: string, token: string) => {
     return response;
 };
 
+const deleteTrackingRecord = async (data: Task) => {
+    const Key = {
+        pk: `task#${data?.id}`,
+    };
+
+    console.log("table:", process.env.TABLE_NAME);
+    const command = new DeleteCommand({
+        TableName: process.env.TABLE_NAME,
+        Key,
+    });
+
+    const response = await docClient.send(command);
+    console.log(response);
+    return response;
+};
+
 const sendTrackingLink = async (data: TrackingLinkData) => {
     const { recipientEmail, recipientName, taskId } = data;
     const token = generateToken();
@@ -128,6 +148,10 @@ export const handler = async (event: SQSEvent): Promise<SQSBatchResponse> => {
                 case "SEND_TRACKING_LINK":
                     console.log("send tracking link:", body);
                     await sendTrackingLink(body);
+                    break;
+                case "DELETE_TRACKING":
+                    console.log("deleting tracking:", body);
+                    await deleteTrackingRecord(body as Task);
                     break;
                 default:
                     throw new Error("Operation not supported");
