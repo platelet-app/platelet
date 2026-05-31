@@ -25,11 +25,8 @@ const sendMessage = async (data, SQSName) => {
 };
 
 export const handler = async (event) => {
+    console.log(`EVENT: ${JSON.stringify(event)}`);
     const SQSName = await getSQSTrackingURL();
     await sendMessage(event.arguments, SQSName);
-
-    console.log(`EVENT: ${JSON.stringify(event)}`);
-    return {
-        statusCode: 200,
-    };
+    return true;
 };
