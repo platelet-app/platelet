@@ -94,6 +94,21 @@ export class TrackingSQSConstruct extends Construct {
 
         // Grant consume permission
         standardQueue.grantConsumeMessages(lambdaRole);
+
+        lambdaRole.addManagedPolicy(
+            iam.ManagedPolicy.fromAwsManagedPolicyName(
+                "service-role/AWSLambdaBasicExecutionRole"
+            )
+        );
+        lambdaRole.addToPolicy(
+            new iam.PolicyStatement({
+                actions: ["ses:SendEmail", "ses:SendRawEmail"],
+                resources: [
+                    `arn:aws:ses:${props.region}:${props.account}:identity/platelet.app`,
+                ],
+                effect: iam.Effect.ALLOW,
+            })
+        );
         const lambdaSQSConsumer = new NodejsFunction(
             this,
             "TrackingSQSConsumer",
