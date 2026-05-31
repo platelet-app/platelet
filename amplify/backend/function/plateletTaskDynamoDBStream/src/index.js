@@ -10,7 +10,6 @@ Amplify Params - DO NOT EDIT */
  * @type {import('@types/aws-lambda').APIGatewayProxyHandler}
  */
 
-import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
 import { getSQSTrackingURL } from "@platelet-app/lambda";
