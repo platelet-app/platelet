@@ -16,6 +16,7 @@ export class PlateletCdkPlatformStack extends cdk.Stack {
         );
         const sqs = new TrackingSQSConstruct(this, "TrackingSQS", {
             region: this.region,
+            account: this.account,
             ddbTable: trackingAppSync.trackingTable,
             alertsEmail,
         });

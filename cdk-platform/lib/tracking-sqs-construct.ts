@@ -15,6 +15,7 @@ import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 
 export interface TrackingSQSConstructProps {
     region: string;
+    account: string;
     ddbTable: cdk.aws_dynamodb.Table;
     alertsEmail?: string;
 }
