@@ -1,5 +1,5 @@
 import type {
-    TrackingInfo,
+    TrackingData,
     QueryGetTrackingArgs,
     TaskDdbRecord,
     TokenDdbRecord,
@@ -24,25 +24,25 @@ export function request(
 
 export function response(
     ctx: Context<QueryGetTrackingArgs, object, object, object, TaskDdbRecord>
-): TrackingInfo | null {
+): TrackingData | null {
     const { result } = ctx;
     if (!result) {
         return null;
     }
     return {
         id: result.pk,
-        tenantName: result.TenantName,
-        tenantWebsite: result.TenantWebsite,
-        pickUpTime: result.PickUpTime,
-        dropOffTime: result.DropOffTime,
+        tenantName: result.TenantName ?? null,
+        tenantWebsite: result.TenantWebsite ?? null,
+        pickUpTime: result.PickUpTime ?? null,
+        dropOffTime: result.DropOffTime ?? null,
         pickUpLocation: {
-            town: result.PickUpLocation?.Town,
-            postCode: result.PickUpLocation?.PostCode,
+            town: result.PickUpLocation?.Town ?? null,
+            postCode: result.PickUpLocation?.PostCode ?? null,
         },
         dropOffLocation: {
-            town: result.DropOffLocation?.Town,
-            postCode: result.DropOffLocation?.PostCode,
+            town: result.DropOffLocation?.Town ?? null,
+            postCode: result.DropOffLocation?.PostCode ?? null,
         },
-        __typename: "TrackingInfo",
+        __typename: "TrackingData",
     };
 }
