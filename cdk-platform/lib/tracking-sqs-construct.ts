@@ -1,6 +1,7 @@
 import { Construct } from "constructs";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import { NodejsFunction, OutputFormat } from "aws-cdk-lib/aws-lambda-nodejs";
 import * as sqs from "aws-cdk-lib/aws-sqs";
 import { Duration, RemovalPolicy } from "aws-cdk-lib";
 import * as iam from "aws-cdk-lib/aws-iam";
@@ -91,16 +92,16 @@ export class TrackingSQSConstruct extends Construct {
 
         // Grant consume permission
         standardQueue.grantConsumeMessages(lambdaRole);
-
-        const lambdaSQSConsumer = new lambda.Function(
+        const lambdaSQSConsumer = new NodejsFunction(
             this,
             "TrackingSQSConsumer",
             {
+                entry: "./lib/lambda/node/TrackingSQSConsumer/src/index.ts",
+                handler: "handler",
                 runtime: lambda.Runtime.NODEJS_24_X,
-                handler: "index.handler",
-                code: lambda.Code.fromAsset(
-                    "./lib/lambda/node/TrackingSQSConsumer/dist"
-                ),
+                bundling: {
+                    format: OutputFormat.CJS,
+                },
                 environment: {
                     REGION: props.region,
                     TABLE_NAME: props.ddbTableName,
