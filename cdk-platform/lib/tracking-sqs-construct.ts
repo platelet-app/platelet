@@ -1,4 +1,5 @@
 import { Construct } from "constructs";
+import * as cdk from "aws-cdk-lib";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction, OutputFormat } from "aws-cdk-lib/aws-lambda-nodejs";
@@ -14,7 +15,7 @@ import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 
 export interface TrackingSQSConstructProps {
     region: string;
-    ddbTableName: string;
+    ddbTable: cdk.aws_dynamodb.Table;
     alertsEmail?: string;
 }
 
@@ -104,7 +105,7 @@ export class TrackingSQSConstruct extends Construct {
                 },
                 environment: {
                     REGION: props.region,
-                    TABLE_NAME: props.ddbTableName,
+                    TABLE_NAME: props.ddbTable?.tableName,
                 },
                 role: lambdaRole,
             }
@@ -112,13 +113,15 @@ export class TrackingSQSConstruct extends Construct {
         lambdaSQSConsumer.addEventSource(
             new SqsEventSource(standardQueue, {
                 batchSize: 10,
+                reportBatchItemFailures: true,
             })
         );
+        props.ddbTable.grantWriteData(lambdaRole);
 
         // save SQS name to SSM to be accessed by dynamodb streams on Amplify
         new ssm.StringParameter(this, "SQSNameSSMParam", {
-            parameterName: `/platelet-platform-cdk/TrackingQueueName`,
-            stringValue: standardQueue.queueName,
+            parameterName: `/platelet-platform-cdk/TrackingQueueURL`,
+            stringValue: standardQueue.queueUrl,
         });
     }
 }
