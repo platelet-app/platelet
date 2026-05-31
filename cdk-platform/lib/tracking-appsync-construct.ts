@@ -25,6 +25,7 @@ export class TrackingAppSyncConstruct extends Construct {
                 name: "pk",
                 type: dynamodb.AttributeType.STRING,
             },
+            timeToLiveAttribute: "ExpiresAt",
         });
 
         const getTrackingAppSyncFunction = new appsync.AppsyncFunction(
