@@ -5302,6 +5302,17 @@ export type AdminDeleteUserMutation = {
   } | null,
 };
 
+export type SendTrackingLinkMutationVariables = {
+  recipientName?: string | null,
+  recipientEmail?: string | null,
+  recipientMobileNumber?: string | null,
+  taskId?: string | null,
+};
+
+export type SendTrackingLinkMutation = {
+  sendTrackingLink?: boolean | null,
+};
+
 export type GetTenantQueryVariables = {
   id: string,
 };

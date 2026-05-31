@@ -3577,3 +3577,20 @@ export const adminDeleteUser = /* GraphQL */ `mutation AdminDeleteUser($userId: 
   APITypes.AdminDeleteUserMutationVariables,
   APITypes.AdminDeleteUserMutation
 >;
+export const sendTrackingLink = /* GraphQL */ `mutation SendTrackingLink(
+  $recipientName: String
+  $recipientEmail: String
+  $recipientMobileNumber: String
+  $taskId: ID
+) {
+  sendTrackingLink(
+    recipientName: $recipientName
+    recipientEmail: $recipientEmail
+    recipientMobileNumber: $recipientMobileNumber
+    taskId: $taskId
+  )
+}
+` as GeneratedMutation<
+  APITypes.SendTrackingLinkMutationVariables,
+  APITypes.SendTrackingLinkMutation
+>;
