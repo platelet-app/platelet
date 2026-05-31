@@ -510,6 +510,7 @@ type Mutation {
   resetUserPassword(userId: ID): SendFeedback @function(name: "plateletAdminResetUserPassword-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   adminDeleteRiderResponsibility(riderResponsibilityId: ID): RiderResponsibility @function(name: "plateletAdminDeleteRiderResponsibility-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
   adminDeleteUser(userId: ID): StateMachineExecution @function(name: "plateletAdminDeleteUser-${env}") @auth(rules: [{allow: groups, groups: ["ADMIN"]}])
+  sendTrackingLink(recipientName: String, recipientEmail: String, recipientMobileNumber: String, taskId: ID): Boolean @function(name: "plateletSendTrackingLink-${env}") @auth(rules: [{allow: groups, groups: ["COORDINATOR", "ADMIN"]}])
 }
 
 type Statistics {
