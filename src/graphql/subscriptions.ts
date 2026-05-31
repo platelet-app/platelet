@@ -1361,6 +1361,7 @@ export const onCreateTask = /* GraphQL */ `subscription OnCreateTask($filter: Mo
       timeSecondary
       __typename
     }
+    isBeingTracked
     updatedAt
     _version
     _deleted
@@ -1538,6 +1539,7 @@ export const onUpdateTask = /* GraphQL */ `subscription OnUpdateTask($filter: Mo
       timeSecondary
       __typename
     }
+    isBeingTracked
     updatedAt
     _version
     _deleted
@@ -1715,6 +1717,7 @@ export const onDeleteTask = /* GraphQL */ `subscription OnDeleteTask($filter: Mo
       timeSecondary
       __typename
     }
+    isBeingTracked
     updatedAt
     _version
     _deleted
@@ -1756,6 +1759,7 @@ export const onCreateTaskAssignee = /* GraphQL */ `subscription OnCreateTaskAssi
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
@@ -1827,6 +1831,7 @@ export const onUpdateTaskAssignee = /* GraphQL */ `subscription OnUpdateTaskAssi
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
@@ -1898,6 +1903,7 @@ export const onDeleteTaskAssignee = /* GraphQL */ `subscription OnDeleteTaskAssi
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
@@ -2673,6 +2679,7 @@ export const onCreateDeliverable = /* GraphQL */ `subscription OnCreateDeliverab
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
@@ -2764,6 +2771,7 @@ export const onUpdateDeliverable = /* GraphQL */ `subscription OnUpdateDeliverab
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
@@ -2855,6 +2863,7 @@ export const onDeleteDeliverable = /* GraphQL */ `subscription OnDeleteDeliverab
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted

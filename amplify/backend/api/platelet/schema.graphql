@@ -302,6 +302,7 @@ type Task
       {allow: private, operations: [read]},
       {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, update, delete]},
     ])
+  isBeingTracked: Boolean @default(value: "false")
 }
 
 type TaskAssignee

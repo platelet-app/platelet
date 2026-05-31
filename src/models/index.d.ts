@@ -503,6 +503,7 @@ type EagerTask = {
   readonly archived?: number | null;
   readonly pickUpSchedule?: Schedule | null;
   readonly dropOffSchedule?: Schedule | null;
+  readonly isBeingTracked?: boolean | null;
   readonly updatedAt?: string | null;
 }
 
@@ -535,6 +536,7 @@ type LazyTask = {
   readonly archived?: number | null;
   readonly pickUpSchedule?: Schedule | null;
   readonly dropOffSchedule?: Schedule | null;
+  readonly isBeingTracked?: boolean | null;
   readonly updatedAt?: string | null;
 }
 

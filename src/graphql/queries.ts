@@ -1050,6 +1050,7 @@ export const getTask = /* GraphQL */ `query GetTask($id: ID!) {
       timeSecondary
       __typename
     }
+    isBeingTracked
     updatedAt
     _version
     _deleted
@@ -1087,6 +1088,7 @@ export const listTasks = /* GraphQL */ `query ListTasks(
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
@@ -1134,6 +1136,7 @@ export const syncTasks = /* GraphQL */ `query SyncTasks(
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
@@ -1185,6 +1188,7 @@ export const listTasksByTenantId = /* GraphQL */ `query ListTasksByTenantId(
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
@@ -1237,6 +1241,7 @@ export const tasksByStatus = /* GraphQL */ `query TasksByStatus(
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
@@ -1291,6 +1296,7 @@ export const tasksByArchivedStatus = /* GraphQL */ `query TasksByArchivedStatus(
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
@@ -1334,6 +1340,7 @@ export const getTaskAssignee = /* GraphQL */ `query GetTaskAssignee($id: ID!) {
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
@@ -1908,6 +1915,7 @@ export const getDeliverable = /* GraphQL */ `query GetDeliverable($id: ID!) {
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
