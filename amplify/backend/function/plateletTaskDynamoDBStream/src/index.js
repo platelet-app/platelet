@@ -35,6 +35,24 @@ const sendMessage = async (data, SQSName) => {
     return response;
 };
 
+const sendDeleteMessage = async (data, SQSName) => {
+    const command = new SendMessageCommand({
+        QueueUrl: SQSName,
+        DelaySeconds: 10,
+        MessageAttributes: {
+            Operation: {
+                DataType: "String",
+                StringValue: "DELETE_TRACKING",
+            },
+        },
+        MessageBody: JSON.stringify(data),
+    });
+
+    const response = await sqsClient.send(command);
+    console.log(response);
+    return response;
+};
+
 export const handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
     const SQSName = await getSQSTrackingURL();
@@ -44,7 +62,14 @@ export const handler = async (event) => {
         console.log("DynamoDB Record: %j", record.dynamodb);
 
         const data = unmarshall(record?.dynamodb?.NewImage);
-        await sendMessage(data, SQSName);
+        const oldData = unmarshall(record?.dynamodb?.OldImage);
+        if (oldData?.isBeingTracked && !data?.isBeingTracked) {
+            // if we are going from tracked to untracked, we should delete the old data
+            await sendDeleteMessage(data, SQSName);
+        } else if (data?.isBeingTracked) {
+            // otherwise if the task is being tracked, send the data to the queue
+            await sendMessage(data, SQSName);
+        }
     }
     return Promise.resolve("Successfully processed DynamoDB record");
 };
