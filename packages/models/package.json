@@ -19,7 +19,7 @@
         "dist"
     ],
     "scripts": {
-        "build": "cd ../.. && amplify api gql-compile && amplify codegen models && cd packages/models && mkdir -p dist && cp ../../src/models/* dist",
+        "build": "cd ../.. && amplify api gql-compile && amplify codegen models && cd packages/models && mkdir -p dist && cp ../../src/models/* dist && sed -i \"s|from './schema'|from './schema.js'|g\" dist/index.js",
         "prepublishOnly": "npm version patch"
     }
 }
