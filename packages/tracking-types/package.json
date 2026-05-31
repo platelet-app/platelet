@@ -19,7 +19,11 @@
     "main": "index.js",
     "types": "dist/index.d.ts",
     "scripts": {
-        "build": "npx graphql-codegen && tsc -p tsconfig.json",
+        "build": "graphql-codegen && tsc -p tsconfig.json",
         "prepublishOnly": "npm run build && npm version patch"
+    },
+    "devDependencies": {
+        "@graphql-codegen/cli": "^5.0.0",
+        "@graphql-codegen/typescript": "^4.0.0"
     }
 }
