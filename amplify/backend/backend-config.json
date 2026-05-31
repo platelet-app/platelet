@@ -481,9 +481,36 @@
       "providerPlugin": "awscloudformation",
       "service": "LambdaLayer"
     },
+    "plateletSendTrackingLink": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "plateletSendUserFeedback": {
       "build": true,
       "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "plateletTaskDynamoDBStream": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "platelet"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
@@ -833,6 +860,22 @@
         }
       ]
     },
+    "AMPLIFY_function_plateletSendTrackingLink_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletSendTrackingLink"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletSendTrackingLink_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletSendTrackingLink"
+        }
+      ]
+    },
     "AMPLIFY_function_plateletSendUserFeedback_deploymentBucketName": {
       "usedBy": [
         {
@@ -846,6 +889,22 @@
         {
           "category": "function",
           "resourceName": "plateletSendUserFeedback"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletTaskDynamoDBStream_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletTaskDynamoDBStream"
+        }
+      ]
+    },
+    "AMPLIFY_function_plateletTaskDynamoDBStream_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "plateletTaskDynamoDBStream"
         }
       ]
     },
