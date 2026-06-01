@@ -36,6 +36,8 @@ export function response(
         tenantWebsite: result.TenantWebsite ?? null,
         pickUpTime: result.PickUpTime ?? null,
         dropOffTime: result.DropOffTime ?? null,
+        cancelTime: result.CancelTime ?? null,
+        rejectTime: result.RejectTime ?? null,
         pickUpLocation: {
             town: result.PickUpLocation?.Town ?? null,
             postCode: result.PickUpLocation?.PostCode ?? null,
