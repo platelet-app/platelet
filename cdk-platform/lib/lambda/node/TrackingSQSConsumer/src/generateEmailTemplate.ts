@@ -2,8 +2,6 @@ export const generateEmailTemplate = (
     recipientName: string,
     serviceName: string,
     serviceURL: string,
-    serviceLogo: string,
-    plateletLogo: string,
     trackingNumber: string
 ) => {
     const trackingURL = `https://platelet.app/track?token=${trackingNumber}`;
@@ -112,19 +110,6 @@ export const generateEmailTemplate = (
 </head>
 <body>
   <div class="card">
-    <div class="header">
-      <!-- Software product logo, links to platelet.app -->
-      <a class="product-logo" href="https://platelet.app">
-        <img src="${plateletLogo}" alt="Platelet logo">
-      </a>
-
-      <!-- Charity name + website link, with charity logo beside it -->
-      <div class="charity">
-        <img src="${serviceLogo}" alt="${serviceName} logo">
-        <a href="${serviceURL}" target="_blank" rel="noopener">${serviceName}</a>
-      </div>
-    </div>
-
     <div class="body">
       <p class="greeting">Hi ${recipientName},</p>
       <p class="message">
@@ -141,6 +126,7 @@ export const generateEmailTemplate = (
       <a class="track-button" href="${trackingURL}" target="_blank" rel="noopener">
         Track this delivery
       </a>
+      <p>Powered by <a href-"https://platelet.app">platelet.app</a></p>
     </div>
   </div>
 </body>
