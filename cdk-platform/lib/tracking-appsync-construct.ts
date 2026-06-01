@@ -15,12 +15,12 @@ export class TrackingAppSyncConstruct extends Construct {
         props: TrackingAppSyncConstructProps
     ) {
         super(scope, id);
-        const api = new appsync.GraphqlApi(this, "tracking-api", {
-            name: "external-users-tracking-api",
+        const api = new appsync.GraphqlApi(this, "TrackingApi", {
+            name: "ExternalUsersTrackingApi",
             schema: appsync.SchemaFile.fromAsset("schema/tracking.graphql"),
         });
 
-        this.trackingTable = new dynamodb.Table(this, "tracking-info-table", {
+        this.trackingTable = new dynamodb.Table(this, "TrackingInfoTable", {
             partitionKey: {
                 name: "pk",
                 type: dynamodb.AttributeType.STRING,
@@ -35,7 +35,7 @@ export class TrackingAppSyncConstruct extends Construct {
                 name: "getTrackingFunction",
                 api,
                 dataSource: api.addDynamoDbDataSource(
-                    "table-for-tracking",
+                    "TableForTracking",
                     this.trackingTable
                 ),
                 code: appsync.Code.fromAsset(
@@ -47,12 +47,12 @@ export class TrackingAppSyncConstruct extends Construct {
 
         const resolveTaskInfo = new appsync.AppsyncFunction(
             this,
-            "func-resolve-task-info",
+            "FuncResolveTaskInfo",
             {
-                name: "resolveTaskInfo",
+                name: "ResolveTaskInfo",
                 api,
                 dataSource: api.addDynamoDbDataSource(
-                    "table-for-tracking-resolve",
+                    "TableForTrackingResolver",
                     this.trackingTable
                 ),
                 code: appsync.Code.fromAsset(
@@ -62,7 +62,7 @@ export class TrackingAppSyncConstruct extends Construct {
             }
         );
 
-        new appsync.Resolver(this, "pipeline-resolver-get-tracking-info", {
+        new appsync.Resolver(this, "PipelineResolverGetTrackingInfo", {
             api,
             typeName: "Query",
             fieldName: "getTracking",
