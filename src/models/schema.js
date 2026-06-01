@@ -1311,6 +1311,13 @@ export const schema = {
                     "isRequired": false,
                     "attributes": []
                 },
+                "isBeingTracked": {
+                    "name": "isBeingTracked",
+                    "isArray": false,
+                    "type": "Boolean",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "updatedAt": {
                     "name": "updatedAt",
                     "isArray": false,
@@ -2676,5 +2683,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.4",
-    "version": "ea23c7472135f07a7efd4966b35c2d76"
+    "version": "978383f42d4838570bb29bf992a6e4ac"
 };

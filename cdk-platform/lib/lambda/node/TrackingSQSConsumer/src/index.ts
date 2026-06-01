@@ -1,0 +1,180 @@
+import type { SQSEvent, SQSBatchResponse } from "aws-lambda";
+import pAll from "p-all";
+import type { Task } from "@platelet-app/types";
+import type { TaskDdbRecord } from "@platelet-app/tracking-types";
+
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import {
+    PutCommand,
+    DynamoDBDocumentClient,
+    DeleteCommand,
+} from "@aws-sdk/lib-dynamodb";
+import { sendPlateletEmail } from "@platelet-app/lambda";
+import { generateEmailTemplate } from "./generateEmailTemplate.js";
+
+type TrackingLinkData = {
+    recipientEmail: string;
+    recipientName: string;
+    name: string;
+    taskId: string;
+};
+
+type TrackingWriteData = {
+    task: Task;
+    tenantName: string;
+    tenantWebsite: string;
+};
+
+const client = new DynamoDBClient({
+    region: process.env.REGION || "eu-west-1",
+});
+const docClient = DynamoDBDocumentClient.from(client);
+
+const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789";
+const generateToken = () => {
+    const randomSegment = () => {
+        const bytes = crypto.getRandomValues(new Uint8Array(4));
+        return Array.from(bytes, (b) => chars[b % chars.length]).join("");
+    };
+    return Array.from({ length: 3 }, randomSegment).join("-");
+};
+
+const writeRecord = async (data: TrackingWriteData) => {
+    const { task, tenantName, tenantWebsite } = data;
+    let expires = new Date();
+    // expires in one year
+    expires.setDate(expires.getDate() + 365);
+
+    const ExpiresAt = Math.floor(expires.getTime() / 1000); // DynamoDB TTL expects seconds
+
+    const record: TaskDdbRecord = {
+        pk: `task#${task.id}`,
+        sk: "metadata",
+        PickUpTime: task.timePickedUp || null,
+        DropOffTime: task.timeDroppedOff || null,
+        CancelTime: task.timeCancelled || null,
+        RejectTime: task.timeRejected || null,
+        TenantName: tenantName,
+        TenantWebsite: tenantWebsite,
+        ExpiresAt,
+    };
+
+    console.log("table:", process.env.TABLE_NAME);
+    const command = new PutCommand({
+        TableName: process.env.TABLE_NAME,
+        Item: record,
+    });
+
+    const response = await docClient.send(command);
+    console.log(response);
+    return response;
+};
+
+const writeTrackingRecord = async (taskId: string, token: string) => {
+    let expires = new Date();
+    // expires in 30 days
+    expires.setDate(expires.getDate() + 30);
+
+    const ExpiresAt = Math.floor(expires.getTime() / 1000); // DynamoDB TTL expects seconds
+
+    const record: TaskDdbRecord = {
+        pk: `task#${taskId}`,
+        sk: `token#${token}`,
+        ExpiresAt,
+    };
+
+    console.log("table:", process.env.TABLE_NAME);
+    const command = new PutCommand({
+        TableName: process.env.TABLE_NAME,
+        Item: record,
+    });
+
+    const response = await docClient.send(command);
+    console.log(response);
+    return response;
+};
+
+const deleteTrackingRecord = async (data: Task) => {
+    const Key = {
+        pk: `task#${data?.id}`,
+        sk: "metadata",
+    };
+
+    console.log("table:", process.env.TABLE_NAME);
+    const command = new DeleteCommand({
+        TableName: process.env.TABLE_NAME,
+        Key,
+    });
+
+    const response = await docClient.send(command);
+    console.log(response);
+    return response;
+};
+
+const sendTrackingLink = async (data: TrackingLinkData) => {
+    const { recipientEmail, recipientName, taskId } = data;
+    const token = generateToken();
+    if (taskId) {
+        await writeTrackingRecord(taskId, token);
+    } else {
+        throw new Error("No task ID!");
+    }
+    if (recipientEmail) {
+        console.log("sending to email", recipientEmail);
+        await sendPlateletEmail(
+            recipientEmail,
+            generateEmailTemplate(
+                recipientName,
+                "test",
+                "test.com",
+                "test.img",
+                "https://www.platelet.app/static/media/platelet.bdc5bd61.png",
+                token
+            ),
+            "quack",
+            "Tracking information"
+        );
+    }
+};
+
+export const handler = async (event: SQSEvent): Promise<SQSBatchResponse> => {
+    const batchItemFailures: SQSBatchResponse["batchItemFailures"] = [];
+
+    const actions = event.Records.map((record) => async () => {
+        try {
+            const body = JSON.parse(record.body);
+            console.log("BODY", record?.body);
+            console.log("ATTR", record.messageAttributes);
+            const operation = record.messageAttributes?.Operation?.stringValue;
+            switch (operation) {
+                case "UPDATE_TRACKING":
+                    console.log(
+                        "start UPDATE_TRACKING operation for:",
+                        body?.id
+                    );
+                    await writeRecord(body as TrackingWriteData);
+                    break;
+                case "SEND_TRACKING_LINK":
+                    console.log("send tracking link:", body);
+                    await sendTrackingLink(body);
+                    break;
+                case "DELETE_TRACKING":
+                    console.log("deleting tracking:", body);
+                    await deleteTrackingRecord(body as Task);
+                    break;
+                default:
+                    throw new Error("Operation not supported");
+            }
+        } catch (err) {
+            console.error(
+                `Failed to process message ${record.messageId}:`,
+                err
+            );
+            batchItemFailures.push({ itemIdentifier: record.messageId });
+        }
+    });
+
+    await pAll(actions, { concurrency: 10 });
+
+    return { batchItemFailures };
+};

@@ -36,6 +36,10 @@ USER_TAKE_OUT_DATA_STATE_MACHINE_ARN=$(jq '.[] | to_entries[] | select(.key|cont
 
 USER_TAKE_OUT_DATA_STATE_MACHINE_ARN_SSM_PARAM_ARN=$(jq '.[] | to_entries[] | select(.key|contains("TakeOutUserDataStateMachineArnSSMParamArnOutput")).value' $1)
 
+
+TENANT_NAME_PARAM_NAME=$(jq '.[] | to_entries[] | select(.key|contains("TenantNameSSMParamNameOutput")).value' $1)
+TENANT_WEBSITE_PARAM_NAME=$(jq '.[] | to_entries[] | select(.key|contains("TenantWebsiteSSMParamNameOutput")).value' $1)
+
 echo "
 [
     {
@@ -51,3 +55,22 @@ echo "
         ]
     }
 ]" > "./amplify/backend/function/plateletUserTakeOutData/custom-policies.json"
+
+# the tenant name and website should be accessible by the ddb stream function
+# this means it can send that data as part of the SQS message
+# and it can be retrieved through the tracking API
+
+echo "
+[
+    {
+        \"Action\": [
+            \"ssm:GetParameter\",
+            \"ssm:GetParameters\",
+            \"ssm:GetParametersByPath\"
+        ],
+        \"Resource\": [
+            $TENANT_NAME_PARAM_NAME,
+            $TENANT_WEBSITE_PARAM_NAME
+        ]
+    }
+]" > "./amplify/backend/function/plateletTaskDynamoDBStream/custom-policies.json"

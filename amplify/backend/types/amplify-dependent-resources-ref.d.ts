@@ -151,7 +151,21 @@ export type AmplifyDependentResourcesAttributes = {
     "plateletSendEmail": {
       "Arn": "string"
     },
+    "plateletSendTrackingLink": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
     "plateletSendUserFeedback": {
+      "Arn": "string",
+      "LambdaExecutionRole": "string",
+      "LambdaExecutionRoleArn": "string",
+      "Name": "string",
+      "Region": "string"
+    },
+    "plateletTaskDynamoDBStream": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",

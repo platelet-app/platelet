@@ -61,7 +61,9 @@ jobs:
                       --context graphQLEndpoint=${{ steps.amplify_outputs.outputs.graphql_endpoint }} \
                       --context bucketName=${{ steps.amplify_outputs.outputs.bucket_name }} \
                       --context createCypressTestingRole=${{ github.ref_name == 'production/app.platelet.app' }} \
-                      --context alertEmail=${{ vars.ALERT_EMAIL }} "
+                      --context alertEmail=${{ vars.ALERT_EMAIL }} \
+                      --context tenantName=${{ vars.tenantName }} \
+                      --context tenantWebsite=${{ vars.tenantWebsite }} "
           npm run bootstrap -- $CONTEXT_ARGS
           npm run deploy -- --require-approval never $CONTEXT_ARGS --outputs-file cdk-out.json
       - name: "Write lambda function roles to custom-roles.json"

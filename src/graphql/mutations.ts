@@ -1397,6 +1397,7 @@ export const createTask = /* GraphQL */ `mutation CreateTask(
       timeSecondary
       __typename
     }
+    isBeingTracked
     updatedAt
     _version
     _deleted
@@ -1577,6 +1578,7 @@ export const updateTask = /* GraphQL */ `mutation UpdateTask(
       timeSecondary
       __typename
     }
+    isBeingTracked
     updatedAt
     _version
     _deleted
@@ -1757,6 +1759,7 @@ export const deleteTask = /* GraphQL */ `mutation DeleteTask(
       timeSecondary
       __typename
     }
+    isBeingTracked
     updatedAt
     _version
     _deleted
@@ -1799,6 +1802,7 @@ export const createTaskAssignee = /* GraphQL */ `mutation CreateTaskAssignee(
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
@@ -1871,6 +1875,7 @@ export const updateTaskAssignee = /* GraphQL */ `mutation UpdateTaskAssignee(
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
@@ -1943,6 +1948,7 @@ export const deleteTaskAssignee = /* GraphQL */ `mutation DeleteTaskAssignee(
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
@@ -2725,6 +2731,7 @@ export const createDeliverable = /* GraphQL */ `mutation CreateDeliverable(
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
@@ -2817,6 +2824,7 @@ export const updateDeliverable = /* GraphQL */ `mutation UpdateDeliverable(
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
@@ -2909,6 +2917,7 @@ export const deleteDeliverable = /* GraphQL */ `mutation DeleteDeliverable(
       status
       isRiderUsingOwnVehicle
       archived
+      isBeingTracked
       updatedAt
       _version
       _deleted
@@ -3576,4 +3585,21 @@ export const adminDeleteUser = /* GraphQL */ `mutation AdminDeleteUser($userId: 
 ` as GeneratedMutation<
   APITypes.AdminDeleteUserMutationVariables,
   APITypes.AdminDeleteUserMutation
+>;
+export const sendTrackingLink = /* GraphQL */ `mutation SendTrackingLink(
+  $recipientName: String
+  $recipientEmail: String
+  $recipientMobileNumber: String
+  $taskId: ID
+) {
+  sendTrackingLink(
+    recipientName: $recipientName
+    recipientEmail: $recipientEmail
+    recipientMobileNumber: $recipientMobileNumber
+    taskId: $taskId
+  )
+}
+` as GeneratedMutation<
+  APITypes.SendTrackingLinkMutationVariables,
+  APITypes.SendTrackingLinkMutation
 >;

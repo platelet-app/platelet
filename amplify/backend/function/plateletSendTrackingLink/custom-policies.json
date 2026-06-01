@@ -1,0 +1,13 @@
+[
+    {
+        "Action": ["ssm:GetParameter"],
+        "Resource": [
+            "arn:aws:ssm:*:*:parameter/platelet-platform-cdk/TrackingQueueURL"
+        ]
+    },
+    {
+        "Action": ["sqs:SendMessage"],
+        "Resource": ["arn:aws:sqs:*:130063560692:*"]
+    }
+]
+

@@ -1,0 +1,29 @@
+{
+    "name": "@platelet-app/tracking-types",
+    "version": "1.0.8",
+    "description": "",
+    "homepage": "https://github.com/platelet-app/platelet#readme",
+    "bugs": {
+        "url": "https://github.com/platelet-app/platelet/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/platelet-app/platelet.git"
+    },
+    "license": "Apache-2.0",
+    "author": "Theo Cranmore <theo@platelet.app>",
+    "files": [
+        "dist/"
+    ],
+    "type": "module",
+    "main": "index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "graphql-codegen && tsc -p tsconfig.json",
+        "prepublishOnly": "npm run build && npm version patch"
+    },
+    "devDependencies": {
+        "@graphql-codegen/cli": "^5.0.0",
+        "@graphql-codegen/typescript": "^4.0.0"
+    }
+}
