@@ -5,6 +5,7 @@ export type LocationDdb = {
 
 export type TaskDdbRecord = {
     pk: string;
+    sk: string;
     PickUpTime?: string | null;
     PickUpLocation?: LocationDdb | null;
     DropOffTime?: string | null;
@@ -16,6 +17,6 @@ export type TaskDdbRecord = {
 
 export type TokenDdbRecord = {
     pk: string;
-    TaskId: string;
+    sk: string;
     ExpiresAt: number;
 };
