@@ -19,6 +19,12 @@ type TrackingLinkData = {
     taskId: string;
 };
 
+type TrackingWriteData = {
+    task: Task;
+    tenantName: string;
+    tenantWebsite: string;
+};
+
 const client = new DynamoDBClient({
     region: process.env.REGION || "eu-west-1",
 });
@@ -33,7 +39,8 @@ const generateToken = () => {
     return Array.from({ length: 3 }, randomSegment).join("-");
 };
 
-const writeRecord = async (data: Task) => {
+const writeRecord = async (data: TrackingWriteData) => {
+    const { task, tenantName, tenantWebsite } = data;
     let expires = new Date();
     // expires in one year
     expires.setDate(expires.getDate() + 365);
@@ -41,12 +48,14 @@ const writeRecord = async (data: Task) => {
     const ExpiresAt = Math.floor(expires.getTime() / 1000); // DynamoDB TTL expects seconds
 
     const record: TaskDdbRecord = {
-        pk: `task#${data.id}`,
+        pk: `task#${task.id}`,
         sk: "metadata",
-        PickUpTime: data.timePickedUp || null,
-        DropOffTime: data.timeDroppedOff || null,
-        CancelTime: data.timeCancelled || null,
-        RejectTime: data.timeRejected || null,
+        PickUpTime: task.timePickedUp || null,
+        DropOffTime: task.timeDroppedOff || null,
+        CancelTime: task.timeCancelled || null,
+        RejectTime: task.timeRejected || null,
+        TenantName: tenantName,
+        TenantWebsite: tenantWebsite,
         ExpiresAt,
     };
 
@@ -144,7 +153,7 @@ export const handler = async (event: SQSEvent): Promise<SQSBatchResponse> => {
                         "start UPDATE_TRACKING operation for:",
                         body?.id
                     );
-                    await writeRecord(body as Task);
+                    await writeRecord(body as TrackingWriteData);
                     break;
                 case "SEND_TRACKING_LINK":
                     console.log("send tracking link:", body);
