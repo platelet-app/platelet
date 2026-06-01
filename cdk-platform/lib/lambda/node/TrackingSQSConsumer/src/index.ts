@@ -17,6 +17,8 @@ type TrackingLinkData = {
     recipientName: string;
     name: string;
     taskId: string;
+    tenantName: string;
+    tenantWebsite: string;
 };
 
 type TrackingWriteData = {
@@ -112,7 +114,8 @@ const deleteTrackingRecord = async (data: Task) => {
 };
 
 const sendTrackingLink = async (data: TrackingLinkData) => {
-    const { recipientEmail, recipientName, taskId } = data;
+    const { recipientEmail, recipientName, taskId, tenantName, tenantWebsite } =
+        data;
     const token = generateToken();
     if (taskId) {
         await writeTrackingRecord(taskId, token);
@@ -125,10 +128,8 @@ const sendTrackingLink = async (data: TrackingLinkData) => {
             recipientEmail,
             generateEmailTemplate(
                 recipientName,
-                "test",
-                "test.com",
-                "test.img",
-                "https://www.platelet.app/static/media/platelet.bdc5bd61.png",
+                tenantName,
+                tenantWebsite,
                 token
             ),
             "quack",

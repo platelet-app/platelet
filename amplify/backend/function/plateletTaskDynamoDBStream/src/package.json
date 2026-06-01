@@ -9,6 +9,6 @@
         "@types/aws-lambda": "^8.10.92"
     },
     "dependencies": {
-        "@platelet-app/lambda": "^1.1.15"
+        "@platelet-app/lambda": "^1.1.17"
     }
 }

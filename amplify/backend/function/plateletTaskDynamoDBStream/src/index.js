@@ -12,56 +12,18 @@ Amplify Params - DO NOT EDIT */
 
 import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
-import { getSQSTrackingURL } from "@platelet-app/lambda";
-import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
+import {
+    getSQSTrackingURL,
+    getTenantName,
+    getTenantWebsite,
+} from "@platelet-app/lambda";
 
 const sqsClient = new SQSClient({});
 
-const getTenantName = async (envName) => {
-    const client = new SSMClient();
-    const parameterName = `/platelet-supporting-cdk/${envName}/TenantName`;
-    const params = {
-        Name: parameterName,
-    };
-    const command = new GetParameterCommand(params);
-    try {
-        const response = await client.send(command);
+const ENV_NAME = process.env.ENV;
 
-        // The value is nested under Parameter.Value
-        return response.Parameter?.Value;
-    } catch (error) {
-        if (error.name === "ParameterNotFound") {
-            console.error(`Parameter not found: ${parameterName}`);
-            return undefined;
-        }
-        console.error("Error retrieving SSM parameter:", error);
-        throw error;
-    }
-};
-
-const getTenantWebsite = async (envName) => {
-    const client = new SSMClient();
-    const parameterName = `/platelet-supporting-cdk/${envName}/TenantWebsite`;
-    const params = {
-        Name: parameterName,
-    };
-    const command = new GetParameterCommand(params);
-    try {
-        const response = await client.send(command);
-
-        // The value is nested under Parameter.Value
-        return response.Parameter?.Value;
-    } catch (error) {
-        if (error.name === "ParameterNotFound") {
-            console.error(`Parameter not found: ${parameterName}`);
-            return undefined;
-        }
-        console.error("Error retrieving SSM parameter:", error);
-        throw error;
-    }
-};
-
-const sendMessage = async (data, SQSName) => {
+const sendMessage = async (data, tenantName, tenantWebsite, SQSName) => {
+    const trackingData = { task: data, tenantName, tenantWebsite };
     const command = new SendMessageCommand({
         QueueUrl: SQSName,
         DelaySeconds: 10,
@@ -71,7 +33,7 @@ const sendMessage = async (data, SQSName) => {
                 StringValue: "UPDATE_TRACKING",
             },
         },
-        MessageBody: JSON.stringify(data),
+        MessageBody: JSON.stringify(trackingData),
     });
 
     const response = await sqsClient.send(command);
@@ -100,8 +62,6 @@ const sendDeleteMessage = async (data, SQSName) => {
 export const handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
     const SQSName = await getSQSTrackingURL();
-    const tenantName = await getTenantName();
-    const tenantWebsite = await getTenantWebsite();
     for (const record of event.Records) {
         console.log(record.eventID);
         console.log(record.eventName);
@@ -113,7 +73,9 @@ export const handler = async (event) => {
             await sendDeleteMessage(data, SQSName);
         } else if (data?.isBeingTracked) {
             // otherwise if the task is being tracked, send the data to the queue
-            await sendMessage(data, SQSName);
+            const tenantName = await getTenantName(ENV_NAME);
+            const tenantWebsite = await getTenantWebsite(ENV_NAME);
+            await sendMessage(data, tenantName, tenantWebsite, SQSName);
         }
     }
     return Promise.resolve("Successfully processed DynamoDB record");
