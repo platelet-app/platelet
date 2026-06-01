@@ -25,7 +25,17 @@ export class TrackingAppSyncConstruct extends Construct {
                 name: "pk",
                 type: dynamodb.AttributeType.STRING,
             },
+            sortKey: {
+                name: "sk",
+                type: dynamodb.AttributeType.STRING,
+            },
             timeToLiveAttribute: "ExpiresAt",
+        });
+
+        this.trackingTable.addGlobalSecondaryIndex({
+            indexName: "TokenIndex",
+            partitionKey: { name: "sk", type: dynamodb.AttributeType.STRING },
+            projectionType: dynamodb.ProjectionType.KEYS_ONLY,
         });
 
         const getTrackingAppSyncFunction = new appsync.AppsyncFunction(
