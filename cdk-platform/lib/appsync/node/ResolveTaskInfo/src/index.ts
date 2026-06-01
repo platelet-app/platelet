@@ -31,7 +31,7 @@ export function response(
         return null;
     }
     return {
-        id: result.pk,
+        id: `token#${ctx?.args?.token}`,
         tenantName: result.TenantName ?? null,
         tenantWebsite: result.TenantWebsite ?? null,
         pickUpTime: result.PickUpTime ?? null,
