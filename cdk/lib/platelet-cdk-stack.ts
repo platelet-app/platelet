@@ -4,6 +4,7 @@ import { DeleteUserStepFunction } from "./delete-user-step-function-construct";
 import { RetryFunctionConstruct } from "./retry-function-construct";
 import { UserTakeOutDataStepFunction } from "./user-take-out-data-step-function-construct";
 import { CypressTestRole } from "./cypress-test-role-construct";
+import { TenantNameWebsiteConstruct } from "./tenant-name-website-construct";
 
 export class PlateletCdkStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: cdk.StackProps) {
@@ -14,6 +15,8 @@ export class PlateletCdkStack extends cdk.Stack {
         const graphQLEndpoint = this.node.tryGetContext("graphQLEndpoint");
         const bucketName = this.node.tryGetContext("bucketName");
         const amplifyEnv = this.node.tryGetContext("amplifyEnv");
+        const tenantWebsite = this.node.tryGetContext("tenantWebsite");
+        const tenantName = this.node.tryGetContext("tenantName");
 
         const retryConstructInstance = new RetryFunctionConstruct(
             this,
@@ -35,6 +38,13 @@ export class PlateletCdkStack extends cdk.Stack {
             graphQLEndpoint,
             bucketName,
             region: this.region,
+            amplifyEnv,
+        });
+
+        new TenantNameWebsiteConstruct(this, "TenantNameWebsite", {
+            region: this.region,
+            tenantName,
+            tenantWebsite,
             amplifyEnv,
         });
 
