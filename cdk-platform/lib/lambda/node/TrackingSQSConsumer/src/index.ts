@@ -45,6 +45,7 @@ const writeRecord = async (data: Task) => {
 
     const record: TaskDdbRecord = {
         pk: `task#${data.id}`,
+        sk: "metadata",
         PickUpTime: data.timePickedUp || null,
         DropOffTime: data.timeDroppedOff || null,
         ExpiresAt,
@@ -68,9 +69,9 @@ const writeTrackingRecord = async (taskId: string, token: string) => {
 
     const ExpiresAt = Math.floor(expires.getTime() / 1000); // DynamoDB TTL expects seconds
 
-    const record: TokenDdbRecord = {
-        pk: `token#${token}`,
-        TaskId: `task#${taskId}`,
+    const record: TaskDdbRecord = {
+        pk: `task#${taskId}`,
+        sk: `token#${token}`,
         ExpiresAt,
     };
 
@@ -88,6 +89,7 @@ const writeTrackingRecord = async (taskId: string, token: string) => {
 const deleteTrackingRecord = async (data: Task) => {
     const Key = {
         pk: `task#${data?.id}`,
+        sk: "metadata",
     };
 
     console.log("table:", process.env.TABLE_NAME);
