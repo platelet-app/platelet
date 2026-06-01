@@ -2,22 +2,36 @@ import type {
     QueryGetTrackingArgs,
     TokenDdbRecord,
 } from "@platelet-app/tracking-types";
-import type { Context, DynamoDBGetItemRequest } from "@aws-appsync/utils";
+import type { Context, DynamoDBQueryRequest } from "@aws-appsync/utils";
 import { util } from "@aws-appsync/utils";
 
 export function request(
     ctx: Context<QueryGetTrackingArgs>
-): DynamoDBGetItemRequest {
+): DynamoDBQueryRequest {
     return {
-        operation: "GetItem",
-        key: {
-            pk: util.dynamodb.toDynamoDB(`token#${ctx?.args?.token}`),
+        operation: "Query",
+        index: "TokenIndex",
+        query: {
+            expression: "sk = :val",
+            expressionValues: {
+                ":val": util.dynamodb.toDynamoDB(`token#${ctx?.args?.token}`),
+            },
         },
     };
 }
 
 export function response(
-    ctx: Context<QueryGetTrackingArgs, object, object, object, TokenDdbRecord>
+    ctx: Context<
+        QueryGetTrackingArgs,
+        object,
+        object,
+        object,
+        { items: TokenDdbRecord[] }
+    >
 ): TokenDdbRecord | null {
-    return ctx.result;
+    const result = ctx.result?.items?.[0] || null;
+    if (!result) {
+        runtime.earlyReturn(null);
+    }
+    return result;
 }
