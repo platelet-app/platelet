@@ -10,6 +10,8 @@ export type TaskDdbRecord = {
     PickUpLocation?: LocationDdb | null;
     DropOffTime?: string | null;
     DropOffLocation?: LocationDdb | null;
+    CancelTime?: string | null;
+    RejectTime?: string | null;
     TenantName?: string | null;
     TenantWebsite?: string | null;
     ExpiresAt: number | null;
