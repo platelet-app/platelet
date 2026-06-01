@@ -20,7 +20,7 @@ export class TrackingAppSyncConstruct extends Construct {
             schema: appsync.SchemaFile.fromAsset("schema/tracking.graphql"),
         });
 
-        this.trackingTable = new dynamodb.Table(this, "TrackingInfoTable", {
+        this.trackingTable = new dynamodb.Table(this, "TrackingDataTable", {
             partitionKey: {
                 name: "pk",
                 type: dynamodb.AttributeType.STRING,
@@ -40,9 +40,9 @@ export class TrackingAppSyncConstruct extends Construct {
 
         const getTrackingAppSyncFunction = new appsync.AppsyncFunction(
             this,
-            "func-get-tracking",
+            "FuncGetTracking",
             {
-                name: "getTrackingFunction",
+                name: "GetTrackingFunction",
                 api,
                 dataSource: api.addDynamoDbDataSource(
                     "TableForTracking",
