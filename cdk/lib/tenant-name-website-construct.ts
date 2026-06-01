@@ -34,11 +34,11 @@ export class TenantNameWebsiteConstruct extends Construct {
             }
         );
 
-        new cdk.CfnOutput(this, "TenantNameSSMParamNameOutput", {
-            value: tenantNameSSMParam.parameterName,
+        new cdk.CfnOutput(this, "TenantNameSSMParamARNOutput", {
+            value: tenantNameSSMParam.parameterArn,
         });
-        new cdk.CfnOutput(this, "TenantWebsiteSSMParamNameOutput", {
-            value: tenantWebsiteSSMParam.parameterName,
+        new cdk.CfnOutput(this, "TenantWebsiteSSMParamARNOutput", {
+            value: tenantWebsiteSSMParam.parameterArn,
         });
     }
 }
