@@ -61,9 +61,8 @@ export const handler = async (event) => {
         console.log("DynamoDB Record: %j", record.dynamodb);
 
         const data = unmarshall(record?.dynamodb?.NewImage);
-        const oldData = unmarshall(record?.dynamodb?.OldImage);
-        if (oldData?.isBeingTracked && !data?.isBeingTracked) {
-            // if we are going from tracked to untracked, we should delete the old data
+        if (!data?.isBeingTracked) {
+            // if the task is not tracked, delete the old data
             await sendDeleteMessage(data, SQSName);
         } else if (data?.isBeingTracked) {
             // otherwise if the task is being tracked, send the data to the queue
