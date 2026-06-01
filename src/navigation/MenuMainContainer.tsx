@@ -1,29 +1,36 @@
-import React, { useEffect, useState } from "react";
-import "../index.css";
-import { useTheme } from "@mui/material/styles";
-import { makeStyles } from "tss-react/mui";
-import AppBar from "@mui/material/AppBar";
-import IconButton from "@mui/material/IconButton";
-import MainWindow from "./MainWindow";
-import { useDispatch, useSelector } from "react-redux";
-import { Box, Hidden, Stack } from "@mui/material";
-import TaskFilterTextField from "../components/TaskFilterTextfield";
-import LightToggleProfileMenu from "./Components/LightToggleProfileMenu";
-import SearchIcon from "@mui/icons-material/Search";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { clearDashboardFilter } from "../redux/dashboardFilter/DashboardFilterActions";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import DashboardDetailTabs from "../scenes/Dashboard/components/DashboardDetailTabs";
-import MobileNavigationDrawer from "./MobileNavigationDrawer";
+import * as React from "react";
 import {
-    dashboardFilterTermSelector,
+    styled,
+    useTheme,
+    Box,
+    AppBar as MuiAppBar,
+    AppBarProps as MuiAppBarProps,
+    CssBaseline,
+    IconButton,
+    Stack,
+    Hidden,
+    useMediaQuery,
+    Container,
+} from "@mui/material";
+import { Sidebar } from "./sidebar/Sidebar";
+import MainWindow from "./MainWindow";
+import { makeStyles } from "tss-react/mui";
+import TaskFilterTextField from "../components/TaskFilterTextfield";
+import DashboardDetailTabs from "../scenes/Dashboard/components/DashboardDetailTabs";
+import RoleViewSelect from "../scenes/Dashboard/components/RoleViewSelect";
+import LightToggleProfileMenu from "./Components/LightToggleProfileMenu";
+import ForwardBackButtons from "./ForwardBackButtons";
+import { TopbarButton } from "./sidebar/TopbarButton";
+import { clearDashboardFilter } from "../redux/dashboardFilter/DashboardFilterActions";
+import { useDispatch, useSelector } from "react-redux";
+import { Search, ArrowBack } from "@mui/icons-material";
+import {
     dashboardTabIndexSelector,
     menuIndexSelector,
 } from "../redux/Selectors";
-import RoleViewSelect from "../scenes/Dashboard/components/RoleViewSelect";
-import ForwardBackButtons from "./ForwardBackButtons";
+import { useCordovaBackButton } from "../hooks/useCordovaBackButton";
 
-const useStyles = makeStyles()((theme) => {
+const useStyles2 = makeStyles()((theme) => {
     return {
         appBarComponents: {
             margin: "auto",
@@ -40,54 +47,82 @@ const useStyles = makeStyles()((theme) => {
     };
 });
 
-export function MenuMainContainer() {
-    const { classes } = useStyles();
-    const [searchMode, setSearchMode] = useState(false);
-    const dashboardTabIndex = useSelector(dashboardTabIndexSelector);
-    const menuIndex = useSelector(menuIndexSelector);
-    const currentFilter = useSelector(dashboardFilterTermSelector);
-    const toggleIcon = searchMode ? <ArrowBackIcon /> : <SearchIcon />;
-    const dispatch = useDispatch();
+interface AppBarProps extends MuiAppBarProps {
+    isXs: boolean;
+    open: boolean;
+}
 
+const AppBar = styled(MuiAppBar, {
+    shouldForwardProp: (prop) => prop !== "open" && prop !== "isXs",
+})<AppBarProps>(({ theme, open, isXs }) => ({
+    zIndex: theme.zIndex.drawer + 1,
+    background: theme.palette.background.paper,
+    transition: theme.transitions.create(["width", "margin"], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+    }),
+    boxShadow:
+        "0px 2px 0px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12)",
+    ...(open &&
+        !isXs && {
+            // marginLeft: drawerWidth,
+            // width: `calc(100% - ${drawerWidth}px)`,
+            transition: theme.transitions.create(["width", "margin"], {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+            }),
+        }),
+}));
+
+export function MenuMainContainer() {
+    const menuIndex = useSelector(menuIndexSelector);
+    const dashboardTabIndex = useSelector(dashboardTabIndexSelector);
+    const { classes } = useStyles2();
+    const theme = useTheme();
+    const isXs = useMediaQuery(theme.breakpoints.down("sm"));
+    const [open, setOpen] = React.useState(false);
+    const [searchMode, setSearchMode] = React.useState(false);
+    const dispatch = useDispatch();
+    const toggleIcon = searchMode ? <ArrowBack /> : <Search />;
     const toggleSearchMode = () => {
         if (searchMode) dispatch(clearDashboardFilter());
         setSearchMode(!searchMode);
     };
 
-    const theme = useTheme();
-    const isSm = useMediaQuery(theme.breakpoints.down("md"));
-    const isXs = useMediaQuery(theme.breakpoints.down("sm"));
+    useCordovaBackButton(() => {
+        if (isXs) {
+            setOpen(false);
+        }
+    }, open);
 
-    const updateSearchMode = React.useCallback(
-        (currentFilter, menuIndex, isSm) => {
-            if (menuIndex !== "dashboard") {
-                setSearchMode(false);
-                dispatch(clearDashboardFilter());
-            } else if (currentFilter && isSm) {
-                setSearchMode((prevState) => {
-                    if (!prevState) return true;
-                    else return prevState;
-                });
-            }
-        },
-        [dispatch]
-    );
+    const handleDrawerOpen = () => {
+        setOpen(true);
+    };
 
-    useEffect(
-        () => updateSearchMode(currentFilter, menuIndex, isSm),
-        [currentFilter, isSm, menuIndex, updateSearchMode]
-    );
+    const toggleOpen = () => {
+        if (open) {
+            handleDrawerClose();
+        } else {
+            handleDrawerOpen();
+        }
+    };
 
-    useEffect(() => {
-        if (!isSm && searchMode) setSearchMode(false);
-    }, [isSm, searchMode]);
+    const handleDrawerClose = () => {
+        setOpen(false);
+    };
 
     return (
-        <React.Fragment>
-            <AppBar
-                position={isSm ? "relative" : "sticky"}
-                className={classes.appBar}
-            >
+        <Box
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+                width: "100%",
+                padding: 0,
+            }}
+        >
+            <CssBaseline />
+            <AppBar position="fixed" open={open} isXs={isXs}>
                 <Stack
                     direction="row"
                     alignItems="center"
@@ -119,7 +154,7 @@ export function MenuMainContainer() {
                                     paddingRight: 1,
                                 }}
                             >
-                                <MobileNavigationDrawer />
+                                <TopbarButton onClick={toggleOpen} />
                                 <ForwardBackButtons />
                             </Box>
                             {menuIndex === "dashboard" && (
@@ -153,7 +188,18 @@ export function MenuMainContainer() {
                     )}
                 </Stack>
             </AppBar>
-            <MainWindow />
-        </React.Fragment>
+            <Container
+                style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    maxWidth: "100%",
+                    padding: 0,
+                }}
+            >
+                <Sidebar onClose={handleDrawerClose} open={open} />
+                <MainWindow />
+            </Container>
+        </Box>
     );
 }
