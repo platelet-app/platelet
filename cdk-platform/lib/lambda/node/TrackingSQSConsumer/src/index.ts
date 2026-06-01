@@ -121,7 +121,7 @@ const sendTrackingLink = async (data: TrackingLinkData) => {
     }
     if (recipientEmail) {
         console.log("sending to email", recipientEmail);
-        const result = await sendPlateletEmail(
+        await sendPlateletEmail(
             recipientEmail,
             generateEmailTemplate(
                 recipientName,
@@ -134,7 +134,6 @@ const sendTrackingLink = async (data: TrackingLinkData) => {
             "quack",
             "Tracking information"
         );
-        console.log("AAA", result);
     }
 };
 
