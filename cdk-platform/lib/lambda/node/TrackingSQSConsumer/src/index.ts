@@ -1,10 +1,7 @@
 import type { SQSEvent, SQSBatchResponse } from "aws-lambda";
 import pAll from "p-all";
 import type { Task } from "@platelet-app/types";
-import type {
-    TaskDdbRecord,
-    TokenDdbRecord,
-} from "@platelet-app/tracking-types";
+import type { TaskDdbRecord } from "@platelet-app/tracking-types";
 
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
