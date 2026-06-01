@@ -17,7 +17,8 @@ export function request(
     return {
         operation: "GetItem",
         key: {
-            pk: util.dynamodb.toDynamoDB(ctx?.prev?.result?.TaskId),
+            pk: util.dynamodb.toDynamoDB(ctx?.prev?.result?.pk),
+            sk: util.dynamodb.toDynamoDB("metadata"),
         },
     };
 }
