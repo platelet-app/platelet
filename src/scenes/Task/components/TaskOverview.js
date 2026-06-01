@@ -16,6 +16,7 @@ import CommentsSection from "../../Comments/CommentsSection";
 import PendingTaskAcceptReject from "./PendingTaskAcceptReject";
 import StatusBar from "./StatusBar";
 import TaskMapDirections from "./TaskMapDirections";
+import { TaskTrackingDetails } from "./TaskTrackingDetails";
 
 const useStyles = makeStyles()((theme) => ({
     root: {
@@ -67,6 +68,7 @@ function TaskOverview({ taskId, isFetching }) {
                             taskModelType="Task"
                             taskId={taskId}
                         />
+                        <TaskTrackingDetails taskId={taskId} />
                         <Hidden mdUp>
                             <TaskAssignmentsPanel taskId={taskId} />
                         </Hidden>
