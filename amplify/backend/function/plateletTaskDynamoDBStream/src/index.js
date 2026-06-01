@@ -13,8 +13,53 @@ Amplify Params - DO NOT EDIT */
 import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
 import { getSQSTrackingURL } from "@platelet-app/lambda";
+import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 
 const sqsClient = new SQSClient({});
+
+const getTenantName = async (envName) => {
+    const client = new SSMClient();
+    const parameterName = `/platelet-supporting-cdk/${envName}/TenantName`;
+    const params = {
+        Name: parameterName,
+    };
+    const command = new GetParameterCommand(params);
+    try {
+        const response = await client.send(command);
+
+        // The value is nested under Parameter.Value
+        return response.Parameter?.Value;
+    } catch (error) {
+        if (error.name === "ParameterNotFound") {
+            console.error(`Parameter not found: ${parameterName}`);
+            return undefined;
+        }
+        console.error("Error retrieving SSM parameter:", error);
+        throw error;
+    }
+};
+
+const getTenantWebsite = async (envName) => {
+    const client = new SSMClient();
+    const parameterName = `/platelet-supporting-cdk/${envName}/TenantWebsite`;
+    const params = {
+        Name: parameterName,
+    };
+    const command = new GetParameterCommand(params);
+    try {
+        const response = await client.send(command);
+
+        // The value is nested under Parameter.Value
+        return response.Parameter?.Value;
+    } catch (error) {
+        if (error.name === "ParameterNotFound") {
+            console.error(`Parameter not found: ${parameterName}`);
+            return undefined;
+        }
+        console.error("Error retrieving SSM parameter:", error);
+        throw error;
+    }
+};
 
 const sendMessage = async (data, SQSName) => {
     const command = new SendMessageCommand({
@@ -55,6 +100,8 @@ const sendDeleteMessage = async (data, SQSName) => {
 export const handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
     const SQSName = await getSQSTrackingURL();
+    const tenantName = await getTenantName();
+    const tenantWebsite = await getTenantWebsite();
     for (const record of event.Records) {
         console.log(record.eventID);
         console.log(record.eventName);
