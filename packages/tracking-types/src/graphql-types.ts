@@ -41,11 +41,13 @@ export type QueryGetTrackingArgs = {
 
 export type TrackingData = {
   __typename?: 'TrackingData';
+  cancelTime?: Maybe<Scalars['AWSDateTime']['output']>;
   dropOffLocation?: Maybe<Location>;
   dropOffTime?: Maybe<Scalars['AWSDateTime']['output']>;
   id: Scalars['ID']['output'];
   pickUpLocation?: Maybe<Location>;
   pickUpTime?: Maybe<Scalars['AWSDateTime']['output']>;
+  rejectTime?: Maybe<Scalars['AWSDateTime']['output']>;
   tenantName?: Maybe<Scalars['String']['output']>;
   tenantWebsite?: Maybe<Scalars['AWSURL']['output']>;
 };
