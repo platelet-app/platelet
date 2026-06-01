@@ -38,16 +38,18 @@ export class TrackingAppSyncConstruct extends Construct {
             projectionType: dynamodb.ProjectionType.KEYS_ONLY,
         });
 
+        const dataSource = api.addDynamoDbDataSource(
+            "TableForTrackingDataSource",
+            this.trackingTable
+        );
+
         const getTrackingAppSyncFunction = new appsync.AppsyncFunction(
             this,
             "FuncGetTracking",
             {
                 name: "GetTrackingFunction",
                 api,
-                dataSource: api.addDynamoDbDataSource(
-                    "TableForTracking",
-                    this.trackingTable
-                ),
+                dataSource,
                 code: appsync.Code.fromAsset(
                     "./lib/appsync/node/GetTracking/dist/index.js"
                 ),
@@ -61,10 +63,7 @@ export class TrackingAppSyncConstruct extends Construct {
             {
                 name: "ResolveTaskInfo",
                 api,
-                dataSource: api.addDynamoDbDataSource(
-                    "TableForTrackingResolver",
-                    this.trackingTable
-                ),
+                dataSource,
                 code: appsync.Code.fromAsset(
                     "./lib/appsync/node/ResolveTaskInfo/dist/index.js"
                 ),
