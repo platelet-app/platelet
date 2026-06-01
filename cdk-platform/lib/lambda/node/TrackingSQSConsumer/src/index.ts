@@ -48,6 +48,8 @@ const writeRecord = async (data: Task) => {
         sk: "metadata",
         PickUpTime: data.timePickedUp || null,
         DropOffTime: data.timeDroppedOff || null,
+        CancelTime: data.timeCancelled || null,
+        RejectTime: data.timeRejected || null,
         ExpiresAt,
     };
 
