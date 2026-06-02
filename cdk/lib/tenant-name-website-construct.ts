@@ -34,11 +34,20 @@ export class TenantNameWebsiteConstruct extends Construct {
             }
         );
 
+        const queueSSM = ssm.StringParameter.fromStringParameterName(
+            this,
+            "SQSTrackingQueueSSMParam",
+            "/platelet-platform-cdk/TrackingQueueURL"
+        );
+
         new cdk.CfnOutput(this, "TenantNameSSMParamARNOutput", {
             value: tenantNameSSMParam.parameterArn,
         });
         new cdk.CfnOutput(this, "TenantWebsiteSSMParamARNOutput", {
             value: tenantWebsiteSSMParam.parameterArn,
+        });
+        new cdk.CfnOutput(this, "SQSQueueURLSSMParamARNOutput", {
+            value: queueSSM.parameterArn,
         });
     }
 }
