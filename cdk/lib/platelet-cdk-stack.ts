@@ -46,6 +46,7 @@ export class PlateletCdkStack extends cdk.Stack {
             tenantName,
             tenantWebsite,
             amplifyEnv,
+            account: this.account,
         });
 
         if (this.node.tryGetContext("createCypressTestingRole") === "true") {
