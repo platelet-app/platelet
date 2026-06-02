@@ -7,6 +7,7 @@ export interface TenantNameWebsiteConstructProps {
     amplifyEnv: string;
     tenantName: string;
     tenantWebsite: string;
+    account: string;
 }
 
 export class TenantNameWebsiteConstruct extends Construct {
@@ -48,6 +49,12 @@ export class TenantNameWebsiteConstruct extends Construct {
         });
         new cdk.CfnOutput(this, "SQSQueueURLSSMParamARNOutput", {
             value: queueSSM.parameterArn,
+        });
+
+        // we can't get the SQS itself from the name only
+        // put together the ARN with account and region
+        new cdk.CfnOutput(this, "TrackingSQSARNOutput", {
+            value: `arn:aws:sqs:${props.region}:${props.account}:platelet-tracking-queue`,
         });
     }
 }
