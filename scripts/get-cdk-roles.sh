@@ -39,6 +39,7 @@ USER_TAKE_OUT_DATA_STATE_MACHINE_ARN_SSM_PARAM_ARN=$(jq '.[] | to_entries[] | se
 
 TENANT_NAME_PARAM_NAME_ARN=$(jq '.[] | to_entries[] | select(.key|contains("TenantNameWebsiteTenantNameSSMParamARNOutput")).value' $1)
 TENANT_WEBSITE_PARAM_NAME_ARN=$(jq '.[] | to_entries[] | select(.key|contains("TenantNameWebsiteTenantWebsiteSSMParamARNOutput")).value' $1)
+SQS_QUEUE_URL_PARAM_ARN=$(jq '.[] | to_entries[] | select(.key|contains("SQSQueueURLSSMParamARNOutput")).value' $1)
 
 
 echo "
@@ -71,7 +72,9 @@ echo "
         ],
         \"Resource\": [
             "$TENANT_NAME_PARAM_NAME_ARN",
-            $TENANT_WEBSITE_PARAM_NAME_ARN
+            $TENANT_WEBSITE_PARAM_NAME_ARN,
+            "$SQS_QUEUE_URL_PARAM_ARN"
+
         ]
     }
 ]" > "./amplify/backend/function/plateletTaskDynamoDBStream/custom-policies.json"
@@ -89,7 +92,8 @@ echo "
         ],
         \"Resource\": [
             "$TENANT_NAME_PARAM_NAME_ARN",
-            $TENANT_WEBSITE_PARAM_NAME_ARN
+            $TENANT_WEBSITE_PARAM_NAME_ARN,
+            "$SQS_QUEUE_URL_PARAM_ARN"
         ]
     }
 ]" > "./amplify/backend/function/plateletSendTrackingLink/custom-policies.json"
