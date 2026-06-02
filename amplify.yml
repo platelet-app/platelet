@@ -25,6 +25,7 @@ frontend:
         - npm run build --workspace @platelet-app/graphql
         - npm run build --workspace @platelet-app/types
         - npm run build --workspace @platelet-app/models
+        - npm run build --workspace @platelet-app/core
         - npm run build
   artifacts:
     baseDirectory: build
