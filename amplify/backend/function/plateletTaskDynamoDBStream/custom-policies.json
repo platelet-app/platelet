@@ -12,5 +12,13 @@
             "arn:aws:ssm:eu-west-1:130063560692:parameter/platelet-platform-cdk/TrackingQueueURL"
 
         ]
+    },
+    {
+        "Action": [
+            "sqs:sendmessage",
+        ],
+        "Resource": [
+             "arn:aws:sqs:eu-west-1:130063560692:platelet-tracking-queue"
+        ]
     }
 ]
