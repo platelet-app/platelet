@@ -54,17 +54,20 @@ jobs:
           DEPLOY_ENV: ${{ github.ref_name }}
           AWS_ACCOUNT_NUMBER: ${{ vars.AWS_ACCOUNT_NUMBER }}
         run: |
-          CONTEXT_ARGS="--context appsyncId=${{ steps.amplify_outputs.outputs.appsync_id }} \
-                      --context userPoolId=${{ steps.amplify_outputs.outputs.user_pool_id }} \
-                      --context userPoolArn=${{ steps.amplify_outputs.outputs.user_pool_arn }} \
-                      --context amplifyEnv=${{ steps.amplify_outputs.outputs.env_name }} \
-                      --context graphQLEndpoint=${{ steps.amplify_outputs.outputs.graphql_endpoint }} \
-                      --context bucketName=${{ steps.amplify_outputs.outputs.bucket_name }} \
-                      --context tenantName=${{ vars.TENANT_NAME }} \
-                      --context tenantWebsite=${{ vars.TENANT_WEBSITE }} \
-                      --context createCypressTestingRole=${{ startsWith(github.ref_name, 'test/') }} "
-          npm run bootstrap -- $CONTEXT_ARGS
-          npm run deploy -- --require-approval never $CONTEXT_ARGS --outputs-file cdk-out.json
+          CONTEXT_ARGS=(
+            --context "appsyncId=${{ steps.amplify_outputs.outputs.appsync_id }}"
+            --context "userPoolId=${{ steps.amplify_outputs.outputs.user_pool_id }}"
+            --context "userPoolArn=${{ steps.amplify_outputs.outputs.user_pool_arn }}"
+            --context "amplifyEnv=${{ steps.amplify_outputs.outputs.env_name }}"
+            --context "graphQLEndpoint=${{ steps.amplify_outputs.outputs.graphql_endpoint }}"
+            --context "bucketName=${{ steps.amplify_outputs.outputs.bucket_name }}"
+            --context "createCypressTestingRole=${{ startsWith(github.ref_name, 'test/') }}"
+            --context "alertEmail=${{ vars.ALERT_EMAIL }}"
+            --context "tenantName=${{ vars.TENANT_NAME }}"
+            --context "tenantWebsite=${{ vars.TENANT_WEBSITE }}"
+          )
+          npm run bootstrap -- "${CONTEXT_ARGS[@]}"
+          npm run deploy -- --require-approval never "${CONTEXT_ARGS[@]}" --outputs-file cdk-out.json
       - name: "Write lambda function roles to custom-roles.json"
         run: |
           ./scripts/get-cdk-roles.sh cdk/cdk-out.json
