@@ -37,8 +37,9 @@ USER_TAKE_OUT_DATA_STATE_MACHINE_ARN=$(jq '.[] | to_entries[] | select(.key|cont
 USER_TAKE_OUT_DATA_STATE_MACHINE_ARN_SSM_PARAM_ARN=$(jq '.[] | to_entries[] | select(.key|contains("TakeOutUserDataStateMachineArnSSMParamArnOutput")).value' $1)
 
 
-TENANT_NAME_PARAM_NAME_ARN=$(jq '.[] | to_entries[] | select(.key|contains("TenantNameSSMParamArnOutput")).value' $1)
-TENANT_WEBSITE_PARAM_NAME_ARN=$(jq '.[] | to_entries[] | select(.key|contains("TenantWebsiteSSMParamArnOutput")).value' $1)
+TENANT_NAME_PARAM_NAME_ARN=$(jq '.[] | to_entries[] | select(.key|contains("TenantNameWebsiteTenantNameSSMParamARNOutput")).value' $1)
+TENANT_WEBSITE_PARAM_NAME_ARN=$(jq '.[] | to_entries[] | select(.key|contains("TenantNameWebsiteTenantWebsiteSSMParamARNOutput")).value' $1)
+
 
 echo "
 [
@@ -69,7 +70,7 @@ echo "
             \"ssm:GetParametersByPath\"
         ],
         \"Resource\": [
-            $TENANT_NAME_PARAM_NAME_ARN,
+            "$TENANT_NAME_PARAM_NAME_ARN",
             $TENANT_WEBSITE_PARAM_NAME_ARN
         ]
     }
@@ -87,7 +88,7 @@ echo "
             \"ssm:GetParametersByPath\"
         ],
         \"Resource\": [
-            $TENANT_NAME_PARAM_NAME_ARN,
+            "$TENANT_NAME_PARAM_NAME_ARN",
             $TENANT_WEBSITE_PARAM_NAME_ARN
         ]
     }
