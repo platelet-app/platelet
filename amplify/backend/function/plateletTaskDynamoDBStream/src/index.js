@@ -22,6 +22,24 @@ const sqsClient = new SQSClient({});
 
 const ENV_NAME = process.env.ENV;
 
+let sqsNamePromise = null;
+let tenantNamePromise = null;
+let tenantWebsitePromise = null;
+
+console.log(sqsNamePromise, tenantNamePromise, tenantWebsitePromise);
+
+const getConfig = () => {
+    if (!sqsNamePromise) sqsNamePromise = getSQSTrackingURL();
+    if (!tenantNamePromise) tenantNamePromise = getTenantName(ENV_NAME);
+    if (!tenantWebsitePromise)
+        tenantWebsitePromise = getTenantWebsite(ENV_NAME);
+    return Promise.all([
+        sqsNamePromise,
+        tenantNamePromise,
+        tenantWebsitePromise,
+    ]);
+};
+
 const sendMessage = async (data, tenantName, tenantWebsite, SQSName) => {
     const trackingData = { task: data, tenantName, tenantWebsite };
     const command = new SendMessageCommand({
@@ -61,7 +79,7 @@ const sendDeleteMessage = async (data, SQSName) => {
 
 export const handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
-    const SQSName = await getSQSTrackingURL();
+    const [SQSName, tenantName, tenantWebsite] = await getConfig();
     for (const record of event.Records) {
         console.log(record.eventID);
         console.log(record.eventName);
@@ -73,9 +91,13 @@ export const handler = async (event) => {
             await sendDeleteMessage(data, SQSName);
         } else if (data?.isBeingTracked) {
             // otherwise if the task is being tracked, send the data to the queue
-            const tenantName = await getTenantName(ENV_NAME);
-            const tenantWebsite = await getTenantWebsite(ENV_NAME);
-            await sendMessage(data, tenantName, tenantWebsite, SQSName);
+            const { timePickedUp, timeDroppedOff } = data;
+            await sendMessage(
+                { timePickedUp, timeDroppedOff },
+                tenantName,
+                tenantWebsite,
+                SQSName
+            );
         }
     }
     return Promise.resolve("Successfully processed DynamoDB record");

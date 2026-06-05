@@ -12,6 +12,22 @@ const ENV_NAME = process.env.ENV;
 
 const sqsClient = new SQSClient({});
 
+let sqsNamePromise = null;
+let tenantNamePromise = null;
+let tenantWebsitePromise = null;
+
+const getConfig = () => {
+    if (!sqsNamePromise) sqsNamePromise = getSQSTrackingURL();
+    if (!tenantNamePromise) tenantNamePromise = getTenantName(ENV_NAME);
+    if (!tenantWebsitePromise)
+        tenantWebsitePromise = getTenantWebsite(ENV_NAME);
+    return Promise.all([
+        sqsNamePromise,
+        tenantNamePromise,
+        tenantWebsitePromise,
+    ]);
+};
+
 const sendMessage = async (data, SQSName) => {
     const command = new SendMessageCommand({
         QueueUrl: SQSName,
@@ -32,9 +48,7 @@ const sendMessage = async (data, SQSName) => {
 
 export const handler = async (event) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
-    const SQSName = await getSQSTrackingURL();
-    const tenantName = await getTenantName(ENV_NAME);
-    const tenantWebsite = await getTenantWebsite(ENV_NAME);
+    const [SQSName, tenantName, tenantWebsite] = await getConfig();
     await sendMessage(
         { ...event.arguments, tenantName, tenantWebsite },
         SQSName
