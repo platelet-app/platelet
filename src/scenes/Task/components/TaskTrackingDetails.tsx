@@ -1,10 +1,5 @@
-import React, {
-    ChangeEvent,
-    ChangeEventHandler,
-    FormEvent,
-    ReactText,
-} from "react";
-import { useModelSubscription } from "@platelet-app/core";
+import React, { ChangeEvent } from "react";
+import { useModelQuery } from "@platelet-app/core";
 import * as models from "@platelet-app/models";
 import { mutations } from "@platelet-app/graphql";
 import { dialogCardStyles } from "../styles/DialogCompactStyles";
@@ -17,7 +12,6 @@ import {
     Stack,
     Switch,
     TextField,
-    ToggleButton,
     Typography,
 } from "@mui/material";
 import { API, DataStore } from "aws-amplify";
@@ -34,7 +28,7 @@ export const TaskTrackingDetails: React.FC<TaskTrackingDetailsProps> = ({
     const [recipientName, setRecipientName] = React.useState("");
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const { classes } = dialogCardStyles();
-    const task = useModelSubscription(models.Task, taskId);
+    const task = useModelQuery(models.Task, taskId);
     const firstLoad = React.useRef(false);
     console.log(task);
 
@@ -49,7 +43,6 @@ export const TaskTrackingDetails: React.FC<TaskTrackingDetailsProps> = ({
         event: ChangeEvent<HTMLInputElement>
     ) => {
         const { checked } = event?.target;
-        console.log("asdf", checked);
         setToggleState(checked);
         const currentTask = await DataStore.query(models.Task, taskId);
         if (currentTask) {
