@@ -75,7 +75,13 @@ export const handler = async (event) => {
             // otherwise if the task is being tracked, send the data to the queue
             const tenantName = await getTenantName(ENV_NAME);
             const tenantWebsite = await getTenantWebsite(ENV_NAME);
-            await sendMessage(data, tenantName, tenantWebsite, SQSName);
+            const { timePickedUp, timeDroppedOff } = data;
+            await sendMessage(
+                { timePickedUp, timeDroppedOff },
+                tenantName,
+                tenantWebsite,
+                SQSName
+            );
         }
     }
     return Promise.resolve("Successfully processed DynamoDB record");
