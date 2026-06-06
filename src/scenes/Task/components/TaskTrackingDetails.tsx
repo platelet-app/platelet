@@ -1,4 +1,8 @@
 import React, { ChangeEvent } from "react";
+import {
+    displayErrorNotification,
+    displayInfoNotification,
+} from "../../../redux/notifications/NotificationsActions";
 import { useModelQuery } from "@platelet-app/core";
 import * as models from "@platelet-app/models";
 import { mutations } from "@platelet-app/graphql";
@@ -8,13 +12,15 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
+    DialogTitle,
+    FormControlLabel,
     Paper,
     Stack,
     Switch,
     TextField,
-    Typography,
 } from "@mui/material";
 import { API, DataStore } from "aws-amplify";
+import { useDispatch } from "react-redux";
 
 type TaskTrackingDetailsProps = {
     taskId: string;
@@ -27,10 +33,10 @@ export const TaskTrackingDetails: React.FC<TaskTrackingDetailsProps> = ({
     const [recipientEmail, setRecipientEmail] = React.useState("");
     const [recipientName, setRecipientName] = React.useState("");
     const [dialogOpen, setDialogOpen] = React.useState(false);
+    const dispatch = useDispatch();
     const { classes } = dialogCardStyles();
     const task = useModelQuery(models.Task, taskId);
     const firstLoad = React.useRef(false);
-    console.log(task);
 
     React.useEffect(() => {
         if (!firstLoad.current && task?.state) {
@@ -42,23 +48,34 @@ export const TaskTrackingDetails: React.FC<TaskTrackingDetailsProps> = ({
     const handleToggleTracking = async (
         event: ChangeEvent<HTMLInputElement>
     ) => {
-        const { checked } = event?.target;
-        setToggleState(checked);
-        const currentTask = await DataStore.query(models.Task, taskId);
-        if (currentTask) {
-            const newTask = models.Task.copyOf(currentTask, (t) => {
-                t.isBeingTracked = checked;
-            });
-            await DataStore.save(newTask);
+        try {
+            const { checked } = event?.target;
+            setToggleState(checked);
+            const currentTask = await DataStore.query(models.Task, taskId);
+            if (currentTask) {
+                const newTask = models.Task.copyOf(currentTask, (t) => {
+                    t.isBeingTracked = checked;
+                });
+                await DataStore.save(newTask);
+            }
+        } catch (e) {
+            console.error(e);
+            dispatch(displayErrorNotification("Sorry, something went wrong."));
         }
     };
 
     const handleSendTrackingLink = async () => {
-        await API.graphql({
-            query: mutations.sendTrackingLink,
-            variables: { taskId, recipientEmail, recipientName },
-        });
-        setDialogOpen(false);
+        try {
+            await API.graphql({
+                query: mutations.sendTrackingLink,
+                variables: { taskId, recipientEmail, recipientName },
+            });
+            setDialogOpen(false);
+            dispatch(displayInfoNotification("Link sent!"));
+        } catch (e) {
+            console.error(e);
+            dispatch(displayErrorNotification("Sorry, something went wrong."));
+        }
     };
 
     const handleChangeRecipientName = (
@@ -77,39 +94,59 @@ export const TaskTrackingDetails: React.FC<TaskTrackingDetailsProps> = ({
 
     return (
         <Paper className={classes?.root}>
-            <Stack>
-                <Typography>
-                    {task?.state?.isBeingTracked && "Task is being tracked."}
-                    {!task?.state?.isBeingTracked &&
-                        "Task is not being tracked."}
-                </Typography>
-                <Switch
-                    disabled={task?.isFetching}
-                    checked={toggleState}
-                    onChange={handleToggleTracking}
+            <Stack
+                alignItems="center"
+                direction="row"
+                justifyContent="space-between"
+            >
+                <FormControlLabel
+                    control={
+                        <Switch
+                            disabled={task?.isFetching}
+                            checked={toggleState}
+                            onChange={handleToggleTracking}
+                        />
+                    }
+                    label="Tracked"
                 />
                 <Button
                     onClick={() => {
                         setDialogOpen(true);
                     }}
+                    variant="outlined"
                     disabled={!toggleState}
                 >
                     Send link
                 </Button>
-                <Dialog open={dialogOpen}>
+                <Dialog
+                    PaperProps={{ sx: { borderRadius: "1em", padding: 1 } }}
+                    open={dialogOpen}
+                >
+                    <DialogTitle>Send a tracking link</DialogTitle>
                     <DialogContent>
-                        <TextField
-                            onChange={handleChangeRecipientName}
-                            value={recipientName}
-                            label="Recipient name"
-                        />
-                        <TextField
-                            onChange={handleChangeRecipientEmail}
-                            value={recipientEmail}
-                            label="Recipient email"
-                        />
+                        <Stack spacing={2} margin={1}>
+                            <TextField
+                                inputProps={{
+                                    "aria-label": "recipient name",
+                                }}
+                                onChange={handleChangeRecipientName}
+                                value={recipientName}
+                                label="Recipient name"
+                            />
+                            <TextField
+                                inputProps={{
+                                    "aria-label": "recipient email",
+                                }}
+                                onChange={handleChangeRecipientEmail}
+                                value={recipientEmail}
+                                label="Recipient email"
+                            />
+                        </Stack>
                     </DialogContent>
                     <DialogActions>
+                        <Button onClick={() => setDialogOpen(false)}>
+                            Cancel
+                        </Button>
                         <Button onClick={handleSendTrackingLink}>Send</Button>
                     </DialogActions>
                 </Dialog>
