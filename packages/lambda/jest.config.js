@@ -1,6 +1,6 @@
 import { createDefaultPreset } from "ts-jest";
 
-const tsJestTransformCfg = createDefaultPreset().transform;
+const tsJestTransformCfg = createDefaultPreset({ useESM: true }).transform;
 
 /** @type {import("jest").Config} **/
 export default {
@@ -8,11 +8,6 @@ export default {
     extensionsToTreatAsEsm: [".ts"],
     moduleNameMapper: {
         "^(\\.\\.?\\/.+)\\.js$": "$1",
-    },
-    globals: {
-        "ts-jest": {
-            useESM: true,
-        },
     },
     transform: {
         ...tsJestTransformCfg,
