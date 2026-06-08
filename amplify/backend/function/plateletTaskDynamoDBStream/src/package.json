@@ -9,9 +9,12 @@
         "@types/aws-lambda": "^8.10.92"
     },
     "dependencies": {
-        "@platelet-app/lambda": "^1.1.17"
+        "@aws-sdk/client-sqs": "^3.1063.0",
+        "@aws-sdk/util-dynamodb": "^3.996.3",
+        "@platelet-app/lambda": "^1.1.17",
+        "jest": "^30.4.2"
     },
     "scripts": {
-        "test": "echo no test"
+        "test": "jest"
     }
 }

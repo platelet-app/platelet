@@ -26,8 +26,6 @@ let sqsNamePromise = null;
 let tenantNamePromise = null;
 let tenantWebsitePromise = null;
 
-console.log(sqsNamePromise, tenantNamePromise, tenantWebsitePromise);
-
 const getConfig = () => {
     if (!sqsNamePromise) sqsNamePromise = getSQSTrackingURL();
     if (!tenantNamePromise) tenantNamePromise = getTenantName(ENV_NAME);
@@ -88,16 +86,21 @@ export const handler = async (event) => {
         const data = unmarshall(record?.dynamodb?.NewImage);
         if (!data?.isBeingTracked) {
             // if the task is not tracked, delete the old data
-            await sendDeleteMessage(data, SQSName);
+            console.log("Deleting task");
+            if (data?.id) {
+                await sendDeleteMessage({ id: data?.id }, SQSName);
+            }
         } else if (data?.isBeingTracked) {
             // otherwise if the task is being tracked, send the data to the queue
-            const { timePickedUp, timeDroppedOff } = data;
-            await sendMessage(
-                { timePickedUp, timeDroppedOff },
-                tenantName,
-                tenantWebsite,
-                SQSName
-            );
+            const { timePickedUp, timeDroppedOff, id } = data;
+            if (id) {
+                await sendMessage(
+                    { timePickedUp, timeDroppedOff, id },
+                    tenantName,
+                    tenantWebsite,
+                    SQSName
+                );
+            }
         }
     }
     return Promise.resolve("Successfully processed DynamoDB record");
