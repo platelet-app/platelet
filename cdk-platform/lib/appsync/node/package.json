@@ -1,5 +1,5 @@
 {
-    "name": "resolvetaskinfo",
+    "name": "appsyncfunctions",
     "version": "1.0.0",
     "description": "",
     "homepage": "https://github.com/platelet-app/platelet#readme",
@@ -12,18 +12,15 @@
     },
     "license": "Apache-2.0",
     "author": "Theo Cranmore <theo@platelet.app>",
-    "type": "module",
-    "main": "index.js",
     "scripts": {
-        "prebuild": "npm install --include=dev",
-        "test": "jest",
-        "build": "tsc",
-        "package": "npm prune --omit=dev && rm -rf dist/node_modules && cp -R node_modules dist/node_modules/ && cp package.json dist"
+        "build": "npm-run-all build-*",
+        "build-resolve-tracking-info": "cd ./ResolveTaskInfo && npm run build",
+        "build-get-tracking": "cd ./GetTracking && npm run build",
+        "package": "npm-run-all pk-*",
+        "pk-resolve-tracking-info": "cd ./ResolveTaskInfo && npm run package",
+        "pk-get-tracking": "cd ./GetTracking && npm run package"
     },
     "dependencies": {
-        "@aws-appsync/utils": "^2.1.1"
-    },
-    "devDependencies": {
-        "@types/aws-lambda": "^8.10.161"
+        "npm-run-all": "^4.1.5"
     }
 }

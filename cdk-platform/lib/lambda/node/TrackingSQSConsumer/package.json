@@ -15,8 +15,10 @@
     "type": "module",
     "main": "index.js",
     "scripts": {
+        "prebuild": "npm install --include=dev",
         "test": "jest",
-        "build": "tsc"
+        "build": "tsc",
+        "package": "npm prune --omit=dev && rm -rf dist/node_modules && cp -R node_modules dist/node_modules/ && cp package.json dist"
     },
     "dependencies": {
         "@aws-sdk/client-dynamodb": "^3.1056.0",
