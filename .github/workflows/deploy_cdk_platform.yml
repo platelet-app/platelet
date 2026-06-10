@@ -1,17 +1,27 @@
 on:
   push:
     branches:
-      - 'production/platform'
+      - 'platform'
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v3
-      - name: 'Install CDK CLI'
-        run: npm install -g aws-cdk
+      - name: 'Install CDK CLI and amplify'
+        run: npm install -g aws-cdk @aws-amplify/cli@12.4.0
+      - name: 'npm install'
+        run: npm install
+      - name: build types package
+        run: npm run build --workspace @platelet-app/types
       - name: build tracking types package
         run: npm run build --workspace @platelet-app/tracking-types
+      - name: build lambda package
+        run: npm run build --workspace @platelet-app/lambda
       - name: 'Install dependencies'
         working-directory: cdk-platform
         run: npm install
@@ -27,6 +37,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_ACCOUNT_NUMBER: ${{ vars.AWS_ACCOUNT_NUMBER }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
         run: |
           npm run bootstrap
           npm run deploy -- --require-approval never --outputs-file cdk-out.json
