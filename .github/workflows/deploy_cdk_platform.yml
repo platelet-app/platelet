@@ -15,7 +15,8 @@ jobs:
       - name: 'Install CDK CLI and amplify'
         run: npm install -g aws-cdk @aws-amplify/cli@12.4.0
       - name: 'Remove cli options'
-        run: sed -i 's/"subscriptionsInheritPrimaryAuth": true,//' amplify/cli.json
+        run: |
+          sed -i 's/"subscriptionsInheritPrimaryAuth": true,//' amplify/cli.json
       - name: 'npm install'
         run: npm install
       - name: build types package
