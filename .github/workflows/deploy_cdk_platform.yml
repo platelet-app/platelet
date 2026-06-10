@@ -12,11 +12,8 @@ jobs:
           node-version: '20'
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v3
-      - name: 'Install CDK CLI and amplify'
-        run: npm install -g aws-cdk @aws-amplify/cli@12.4.0
-      - name: 'Remove cli options'
-        run: |
-          sed -i 's/"subscriptionsInheritPrimaryAuth": true,//' amplify/cli.json
+      - name: 'Install CDK CLI'
+        run: npm install -g aws-cdk
       - name: 'npm install'
         run: npm install
       - name: build types package
