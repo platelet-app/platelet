@@ -28,6 +28,9 @@ jobs:
       - name: 'Build lambda functions'
         working-directory: cdk-platform
         run: npm run build-functions
+      - name: 'Build landing page'
+        working-directory: cdk-platform
+        run: cd lib/hosting/landing-page && npm install && npm run build
       - name: 'Build'
         working-directory: cdk-platform
         run: npm run build
