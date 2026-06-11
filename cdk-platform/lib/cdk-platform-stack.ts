@@ -2,6 +2,7 @@ import * as cdk from "aws-cdk-lib/core";
 import { Construct } from "constructs";
 import { TrackingAppSyncConstruct } from "./tracking-appsync-construct";
 import { TrackingSQSConstruct } from "./tracking-sqs-construct";
+import { HostingConstruct } from "./hosting-construct";
 
 export class PlateletCdkPlatformStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -20,5 +21,6 @@ export class PlateletCdkPlatformStack extends cdk.Stack {
             ddbTable: trackingAppSync.trackingTable,
             alertsEmail,
         });
+        new HostingConstruct(this, "Hosting", { region: this.region });
     }
 }
