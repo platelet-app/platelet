@@ -14,7 +14,7 @@ export class HostingConstruct extends Construct {
         });
         new BucketDeployment(this, "BucketDeployment", {
             destinationBucket: landingBucket,
-            sources: [Source.asset("./hosting/landing-page/build")],
+            sources: [Source.asset("./lib/hosting/landing-page/build")],
         });
     }
 }
