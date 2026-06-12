@@ -33,10 +33,11 @@ export class HostingConstruct extends Construct {
         console.log(zone);
 
         // 2. Create a TLS/SSL certificate for HTTPS
-        const certificate = new acm.Certificate(this, 'PlatformHostingCertificate', {
+        const certificate = new acm.DnsValidatedCertificate(this, 'PlatformHostingCertificate', {
             domainName: domainName,
-            subjectAlternativeNames: [`*.${domainName}`],
-            validation: acm.CertificateValidation.fromDns(zone),
+            subjectAlternativeNames: ['*.' + domainName],
+            hostedZone: zone,
+            region: 'us-east-1', // Cloudfront only checks this region for certificates
         });
 
         // 2.1 The removal policy for the certificate can be set to 'Retain' or 'Destroy'
