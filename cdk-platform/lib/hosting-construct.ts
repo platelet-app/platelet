@@ -17,8 +17,8 @@ export class HostingConstruct extends Construct {
     constructor(scope: Construct, id: string, props: HostingConstructProps) {
         super(scope, id);
         // 1. Define the domain name by changing'stormit.link'.
-        const domainName = 'platelet.app';
-        const siteDomain = `platform-landing.${domainName}`;
+        const domainName = 'platelet-soft.com';
+        const siteDomain = `www.${domainName}`;
 
         // 1.1 Create a Route 53 hosted zone (optional - you will need to update the NS records).
         /*
@@ -79,17 +79,17 @@ export class HostingConstruct extends Construct {
 
         // 5. Create a Route 53 alias record for the CloudFront distribution
         //5.1  Add an 'A' record to Route 53 for 'www.example.com'
-        //  new route53.ARecord(this, 'WWWSiteAliasRecord', {
-        //      zone,
-        //      recordName: siteDomain,
-        //      target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(distribution))
-        //  });
-        //  //5.2 Add an 'A' record to Route 53 for 'example.com'
-        //  new route53.ARecord(this, 'SiteAliasRecord', {
-        //      zone,
-        //      recordName: domainName,
-        //      target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(distribution))
-        //  });
+        new route53.ARecord(this, 'LandingWWWSiteAliasRecord', {
+            zone,
+            recordName: siteDomain,
+            target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(distribution))
+        });
+        //5.2 Add an 'A' record to Route 53 for 'example.com'
+        new route53.ARecord(this, 'LandingSiteAliasRecord', {
+            zone,
+            recordName: domainName,
+            target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(distribution))
+        });
 
         //6. Deploy the files from the 'html-website' folder to an S3 bucket
         new s3deploy.BucketDeployment(this, 'DeployWebsite', {
