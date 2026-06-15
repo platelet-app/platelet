@@ -66,6 +66,15 @@ export class HostingConstruct extends Construct {
         new CfnOutput(this, "LandingPageBucket", {
             value: siteBucket.bucketName,
         });
+        const trackingPageBucket = new s3.Bucket(this, "TrackingPage", {
+            bucketName: `${siteDomain}/track`,
+            removalPolicy: RemovalPolicy.DESTROY,
+            autoDeleteObjects: true,
+            blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS,
+            accessControl: s3.BucketAccessControl.BUCKET_OWNER_FULL_CONTROL,
+            websiteIndexDocument: "index.html",
+            websiteErrorDocument: "index.html",
+        });
 
         // 4. Deploy CloudFront distribution
         const distribution = new cloudfront.Distribution(
@@ -95,6 +104,15 @@ export class HostingConstruct extends Construct {
                     viewerProtocolPolicy:
                         cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
                 },
+                additionalBehaviors: {
+                    '/track/': {
+                        allowedMethods:
+                            cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+                        viewerProtocolPolicy:
+                            cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+                        origin: cloudfront_origins.S3BucketOrigin.withOriginAccessControl(trackingPageBucket)
+                    }
+                }
             }
         );
 
@@ -126,6 +144,15 @@ export class HostingConstruct extends Construct {
                 s3deploy.Source.asset("./lib/hosting/landing-page/build"),
             ],
             destinationBucket: siteBucket,
+            distribution,
+            distributionPaths: ["/*"],
+        });
+        // deploy the tracking page
+        new s3deploy.BucketDeployment(this, "DeployTracking", {
+            sources: [
+                s3deploy.Source.asset("./lib/hosting/tracking-page/build"),
+            ],
+            destinationBucket: trackingPageBucket,
             distribution,
             distributionPaths: ["/*"],
         });
