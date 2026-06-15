@@ -1,0 +1,40 @@
+{
+  "name": "tracking-page",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "rsbuild build",
+    "dev": "rsbuild --open",
+    "format": "prettier --write .",
+    "lint": "rslint",
+    "preview": "rsbuild preview",
+    "test": "rstest",
+    "test:watch": "rstest --watch"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^9.1.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@rsbuild/core": "^2.0.14",
+    "@rsbuild/plugin-babel": "^1.2.1",
+    "@rsbuild/plugin-react": "^2.0.1",
+    "@rslint/core": "^0.5.3",
+    "@rstest/adapter-rsbuild": "^0.10.4",
+    "@rstest/core": "^0.10.4",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^24.13.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "happy-dom": "^20.10.3",
+    "prettier": "^3.8.3",
+    "typescript": "^6.0.3"
+  }
+}
