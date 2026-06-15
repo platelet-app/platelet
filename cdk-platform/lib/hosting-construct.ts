@@ -5,8 +5,8 @@ import * as targets from "aws-cdk-lib/aws-route53-targets";
 import * as cloudfront_origins from "aws-cdk-lib/aws-cloudfront-origins";
 import * as s3deploy from "aws-cdk-lib/aws-s3-deployment";
 
-import { CfnOutput, Duration, RemovalPolicy } from "aws-cdk-lib";
-import { Construct } from "constructs";
+import {CfnOutput, Duration, RemovalPolicy} from "aws-cdk-lib";
+import {Construct} from "constructs";
 import * as s3 from "aws-cdk-lib/aws-s3";
 
 export interface HostingConstructProps {
@@ -67,7 +67,7 @@ export class HostingConstruct extends Construct {
             value: siteBucket.bucketName,
         });
         const trackingPageBucket = new s3.Bucket(this, "TrackingPage", {
-            bucketName: `${siteDomain}/track`,
+            bucketName: `${siteDomain}-track`,
             removalPolicy: RemovalPolicy.DESTROY,
             autoDeleteObjects: true,
             blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS,
