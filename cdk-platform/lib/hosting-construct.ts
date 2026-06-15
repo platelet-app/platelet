@@ -5,8 +5,8 @@ import * as targets from "aws-cdk-lib/aws-route53-targets";
 import * as cloudfront_origins from "aws-cdk-lib/aws-cloudfront-origins";
 import * as s3deploy from "aws-cdk-lib/aws-s3-deployment";
 
-import {CfnOutput, Duration, RemovalPolicy} from "aws-cdk-lib";
-import {Construct} from "constructs";
+import { CfnOutput, Duration, RemovalPolicy } from "aws-cdk-lib";
+import { Construct } from "constructs";
 import * as s3 from "aws-cdk-lib/aws-s3";
 
 export interface HostingConstructProps {
@@ -105,14 +105,16 @@ export class HostingConstruct extends Construct {
                         cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
                 },
                 additionalBehaviors: {
-                    '/track/': {
+                    "/track/": {
                         allowedMethods:
                             cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
                         viewerProtocolPolicy:
                             cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-                        origin: cloudfront_origins.S3BucketOrigin.withOriginAccessControl(trackingPageBucket)
-                    }
-                }
+                        origin: cloudfront_origins.S3BucketOrigin.withOriginAccessControl(
+                            trackingPageBucket
+                        ),
+                    },
+                },
             }
         );
 
@@ -150,7 +152,7 @@ export class HostingConstruct extends Construct {
         // deploy the tracking page
         new s3deploy.BucketDeployment(this, "DeployTracking", {
             sources: [
-                s3deploy.Source.asset("./lib/hosting/tracking-page/build"),
+                s3deploy.Source.asset("./lib/hosting/tracking-page/dist"),
             ],
             destinationBucket: trackingPageBucket,
             distribution,
