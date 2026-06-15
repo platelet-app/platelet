@@ -56,7 +56,6 @@ export class HostingConstruct extends Construct {
         // Please be aware that all content stored in the S3 bucket is publicly available.
         const siteBucket = new s3.Bucket(this, "LandingPage", {
             bucketName: siteDomain,
-            publicReadAccess: true,
             removalPolicy: RemovalPolicy.DESTROY,
             autoDeleteObjects: true,
             blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS,
