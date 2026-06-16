@@ -164,7 +164,8 @@ export class HostingConstruct extends Construct {
             ],
             destinationBucket: trackingPageBucket,
             distribution,
-            distributionPaths: ["/*"],
+            destinationKeyPrefix: "track/",
+            distributionPaths: ["/track/*"],
         });
     }
 }
