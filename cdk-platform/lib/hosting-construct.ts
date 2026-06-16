@@ -88,6 +88,12 @@ export class HostingConstruct extends Construct {
                     cloudfront.SecurityPolicyProtocol.TLS_V1_2_2021,
                 errorResponses: [
                     {
+                        httpStatus: 403,
+                        responseHttpStatus: 200,
+                        responsePagePath: "/index.html",
+                        ttl: Duration.minutes(30),
+                    },
+                    {
                         httpStatus: 404,
                         responseHttpStatus: 404,
                         responsePagePath: "/index.html",
