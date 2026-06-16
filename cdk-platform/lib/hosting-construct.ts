@@ -58,7 +58,8 @@ export class HostingConstruct extends Construct {
             bucketName: siteDomain,
             removalPolicy: RemovalPolicy.DESTROY,
             autoDeleteObjects: true,
-            blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS,
+            publicReadAccess: true,
+            blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS_ONLY,
             accessControl: s3.BucketAccessControl.BUCKET_OWNER_FULL_CONTROL,
             websiteIndexDocument: "index.html",
             websiteErrorDocument: "index.html",
@@ -70,7 +71,8 @@ export class HostingConstruct extends Construct {
             bucketName: `${siteDomain}-track`,
             removalPolicy: RemovalPolicy.DESTROY,
             autoDeleteObjects: true,
-            blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS,
+            publicReadAccess: true,
+            blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS_ONLY,
             accessControl: s3.BucketAccessControl.BUCKET_OWNER_FULL_CONTROL,
             websiteIndexDocument: "index.html",
             websiteErrorDocument: "index.html",
@@ -101,7 +103,7 @@ export class HostingConstruct extends Construct {
                     },
                 ],
                 defaultBehavior: {
-                    origin: cloudfront_origins.S3BucketOrigin.withOriginAccessControl(
+                    origin: new cloudfront_origins.S3StaticWebsiteOrigin(
                         siteBucket
                     ),
                     compress: true,
@@ -116,7 +118,7 @@ export class HostingConstruct extends Construct {
                             cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
                         viewerProtocolPolicy:
                             cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-                        origin: cloudfront_origins.S3BucketOrigin.withOriginAccessControl(
+                        origin: new cloudfront_origins.S3StaticWebsiteOrigin(
                             trackingPageBucket
                         ),
                     },
