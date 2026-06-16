@@ -4,6 +4,12 @@ import { pluginBabel } from '@rsbuild/plugin-babel';
 
 // Docs: https://rsbuild.rs/config/
 export default defineConfig({
+  server: {
+    base: '/track',
+  },
+  output: {
+    assetPrefix: '/track/',
+  },
   plugins: [
     pluginReact(),
     pluginBabel({
