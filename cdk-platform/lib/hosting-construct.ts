@@ -113,7 +113,7 @@ export class HostingConstruct extends Construct {
                         cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
                 },
                 additionalBehaviors: {
-                    "/track/": {
+                    "/track*": {
                         allowedMethods:
                             cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
                         viewerProtocolPolicy:
