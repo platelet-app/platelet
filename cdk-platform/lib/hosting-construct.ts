@@ -11,14 +11,14 @@ import * as s3 from "aws-cdk-lib/aws-s3";
 
 export interface HostingConstructProps {
     region: string;
+    domainName: string;
 }
 
 export class HostingConstruct extends Construct {
     constructor(scope: Construct, id: string, props: HostingConstructProps) {
         super(scope, id);
         // 1. Define the domain name by changing'stormit.link'.
-        const domainName = "platelet-soft.com";
-        const siteDomain = `www.${domainName}`;
+        const siteDomain = `www.${props.domainName}`;
 
         // 1.1 Create a Route 53 hosted zone (optional - you will need to update the NS records).
         /*
@@ -30,7 +30,7 @@ export class HostingConstruct extends Construct {
 
         // 1.2 Find the current hosted zone in Route 53
         const zone = route53.HostedZone.fromLookup(this, "Zone", {
-            domainName: domainName,
+            domainName: props.domainName,
         });
         console.log(zone);
 
@@ -39,8 +39,8 @@ export class HostingConstruct extends Construct {
             this,
             "PlatformHostingCertificate",
             {
-                domainName: domainName,
-                subjectAlternativeNames: ["*." + domainName],
+                domainName: props.domainName,
+                subjectAlternativeNames: ["*." + props.domainName],
                 hostedZone: zone,
                 region: "us-east-1", // Cloudfront only checks this region for certificates
             }
@@ -104,7 +104,7 @@ function handler(event) {
             {
                 certificate: certificate,
                 defaultRootObject: "index.html",
-                domainNames: [siteDomain, domainName],
+                domainNames: [siteDomain, props.domainName],
                 minimumProtocolVersion:
                     cloudfront.SecurityPolicyProtocol.TLS_V1_2_2021,
                 errorResponses: [
@@ -168,7 +168,7 @@ function handler(event) {
         //5.2 Add an 'A' record to Route 53 for 'example.com'
         new route53.ARecord(this, "LandingSiteAliasRecord", {
             zone,
-            recordName: domainName,
+            recordName: props.domainName,
             target: route53.RecordTarget.fromAlias(
                 new targets.CloudFrontTarget(distribution)
             ),

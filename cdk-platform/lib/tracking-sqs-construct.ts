@@ -17,6 +17,7 @@ export interface TrackingSQSConstructProps {
     region: string;
     account: string;
     ddbTable: cdk.aws_dynamodb.Table;
+    domainName: string;
     alertsEmail?: string;
 }
 
@@ -122,6 +123,7 @@ export class TrackingSQSConstruct extends Construct {
                 environment: {
                     REGION: props.region,
                     TABLE_NAME: props.ddbTable?.tableName,
+                    DOMAIN_NAME: props.domainName,
                 },
                 role: lambdaRole,
             }

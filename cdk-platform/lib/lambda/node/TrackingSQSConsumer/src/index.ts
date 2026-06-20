@@ -116,6 +116,7 @@ const deleteTrackingRecord = async (data: Task) => {
 const sendTrackingLink = async (data: TrackingLinkData) => {
     const { recipientEmail, recipientName, taskId, tenantName, tenantWebsite } =
         data;
+    const { domainName } = process.env;
     const token = generateToken();
     if (taskId) {
         await writeTrackingRecord(taskId, token);
@@ -130,7 +131,8 @@ const sendTrackingLink = async (data: TrackingLinkData) => {
                 recipientName,
                 tenantName,
                 tenantWebsite,
-                token
+                token,
+                domainName
             ),
             "quack",
             "Tracking information"

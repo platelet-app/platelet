@@ -7,6 +7,8 @@ import { HostingConstruct } from "./hosting-construct";
 export class PlateletCdkPlatformStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
+
+        const domainName = "platelet-soft.com";
         const alertsEmail = this.node.tryGetContext("alertsEmail");
         const trackingAppSync = new TrackingAppSyncConstruct(
             this,
@@ -20,7 +22,11 @@ export class PlateletCdkPlatformStack extends cdk.Stack {
             account: this.account,
             ddbTable: trackingAppSync.trackingTable,
             alertsEmail,
+            domainName,
         });
-        new HostingConstruct(this, "Hosting", { region: this.region });
+        new HostingConstruct(this, "Hosting", {
+            region: this.region,
+            domainName,
+        });
     }
 }

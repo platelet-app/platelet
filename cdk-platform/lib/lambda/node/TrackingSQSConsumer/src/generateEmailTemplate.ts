@@ -2,9 +2,10 @@ export const generateEmailTemplate = (
     recipientName: string,
     serviceName: string,
     serviceURL: string,
-    trackingNumber: string
+    trackingNumber: string,
+    domainName?: string
 ) => {
-    const trackingURL = `https://platelet.app/track?token=${trackingNumber}`;
+    const trackingURL = `https://${domainName}/track/${trackingNumber}`;
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
