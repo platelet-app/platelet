@@ -67,6 +67,25 @@ export class HostingConstruct extends Construct {
         new CfnOutput(this, "LandingPageBucket", {
             value: siteBucket.bucketName,
         });
+        // Rewrites SPA routes (no file extension) to /track/index.html so S3 returns 200
+        // instead of 404, which would otherwise be caught by the distribution-level error response.
+        const trackingPageFunction = new cloudfront.Function(
+            this,
+            "TrackingPageFunction",
+            {
+                code: cloudfront.FunctionCode.fromInline(`
+function handler(event) {
+    var request = event.request;
+    var uri = request.uri;
+    if (!uri.match(/\\/[^/]+\\.[^/]+$/)) {
+        request.uri = '/track/index.html';
+    }
+    return request;
+}
+`),
+            }
+        );
+
         const trackingPageBucket = new s3.Bucket(this, "TrackingPage", {
             bucketName: `${siteDomain}-track`,
             removalPolicy: RemovalPolicy.DESTROY,
@@ -121,6 +140,13 @@ export class HostingConstruct extends Construct {
                         origin: new cloudfront_origins.S3StaticWebsiteOrigin(
                             trackingPageBucket
                         ),
+                        functionAssociations: [
+                            {
+                                function: trackingPageFunction,
+                                eventType:
+                                    cloudfront.FunctionEventType.VIEWER_REQUEST,
+                            },
+                        ],
                     },
                 },
             }
