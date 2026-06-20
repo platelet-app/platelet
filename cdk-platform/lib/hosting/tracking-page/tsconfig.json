@@ -17,7 +17,8 @@
 
     /* type checking */
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "strictNullChecks":true
   },
-  "include": ["src"]
+  "include": ["src", "rsbuild.config.ts"]
 }
