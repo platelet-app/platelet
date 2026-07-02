@@ -34,8 +34,6 @@ export default async function duplicateTask(
         establishmentLocation,
         dropOffLocation,
         pickUpLocation,
-        pickUpSchedule,
-        dropOffSchedule,
         createdBy,
         ...rest
     } = { ...task };
