@@ -6,26 +6,26 @@ export const override = (resources: AmplifyApiGraphQlResourceStackTemplate) => {
     // contain functions that reference the UserTable AppSync data source (registered by the
     // User model stack), causing "Data source not found" errors. Adding explicit dependencies
     // ensures the User stack completes before those stacks start.
-    const userStack = resources.models["User"];
-    const taskStack = resources.models["Task"];
-    for (const modelName of [
-        "Task",
-        "Location",
-        "PossibleRiderResponsibilities",
-        "Vehicle",
-        "ScheduledTask",
-        "TaskAssignee",
-        "VehicleAssignment",
-        "Comment",
-    ]) {
-        if (resources.models[modelName]) {
-            resources.models[modelName].node.addDependency(userStack);
+    const userModelStack = resources.models["User"]?.modelStack;
+    if (userModelStack) {
+        for (const modelName of [
+            "Task",
+            "Location",
+            "PossibleRiderResponsibilities",
+            "Vehicle",
+            "ScheduledTask",
+            "TaskAssignee",
+            "VehicleAssignment",
+            "Comment",
+        ]) {
+            resources.models[modelName]?.modelStack?.addDependsOn(userModelStack);
         }
     }
 
     // TaskAssignee.postAuth.2 also references TaskTable, so it must wait for Task too.
-    if (resources.models["TaskAssignee"]) {
-        resources.models["TaskAssignee"].node.addDependency(taskStack);
+    const taskModelStack = resources.models["Task"]?.modelStack;
+    if (taskModelStack) {
+        resources.models["TaskAssignee"]?.modelStack?.addDependsOn(taskModelStack);
     }
 
     // prevent an assignment being made on a task if it is archived
