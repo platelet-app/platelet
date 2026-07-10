@@ -2,6 +2,32 @@ import { AmplifyApiGraphQlResourceStackTemplate } from "@aws-amplify/cli-extensi
 import { overrideDataSourceByFileName } from "./overrideHelpers";
 
 export const override = (resources: AmplifyApiGraphQlResourceStackTemplate) => {
+    // On a fresh deployment all model stacks are created in parallel. Several model stacks
+    // contain functions that reference the UserTable AppSync data source (registered by the
+    // User model stack), causing "Data source not found" errors. Adding explicit dependencies
+    // ensures the User stack completes before those stacks start.
+    const userStack = resources.models["User"];
+    const taskStack = resources.models["Task"];
+    for (const modelName of [
+        "Task",
+        "Location",
+        "PossibleRiderResponsibilities",
+        "Vehicle",
+        "ScheduledTask",
+        "TaskAssignee",
+        "VehicleAssignment",
+        "Comment",
+    ]) {
+        if (resources.models[modelName]) {
+            resources.models[modelName].node.addDependency(userStack);
+        }
+    }
+
+    // TaskAssignee.postAuth.2 also references TaskTable, so it must wait for Task too.
+    if (resources.models["TaskAssignee"]) {
+        resources.models["TaskAssignee"].node.addDependency(taskStack);
+    }
+
     // prevent an assignment being made on a task if it is archived
     overrideDataSourceByFileName(
         resources,
