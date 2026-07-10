@@ -1,13 +1,27 @@
 import { AmplifyApiGraphQlResourceStackTemplate } from "@aws-amplify/cli-extensibility-helper";
+import { NestedStack } from "@aws-cdk/core";
 import { overrideDataSourceByFileName } from "./overrideHelpers";
+
+// modelStack on DDBModelDirectiveStack is never populated at runtime by the Amplify transformer.
+// Instead, traverse up from modelDatasource (which IS populated) to get the underlying CfnStack.
+function getModelCfnStack(
+    resources: AmplifyApiGraphQlResourceStackTemplate,
+    modelName: string
+) {
+    const datasource = resources.models?.[modelName]?.modelDatasource;
+    if (!datasource) return undefined;
+    const stack = datasource.stack;
+    if (!NestedStack.isNestedStack(stack)) return undefined;
+    return stack.nestedStackResource;
+}
 
 export const override = (resources: AmplifyApiGraphQlResourceStackTemplate) => {
     // On a fresh deployment all model stacks are created in parallel. Several model stacks
     // contain functions that reference the UserTable AppSync data source (registered by the
     // User model stack), causing "Data source not found" errors. Adding explicit dependencies
     // ensures the User stack completes before those stacks start.
-    const userModelStack = resources.models["User"]?.modelStack;
-    if (userModelStack) {
+    const userCfnStack = getModelCfnStack(resources, "User");
+    if (userCfnStack) {
         for (const modelName of [
             "Task",
             "Location",
@@ -18,14 +32,23 @@ export const override = (resources: AmplifyApiGraphQlResourceStackTemplate) => {
             "VehicleAssignment",
             "Comment",
         ]) {
-            resources.models[modelName]?.modelStack?.addDependsOn(userModelStack);
+            const modelCfnStack = getModelCfnStack(resources, modelName);
+            if (modelCfnStack) {
+                modelCfnStack.addDependsOn(userCfnStack);
+            }
         }
     }
 
     // TaskAssignee.postAuth.2 also references TaskTable, so it must wait for Task too.
-    const taskModelStack = resources.models["Task"]?.modelStack;
-    if (taskModelStack) {
-        resources.models["TaskAssignee"]?.modelStack?.addDependsOn(taskModelStack);
+    const taskCfnStack = getModelCfnStack(resources, "Task");
+    if (taskCfnStack) {
+        const taskAssigneeCfnStack = getModelCfnStack(
+            resources,
+            "TaskAssignee"
+        );
+        if (taskAssigneeCfnStack) {
+            taskAssigneeCfnStack.addDependsOn(taskCfnStack);
+        }
     }
 
     // prevent an assignment being made on a task if it is archived
