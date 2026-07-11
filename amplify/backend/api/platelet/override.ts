@@ -26,49 +26,49 @@ export const override = (resources: AmplifyApiGraphQlResourceStackTemplate) => {
     // prevent a user being assigned to a task if they are being deleted
     overrideDataSourceByFileName(
         resources,
-        "Mutation.createTaskAssignee.postAuth.1", // <== The name of your file (without the extension)
+        "Mutation.createTaskAssignee.postAuth.2", // <== The name of your file (without the extension)
         "TaskAssignee", // <== The model that this resolver falls within
         "UserTable" // <== The new datasource that you want to use
     );
     // prevent a user being assigned to a vehicle if they are being deleted
     overrideDataSourceByFileName(
         resources,
-        "Mutation.createVehicleAssignment.postAuth.1", // <== The name of your file (without the extension)
+        "Mutation.createVehicleAssignment.postAuth.2", // <== The name of your file (without the extension)
         "VehicleAssignment", // <== The model that this resolver falls within
         "UserTable" // <== The new datasource that you want to use
     );
     // prevent a user being assigned a possible rider responsibility if they are being deleted
     overrideDataSourceByFileName(
         resources,
-        "Mutation.createPossibleRiderResponsibilities.postAuth.1", // <== The name of your file (without the extension)
+        "Mutation.createPossibleRiderResponsibilities.postAuth.2", // <== The name of your file (without the extension)
         "PossibleRiderResponsibilities", // <== The model that this resolver falls within
         "UserTable" // <== The new datasource that you want to use
     );
     // prevent a task being created by a user who is being deleted
     overrideDataSourceByFileName(
         resources,
-        "Mutation.createTask.postAuth.1",
+        "Mutation.createTask.postAuth.2",
         "Task",
         "UserTable"
     );
     // prevent a location being created by a user who is being deleted
     overrideDataSourceByFileName(
         resources,
-        "Mutation.createLocation.postAuth.1",
+        "Mutation.createLocation.postAuth.2",
         "Location",
         "UserTable"
     );
     // prevent a vehicle being created by a user who is being deleted
     overrideDataSourceByFileName(
         resources,
-        "Mutation.createVehicle.postAuth.1",
+        "Mutation.createVehicle.postAuth.2",
         "Vehicle",
         "UserTable"
     );
     // prevent a task being created by a user who is being deleted
     overrideDataSourceByFileName(
         resources,
-        "Mutation.createScheduledTask.postAuth.1",
+        "Mutation.createScheduledTask.postAuth.2",
         "ScheduledTask",
         "UserTable"
     );
