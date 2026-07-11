@@ -86,6 +86,36 @@ export const overrideDataSource = (
     }
 };
 
+export const addModelStackDependency = (
+    resources: AmplifyApiGraphQlResourceStackTemplate,
+    dependentModelName: string,
+    dependencyModelName: string
+) => {
+    // resolves the AWS::CloudFormation::Stack resource of a model's nested stack;
+    // modelStack is not populated in the override context at push time, so reach
+    // the stack through a resource that is (appsyncFunctions or the datasource)
+    const getNestedStackResource = (modelName: string) => {
+        const model = resources.models[modelName];
+        if (!model) return undefined;
+        const anchor: any =
+            (model.appsyncFunctions &&
+                Object.values(model.appsyncFunctions)[0]) ||
+            model.modelDatasource ||
+            model.modelDDBTable;
+        return anchor && anchor.stack && anchor.stack.nestedStackResource;
+    };
+    const dependent = getNestedStackResource(dependentModelName);
+    const dependency = getNestedStackResource(dependencyModelName);
+    if (!dependent || !dependency) {
+        throw Error(
+            "Could not resolve the nested stack resource for " +
+                (dependent ? dependencyModelName : dependentModelName) +
+                " so the stack dependency cannot be added."
+        );
+    }
+    dependent.addDependsOn(dependency);
+};
+
 export const verifyResolverExistenceByFileName = (
     resources: AmplifyApiGraphQlResourceStackTemplate,
     resolverFileName: string,
