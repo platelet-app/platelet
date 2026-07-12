@@ -97,7 +97,7 @@ export const addModelStackDependency = (
     const getNestedStackResource = (modelName: string) => {
         const model = resources.models[modelName];
         if (!model) return undefined;
-        const anchor: any =
+        const anchor =
             (model.appsyncFunctions &&
                 Object.values(model.appsyncFunctions)[0]) ||
             model.modelDatasource ||
