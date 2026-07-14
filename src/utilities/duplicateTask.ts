@@ -1,4 +1,4 @@
-import { Auth, DataStore } from "aws-amplify";
+import { DataStore } from "aws-amplify";
 import _ from "lodash";
 import * as models from "../models";
 
@@ -34,8 +34,6 @@ export default async function duplicateTask(
         establishmentLocation,
         dropOffLocation,
         pickUpLocation,
-        pickUpSchedule,
-        dropOffSchedule,
         createdBy,
         ...rest
     } = { ...task };
