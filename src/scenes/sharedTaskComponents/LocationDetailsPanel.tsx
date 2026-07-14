@@ -668,15 +668,19 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                             )}
                         </Stack>
                         {contents}
-                        {(schedule || hasFullPermissions) && <Divider />}
-                        <TaskScheduleDetails
-                            onClear={handleClearSchedule}
-                            onChange={handleEditSchedule}
-                            schedule={schedule}
-                            noWarning={noWarning}
-                            hideDate={hideScheduleDate}
-                            canEdit={hasFullPermissions}
-                        />
+                        {(schedule || hasFullPermissions) && (
+                            <>
+                                <Divider />
+                                <TaskScheduleDetails
+                                    onClear={handleClearSchedule}
+                                    onChange={handleEditSchedule}
+                                    schedule={schedule}
+                                    noWarning={noWarning}
+                                    hideDate={hideScheduleDate}
+                                    canEdit={hasFullPermissions}
+                                />
+                            </>
+                        )}
                     </Stack>
                 </Paper>
                 <ConfirmationDialog
