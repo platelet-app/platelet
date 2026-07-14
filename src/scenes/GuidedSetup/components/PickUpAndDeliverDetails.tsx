@@ -6,7 +6,6 @@ import { useTheme } from "@mui/material/styles";
 import PickUpAndDeliverSchedule, {
     Schedule,
 } from "../../../scenes/sharedTaskComponents/PickUpAndDeliverSchedule";
-import useIsPaidSubscription from "../../../hooks/useIsPaidSubscription";
 
 type PickUpAndDeliverDetailsProps = {
     onSetPickUpLocation: (location: any) => void;
@@ -38,7 +37,6 @@ export const PickUpAndDeliverDetails: React.FC<
     const theme = useTheme();
     const [pickUpOpen, setPickUpOpen] = React.useState(false);
     const [dropOffOpen, setDropOffOpen] = React.useState(false);
-    const isPaid = useIsPaidSubscription();
     const handlePickUpScheduleConfirm = (newValue: Schedule | null) => {
         onSetSchedule({ ...schedule, pickUp: newValue });
     };
@@ -94,17 +92,15 @@ export const PickUpAndDeliverDetails: React.FC<
                 onClear={onClearPickUpLocation}
                 override={overrides.pickUpLocation}
             />
-            {isPaid && (
-                <PickUpAndDeliverSchedule
-                    title="Pick-up schedule"
-                    initialSchedule={schedule.pickUp}
-                    onConfirm={handlePickUpScheduleConfirm}
-                    handleClose={() => setPickUpOpen(false)}
-                    key={pickUpOpen ? "pick-up" : "pick-up-2"}
-                    open={pickUpOpen}
-                    handleOpen={() => setPickUpOpen(true)}
-                />
-            )}
+            <PickUpAndDeliverSchedule
+                title="Pick-up schedule"
+                initialSchedule={schedule.pickUp}
+                onConfirm={handlePickUpScheduleConfirm}
+                handleClose={() => setPickUpOpen(false)}
+                key={pickUpOpen ? "pick-up" : "pick-up-2"}
+                open={pickUpOpen}
+                handleOpen={() => setPickUpOpen(true)}
+            />
             <Divider />
             <Typography variant="h6">Where to?</Typography>
             <PopOutLocationSelector
@@ -113,17 +109,15 @@ export const PickUpAndDeliverDetails: React.FC<
                 onClear={onClearDropOffLocation}
             />
             <Divider />
-            {isPaid && (
-                <PickUpAndDeliverSchedule
-                    title="Delivery schedule"
-                    onConfirm={handleDropOffScheduleConfirm}
-                    handleClose={() => setDropOffOpen(false)}
-                    initialSchedule={schedule.dropOff}
-                    key={dropOffOpen ? "drop-off" : "drop-off-2"}
-                    open={dropOffOpen}
-                    handleOpen={() => setDropOffOpen(true)}
-                />
-            )}
+            <PickUpAndDeliverSchedule
+                title="Delivery schedule"
+                onConfirm={handleDropOffScheduleConfirm}
+                handleClose={() => setDropOffOpen(false)}
+                initialSchedule={schedule.dropOff}
+                key={dropOffOpen ? "drop-off" : "drop-off-2"}
+                open={dropOffOpen}
+                handleOpen={() => setDropOffOpen(true)}
+            />
         </Stack>
     );
 };
