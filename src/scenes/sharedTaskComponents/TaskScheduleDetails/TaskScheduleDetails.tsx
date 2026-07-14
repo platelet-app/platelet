@@ -29,6 +29,7 @@ type TaskScheduleDetailsProps = {
     onChange: (value: models.Schedule) => void;
     noWarning?: boolean;
     hideDate?: boolean;
+    canEdit?: boolean;
 };
 
 export const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
@@ -37,6 +38,7 @@ export const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
     onChange,
     noWarning = true,
     hideDate = false,
+    canEdit = false,
 }) => {
     const [confirmClear, setConfirmClear] = React.useState(false);
     const [editMode, setEditMode] = React.useState(false);
@@ -85,23 +87,25 @@ export const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
                         schedule={schedule}
                         showWarning={!noWarning}
                     />
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                        }}
-                    >
-                        <IconButton onClick={() => setConfirmClear(true)}>
-                            <ClearIcon />
-                        </IconButton>
-                        <IconButton onClick={handleSetEditMode}>
-                            <EditIcon />
-                        </IconButton>
-                    </Box>
+                    {canEdit && (
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                            }}
+                        >
+                            <IconButton onClick={() => setConfirmClear(true)}>
+                                <ClearIcon />
+                            </IconButton>
+                            <IconButton onClick={handleSetEditMode}>
+                                <EditIcon />
+                            </IconButton>
+                        </Box>
+                    )}
                 </Stack>
             )}
-            {!schedule && (
+            {!schedule && canEdit && (
                 <Stack
                     direction="row"
                     justifyContent="space-between"
