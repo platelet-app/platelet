@@ -27,6 +27,16 @@ export class PlateletCdkStack extends cdk.Stack {
             "RetryFunction"
         );
 
+        const SSMParamsConstructInstance = new SSMParamsConstruct(
+            this,
+            "SSMParams",
+            {
+                amplifyEnv,
+                fromEmail,
+                domainName,
+            }
+        );
+
         new DeleteUserStepFunction(this, "DeleteUserStepFunction", {
             appsyncId,
             userPoolId,
@@ -45,6 +55,7 @@ export class PlateletCdkStack extends cdk.Stack {
             region: this.region,
             amplifyEnv,
             alertEmail,
+            fromEmailParameterArn: SSMParamsConstructInstance.fromEmailArn,
         });
 
         new TenantNameWebsiteConstruct(this, "TenantNameWebsite", {

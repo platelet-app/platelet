@@ -42,6 +42,8 @@ TENANT_WEBSITE_PARAM_NAME_ARN=$(jq '.[] | to_entries[] | select(.key|contains("T
 SQS_QUEUE_URL_PARAM_ARN=$(jq '.[] | to_entries[] | select(.key|contains("SQSQueueURLSSMParamARNOutput")).value' $1)
 TRACKING_SQS_ARN=$(jq '.[] | to_entries[] | select(.key|contains("TrackingSQSARNOutput")).value' $1)
 
+FROM_EMAIL_SSM_PARAM_ARN=$(jq '.[] | to_entries[] | select(.key|contains("FromEmailSSMParamArnOutput")).value' $1)
+DOMAIN_NAME_SSM_PARAM_ARN=$(jq '.[] | to_entries[] | select(.key|contains("DomainNameSSMParamArnOutput")).value' $1)
 
 echo "
 [
@@ -62,7 +64,7 @@ echo "
 # the tenant name and website should be accessible by the ddb stream function
 # this means it can send that data as part of the SQS message
 # and it can be retrieved through the tracking API
-
+#
 echo "
 [
     {
@@ -88,8 +90,20 @@ echo "
     }
 ]" > "./amplify/backend/function/plateletTaskDynamoDBStream/custom-policies.json"
 
-# the tenant name and website should be accessible by the send tracking link function
-# the tenant name and website are sent in the email
+echo "
+[
+    {
+        \"Action\": [
+            \"ssm:GetParameter\",
+            \"ssm:GetParameters\",
+            \"ssm:GetParametersByPath\"
+        ],
+        \"Resource\": [
+            $FROM_EMAIL_SSM_PARAM_ARN,
+            $DOMAIN_NAME_SSM_PARAM_ARN
+        ]
+    }
+]" > "./amplify/backend/function/plateletAddNewTenant/custom-policies.json"
 
 echo "
 [
@@ -114,3 +128,33 @@ echo "
         ]
     }
 ]" > "./amplify/backend/function/plateletSendTrackingLink/custom-policies.json"
+
+echo "
+[
+    {
+        \"Action\": [
+            \"ssm:GetParameter\",
+            \"ssm:GetParameters\",
+            \"ssm:GetParametersByPath\"
+        ],
+        \"Resource\": [
+            $FROM_EMAIL_SSM_PARAM_ARN,
+            $DOMAIN_NAME_SSM_PARAM_ARN
+        ]
+    }
+]" > "./amplify/backend/function/plateletAdminResetUserPassword/custom-policies.json"
+
+echo "
+[
+    {
+        \"Action\": [
+            \"ssm:GetParameter\",
+            \"ssm:GetParameters\",
+            \"ssm:GetParametersByPath\"
+        ],
+        \"Resource\": [
+            $FROM_EMAIL_SSM_PARAM_ARN,
+            $DOMAIN_NAME_SSM_PARAM_ARN
+        ]
+    }
+]" > "./amplify/backend/function/plateletAdminAddNewUser/custom-policies.json"
