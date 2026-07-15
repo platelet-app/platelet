@@ -218,7 +218,8 @@ export const GuidedSetup = () => {
             const isDueInMoreThanOneDay = !taskScheduleDueStatus(
                 convertedSchedule,
                 0,
-                1
+                1,
+                true
             );
             if (isDueInMoreThanOneDay) {
                 setFutureOrDash("future");
@@ -232,7 +233,8 @@ export const GuidedSetup = () => {
             const isDueInMoreThanOneDay = !taskScheduleDueStatus(
                 convertedSchedule,
                 0,
-                1
+                1,
+                true
             );
             if (isDueInMoreThanOneDay) {
                 setFutureOrDash("future");
