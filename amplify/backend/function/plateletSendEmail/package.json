@@ -11,8 +11,5 @@
         "modulePaths": [
             "<rootDir>/lib/nodejs/node_modules"
         ]
-    },
-    "dependencies": {
-        "@aws-sdk/client-ssm": "^3.1087.0"
     }
 }
