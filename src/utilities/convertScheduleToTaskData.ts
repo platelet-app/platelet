@@ -3,9 +3,10 @@ import { Schedule } from "../scenes/sharedTaskComponents/PickUpAndDeliverSchedul
 import { calculateBetweenIsOneDay } from "../utilities/calculateBetweenIsOneDay";
 
 export const convertScheduleToTaskData = (
-    schedule: Schedule | null | undefined
+    input: Schedule | null | undefined
 ): models.Schedule | null => {
-    if (!schedule) return null;
+    if (!input) return null;
+    const schedule = { ...input };
     const scheduledDate = schedule.date || new Date("2099-01-01");
     let scheduledDateSecond = null;
     const hour = schedule?.timePrimary?.split(":")[0];
