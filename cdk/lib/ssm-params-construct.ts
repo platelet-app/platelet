@@ -18,7 +18,7 @@ export class SSMParamsConstruct extends Construct {
             stringValue: props.fromEmail,
         });
         const domainName = new ssm.StringParameter(this, "DomainNameSSMParam", {
-            parameterName: `/platelet-supporting-cdk/${props.amplifyEnv}/domainName`,
+            parameterName: `/platelet-supporting-cdk/${props.amplifyEnv}/DomainName`,
             stringValue: props.domainName,
         });
 
