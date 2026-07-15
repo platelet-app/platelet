@@ -52,7 +52,7 @@ const getParam = async (paramName: string) => {
 };
 
 const getFromEmailParam = () => {
-    const fromEmailParameterName = `/platelet-supporting-cdk/${process.env.ENV}/fromEmail`;
+    const fromEmailParameterName = `/platelet-supporting-cdk/${process.env.ENV}/FromEmail`;
     return getParam(fromEmailParameterName);
 };
 

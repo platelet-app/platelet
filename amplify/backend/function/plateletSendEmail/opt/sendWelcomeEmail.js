@@ -23,8 +23,8 @@ const getParam = async (paramName) => {
 };
 
 const getSSMParams = async () => {
-    const fromEmailParameterName = `/platelet-supporting-cdk/${process.env.ENV}/fromEmail`;
-    const domainParameterName = `/platelet-supporting-cdk/${process.env.ENV}/domainName`;
+    const fromEmailParameterName = `/platelet-supporting-cdk/${process.env.ENV}/FromEmail`;
+    const domainParameterName = `/platelet-supporting-cdk/${process.env.ENV}/DomainName`;
     const fromEmail = await getParam(fromEmailParameterName);
     const domainName = await getParam(domainParameterName);
     if (!fromEmail) {
