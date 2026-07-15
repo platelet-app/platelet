@@ -3,11 +3,13 @@ import { Schedule } from "../scenes/sharedTaskComponents/PickUpAndDeliverSchedul
 import { calculateBetweenIsOneDay } from "../utilities/calculateBetweenIsOneDay";
 
 export const convertScheduleToTaskData = (
-    input: Schedule | null | undefined
+    schedule: Schedule | null | undefined
 ): models.Schedule | null => {
-    if (!input) return null;
-    const schedule = { ...input };
-    const scheduledDate = schedule.date || new Date("2099-01-01");
+    if (!schedule) return null;
+    // clone the date so setting the time doesn't mutate the caller's Date
+    const scheduledDate = schedule.date
+        ? new Date(schedule.date)
+        : new Date("2099-01-01");
     let scheduledDateSecond = null;
     const hour = schedule?.timePrimary?.split(":")[0];
     const minute = schedule?.timePrimary?.split(":")[1];
