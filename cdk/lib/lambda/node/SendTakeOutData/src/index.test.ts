@@ -161,7 +161,7 @@ describe("SendTakeOutData", () => {
             })
         );
         expect(ssmMock.calls()[0].args[0].input).toEqual({
-            Name: "/platelet-supporting-cdk/test/fromEmail",
+            Name: "/platelet-supporting-cdk/test/FromEmail",
         });
     });
 });
