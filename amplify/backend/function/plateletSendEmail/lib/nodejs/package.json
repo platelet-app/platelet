@@ -3,6 +3,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@aws-sdk/client-ssm": "^3.1087.0",
     "aws-sdk": "^2.1488.0"
   },
   "devDependencies": {}
