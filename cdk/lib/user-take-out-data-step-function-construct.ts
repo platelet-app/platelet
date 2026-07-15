@@ -23,6 +23,7 @@ export interface UserTakeOutDataStepFunctionProps {
     bucketName: string;
     graphQLEndpoint: string;
     amplifyEnv: string;
+    fromEmailParameterArn: string;
     alertEmail?: string;
 }
 
@@ -240,6 +241,13 @@ export class UserTakeOutDataStepFunction extends Construct {
             new iam.PolicyStatement({
                 actions: ["ses:SendRawEmail"],
                 resources: [this.sesIdentity.emailIdentityArn],
+            })
+        );
+
+        finishAndSendUserDataFunction.addToRolePolicy(
+            new iam.PolicyStatement({
+                actions: ["ssm:GetParameter"],
+                resources: [props.fromEmailParameterArn],
             })
         );
 
