@@ -1,6 +1,7 @@
 import { Construct } from "constructs";
 import * as cdk from "aws-cdk-lib";
 import * as ssm from "aws-cdk-lib/aws-ssm";
+import * as ses from "aws-cdk-lib/aws-ses";
 
 export interface SSMParamsConstructProps {
     amplifyEnv: string;
@@ -39,8 +40,14 @@ export class SSMParamsConstruct extends Construct {
         new cdk.CfnOutput(this, "DomainNameSSMParamArnOutput", {
             value: domainNameParam.parameterArn,
         });
-        new cdk.CfnOutput(this, "FromEmailValueOutput", {
-            value: props.fromEmail,
+
+        const SES = ses.EmailIdentity.fromEmailIdentityName(
+            this,
+            "SESEmailIdentity",
+            props.fromEmail
+        );
+        new cdk.CfnOutput(this, "SESEmailIdentityArn", {
+            value: SES.emailIdentityArn,
         });
     }
 }
