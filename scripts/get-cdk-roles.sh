@@ -39,6 +39,9 @@ USER_TAKE_OUT_DATA_STATE_MACHINE_ARN_SSM_PARAM_ARN=$(jq '.[] | to_entries[] | se
 FROM_EMAIL_SSM_PARAM_ARN=$(jq '.[] | to_entries[] | select(.key|contains("FromEmailSSMParamArnOutput")).value' $1)
 DOMAIN_NAME_SSM_PARAM_ARN=$(jq '.[] | to_entries[] | select(.key|contains("DomainNameSSMParamArnOutput")).value' $1)
 
+FROM_EMAIL_VALUE=$(jq '.[] | to_entries[] | select(.key|contains("FromEmailValueOutput")).value' $1)
+
+
 echo "
 [
     {
@@ -82,6 +85,16 @@ echo "
             $FROM_EMAIL_SSM_PARAM_ARN,
             $DOMAIN_NAME_SSM_PARAM_ARN
         ]
+    },
+    {
+        \"Action\": [
+
+            \"ses:SendEmail\",
+            \"ses:SendRawEmail\"
+        ],
+        \"Resource\": [
+            $FROM_EMAIL_VALUE
+        ]
     }
 ]" > "./amplify/backend/function/plateletAdminResetUserPassword/custom-policies.json"
 
@@ -96,6 +109,16 @@ echo "
         \"Resource\": [
             $FROM_EMAIL_SSM_PARAM_ARN,
             $DOMAIN_NAME_SSM_PARAM_ARN
+        ]
+    },
+    {
+        \"Action\": [
+
+            \"ses:SendEmail\",
+            \"ses:SendRawEmail\"
+        ],
+        \"Resource\": [
+            $FROM_EMAIL_VALUE
         ]
     }
 ]" > "./amplify/backend/function/plateletAdminAddNewUser/custom-policies.json"
