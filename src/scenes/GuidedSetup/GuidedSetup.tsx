@@ -207,23 +207,40 @@ export const GuidedSetup = () => {
     const whoami = useSelector(getWhoami);
 
     useEffect(() => {
-        if (!schedule.pickUp) {
+        if (!schedule.pickUp && !schedule.dropOff) {
             setFutureOrDash(null);
             return;
         }
-        if (futureOrDash) return;
         if (schedule.pickUp) {
             const convertedSchedule = convertScheduleToTaskData(
                 schedule.pickUp
             );
-            const isDueInOneDay = !taskScheduleDueStatus(
+            const isDueInMoreThanOneDay = !taskScheduleDueStatus(
                 convertedSchedule,
                 0,
                 1
             );
-            if (isDueInOneDay) setFutureOrDash("future");
+            if (isDueInMoreThanOneDay) {
+                setFutureOrDash("future");
+            } else {
+                setFutureOrDash(null);
+            }
+        } else if (schedule.dropOff) {
+            const convertedSchedule = convertScheduleToTaskData(
+                schedule.dropOff
+            );
+            const isDueInMoreThanOneDay = !taskScheduleDueStatus(
+                convertedSchedule,
+                0,
+                1
+            );
+            if (isDueInMoreThanOneDay) {
+                setFutureOrDash("future");
+            } else {
+                setFutureOrDash(null);
+            }
         }
-    }, [schedule.pickUp, futureOrDash]);
+    }, [schedule]);
 
     const handleChange = (_: any, newValue: number) => {
         setTabIndex(newValue);
