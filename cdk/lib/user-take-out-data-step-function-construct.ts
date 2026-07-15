@@ -218,6 +218,7 @@ export class UserTakeOutDataStepFunction extends Construct {
                     REGION: props.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
                     TAKE_OUT_BUCKET: takeOutBucket.bucketName,
+                    ENV: this.amplifyEnv,
                 },
                 role: new iam.Role(
                     this,
