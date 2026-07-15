@@ -4,6 +4,7 @@ import { DeleteUserStepFunction } from "./delete-user-step-function-construct";
 import { RetryFunctionConstruct } from "./retry-function-construct";
 import { UserTakeOutDataStepFunction } from "./user-take-out-data-step-function-construct";
 import { CypressTestRole } from "./cypress-test-role-construct";
+import { SSMParamsConstruct } from "./ssm-params-construct";
 
 export class PlateletCdkStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: cdk.StackProps) {
@@ -15,6 +16,8 @@ export class PlateletCdkStack extends cdk.Stack {
         const bucketName = this.node.tryGetContext("bucketName");
         const amplifyEnv = this.node.tryGetContext("amplifyEnv");
         const alertEmail = this.node.tryGetContext("alertEmail");
+        const fromEmail = this.node.tryGetContext("fromEmail");
+        const domainName = this.node.tryGetContext("domainName");
 
         const retryConstructInstance = new RetryFunctionConstruct(
             this,
@@ -39,6 +42,12 @@ export class PlateletCdkStack extends cdk.Stack {
             region: this.region,
             amplifyEnv,
             alertEmail,
+        });
+
+        new SSMParamsConstruct(this, "SSMParams", {
+            amplifyEnv,
+            fromEmail,
+            domainName,
         });
 
         if (this.node.tryGetContext("createCypressTestingRole") === "true") {
