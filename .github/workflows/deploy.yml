@@ -65,6 +65,8 @@ jobs:
             --context "alertEmail=${{ vars.ALERT_EMAIL }}"
             --context "tenantName=${{ vars.TENANT_NAME }}"
             --context "tenantWebsite=${{ vars.TENANT_WEBSITE }}"
+            --context "fromEmail=${{ vars.FROM_EMAIL }}"
+            --context "domainName=${{ vars.DOMAIN_NAME }}"
           )
           npm run bootstrap -- "${CONTEXT_ARGS[@]}"
           npm run deploy -- --require-approval never "${CONTEXT_ARGS[@]}" --outputs-file cdk-out.json
