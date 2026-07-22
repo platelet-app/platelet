@@ -45,6 +45,8 @@ TRACKING_SQS_ARN=$(jq '.[] | to_entries[] | select(.key|contains("TrackingSQSARN
 FROM_EMAIL_SSM_PARAM_ARN=$(jq '.[] | to_entries[] | select(.key|contains("FromEmailSSMParamArnOutput")).value' $1)
 DOMAIN_NAME_SSM_PARAM_ARN=$(jq '.[] | to_entries[] | select(.key|contains("DomainNameSSMParamArnOutput")).value' $1)
 
+SES_IDENTITY_ARN=$(jq '.[] | to_entries[] | select(.key|contains("SESEmailIdentityArn")).value' $1)
+
 echo "
 [
     {
@@ -102,6 +104,16 @@ echo "
             $FROM_EMAIL_SSM_PARAM_ARN,
             $DOMAIN_NAME_SSM_PARAM_ARN
         ]
+    },
+    {
+        \"Action\": [
+
+            \"ses:SendEmail\",
+            \"ses:SendRawEmail\"
+        ],
+        \"Resource\": [
+            $SES_IDENTITY_ARN
+        ]
     }
 ]" > "./amplify/backend/function/plateletAddNewTenant/custom-policies.json"
 
@@ -141,6 +153,16 @@ echo "
             $FROM_EMAIL_SSM_PARAM_ARN,
             $DOMAIN_NAME_SSM_PARAM_ARN
         ]
+    },
+    {
+        \"Action\": [
+
+            \"ses:SendEmail\",
+            \"ses:SendRawEmail\"
+        ],
+        \"Resource\": [
+            $SES_IDENTITY_ARN
+        ]
     }
 ]" > "./amplify/backend/function/plateletAdminResetUserPassword/custom-policies.json"
 
@@ -155,6 +177,16 @@ echo "
         \"Resource\": [
             $FROM_EMAIL_SSM_PARAM_ARN,
             $DOMAIN_NAME_SSM_PARAM_ARN
+        ]
+    },
+    {
+        \"Action\": [
+
+            \"ses:SendEmail\",
+            \"ses:SendRawEmail\"
+        ],
+        \"Resource\": [
+            $SES_IDENTITY_ARN
         ]
     }
 ]" > "./amplify/backend/function/plateletAdminAddNewUser/custom-policies.json"

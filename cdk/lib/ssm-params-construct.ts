@@ -1,6 +1,7 @@
 import { Construct } from "constructs";
 import * as cdk from "aws-cdk-lib";
 import * as ssm from "aws-cdk-lib/aws-ssm";
+import * as ses from "aws-cdk-lib/aws-ses";
 
 export interface SSMParamsConstructProps {
     amplifyEnv: string;
@@ -13,23 +14,42 @@ export class SSMParamsConstruct extends Construct {
     constructor(scope: Construct, id: string, props: SSMParamsConstructProps) {
         super(scope, id);
 
-        const fromEmail = new ssm.StringParameter(this, "FromEmailSSMParam", {
-            parameterName: `/platelet-supporting-cdk/${props.amplifyEnv}/FromEmail`,
-            stringValue: props.fromEmail,
-        });
-        const domainName = new ssm.StringParameter(this, "DomainNameSSMParam", {
-            parameterName: `/platelet-supporting-cdk/${props.amplifyEnv}/domainName`,
-            stringValue: props.domainName,
-        });
+        const fromEmailParam = new ssm.StringParameter(
+            this,
+            "FromEmailSSMParam",
+            {
+                parameterName: `/platelet-supporting-cdk/${props.amplifyEnv}/FromEmail`,
+                stringValue: props.fromEmail,
+            }
+        );
+        const domainNameParam = new ssm.StringParameter(
+            this,
+            "DomainNameSSMParam",
+            {
+                parameterName: `/platelet-supporting-cdk/${props.amplifyEnv}/DomainName`,
+                stringValue: props.domainName,
+            }
+        );
 
-        this.fromEmailArn = fromEmail.parameterArn;
+        this.fromEmailArn = fromEmailParam.parameterArn;
 
         // output values to be used in custom-policies.json files
         new cdk.CfnOutput(this, "FromEmailSSMParamArnOutput", {
             value: this.fromEmailArn,
         });
         new cdk.CfnOutput(this, "DomainNameSSMParamArnOutput", {
-            value: domainName.parameterArn,
+            value: domainNameParam.parameterArn,
+        });
+
+        // get the identity so we can output the ARN
+        // this is needed for custom-policies.json in lambda functions
+        const SES = ses.EmailIdentity.fromEmailIdentityName(
+            this,
+            "SESEmailIdentity",
+            props.fromEmail
+        );
+        new cdk.CfnOutput(this, "SESEmailIdentityArn", {
+            value: SES.emailIdentityArn,
         });
     }
 }
