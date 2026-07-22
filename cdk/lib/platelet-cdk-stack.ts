@@ -26,7 +26,7 @@ export class PlateletCdkStack extends cdk.Stack {
 
         const SSMParamsConstructInstance = new SSMParamsConstruct(
             this,
-            "SSMParams",
+            "SSMParamsConstruct",
             {
                 amplifyEnv,
                 fromEmail,
