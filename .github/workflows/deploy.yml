@@ -5,7 +5,7 @@ on:
     branches:
       - 'production/**'
       - 'test/**'
-      - 'dev'
+      - 'dev/**'
 
 jobs:
   build-and-deploy:
