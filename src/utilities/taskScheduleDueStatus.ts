@@ -25,12 +25,10 @@ const taskScheduleDueStatus = (
     ) {
         if (useWindowStart) {
             if (schedule?.relation === models.TimeRelation.ANYTIME) {
-                scheduleDate.setHours(0);
-                scheduleDate.setMinutes(0);
+                scheduleDate.setHours(0, 0, 0, 0);
             }
         } else {
-            scheduleDate.setHours(23);
-            scheduleDate.setMinutes(59);
+            scheduleDate.setHours(23, 59, 59, 999);
         }
     }
     scheduleDate.setUTCHours(scheduleDate.getUTCHours() - hours);
