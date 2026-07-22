@@ -43,10 +43,11 @@ export class SSMParamsConstruct extends Construct {
 
         // get the identity so we can output the ARN
         // this is needed for custom-policies.json in lambda functions
+        const domainSplit = props.fromEmail.split("@")[1];
         const SES = ses.EmailIdentity.fromEmailIdentityName(
             this,
             "SESEmailIdentity",
-            props.fromEmail
+            domainSplit
         );
         new cdk.CfnOutput(this, "SESEmailIdentityArn", {
             value: SES.emailIdentityArn,
