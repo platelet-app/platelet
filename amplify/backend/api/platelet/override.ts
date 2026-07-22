@@ -1,5 +1,8 @@
 import { AmplifyApiGraphQlResourceStackTemplate } from "@aws-amplify/cli-extensibility-helper";
-import { overrideDataSourceByFileName } from "./overrideHelpers";
+import {
+    addModelStackDependency,
+    overrideDataSourceByFileName,
+} from "./overrideHelpers";
 
 export const override = (resources: AmplifyApiGraphQlResourceStackTemplate) => {
     // prevent an assignment being made on a task if it is archived
@@ -72,4 +75,21 @@ export const override = (resources: AmplifyApiGraphQlResourceStackTemplate) => {
         "ScheduledTask",
         "UserTable"
     );
+    // the overrides above set DataSourceName as a plain string, so CloudFormation
+    // can't infer cross-stack dependencies; without these the model stacks deploy
+    // in parallel and fresh environments fail with "Data source not found"
+    [
+        "Comment",
+        "TaskAssignee",
+        "VehicleAssignment",
+        "PossibleRiderResponsibilities",
+        "Task",
+        "Location",
+        "Vehicle",
+        "ScheduledTask",
+    ].forEach((model) => {
+        addModelStackDependency(resources, model, "User");
+    });
+    // TaskAssignee also uses TaskTable
+    addModelStackDependency(resources, "TaskAssignee", "Task");
 };
