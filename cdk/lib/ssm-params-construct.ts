@@ -41,6 +41,8 @@ export class SSMParamsConstruct extends Construct {
             value: domainNameParam.parameterArn,
         });
 
+        // get the identity so we can output the ARN
+        // this is needed for custom-policies.json in lambda functions
         const SES = ses.EmailIdentity.fromEmailIdentityName(
             this,
             "SESEmailIdentity",
