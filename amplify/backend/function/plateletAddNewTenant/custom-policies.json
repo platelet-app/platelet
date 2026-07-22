@@ -1,6 +1,24 @@
+
 [
     {
-        "Action": ["ses:SendEmail", "ses:SendRawEmail"],
-        "Resource": ["*"]
+        "Action": [
+            "ssm:GetParameter",
+            "ssm:GetParameters",
+            "ssm:GetParametersByPath"
+        ],
+        "Resource": [
+            "arn:aws:ssm:eu-west-1:130063560692:parameter/platelet-supporting-cdk/mahalia/FromEmail",
+            "arn:aws:ssm:eu-west-1:130063560692:parameter/platelet-supporting-cdk/mahalia/DomainName"
+        ]
+    },
+    {
+        "Action": [
+
+            "ses:SendEmail",
+            "ses:SendRawEmail"
+        ],
+        "Resource": [
+            "arn:aws:ses:eu-west-1:130063560692:identity/platelet.app"
+        ]
     }
 ]
