@@ -66,12 +66,6 @@ export class PlateletCdkStack extends cdk.Stack {
             account: this.account,
         });
 
-        new SSMParamsConstruct(this, "SSMParams", {
-            amplifyEnv,
-            fromEmail,
-            domainName,
-        });
-
         if (this.node.tryGetContext("createCypressTestingRole") === "true") {
             new CypressTestRole(this, "CypressTestRole", {
                 appsyncId,
