@@ -68,7 +68,7 @@ The domain name that you want to link people to in registration emails. e.g.: ap
 
 ### Updating the tenant API
 
-Attach this policy to the AWS account to give access to the tenant API:
+Create this policy in the AWS account to give access to the tenant API:
 
 ```
 {
