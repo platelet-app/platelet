@@ -117,6 +117,31 @@ echo "
     }
 ]" > "./amplify/backend/function/plateletAddNewTenant/custom-policies.json"
 
+
+echo "
+[
+    {
+        \"Action\": [
+            \"ssm:GetParameter\",
+            \"ssm:GetParameters\",
+            \"ssm:GetParametersByPath\"
+        ],
+        \"Resource\": [
+            $FROM_EMAIL_SSM_PARAM_ARN
+        ]
+    },
+    {
+        \"Action\": [
+
+            \"ses:SendEmail\",
+            \"ses:SendRawEmail\"
+        ],
+        \"Resource\": [
+            $SES_IDENTITY_ARN
+        ]
+    }
+]" > "./amplify/backend/function/plateletSendUserFeedback/custom-policies.json"
+
 echo "
 [
     {

@@ -28,10 +28,10 @@ const getSSMParams = async () => {
     const fromEmail = await getParam(fromEmailParameterName);
     const domainName = await getParam(domainParameterName);
     if (!fromEmail) {
-        throw new Error("No from email!");
+        throw new Error(`Missing SSM parameter: ${fromEmailParameterName}`);
     }
     if (!domainName) {
-        throw new Error("No domain name!");
+        throw new Error(`Missing SSM parameter: ${domainParameterName}`);
     }
     return { fromEmail, domainName };
 };
