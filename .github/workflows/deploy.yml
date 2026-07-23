@@ -109,6 +109,7 @@ jobs:
           amplify pull --appId ${{ vars.AMPLIFY_APP_ID }} --envName ${{ steps.amplify_outputs.outputs.env_name }} -y
           babel --plugins @babel/plugin-transform-modules-commonjs src/aws-exports.js > src/aws-exports-es5.js
       - name: Update the tenant API
+        if: ${{ vars.API_URL != '' && vars.TENANT_NAME != '' }}
         uses: platelet-app/update-tenant-api-action@main
         with:
           awsEnvName: ${{ steps.amplify_outputs.outputs.env_name }}
