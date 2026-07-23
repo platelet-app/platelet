@@ -19,6 +19,12 @@ export class PlateletCdkStack extends cdk.Stack {
         const fromEmail = this.node.tryGetContext("fromEmail");
         const domainName = this.node.tryGetContext("domainName");
 
+        if (typeof fromEmail !== "string" || fromEmail.trim() === "") {
+            throw new Error('Missing required CDK context: "fromEmail"');
+        }
+        if (typeof domainName !== "string" || domainName.trim() === "") {
+            throw new Error('Missing required CDK context: "domainName"');
+        }
         const retryConstructInstance = new RetryFunctionConstruct(
             this,
             "RetryFunction"
