@@ -6,10 +6,12 @@ on:
       - 'production/**'
       - 'test/**'
       - 'dev/**'
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event.before != '0000000000000000000000000000000000000000'
     environment: ${{ github.ref_name }}
     steps:
       - name: 'Checkout GitHub Action'
