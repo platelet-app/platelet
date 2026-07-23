@@ -210,6 +210,11 @@ const sendEmail = async (
 `;
 
     const fromEmail = await getFromEmailParam();
+    if (!fromEmail) {
+        throw new Error(
+            `Missing SSM parameter value for FromEmail (env: ${process.env.ENV ?? "<unset>"})`
+        );
+    }
     const mailOptions = {
         from: fromEmail,
         subject: "Your requested take out data",
