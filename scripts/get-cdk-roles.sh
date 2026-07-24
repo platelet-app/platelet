@@ -156,3 +156,29 @@ echo "
         ]
     }
 ]" > "./amplify/backend/function/plateletAdminAddNewUser/custom-policies.json"
+
+
+echo "
+[
+    {
+        \"Action\": [
+            \"ssm:GetParameter\",
+            \"ssm:GetParameters\",
+            \"ssm:GetParametersByPath\"
+        ],
+        \"Resource\": [
+            $FROM_EMAIL_SSM_PARAM_ARN,
+            $DOMAIN_NAME_SSM_PARAM_ARN
+        ]
+    },
+    {
+        \"Action\": [
+
+            \"ses:SendEmail\",
+            \"ses:SendRawEmail\"
+        ],
+        \"Resource\": [
+            $SES_IDENTITY_ARN
+        ]
+    }
+]" > "./amplify/backend/function/plateletAddNewTenant/custom-policies.json"
