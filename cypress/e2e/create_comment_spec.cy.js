@@ -52,22 +52,25 @@ describe("createComment access control", () => {
     it("creates a second test user to use as the mismatched author", () => {
         const timestamp = Date.now();
 
-        cy.then(() =>
-            API.graphql({
-                query: mutations.registerUser,
-                variables: {
-                    name: `Test Comment Author User ${timestamp}`,
-                    email: `test-comment-author-${timestamp}@platelet.app`,
-                    tenantId: Cypress.env("tenantId"),
-                    roles: ["RIDER", "USER"],
-                },
-                authMode: "AMAZON_COGNITO_USER_POOLS",
-            })
-        ).then((response) => {
-            expect(response.data.registerUser).to.not.be.null;
-            otherUserId = response.data.registerUser.id;
-            expect(otherUserId).to.exist;
-            cy.log("Created other user:", otherUserId);
+        cy.fixture("registration_details").then((details) => {
+            const { rider } = details;
+            const variables = {
+                ...rider,
+                tenantId: Cypress.env("tenantId"),
+                name: `Test Comment Author User ${timestamp}`,
+            };
+            cy.then(() =>
+                API.graphql({
+                    query: mutations.registerUser,
+                    variables,
+                    authMode: "AMAZON_COGNITO_USER_POOLS",
+                })
+            ).then((response) => {
+                expect(response.data.registerUser).to.not.be.null;
+                otherUserId = response.data.registerUser.id;
+                expect(otherUserId).to.exist;
+                cy.log("Created other user:", otherUserId);
+            });
         });
     });
 
@@ -138,7 +141,12 @@ describe("createComment access control", () => {
         cy.then(() =>
             API.graphql({
                 query: mutations.deleteComment,
-                variables: { input: { id: createdCommentId, _version: createdCommentVersion } },
+                variables: {
+                    input: {
+                        id: createdCommentId,
+                        _version: createdCommentVersion,
+                    },
+                },
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             })
         ).then((response) => {

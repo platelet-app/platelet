@@ -109,26 +109,29 @@ describe("User Deletion End-to-End Test", () => {
         testUserName = `Test User ${timestamp}`;
         testUserPassword = `TestDel${timestamp}!A`;
 
-        cy.then(() => {
-            return API.graphql({
-                query: mutations.registerUser,
-                variables: {
-                    name: testUserName,
-                    email: testUserEmail,
-                    tenantId: Cypress.env("tenantId"),
-                    roles: ["RIDER", "USER"],
-                },
-                authMode: "AMAZON_COGNITO_USER_POOLS",
+        cy.fixture("registration_details").then((details) => {
+            const { rider } = details;
+            const variables = {
+                ...rider,
+                tenantId: Cypress.env("tenantId"),
+                name: testUserName,
+            };
+            cy.then(() => {
+                return API.graphql({
+                    query: mutations.registerUser,
+                    variables,
+                    authMode: "AMAZON_COGNITO_USER_POOLS",
+                });
+            }).then((response) => {
+                expect(response.data.registerUser).to.not.be.null;
+                testUserId = response.data.registerUser.id;
+                testUserCognitoId = response.data.registerUser.cognitoId;
+                testUserUsername = response.data.registerUser.username;
+                expect(testUserId).to.exist;
+                expect(testUserCognitoId).to.exist;
+                expect(testUserUsername).to.exist;
+                cy.log("Created user with ID:", testUserId);
             });
-        }).then((response) => {
-            expect(response.data.registerUser).to.not.be.null;
-            testUserId = response.data.registerUser.id;
-            testUserCognitoId = response.data.registerUser.cognitoId;
-            testUserUsername = response.data.registerUser.username;
-            expect(testUserId).to.exist;
-            expect(testUserCognitoId).to.exist;
-            expect(testUserUsername).to.exist;
-            cy.log("Created user with ID:", testUserId);
         });
     });
 

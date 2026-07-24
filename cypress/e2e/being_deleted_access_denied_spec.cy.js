@@ -84,21 +84,22 @@ describe("isBeingDeleted access denial", () => {
     it("creates a test user", () => {
         const timestamp = Date.now();
         testUserPassword = `TestBeingDel${timestamp}!A`;
-
-        cy.then(() =>
-            graphql(mutations.registerUser, {
-                name: `Test Being-Deleted User ${timestamp}`,
-                email: `test-being-deleted-${timestamp}@platelet.app`,
+        cy.fixture("registration_details").then((details) => {
+            const { rider } = details;
+            const data = {
+                ...rider,
                 tenantId: Cypress.env("tenantId"),
-                roles: ["RIDER", "USER"],
-            })
-        ).then((response) => {
-            expect(response.data.registerUser).to.not.be.null;
-            testUserId = response.data.registerUser.id;
-            testUserUsername = response.data.registerUser.username;
-            expect(testUserId).to.exist;
-            expect(testUserUsername).to.exist;
-            cy.log("Created test user:", testUserId);
+            };
+            cy.then(() => graphql(mutations.registerUser, data)).then(
+                (response) => {
+                    expect(response.data.registerUser).to.not.be.null;
+                    testUserId = response.data.registerUser.id;
+                    testUserUsername = response.data.registerUser.username;
+                    expect(testUserId).to.exist;
+                    expect(testUserUsername).to.exist;
+                    cy.log("Created test user:", testUserId);
+                }
+            );
         });
     });
 
@@ -148,8 +149,8 @@ describe("isBeingDeleted access denial", () => {
                 },
             })
         ).then((response) => {
-            expect(response.errors, "createVehicle setup should not error").to.be
-                .undefined;
+            expect(response.errors, "createVehicle setup should not error").to
+                .be.undefined;
             sharedVehicleId = response.data.createVehicle.id;
             sharedVehicleVersion = response.data.createVehicle._version;
             expect(sharedVehicleId).to.exist;
@@ -175,7 +176,10 @@ describe("isBeingDeleted access denial", () => {
             sharedRiderResponsibilityVersion =
                 response.data.createRiderResponsibility._version;
             expect(sharedRiderResponsibilityId).to.exist;
-            cy.log("Created shared rider responsibility:", sharedRiderResponsibilityId);
+            cy.log(
+                "Created shared rider responsibility:",
+                sharedRiderResponsibilityId
+            );
         });
     });
 
@@ -236,10 +240,8 @@ describe("isBeingDeleted access denial", () => {
                 },
             })
         ).then((response) => {
-            expect(
-                response.errors,
-                "createVehicleAssignment should not error"
-            ).to.be.undefined;
+            expect(response.errors, "createVehicleAssignment should not error")
+                .to.be.undefined;
             createdVehicleAssignmentId =
                 response.data.createVehicleAssignment.id;
             createdVehicleAssignmentVersion =
@@ -254,7 +256,8 @@ describe("isBeingDeleted access denial", () => {
                 input: {
                     tenantId: Cypress.env("tenantId"),
                     userPossibleRiderResponsibilitiesId: testUserId,
-                    riderResponsibilityPossibleUsersId: sharedRiderResponsibilityId,
+                    riderResponsibilityPossibleUsersId:
+                        sharedRiderResponsibilityId,
                 },
             })
         ).then((response) => {
@@ -355,13 +358,14 @@ describe("isBeingDeleted access denial", () => {
                 isBeingDeleted: true,
             },
         }).then((response) => {
-            expect(
-                response.errors,
-                "IAM updateUser should not return errors"
-            ).to.be.undefined;
+            expect(response.errors, "IAM updateUser should not return errors")
+                .to.be.undefined;
             expect(response.data.updateUser.isBeingDeleted).to.equal(true);
             testUserVersion = response.data.updateUser._version;
-            cy.log("User marked as isBeingDeleted, new _version:", testUserVersion);
+            cy.log(
+                "User marked as isBeingDeleted, new _version:",
+                testUserVersion
+            );
         });
     });
 
@@ -380,10 +384,8 @@ describe("isBeingDeleted access denial", () => {
                 },
             }).catch((err) => err)
         ).then((result) => {
-            expect(
-                result.errors,
-                "createTaskAssignee should return errors"
-            ).to.exist;
+            expect(result.errors, "createTaskAssignee should return errors").to
+                .exist;
             expect(result.errors[0].errorType).to.equal("NotFoundError");
             expect(result.errors[0].message).to.equal(
                 "The user cannot be found"
@@ -438,7 +440,8 @@ describe("isBeingDeleted access denial", () => {
                 input: {
                     tenantId: Cypress.env("tenantId"),
                     userPossibleRiderResponsibilitiesId: testUserId,
-                    riderResponsibilityPossibleUsersId: sharedRiderResponsibilityId,
+                    riderResponsibilityPossibleUsersId:
+                        sharedRiderResponsibilityId,
                 },
             }).catch((err) => err)
         ).then((result) => {
@@ -481,10 +484,8 @@ describe("isBeingDeleted access denial", () => {
                 },
             }).catch((err) => err)
         ).then((result) => {
-            expect(
-                result.errors,
-                "createLocation should return errors"
-            ).to.exist;
+            expect(result.errors, "createLocation should return errors").to
+                .exist;
             expect(result.errors[0].errorType).to.equal("NotFoundError");
             expect(result.errors[0].message).to.equal(
                 "The user cannot be found"
@@ -502,10 +503,8 @@ describe("isBeingDeleted access denial", () => {
                 },
             }).catch((err) => err)
         ).then((result) => {
-            expect(
-                result.errors,
-                "createVehicle should return errors"
-            ).to.exist;
+            expect(result.errors, "createVehicle should return errors").to
+                .exist;
             expect(result.errors[0].errorType).to.equal("NotFoundError");
             expect(result.errors[0].message).to.equal(
                 "The user cannot be found"
@@ -523,10 +522,8 @@ describe("isBeingDeleted access denial", () => {
                 },
             }).catch((err) => err)
         ).then((result) => {
-            expect(
-                result.errors,
-                "createScheduledTask should return errors"
-            ).to.exist;
+            expect(result.errors, "createScheduledTask should return errors").to
+                .exist;
             expect(result.errors[0].errorType).to.equal("NotFoundError");
             expect(result.errors[0].message).to.equal(
                 "The user cannot be found"
@@ -553,7 +550,10 @@ describe("isBeingDeleted access denial", () => {
         // Records that support delete via Cognito auth
         cy.then(() =>
             graphql(mutations.deleteComment, {
-                input: { id: createdCommentId, _version: createdCommentVersion },
+                input: {
+                    id: createdCommentId,
+                    _version: createdCommentVersion,
+                },
             }).catch(() => {})
         );
         cy.then(() =>
