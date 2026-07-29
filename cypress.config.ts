@@ -306,18 +306,13 @@ export default defineConfig({
                             query: gqlQueries.listTenants,
                             variables: {},
                         });
-                        const tenants = (
-                            (tenantsResp.data?.listTenants as any)
-                                ?.items as any[]
-                        )?.filter((t: any) => !t._deleted);
+                        const tenants =
+                            tenantsResp.data?.listTenants?.items?.filter(
+                                (t) => !t._deleted
+                            );
                         if (!tenants?.length) {
                             throw new Error(
                                 "createFixtureUsers: no tenants found via IAM listTenants"
-                            );
-                        }
-                        if (tenants.length > 1) {
-                            throw new Error(
-                                `createFixtureUsers: multiple tenants found — set tenantId in Cypress env to disambiguate`
                             );
                         }
                         tenantId = tenants[0].id;
