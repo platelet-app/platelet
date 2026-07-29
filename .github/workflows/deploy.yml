@@ -149,8 +149,6 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ vars.AWS_REGION }}
-          CYPRESS_adminusername: ${{ vars.CYPRESS_ADMIN_USERNAME }}
-          CYPRESS_adminpassword: ${{ secrets.CYPRESS_ADMIN_PASSWORD }}
           CYPRESS_bucket: ${{ steps.amplify_outputs.outputs.bucket_name }}
           CYPRESS_userPoolId: ${{ steps.amplify_outputs.outputs.user_pool_id }}
           CYPRESS_clientId: ${{ steps.amplify_outputs.outputs.client_id }}
