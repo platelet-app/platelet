@@ -93,6 +93,7 @@
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
+        "build:packages": "scripts/build-packages.sh",
         "test": "react-scripts test --testTimeout=60000",
         "test:e2e": "NODE_OPTIONS=--openssl-legacy-provider npx cypress run",
         "test:cypress": "NODE_OPTIONS=--openssl-legacy-provider npx cypress open",
