@@ -63,7 +63,9 @@ describe("User Deletion End-to-End Test", () => {
     let createdVehicleAssignmentId;
     let createdPossibleRiderResponsibilityId;
     let createdTaskId;
+    let createdTaskVersion;
     let createdVehicleId;
+    let createdVehicleVersion;
     let riderResponsibilityId;
 
     before(() => {
@@ -89,6 +91,30 @@ describe("User Deletion End-to-End Test", () => {
                     "Cleaned up rider responsibility:",
                     riderResponsibilityId
                 );
+            });
+        }
+        if (createdTaskId && createdTaskVersion) {
+            cy.iamGraphqlMutation(mutations.deleteTask, {
+                input: { id: createdTaskId, _version: createdTaskVersion },
+            }).then((r) => {
+                if (r.errors)
+                    cy.log("deleteTask cleanup errors (non-fatal):", r.errors);
+                else cy.log("Cleaned up task:", createdTaskId);
+            });
+        }
+        if (createdVehicleId && createdVehicleVersion) {
+            cy.iamGraphqlMutation(mutations.deleteVehicle, {
+                input: {
+                    id: createdVehicleId,
+                    _version: createdVehicleVersion,
+                },
+            }).then((r) => {
+                if (r.errors)
+                    cy.log(
+                        "deleteVehicle cleanup errors (non-fatal):",
+                        r.errors
+                    );
+                else cy.log("Cleaned up vehicle:", createdVehicleId);
             });
         }
         cy.clearLocalStorageSnapshot();
@@ -228,6 +254,7 @@ describe("User Deletion End-to-End Test", () => {
         }).then((response) => {
             expect(response.data.createTask).to.not.be.null;
             createdTaskId = response.data.createTask.id;
+            createdTaskVersion = response.data.createTask._version;
             expect(createdTaskId).to.exist;
             cy.log("Created task with ID:", createdTaskId);
         });
@@ -271,6 +298,7 @@ describe("User Deletion End-to-End Test", () => {
         }).then((response) => {
             expect(response.data.createVehicle).to.not.be.null;
             createdVehicleId = response.data.createVehicle.id;
+            createdVehicleVersion = response.data.createVehicle._version;
             expect(createdVehicleId).to.exist;
             cy.log("Created vehicle with ID:", createdVehicleId);
         });

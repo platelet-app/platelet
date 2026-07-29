@@ -597,45 +597,26 @@ describe("isBeingDeleted access denial", () => {
             }).catch(() => {})
         );
 
-        // Task and Vehicle have no delete auth rule — cancel/disable them instead
-        cy.then(() =>
-            graphql(mutations.updateTask, {
-                input: {
-                    id: createdTaskId,
-                    _version: createdTaskVersion,
-                    status: "CANCELLED",
-                    archived: 1,
-                },
-            }).catch(() => {})
-        );
-        cy.then(() =>
-            graphql(mutations.updateTask, {
-                input: {
-                    id: sharedTaskId,
-                    _version: sharedTaskVersion,
-                    status: "CANCELLED",
-                    archived: 1,
-                },
-            }).catch(() => {})
-        );
-        cy.then(() =>
-            graphql(mutations.updateVehicle, {
-                input: {
-                    id: createdVehicleId,
-                    _version: createdVehicleVersion,
-                    disabled: 1,
-                },
-            }).catch(() => {})
-        );
-        cy.then(() =>
-            graphql(mutations.updateVehicle, {
-                input: {
-                    id: sharedVehicleId,
-                    _version: sharedVehicleVersion,
-                    disabled: 1,
-                },
-            }).catch(() => {})
-        );
+        cy.iamGraphqlMutation(mutations.deleteTask, {
+            input: { id: createdTaskId, _version: createdTaskVersion },
+        }).then((r) => {
+            if (r.errors) cy.log("deleteTask (created) errors:", r.errors);
+        });
+        cy.iamGraphqlMutation(mutations.deleteTask, {
+            input: { id: sharedTaskId, _version: sharedTaskVersion },
+        }).then((r) => {
+            if (r.errors) cy.log("deleteTask (shared) errors:", r.errors);
+        });
+        cy.iamGraphqlMutation(mutations.deleteVehicle, {
+            input: { id: createdVehicleId, _version: createdVehicleVersion },
+        }).then((r) => {
+            if (r.errors) cy.log("deleteVehicle (created) errors:", r.errors);
+        });
+        cy.iamGraphqlMutation(mutations.deleteVehicle, {
+            input: { id: sharedVehicleId, _version: sharedVehicleVersion },
+        }).then((r) => {
+            if (r.errors) cy.log("deleteVehicle (shared) errors:", r.errors);
+        });
         cy.then(() =>
             graphql(mutations.deleteRiderResponsibility, {
                 input: {
