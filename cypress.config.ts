@@ -125,31 +125,6 @@ async function adminSetUserPassword({
     );
 }
 
-function jwtSub(token: string): string {
-    const payload = token.split(".")[1];
-    return JSON.parse(Buffer.from(payload, "base64url").toString("utf8")).sub;
-}
-
-async function executeCognitoGraphqlRequest(
-    endpoint: string,
-    idToken: string,
-    query: string,
-    variables: unknown
-): Promise<{ data?: Record<string, unknown>; errors?: unknown[] }> {
-    const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: idToken,
-        },
-        body: JSON.stringify({ query, variables }),
-    });
-    return response.json() as Promise<{
-        data?: Record<string, unknown>;
-        errors?: unknown[];
-    }>;
-}
-
 export default defineConfig({
     allowCypressEnv: true,
     video: false,
@@ -164,33 +139,41 @@ export default defineConfig({
                 undefined;
 
             interface FixtureUser {
-                id: string;
+                id: string | null;
                 username: string;
                 password: string;
             }
             let fixtureUsers: {
+                admin: FixtureUser;
                 coord: FixtureUser;
                 rider: FixtureUser;
             } | null = null;
-            let storedAdminToken: string | null = null;
 
             on("after:run", async () => {
-                if (!fixtureUsers || !storedAdminToken) return;
+                if (!fixtureUsers) return;
                 const endpoint = config.env.appsyncGraphqlEndpoint as string;
-                for (const user of [fixtureUsers.coord, fixtureUsers.rider]) {
+                const region = config.env.appsyncRegion as string;
+                for (const user of [
+                    fixtureUsers.admin,
+                    fixtureUsers.coord,
+                    fixtureUsers.rider,
+                ]) {
+                    if (!user.id) continue;
                     try {
-                        await executeCognitoGraphqlRequest(
+                        await executeIamGraphqlRequest({
                             endpoint,
-                            storedAdminToken,
-                            gqlMutations.disableUser,
-                            { userId: user.id }
-                        );
-                        await executeCognitoGraphqlRequest(
+                            region,
+                            roleArn: resolvedRoleArn,
+                            query: gqlMutations.disableUser,
+                            variables: { userId: user.id },
+                        });
+                        await executeIamGraphqlRequest({
                             endpoint,
-                            storedAdminToken,
-                            gqlMutations.adminDeleteUser,
-                            { userId: user.id }
-                        );
+                            region,
+                            roleArn: resolvedRoleArn,
+                            query: gqlMutations.adminDeleteUser,
+                            variables: { userId: user.id },
+                        });
                         console.log(
                             `[Cypress] Cleaned up fixture user ${user.id}`
                         );
@@ -202,7 +185,6 @@ export default defineConfig({
                     }
                 }
                 fixtureUsers = null;
-                storedAdminToken = null;
             });
 
             on("task", {
@@ -271,7 +253,10 @@ export default defineConfig({
                                 Username: username,
                             })
                         );
-                        return { exists: true, enabled: result.Enabled ?? true };
+                        return {
+                            exists: true,
+                            enabled: result.Enabled ?? true,
+                        };
                     } catch (err: any) {
                         if (err.name === "UserNotFoundException") {
                             return { exists: false };
@@ -303,12 +288,7 @@ export default defineConfig({
                     return (result.Groups ?? []).map((g) => g.GroupName);
                 },
 
-                async createFixtureUsers({
-                    adminToken,
-                }: {
-                    adminToken: string;
-                }) {
-                    storedAdminToken = adminToken;
+                async createFixtureUsers() {
                     if (fixtureUsers) return fixtureUsers;
 
                     const region = config.env.appsyncRegion as string;
@@ -319,68 +299,102 @@ export default defineConfig({
 
                     let tenantId = config.env.tenantId as string | undefined;
                     if (!tenantId) {
-                        const cognitoId = jwtSub(adminToken);
-                        const selfResp = await executeCognitoGraphqlRequest(
+                        const tenantsResp = await executeIamGraphqlRequest({
                             endpoint,
-                            adminToken,
-                            gqlQueries.getUserByCognitoId,
-                            { cognitoId }
-                        );
-                        const items = (
-                            selfResp.data?.getUserByCognitoId as any
-                        )?.items;
-                        tenantId = items?.[0]?.tenantId;
-                        if (!tenantId) {
+                            region,
+                            roleArn: resolvedRoleArn,
+                            query: gqlQueries.listTenants,
+                            variables: {},
+                        });
+                        const tenants = (
+                            (tenantsResp.data?.listTenants as any)
+                                ?.items as any[]
+                        )?.filter((t: any) => !t._deleted);
+                        if (!tenants?.length) {
                             throw new Error(
-                                `createFixtureUsers: could not resolve tenantId from admin user record. errors: ${JSON.stringify(selfResp.errors)}`
+                                "createFixtureUsers: no tenants found via IAM listTenants"
                             );
                         }
+                        if (tenants.length > 1) {
+                            throw new Error(
+                                `createFixtureUsers: multiple tenants found — set tenantId in Cypress env to disambiguate`
+                            );
+                        }
+                        tenantId = tenants[0].id;
                     }
 
+                    const adminPassword = `AdminTest${timestamp}!A`;
                     const coordPassword = `CoordTest${timestamp}!A`;
                     const riderPassword = `RiderTest${timestamp}!A`;
 
-                    const [coordResp, riderResp] = await Promise.all([
-                        executeCognitoGraphqlRequest(
-                            endpoint,
-                            adminToken,
-                            gqlMutations.registerUser,
-                            {
-                                name: `Test Coordinator ${timestamp}`,
-                                email: `test-coord-${timestamp}@platelet.app`,
-                                tenantId,
-                                roles: ["COORDINATOR", "USER"],
-                            }
-                        ),
-                        executeCognitoGraphqlRequest(
-                            endpoint,
-                            adminToken,
-                            gqlMutations.registerUser,
-                            {
-                                name: `Test Rider ${timestamp}`,
-                                email: `test-rider-${timestamp}@platelet.app`,
-                                tenantId,
-                                roles: ["RIDER", "USER"],
-                            }
-                        ),
-                    ]);
+                    const [adminResp, coordResp, riderResp] = await Promise.all(
+                        [
+                            executeIamGraphqlRequest({
+                                endpoint,
+                                region,
+                                roleArn: resolvedRoleArn,
+                                query: gqlMutations.registerUser,
+                                variables: {
+                                    name: `Test Admin ${timestamp}`,
+                                    email: `test-admin-${timestamp}@platelet.app`,
+                                    tenantId,
+                                    roles: ["ADMIN", "USER"],
+                                },
+                            }),
+                            executeIamGraphqlRequest({
+                                endpoint,
+                                region,
+                                roleArn: resolvedRoleArn,
+                                query: gqlMutations.registerUser,
+                                variables: {
+                                    name: `Test Coordinator ${timestamp}`,
+                                    email: `test-coord-${timestamp}@platelet.app`,
+                                    tenantId,
+                                    roles: ["COORDINATOR", "USER"],
+                                },
+                            }),
+                            executeIamGraphqlRequest({
+                                endpoint,
+                                region,
+                                roleArn: resolvedRoleArn,
+                                query: gqlMutations.registerUser,
+                                variables: {
+                                    name: `Test Rider ${timestamp}`,
+                                    email: `test-rider-${timestamp}@platelet.app`,
+                                    tenantId,
+                                    roles: ["RIDER", "USER"],
+                                },
+                            }),
+                        ]
+                    );
 
+                    const admin = adminResp.data?.registerUser as
+                        | { id: string; username: string }
+                        | undefined;
                     const coord = coordResp.data?.registerUser as
-                        | (FixtureUser & { username: string })
+                        | { id: string; username: string }
                         | undefined;
                     const rider = riderResp.data?.registerUser as
-                        | (FixtureUser & { username: string })
+                        | { id: string; username: string }
                         | undefined;
 
-                    if (!coord?.id || !rider?.id) {
+                    if (!admin?.id || !coord?.id || !rider?.id) {
                         throw new Error(
                             `Fixture user creation failed:\n` +
+                                `admin: ${JSON.stringify(adminResp.errors)}\n` +
                                 `coord: ${JSON.stringify(coordResp.errors)}\n` +
                                 `rider: ${JSON.stringify(riderResp.errors)}`
                         );
                     }
 
                     await Promise.all([
+                        adminSetUserPassword({
+                            username: admin.username,
+                            password: adminPassword,
+                            userPoolId,
+                            region,
+                            roleArn: resolvedRoleArn,
+                        }),
                         adminSetUserPassword({
                             username: coord.username,
                             password: coordPassword,
@@ -398,6 +412,11 @@ export default defineConfig({
                     ]);
 
                     fixtureUsers = {
+                        admin: {
+                            id: admin.id,
+                            username: admin.username,
+                            password: adminPassword,
+                        },
                         coord: {
                             id: coord.id,
                             username: coord.username,
@@ -411,7 +430,7 @@ export default defineConfig({
                     };
 
                     console.log(
-                        `[Cypress] Created fixture users — coord: ${coord.id}, rider: ${rider.id}`
+                        `[Cypress] Created fixture users — admin: ${admin.id}, coord: ${coord.id}, rider: ${rider.id}`
                     );
                     return fixtureUsers;
                 },
@@ -419,12 +438,15 @@ export default defineConfig({
                 getFixtureUsers() {
                     if (fixtureUsers) return fixtureUsers;
                     // Fallback to env vars so cypress open works with pre-existing accounts.
+                    const au = config.env.adminusername as string | undefined;
+                    const ap = config.env.adminpassword as string | undefined;
                     const cu = config.env.coordusername as string | undefined;
                     const cp = config.env.coordpassword as string | undefined;
                     const ru = config.env.riderusername as string | undefined;
                     const rp = config.env.riderpassword as string | undefined;
-                    if (cu && cp && ru && rp) {
+                    if (au && ap && cu && cp && ru && rp) {
                         return {
+                            admin: { id: null, username: au, password: ap },
                             coord: { id: null, username: cu, password: cp },
                             rider: { id: null, username: ru, password: rp },
                         };

@@ -108,8 +108,14 @@ Cypress.Commands.add("signIn", (role) => {
         const makeKey = (name) =>
             `CognitoIdentityServiceProvider.${cognitoUser.pool.clientId}.${cognitoUser.username}.${name}`;
 
-        cy.setLocalStorage(makeKey("accessToken"), cognitoUser.signInUserSession.accessToken.jwtToken);
-        cy.setLocalStorage(makeKey("idToken"), cognitoUser.signInUserSession.idToken.jwtToken);
+        cy.setLocalStorage(
+            makeKey("accessToken"),
+            cognitoUser.signInUserSession.accessToken.jwtToken
+        );
+        cy.setLocalStorage(
+            makeKey("idToken"),
+            cognitoUser.signInUserSession.idToken.jwtToken
+        );
         cy.setLocalStorage(
             `CognitoIdentityServiceProvider.${cognitoUser.pool.clientId}.LastAuthUser`,
             cognitoUser.username
@@ -128,18 +134,17 @@ Cypress.Commands.add("signIn", (role) => {
         });
     };
 
-    if (role === "RIDER" || role === "COORDINATOR") {
-        cy.task("getFixtureUsers").then((users) => {
+    cy.task("getFixtureUsers")
+        .then((users) => {
             const { username, password } =
-                role === "COORDINATOR" ? users.coord : users.rider;
+                role === "COORDINATOR"
+                    ? users.coord
+                    : role === "RIDER"
+                    ? users.rider
+                    : users.admin;
             return Auth.signIn(username, password);
-        }).then(completeSignIn);
-    } else {
-        // ADMIN
-        cy.then(() =>
-            Auth.signIn(Cypress.env("adminusername"), Cypress.env("adminpassword"))
-        ).then(completeSignIn);
-    }
+        })
+        .then(completeSignIn);
 
     cy.saveLocalStorage();
 });
