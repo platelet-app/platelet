@@ -79,7 +79,7 @@ jobs:
                       --context amplifyEnv=${{ steps.amplify_outputs.outputs.env_name }} \
                       --context graphQLEndpoint=${{ steps.amplify_outputs.outputs.graphql_endpoint }} \
                       --context bucketName=${{ steps.amplify_outputs.outputs.bucket_name }} \
-                      --context createCypressTestingRole=${{ startsWith(github.ref_name, 'test/') }} \
+                      --context createCypressTestingRole=${{ startsWith(github.ref_name, 'test/') || startsWith(github.ref_name, 'dev/') }} \
                       --context alertEmail=${{ vars.ALERT_EMAIL }} \
                       --context fromEmail=${{ vars.FROM_EMAIL }} \
                       --context domainName=${{ vars.DOMAIN_NAME }} "
@@ -144,7 +144,7 @@ jobs:
       - name: build graphql package
         run: npm run build:simple --workspace @platelet-app/graphql
       - name: Run Cypress tests
-        if: ${{ vars.CYPRESS_ADMIN_USERNAME != '' }}
+        if: ${{ startsWith(github.ref_name, 'test/') || startsWith(github.ref_name, 'dev/') }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
