@@ -34,7 +34,6 @@ Once the build has completed, you can pull it to your local project to work on:
 
 `amplify pull --appId <app-id> --envName <env-name>`
 
-Find the App ID and environment name on the app overview. The environment name is typically generated in the form of a person's name (e.g. evanne).
 
 ## Creating a new environment
 
@@ -85,7 +84,7 @@ to start working on the front-end. Navigate to `http://localhost:3000` if it doe
 
 ## Creating a primary admin user
 
-TODO: This process should be streamlined either with a GitHub action or using the supporting CDK. These instructions are subject to change.
+TODO: This process should be streamlined either with a GitHub action or using the supporting CDK. These instructions are subject to change (issue #270 on GitHub).
 
 Before you can log in, you must create a primary admin user.
 
