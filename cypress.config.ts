@@ -308,7 +308,7 @@ export default defineConfig({
                         });
                         const tenants =
                             tenantsResp.data?.listTenants?.items?.filter(
-                                (t) => !t._deleted
+                                (t) => t._deleted !== true
                             );
                         if (!tenants?.length) {
                             throw new Error(
