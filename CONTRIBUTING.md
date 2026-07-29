@@ -100,7 +100,7 @@ Once it is created, click on the user and add it to the `SUPER` group.
 
 Return to your terminal and run `amplify api console`, when prompted select `GraphQL`.
 
-Select the API with your environnment name. Then `Run a query`.
+Select the API with your environment name. Then `Run a query`.
 
 Click the icon that looks like a key, then `Login with User Pools`. Log in with the super account created earlier. It might prompt you to create a new password, but you can use the same password you created earlier.
 
@@ -121,6 +121,8 @@ mutation MyMutation {
 ```
 
 The email address must be different to the one used for the super account, but one you can access.
+
+You will receive an email to that address with login details. From there you can start using this instance of platelet.
 
 ###### Public bucket with profile pictures
 
