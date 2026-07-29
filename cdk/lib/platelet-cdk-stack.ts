@@ -1,4 +1,5 @@
 import * as cdk from "aws-cdk-lib";
+import * as ses from "aws-cdk-lib/aws-ses";
 import { Construct } from "constructs";
 import { DeleteUserStepFunction } from "./delete-user-step-function-construct";
 import { RetryFunctionConstruct } from "./retry-function-construct";
@@ -30,6 +31,13 @@ export class PlateletCdkStack extends cdk.Stack {
             "RetryFunction"
         );
 
+        // get the SES identity from the fromEmail
+        const domainSplit = fromEmail.split("@")[1];
+        const SES = ses.EmailIdentity.fromEmailIdentityName(
+            this,
+            "SESEmailIdentity",
+            domainSplit
+        );
         const SSMParamsConstructInstance = new SSMParamsConstruct(
             this,
             "SSMParams",
@@ -59,6 +67,7 @@ export class PlateletCdkStack extends cdk.Stack {
             amplifyEnv,
             alertEmail,
             fromEmailParameterArn: SSMParamsConstructInstance.fromEmailArn,
+            sesIdentity: SES
         });
 
         if (this.node.tryGetContext("createCypressTestingRole") === "true") {
@@ -67,5 +76,11 @@ export class PlateletCdkStack extends cdk.Stack {
                 userPoolArn,
             });
         }
+
+        // output the SES identity ARN
+        // this is needed for custom-policies.json in lambda functions
+        new cdk.CfnOutput(this, "SESEmailIdentityArn", {
+            value: SES.emailIdentityArn,
+        });
     }
 }

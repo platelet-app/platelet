@@ -1,7 +1,6 @@
 import { Construct } from "constructs";
 import * as cdk from "aws-cdk-lib";
 import * as ssm from "aws-cdk-lib/aws-ssm";
-import * as ses from "aws-cdk-lib/aws-ses";
 
 export interface SSMParamsConstructProps {
     amplifyEnv: string;
@@ -41,16 +40,5 @@ export class SSMParamsConstruct extends Construct {
             value: domainNameParam.parameterArn,
         });
 
-        // get the identity so we can output the ARN
-        // this is needed for custom-policies.json in lambda functions
-        const domainSplit = props.fromEmail.split("@")[1];
-        const SES = ses.EmailIdentity.fromEmailIdentityName(
-            this,
-            "SESEmailIdentity",
-            domainSplit
-        );
-        new cdk.CfnOutput(this, "SESEmailIdentityArn", {
-            value: SES.emailIdentityArn,
-        });
     }
 }
