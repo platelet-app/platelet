@@ -13,10 +13,7 @@ import {
     AdminListGroupsForUserCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import fetch from "node-fetch";
-import {
-    mutations as gqlMutations,
-    queries as gqlQueries,
-} from "@platelet-app/graphql";
+import { mutations as gqlMutations } from "@platelet-app/graphql";
 
 function getCypressTestRoleArnFromCdkOutputs(): string | null {
     const cdkOutPath = path.join(__dirname, "cdk/cdk-out.json");
@@ -32,7 +29,9 @@ function getCypressTestRoleArnFromCdkOutputs(): string | null {
                 }
             }
         }
-    } catch (_) {}
+    } catch (error) {
+        cy.log("There was an error getting the cypress role", error);
+    }
     return null;
 }
 
