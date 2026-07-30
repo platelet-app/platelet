@@ -298,74 +298,55 @@ export default defineConfig({
                     const timestamp = Date.now();
 
                     let tenantId = config.env.tenantId as string | undefined;
+                    let admin;
                     if (!tenantId) {
-                        const tenantsResp = await executeIamGraphqlRequest({
+                        const registerTenant = await executeIamGraphqlRequest({
                             endpoint,
                             region,
                             roleArn: resolvedRoleArn,
-                            query: gqlQueries.listTenants,
-                            variables: {},
+                            query: gqlMutations.registerTenant,
+                            variables: {
+                                name: "Some admin",
+                                tenantName: "test tenant",
+                                emailAddress: "success@simulator.amazonses.com",
+                            },
                         });
-                        const tenants =
-                            tenantsResp.data?.listTenants?.items?.filter(
-                                (t) => t._deleted !== true
-                            );
-                        if (!tenants?.length) {
-                            throw new Error(
-                                "createFixtureUsers: no tenants found via IAM listTenants"
-                            );
-                        }
-                        tenantId = tenants[0].id;
+                        console.log("Register tenant result:", registerTenant);
+                        admin = registerTenant?.data;
+                        tenantId = registerTenant?.id;
                     }
 
                     const adminPassword = `AdminTest${timestamp}!A`;
                     const coordPassword = `CoordTest${timestamp}!A`;
                     const riderPassword = `RiderTest${timestamp}!A`;
 
-                    const [adminResp, coordResp, riderResp] = await Promise.all(
-                        [
-                            executeIamGraphqlRequest({
-                                endpoint,
-                                region,
-                                roleArn: resolvedRoleArn,
-                                query: gqlMutations.registerUser,
-                                variables: {
-                                    name: `Test Admin ${timestamp}`,
-                                    email: `test-admin-${timestamp}@platelet.app`,
-                                    tenantId,
-                                    roles: ["ADMIN", "USER"],
-                                },
-                            }),
-                            executeIamGraphqlRequest({
-                                endpoint,
-                                region,
-                                roleArn: resolvedRoleArn,
-                                query: gqlMutations.registerUser,
-                                variables: {
-                                    name: `Test Coordinator ${timestamp}`,
-                                    email: `test-coord-${timestamp}@platelet.app`,
-                                    tenantId,
-                                    roles: ["COORDINATOR", "USER"],
-                                },
-                            }),
-                            executeIamGraphqlRequest({
-                                endpoint,
-                                region,
-                                roleArn: resolvedRoleArn,
-                                query: gqlMutations.registerUser,
-                                variables: {
-                                    name: `Test Rider ${timestamp}`,
-                                    email: `test-rider-${timestamp}@platelet.app`,
-                                    tenantId,
-                                    roles: ["RIDER", "USER"],
-                                },
-                            }),
-                        ]
-                    );
+                    const [coordResp, riderResp] = await Promise.all([
+                        executeIamGraphqlRequest({
+                            endpoint,
+                            region,
+                            roleArn: resolvedRoleArn,
+                            query: gqlMutations.registerUser,
+                            variables: {
+                                name: `Test Coordinator ${timestamp}`,
+                                email: `test-coord-${timestamp}@platelet.app`,
+                                tenantId,
+                                roles: ["COORDINATOR", "USER"],
+                            },
+                        }),
+                        executeIamGraphqlRequest({
+                            endpoint,
+                            region,
+                            roleArn: resolvedRoleArn,
+                            query: gqlMutations.registerUser,
+                            variables: {
+                                name: `Test Rider ${timestamp}`,
+                                email: `test-rider-${timestamp}@platelet.app`,
+                                tenantId,
+                                roles: ["RIDER", "USER"],
+                            },
+                        }),
+                    ]);
 
-                    const admin = adminResp.data?.registerUser as
-                        | { id: string; username: string }
-                        | undefined;
                     const coord = coordResp.data?.registerUser as
                         | { id: string; username: string }
                         | undefined;
@@ -376,7 +357,6 @@ export default defineConfig({
                     if (!admin?.id || !coord?.id || !rider?.id) {
                         throw new Error(
                             `Fixture user creation failed:\n` +
-                                `admin: ${JSON.stringify(adminResp.errors)}\n` +
                                 `coord: ${JSON.stringify(coordResp.errors)}\n` +
                                 `rider: ${JSON.stringify(riderResp.errors)}`
                         );
