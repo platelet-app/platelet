@@ -308,6 +308,7 @@ export default defineConfig({
                 },
 
                 async createFixtureUsers() {
+                    console.log("CREATE FixtureUser");
                     if (fixtureUsers) return fixtureUsers;
 
                     const region = config.env.appsyncRegion as string;
@@ -326,17 +327,18 @@ export default defineConfig({
                             variables: {
                                 name: "Some admin",
                                 tenantName: "test tenant",
-                                emailAddress: "success@simulator.amazonses.com",
+                                emailAddress: `success+${timestamp}@simulator.amazonses.com`,
                             },
                         });
                         console.log("Register tenant result:", registerTenant);
-                        admin = registerTenant?.data;
-                        tenantId = registerTenant?.id;
+                        admin = registerTenant?.data?.registerTenant?.admin;
+                        tenantId = registerTenant?.data?.registerTenant?.id;
                     }
 
                     const adminPassword = `AdminTest${timestamp}!A`;
                     const coordPassword = `CoordTest${timestamp}!A`;
                     const riderPassword = `RiderTest${timestamp}!A`;
+                    console.log("tenantId", tenantId);
 
                     const [coordResp, riderResp] = await Promise.all([
                         executeIamGraphqlRequest({
@@ -346,7 +348,7 @@ export default defineConfig({
                             query: gqlMutations.registerUser,
                             variables: {
                                 name: `Test Coordinator ${timestamp}`,
-                                email: `test-coord-${timestamp}@platelet.app`,
+                                email: `success*test-coord-${timestamp}@simulator.amazonses.com`,
                                 tenantId,
                                 roles: ["COORDINATOR", "USER"],
                             },
@@ -358,7 +360,7 @@ export default defineConfig({
                             query: gqlMutations.registerUser,
                             variables: {
                                 name: `Test Rider ${timestamp}`,
-                                email: `test-rider-${timestamp}@platelet.app`,
+                                email: `success+test-rider-${timestamp}@simulator.amazonses.com`,
                                 tenantId,
                                 roles: ["RIDER", "USER"],
                             },
