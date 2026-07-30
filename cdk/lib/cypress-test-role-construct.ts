@@ -42,11 +42,11 @@ export class CypressTestRole extends Construct {
                 resources: [
                     `${api.arn}/types/Mutation/fields/updateUser`,
                     `${api.arn}/types/Mutation/fields/registerUser`,
+                    `${api.arn}/types/Mutation/fields/registerTenant`,
                     `${api.arn}/types/Mutation/fields/disableUser`,
                     `${api.arn}/types/Mutation/fields/adminDeleteUser`,
                     `${api.arn}/types/Mutation/fields/deleteTask`,
                     `${api.arn}/types/Mutation/fields/deleteVehicle`,
-                    `${api.arn}/types/Query/fields/listTenants`,
                 ],
             })
         );
