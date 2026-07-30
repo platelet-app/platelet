@@ -131,7 +131,7 @@ describe("User Deletion End-to-End Test", () => {
 
     it("should create a test user", () => {
         const timestamp = Date.now();
-        testUserEmail = `test-delete-${timestamp}@platelet.app`;
+        testUserEmail = `success+test-delete-${timestamp}@simulator.amazonses.com`;
         testUserName = `Test User ${timestamp}`;
         testUserPassword = `TestDel${timestamp}!A`;
 
@@ -140,6 +140,7 @@ describe("User Deletion End-to-End Test", () => {
             const variables = {
                 ...rider,
                 tenantId: Cypress.env("tenantId"),
+                email: testUserEmail,
                 name: testUserName,
             };
             cy.then(() => {

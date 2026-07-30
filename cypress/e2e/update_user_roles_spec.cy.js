@@ -73,6 +73,7 @@ describe("updateUserRoles", () => {
             const variables = {
                 ...rider,
                 tenantId: Cypress.env("tenantId"),
+                email: `success+test-rider-author-${timestamp}@simulator.amazonses.com`,
                 name,
             };
             cy.then(() =>

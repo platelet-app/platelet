@@ -89,6 +89,7 @@ describe("isBeingDeleted access denial", () => {
             const data = {
                 ...rider,
                 tenantId: Cypress.env("tenantId"),
+                email: `success+test-delete-denied-${timestamp}@simulator.amazonses.com`,
             };
             cy.then(() => graphql(mutations.registerUser, data)).then(
                 (response) => {

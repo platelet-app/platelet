@@ -58,6 +58,7 @@ describe("createComment access control", () => {
                 ...rider,
                 tenantId: Cypress.env("tenantId"),
                 name: `Test Comment Author User ${timestamp}`,
+                email: `success+test-mismatched-author-${timestamp}@simulator.amazonses.com`,
             };
             cy.then(() =>
                 API.graphql({

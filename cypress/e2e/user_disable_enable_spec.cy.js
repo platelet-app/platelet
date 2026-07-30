@@ -68,6 +68,7 @@ describe("User Disable/Enable End-to-End Test", () => {
                 ...rider,
                 tenantId: Cypress.env("tenantId"),
                 name: `Test DisableEnable ${timestamp}`,
+                email: `success+test-enable-disable-${timestamp}@simulator.amazonses.com`,
             };
             cy.then(() =>
                 API.graphql({
