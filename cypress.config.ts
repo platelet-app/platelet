@@ -142,12 +142,15 @@ export default defineConfig({
                 id: string | null;
                 username: string;
                 password: string;
+                isPrimaryAdmin?: number;
             }
             let fixtureUsers: {
                 admin: FixtureUser;
                 coord: FixtureUser;
                 rider: FixtureUser;
             } | null = null;
+
+            let tenantId = config.env.tenantId as string | undefined;
 
             on("after:run", async () => {
                 if (!fixtureUsers) return;
@@ -160,6 +163,15 @@ export default defineConfig({
                 ]) {
                     if (!user.id) continue;
                     try {
+                        if (user?.isPrimaryAdmin) {
+                            await executeIamGraphqlRequest({
+                                endpoint,
+                                region,
+                                roleArn: resolvedRoleArn,
+                                query: gqlMutations.updateUser,
+                                variables: { isPrimaryAdmin: 0 },
+                            });
+                        }
                         await executeIamGraphqlRequest({
                             endpoint,
                             region,
@@ -185,6 +197,13 @@ export default defineConfig({
                     }
                 }
                 fixtureUsers = null;
+                await executeIamGraphqlRequest({
+                    endpoint,
+                    region,
+                    roleArn: resolvedRoleArn,
+                    query: gqlMutations.deleteTenant,
+                    variables: { id: tenantId },
+                });
             });
 
             on("task", {
@@ -297,7 +316,6 @@ export default defineConfig({
                     const userPoolId = config.env.userPoolId as string;
                     const timestamp = Date.now();
 
-                    let tenantId = config.env.tenantId as string | undefined;
                     let admin;
                     if (!tenantId) {
                         const registerTenant = await executeIamGraphqlRequest({
