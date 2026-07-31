@@ -1,3 +1,20 @@
+
 {
-    "adminRoleNames": []
+    "adminRoleNames": [
+        "PlateletCdkStack-dev-mike-DeleteUserStepFunctionCle-6HvsgEqI4D81",
+        "PlateletCdkStack-dev-mike-UserTakeOutDataStepFuncti-CoewkH8Yrrmf",
+        "PlateletCdkStack-dev-mike-DeleteUserStepFunctionDel-aGRjB0U5upQU",
+        "PlateletCdkStack-dev-mike-DeleteUserStepFunctionDel-Nogj9rs36XkG",
+        "PlateletCdkStack-dev-mike-DeleteUserStepFunctionCle-wUCrurLCQugj",
+        "PlateletCdkStack-dev-mike-CypressTestRoleDD1C6702-OhMyENNeKEMn",
+        "PlateletCdkStack-dev-mike-UserTakeOutDataStepFuncti-PFggxxrdEsXX",
+        "PlateletCdkStack-dev-mike-DeleteUserStepFunctionDel-TpaP6eOY7egV",
+        "PlateletCdkStack-dev-mike-UserTakeOutDataStepFuncti-ZRSuKv9orYda",
+        "PlateletCdkStack-dev-mike-UserTakeOutDataStepFuncti-32sxXuoRGL6l",
+        "PlateletCdkStack-dev-mike-DeleteUserStepFunctionDel-kLPi5R1lkd1W",
+        "PlateletCdkStack-dev-mike-DeleteUserStepFunctionGet-MJNVS8NsR8EK",
+        "PlateletCdkStack-dev-mike-UserTakeOutDataStepFuncti-3hGB67Fagg8b",
+        "PlateletCdkStack-dev-mike-DeleteUserStepFunctionGet-2qYvKsppPtc4",
+    ]
 }
+
