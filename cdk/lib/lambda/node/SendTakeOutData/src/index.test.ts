@@ -9,10 +9,12 @@ import {
 } from "@aws-sdk/client-s3";
 
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
+import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 
 // Create the mock instance
 const s3Mock = mockClient(S3Client);
 const sesMock = mockClient(SESv2Client);
+const ssmMock = mockClient(SSMClient);
 
 jest.unstable_mockModule("@platelet-app/lambda", async () => {
     return {
@@ -80,6 +82,8 @@ const fakeUser = {
 describe("SendTakeOutData", () => {
     beforeEach(() => {
         s3Mock.reset();
+        sesMock.reset();
+        ssmMock.reset();
         jest.clearAllMocks();
     });
 
@@ -87,6 +91,9 @@ describe("SendTakeOutData", () => {
         const mockArchiveInstance = archiver();
 
         sesMock.on(SendEmailCommand).resolves({});
+        ssmMock.on(GetParameterCommand).resolves({
+            Parameter: { Value: "noreply@platelet.app" },
+        });
 
         s3Mock.on(DeleteObjectCommand).resolves({});
         lambda.request
@@ -153,5 +160,8 @@ describe("SendTakeOutData", () => {
                 FromEmailAddress: "noreply@platelet.app",
             })
         );
+        expect(ssmMock.calls()[0].args[0].input).toEqual({
+            Name: "/platelet-supporting-cdk/test/FromEmail",
+        });
     });
 });

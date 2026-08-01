@@ -11,6 +11,7 @@ type TimePickerBasicProps = {
     startValue?: string;
     showPlusOneDay?: boolean;
     label?: string;
+    id?: string;
 };
 
 const CustomTextField = styled(TextField)({
@@ -28,6 +29,7 @@ const TimePickerBasic: React.FC<TimePickerBasicProps> = ({
     startValue,
     showPlusOneDay = false,
     label = "Time",
+    id = "time-picker-basic",
 }) => {
     const timeOptions = generateTimeOptions(startValue, showOnlyTodayTimes);
 
@@ -48,7 +50,7 @@ const TimePickerBasic: React.FC<TimePickerBasicProps> = ({
         <Autocomplete
             fullWidth
             freeSolo
-            id="time-picker-basic"
+            id={id}
             options={timeOptions}
             getOptionLabel={(option) => option}
             value={value}

@@ -5,13 +5,32 @@ on:
     branches:
       - 'production/**'
       - 'test/**'
-      - 'dev'
+      - 'dev/**'
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name }}
     steps:
+      - name: 'Wait for automatic Amplify build if first run'
+        if: github.event.before == '0000000000000000000000000000000000000000'
+        uses: duckbytes/amplify-build-status@master
+        with:
+          app-id: ${{ vars.AMPLIFY_APP_ID }}
+          branch-name: ${{ github.ref_name }}
+          commit-id: ${{ steps.commit_changes.outputs.commit_long_sha || github.sha }}
+          wait: true
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+      - name: 'Disable auto-build on the branch'
+        run: |
+          aws amplify update-branch --app-id ${{ vars.AMPLIFY_APP_ID }} --branch-name ${{ github.ref_name }} --no-enable-auto-build
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v3
       - name: 'Install CDK CLI'
@@ -23,13 +42,13 @@ jobs:
         working-directory: amplify/backend
         run: yarn --frozen-lockfile
       - name: 'Test cdk functions'
-        run: ./test-cdk-functions.sh
+        run: npm run test:cdk-lambda
       - name: 'Test amplify functions'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ vars.AWS_REGION }}
-        run: ./test-amplify-functions.sh
+        run: npm run test:lambda
       - name: 'Build'
         working-directory: cdk
         run: npm run build
@@ -60,8 +79,10 @@ jobs:
                       --context amplifyEnv=${{ steps.amplify_outputs.outputs.env_name }} \
                       --context graphQLEndpoint=${{ steps.amplify_outputs.outputs.graphql_endpoint }} \
                       --context bucketName=${{ steps.amplify_outputs.outputs.bucket_name }} \
-                      --context createCypressTestingRole=${{ startsWith(github.ref_name, 'test/') }} \
-                      --context alertEmail=${{ vars.ALERT_EMAIL }} "
+                      --context createCypressTestingRole=${{ startsWith(github.ref_name, 'test/') || startsWith(github.ref_name, 'dev/') }} \
+                      --context alertEmail=${{ vars.ALERT_EMAIL }} \
+                      --context fromEmail=${{ vars.FROM_EMAIL }} \
+                      --context domainName=${{ vars.DOMAIN_NAME }} "
           npm run bootstrap -- $CONTEXT_ARGS
           npm run deploy -- --require-approval never $CONTEXT_ARGS --outputs-file cdk-out.json
       - name: "Write lambda function roles to custom-roles.json"
@@ -107,6 +128,7 @@ jobs:
           amplify pull --appId ${{ vars.AMPLIFY_APP_ID }} --envName ${{ steps.amplify_outputs.outputs.env_name }} -y
           babel --plugins @babel/plugin-transform-modules-commonjs src/aws-exports.js > src/aws-exports-es5.js
       - name: Update the tenant API
+        if: ${{ vars.API_URL != '' && vars.TENANT_NAME != '' }}
         uses: platelet-app/update-tenant-api-action@main
         with:
           awsEnvName: ${{ steps.amplify_outputs.outputs.env_name }}
@@ -122,13 +144,11 @@ jobs:
       - name: build graphql package
         run: npm run build:simple --workspace @platelet-app/graphql
       - name: Run Cypress tests
-        if: ${{ vars.CYPRESS_ADMIN_USERNAME != '' }}
+        if: ${{ startsWith(github.ref_name, 'test/') || startsWith(github.ref_name, 'dev/') }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ vars.AWS_REGION }}
-          CYPRESS_adminusername: ${{ vars.CYPRESS_ADMIN_USERNAME }}
-          CYPRESS_adminpassword: ${{ secrets.CYPRESS_ADMIN_PASSWORD }}
           CYPRESS_bucket: ${{ steps.amplify_outputs.outputs.bucket_name }}
           CYPRESS_userPoolId: ${{ steps.amplify_outputs.outputs.user_pool_id }}
           CYPRESS_clientId: ${{ steps.amplify_outputs.outputs.client_id }}

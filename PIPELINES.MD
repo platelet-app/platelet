@@ -60,9 +60,15 @@ The name of the current tenant being deployed to. This is what will be displayed
 `ALERT_EMAIL`:
 Optional email address to receive alerts on.
 
+`FROM_EMAIL`:
+Email address that is used to send emails to users. There must be a corresponding SES identity set up in the account.
+
+`DOMAIN_NAME`:
+The domain name that you want to link people to in registration emails. e.g.: app.platelet.app.
+
 ### Updating the tenant API
 
-Attach this policy to the AWS account to give access to the tenant API:
+Create this policy in the AWS account to give access to the tenant API:
 
 ```
 {
