@@ -1,6 +1,24 @@
+
 [
     {
-        "Action": [],
-        "Resource": []
+        "Action": [
+            "ssm:GetParameter",
+            "ssm:GetParameters",
+            "ssm:GetParametersByPath"
+        ],
+        "Resource": [
+            "arn:aws:ssm:eu-west-1:356117015333:parameter/platelet-supporting-cdk/rowena/FromEmail",
+            "arn:aws:ssm:eu-west-1:356117015333:parameter/platelet-supporting-cdk/rowena/DomainName"
+        ]
+    },
+    {
+        "Action": [
+
+            "ses:SendEmail",
+            "ses:SendRawEmail"
+        ],
+        "Resource": [
+            "arn:aws:ses:eu-west-1:356117015333:identity/platelet-soft.com"
+        ]
     }
 ]
