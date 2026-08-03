@@ -33,8 +33,8 @@ jobs:
         run: yarn --frozen-lockfile
       - name: 'npm install front-end'
         run: npm install
-      - name: build graphql package
-        run: npm run build:simple --workspace @platelet-app/graphql
+      - name: 'Build packages'
+        run: npm run build:packages
         ## TESTS
       - name: 'Test cdk functions'
         run: npm run test:cdk-lambda
