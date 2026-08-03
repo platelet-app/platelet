@@ -40,6 +40,8 @@ jobs:
         run: npm run test:cdk-lambda
       - name: 'Test amplify functions'
         run: npm run test:lambda
+      - name: create empty aws-exports file
+        run: touch src/aws-exports.js
       - name: 'Test front-end'
         run: npm test -- --silent
       ## AMPLIFY
