@@ -159,6 +159,7 @@ jobs:
           AWS_REGION: ${{ vars.AWS_REGION }}
       ## UPDATE TENANT API
       - name: Install Amplify CLI and pull project
+        if: ${{ vars.API_URL != '' && vars.TENANT_NAME != '' }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
