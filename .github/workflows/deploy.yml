@@ -16,6 +16,11 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name }}
     steps:
+      ## SETUP
+      - name: 'Set up Node.js'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v3
       - name: 'Install CDK CLI'
@@ -28,6 +33,7 @@ jobs:
         run: yarn --frozen-lockfile
       - name: 'npm install front-end'
         run: npm install
+        ## TESTS
       - name: 'Test cdk functions'
         run: npm run test:cdk-lambda
       - name: 'Test amplify functions'
@@ -38,6 +44,7 @@ jobs:
         run: npm run test:lambda
       - name: 'Test front-end'
         run: npm test -- --silent
+      ## AMPLIFY
       - name: 'Get the branch to see if it exists'
         id: branch_check
         run: |
@@ -70,12 +77,14 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ vars.AWS_REGION }}
+      ## BUILD CDK
       - name: 'Build'
         working-directory: cdk
         run: npm run build
       - name: 'Build lambda functions'
         working-directory: cdk
         run: npm run build-functions
+      ## AMPLIFY OUTPUTS
       - name: 'Wait for initial Amplify build if first run'
         if: ${{ steps.branch_check.outputs.branch_not_exists != '0' }}
         uses: duckbytes/amplify-build-status@master
@@ -98,6 +107,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ vars.AWS_REGION }}
+      ## DEPLOY CDK
       - name: 'Bootstrap and deploy'
         working-directory: cdk
         env:
@@ -128,6 +138,7 @@ jobs:
           add: '["./amplify/*custom-roles.json", "./amplify/*custom-policies.json"]'
           default_author: github_actor
           pathspec_error_handling: "exitImmediately"
+      ## REBUILD AMPLIFY WITH CDK
       - name: 'Start Amplify build'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -146,10 +157,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ vars.AWS_REGION }}
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      ## UPDATE TENANT API
       - name: Install Amplify CLI and pull project
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -172,6 +180,7 @@ jobs:
           apiURL: ${{ vars.API_URL }}
           amplifyEnvName: ${{ steps.amplify_outputs.outputs.env_name }}
           tenantName: ${{ vars.TENANT_NAME }}
+      ## CYPRESS TESTS
       - name: build graphql package
         run: npm run build:simple --workspace @platelet-app/graphql
       - name: Run Cypress tests
