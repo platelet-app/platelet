@@ -37,10 +37,6 @@ jobs:
       - name: 'Test cdk functions'
         run: npm run test:cdk-lambda
       - name: 'Test amplify functions'
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ vars.AWS_REGION }}
         run: npm run test:lambda
       - name: 'Test front-end'
         run: npm test -- --silent
