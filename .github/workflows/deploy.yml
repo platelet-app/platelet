@@ -50,6 +50,8 @@ jobs:
       - name: 'Install Amplify dependencies'
         working-directory: amplify/backend
         run: yarn --frozen-lockfile
+      - name: 'npm install front-end'
+        run: npm install
       - name: 'Test cdk functions'
         run: npm run test:cdk-lambda
       - name: 'Test amplify functions'
@@ -57,6 +59,8 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ vars.AWS_REGION }}
+      - name: 'Test front-end'
+        run: npm test -- --silent
         run: npm run test:lambda
       - name: 'Build'
         working-directory: cdk
@@ -148,8 +152,6 @@ jobs:
           apiURL: ${{ vars.API_URL }}
           amplifyEnvName: ${{ steps.amplify_outputs.outputs.env_name }}
           tenantName: ${{ vars.TENANT_NAME }}
-      - name: npm install
-        run: npm install
       - name: build graphql package
         run: npm run build:simple --workspace @platelet-app/graphql
       - name: Run Cypress tests
