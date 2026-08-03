@@ -33,6 +33,8 @@ jobs:
         run: yarn --frozen-lockfile
       - name: 'npm install front-end'
         run: npm install
+      - name: build graphql package
+        run: npm run build:simple --workspace @platelet-app/graphql
         ## TESTS
       - name: 'Test cdk functions'
         run: npm run test:cdk-lambda
@@ -177,8 +179,6 @@ jobs:
           amplifyEnvName: ${{ steps.amplify_outputs.outputs.env_name }}
           tenantName: ${{ vars.TENANT_NAME }}
       ## CYPRESS TESTS
-      - name: build graphql package
-        run: npm run build:simple --workspace @platelet-app/graphql
       - name: Run Cypress tests
         if: ${{ startsWith(github.ref_name, 'test/') || startsWith(github.ref_name, 'dev/') || startsWith(github.ref_name, 'pr/') }}
         env:
