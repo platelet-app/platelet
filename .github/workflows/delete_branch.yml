@@ -5,7 +5,7 @@ on:
 
 jobs:
   delete:
-    if: github.event.ref_type == 'branch' && startsWith(github.event.ref, 'dev/')
+    if: github.event.ref_type == 'branch' && (startsWith(github.event.ref, 'dev/') || startsWith(github.event.ref, 'pr/'))
     runs-on: ubuntu-latest
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
