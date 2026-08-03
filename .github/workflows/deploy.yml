@@ -8,6 +8,9 @@ on:
       - 'dev/**'
       - 'pr/**'
 
+concurrency:
+  group: deploy-${{ github.ref_name }}
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
