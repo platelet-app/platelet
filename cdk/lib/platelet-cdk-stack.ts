@@ -1,9 +1,11 @@
 import * as cdk from "aws-cdk-lib";
+import * as ses from "aws-cdk-lib/aws-ses";
 import { Construct } from "constructs";
 import { DeleteUserStepFunction } from "./delete-user-step-function-construct";
 import { RetryFunctionConstruct } from "./retry-function-construct";
 import { UserTakeOutDataStepFunction } from "./user-take-out-data-step-function-construct";
 import { CypressTestRole } from "./cypress-test-role-construct";
+import { SSMParamsConstruct } from "./ssm-params-construct";
 
 export class PlateletCdkStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: cdk.StackProps) {
@@ -15,10 +17,35 @@ export class PlateletCdkStack extends cdk.Stack {
         const bucketName = this.node.tryGetContext("bucketName");
         const amplifyEnv = this.node.tryGetContext("amplifyEnv");
         const alertEmail = this.node.tryGetContext("alertEmail");
+        const fromEmail = this.node.tryGetContext("fromEmail");
+        const domainName = this.node.tryGetContext("domainName");
 
+        if (typeof fromEmail !== "string" || fromEmail.trim() === "") {
+            throw new Error('Missing required CDK context: "fromEmail"');
+        }
+        if (typeof domainName !== "string" || domainName.trim() === "") {
+            throw new Error('Missing required CDK context: "domainName"');
+        }
         const retryConstructInstance = new RetryFunctionConstruct(
             this,
             "RetryFunction"
+        );
+
+        // get the SES identity from the fromEmail
+        const domainSplit = fromEmail.split("@")[1];
+        const SES = ses.EmailIdentity.fromEmailIdentityName(
+            this,
+            "SESEmailIdentity",
+            domainSplit
+        );
+        const SSMParamsConstructInstance = new SSMParamsConstruct(
+            this,
+            "SSMParams",
+            {
+                amplifyEnv,
+                fromEmail,
+                domainName,
+            }
         );
 
         new DeleteUserStepFunction(this, "DeleteUserStepFunction", {
@@ -39,6 +66,8 @@ export class PlateletCdkStack extends cdk.Stack {
             region: this.region,
             amplifyEnv,
             alertEmail,
+            fromEmailParameterArn: SSMParamsConstructInstance.fromEmailArn,
+            sesIdentity: SES
         });
 
         if (this.node.tryGetContext("createCypressTestingRole") === "true") {
@@ -47,5 +76,11 @@ export class PlateletCdkStack extends cdk.Stack {
                 userPoolArn,
             });
         }
+
+        // output the SES identity ARN
+        // this is needed for custom-policies.json in lambda functions
+        new cdk.CfnOutput(this, "SESEmailIdentityArn", {
+            value: SES.emailIdentityArn,
+        });
     }
 }

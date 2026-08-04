@@ -1,4 +1,5 @@
 import type { LambdaEvent } from "./interfaces.js";
+import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 import pAll from "p-all";
 import archiver from "archiver";
 import nodemailer from "nodemailer";
@@ -28,6 +29,32 @@ const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT;
 const REGION = process.env.REGION;
 
 const s3Client = new S3Client({ region: REGION || "eu-west-1" });
+
+const client = new SSMClient();
+
+const getParam = async (paramName: string) => {
+    const params = {
+        Name: paramName,
+    };
+    const command = new GetParameterCommand(params);
+    try {
+        const response = await client.send(command);
+        // The value is nested under Parameter.Value
+        return response.Parameter?.Value;
+    } catch (error) {
+        if (error instanceof Error && error.name === "ParameterNotFound") {
+            console.error(`Parameter not found: ${paramName}`);
+            return undefined;
+        }
+        console.error("Error retrieving SSM parameter:", error);
+        throw error;
+    }
+};
+
+const getFromEmailParam = () => {
+    const fromEmailParameterName = `/platelet-supporting-cdk/${process.env.ENV}/FromEmail`;
+    return getParam(fromEmailParameterName);
+};
 
 const writeToBucket = async (data: User, key: string) => {
     const json = JSON.stringify(data);
@@ -182,8 +209,14 @@ const sendEmail = async (
 </p>
 `;
 
+    const fromEmail = await getFromEmailParam();
+    if (!fromEmail) {
+        throw new Error(
+            `Missing SSM parameter value for FromEmail (env: ${process.env.ENV ?? "<unset>"})`
+        );
+    }
     const mailOptions = {
-        from: "noreply@platelet.app",
+        from: fromEmail,
         subject: "Your requested take out data",
         html,
         to: emailAddress,

@@ -36,6 +36,11 @@ USER_TAKE_OUT_DATA_STATE_MACHINE_ARN=$(jq '.[] | to_entries[] | select(.key|cont
 
 USER_TAKE_OUT_DATA_STATE_MACHINE_ARN_SSM_PARAM_ARN=$(jq '.[] | to_entries[] | select(.key|contains("TakeOutUserDataStateMachineArnSSMParamArnOutput")).value' $1)
 
+FROM_EMAIL_SSM_PARAM_ARN=$(jq '.[] | to_entries[] | select(.key|contains("FromEmailSSMParamArnOutput")).value' $1)
+DOMAIN_NAME_SSM_PARAM_ARN=$(jq '.[] | to_entries[] | select(.key|contains("DomainNameSSMParamArnOutput")).value' $1)
+
+SES_IDENTITY_ARN=$(jq '.[] | to_entries[] | select(.key|contains("SESEmailIdentityArn")).value' $1)
+
 echo "
 [
     {
@@ -51,3 +56,103 @@ echo "
         ]
     }
 ]" > "./amplify/backend/function/plateletUserTakeOutData/custom-policies.json"
+
+echo "
+[
+    {
+        \"Action\": [
+            \"ssm:GetParameter\",
+            \"ssm:GetParameters\",
+            \"ssm:GetParametersByPath\"
+        ],
+        \"Resource\": [
+            $FROM_EMAIL_SSM_PARAM_ARN,
+            $DOMAIN_NAME_SSM_PARAM_ARN
+        ]
+    },
+    {
+        \"Action\": [
+
+            \"ses:SendEmail\",
+            \"ses:SendRawEmail\"
+        ],
+        \"Resource\": [
+            $SES_IDENTITY_ARN
+        ]
+    }
+]" > "./amplify/backend/function/plateletAddNewTenant/custom-policies.json"
+
+
+echo "
+[
+    {
+        \"Action\": [
+            \"ssm:GetParameter\",
+            \"ssm:GetParameters\",
+            \"ssm:GetParametersByPath\"
+        ],
+        \"Resource\": [
+            $FROM_EMAIL_SSM_PARAM_ARN
+        ]
+    },
+    {
+        \"Action\": [
+
+            \"ses:SendEmail\",
+            \"ses:SendRawEmail\"
+        ],
+        \"Resource\": [
+            $SES_IDENTITY_ARN
+        ]
+    }
+]" > "./amplify/backend/function/plateletSendUserFeedback/custom-policies.json"
+
+echo "
+[
+    {
+        \"Action\": [
+            \"ssm:GetParameter\",
+            \"ssm:GetParameters\",
+            \"ssm:GetParametersByPath\"
+        ],
+        \"Resource\": [
+            $FROM_EMAIL_SSM_PARAM_ARN,
+            $DOMAIN_NAME_SSM_PARAM_ARN
+        ]
+    },
+    {
+        \"Action\": [
+
+            \"ses:SendEmail\",
+            \"ses:SendRawEmail\"
+        ],
+        \"Resource\": [
+            $SES_IDENTITY_ARN
+        ]
+    }
+]" > "./amplify/backend/function/plateletAdminResetUserPassword/custom-policies.json"
+
+echo "
+[
+    {
+        \"Action\": [
+            \"ssm:GetParameter\",
+            \"ssm:GetParameters\",
+            \"ssm:GetParametersByPath\"
+        ],
+        \"Resource\": [
+            $FROM_EMAIL_SSM_PARAM_ARN,
+            $DOMAIN_NAME_SSM_PARAM_ARN
+        ]
+    },
+    {
+        \"Action\": [
+
+            \"ses:SendEmail\",
+            \"ses:SendRawEmail\"
+        ],
+        \"Resource\": [
+            $SES_IDENTITY_ARN
+        ]
+    }
+]" > "./amplify/backend/function/plateletAdminAddNewUser/custom-policies.json"

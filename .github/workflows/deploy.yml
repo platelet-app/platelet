@@ -5,11 +5,13 @@ on:
     branches:
       - 'production/**'
       - 'test/**'
-      - 'dev'
+      - 'dev/**'
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event.before != '0000000000000000000000000000000000000000'
     environment: ${{ github.ref_name }}
     steps:
       - name: 'Checkout GitHub Action'
@@ -61,7 +63,9 @@ jobs:
                       --context graphQLEndpoint=${{ steps.amplify_outputs.outputs.graphql_endpoint }} \
                       --context bucketName=${{ steps.amplify_outputs.outputs.bucket_name }} \
                       --context createCypressTestingRole=${{ startsWith(github.ref_name, 'test/') }} \
-                      --context alertEmail=${{ vars.ALERT_EMAIL }} "
+                      --context alertEmail=${{ vars.ALERT_EMAIL }} \
+                      --context fromEmail=${{ vars.FROM_EMAIL }} \
+                      --context domainName=${{ vars.DOMAIN_NAME }} "
           npm run bootstrap -- $CONTEXT_ARGS
           npm run deploy -- --require-approval never $CONTEXT_ARGS --outputs-file cdk-out.json
       - name: "Write lambda function roles to custom-roles.json"
@@ -107,6 +111,7 @@ jobs:
           amplify pull --appId ${{ vars.AMPLIFY_APP_ID }} --envName ${{ steps.amplify_outputs.outputs.env_name }} -y
           babel --plugins @babel/plugin-transform-modules-commonjs src/aws-exports.js > src/aws-exports-es5.js
       - name: Update the tenant API
+        if: ${{ vars.API_URL != '' && vars.TENANT_NAME != '' }}
         uses: platelet-app/update-tenant-api-action@main
         with:
           awsEnvName: ${{ steps.amplify_outputs.outputs.env_name }}
