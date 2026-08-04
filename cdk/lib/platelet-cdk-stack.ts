@@ -74,7 +74,7 @@ export class PlateletCdkStack extends cdk.Stack {
             amplifyEnv,
             alertEmail,
             fromEmailParameterArn: SSMParamsConstructInstance.fromEmailArn,
-            sesIdentity: SES
+            sesIdentity: SES,
         });
 
         if (this.node.tryGetContext("createCypressTestingRole") === "true") {
