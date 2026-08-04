@@ -1,7 +1,15 @@
+
 [
     {
-        "Action": [],
-        "Resource": []
+        "Action": [
+            "states:StartExecution",
+            "ssm:GetParameter",
+            "ssm:GetParameters",
+            "ssm:GetParametersByPath"
+        ],
+        "Resource": [
+            "arn:aws:states:eu-west-1:356117015333:stateMachine:UserTakeOutDataStepFunctionUserTakeOutDataStateMachineCC811049-krdNBB6X3f0y",
+            "arn:aws:ssm:eu-west-1:356117015333:parameter/platelet-supporting-cdk/dre/UserTakeOutDataStateMachineArn"
+        ]
     }
 ]
-
