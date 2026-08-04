@@ -48,9 +48,6 @@ Should match the region the deployment is in.
 `AMPLIFY_APP_ID`:
 The Amplify APP ID. This can be acquired from the AWS console.
 
-`AWS_ACCOUNT_NUMBER`:
-The AWS account number where the CDK stack will be deployed. Used by CDK deployment.
-
 `API_URL`:
 The GraphQL endpoint for the tenant API. This can be acquired from the AWS console under AppSync.
 
