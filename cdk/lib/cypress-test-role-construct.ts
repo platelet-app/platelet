@@ -40,6 +40,10 @@ export class CypressTestRole extends Construct {
             new iam.PolicyStatement({
                 actions: ["appsync:GraphQL"],
                 resources: [
+                    // getUser and getTenant fetch _version so cleanup can
+                    // demote the primary admin and delete the test tenant
+                    `${api.arn}/types/Query/fields/getUser`,
+                    `${api.arn}/types/Query/fields/getTenant`,
                     `${api.arn}/types/Mutation/fields/updateUser`,
                     `${api.arn}/types/Mutation/fields/registerUser`,
                     `${api.arn}/types/Mutation/fields/registerTenant`,
