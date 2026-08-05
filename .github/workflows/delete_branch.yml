@@ -37,7 +37,7 @@ jobs:
       - name: Wait a bit for things to be deleted..
         uses: jakejarvis/wait-action@master
         with:
-          time: '30s'
+          time: '10m'
       - name: Disconnect the branch
         run: |
           aws amplify delete-branch --app-id ${{ vars.AMPLIFY_APP_ID }} --branch-name ${{ github.event.ref }}
