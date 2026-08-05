@@ -34,6 +34,10 @@ jobs:
       - name: Delete the amplify environment
         run: |
           aws amplify delete-backend-environment --app-id ${{ vars.AMPLIFY_APP_ID }} --environment-name ${{ steps.amplify_outputs.outputs.env_name }}
+      - name: Wait a bit for things to be deleted..
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '30s'
       - name: Disconnect the branch
         run: |
           aws amplify delete-branch --app-id ${{ vars.AMPLIFY_APP_ID }} --branch-name ${{ github.event.ref }}
