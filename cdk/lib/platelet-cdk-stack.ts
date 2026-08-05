@@ -1,4 +1,5 @@
 import * as cdk from "aws-cdk-lib";
+import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as ses from "aws-cdk-lib/aws-ses";
 import { Construct } from "constructs";
 import { DeleteUserStepFunction } from "./delete-user-step-function-construct";
@@ -12,7 +13,6 @@ export class PlateletCdkStack extends cdk.Stack {
         super(scope, id, props);
         const appsyncId = this.node.tryGetContext("appsyncId");
         const userPoolId = this.node.tryGetContext("userPoolId");
-        const userPoolArn = this.node.tryGetContext("userPoolArn");
         const graphQLEndpoint = this.node.tryGetContext("graphQLEndpoint");
         const bucketName = this.node.tryGetContext("bucketName");
         const amplifyEnv = this.node.tryGetContext("amplifyEnv");
@@ -38,6 +38,13 @@ export class PlateletCdkStack extends cdk.Stack {
             "SESEmailIdentity",
             domainSplit
         );
+
+        const userPool = cognito.UserPool.fromUserPoolId(
+            this,
+            "AmplifyUserPool",
+            userPoolId
+        );
+
         const SSMParamsConstructInstance = new SSMParamsConstruct(
             this,
             "SSMParams",
@@ -67,13 +74,13 @@ export class PlateletCdkStack extends cdk.Stack {
             amplifyEnv,
             alertEmail,
             fromEmailParameterArn: SSMParamsConstructInstance.fromEmailArn,
-            sesIdentity: SES
+            sesIdentity: SES,
         });
 
         if (this.node.tryGetContext("createCypressTestingRole") === "true") {
             new CypressTestRole(this, "CypressTestRole", {
                 appsyncId,
-                userPoolArn,
+                userPoolArn: userPool.userPoolArn,
             });
         }
 
