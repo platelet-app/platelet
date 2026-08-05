@@ -28,4 +28,4 @@ Run `npm run test:cdk-lambda`. This runs the script `scripts/test-cdk-functions.
 
 ## Cypress
 
-You can run end to end tests with `npm run test:e2e`
+You can run end to end tests with `npm run test:e2e` or open cypress with `npx open cypress`.

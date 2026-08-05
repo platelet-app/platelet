@@ -1,0 +1,71 @@
+name: PR preview link comment
+
+on:
+    workflow_run:
+        workflows: ["Deploy CDK and Amplify"]
+        types: [completed]
+
+# When a deploy for a pr/<number> mirror branch finishes, comment the
+# front-end link (or a link to the failed run's logs) on the pull request
+# that the branch mirrors.
+jobs:
+    comment:
+        if: >
+            (github.event.workflow_run.conclusion == 'success' ||
+            github.event.workflow_run.conclusion == 'failure') &&
+            startsWith(github.event.workflow_run.head_branch, 'pr/')
+        runs-on: ubuntu-latest
+        permissions:
+            pull-requests: write
+        steps:
+            - name: "Get the Amplify default domain"
+              if: ${{ github.event.workflow_run.conclusion == 'success' }}
+              id: amplify_domain
+              env:
+                  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  AWS_REGION: ${{ vars.AWS_REGION }}
+              run: |
+                  DOMAIN=$(aws amplify get-app --app-id ${{ vars.AMPLIFY_APP_ID }} --query 'app.defaultDomain' --output text)
+                  echo "domain=$DOMAIN" >> $GITHUB_OUTPUT
+            - name: "Comment the preview link on the pull request"
+              uses: actions/github-script@v7
+              env:
+                  BRANCH_NAME: ${{ github.event.workflow_run.head_branch }}
+                  DEFAULT_DOMAIN: ${{ steps.amplify_domain.outputs.domain }}
+                  CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+                  RUN_URL: ${{ github.event.workflow_run.html_url }}
+              with:
+                  script: |
+                      const prNumber = Number(process.env.BRANCH_NAME.replace("pr/", ""));
+                      const marker = "<!-- pr-preview-url -->";
+                      let body;
+                      if (process.env.CONCLUSION === "success") {
+                        // Amplify replaces unsupported characters in branch names with hyphens for the subdomain
+                        const subdomain = process.env.BRANCH_NAME.replace(/[^A-Za-z0-9-]/g, "-");
+                        const url = `https://${subdomain}.${process.env.DEFAULT_DOMAIN}`;
+                        body = `${marker}\nPreview deployment is ready: ${url} ([deploy logs](${process.env.RUN_URL}))`;
+                      } else {
+                        body = `${marker}\nPreview deployment failed: [view the logs](${process.env.RUN_URL})`;
+                      }
+                      const { data: comments } = await github.rest.issues.listComments({
+                        ...context.repo,
+                        issue_number: prNumber,
+                        per_page: 100,
+                      });
+                      const existing = comments.find(
+                        (comment) => comment.body && comment.body.includes(marker)
+                      );
+                      if (existing) {
+                        await github.rest.issues.updateComment({
+                          ...context.repo,
+                          comment_id: existing.id,
+                          body,
+                        });
+                      } else {
+                        await github.rest.issues.createComment({
+                          ...context.repo,
+                          issue_number: prNumber,
+                          body,
+                        });
+                      }

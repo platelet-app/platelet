@@ -48,9 +48,6 @@ Should match the region the deployment is in.
 `AMPLIFY_APP_ID`:
 The Amplify APP ID. This can be acquired from the AWS console.
 
-`AWS_ACCOUNT_NUMBER`:
-The AWS account number where the CDK stack will be deployed. Used by CDK deployment.
-
 `API_URL`:
 The GraphQL endpoint for the tenant API. This can be acquired from the AWS console under AppSync.
 
@@ -67,6 +64,8 @@ Email address that is used to send emails to users. There must be a correspondin
 The domain name that you want to link people to in registration emails. e.g.: app.platelet.app.
 
 ### Updating the tenant API
+
+This step is optional and will only run if API_URL and TENANT_NAME is defined as variables.
 
 Create this policy in the AWS account to give access to the tenant API:
 
@@ -206,3 +205,80 @@ Should match the region the deployment is in.
 The user pool ID of the tenant. A link to the cognito group can be found from the Amplify console.
 
 This workflow lets you select whether to add or remove the group from PAID status.
+
+## pr_preview.yml
+
+This workflow will set up an instance of platelet on pull request creation.
+
+It will only run if the pull request is created by a collaborator.
+
+### Steps
+
+- On open: create or updates a mirror branch prefixed with `pr/`
+- On close: deletes the mirror branch, triggering the delete.yml workflow for teardown
+
+### Environment Variables and Secrets
+
+#### Secrets
+
+`PR_MIRROR_PAT`
+A personal access token with read/write access to the repository.
+
+## pr_preview_comment.yml
+
+This workflow runs when a deployment for a pull request preview is completed. It writes a comment to the pull request with a link to the front-end deployment of the preview.
+
+Currently no test user is created on setup and needs to be registered manually.
+
+### Environment Variables and Secrets
+
+#### Secrets
+
+`AWS_ACCESS_KEY_ID`:
+The AWS Access Key ID.
+
+`AWS_SECRET_ACCESS_KEY`:
+The AWS Secret Access Key.
+
+#### Variables
+
+`AWS_REGION`:
+Should match the region the deployment is in.
+
+`AMPLIFY_APP_ID`:
+The Amplify APP ID. This can be acquired from the AWS console.
+
+## delete_branch.yml
+
+This workflow runs when a branch is deleted. If the branch does not start with dev/ or pr/ then it skips all steps.
+
+### Steps
+
+- Get amplify outputs
+- Empty bucket so that it can be deleted
+- Empty deployment bucket so that it can be deleted
+- Delete the CloudFormation stack for that Amplify instance
+- Delete the amplify backend
+- Disconnect the branch from the Amplify console
+- Get the supporting CDK stack name
+- Delete the supporting CDK stack
+
+If it cannot delete the supporting stack on first try (like if there is a non-empty bucket) then it attempts to delete again with the FORCE_DELETE_STACK option.
+
+### Environment Variables and Secrets
+
+#### Secrets
+
+`AWS_ACCESS_KEY_ID`:
+The AWS Access Key ID.
+
+`AWS_SECRET_ACCESS_KEY`:
+The AWS Secret Access Key.
+
+#### Variables
+
+`AWS_REGION`:
+Should match the region the deployment is in.
+
+`AMPLIFY_APP_ID`:
+The Amplify APP ID. This can be acquired from the AWS console.
