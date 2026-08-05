@@ -1,7 +1,23 @@
 const plateletProfilePictureResolver = require("./index").handler;
 const { S3Client } = require("@aws-sdk/client-s3");
-const sharp = require("sharp");
 const fetch = require("node-fetch");
+
+jest.mock("@aws-sdk/credential-provider-node", () => ({
+    defaultProvider: jest.fn(
+        () => () =>
+            Promise.resolve({
+                accessKeyId: "FAKE_KEY",
+                secretAccessKey: "FAKE_SECRET",
+                sessionToken: "FAKE_TOKEN",
+            })
+    ),
+}));
+
+jest.mock("@aws-sdk/signature-v4", () => ({
+    SignatureV4: jest.fn().mockImplementation(() => ({
+        sign: jest.fn((req) => Promise.resolve(req)),
+    })),
+}));
 
 jest.mock("sharp");
 jest.mock("node-fetch", () => ({

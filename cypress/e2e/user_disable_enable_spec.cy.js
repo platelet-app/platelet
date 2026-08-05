@@ -62,24 +62,28 @@ describe("User Disable/Enable End-to-End Test", () => {
     it("should create a test user", () => {
         const timestamp = Date.now();
 
-        cy.then(() =>
-            API.graphql({
-                query: mutations.registerUser,
-                variables: {
-                    name: `Test DisableEnable ${timestamp}`,
-                    email: `test-disable-${timestamp}@platelet.app`,
-                    tenantId: Cypress.env("tenantId"),
-                    roles: ["RIDER", "USER"],
-                },
-                authMode: "AMAZON_COGNITO_USER_POOLS",
-            })
-        ).then((response) => {
-            expect(response.data.registerUser).to.not.be.null;
-            testUserId = response.data.registerUser.id;
-            testUserUsername = response.data.registerUser.username;
-            expect(testUserId).to.exist;
-            expect(testUserUsername).to.exist;
-            cy.log("Created user with ID:", testUserId);
+        cy.fixture("registration_details").then((details) => {
+            const { rider } = details;
+            const variables = {
+                ...rider,
+                tenantId: Cypress.env("tenantId"),
+                name: `Test DisableEnable ${timestamp}`,
+                email: `success+test-enable-disable-${timestamp}@simulator.amazonses.com`,
+            };
+            cy.then(() =>
+                API.graphql({
+                    query: mutations.registerUser,
+                    variables,
+                    authMode: "AMAZON_COGNITO_USER_POOLS",
+                })
+            ).then((response) => {
+                expect(response.data.registerUser).to.not.be.null;
+                testUserId = response.data.registerUser.id;
+                testUserUsername = response.data.registerUser.username;
+                expect(testUserId).to.exist;
+                expect(testUserUsername).to.exist;
+                cy.log("Created user with ID:", testUserId);
+            });
         });
     });
 

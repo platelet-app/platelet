@@ -35,11 +35,20 @@ export class CypressTestRole extends Construct {
             assumedBy: new iam.AccountPrincipal(cdk.Stack.of(this).account),
         });
 
-        // Scoped to the AppSync mutations the tests require.
+        // Scoped to the AppSync operations the tests require.
         this.role.addToPolicy(
             new iam.PolicyStatement({
                 actions: ["appsync:GraphQL"],
-                resources: [`${api.arn}/types/Mutation/fields/updateUser`],
+                resources: [
+                    `${api.arn}/types/Mutation/fields/updateUser`,
+                    `${api.arn}/types/Mutation/fields/registerUser`,
+                    `${api.arn}/types/Mutation/fields/registerTenant`,
+                    `${api.arn}/types/Mutation/fields/deleteTenant`,
+                    `${api.arn}/types/Mutation/fields/disableUser`,
+                    `${api.arn}/types/Mutation/fields/adminDeleteUser`,
+                    `${api.arn}/types/Mutation/fields/deleteTask`,
+                    `${api.arn}/types/Mutation/fields/deleteVehicle`,
+                ],
             })
         );
 

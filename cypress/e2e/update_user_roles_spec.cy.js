@@ -34,7 +34,10 @@ describe("updateUserRoles", () => {
                     variables: { userId: testUserId },
                     authMode: "AMAZON_COGNITO_USER_POOLS",
                 }).catch((err) => {
-                    cy.log("disable cleanup failed (non-fatal):", err?.message ?? err);
+                    cy.log(
+                        "disable cleanup failed (non-fatal):",
+                        err?.message ?? err
+                    );
                 })
             ).then(() =>
                 API.graphql({
@@ -42,7 +45,10 @@ describe("updateUserRoles", () => {
                     variables: { userId: testUserId },
                     authMode: "AMAZON_COGNITO_USER_POOLS",
                 }).catch((err) => {
-                    cy.log("delete cleanup failed (non-fatal):", err?.message ?? err);
+                    cy.log(
+                        "delete cleanup failed (non-fatal):",
+                        err?.message ?? err
+                    );
                 })
             );
         }
@@ -60,29 +66,37 @@ describe("updateUserRoles", () => {
 
     it("should create a test user with RIDER role", () => {
         const timestamp = Date.now();
-        const email = `test-roles-${timestamp}@platelet.app`;
         const name = `Test Roles User ${timestamp}`;
 
-        cy.then(() =>
-            API.graphql({
-                query: mutations.registerUser,
-                variables: {
-                    name,
-                    email,
-                    tenantId: Cypress.env("tenantId"),
-                    roles: ["RIDER", "USER"],
-                },
-                authMode: "AMAZON_COGNITO_USER_POOLS",
-            })
-        ).then((response) => {
-            expect(response.data.registerUser).to.not.be.null;
-            testUserId = response.data.registerUser.id;
-            testUserUsername = response.data.registerUser.username;
-            expect(testUserId).to.exist;
-            expect(testUserUsername).to.exist;
-            expect(response.data.registerUser.roles).to.include("RIDER");
-            expect(response.data.registerUser.roles).to.include("USER");
-            cy.log("Created user:", testUserId, "username:", testUserUsername);
+        cy.fixture("registration_details").then((details) => {
+            const { rider } = details;
+            const variables = {
+                ...rider,
+                tenantId: Cypress.env("tenantId"),
+                email: `success+test-rider-author-${timestamp}@simulator.amazonses.com`,
+                name,
+            };
+            cy.then(() =>
+                API.graphql({
+                    query: mutations.registerUser,
+                    variables,
+                    authMode: "AMAZON_COGNITO_USER_POOLS",
+                })
+            ).then((response) => {
+                expect(response.data.registerUser).to.not.be.null;
+                testUserId = response.data.registerUser.id;
+                testUserUsername = response.data.registerUser.username;
+                expect(testUserId).to.exist;
+                expect(testUserUsername).to.exist;
+                expect(response.data.registerUser.roles).to.include("RIDER");
+                expect(response.data.registerUser.roles).to.include("USER");
+                cy.log(
+                    "Created user:",
+                    testUserId,
+                    "username:",
+                    testUserUsername
+                );
+            });
         });
     });
 
@@ -175,8 +189,10 @@ describe("updateUserRoles", () => {
                 authMode: "AMAZON_COGNITO_USER_POOLS",
             }).catch((err) => err)
         ).then((result) => {
-            expect(result.errors, "COORDINATOR updateUserRoles should be denied")
-                .to.exist;
+            expect(
+                result.errors,
+                "COORDINATOR updateUserRoles should be denied"
+            ).to.exist;
             expect(result.errors[0].errorType).to.equal("Unauthorized");
         });
 

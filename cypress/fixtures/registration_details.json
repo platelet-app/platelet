@@ -1,0 +1,17 @@
+{
+    "rider": {
+        "name": "Rider Name",
+        "email": "success+rider@simulator.amazonses.com",
+        "roles": ["USER", "RIDER"]
+    },
+    "coordinator": {
+        "name": "Coordinator Name",
+        "email": "success+coordinator@simulator.amazonses.com",
+        "roles": ["USER", "COORDINATOR"]
+    },
+    "admin": {
+        "name": "Admin Name",
+        "email": "success+admin@simulator.amazonses.com",
+        "roles": ["USER", "ADMIN"]
+    }
+}

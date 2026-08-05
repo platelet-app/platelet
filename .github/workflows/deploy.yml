@@ -6,14 +6,21 @@ on:
       - 'production/**'
       - 'test/**'
       - 'dev/**'
-  workflow_dispatch:
+      - 'pr/**'
+
+concurrency:
+  group: deploy-${{ github.ref_name }}
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || github.event.before != '0000000000000000000000000000000000000000'
     environment: ${{ github.ref_name }}
     steps:
+      ## SETUP
+      - name: 'Set up Node.js'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v3
       - name: 'Install CDK CLI'
@@ -24,20 +31,72 @@ jobs:
       - name: 'Install Amplify dependencies'
         working-directory: amplify/backend
         run: yarn --frozen-lockfile
+      - name: 'npm install front-end'
+        run: npm install
+      - name: 'Build packages'
+        run: npm run build:packages
+        ## TESTS
       - name: 'Test cdk functions'
-        run: ./test-cdk-functions.sh
+        run: npm run test:cdk-lambda
       - name: 'Test amplify functions'
+        run: npm run test:lambda
+      - name: create empty aws-exports file
+        run: touch src/aws-exports.js
+      - name: 'Test front-end'
+        run: npm test -- --silent
+      ## AMPLIFY
+      - name: 'Get the branch to see if it exists'
+        id: branch_check
+        run: |
+          set +e
+          aws amplify get-branch --app-id ${{ vars.AMPLIFY_APP_ID }} --branch-name ${{ github.ref_name }}
+          echo "branch_not_exists=$?" >> $GITHUB_OUTPUT
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ vars.AWS_REGION }}
-        run: ./test-amplify-functions.sh
+      - name: 'Create the branch if not exists'
+        if: ${{ steps.branch_check.outputs.branch_not_exists != '0' }}
+        run: aws amplify create-branch --app-id ${{ vars.AMPLIFY_APP_ID }} --branch-name ${{ github.ref_name }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+      - name: 'Disable auto-build on the branch'
+        run: |
+          aws amplify update-branch --app-id ${{ vars.AMPLIFY_APP_ID }} --branch-name ${{ github.ref_name }} --no-enable-auto-build
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+      - name: 'Start initial Amplify build to create the backend environment'
+        if: ${{ steps.branch_check.outputs.branch_not_exists != '0' }}
+        run: |
+          aws amplify start-job --app-id ${{ vars.AMPLIFY_APP_ID }} --branch-name ${{ github.ref_name }} --job-type RELEASE --commit-id ${{ github.sha }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+      ## BUILD CDK
       - name: 'Build'
         working-directory: cdk
         run: npm run build
       - name: 'Build lambda functions'
         working-directory: cdk
         run: npm run build-functions
+      ## AMPLIFY OUTPUTS
+      - name: 'Wait for initial Amplify build if first run'
+        if: ${{ steps.branch_check.outputs.branch_not_exists != '0' }}
+        uses: duckbytes/amplify-build-status@master
+        with:
+          app-id: ${{ vars.AMPLIFY_APP_ID }}
+          branch-name: ${{ github.ref_name }}
+          commit-id: ${{ github.sha }}
+          wait: true
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
       - name: 'Get Amplify outputs'
         uses: duckbytes/amplify-get-outputs@master
         id: amplify_outputs
@@ -48,21 +107,20 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ vars.AWS_REGION }}
+      ## DEPLOY CDK
       - name: 'Bootstrap and deploy'
         working-directory: cdk
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           DEPLOY_ENV: ${{ github.ref_name }}
-          AWS_ACCOUNT_NUMBER: ${{ vars.AWS_ACCOUNT_NUMBER }}
         run: |
           CONTEXT_ARGS="--context appsyncId=${{ steps.amplify_outputs.outputs.appsync_id }} \
                       --context userPoolId=${{ steps.amplify_outputs.outputs.user_pool_id }} \
-                      --context userPoolArn=${{ steps.amplify_outputs.outputs.user_pool_arn }} \
                       --context amplifyEnv=${{ steps.amplify_outputs.outputs.env_name }} \
                       --context graphQLEndpoint=${{ steps.amplify_outputs.outputs.graphql_endpoint }} \
                       --context bucketName=${{ steps.amplify_outputs.outputs.bucket_name }} \
-                      --context createCypressTestingRole=${{ startsWith(github.ref_name, 'test/') }} \
+                      --context createCypressTestingRole=${{ startsWith(github.ref_name, 'test/') || startsWith(github.ref_name, 'dev/') || startsWith(github.ref_name, 'pr/') }} \
                       --context alertEmail=${{ vars.ALERT_EMAIL }} \
                       --context fromEmail=${{ vars.FROM_EMAIL }} \
                       --context domainName=${{ vars.DOMAIN_NAME }} "
@@ -78,6 +136,7 @@ jobs:
           add: '["./amplify/*custom-roles.json", "./amplify/*custom-policies.json"]'
           default_author: github_actor
           pathspec_error_handling: "exitImmediately"
+      ## REBUILD AMPLIFY WITH CDK
       - name: 'Start Amplify build'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -96,11 +155,9 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ vars.AWS_REGION }}
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      ## UPDATE TENANT API
       - name: Install Amplify CLI and pull project
+        if: ${{ vars.API_URL != '' && vars.TENANT_NAME != '' }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -122,18 +179,13 @@ jobs:
           apiURL: ${{ vars.API_URL }}
           amplifyEnvName: ${{ steps.amplify_outputs.outputs.env_name }}
           tenantName: ${{ vars.TENANT_NAME }}
-      - name: npm install
-        run: npm install
-      - name: build graphql package
-        run: npm run build:simple --workspace @platelet-app/graphql
+      ## CYPRESS TESTS
       - name: Run Cypress tests
-        if: ${{ vars.CYPRESS_ADMIN_USERNAME != '' }}
+        if: ${{ startsWith(github.ref_name, 'test/') || startsWith(github.ref_name, 'dev/') || startsWith(github.ref_name, 'pr/') }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ vars.AWS_REGION }}
-          CYPRESS_adminusername: ${{ vars.CYPRESS_ADMIN_USERNAME }}
-          CYPRESS_adminpassword: ${{ secrets.CYPRESS_ADMIN_PASSWORD }}
           CYPRESS_bucket: ${{ steps.amplify_outputs.outputs.bucket_name }}
           CYPRESS_userPoolId: ${{ steps.amplify_outputs.outputs.user_pool_id }}
           CYPRESS_clientId: ${{ steps.amplify_outputs.outputs.client_id }}

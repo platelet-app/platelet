@@ -1,6 +1,23 @@
 const plateletProfilePictureUploadURLResolver = require("./index").handler;
 const appsync = require("aws-appsync");
 
+jest.mock("@aws-sdk/credential-provider-node", () => ({
+    defaultProvider: jest.fn(
+        () => () =>
+            Promise.resolve({
+                accessKeyId: "FAKE_KEY",
+                secretAccessKey: "FAKE_SECRET",
+                sessionToken: "FAKE_TOKEN",
+            })
+    ),
+}));
+
+jest.mock("@aws-sdk/signature-v4", () => ({
+    SignatureV4: jest.fn().mockImplementation(() => ({
+        sign: jest.fn((req) => Promise.resolve(req)),
+    })),
+}));
+
 const event = {
     identity: {
         claims: {
