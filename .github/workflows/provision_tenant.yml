@@ -1,0 +1,126 @@
+name: Provision tenant
+
+on:
+    workflow_run:
+        workflows: ["Deploy CDK and Amplify"]
+        types: [completed]
+
+# After a successful deploy, invoke the ProvisionTenant lambda so that brand
+# new environments get their first tenant and primary admin user. The lambda
+# is idempotent and does nothing when a tenant already exists. It can only be
+# invoked after the deploy has finished because its role is authorized for
+# the AppSync API through custom-roles.json, which is applied by the Amplify
+# rebuild at the end of the deploy workflow.
+#
+# pr/ mirror branches get a preview tenant with a permanent password that is
+# posted to Slack so developers can log in to the preview immediately. Other
+# branches provision a tenant only when the INITIAL_TENANT_NAME,
+# INITIAL_ADMIN_NAME, and INITIAL_ADMIN_EMAIL variables are configured for
+# the environment, and the new admin receives the welcome email.
+jobs:
+    provision:
+        if: github.event.workflow_run.conclusion == 'success'
+        runs-on: ubuntu-latest
+        environment: ${{ github.event.workflow_run.head_branch }}
+        env:
+            BRANCH_NAME: ${{ github.event.workflow_run.head_branch }}
+        steps:
+            - name: "Determine the provisioning mode"
+              id: mode
+              env:
+                  INITIAL_TENANT_NAME: ${{ vars.INITIAL_TENANT_NAME }}
+                  INITIAL_ADMIN_NAME: ${{ vars.INITIAL_ADMIN_NAME }}
+                  INITIAL_ADMIN_EMAIL: ${{ vars.INITIAL_ADMIN_EMAIL }}
+              run: |
+                  if [[ "$BRANCH_NAME" == pr/* ]]; then
+                      echo "mode=preview" >> $GITHUB_OUTPUT
+                      echo "tenant_name=Preview $BRANCH_NAME" >> $GITHUB_OUTPUT
+                      echo "admin_name=Preview Admin" >> $GITHUB_OUTPUT
+                      echo "admin_email=preview@example.com" >> $GITHUB_OUTPUT
+                  elif [[ -n "$INITIAL_TENANT_NAME" && -n "$INITIAL_ADMIN_NAME" && -n "$INITIAL_ADMIN_EMAIL" ]]; then
+                      echo "mode=bootstrap" >> $GITHUB_OUTPUT
+                      echo "tenant_name=$INITIAL_TENANT_NAME" >> $GITHUB_OUTPUT
+                      echo "admin_name=$INITIAL_ADMIN_NAME" >> $GITHUB_OUTPUT
+                      echo "admin_email=$INITIAL_ADMIN_EMAIL" >> $GITHUB_OUTPUT
+                  else
+                      echo "mode=skip" >> $GITHUB_OUTPUT
+                      echo "No preview branch and no INITIAL_TENANT_* variables, nothing to provision."
+                  fi
+            - name: "Invoke the ProvisionTenant lambda"
+              if: ${{ steps.mode.outputs.mode != 'skip' }}
+              id: provision
+              env:
+                  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  AWS_REGION: ${{ vars.AWS_REGION }}
+                  MODE: ${{ steps.mode.outputs.mode }}
+                  TENANT_NAME: ${{ steps.mode.outputs.tenant_name }}
+                  ADMIN_NAME: ${{ steps.mode.outputs.admin_name }}
+                  ADMIN_EMAIL: ${{ steps.mode.outputs.admin_email }}
+              run: |
+                  STACK_NAME="PlateletCdkStack-$(echo "$BRANCH_NAME" | sed 's/[^A-Za-z0-9-]/-/g')"
+                  FUNCTION_NAME=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" \
+                      --query "Stacks[0].Outputs[?contains(OutputKey, 'ProvisionTenantFunctionName')].OutputValue" \
+                      --output text)
+                  if [ -z "$FUNCTION_NAME" ] || [ "$FUNCTION_NAME" = "None" ]; then
+                      echo "Could not find the ProvisionTenant function name in the $STACK_NAME outputs."
+                      exit 1
+                  fi
+                  PAYLOAD=$(jq -n \
+                      --arg mode "$MODE" \
+                      --arg tenantName "$TENANT_NAME" \
+                      --arg adminName "$ADMIN_NAME" \
+                      --arg adminEmailAddress "$ADMIN_EMAIL" \
+                      '{mode: $mode, tenantName: $tenantName, adminName: $adminName, adminEmailAddress: $adminEmailAddress}')
+                  INVOKE_RESULT=$(aws lambda invoke --function-name "$FUNCTION_NAME" \
+                      --cli-binary-format raw-in-base64-out \
+                      --payload "$PAYLOAD" response.json)
+                  if [ -n "$(echo "$INVOKE_RESULT" | jq -r '.FunctionError // empty')" ]; then
+                      echo "The ProvisionTenant lambda returned an error:"
+                      cat response.json
+                      exit 1
+                  fi
+                  # mask the password so it cannot leak into the logs; the
+                  # Slack step reads it from response.json because masked
+                  # values cannot be passed between steps as outputs
+                  PASSWORD=$(jq -r '.password // empty' response.json)
+                  if [ -n "$PASSWORD" ]; then
+                      echo "::add-mask::$PASSWORD"
+                  fi
+                  echo "Provisioning finished with status: $(jq -r '.status' response.json)"
+            - name: "Get the Amplify default domain"
+              if: ${{ steps.mode.outputs.mode == 'preview' && vars.DOMAIN_NAME == '' }}
+              id: amplify_domain
+              env:
+                  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  AWS_REGION: ${{ vars.AWS_REGION }}
+              run: |
+                  DOMAIN=$(aws amplify get-app --app-id ${{ vars.AMPLIFY_APP_ID }} --query 'app.defaultDomain' --output text)
+                  echo "domain=$DOMAIN" >> $GITHUB_OUTPUT
+            - name: "Post the preview login details to Slack"
+              if: ${{ steps.mode.outputs.mode == 'preview' }}
+              env:
+                  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+                  DEFAULT_DOMAIN: ${{ vars.DOMAIN_NAME || steps.amplify_domain.outputs.domain }}
+                  REPOSITORY: ${{ github.repository }}
+              run: |
+                  if [ -z "$SLACK_WEBHOOK_URL" ]; then
+                      echo "SLACK_WEBHOOK_URL is not configured, skipping the Slack notification."
+                      exit 0
+                  fi
+                  LOGIN_EMAIL=$(jq -r '.loginEmailAddress // empty' response.json)
+                  PASSWORD=$(jq -r '.password // empty' response.json)
+                  if [ -z "$LOGIN_EMAIL" ] || [ -z "$PASSWORD" ]; then
+                      echo "No preview credentials were returned, skipping the Slack notification."
+                      exit 0
+                  fi
+                  # Amplify replaces unsupported characters in branch names with hyphens for the subdomain
+                  SUBDOMAIN=$(echo "$BRANCH_NAME" | sed 's/[^A-Za-z0-9-]/-/g')
+                  URL="https://${SUBDOMAIN}.${DEFAULT_DOMAIN}"
+                  PR_NUMBER="${BRANCH_NAME#pr/}"
+                  TEXT=$(printf 'Preview deployment for PR #%s is ready: %s\nUsername: %s\nPassword: %s\nPull request: https://github.com/%s/pull/%s' \
+                      "$PR_NUMBER" "$URL" "$LOGIN_EMAIL" "$PASSWORD" "$REPOSITORY" "$PR_NUMBER")
+                  jq -n --arg text "$TEXT" '{text: $text}' \
+                      | curl -fsS -X POST -H 'Content-type: application/json' --data @- "$SLACK_WEBHOOK_URL" > /dev/null
+                  rm response.json

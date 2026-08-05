@@ -7,6 +7,7 @@ import { RetryFunctionConstruct } from "./retry-function-construct";
 import { UserTakeOutDataStepFunction } from "./user-take-out-data-step-function-construct";
 import { CypressTestRole } from "./cypress-test-role-construct";
 import { SSMParamsConstruct } from "./ssm-params-construct";
+import { ProvisionTenantConstruct } from "./provision-tenant-construct";
 
 export class PlateletCdkStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: cdk.StackProps) {
@@ -64,6 +65,17 @@ export class PlateletCdkStack extends cdk.Stack {
             amplifyEnv,
             retryFunction: retryConstructInstance.retryFunction,
             alertEmail,
+        });
+
+        new ProvisionTenantConstruct(this, "ProvisionTenant", {
+            appsyncId,
+            userPoolId,
+            graphQLEndpoint,
+            region: this.region,
+            amplifyEnv,
+            fromEmailParameterArn: SSMParamsConstructInstance.fromEmailArn,
+            domainNameParameterArn: SSMParamsConstructInstance.domainNameArn,
+            sesIdentity: SES,
         });
 
         new UserTakeOutDataStepFunction(this, "UserTakeOutDataStepFunction", {
