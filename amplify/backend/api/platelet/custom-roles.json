@@ -1,3 +1,21 @@
+
 {
-    "adminRoleNames": []
+    "adminRoleNames": [
+        "PlateletCdkStack-pr-276-DeleteUserStepFunctionClean-1Qp6cOpKButf",
+        "PlateletCdkStack-pr-276-ProvisionTenantProvisionTen-nhWzPI3m2IBX",
+        "PlateletCdkStack-pr-276-UserTakeOutDataStepFunction-w4if8fpbLf3u",
+        "PlateletCdkStack-pr-276-DeleteUserStepFunctionDelet-4dVlIAxVeHpw",
+        "PlateletCdkStack-pr-276-DeleteUserStepFunctionDelet-2r8CUEGdFGRD",
+        "PlateletCdkStack-pr-276-DeleteUserStepFunctionClean-kUpqeZERA8Wn",
+        "PlateletCdkStack-pr-276-CypressTestRoleDD1C6702-mdUwYNcr4Dts",
+        "PlateletCdkStack-pr-276-UserTakeOutDataStepFunction-V3aFceKqj7em",
+        "PlateletCdkStack-pr-276-DeleteUserStepFunctionDelet-c29QOy14KIvM",
+        "PlateletCdkStack-pr-276-UserTakeOutDataStepFunction-XKMbS7tMZFvt",
+        "PlateletCdkStack-pr-276-UserTakeOutDataStepFunction-UZEh8pbioMOt",
+        "PlateletCdkStack-pr-276-DeleteUserStepFunctionDelet-BlCOwxeb7Glb",
+        "PlateletCdkStack-pr-276-DeleteUserStepFunctionGetUs-8Dr96kTxZKGh",
+        "PlateletCdkStack-pr-276-UserTakeOutDataStepFunction-Yp7xOZdsPWMB",
+        "PlateletCdkStack-pr-276-DeleteUserStepFunctionGetUs-ieIHutSDN87D",
+    ]
 }
+
