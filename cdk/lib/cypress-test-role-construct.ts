@@ -47,6 +47,7 @@ export class CypressTestRole extends Construct {
                     `${api.arn}/types/Mutation/fields/registerTenant`,
                     `${api.arn}/types/Mutation/fields/deleteTenant`,
                     `${api.arn}/types/Mutation/fields/disableUser`,
+                    `${api.arn}/types/Mutation/fields/deleteUser`,
                     `${api.arn}/types/Mutation/fields/adminDeleteUser`,
                     `${api.arn}/types/Mutation/fields/deleteTask`,
                     `${api.arn}/types/Mutation/fields/deleteVehicle`,
