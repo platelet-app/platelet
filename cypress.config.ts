@@ -13,7 +13,10 @@ import {
     AdminListGroupsForUserCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import fetch from "node-fetch";
-import { mutations as gqlMutations } from "@platelet-app/graphql";
+import {
+    mutations as gqlMutations,
+    queries as gqlQueries,
+} from "@platelet-app/graphql";
 
 function getCypressTestRoleArnFromCdkOutputs(): string | null {
     const cdkOutPath = path.join(__dirname, "cdk/cdk-out.json");
@@ -97,6 +100,21 @@ async function executeIamGraphqlRequest({
     return response.json();
 }
 
+async function executeIamGraphqlRequestOrThrow(
+    args: Parameters<typeof executeIamGraphqlRequest>[0]
+) {
+    const result = (await executeIamGraphqlRequest(args)) as {
+        data?: any;
+        errors?: unknown[];
+    };
+    if (result?.errors) {
+        throw new Error(
+            `GraphQL request failed: ${JSON.stringify(result.errors)}`
+        );
+    }
+    return result;
+}
+
 async function adminSetUserPassword({
     username,
     password,
@@ -150,6 +168,10 @@ export default defineConfig({
             } | null = null;
 
             let tenantId = config.env.tenantId as string | undefined;
+            // only delete the tenant when this run registered it, so a
+            // pre-existing tenant passed in via config.env.tenantId (e.g.
+            // a local dev environment) is never deleted
+            let tenantCreatedByRun = false;
 
             on("after:run", async () => {
                 if (!fixtureUsers) return;
@@ -163,22 +185,45 @@ export default defineConfig({
                     if (!user.id) continue;
                     try {
                         if (user?.isPrimaryAdmin) {
-                            await executeIamGraphqlRequest({
+                            // demote the primary admin first, otherwise
+                            // plateletAdminDeleteUser refuses to delete it
+                            const getUserResult =
+                                await executeIamGraphqlRequestOrThrow({
+                                    endpoint,
+                                    region,
+                                    roleArn: resolvedRoleArn,
+                                    query: gqlQueries.getUser,
+                                    variables: { id: user.id },
+                                });
+                            const userVersion =
+                                getUserResult?.data?.getUser?._version;
+                            if (!userVersion) {
+                                throw new Error(
+                                    `Could not fetch _version for user ${user.id}`
+                                );
+                            }
+                            await executeIamGraphqlRequestOrThrow({
                                 endpoint,
                                 region,
                                 roleArn: resolvedRoleArn,
                                 query: gqlMutations.updateUser,
-                                variables: { isPrimaryAdmin: 0 },
+                                variables: {
+                                    input: {
+                                        id: user.id,
+                                        isPrimaryAdmin: 0,
+                                        _version: userVersion,
+                                    },
+                                },
                             });
                         }
-                        await executeIamGraphqlRequest({
+                        await executeIamGraphqlRequestOrThrow({
                             endpoint,
                             region,
                             roleArn: resolvedRoleArn,
                             query: gqlMutations.disableUser,
                             variables: { userId: user.id },
                         });
-                        await executeIamGraphqlRequest({
+                        await executeIamGraphqlRequestOrThrow({
                             endpoint,
                             region,
                             roleArn: resolvedRoleArn,
@@ -196,13 +241,45 @@ export default defineConfig({
                     }
                 }
                 fixtureUsers = null;
-                await executeIamGraphqlRequest({
-                    endpoint,
-                    region,
-                    roleArn: resolvedRoleArn,
-                    query: gqlMutations.deleteTenant,
-                    variables: { id: tenantId },
-                });
+                if (tenantId && tenantCreatedByRun) {
+                    try {
+                        const getTenantResult =
+                            await executeIamGraphqlRequestOrThrow({
+                                endpoint,
+                                region,
+                                roleArn: resolvedRoleArn,
+                                query: gqlQueries.getTenant,
+                                variables: { id: tenantId },
+                            });
+                        const tenantVersion =
+                            getTenantResult?.data?.getTenant?._version;
+                        if (!tenantVersion) {
+                            throw new Error(
+                                `Could not fetch _version for tenant ${tenantId}`
+                            );
+                        }
+                        await executeIamGraphqlRequestOrThrow({
+                            endpoint,
+                            region,
+                            roleArn: resolvedRoleArn,
+                            query: gqlMutations.deleteTenant,
+                            variables: {
+                                input: {
+                                    id: tenantId,
+                                    _version: tenantVersion,
+                                },
+                            },
+                        });
+                        console.log(
+                            `[Cypress] Deleted test tenant ${tenantId}`
+                        );
+                    } catch (err) {
+                        console.error(
+                            `[Cypress] Failed to delete test tenant ${tenantId}:`,
+                            err
+                        );
+                    }
+                }
             });
 
             on("task", {
@@ -332,6 +409,7 @@ export default defineConfig({
                         console.log("Register tenant result:", registerTenant);
                         admin = registerTenant?.data?.registerTenant?.admin;
                         tenantId = registerTenant?.data?.registerTenant?.id;
+                        tenantCreatedByRun = Boolean(tenantId);
                     }
 
                     const adminPassword = `AdminTest${timestamp}!A`;
@@ -410,6 +488,9 @@ export default defineConfig({
                             id: admin.id,
                             username: admin.username,
                             password: adminPassword,
+                            // the registerTenant admin is the primary admin
+                            // and must be demoted before it can be deleted
+                            isPrimaryAdmin: tenantCreatedByRun ? 1 : 0,
                         },
                         coord: {
                             id: coord.id,
