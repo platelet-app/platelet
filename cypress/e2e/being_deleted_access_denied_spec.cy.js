@@ -555,7 +555,7 @@ describe("isBeingDeleted access denial", () => {
                     id: createdCommentId,
                     _version: createdCommentVersion,
                 },
-            }).catch(() => {})
+            })
         );
         cy.then(() =>
             graphql(mutations.deleteTaskAssignee, {
@@ -563,7 +563,7 @@ describe("isBeingDeleted access denial", () => {
                     id: createdTaskAssigneeId,
                     _version: createdTaskAssigneeVersion,
                 },
-            }).catch(() => {})
+            })
         );
         cy.then(() =>
             graphql(mutations.deleteVehicleAssignment, {
@@ -571,7 +571,7 @@ describe("isBeingDeleted access denial", () => {
                     id: createdVehicleAssignmentId,
                     _version: createdVehicleAssignmentVersion,
                 },
-            }).catch(() => {})
+            })
         );
         cy.then(() =>
             graphql(mutations.deletePossibleRiderResponsibilities, {
@@ -579,7 +579,7 @@ describe("isBeingDeleted access denial", () => {
                     id: createdPossibleRiderResponsibilitiesId,
                     _version: createdPossibleRiderResponsibilitiesVersion,
                 },
-            }).catch(() => {})
+            })
         );
         cy.then(() =>
             graphql(mutations.deleteLocation, {
@@ -587,7 +587,7 @@ describe("isBeingDeleted access denial", () => {
                     id: createdLocationId,
                     _version: createdLocationVersion,
                 },
-            }).catch(() => {})
+            })
         );
         cy.then(() =>
             graphql(mutations.deleteScheduledTask, {
@@ -595,7 +595,7 @@ describe("isBeingDeleted access denial", () => {
                     id: createdScheduledTaskId,
                     _version: createdScheduledTaskVersion,
                 },
-            }).catch(() => {})
+            })
         );
 
         cy.iamGraphqlMutation(mutations.deleteTask, {
@@ -624,7 +624,7 @@ describe("isBeingDeleted access denial", () => {
                     id: sharedRiderResponsibilityId,
                     _version: sharedRiderResponsibilityVersion,
                 },
-            }).catch(() => {})
+            })
         );
 
         cy.then(() =>
