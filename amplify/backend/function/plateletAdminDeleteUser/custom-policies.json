@@ -1,6 +1,15 @@
+
 [
     {
-        "Action": [],
-        "Resource": []
+        "Action": [
+            "states:StartExecution",
+            "ssm:GetParameter",
+            "ssm:GetParameters",
+            "ssm:GetParametersByPath"
+        ],
+        "Resource": [
+            "arn:aws:states:eu-west-1:356117015333:stateMachine:DeleteUserStepFunctionDeleteUserStateMachine9FDD566C-GgNkbUaSRMjH",
+            "arn:aws:ssm:eu-west-1:356117015333:parameter/platelet-supporting-cdk/dre/DeleteUserStateMachineArn"
+        ]
     }
 ]
