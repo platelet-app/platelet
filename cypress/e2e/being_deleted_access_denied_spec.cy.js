@@ -619,7 +619,7 @@ describe("isBeingDeleted access denial", () => {
             if (r.errors) cy.log("deleteVehicle (shared) errors:", r.errors);
         });
         cy.then(() =>
-            graphql(mutations.deleteRiderResponsibility, {
+            cy.iamGraphqlMutation(mutations.deleteRiderResponsibility, {
                 input: {
                     id: sharedRiderResponsibilityId,
                     _version: sharedRiderResponsibilityVersion,
