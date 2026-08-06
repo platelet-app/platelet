@@ -33,7 +33,7 @@ describe("User Disable/Enable End-to-End Test", () => {
                     query: mutations.disableUser,
                     variables: { userId: testUserId },
                     authMode: "AMAZON_COGNITO_USER_POOLS",
-                }).catch(() => {})
+                })
             ).then(() =>
                 API.graphql({
                     query: mutations.adminDeleteUser,
