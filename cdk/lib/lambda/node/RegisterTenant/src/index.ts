@@ -16,6 +16,8 @@ import {
     AdminDeleteUserCommand,
     AdminUpdateUserAttributesCommand,
     CognitoIdentityProviderClient,
+    DeliveryMediumType,
+    MessageActionType,
 } from "@aws-sdk/client-cognito-identity-provider";
 
 const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT || "";
@@ -42,7 +44,7 @@ const generateReferenceIdentifier = (tenantName: string) => {
 const addUserToCognito = async (user: User) => {
     const generatedPassword = generateSecurePassword();
     const params = {
-        DesiredDeliveryMediums: ["EMAIL"],
+        DesiredDeliveryMediums: [DeliveryMediumType.EMAIL],
         ForceAliasCreation: false,
         UserAttributes: [
             {
@@ -57,7 +59,7 @@ const addUserToCognito = async (user: User) => {
         TemporaryPassword: generatedPassword,
         UserPoolId: USER_POOL_ID,
         Username: user.username,
-        MessageAction: "SUPPRESS",
+        MessageAction: MessageActionType.SUPPRESS,
     };
 
     const command = new AdminCreateUserCommand(params);
