@@ -14,7 +14,8 @@
     "author": "Theo Cranmore <theo@platelet.app>",
     "license": "Apache-2.0",
     "dependencies": {
-        "@aws-sdk/client-cognito-identity-provider": "^3.908.0"
+        "@aws-sdk/client-cognito-identity-provider": "^3.908.0",
+        "uuid": "^14.0.1"
     },
     "devDependencies": {
         "@types/jest": "^30.0.0",
