@@ -7,7 +7,6 @@ import {
     generateSecurePassword,
     sendTenantWelcomeEmail,
 } from "@platelet-app/lambda";
-import { getUser } from "./queries.js";
 import { mutations, queries } from "@platelet-app/graphql";
 import type { User } from "@platelet-app/types";
 import {
@@ -200,7 +199,7 @@ const cleanUp = async (
         console.log("Deleting user:", user.id);
         const existingUser = await request(
             {
-                query: getUser,
+                query: queries.getUser,
                 variables: { id: user.id },
             },
 
