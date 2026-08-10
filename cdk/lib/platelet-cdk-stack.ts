@@ -1,4 +1,5 @@
 import * as cdk from "aws-cdk-lib";
+import * as appsync from "aws-cdk-lib/aws-appsync";
 import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as ses from "aws-cdk-lib/aws-ses";
 import { Construct } from "constructs";
@@ -7,6 +8,7 @@ import { RetryFunctionConstruct } from "./retry-function-construct";
 import { UserTakeOutDataStepFunction } from "./user-take-out-data-step-function-construct";
 import { CypressTestRole } from "./cypress-test-role-construct";
 import { SSMParamsConstruct } from "./ssm-params-construct";
+import { RegisterTenantFunctionConstruct } from "./register-tenant-function-construct";
 
 export class PlateletCdkStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: cdk.StackProps) {
@@ -55,6 +57,12 @@ export class PlateletCdkStack extends cdk.Stack {
             }
         );
 
+        const graphqlAppSync = appsync.GraphqlApi.fromGraphqlApiAttributes(
+            this,
+            "GraphqlAppSync",
+            { graphqlApiId: appsyncId }
+        );
+
         new DeleteUserStepFunction(this, "DeleteUserStepFunction", {
             appsyncId,
             userPoolId,
@@ -75,6 +83,13 @@ export class PlateletCdkStack extends cdk.Stack {
             alertEmail,
             fromEmailParameterArn: SSMParamsConstructInstance.fromEmailArn,
             sesIdentity: SES,
+        });
+
+        new RegisterTenantFunctionConstruct(this, "RegisterTenantFunction", {
+            region: this.region,
+            graphQLEndpoint,
+            userPoolId,
+            graphqlAppSync,
         });
 
         if (this.node.tryGetContext("createCypressTestingRole") === "true") {
