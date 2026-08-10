@@ -3,10 +3,9 @@ import { jest, expect } from "@jest/globals";
 jest.unstable_mockModule("@platelet-app/lambda", () => ({
     request: jest.fn(),
     errorCheck: jest.fn(),
+    generateSecurePassword: jest.fn().mockReturnValue("some-password"),
     // @ts-ignore
-    getUserProfilePictures: jest.fn().mockResolvedValue({
-        Contents: [{ Key: "test-key" }, { Key: "test-key2" }],
-    }),
+    sendTenantWelcomeEmail: jest.fn().mockResolvedValue({}),
 }));
 
 jest.unstable_mockModule("@aws-sdk/client-cognito-identity-provider", () => {
@@ -17,8 +16,12 @@ jest.unstable_mockModule("@aws-sdk/client-cognito-identity-provider", () => {
     }));
     return {
         CognitoIdentityProviderClient: MockCognitoIdentityProviderClient,
-        AdminDisableUserCommand: jest.fn(),
+        AdminAddUserToGroupCommand: jest.fn(),
+        AdminCreateUserCommand: jest.fn(),
         AdminDeleteUserCommand: jest.fn(),
+        AdminUpdateUserAttributesCommand: jest.fn(),
+        DeliveryMediumType: { EMAIL: "EMAIL", SMS: "SMS" },
+        MessageActionType: { RESEND: "RESEND", SUPPRESS: "SUPPRESS" },
         mockSend, // Export mockSend to assert on tests
     };
 });
