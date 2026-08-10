@@ -1,3 +1,21 @@
+
 {
-    "adminRoleNames": []
+    "adminRoleNames": [
+        "PlateletCdkStack-dev-tena-DeleteUserStepFunctionCle-5nfvyZ1QKrpt",
+        "PlateletCdkStack-dev-tena-UserTakeOutDataStepFuncti-w1KrvmmsHlkF",
+        "PlateletCdkStack-dev-tena-DeleteUserStepFunctionDel-Fkm0MVvipaOx",
+        "PlateletCdkStack-dev-tena-DeleteUserStepFunctionDel-eqUXtuynYlM0",
+        "PlateletCdkStack-dev-tena-DeleteUserStepFunctionCle-JRfvC0ZMEf2a",
+        "PlateletCdkStack-dev-tenant-CypressTestRoleDD1C6702-6IvCVsJ6m09M",
+        "PlateletCdkStack-dev-tena-UserTakeOutDataStepFuncti-0ZHKt9bVwkKt",
+        "PlateletCdkStack-dev-tena-DeleteUserStepFunctionDel-ewgvzhYx9FJY",
+        "PlateletCdkStack-dev-tena-UserTakeOutDataStepFuncti-3HFlQOyulRAz",
+        "PlateletCdkStack-dev-tena-UserTakeOutDataStepFuncti-TRGDAWgNb675",
+        "PlateletCdkStack-dev-tena-DeleteUserStepFunctionDel-CWzq8vG3q95k",
+        "PlateletCdkStack-dev-tena-RegisterTenantFunctionReg-8dHpFXDKVtQL",
+        "PlateletCdkStack-dev-tena-DeleteUserStepFunctionGet-Hp7D0hl0gXyF",
+        "PlateletCdkStack-dev-tena-UserTakeOutDataStepFuncti-w7lVfBQULng1",
+        "PlateletCdkStack-dev-tena-DeleteUserStepFunctionGet-pqYQdBMXWZiv",
+    ]
 }
+
