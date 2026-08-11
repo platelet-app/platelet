@@ -54,12 +54,13 @@ export class RegisterTenantFunctionConstruct extends Construct {
             registerTenantFunction,
             props.graphqlAppSync.arn,
             {
-                queries: ["getTenant"],
+                queries: ["getTenant", "getUser"],
                 mutations: [
                     "createUser",
                     "updateUser",
                     "createTenant",
                     "deleteTenant",
+                    "deleteUser",
                 ],
             }
         );
