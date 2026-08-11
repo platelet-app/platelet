@@ -91,6 +91,10 @@ export class PlateletCdkStack extends cdk.Stack {
             userPoolId,
             graphqlAppSync,
             userPoolArn: userPool.userPoolArn,
+            fromEmailParameterArn: SSMParamsConstructInstance.fromEmailArn,
+            domainNameParameterArn: SSMParamsConstructInstance.domainNameArn,
+            amplifyEnv,
+            sesIdentity: SES,
         });
 
         if (this.node.tryGetContext("createCypressTestingRole") === "true") {
