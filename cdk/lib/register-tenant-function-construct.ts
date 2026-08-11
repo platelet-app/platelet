@@ -9,6 +9,7 @@ export interface RegisterTenantFunctionConstructProps {
     graphQLEndpoint: string;
     userPoolId: string;
     graphqlAppSync: cdk.aws_appsync.IGraphqlApi;
+    userPoolArn: string;
 }
 
 export class RegisterTenantFunctionConstruct extends Construct {
@@ -18,6 +19,10 @@ export class RegisterTenantFunctionConstruct extends Construct {
         props: RegisterTenantFunctionConstructProps
     ) {
         super(scope, id);
+
+        const role = new iam.Role(this, "RegisterTenantFunctionRole", {
+            assumedBy: new iam.AccountPrincipal(cdk.Stack.of(this).account),
+        });
 
         const registerTenantFunction = new lambda.Function(
             this,
@@ -54,6 +59,17 @@ export class RegisterTenantFunctionConstruct extends Construct {
                     "deleteTenant",
                 ],
             }
+        );
+        role.addToPolicy(
+            new iam.PolicyStatement({
+                actions: [
+                    "cognito-idp:AdminCreateUser",
+                    "cognito-idp:AdminDeleteUser",
+                    "cognito-idp:AdminAddUserToGroup",
+                    "cognito-idp:AdminUpdateUserAttributes",
+                ],
+                resources: [props.userPoolArn],
+            })
         );
     }
 }
