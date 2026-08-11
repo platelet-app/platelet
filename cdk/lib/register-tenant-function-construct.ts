@@ -21,7 +21,7 @@ export class RegisterTenantFunctionConstruct extends Construct {
         super(scope, id);
 
         const role = new iam.Role(this, "RegisterTenantFunctionRole", {
-            assumedBy: new iam.AccountPrincipal(cdk.Stack.of(this).account),
+            assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
         });
 
         const registerTenantFunction = new lambda.Function(
@@ -39,9 +39,7 @@ export class RegisterTenantFunctionConstruct extends Construct {
                     GRAPHQL_ENDPOINT: props.graphQLEndpoint,
                     USER_POOL_ID: props.userPoolId,
                 },
-                role: new iam.Role(this, "RegisterTenantFunctionRole", {
-                    assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
-                }),
+                role,
             }
         );
         new cdk.CfnOutput(this, "AdminRoleNamesRegisterTenant", {
