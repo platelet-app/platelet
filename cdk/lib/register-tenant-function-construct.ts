@@ -10,6 +10,10 @@ export interface RegisterTenantFunctionConstructProps {
     userPoolId: string;
     graphqlAppSync: cdk.aws_appsync.IGraphqlApi;
     userPoolArn: string;
+    fromEmailParameterArn: string;
+    domainNameParameterArn: string;
+    amplifyEnv: string;
+    sesIdentity: cdk.aws_ses.IEmailIdentity;
 }
 
 export class RegisterTenantFunctionConstruct extends Construct {
@@ -38,6 +42,7 @@ export class RegisterTenantFunctionConstruct extends Construct {
                     REGION: props.region,
                     GRAPHQL_ENDPOINT: props.graphQLEndpoint,
                     USER_POOL_ID: props.userPoolId,
+                    ENV: props.amplifyEnv,
                 },
                 role,
             }
@@ -67,6 +72,19 @@ export class RegisterTenantFunctionConstruct extends Construct {
                     "cognito-idp:AdminUpdateUserAttributes",
                 ],
                 resources: [props.userPoolArn],
+            })
+        );
+        role.addToPolicy(
+            new iam.PolicyStatement({
+                actions: ["ses:SendRawEmail", "ses:SendEmail"],
+                resources: [props.sesIdentity.emailIdentityArn],
+            })
+        );
+
+        role.addToPolicy(
+            new iam.PolicyStatement({
+                actions: ["ssm:GetParameter"],
+                resources: [props.fromEmailParameterArn],
             })
         );
     }
