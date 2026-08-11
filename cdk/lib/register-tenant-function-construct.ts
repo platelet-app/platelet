@@ -84,7 +84,10 @@ export class RegisterTenantFunctionConstruct extends Construct {
         role.addToPolicy(
             new iam.PolicyStatement({
                 actions: ["ssm:GetParameter"],
-                resources: [props.fromEmailParameterArn],
+                resources: [
+                    props.fromEmailParameterArn,
+                    props.domainNameParameterArn,
+                ],
             })
         );
     }
