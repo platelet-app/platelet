@@ -85,7 +85,7 @@ const addUserToCognito = async (user: User) => {
 
     return {
         password: generatedPassword,
-        sub: subFind.Value,
+        sub: cognitoId,
         username: user.username,
     };
 };
