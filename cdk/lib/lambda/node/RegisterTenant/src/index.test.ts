@@ -86,7 +86,7 @@ const mockEvent = {
     tenantName: "test tenant",
 };
 
-describe.skip("RegisterTenant", () => {
+describe("RegisterTenant", () => {
     beforeEach(() => {
         cognitoMock.reset();
         jest.clearAllMocks();
