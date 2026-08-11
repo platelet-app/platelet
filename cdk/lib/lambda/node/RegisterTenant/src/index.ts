@@ -310,6 +310,7 @@ export const handler = async (
             cognitoUser.password
         );
         console.log("Successfully sent welcome email");
+        throw new Error("wew");
         return { ...newTenant, admin };
     } catch (e) {
         console.error("Error:", e);
