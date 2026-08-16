@@ -7,12 +7,12 @@ const app = new cdk.App();
 
 const deployEnv = process.env.DEPLOY_ENV || "dev";
 
-const awsAccountNumber = process.env.AWS_ACCOUNT_ID;
+const region = process.env.AWS_REGION || "eu-west-1";
 
 const stackName = deployEnv.replace(/[^A-Za-z0-9-]/g, "-");
 
 new PlateletCdkStack(app, `PlateletCdkStack-${stackName}`, {
-    env: { account: awsAccountNumber, region: "eu-west-1" },
+    env: { region },
 });
 
 cdk.Aspects.of(app).add(new AwsSolutionsChecks());

@@ -221,7 +221,7 @@ exports.handler = async (event) => {
     let password;
     let cognitoId;
     const callingUserGroups = event.identity.groups;
-    const isPaid = callingUserGroups.includes("PAID");
+    const isPaid = callingUserGroups?.includes("PAID");
     const newCognitoUser = await createNewCognitoUser(user, isPaid);
     password = newCognitoUser.password;
     cognitoId = newCognitoUser.cognitoId;

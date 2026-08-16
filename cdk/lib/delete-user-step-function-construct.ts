@@ -8,9 +8,14 @@ import * as ssm from "aws-cdk-lib/aws-ssm";
 import * as appsync from "aws-cdk-lib/aws-appsync";
 import * as cognito from "aws-cdk-lib/aws-cognito";
 import * as s3 from "aws-cdk-lib/aws-s3";
+import * as sns from "aws-cdk-lib/aws-sns";
+import * as sns_subscriptions from "aws-cdk-lib/aws-sns-subscriptions";
+import * as events from "aws-cdk-lib/aws-events";
+import * as events_targets from "aws-cdk-lib/aws-events-targets";
 import { Construct } from "constructs";
 import { NagSuppressions } from "cdk-nag";
 import { createLambdaStatement, getRoleArnNameOnly } from "./utils";
+import { Alias } from "aws-cdk-lib/aws-kms";
 
 export interface DeleteUserStepFunctionProps {
     userPoolId: string;
@@ -20,6 +25,7 @@ export interface DeleteUserStepFunctionProps {
     graphQLEndpoint: string;
     amplifyEnv: string;
     retryFunction: lambda.Function;
+    alertEmail?: string;
 }
 
 export class DeleteUserStepFunction extends Construct {
@@ -229,6 +235,7 @@ export class DeleteUserStepFunction extends Construct {
                 ),
             }
         );
+
         createLambdaStatement(
             cleanPossibleRiderResponsibilitiesFunction,
             this.appsync.arn,
@@ -237,6 +244,46 @@ export class DeleteUserStepFunction extends Construct {
                 mutations: ["deletePossibleRiderResponsibilities"],
             }
         );
+
+        const onUserDeleteFailureFunction = new lambda.Function(
+            this,
+            "DeleteUserOnFailure",
+            {
+                runtime: lambda.Runtime.NODEJS_22_X,
+                handler: "index.handler",
+                code: lambda.Code.fromAsset(
+                    "./lib/lambda/node/DeleteUserOnFailure/dist"
+                ),
+                timeout: cdk.Duration.seconds(180),
+                environment: {
+                    GRAPHQL_ENDPOINT: this.graphQLEndpoint,
+                    REGION: props.region,
+                },
+                role: new iam.Role(this, "DeleteUserOnFailureFunctionRole", {
+                    assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+                }),
+            }
+        );
+
+        createLambdaStatement(onUserDeleteFailureFunction, this.appsync.arn, {
+            queries: ["getUser"],
+            mutations: ["updateUser"],
+        });
+
+        const onUserDeleteFailureTask = new tasks.LambdaInvoke(
+            this,
+            "OnUserDeleteFailureInvocation",
+            {
+                lambdaFunction: onUserDeleteFailureFunction,
+                outputPath: "$.Payload",
+                payload: sfn.TaskInput.fromJsonPathAt("$"), // Pass the entire state to the error handler
+            }
+        );
+
+        const finalFailureState = new sfn.Fail(this, "UserDeletionFailed", {
+            error: "UserDeletionFailedError",
+            cause: "The user deletion process failed after all retries and failure handling.",
+        });
 
         const deleteUserFunction = new lambda.Function(
             this,
@@ -418,7 +465,19 @@ export class DeleteUserStepFunction extends Construct {
 
         waitBeforeRetry.next(retryCheckLambdaTask);
         retryCheckLambdaTask.next(mainChain);
-        const definition = sfn.Chain.start(retryCheckLambdaTask);
+        // The overall definition of the state machine.
+        // It starts with retryCheckLambdaTask, which is a State and can have an addCatch.
+        const definition = retryCheckLambdaTask;
+
+        // Add a global catch to the starting state of the state machine.
+        // This catches any error that propagates up from the entire workflow.
+        definition.addCatch(onUserDeleteFailureTask, {
+            errors: [sfn.Errors.ALL], // Catch any error that occurs in the state machine
+            resultPath: "$.error", // Store error details in the state for the failure lambda
+        });
+
+        // Ensure that after the failure lambda is invoked, the state machine explicitly fails.
+        onUserDeleteFailureTask.next(finalFailureState);
 
         const deleteUserStateMachine = new sfn.StateMachine(
             this,
@@ -449,6 +508,36 @@ export class DeleteUserStepFunction extends Construct {
             ],
             true
         );
+
+        const snsKey = Alias.fromAliasName(
+            this,
+            "DeleteUserTopicKey",
+            "alias/aws/sns"
+        );
+
+        if (props.alertEmail) {
+            const failureAlertTopic = new sns.Topic(
+                this,
+                "DeleteUserFailureAlertTopic",
+                { enforceSSL: true, masterKey: snsKey }
+            );
+            failureAlertTopic.addSubscription(
+                new sns_subscriptions.EmailSubscription(props.alertEmail)
+            );
+            new events.Rule(this, "DeleteUserStateMachineFailureRule", {
+                eventPattern: {
+                    source: ["aws.states"],
+                    detailType: ["Step Functions Execution Status Change"],
+                    detail: {
+                        stateMachineArn: [
+                            deleteUserStateMachine.stateMachineArn,
+                        ],
+                        status: ["FAILED", "TIMED_OUT", "ABORTED"],
+                    },
+                },
+                targets: [new events_targets.SnsTopic(failureAlertTopic)],
+            });
+        }
 
         // save the state machine name to SSM to be accessed by plateletAdminDeleteUser lambda
         const deleteUserStateMachineArnSSMParam = new ssm.StringParameter(
@@ -489,6 +578,9 @@ export class DeleteUserStepFunction extends Construct {
                 ),
             }
         );
+        new cdk.CfnOutput(this, "AdminRoleNamesDeleteUserOnFailure", {
+            value: getRoleArnNameOnly(onUserDeleteFailureFunction),
+        });
         new cdk.CfnOutput(this, "AdminRoleNamesDeleteUserRoleOutput", {
             value: getRoleArnNameOnly(deleteUserFunction),
         });

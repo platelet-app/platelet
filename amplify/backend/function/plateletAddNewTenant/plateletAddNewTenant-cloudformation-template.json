@@ -107,7 +107,7 @@
             "Arn"
           ]
         },
-        "Runtime": "nodejs18.x",
+        "Runtime": "nodejs24.x",
         "Layers": [
           {
             "Ref": "functionplateletappSyncOperationsArn"

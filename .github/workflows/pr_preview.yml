@@ -1,0 +1,53 @@
+name: PR preview deployment
+
+on:
+    pull_request:
+        types: [opened, reopened, synchronize, closed]
+
+# Mirrors feat/** pull request branches to pr/<number> branches so that
+# deploy.yml and delete_branch.yml handle the actual deploy and teardown.
+# The pushes use a PAT (PR_MIRROR_PAT) because events created with the
+# default GITHUB_TOKEN do not trigger other workflows.
+jobs:
+    deploy:
+        if: >
+            github.event.action != 'closed' &&
+            github.event.pull_request.head.repo.full_name == github.repository &&
+            startsWith(github.event.pull_request.head.ref, 'feat/') &&
+            contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association)
+        runs-on: ubuntu-latest
+        steps:
+            - name: "Create or update the mirror branch to trigger a deployment"
+              uses: actions/github-script@v7
+              with:
+                  github-token: ${{ secrets.PR_MIRROR_PAT }}
+                  script: |
+                      const ref = `heads/pr/${context.payload.number}`;
+                      const sha = context.payload.pull_request.head.sha;
+                      try {
+                        await github.rest.git.updateRef({ ...context.repo, ref, sha, force: true });
+                      } catch (error) {
+                        // 422 means the ref does not exist yet
+                        if (error.status !== 422) throw error;
+                        await github.rest.git.createRef({ ...context.repo, ref: `refs/${ref}`, sha });
+                      }
+    teardown:
+        if: >
+            github.event.action == 'closed' &&
+            github.event.pull_request.head.repo.full_name == github.repository &&
+            startsWith(github.event.pull_request.head.ref, 'feat/')
+        runs-on: ubuntu-latest
+        steps:
+            - name: "Delete the mirror branch to trigger teardown"
+              uses: actions/github-script@v7
+              with:
+                  github-token: ${{ secrets.PR_MIRROR_PAT }}
+                  script: |
+                      const ref = `heads/pr/${context.payload.number}`;
+                      try {
+                        await github.rest.git.deleteRef({ ...context.repo, ref });
+                      } catch (error) {
+                        // 422 means the ref does not exist, so there is nothing to tear down
+                        if (error.status !== 422) throw error;
+                        core.info("No mirror branch found, nothing to tear down.");
+                      }

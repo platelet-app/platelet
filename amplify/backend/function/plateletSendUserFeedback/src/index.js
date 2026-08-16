@@ -8,16 +8,47 @@ Amplify Params - DO NOT EDIT */
  */
 
 const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
+const { SSMClient, GetParameterCommand } = require("@aws-sdk/client-ssm");
+
+const client = new SSMClient();
+
+const getParam = async (paramName) => {
+    const params = {
+        Name: paramName,
+    };
+    const command = new GetParameterCommand(params);
+    try {
+        const response = await client.send(command);
+        // The value is nested under Parameter.Value
+        return response.Parameter?.Value;
+    } catch (error) {
+        if (error.name === "ParameterNotFound") {
+            console.error(`Parameter not found: ${paramName}`);
+            return undefined;
+        }
+        console.error("Error retrieving SSM parameter:", error);
+        throw error;
+    }
+};
+
+const getEmailParam = async () => {
+    const fromEmailParameterName = `/platelet-supporting-cdk/${process.env.ENV}/FromEmail`;
+    const fromEmail = await getParam(fromEmailParameterName);
+    if (!fromEmail) {
+        throw new Error(`Missing SSM parameter: ${fromEmailParameterName}`);
+    }
+    return fromEmail;
+};
 
 const PLATELET_SEND_TO_EMAIL_ADDRESS = "info@platelet.app";
-const PLATELET_SEND_FROM_EMAIL_ADDRESS = "info@platelet.app";
 
 async function sendFeedbackEmail(body, senderEmail = null) {
+    const fromEmail = await getEmailParam();
     const ses = new SESClient({
         region: process.env.REGION,
     });
     const plateletEmail = PLATELET_SEND_TO_EMAIL_ADDRESS;
-    const Source = PLATELET_SEND_FROM_EMAIL_ADDRESS;
+    const Source = fromEmail;
     const returnEmailAddress = senderEmail || PLATELET_SEND_TO_EMAIL_ADDRESS;
 
     const sender = senderEmail || "No email.";

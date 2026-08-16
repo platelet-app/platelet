@@ -7,10 +7,14 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 import * as appsync from "aws-cdk-lib/aws-appsync";
 import * as s3 from "aws-cdk-lib/aws-s3";
-import * as ses from "aws-cdk-lib/aws-ses";
+import * as sns from "aws-cdk-lib/aws-sns";
+import * as sns_subscriptions from "aws-cdk-lib/aws-sns-subscriptions";
+import * as events from "aws-cdk-lib/aws-events";
+import * as events_targets from "aws-cdk-lib/aws-events-targets";
 import { Construct } from "constructs";
 import { createLambdaStatement, getRoleArnNameOnly } from "./utils";
 import { NagSuppressions } from "cdk-nag";
+import { Alias } from "aws-cdk-lib/aws-kms";
 
 export interface UserTakeOutDataStepFunctionProps {
     region: string;
@@ -18,6 +22,9 @@ export interface UserTakeOutDataStepFunctionProps {
     bucketName: string;
     graphQLEndpoint: string;
     amplifyEnv: string;
+    fromEmailParameterArn: string;
+    alertEmail?: string;
+    sesIdentity: cdk.aws_ses.IEmailIdentity;
 }
 
 export class UserTakeOutDataStepFunction extends Construct {
@@ -25,7 +32,6 @@ export class UserTakeOutDataStepFunction extends Construct {
     private appsync: cdk.aws_appsync.IGraphqlApi;
     private amplifyEnv: string;
     private graphQLEndpoint: string;
-    private sesIdentity: cdk.aws_ses.IEmailIdentity;
 
     constructor(
         scope: Construct,
@@ -38,11 +44,6 @@ export class UserTakeOutDataStepFunction extends Construct {
             this,
             "AmplifyBucket",
             props.bucketName
-        );
-        this.sesIdentity = ses.EmailIdentity.fromEmailIdentityName(
-            this,
-            "TakeOutSESEmailIdentity",
-            "platelet.app"
         );
         this.appsync = appsync.GraphqlApi.fromGraphqlApiAttributes(
             this,
@@ -212,6 +213,7 @@ export class UserTakeOutDataStepFunction extends Construct {
                     REGION: props.region,
                     GRAPHQL_ENDPOINT: this.graphQLEndpoint,
                     TAKE_OUT_BUCKET: takeOutBucket.bucketName,
+                    ENV: this.amplifyEnv,
                 },
                 role: new iam.Role(
                     this,
@@ -232,7 +234,14 @@ export class UserTakeOutDataStepFunction extends Construct {
         finishAndSendUserDataFunction.addToRolePolicy(
             new iam.PolicyStatement({
                 actions: ["ses:SendRawEmail"],
-                resources: [this.sesIdentity.emailIdentityArn],
+                resources: [props.sesIdentity.emailIdentityArn],
+            })
+        );
+
+        finishAndSendUserDataFunction.addToRolePolicy(
+            new iam.PolicyStatement({
+                actions: ["ssm:GetParameter"],
+                resources: [props.fromEmailParameterArn],
             })
         );
 
@@ -262,7 +271,7 @@ export class UserTakeOutDataStepFunction extends Construct {
         );
         finishAndSendUserDataFunction.addToRolePolicy(
             new iam.PolicyStatement({
-                actions: ["s3:ListBucket", "s3:PutObject"],
+                actions: ["s3:ListBucket"],
                 resources: [takeOutBucket.bucketArn],
             })
         );
@@ -272,6 +281,13 @@ export class UserTakeOutDataStepFunction extends Construct {
                 resources: [`${takeOutBucket.bucketArn}/*`],
             })
         );
+        finishAndSendUserDataFunction.addToRolePolicy(
+            new iam.PolicyStatement({
+                actions: ["s3:PutObject"],
+                resources: [`${takeOutBucket.bucketArn}/*`],
+            })
+        );
+
         getUserPossibleRiderResponsibilitiesFunction.addToRolePolicy(
             new iam.PolicyStatement({
                 actions: ["s3:PutObject"],
@@ -292,13 +308,6 @@ export class UserTakeOutDataStepFunction extends Construct {
             })
         );
         getUserVehicleAssignmentsFunction.addToRolePolicy(
-            new iam.PolicyStatement({
-                actions: ["s3:PutObject"],
-                resources: [`${takeOutBucket.bucketArn}/*`],
-            })
-        );
-
-        finishAndSendUserDataFunction.addToRolePolicy(
             new iam.PolicyStatement({
                 actions: ["s3:PutObject"],
                 resources: [`${takeOutBucket.bucketArn}/*`],
@@ -415,6 +424,36 @@ export class UserTakeOutDataStepFunction extends Construct {
             ],
             true
         );
+
+        const snsKey = Alias.fromAliasName(
+            this,
+            "TakeOutUserTopicKey",
+            "alias/aws/sns"
+        );
+
+        if (props.alertEmail) {
+            const failureAlertTopic = new sns.Topic(
+                this,
+                "TakeOutDataFailureAlertTopic",
+                { enforceSSL: true, masterKey: snsKey }
+            );
+            failureAlertTopic.addSubscription(
+                new sns_subscriptions.EmailSubscription(props.alertEmail)
+            );
+            new events.Rule(this, "TakeOutDataStateMachineFailureRule", {
+                eventPattern: {
+                    source: ["aws.states"],
+                    detailType: ["Step Functions Execution Status Change"],
+                    detail: {
+                        stateMachineArn: [
+                            userTakeOutDataStateMachine.stateMachineArn,
+                        ],
+                        status: ["FAILED", "TIMED_OUT", "ABORTED"],
+                    },
+                },
+                targets: [new events_targets.SnsTopic(failureAlertTopic)],
+            });
+        }
 
         // save the state machine name to SSM to be accessed by plateletUserTakeOutData lambda
         const userTakeOutDataMachineArnSSMParam = new ssm.StringParameter(

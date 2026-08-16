@@ -55,6 +55,7 @@ const TimeRelationPicker: React.FC<TimeRelationPickerProps> = ({
             </FormControl>
             {relation !== models.TimeRelation.ANYTIME && (
                 <TimePickerBasic
+                    id="time-picker-primary"
                     isValid={isValid}
                     onChange={handleChangeTime}
                     value={timePrimary}
@@ -68,6 +69,7 @@ const TimeRelationPicker: React.FC<TimeRelationPickerProps> = ({
             {relation === models.TimeRelation.BETWEEN &&
                 timeSecondary != null && (
                     <TimePickerBasic
+                        id="time-picker-secondary"
                         isValid={isValidSecondary}
                         showPlusOneDay={betweenIsNextDay}
                         onChange={handleChangeSecondaryTime}

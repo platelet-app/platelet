@@ -1,7 +1,6 @@
 type Tenant
 @auth(rules: [
 {allow: private, operations: [read]},
-{allow: private, provider: iam, operations: [read]},
 ])
 @model {
   id: ID!
@@ -73,11 +72,11 @@ type User
   createdVehicles: [Vehicle] @hasMany
   createdScheduledTasks: [ScheduledTask] @hasMany
   disabled: Int @default(value: "0")
+  isBeingDeleted: Boolean @default(value: "false")
 }
 
 type PossibleRiderResponsibilities
 @auth(rules: [
-  {allow: private, provider: iam, operations: [read, delete]},
   {allow: private, operations: [read]},
   {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
 ])
@@ -119,7 +118,6 @@ type Vehicle
 
 type VehicleAssignment
 @auth(rules: [
-  {allow: private, provider: iam, operations: [read, delete]},
   {allow: private, operations: [read]},
   {allow: groups, groups: ["ADMIN", "COORDINATOR", "RIDER"], operations: [create, read, delete]},
 ])
@@ -305,7 +303,6 @@ type Task
 
 type TaskAssignee
 @auth(rules: [
-  {allow: private, provider: iam, operations: [read, delete]},
   {allow: private, operations: [read]},
   {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read, delete]},
 ])
@@ -345,7 +342,6 @@ type ScheduledTask
 
 type Comment
 @auth(rules: [
-  {allow: private, provider: iam, operations: [read, delete]},
   {allow: groups, groups: ["USER"], operations: [read]},
   {allow: owner, operations: [create, read, delete, update]},
   {allow: groups, groups: ["ADMIN"], operations: [create, read, delete, update]},
@@ -355,14 +351,12 @@ type Comment
   parentId: ID @index(name: "byParent")
   owner: String
     @auth(rules: [
-      {allow: private, provider: iam, operations: [read, delete]},
       {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
       {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
     ])
   tenantId: ID! @index(name: "byTenantId")
     @auth(rules: [
-      {allow: private, provider: iam, operations: [read, delete]},
       {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
       {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
@@ -372,7 +366,6 @@ type Comment
   visibility: CommentVisibility
   archived: Int @default(value: "0") @index(name: "byArchived")
     @auth(rules: [
-      {allow: private, provider: iam, operations: [read, delete]},
       {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
       {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
@@ -494,7 +487,7 @@ type SendFeedback {
   successState: Boolean
 }
 
-type StateMachineExecution {
+type StateMachineExecution @aws_cognito_user_pools @aws_iam {
   executionArn: String
   startDate: String
 }

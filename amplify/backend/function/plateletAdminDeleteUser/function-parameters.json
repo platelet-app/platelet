@@ -9,7 +9,8 @@
     },
     "auth": {
       "platelet61a0ac07": [
-        "read"
+        "read",
+        "update"
       ]
     }
   }

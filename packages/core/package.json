@@ -15,6 +15,9 @@
     "type": "module",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
     "scripts": {
         "build": "tsc --project tsconfig.json",
         "prepublishOnly": "npm run build && npm version patch"

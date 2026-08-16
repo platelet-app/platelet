@@ -16,7 +16,6 @@ import { DatePicker } from "@mui/lab";
 import TaskScheduleIconText from "../TaskScheduleIconText";
 import { Schedule } from "../PickUpAndDeliverSchedule";
 import { convertScheduleToTaskData } from "../../../utilities/convertScheduleToTaskData";
-import useIsPaidSubscription from "../../../hooks/useIsPaidSubscription";
 import calculateDefaultEditTimes from "./utils/calculateDefaultEditTimes";
 
 const isValidTime = (time: string) => {
@@ -30,6 +29,7 @@ type TaskScheduleDetailsProps = {
     onChange: (value: models.Schedule) => void;
     noWarning?: boolean;
     hideDate?: boolean;
+    canEdit?: boolean;
 };
 
 export const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
@@ -38,14 +38,13 @@ export const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
     onChange,
     noWarning = true,
     hideDate = false,
+    canEdit = false,
 }) => {
     const [confirmClear, setConfirmClear] = React.useState(false);
     const [editMode, setEditMode] = React.useState(false);
     const [scheduleState, setScheduleState] = React.useState<Schedule | null>(
         null
     );
-
-    const isPaid = useIsPaidSubscription();
 
     const handleClear = () => {
         onClear();
@@ -88,25 +87,25 @@ export const TaskScheduleDetails: React.FC<TaskScheduleDetailsProps> = ({
                         schedule={schedule}
                         showWarning={!noWarning}
                     />
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                        }}
-                    >
-                        <IconButton onClick={() => setConfirmClear(true)}>
-                            <ClearIcon />
-                        </IconButton>
-                        {isPaid && (
+                    {canEdit && (
+                        <Box
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                            }}
+                        >
+                            <IconButton onClick={() => setConfirmClear(true)}>
+                                <ClearIcon />
+                            </IconButton>
                             <IconButton onClick={handleSetEditMode}>
                                 <EditIcon />
                             </IconButton>
-                        )}
-                    </Box>
+                        </Box>
+                    )}
                 </Stack>
             )}
-            {!schedule && (
+            {!schedule && canEdit && (
                 <Stack
                     direction="row"
                     justifyContent="space-between"

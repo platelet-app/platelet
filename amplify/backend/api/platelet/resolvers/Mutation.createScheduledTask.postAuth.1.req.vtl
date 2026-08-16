@@ -1,0 +1,6 @@
+{
+    "operation": "GetItem",
+    "key": {
+        "id": $util.dynamodb.toDynamoDBJson($util.defaultIfNull($ctx.args.input.userCreatedScheduledTasksId, "__SKIP__"))
+    }
+}

@@ -24,7 +24,6 @@ import {
 } from "../../API";
 import { TaskScheduleDetails } from "./TaskScheduleDetails";
 import useModelSubscription from "../../hooks/useModelSubscription";
-import useIsPaidSubscription from "../../hooks/useIsPaidSubscription";
 
 export const protectedFields = [
     "id",
@@ -71,7 +70,6 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     // I have no idea why the imported selector is undefined here
     // @ts-ignore
     const tenantId = useSelector((state) => state.tenantId);
-    const isPaid = useIsPaidSubscription();
     const [state, setState] = useState<models.Location | null>(null);
     const [editMode, setEditMode] = useState(false);
     const [errorState, setErrorState] = useState(false);
@@ -670,7 +668,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                             )}
                         </Stack>
                         {contents}
-                        {(isPaid || schedule) && (
+                        {(schedule || hasFullPermissions) && (
                             <>
                                 <Divider />
                                 <TaskScheduleDetails
@@ -679,6 +677,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                                     schedule={schedule}
                                     noWarning={noWarning}
                                     hideDate={hideScheduleDate}
+                                    canEdit={hasFullPermissions}
                                 />
                             </>
                         )}

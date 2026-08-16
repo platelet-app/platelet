@@ -432,4 +432,64 @@ describe("generateReports", () => {
             generateReportBasic(null, "ALL", tenantId, new Date(), new Date())
         ).rejects.toThrow("some error");
     });
+    test("generate report with first of month end date", async () => {
+        const whoami = {
+            displayName: "Whoami",
+            name: "Whoami name",
+            roles: [userRoles.coordinator],
+            _deleted: false,
+        };
+        const assignee = {
+            assignee: whoami,
+            role: Role.COORDINATOR,
+            _deleted: false,
+        };
+        const task = {
+            _deleted: false,
+            createdAt: "2023-09-15T12:00:00.000Z",
+            status: tasksStatus.new,
+            timeOfCall: "2023-09-15T12:00:00.000Z",
+            requesterContact: {
+                name: "test person",
+                telephoneNumber: "1234567890",
+            },
+            assignees: {
+                items: [assignee],
+            },
+            deliverables: { items: [] },
+            comments: { items: [] },
+            priority: priorities.medium,
+            dateCreated: "2023-09-15",
+            isRiderUsingOwnVehicle: 0,
+            pickUpLocation: pickUpLocationData,
+            dropOffLocation: dropOffLocationData,
+        };
+        const graphqlSpy = jest.spyOn(API, "graphql").mockResolvedValueOnce({
+            data: {
+                listTasksByTenantId: {
+                    items: [task],
+                    nextToken: null,
+                    startedAt: 1620000000000,
+                },
+            },
+        });
+        // Test with end date being first of the month (01/10/2023)
+        const startDate = new Date("2023-09-02T00:00:00.000Z");
+        const endDate = new Date("2023-10-01T00:00:00.000Z");
+        await generateReportBasic(
+            null,
+            "ALL",
+            tenantId,
+            startDate,
+            endDate
+        );
+        expect(graphqlSpy).toHaveBeenCalledTimes(1);
+        const callArgs = graphqlSpy.mock.calls[0][0];
+        const { variables } = callArgs;
+        
+        // The startDate should be 2023-09-02 at 00:00:00 UTC
+        expect(variables.startDate).toBe("2023-09-02T00:00:00.000Z");
+        // The endDate should be 2023-10-02 at 00:00:00 UTC (one day after the selected end date)
+        expect(variables.endDate).toBe("2023-10-02T00:00:00.000Z");
+    });
 });
