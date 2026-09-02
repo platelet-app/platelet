@@ -14,10 +14,15 @@
     "author": "Theo Cranmore <theo@platelet.app>",
     "license": "Apache-2.0",
     "dependencies": {
-        "@aws-sdk/client-cognito-identity-provider": "^3.908.0"
+        "@aws-sdk/client-cognito-identity-provider": "^3.908.0",
+        "@platelet-app/graphql": "^1.1.10",
+        "@platelet-app/lambda": "^1.1.19",
+        "@platelet-app/types": "^1.1.4",
+        "uuid": "^14.0.1"
     },
     "devDependencies": {
         "@types/jest": "^30.0.0",
+        "aws-sdk-client-mock": "^4.1.0",
         "jest": "^30.2.0",
         "ts-jest": "^29.4.5"
     }

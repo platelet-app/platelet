@@ -10,6 +10,7 @@ export interface SSMParamsConstructProps {
 
 export class SSMParamsConstruct extends Construct {
     public fromEmailArn: string;
+    public domainNameArn: string;
     constructor(scope: Construct, id: string, props: SSMParamsConstructProps) {
         super(scope, id);
 
@@ -31,6 +32,7 @@ export class SSMParamsConstruct extends Construct {
         );
 
         this.fromEmailArn = fromEmailParam.parameterArn;
+        this.domainNameArn = domainNameParam.parameterArn;
 
         // output values to be used in custom-policies.json files
         new cdk.CfnOutput(this, "FromEmailSSMParamArnOutput", {
@@ -39,6 +41,5 @@ export class SSMParamsConstruct extends Construct {
         new cdk.CfnOutput(this, "DomainNameSSMParamArnOutput", {
             value: domainNameParam.parameterArn,
         });
-
     }
 }

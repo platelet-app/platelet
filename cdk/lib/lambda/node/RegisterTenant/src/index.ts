@@ -7,7 +7,6 @@ import {
     generateSecurePassword,
     sendTenantWelcomeEmail,
 } from "@platelet-app/lambda";
-import { getUser } from "./queries.js";
 import { mutations, queries } from "@platelet-app/graphql";
 import type { User } from "@platelet-app/types";
 import {
@@ -16,6 +15,8 @@ import {
     AdminDeleteUserCommand,
     AdminUpdateUserAttributesCommand,
     CognitoIdentityProviderClient,
+    DeliveryMediumType,
+    MessageActionType,
 } from "@aws-sdk/client-cognito-identity-provider";
 
 const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT || "";
@@ -42,7 +43,7 @@ const generateReferenceIdentifier = (tenantName: string) => {
 const addUserToCognito = async (user: User) => {
     const generatedPassword = generateSecurePassword();
     const params = {
-        DesiredDeliveryMediums: ["EMAIL"],
+        DesiredDeliveryMediums: [DeliveryMediumType.EMAIL],
         ForceAliasCreation: false,
         UserAttributes: [
             {
@@ -57,7 +58,7 @@ const addUserToCognito = async (user: User) => {
         TemporaryPassword: generatedPassword,
         UserPoolId: USER_POOL_ID,
         Username: user.username,
-        MessageAction: "SUPPRESS",
+        MessageAction: MessageActionType.SUPPRESS,
     };
 
     const command = new AdminCreateUserCommand(params);
@@ -198,7 +199,7 @@ const cleanUp = async (
         console.log("Deleting user:", user.id);
         const existingUser = await request(
             {
-                query: getUser,
+                query: queries.getUser,
                 variables: { id: user.id },
             },
 

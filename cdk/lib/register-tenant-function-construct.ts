@@ -9,6 +9,11 @@ export interface RegisterTenantFunctionConstructProps {
     graphQLEndpoint: string;
     userPoolId: string;
     graphqlAppSync: cdk.aws_appsync.IGraphqlApi;
+    userPoolArn: string;
+    fromEmailParameterArn: string;
+    domainNameParameterArn: string;
+    amplifyEnv: string;
+    sesIdentity: cdk.aws_ses.IEmailIdentity;
 }
 
 export class RegisterTenantFunctionConstruct extends Construct {
@@ -18,6 +23,10 @@ export class RegisterTenantFunctionConstruct extends Construct {
         props: RegisterTenantFunctionConstructProps
     ) {
         super(scope, id);
+
+        const role = new iam.Role(this, "RegisterTenantFunctionRole", {
+            assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
+        });
 
         const registerTenantFunction = new lambda.Function(
             this,
@@ -33,10 +42,9 @@ export class RegisterTenantFunctionConstruct extends Construct {
                     REGION: props.region,
                     GRAPHQL_ENDPOINT: props.graphQLEndpoint,
                     USER_POOL_ID: props.userPoolId,
+                    ENV: props.amplifyEnv,
                 },
-                role: new iam.Role(this, "RegisterTenantFunctionRole", {
-                    assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
-                }),
+                role,
             }
         );
         new cdk.CfnOutput(this, "AdminRoleNamesRegisterTenant", {
@@ -54,6 +62,33 @@ export class RegisterTenantFunctionConstruct extends Construct {
                     "deleteTenant",
                 ],
             }
+        );
+        role.addToPolicy(
+            new iam.PolicyStatement({
+                actions: [
+                    "cognito-idp:AdminCreateUser",
+                    "cognito-idp:AdminDeleteUser",
+                    "cognito-idp:AdminAddUserToGroup",
+                    "cognito-idp:AdminUpdateUserAttributes",
+                ],
+                resources: [props.userPoolArn],
+            })
+        );
+        role.addToPolicy(
+            new iam.PolicyStatement({
+                actions: ["ses:SendRawEmail", "ses:SendEmail"],
+                resources: [props.sesIdentity.emailIdentityArn],
+            })
+        );
+
+        role.addToPolicy(
+            new iam.PolicyStatement({
+                actions: ["ssm:GetParameter"],
+                resources: [
+                    props.fromEmailParameterArn,
+                    props.domainNameParameterArn,
+                ],
+            })
         );
     }
 }
