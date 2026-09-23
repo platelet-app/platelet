@@ -271,9 +271,7 @@ const addTenant = async (tenant: { name: string; tenantAdminId: string }) => {
     return createdTenant?.data?.createTenant;
 };
 
-export const handler = async (
-    event: LambdaEvent
-): Promise<CreateTenantMutation> => {
+export const handler = async (event: LambdaEvent) => {
     console.log("register tenant", event);
     if (!GRAPHQL_ENDPOINT) {
         throw new Error("Missing env variables");
