@@ -190,7 +190,7 @@ const cleanUp = async (
         console.log("Deleting cognito user:", cognitoUser.username);
         const params = {
             UserPoolId: USER_POOL_ID,
-            Username: user.username,
+            Username: cognitoUser.username,
         };
         const command = new AdminDeleteUserCommand(params);
         await cognitoClient.send(command);
