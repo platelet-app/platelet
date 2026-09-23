@@ -1,3 +1,21 @@
+
 {
-    "adminRoleNames": []
+    "adminRoleNames": [
+        "PlateletCdkStack-pr-282-DeleteUserStepFunctionClean-SC7g6Os7Idvv",
+        "PlateletCdkStack-pr-282-UserTakeOutDataStepFunction-cCwJK7wqMUeX",
+        "PlateletCdkStack-pr-282-DeleteUserStepFunctionDelet-wy5fD8QcLYGW",
+        "PlateletCdkStack-pr-282-DeleteUserStepFunctionDelet-iyGpnZEmBXDP",
+        "PlateletCdkStack-pr-282-DeleteUserStepFunctionClean-Pg23ECmPtclB",
+        "PlateletCdkStack-pr-282-CypressTestRoleCypressRoleC-RURkVFS6EP3J",
+        "PlateletCdkStack-pr-282-UserTakeOutDataStepFunction-rVsdc98XpDj3",
+        "PlateletCdkStack-pr-282-DeleteUserStepFunctionDelet-tfFoGuoqQmSv",
+        "PlateletCdkStack-pr-282-UserTakeOutDataStepFunction-P70RfzXFCbp9",
+        "PlateletCdkStack-pr-282-UserTakeOutDataStepFunction-8Nr6IF0s6y68",
+        "PlateletCdkStack-pr-282-DeleteUserStepFunctionDelet-aVzUcbjLz2YP",
+        "PlateletCdkStack-pr-282-RegisterTenantFunctionRegis-VfNExl3t8HYM",
+        "PlateletCdkStack-pr-282-DeleteUserStepFunctionGetUs-FoTVImprcqKY",
+        "PlateletCdkStack-pr-282-UserTakeOutDataStepFunction-Mcxh4xhugjOi",
+        "PlateletCdkStack-pr-282-DeleteUserStepFunctionGetUs-milkSduECmOV",
+    ]
 }
+
