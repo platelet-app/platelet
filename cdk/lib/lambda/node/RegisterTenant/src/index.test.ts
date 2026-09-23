@@ -211,7 +211,7 @@ describe("RegisterTenant", () => {
             ["USER", "ADMIN", "COORDINATOR"].map((group) => ({
                 GroupName: group,
                 UserPoolId: "some_pool",
-                Username: "testUsername",
+                Username: "test-uuid",
             }))
         );
 
