@@ -29,9 +29,7 @@ export class CypressTestRole extends Construct {
             { graphqlApiId: props.appsyncId }
         );
 
-        this.role = new iam.Role(this, "Role", {
-            description:
-                "Assumed by Cypress E2E tests to set isBeingDeleted on User records via AppSync IAM auth.",
+        this.role = new iam.Role(this, "CypressRole", {
             assumedBy: new iam.AccountPrincipal(cdk.Stack.of(this).account),
         });
 
