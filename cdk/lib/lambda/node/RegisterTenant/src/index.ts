@@ -257,12 +257,15 @@ const cleanUp = async (
     }
 };
 
-const addTenant = async (tenant: { name: string; tenantAdminId: string }) => {
-    const referenceIdentifier = generateReferenceIdentifier(tenant.name);
+const addTenant = async (tenant: {
+    name: string;
+    tenantAdminId: string;
+    referenceIdentifier: string;
+}) => {
     const createdTenantResult = await request(
         {
             query: mutations.createTenant,
-            variables: { input: { ...tenant, referenceIdentifier } },
+            variables: { input: { ...tenant } },
         },
         GRAPHQL_ENDPOINT
     );
@@ -276,6 +279,9 @@ export const handler = async (event: LambdaEvent) => {
     if (!GRAPHQL_ENDPOINT) {
         throw new Error("Missing env variables");
     }
+    // Validate the tenant name before creating any resources so an invalid
+    // name fails fast instead of requiring a rollback of the admin user.
+    const referenceIdentifier = generateReferenceIdentifier(event.tenantName);
     const user = {
         name: event.name,
         displayName: event.name,
@@ -292,6 +298,7 @@ export const handler = async (event: LambdaEvent) => {
         newTenant = await addTenant({
             ...tenant,
             tenantAdminId: newUser.id,
+            referenceIdentifier,
         });
         cognitoUser = await addUserToCognito(newUser);
         const admin = await updateUserTenantAndCognito(

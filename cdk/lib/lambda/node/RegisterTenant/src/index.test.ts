@@ -300,15 +300,8 @@ describe("RegisterTenant", () => {
         );
     });
 
-    test("clean up the user when the tenant name is too short", async () => {
-        lambda.request
-            .mockImplementationOnce(setupFetchStub(fakeCreatedUser))
-            .mockImplementationOnce(
-                setupFetchStub({
-                    getUser: { id: "deleteUserId", _version: 5 },
-                })
-            )
-            .mockImplementation(setupFetchStub({}));
+    test("reject a too short tenant name before creating anything", async () => {
+        lambda.request.mockImplementation(setupFetchStub({}));
 
         await expect(
             handler({ ...mockEvent, tenantName: "a b" })
@@ -316,28 +309,14 @@ describe("RegisterTenant", () => {
             "tenantName must be at least 4 characters without whitespace"
         );
 
-        // the cognito user was never created so it should not be deleted
+        // the tenant name is validated up front, so nothing is created and
+        // there is nothing to clean up
+        expect(lambda.request).not.toHaveBeenCalled();
         expect(cognitoMock.commandCalls(AdminCreateUserCommand)).toHaveLength(
             0
         );
         expect(cognitoMock.commandCalls(AdminDeleteUserCommand)).toHaveLength(
             0
-        );
-
-        expect(lambda.request).toHaveBeenCalledWith(
-            {
-                query: mutations.deleteUser,
-                variables: { input: { id: "deleteUserId", _version: 5 } },
-            },
-            GRAPHQL_ENDPOINT
-        );
-        // no tenant was created so there is nothing to look up or delete
-        expect(lambda.request).not.toHaveBeenCalledWith(
-            {
-                query: queries.getTenant,
-                variables: { id: expect.any(String) },
-            },
-            GRAPHQL_ENDPOINT
         );
     });
 });
