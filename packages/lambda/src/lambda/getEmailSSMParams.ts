@@ -21,8 +21,12 @@ const getParam = async (paramName: string) => {
     }
 };
 export const getEmailSSMParams = async () => {
-    const fromEmailParameterName = `/platelet-supporting-cdk/${process.env.ENV}/FromEmail`;
-    const domainParameterName = `/platelet-supporting-cdk/${process.env.ENV}/DomainName`;
+    const env = process.env.ENV;
+    if (!env) {
+        throw new Error("Missing env var: ENV");
+    }
+    const fromEmailParameterName = `/platelet-supporting-cdk/${env}/FromEmail`;
+    const domainParameterName = `/platelet-supporting-cdk/${env}/DomainName`;
     const fromEmail = await getParam(fromEmailParameterName);
     const domainName = await getParam(domainParameterName);
     if (!fromEmail) {
