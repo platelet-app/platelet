@@ -1,3 +1,21 @@
+
 {
-    "adminRoleNames": []
+    "adminRoleNames": [
+        "PlateletCdkStack-dev-eeee-DeleteUserStepFunctionCle-ZkmZsZr2Ridt",
+        "PlateletCdkStack-dev-eeee-UserTakeOutDataStepFuncti-YILYqhE4hNq6",
+        "PlateletCdkStack-dev-eeee-DeleteUserStepFunctionDel-aAdjQdqzr8Z4",
+        "PlateletCdkStack-dev-eeee-DeleteUserStepFunctionDel-79xbrmOzQhcE",
+        "PlateletCdkStack-dev-eeee-DeleteUserStepFunctionCle-8ByPajYyPBGe",
+        "PlateletCdkStack-dev-eeee-CypressTestRoleCypressRol-MyCGzAJhDUep",
+        "PlateletCdkStack-dev-eeee-UserTakeOutDataStepFuncti-K6S2ZWNTA07x",
+        "PlateletCdkStack-dev-eeee-DeleteUserStepFunctionDel-aIvUB5f7yTLo",
+        "PlateletCdkStack-dev-eeee-UserTakeOutDataStepFuncti-jL1IUPeRSlel",
+        "PlateletCdkStack-dev-eeee-UserTakeOutDataStepFuncti-Z8s7Rby4Yf5T",
+        "PlateletCdkStack-dev-eeee-DeleteUserStepFunctionDel-nRCFgJ30411u",
+        "PlateletCdkStack-dev-eeee-RegisterTenantFunctionReg-JMITSfRw0kUC",
+        "PlateletCdkStack-dev-eeee-DeleteUserStepFunctionGet-XdpY557Onq62",
+        "PlateletCdkStack-dev-eeee-UserTakeOutDataStepFuncti-EAZxkPsGHc9M",
+        "PlateletCdkStack-dev-eeee-DeleteUserStepFunctionGet-Tiacy1IagDig",
+    ]
 }
+
