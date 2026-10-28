@@ -164,7 +164,7 @@ function* getWhoami() {
                         ),
                         ...archivedModels.map((model) =>
                             syncExpression(model, (m) =>
-                                m.tenantId("eq", tenantId).archived("eq", 0)
+                                m.archived("eq", 0).tenantId("eq", tenantId)
                             )
                         ),
                         syncExpression(models.Tenant, (m) =>
