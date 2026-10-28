@@ -1012,6 +1012,16 @@ export const schema = {
                 {
                     "type": "key",
                     "properties": {
+                        "name": "byTenantArchived",
+                        "fields": [
+                            "tenantId",
+                            "archived"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
                         "name": "byTenantId",
                         "fields": [
                             "tenantId"
@@ -1330,6 +1340,16 @@ export const schema = {
                 {
                     "type": "key",
                     "properties": {
+                        "name": "byTenantArchived",
+                        "fields": [
+                            "tenantId",
+                            "archived"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
                         "name": "byTenantId",
                         "queryField": "listTasksByTenantId",
                         "fields": [
@@ -1498,6 +1518,16 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantArchived",
+                        "fields": [
+                            "tenantId",
+                            "archived"
+                        ]
+                    }
                 },
                 {
                     "type": "key",
@@ -1872,6 +1902,16 @@ export const schema = {
                 {
                     "type": "key",
                     "properties": {
+                        "name": "byTenantArchived",
+                        "fields": [
+                            "tenantId",
+                            "archived"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
                         "name": "byTenantId",
                         "fields": [
                             "tenantId"
@@ -2188,6 +2228,16 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byTenantArchived",
+                        "fields": [
+                            "tenantId",
+                            "archived"
+                        ]
+                    }
                 },
                 {
                     "type": "key",
