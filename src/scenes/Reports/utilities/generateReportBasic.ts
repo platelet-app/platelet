@@ -295,18 +295,29 @@ export default async function generateReportBasic(
     } else if (!userId && role !== "ALL") {
         throw new Error("userId is null");
     }
-    const actualEndDate = endDate ? new Date(endDate) : null;
-    const actualStartDate = startDate ? new Date(startDate) : null;
-    if (actualStartDate) {
-        actualStartDate.setUTCHours(0, 0, 0, 0);
-    }
+    // Build UTC day boundaries from the picker's local calendar date, rather
+    // than reinterpreting local midnight as if it were UTC midnight (which
+    // shifts the range back a day in timezones ahead of UTC).
+    const actualStartDate = startDate
+        ? new Date(
+              Date.UTC(
+                  startDate.getFullYear(),
+                  startDate.getMonth(),
+                  startDate.getDate()
+              )
+          )
+        : null;
     // if we use ALL we are using graphql and createdAt, so we add a day to the end date
     // and set the time to 00
-    if (actualEndDate) {
-        actualEndDate.setUTCHours(0, 0, 0, 0);
-        // Add one day to include tasks created on the end date
-        actualEndDate.setTime(actualEndDate.getTime() + ONE_DAY_MS);
-    }
+    const actualEndDate = endDate
+        ? new Date(
+              Date.UTC(
+                  endDate.getFullYear(),
+                  endDate.getMonth(),
+                  endDate.getDate()
+              ) + ONE_DAY_MS
+          )
+        : null;
     console.log("get tasks", actualStartDate, actualEndDate);
     if (
         actualStartDate &&
