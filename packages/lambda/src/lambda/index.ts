@@ -5,3 +5,5 @@ export { sendPlateletEmail } from "./sendPlateletEmail.js";
 export { getSQSTrackingURL } from "./getSQSTrackingURL.js";
 export { getTenantName } from "./getTenantName.js";
 export { getTenantWebsite } from "./getTenantWebsite.js";
+export { generateSecurePassword } from "./generateSecurePassword.js";
+export { sendTenantWelcomeEmail } from "./sendTenantWelcomeEmail.js";

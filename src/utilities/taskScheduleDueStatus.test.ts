@@ -45,4 +45,34 @@ describe("taskScheduleDueStatus", () => {
         const result = taskScheduleDueStatus(schedule, 1);
         expect(result).toEqual(true);
     });
+    test("anytime tomorrow is due within one day when using the window start", () => {
+        const schedule = new models.Schedule({
+            relation: models.TimeRelation.ANYTIME,
+            timePrimary: "2021-01-02T12:00:00.000Z",
+        });
+        expect(taskScheduleDueStatus(schedule, 0, 1, true)).toEqual(true);
+        // default end of window behaviour still counts it as not due
+        expect(taskScheduleDueStatus(schedule, 0, 1)).toEqual(false);
+    });
+    test("anytime the day after tomorrow is not due within one day when using the window start", () => {
+        const schedule = new models.Schedule({
+            relation: models.TimeRelation.ANYTIME,
+            timePrimary: "2021-01-03T12:00:00.000Z",
+        });
+        expect(taskScheduleDueStatus(schedule, 0, 1, true)).toEqual(false);
+    });
+    test("after a time tomorrow uses timePrimary when using the window start", () => {
+        const dueSchedule = new models.Schedule({
+            relation: models.TimeRelation.AFTER,
+            timePrimary: "2021-01-02T09:00:00.000Z",
+        });
+        expect(taskScheduleDueStatus(dueSchedule, 0, 1, true)).toEqual(true);
+        const notDueSchedule = new models.Schedule({
+            relation: models.TimeRelation.AFTER,
+            timePrimary: "2021-01-02T14:00:00.000Z",
+        });
+        expect(taskScheduleDueStatus(notDueSchedule, 0, 1, true)).toEqual(
+            false
+        );
+    });
 });

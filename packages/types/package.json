@@ -20,6 +20,7 @@
     ],
     "scripts": {
         "build": "cd ../.. && amplify api gql-compile && amplify codegen && cp src/API.ts packages/types/src && cd packages/types && tsc --project tsconfig.json",
+        "build:simple": "cd ../.. && cp src/API.ts packages/types/src && cd packages/types && tsc --project tsconfig.json",
         "prepublishOnly": "npm run build && npm version patch"
     }
 }

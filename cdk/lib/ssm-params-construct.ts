@@ -1,7 +1,6 @@
 import { Construct } from "constructs";
 import * as cdk from "aws-cdk-lib";
 import * as ssm from "aws-cdk-lib/aws-ssm";
-import * as ses from "aws-cdk-lib/aws-ses";
 
 export interface SSMParamsConstructProps {
     amplifyEnv: string;
@@ -11,6 +10,7 @@ export interface SSMParamsConstructProps {
 
 export class SSMParamsConstruct extends Construct {
     public fromEmailArn: string;
+    public domainNameArn: string;
     constructor(scope: Construct, id: string, props: SSMParamsConstructProps) {
         super(scope, id);
 
@@ -32,6 +32,7 @@ export class SSMParamsConstruct extends Construct {
         );
 
         this.fromEmailArn = fromEmailParam.parameterArn;
+        this.domainNameArn = domainNameParam.parameterArn;
 
         // output values to be used in custom-policies.json files
         new cdk.CfnOutput(this, "FromEmailSSMParamArnOutput", {
@@ -39,18 +40,6 @@ export class SSMParamsConstruct extends Construct {
         });
         new cdk.CfnOutput(this, "DomainNameSSMParamArnOutput", {
             value: domainNameParam.parameterArn,
-        });
-
-        // get the identity so we can output the ARN
-        // this is needed for custom-policies.json in lambda functions
-        const domainSplit = props.fromEmail.split("@")[1];
-        const SES = ses.EmailIdentity.fromEmailIdentityName(
-            this,
-            "SESEmailIdentity",
-            domainSplit
-        );
-        new cdk.CfnOutput(this, "SESEmailIdentityArn", {
-            value: SES.emailIdentityArn,
         });
     }
 }

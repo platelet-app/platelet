@@ -3,7 +3,12 @@ import * as models from "../models";
 const taskScheduleDueStatus = (
     schedule: models.Schedule | null,
     hours: number = 0,
-    days: number = 0
+    days: number = 0,
+    // ANYTIME and AFTER schedules span a window rather than a point in time;
+    // by default they count as due at the end of the window (23:59), which
+    // suits deadline warnings. Pass useWindowStart to count them as due from
+    // when they first become actionable instead.
+    useWindowStart: boolean = false
 ) => {
     if (!schedule) {
         return false;
@@ -18,8 +23,13 @@ const taskScheduleDueStatus = (
             schedule?.relation as models.TimeRelation
         )
     ) {
-        scheduleDate.setHours(23);
-        scheduleDate.setMinutes(59);
+        if (useWindowStart) {
+            if (schedule?.relation === models.TimeRelation.ANYTIME) {
+                scheduleDate.setUTCHours(0, 0, 0, 0);
+            }
+        } else {
+            scheduleDate.setUTCHours(23, 59, 59, 999);
+        }
     }
     scheduleDate.setUTCHours(scheduleDate.getUTCHours() - hours);
     scheduleDate.setUTCDate(scheduleDate.getUTCDate() - days);
