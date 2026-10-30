@@ -1365,6 +1365,51 @@ export const createTask = /* GraphQL */ `mutation CreateTask(
       userCreatedLocationsId
       __typename
     }
+    pickUpLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
+    dropOffLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
+    establishmentLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
     riderResponsibility
     assignees {
       nextToken
@@ -1545,6 +1590,51 @@ export const updateTask = /* GraphQL */ `mutation UpdateTask(
       userCreatedLocationsId
       __typename
     }
+    pickUpLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
+    dropOffLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
+    establishmentLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
     riderResponsibility
     assignees {
       nextToken
@@ -1723,6 +1813,51 @@ export const deleteTask = /* GraphQL */ `mutation DeleteTask(
       _deleted
       _lastChangedAt
       userCreatedLocationsId
+      __typename
+    }
+    pickUpLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
+    dropOffLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
+    establishmentLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
       __typename
     }
     riderResponsibility
@@ -2111,6 +2246,51 @@ export const createScheduledTask = /* GraphQL */ `mutation CreateScheduledTask(
       userCreatedLocationsId
       __typename
     }
+    pickUpLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
+    dropOffLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
+    establishmentLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
     priority
     deliverables {
       nextToken
@@ -2269,6 +2449,51 @@ export const updateScheduledTask = /* GraphQL */ `mutation UpdateScheduledTask(
       userCreatedLocationsId
       __typename
     }
+    pickUpLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
+    dropOffLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
+    establishmentLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
     priority
     deliverables {
       nextToken
@@ -2425,6 +2650,51 @@ export const deleteScheduledTask = /* GraphQL */ `mutation DeleteScheduledTask(
       _deleted
       _lastChangedAt
       userCreatedLocationsId
+      __typename
+    }
+    pickUpLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
+    dropOffLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
+    establishmentLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
       __typename
     }
     priority

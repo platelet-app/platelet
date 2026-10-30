@@ -1212,6 +1212,33 @@ export const schema = {
                         "targetName": "establishmentLocationId"
                     }
                 },
+                "pickUpLocationDetails": {
+                    "name": "pickUpLocationDetails",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "TaskLocation"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "dropOffLocationDetails": {
+                    "name": "dropOffLocationDetails",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "TaskLocation"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "establishmentLocationDetails": {
+                    "name": "establishmentLocationDetails",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "TaskLocation"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "riderResponsibility": {
                     "name": "riderResponsibility",
                     "isArray": false,
@@ -1631,6 +1658,33 @@ export const schema = {
                         "connectionType": "BELONGS_TO",
                         "targetName": "establishmentLocationId"
                     }
+                },
+                "pickUpLocationDetails": {
+                    "name": "pickUpLocationDetails",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "TaskLocation"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "dropOffLocationDetails": {
+                    "name": "dropOffLocationDetails",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "TaskLocation"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "establishmentLocationDetails": {
+                    "name": "establishmentLocationDetails",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "TaskLocation"
+                    },
+                    "isRequired": false,
+                    "attributes": []
                 },
                 "priority": {
                     "name": "priority",
@@ -2547,6 +2601,104 @@ export const schema = {
                 }
             }
         },
+        "TaskLocation": {
+            "name": "TaskLocation",
+            "fields": {
+                "name": {
+                    "name": "name",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "contact": {
+                    "name": "contact",
+                    "isArray": false,
+                    "type": {
+                        "nonModel": "AddressAndContactDetails"
+                    },
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "ward": {
+                    "name": "ward",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "line1": {
+                    "name": "line1",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "line2": {
+                    "name": "line2",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "line3": {
+                    "name": "line3",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "town": {
+                    "name": "town",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "county": {
+                    "name": "county",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "state": {
+                    "name": "state",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "country": {
+                    "name": "country",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "postcode": {
+                    "name": "postcode",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "what3words": {
+                    "name": "what3words",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "googleMapsPlaceId": {
+                    "name": "googleMapsPlaceId",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                }
+            }
+        },
         "Schedule": {
             "name": "Schedule",
             "fields": {
@@ -2676,5 +2828,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.4",
-    "version": "ea23c7472135f07a7efd4966b35c2d76"
+    "version": "929e24735add6951bfcc2877716821ff"
 };

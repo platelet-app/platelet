@@ -112,6 +112,42 @@ export declare type AddressAndContactDetails = LazyLoading extends LazyLoadingDi
 
 export declare const AddressAndContactDetails: (new (init: ModelInit<AddressAndContactDetails>) => AddressAndContactDetails)
 
+type EagerTaskLocation = {
+  readonly name?: string | null;
+  readonly contact?: AddressAndContactDetails | null;
+  readonly ward?: string | null;
+  readonly line1?: string | null;
+  readonly line2?: string | null;
+  readonly line3?: string | null;
+  readonly town?: string | null;
+  readonly county?: string | null;
+  readonly state?: string | null;
+  readonly country?: string | null;
+  readonly postcode?: string | null;
+  readonly what3words?: string | null;
+  readonly googleMapsPlaceId?: string | null;
+}
+
+type LazyTaskLocation = {
+  readonly name?: string | null;
+  readonly contact?: AddressAndContactDetails | null;
+  readonly ward?: string | null;
+  readonly line1?: string | null;
+  readonly line2?: string | null;
+  readonly line3?: string | null;
+  readonly town?: string | null;
+  readonly county?: string | null;
+  readonly state?: string | null;
+  readonly country?: string | null;
+  readonly postcode?: string | null;
+  readonly what3words?: string | null;
+  readonly googleMapsPlaceId?: string | null;
+}
+
+export declare type TaskLocation = LazyLoading extends LazyLoadingDisabled ? EagerTaskLocation : LazyTaskLocation
+
+export declare const TaskLocation: (new (init: ModelInit<TaskLocation>) => TaskLocation)
+
 type EagerSchedule = {
   readonly relation?: TimeRelation | keyof typeof TimeRelation | null;
   readonly timePrimary?: string | null;
@@ -493,6 +529,9 @@ type EagerTask = {
   readonly pickUpLocation?: Location | null;
   readonly dropOffLocation?: Location | null;
   readonly establishmentLocation?: Location | null;
+  readonly pickUpLocationDetails?: TaskLocation | null;
+  readonly dropOffLocationDetails?: TaskLocation | null;
+  readonly establishmentLocationDetails?: TaskLocation | null;
   readonly riderResponsibility?: string | null;
   readonly assignees?: (TaskAssignee | null)[] | null;
   readonly priority?: Priority | keyof typeof Priority | null;
@@ -525,6 +564,9 @@ type LazyTask = {
   readonly pickUpLocation: AsyncItem<Location | undefined>;
   readonly dropOffLocation: AsyncItem<Location | undefined>;
   readonly establishmentLocation: AsyncItem<Location | undefined>;
+  readonly pickUpLocationDetails?: TaskLocation | null;
+  readonly dropOffLocationDetails?: TaskLocation | null;
+  readonly establishmentLocationDetails?: TaskLocation | null;
   readonly riderResponsibility?: string | null;
   readonly assignees: AsyncCollection<TaskAssignee>;
   readonly priority?: Priority | keyof typeof Priority | null;
@@ -581,6 +623,9 @@ type EagerScheduledTask = {
   readonly pickUpLocation?: Location | null;
   readonly dropOffLocation?: Location | null;
   readonly establishmentLocation?: Location | null;
+  readonly pickUpLocationDetails?: TaskLocation | null;
+  readonly dropOffLocationDetails?: TaskLocation | null;
+  readonly establishmentLocationDetails?: TaskLocation | null;
   readonly priority?: Priority | keyof typeof Priority | null;
   readonly deliverables?: (Deliverable | null)[] | null;
   readonly disabled?: number | null;
@@ -599,6 +644,9 @@ type LazyScheduledTask = {
   readonly pickUpLocation: AsyncItem<Location | undefined>;
   readonly dropOffLocation: AsyncItem<Location | undefined>;
   readonly establishmentLocation: AsyncItem<Location | undefined>;
+  readonly pickUpLocationDetails?: TaskLocation | null;
+  readonly dropOffLocationDetails?: TaskLocation | null;
+  readonly establishmentLocationDetails?: TaskLocation | null;
   readonly priority?: Priority | keyof typeof Priority | null;
   readonly deliverables: AsyncCollection<Deliverable>;
   readonly disabled?: number | null;
