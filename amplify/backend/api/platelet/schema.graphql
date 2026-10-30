@@ -187,6 +187,22 @@ type Location
     ])
 }
 
+type TaskLocation {
+  name: String
+  contact: AddressAndContactDetails
+  ward: String
+  line1: String
+  line2: String
+  line3: String
+  town: String
+  county: String
+  state: String
+  country: String
+  postcode: String
+  what3words: String
+  googleMapsPlaceId: String
+}
+
 enum TimeRelation {
   BEFORE
   AFTER
@@ -269,6 +285,22 @@ type Task
   pickUpLocation: Location @belongsTo(fields: ["pickUpLocationId"])
   dropOffLocation: Location @belongsTo(fields: ["dropOffLocationId"])
   establishmentLocation: Location @belongsTo(fields: ["establishmentLocationId"])
+  # location data snapshots, to replace the connections eventually
+  pickUpLocationDetails: TaskLocation
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "ADMIN"], operations: [create, read, update, delete]},
+    ])
+  dropOffLocationDetails: TaskLocation
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "ADMIN"], operations: [create, read, update, delete]},
+    ])
+  establishmentLocationDetails: TaskLocation
+    @auth(rules: [
+      {allow: private, operations: [read]},
+      {allow: groups, groups: ["COORDINATOR", "ADMIN"], operations: [create, read, update, delete]},
+    ])
   riderResponsibility: String
     @auth(rules: [
       {allow: private, operations: [read]},
@@ -332,6 +364,9 @@ type ScheduledTask
   pickUpLocation: Location @belongsTo(fields: ["pickUpLocationId"])
   dropOffLocation: Location @belongsTo(fields: ["dropOffLocationId"])
   establishmentLocation: Location @belongsTo(fields: ["establishmentLocationId"])
+  pickUpLocationDetails: TaskLocation
+  dropOffLocationDetails: TaskLocation
+  establishmentLocationDetails: TaskLocation
   priority: Priority
   deliverables: [Deliverable] @hasMany
   disabled: Int @default(value: "0")
