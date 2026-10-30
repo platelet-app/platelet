@@ -1,4 +1,5 @@
 import LocationDetailAndSelector from "./LocationDetailAndSelector";
+import { utils } from "@platelet-app/core";
 import { GraphQLQuery } from "@aws-amplify/api";
 import React, { useEffect, useRef, useState } from "react";
 import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
@@ -94,6 +95,9 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     const errorMessage = "Sorry, an error occurred";
 
     const hideScheduleDate = taskModel.name === "ScheduledTask";
+    const detailsKey = `${locationKey}Details` as
+        | "pickUpLocationDetails"
+        | "dropOffLocationDetails";
 
     const { state: task } = useModelSubscription(taskModel, taskId);
     const schedule =
@@ -233,6 +237,20 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
         );
     };
 
+    // dual-write: keep the nested location details on the task in sync with the Location model
+    async function saveTaskLocationDetails(location: models.Location | null) {
+        if (!taskId) throw new Error("No task id");
+        // @ts-ignore
+        const existingTask = await DataStore.query(taskModel, taskId);
+        if (!existingTask) throw new Error("Task doesn't exist");
+        await DataStore.save(
+            taskModel.copyOf(existingTask, (updated) => {
+                // @ts-ignore
+                updated[detailsKey] = toTaskLocation(location);
+            })
+        );
+    }
+
     async function editPreset(additionalValues?: LocationType) {
         try {
             if (!taskId) throw new Error("No task id");
@@ -259,6 +277,8 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                 taskModel.copyOf(result, (updated) => {
                     // @ts-ignore
                     updated[locationKey as keyof taskModel] = newLocation;
+                    // @ts-ignore
+                    updated[detailsKey] = toTaskLocation(newLocation);
                 })
             );
             return newLocation;
@@ -294,6 +314,8 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                         taskModel.copyOf(result, (updated) => {
                             // @ts-ignore
                             updated[locationKey] = location;
+                            // @ts-ignore
+                            updated[detailsKey] = toTaskLocation(location);
                         })
                     );
                 }
@@ -326,6 +348,8 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                         taskModel.copyOf(result, (updated) => {
                             // @ts-ignore
                             updated[locationKey] = null;
+                            // @ts-ignore
+                            updated[detailsKey] = null;
                         })
                     );
                     if (process.env.REACT_APP_OFFLINE_ONLY !== "true") {
@@ -347,6 +371,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                                         id,
                                         _version,
                                         [`${locationKey}Id`]: null,
+                                        [detailsKey]: null,
                                     },
                                 })
                             );
@@ -386,6 +411,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                                             id,
                                             _version,
                                             [`${locationKey}Id`]: null,
+                                            [detailsKey]: null,
                                         },
                                     })
                                 );
@@ -489,6 +515,9 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                     );
                 }
             }
+            if (locationResult) {
+                await saveTaskLocationDetails(locationResult);
+            }
         } else {
             locationResult = await DataStore.save(
                 new models.Location({
@@ -507,6 +536,8 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                     taskModel.copyOf(existingTask, (updated) => {
                         // @ts-ignore
                         updated[key] = locationResult;
+                        // @ts-ignore
+                        updated[detailsKey] = toTaskLocation(locationResult);
                     })
                 );
             }
@@ -552,6 +583,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                                 }
                             )
                         );
+                        await saveTaskLocationDetails(locationResult);
                     }
                 }
             } else {
@@ -588,6 +620,11 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                         taskModel.copyOf(existingTask, (updated) => {
                             // @ts-ignore
                             updated[key] = locationResult;
+                            // @ts-ignore
+                            updated[detailsKey] =
+                                utils.locationModelToTaskLocationDetail(
+                                    locationResult
+                                );
                         })
                     );
                 }

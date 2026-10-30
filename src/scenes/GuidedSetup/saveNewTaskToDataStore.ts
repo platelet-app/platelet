@@ -1,4 +1,5 @@
 import { userRoles } from "../../apiConsts";
+import { utils } from "@platelet-app/core";
 import store from "../../redux/Store";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models";
@@ -53,16 +54,22 @@ export async function saveNewTaskToDataStore(
     }
     let pickUpLocation = locations.pickUpLocation;
     if (locations.pickUpLocation && !locations.pickUpLocation.id) {
+        // dual-write model and nested
         pickUpLocation = await DataStore.save(
             new models.Location({ ...pickUpLocation, listed: 0, tenantId })
         );
     }
     let dropOffLocation = locations.dropOffLocation;
     if (locations.dropOffLocation && !locations.dropOffLocation.id) {
+        // dual-write model and nested
         dropOffLocation = await DataStore.save(
             new models.Location({ ...dropOffLocation, listed: 0, tenantId })
         );
     }
+    const pickUpLocationDetails =
+        utils.locationModelToTaskLocationDetail(pickUpLocation);
+    const dropOffLocationDetails =
+        utils.locationModelToTaskLocationDetail(dropOffLocation);
     // get the date today without time
     const date = new Date();
     const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -73,6 +80,8 @@ export async function saveNewTaskToDataStore(
             ...rest,
             pickUpLocation,
             pickUpSchedule,
+            pickUpLocationDetails,
+            dropOffLocationDetails,
             establishmentLocation,
             createdBy: author,
             dropOffLocation,
