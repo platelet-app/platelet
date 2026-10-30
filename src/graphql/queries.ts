@@ -1018,6 +1018,51 @@ export const getTask = /* GraphQL */ `query GetTask($id: ID!) {
       userCreatedLocationsId
       __typename
     }
+    pickUpLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
+    dropOffLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
+    establishmentLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
     riderResponsibility
     assignees {
       nextToken
@@ -1561,6 +1606,51 @@ export const getScheduledTask = /* GraphQL */ `query GetScheduledTask($id: ID!) 
       _deleted
       _lastChangedAt
       userCreatedLocationsId
+      __typename
+    }
+    pickUpLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
+    dropOffLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
+      __typename
+    }
+    establishmentLocationDetails {
+      name
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      googleMapsPlaceId
       __typename
     }
     priority
