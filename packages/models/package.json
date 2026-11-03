@@ -19,8 +19,9 @@
         "dist"
     ],
     "scripts": {
-        "build": "cd ../.. && amplify api gql-compile && amplify codegen models && cd packages/models && mkdir -p dist && cp ../../src/models/* dist",
-        "build:simple": "mkdir -p dist && cp ../../src/models/* dist",
+        "sedQueries": "sed -i \"s:import { schema } from './schema';:import { schema } from './schema.js';:g\" dist/index.js",
+        "build": "cd ../.. && amplify api gql-compile && amplify codegen models && cd packages/models && mkdir -p dist && cp ../../src/models/* dist && npm run sedQueries --workspace @platelet-app/models",
+        "build:simple": "mkdir -p dist && cp ../../src/models/* dist && npm run sedQueries --workspace @platelet-app/models",
         "prepublishOnly": "npm version patch"
     }
 }
