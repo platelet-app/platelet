@@ -60,6 +60,8 @@ describe("saveNewTaskToDataStore", () => {
             establishmentLocation,
             pickUpLocation: null,
             dropOffLocation: null,
+            pickUpLocationDetails: null,
+            dropOffLocationDetails: null,
             pickUpSchedule: null,
             dropOffSchedule: null,
             timeOfCall: "2021-02-01T12:00:58.987Z",
@@ -128,6 +130,8 @@ describe("saveNewTaskToDataStore", () => {
             createdBy: author,
             pickUpLocation: null,
             dropOffLocation: null,
+            pickUpLocationDetails: null,
+            dropOffLocationDetails: null,
             establishmentLocation: null,
             pickUpSchedule: null,
             dropOffSchedule: null,
@@ -225,6 +229,8 @@ describe("saveNewTaskToDataStore", () => {
             createdBy: author,
             pickUpLocation: null,
             dropOffLocation: null,
+            pickUpLocationDetails: null,
+            dropOffLocationDetails: null,
             establishmentLocation: null,
             pickUpSchedule: mockPickUpSchedule,
             dropOffSchedule: mockDropOffSchedule,
@@ -303,6 +309,8 @@ describe("saveNewTaskToDataStore", () => {
             createdBy: author,
             pickUpLocation: null,
             dropOffLocation: null,
+            pickUpLocationDetails: null,
+            dropOffLocationDetails: null,
             establishmentLocation: null,
             pickUpSchedule: mockPickUpSchedule,
             dropOffSchedule: mockDropOffSchedule,
@@ -380,6 +388,28 @@ describe("saveNewTaskToDataStore", () => {
             createdBy: author,
             pickUpLocation,
             dropOffLocation,
+            pickUpLocationDetails: {
+                line1: "line 1",
+                line2: "line 2",
+                town: "town",
+                country: "country",
+                county: "county",
+                contact: {
+                    name: "name loc",
+                    telephoneNumber: "01234567914",
+                },
+            },
+            dropOffLocationDetails: {
+                line1: "drop line 1",
+                line2: "drop line 2",
+                town: "drop town",
+                country: "drop country",
+                county: "drop county",
+                contact: {
+                    name: "drop name loc",
+                    telephoneNumber: "01734567914",
+                },
+            },
             establishmentLocation: null,
             pickUpSchedule: null,
             dropOffSchedule: null,
@@ -397,6 +427,90 @@ describe("saveNewTaskToDataStore", () => {
             ...mockTask,
             id: expect.any(String),
         });
+    });
+    test("save a new task with new unlisted locations", async () => {
+        const author = new models.User({
+            name: "name",
+            displayName: "displayName",
+            tenantId,
+            username: "username",
+            roles: [models.Role.USER],
+            cognitoId: "cognitoId",
+        });
+
+        const { id: authorId } = await DataStore.save(author);
+        const saveSpy = jest.spyOn(DataStore, "save");
+
+        // locations without an id haven't been saved yet
+        const pickUpLocation = {
+            line1: "line 1",
+            postcode: "postcode",
+            what3words: "some.what.words",
+            contact: {
+                name: "name loc",
+                telephoneNumber: "01234567914",
+            },
+        };
+        const dropOffLocation = {
+            line1: "drop line 1",
+            town: "drop town",
+            googleMapsPlaceId: "somePlaceId",
+        };
+
+        const data = {
+            locations: {
+                pickUpLocation,
+                dropOffLocation,
+            },
+            deliverables: {},
+            comment: { body: "" },
+            establishmentLocation: null,
+            schedule: { pickUp: null, dropOff: null },
+            requesterContact: {
+                name: "some name",
+                telephoneNumber: "01234567890",
+            },
+            timeOfCall: "2021-02-01T12:00:58.987Z",
+            status: models.TaskStatus.NEW,
+        };
+        // @ts-ignore
+        await saveNewTaskToDataStore(data, tenantId, authorId);
+        // the location models are still saved
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...pickUpLocation,
+            listed: 0,
+            tenantId,
+            id: expect.any(String),
+        });
+        expect(saveSpy).toHaveBeenCalledWith({
+            ...dropOffLocation,
+            listed: 0,
+            tenantId,
+            id: expect.any(String),
+        });
+        // and the same values are copied onto the task
+        expect(saveSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                pickUpLocation: expect.objectContaining({
+                    ...pickUpLocation,
+                    id: expect.any(String),
+                }),
+                dropOffLocation: expect.objectContaining({
+                    ...dropOffLocation,
+                    id: expect.any(String),
+                }),
+                pickUpLocationDetails: pickUpLocation,
+                dropOffLocationDetails: dropOffLocation,
+            })
+        );
+        const savedTask = saveSpy.mock.calls
+            .map(([model]) => model)
+            .find((model) => model instanceof models.Task) as models.Task;
+        // none of the Location model fields are copied into the nested values
+        for (const key of ["id", "listed", "tenantId"]) {
+            expect(savedTask.pickUpLocationDetails).not.toHaveProperty(key);
+            expect(savedTask.dropOffLocationDetails).not.toHaveProperty(key);
+        }
     });
     test("save a new task with a comment", async () => {
         const author = new models.User({
@@ -444,6 +558,8 @@ describe("saveNewTaskToDataStore", () => {
             establishmentLocation,
             pickUpLocation: null,
             dropOffLocation: null,
+            pickUpLocationDetails: null,
+            dropOffLocationDetails: null,
             pickUpSchedule: null,
             dropOffSchedule: null,
             timeOfCall: "2021-02-01T12:00:58.987Z",

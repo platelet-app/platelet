@@ -1,6 +1,7 @@
 import { Auth, DataStore } from "aws-amplify";
 import _ from "lodash";
 import * as models from "../../../models";
+import { utils } from "@platelet-app/core";
 
 const ignoredFields = [
     "id",
@@ -101,11 +102,19 @@ export default async function generateMultipleDuplicatedTaskModels(
                 );
             }
 
+            // dual-write model and nested
+            const pickUpLocationDetails =
+                utils.locationModelToTaskLocationDetail(pickUpLocation);
+            const dropOffLocationDetails =
+                utils.locationModelToTaskLocationDetail(dropOffLocation);
+
             let newTaskData = new models.Task({
                 ...rest,
                 status: models.TaskStatus.NEW,
                 pickUpLocation,
                 dropOffLocation,
+                pickUpLocationDetails,
+                dropOffLocationDetails,
                 createdBy: whoami,
                 establishmentLocation,
                 dateCreated: today.toISOString().split("T")[0],
