@@ -627,6 +627,8 @@ describe("TaskContextMenu", () => {
         });
         expect(saveSpy).toHaveBeenCalledWith({
             ...task,
+            pickUpLocationDetails: { name: "woop" },
+            dropOffLocationDetails: { name: "ohp" },
             dateCreated: dateString,
             createdBy: whoami,
             tenantId,
@@ -639,6 +641,8 @@ describe("TaskContextMenu", () => {
                 id: expect.not.stringMatching(del.id),
                 task: {
                     ...task,
+                    pickUpLocationDetails: { name: "woop" },
+                    dropOffLocationDetails: { name: "ohp" },
                     dateCreated: dateString,
                     createdBy: whoami,
                     id: expect.not.stringMatching(task.id),
@@ -651,6 +655,8 @@ describe("TaskContextMenu", () => {
             id: expect.any(String),
             task: {
                 ...task,
+                pickUpLocationDetails: { name: "woop" },
+                dropOffLocationDetails: { name: "ohp" },
                 createdBy: whoami,
                 dateCreated: dateString,
                 id: expect.any(String),
@@ -792,6 +798,14 @@ describe("TaskContextMenu", () => {
             id: expect.not.stringMatching(mockEstablishment.id),
             tenantId,
         });
+        // the location values are also copied onto the task
+        expect(saveSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                id: expect.not.stringMatching(task.id),
+                pickUpLocationDetails: { name: "woop" },
+                dropOffLocationDetails: { name: "ohp" },
+            })
+        );
     });
 
     test("duplicate a task failure", async () => {
