@@ -17,7 +17,7 @@ import RequesterContact from "../../sharedTaskComponents/RequesterContact";
 import { userRoles } from "../../../apiConsts";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 import RiderResponsibilityDetail from "./RiderResponsibilityDetail";
-import { utils } from "@platelet-app/core/";
+import { utils } from "@platelet-app/core";
 
 function TaskDetailsPanel(props) {
     const { classes } = dialogCardStyles();
