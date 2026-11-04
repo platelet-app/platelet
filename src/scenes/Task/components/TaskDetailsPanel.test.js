@@ -463,6 +463,7 @@ describe("TaskDetailsPanel", () => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...mockTask,
                 establishmentLocation: mockEstablishment,
+                establishmentLocationDetails: { name: "Test Establishment" },
             });
         });
         expect(
@@ -514,6 +515,7 @@ describe("TaskDetailsPanel", () => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...mockTask,
                 establishmentLocation: mockEstablishment,
+                establishmentLocationDetails: { name: "Test Establishment" },
             });
         });
     });
@@ -612,6 +614,7 @@ describe("TaskDetailsPanel", () => {
                     ...mockEstablishment,
                     id: expect.any(String),
                 }),
+                establishmentLocationDetails: { name: "Test Unlisted" },
             });
         });
     });

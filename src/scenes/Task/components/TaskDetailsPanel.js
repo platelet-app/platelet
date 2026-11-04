@@ -17,6 +17,7 @@ import RequesterContact from "../../sharedTaskComponents/RequesterContact";
 import { userRoles } from "../../../apiConsts";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 import RiderResponsibilityDetail from "./RiderResponsibilityDetail";
+import { utils } from "@platelet-app/core/";
 
 function TaskDetailsPanel(props) {
     const { classes } = dialogCardStyles();
@@ -115,6 +116,8 @@ function TaskDetailsPanel(props) {
             await DataStore.save(
                 models.Task.copyOf(result, (updated) => {
                     updated.establishmentLocation = value;
+                    updated.establishmentLocationDetails =
+                        utils.locationModelToTaskLocationDetail(value);
                 })
             );
         } catch (error) {
