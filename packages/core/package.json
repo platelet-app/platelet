@@ -24,6 +24,7 @@
     },
     "dependencies": {
         "@platelet-app/models": "^1.1.1",
-        "aws-amplify": "^4.3.46"
+        "aws-amplify": "^4.3.46",
+        "lodash": "^4.17.21"
     }
 }
