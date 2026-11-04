@@ -246,7 +246,8 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
         await DataStore.save(
             taskModel.copyOf(existingTask, (updated) => {
                 // @ts-ignore
-                updated[detailsKey] = toTaskLocation(location);
+                updated[detailsKey] =
+                    utils.locationModelToTaskLocationDetail(location);
             })
         );
     }
@@ -278,7 +279,8 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                     // @ts-ignore
                     updated[locationKey as keyof taskModel] = newLocation;
                     // @ts-ignore
-                    updated[detailsKey] = toTaskLocation(newLocation);
+                    updated[detailsKey] =
+                        utils.locationModelToTaskLocationDetail(newLocation);
                 })
             );
             return newLocation;
@@ -315,7 +317,10 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                             // @ts-ignore
                             updated[locationKey] = location;
                             // @ts-ignore
-                            updated[detailsKey] = toTaskLocation(location);
+                            updated[detailsKey] =
+                                utils.locationModelToTaskLocationDetail(
+                                    location
+                                );
                         })
                     );
                 }
@@ -344,12 +349,16 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                     existingLocation.id
                 );
                 if (currentLocation?.listed === 1) {
+                    const isOfflineOnly =
+                        process.env.REACT_APP_OFFLINE_ONLY === "true";
                     await DataStore.save(
                         taskModel.copyOf(result, (updated) => {
                             // @ts-ignore
                             updated[locationKey] = null;
-                            // @ts-ignore
-                            updated[detailsKey] = null;
+                            if (isOfflineOnly) {
+                                // @ts-ignore
+                                updated[detailsKey] = null;
+                            }
                         })
                     );
                     if (process.env.REACT_APP_OFFLINE_ONLY !== "true") {
@@ -537,7 +546,10 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                         // @ts-ignore
                         updated[key] = locationResult;
                         // @ts-ignore
-                        updated[detailsKey] = toTaskLocation(locationResult);
+                        updated[detailsKey] =
+                            utils.locationModelToTaskLocationDetail(
+                                locationResult
+                            );
                     })
                 );
             }

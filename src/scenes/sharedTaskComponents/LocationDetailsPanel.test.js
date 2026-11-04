@@ -22,6 +22,25 @@ const finishLoading = async () => {
     });
 };
 
+// the values from a Location that should be copied to the nested location details on the task
+const taskLocationFields = [
+    "name",
+    "contact",
+    "ward",
+    "line1",
+    "line2",
+    "line3",
+    "town",
+    "county",
+    "state",
+    "country",
+    "postcode",
+    "what3words",
+    "googleMapsPlaceId",
+];
+const toLocationDetails = (location) => _.pick(location, taskLocationFields);
+const detailsKeyFor = (locationKey) => `${locationKey}Details`;
+
 const mockAccessToken = {
     payload: {
         "cognito:groups": ["PAID"],
@@ -152,6 +171,7 @@ describe("LocationDetailsPanel", () => {
         expect(saveSpy).toHaveBeenCalledWith({
             ...task,
             [locationKey]: mockLocation,
+            [detailsKeyFor(locationKey)]: toLocationDetails(mockLocation),
         });
         expect(screen.queryByRole("textbox")).toBeNull();
         userEvent.click(screen.getByRole("button", { name: "Edit" }));
@@ -164,7 +184,10 @@ describe("LocationDetailsPanel", () => {
         locationKey
         ${"pickUpLocation"} | ${"dropOffLocation"}
     `("clear a listed location", async ({ locationKey }) => {
-        const task = new models.Task({ [locationKey]: mockLocations[0] });
+        const task = new models.Task({
+            [locationKey]: mockLocations[0],
+            [detailsKeyFor(locationKey)]: toLocationDetails(mockLocations[0]),
+        });
         await DataStore.save(task);
         const saveSpy = jest.spyOn(DataStore, "save");
         const apiSpy = jest.spyOn(API, "graphql").mockResolvedValueOnce({
@@ -188,6 +211,8 @@ describe("LocationDetailsPanel", () => {
         userEvent.click(okButton);
         await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(1));
         await waitFor(() => expect(apiSpy).toHaveBeenCalledTimes(2));
+        // the details are left for the graphql mutation to clear
+        // so that DataStore doesn't send a conflicting update
         expect(saveSpy).toHaveBeenCalledWith({
             ...task,
             [locationKey]: null,
@@ -204,10 +229,53 @@ describe("LocationDetailsPanel", () => {
                 _version: 1,
                 id: expect.any(String),
                 [`${locationKey}Id`]: null,
+                [detailsKeyFor(locationKey)]: null,
             },
         });
         expect(screen.queryByRole("button", { name: "Edit" })).toBeNull();
         expect(screen.queryByRole("button", { name: "Clear" })).toBeNull();
+    });
+
+    test.each`
+        locationKey
+        ${"pickUpLocation"} | ${"dropOffLocation"}
+    `("clear a listed location when offline only", async ({ locationKey }) => {
+        const originalOfflineOnly = process.env.REACT_APP_OFFLINE_ONLY;
+        process.env.REACT_APP_OFFLINE_ONLY = "true";
+        try {
+            const task = new models.Task({
+                [locationKey]: mockLocations[0],
+                [detailsKeyFor(locationKey)]: toLocationDetails(
+                    mockLocations[0]
+                ),
+            });
+            await DataStore.save(task);
+            const saveSpy = jest.spyOn(DataStore, "save");
+            const apiSpy = jest.spyOn(API, "graphql");
+
+            render(
+                <LocationDetailsPanel
+                    taskModel={models.Task}
+                    taskId={task.id}
+                    locationKey={locationKey}
+                />,
+                { preloadedState }
+            );
+            await screen.findByText(RegExp(mockLocations[0].line1));
+            userEvent.click(screen.getByRole("button", { name: "Edit" }));
+            userEvent.click(screen.getByRole("button", { name: "Clear" }));
+            userEvent.click(screen.getByRole("button", { name: "OK" }));
+            await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(1));
+            // with no graphql mutation DataStore has to clear the details itself
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...task,
+                [locationKey]: null,
+                [detailsKeyFor(locationKey)]: null,
+            });
+            expect(apiSpy).not.toHaveBeenCalled();
+        } finally {
+            process.env.REACT_APP_OFFLINE_ONLY = originalOfflineOnly;
+        }
     });
 
     test.each`
@@ -287,6 +355,7 @@ describe("LocationDetailsPanel", () => {
                 _version: 1,
                 id: expect.any(String),
                 [`${locationKey}Id`]: null,
+                [detailsKeyFor(locationKey)]: null,
             },
         });
 
@@ -364,6 +433,10 @@ describe("LocationDetailsPanel", () => {
                 id: expect.any(String),
                 line1: `${fakeLocation.line1}test`,
             },
+            [detailsKeyFor(locationKey)]: toLocationDetails({
+                ...fakeLocation,
+                line1: `${fakeLocation.line1}test`,
+            }),
         });
         userEvent.click(screen.getByRole("button", { name: "Finish" }));
         expect(
@@ -403,10 +476,19 @@ describe("LocationDetailsPanel", () => {
         expect(textBox).toHaveValue(mockLocations[1].ward);
         userEvent.type(textBox, " new data");
         userEvent.type(textBox, "{enter}");
-        await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(1));
-        expect(saveSpy).toHaveBeenCalledWith({
+        // the location model and the nested details on the task are both updated
+        await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(2));
+        expect(saveSpy).toHaveBeenNthCalledWith(1, {
             ...fakeModel,
             ward: `${fakeModel.ward} ${fakeInputData}`,
+        });
+        expect(saveSpy).toHaveBeenNthCalledWith(2, {
+            ...mockTask,
+            [locationKey]: expect.objectContaining({ id: fake.id }),
+            [detailsKeyFor(locationKey)]: toLocationDetails({
+                ...fakeModel,
+                ward: `${fakeModel.ward} ${fakeInputData}`,
+            }),
         });
     });
 
@@ -453,6 +535,7 @@ describe("LocationDetailsPanel", () => {
                     tenantId,
                     id: expect.any(String),
                 },
+                [detailsKeyFor(locationKey)]: { line1: "new data" },
             });
         }
     );
@@ -488,13 +571,20 @@ describe("LocationDetailsPanel", () => {
         expect(textBox).toHaveValue(fakeModel.contact.name);
         userEvent.type(textBox, " new data");
         userEvent.type(textBox, "{enter}");
-        await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(1));
-        expect(saveSpy).toHaveBeenCalledWith({
+        // the location model and the nested details on the task are both updated
+        await waitFor(() => expect(saveSpy).toHaveBeenCalledTimes(2));
+        const updatedLocation = {
             ...fakeModel,
             contact: {
                 ...fakeModel.contact,
                 name: `${fakeModel.contact.name} ${fakeInputData}`,
             },
+        };
+        expect(saveSpy).toHaveBeenNthCalledWith(1, updatedLocation);
+        expect(saveSpy).toHaveBeenNthCalledWith(2, {
+            ...mockTask,
+            [locationKey]: expect.objectContaining({ id: fakeModel.id }),
+            [detailsKeyFor(locationKey)]: toLocationDetails(updatedLocation),
         });
     });
 
@@ -543,6 +633,9 @@ describe("LocationDetailsPanel", () => {
                         ...fakeModel,
                         contact: { name: fakeInputData },
                         id: expect.any(String),
+                    },
+                    [detailsKeyFor(locationKey)]: {
+                        contact: { name: fakeInputData },
                     },
                 })
             );
@@ -594,6 +687,7 @@ describe("LocationDetailsPanel", () => {
                         ward: "ward data",
                         id: expect.any(String),
                     },
+                    [detailsKeyFor(locationKey)]: { ward: "ward data" },
                 })
             );
             userEvent.click(screen.getByText("Name"));
@@ -609,6 +703,19 @@ describe("LocationDetailsPanel", () => {
                         name: `${fakeInputData}`,
                     },
                     id: expect.any(String),
+                })
+            );
+            // the nested details on the task get the contact as well
+            await waitFor(() =>
+                expect(saveSpy).toHaveBeenNthCalledWith(4, {
+                    ...fakeTask,
+                    [locationKey]: expect.objectContaining({
+                        ward: "ward data",
+                    }),
+                    [detailsKeyFor(locationKey)]: {
+                        ward: "ward data",
+                        contact: { name: fakeInputData },
+                    },
                 })
             );
         }
@@ -765,6 +872,9 @@ describe("LocationDetailsPanel", () => {
                         },
                         id: expect.any(String),
                     },
+                    [detailsKeyFor(locationKey)]: {
+                        contact: { name: fakeInputData },
+                    },
                 })
             );
             userEvent.click(screen.getByText("Ward"));
@@ -777,6 +887,19 @@ describe("LocationDetailsPanel", () => {
                     contact: { name: fakeInputData },
                     ward: "ward data",
                     id: expect.any(String),
+                })
+            );
+            // the nested details on the task get the address as well
+            await waitFor(() =>
+                expect(saveSpy).toHaveBeenNthCalledWith(4, {
+                    ...fakeTask,
+                    [locationKey]: expect.objectContaining({
+                        contact: { name: fakeInputData },
+                    }),
+                    [detailsKeyFor(locationKey)]: {
+                        contact: { name: fakeInputData },
+                        ward: "ward data",
+                    },
                 })
             );
         }
@@ -981,6 +1104,7 @@ describe("LocationDetailsPanel", () => {
                 expect(saveSpy).toHaveBeenCalledWith({
                     ...task,
                     [locationKey]: mockPreset2,
+                    [detailsKeyFor(locationKey)]: { name: "new preset" },
                 });
             });
             console.log(querySpy.mock.calls);
@@ -1047,6 +1171,7 @@ describe("LocationDetailsPanel", () => {
         expect(saveSpy).toHaveBeenCalledWith({
             ...task,
             pickUpLocation: { ...mockLocation, id: expect.any(String) },
+            pickUpLocationDetails: toLocationDetails(mockLocation),
             id: expect.any(String),
         });
         const { label, addressNumber, street, ...rest } = fakeOnlineLocation;
