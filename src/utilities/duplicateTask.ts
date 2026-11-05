@@ -86,6 +86,8 @@ export default async function duplicateTask(
         utils.locationModelToTaskLocationDetail(pickUpLocation);
     const dropOffLocationDetails =
         utils.locationModelToTaskLocationDetail(dropOffLocation);
+    const establishmentLocationDetails =
+        utils.locationModelToTaskLocationDetail(establishmentLocation);
     let newTaskData = new models.Task({
         ...rest,
         status: models.TaskStatus.NEW,
@@ -94,6 +96,7 @@ export default async function duplicateTask(
         pickUpLocationDetails,
         dropOffLocationDetails,
         establishmentLocation,
+        establishmentLocationDetails,
         tenantId,
         createdBy: author,
         dateCreated: today.toISOString().split("T")[0],
@@ -110,6 +113,7 @@ export default async function duplicateTask(
                 dropOffLocationDetails,
                 riderResponsibility,
                 establishmentLocation,
+                establishmentLocationDetails,
                 tenantId,
                 createdBy: author,
                 dateCreated: today.toISOString().split("T")[0],

@@ -107,6 +107,8 @@ export default async function generateMultipleDuplicatedTaskModels(
                 utils.locationModelToTaskLocationDetail(pickUpLocation);
             const dropOffLocationDetails =
                 utils.locationModelToTaskLocationDetail(dropOffLocation);
+            const establishmentLocationDetails =
+                utils.locationModelToTaskLocationDetail(establishmentLocation);
 
             let newTaskData = new models.Task({
                 ...rest,
@@ -117,6 +119,7 @@ export default async function generateMultipleDuplicatedTaskModels(
                 dropOffLocationDetails,
                 createdBy: whoami,
                 establishmentLocation,
+                establishmentLocationDetails,
                 dateCreated: today.toISOString().split("T")[0],
                 tenantId,
             });
