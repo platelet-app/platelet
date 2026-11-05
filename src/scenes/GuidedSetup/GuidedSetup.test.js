@@ -5,6 +5,7 @@ import { GuidedSetup } from "./GuidedSetup";
 import * as models from "../../models";
 import { DataStore, Geo } from "aws-amplify";
 import userEvent from "@testing-library/user-event";
+import _ from "lodash";
 
 import {
     commentVisibility,
@@ -36,6 +37,18 @@ jest.mock("aws-amplify", () => {
 });
 
 const tenantId = "tenantId";
+
+// the nested location details on a task are a copy of the location without the model fields
+const locationDetails = (location) =>
+    _.omit(location, [
+        "id",
+        "listed",
+        "tenantId",
+        "archived",
+        "_version",
+        "_lastChangedAt",
+        "_deleted",
+    ]);
 
 const whoami = new models.User({
     displayName: "test user",
@@ -173,11 +186,14 @@ describe("GuidedSetup", () => {
         });
         const mockTask = new models.Task({
             dropOffLocation: null,
+            dropOffLocationDetails: null,
             pickUpLocation: null,
+            pickUpLocationDetails: null,
             priority: null,
             createdBy: mockWhoami,
             status: tasksStatus.new,
             establishmentLocation: null,
+            establishmentLocationDetails: null,
             requesterContact: {
                 name: "",
                 telephoneNumber: "",
@@ -241,8 +257,11 @@ describe("GuidedSetup", () => {
         });
         const mockTask = new models.Task({
             dropOffLocation: null,
+            dropOffLocationDetails: null,
             pickUpLocation: null,
+            pickUpLocationDetails: null,
             establishmentLocation: null,
+            establishmentLocationDetails: null,
             createdBy: mockWhoami,
             priority: priorities.high,
             status: tasksStatus.new,
@@ -344,10 +363,13 @@ describe("GuidedSetup", () => {
         );
         const mockTask = new models.Task({
             dropOffLocation: null,
+            dropOffLocationDetails: null,
             pickUpLocation: null,
+            pickUpLocationDetails: null,
             priority: null,
             createdBy: whoami,
             establishmentLocation: mockLocation,
+            establishmentLocationDetails: locationDetails(mockLocation),
             status: tasksStatus.new,
             requesterContact: { name: "", telephoneNumber: "" },
             tenantId,
@@ -384,10 +406,13 @@ describe("GuidedSetup", () => {
         );
         const mockTask = new models.Task({
             dropOffLocation: null,
+            dropOffLocationDetails: null,
             pickUpLocation: null,
+            pickUpLocationDetails: null,
             createdBy: whoami,
             priority: null,
             establishmentLocation: null,
+            establishmentLocationDetails: null,
             status: tasksStatus.new,
             requesterContact: { name: "", telephoneNumber: "" },
             tenantId,
@@ -422,6 +447,7 @@ describe("GuidedSetup", () => {
         const mockTask = new models.Task({
             createdBy: whoami,
             establishmentLocation: null,
+            establishmentLocationDetails: null,
             priority: null,
             status: models.TaskStatus.NEW,
             requesterContact: { name: "", telephoneNumber: "" },
@@ -556,6 +582,8 @@ describe("GuidedSetup", () => {
                 ...mockLocation2,
                 id: expect.any(String),
             },
+            pickUpLocationDetails: locationDetails(mockLocation),
+            dropOffLocationDetails: locationDetails(mockLocation2),
         });
     }, 40000);
 
@@ -567,10 +595,13 @@ describe("GuidedSetup", () => {
         });
         const mockTask = new models.Task({
             dropOffLocation: null,
+            dropOffLocationDetails: null,
             pickUpLocation: null,
+            pickUpLocationDetails: null,
             createdBy: whoami,
             priority: null,
             establishmentLocation: mockLocation,
+            establishmentLocationDetails: locationDetails(mockLocation),
             status: tasksStatus.new,
             requesterContact: { name: "", telephoneNumber: "" },
             tenantId,
@@ -606,6 +637,7 @@ describe("GuidedSetup", () => {
         expect(saveSpy).toHaveBeenCalledWith({
             ...mockTask,
             establishmentLocation: { ...mockLocation, id: expect.any(String) },
+            establishmentLocationDetails: locationDetails(mockLocation),
             ...timeStrings,
             id: expect.any(String),
         });
@@ -617,10 +649,13 @@ describe("GuidedSetup", () => {
         );
         const mockTask = new models.Task({
             dropOffLocation: null,
+            dropOffLocationDetails: null,
             pickUpLocation: mockLocation,
+            pickUpLocationDetails: locationDetails(mockLocation),
             createdBy: whoami,
             priority: null,
             establishmentLocation: mockLocation,
+            establishmentLocationDetails: locationDetails(mockLocation),
             status: tasksStatus.new,
             requesterContact: { name: "", telephoneNumber: "" },
             tenantId,
@@ -671,10 +706,13 @@ describe("GuidedSetup", () => {
         );
         const mockTask = new models.Task({
             dropOffLocation: null,
+            dropOffLocationDetails: null,
             pickUpLocation: null,
+            pickUpLocationDetails: null,
             createdBy: whoami,
             priority: null,
             establishmentLocation: mockLocation,
+            establishmentLocationDetails: locationDetails(mockLocation),
             status: tasksStatus.new,
             requesterContact: {
                 name: "",
@@ -712,10 +750,13 @@ describe("GuidedSetup", () => {
     test("adding item data", async () => {
         const mockTask = new models.Task({
             dropOffLocation: null,
+            dropOffLocationDetails: null,
             pickUpLocation: null,
+            pickUpLocationDetails: null,
             createdBy: whoami,
             priority: null,
             establishmentLocation: null,
+            establishmentLocationDetails: null,
             status: tasksStatus.new,
             requesterContact: { name: "", telephoneNumber: "" },
             tenantId,
@@ -907,11 +948,14 @@ describe("GuidedSetup", () => {
         });
         const mockTask = new models.Task({
             dropOffLocation: null,
+            dropOffLocationDetails: null,
             pickUpLocation: null,
+            pickUpLocationDetails: null,
             priority: null,
             createdBy: mockWhoami,
             status: tasksStatus.new,
             establishmentLocation: null,
+            establishmentLocationDetails: null,
             requesterContact: {
                 name: "",
                 telephoneNumber: "",
@@ -1001,186 +1045,124 @@ describe("GuidedSetup", () => {
         });
     });
     test.each`
-        action
-        ${"pickUpLocation"} | ${"dropOffLocation"}
-    `("online search when selecting a location", async ({ locationType }) => {
-        const fakeOnlineLocation = {
-            label: "testLabel",
-            addressNumber: "123",
-            street: "testStreet",
-            neighborhood: "testNeighborhood",
-            municipality: "testMunicipality",
-            subRegion: "testSubRegion",
-            country: "testCountry",
-            postalCode: "testPostalCode",
-        };
-        const querySpy = jest.spyOn(DataStore, "query");
-        const saveSpy = jest.spyOn(DataStore, "save");
-        jest.spyOn(Geo, "searchByText").mockResolvedValue([fakeOnlineLocation]);
-        render(<GuidedSetup />, { preloadedState });
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
-        userEvent.click(screen.getByText(/PICK-UP/));
-        const textBox = screen.getAllByRole("combobox", {
-            name: "Search locations...",
-        })[locationType === "pickUpLocation" ? 0 : 1];
-        userEvent.type(textBox, "testLabel");
-        const option = await screen.findByText(
-            "testLabel",
-            {},
-            { timeout: 1000 }
-        );
-        userEvent.click(option);
-        await waitFor(() => {
-            expect(screen.queryByText("testLabel")).toBeNull();
-        });
-        const { label, addressNumber, street, ...rest } = fakeOnlineLocation;
-        expect(
-            screen.getByText(`${addressNumber} ${street}`)
-        ).toBeInTheDocument();
-        for (const value of Object.values(rest)) {
-            expect(screen.getByText(value)).toBeInTheDocument();
-        }
-        userEvent.click(screen.getByText("testNeighborhood"));
-        userEvent.type(
-            screen.getByRole("textbox", { name: "Click to edit" }),
-            "more"
-        );
-        userEvent.click(
-            screen.getByRole("button", { name: "Save to dashboard" })
-        );
-        await waitFor(() => {
-            expect(saveSpy).toHaveBeenCalledTimes(3);
-        });
-        const mockLocation = new models.Location({
-            country: "testCountry",
-            county: "testSubRegion",
-            line1: "123 testStreet",
-            line2: "testNeighborhoodmore",
-            listed: 0,
-            postcode: "testPostalCode",
-            tenantId: "tenantId",
-            town: "testMunicipality",
-        });
-        const mockTask = new models.Task({
-            tenantId,
-            createdBy: whoami,
-            dateCreated: "2021-11-29",
-            dropOffLocation: null,
-            priority: null,
-            requesterContact: {
-                name: "",
-                telephoneNumber: "",
-            },
-            status: "NEW",
-            timeOfCall: "2021-11-29T23:24:58.987Z",
-            establishmentLocation: null,
-            pickUpSchedule: null,
-            dropOffSchedule: null,
-        });
-        expect(saveSpy).toHaveBeenCalledWith({
-            ...mockLocation,
-            id: expect.any(String),
-        });
-        if (locationType === "pickUpLocation") {
-            expect(saveSpy).toHaveBeenCalledWith({
-                ...mockTask,
-                pickUpLocation: { ...mockLocation, id: expect.any(String) },
-                dropOffLocation: null,
-                id: expect.any(String),
-            });
-        } else {
-            expect(saveSpy).toHaveBeenCalledWith({
-                ...mockTask,
-                pickUpLocation: null,
-                dropOffLocation: { ...mockLocation, id: expect.any(String) },
-                id: expect.any(String),
-            });
-        }
-    });
-    test.each`
-        action
-        ${"pickUpLocation"} | ${"dropOffLocation"}
-    `("save with a location from the directory", async ({ locationType }) => {
-        const mockLocation = new models.Location({
-            name: "testLocation",
-            country: "testCountry",
-            county: "testSubRegion",
-            line1: "123 testStreet",
-            line2: "testNeighborhood",
-            listed: 1,
-            postcode: "testPostalCode",
-            tenantId: "tenantId",
-            town: "testMunicipality",
-            archived: 0,
-        });
-        await DataStore.save(mockLocation);
-        const mockTask = new models.Task({
-            tenantId,
-            createdBy: whoami,
-            dateCreated: "2021-11-29",
-            priority: null,
-            requesterContact: {
-                name: "",
-                telephoneNumber: "",
-            },
-            status: "NEW",
-            timeOfCall: "2021-11-29T23:24:58.987Z",
-            establishmentLocation: null,
-            pickUpSchedule: null,
-            dropOffSchedule: null,
-        });
-        const querySpy = jest.spyOn(DataStore, "query");
-        const saveSpy = jest.spyOn(DataStore, "save");
-        render(<GuidedSetup />, { preloadedState });
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
-        userEvent.click(screen.getByText(/PICK-UP/));
-        const textBox = screen.getAllByRole("combobox", {
-            name: "Search locations...",
-        })[locationType === "pickUpLocation" ? 0 : 1];
-        userEvent.type(textBox, "testLocation");
-        const option = await screen.findByText("testLocation");
-        userEvent.click(option);
-
-        const rest = [
-            mockLocation.country,
-            mockLocation.county,
-            mockLocation.line1,
-            mockLocation.line2,
-            mockLocation.postcode,
-            mockLocation.town,
-            mockLocation.name,
-        ];
-
-        for (const value of Object.values(rest)) {
-            expect(screen.getByText(value)).toBeInTheDocument();
-        }
-        userEvent.click(
-            screen.getByRole("button", { name: "Save to dashboard" })
-        );
-        await waitFor(() => {
-            expect(saveSpy).toHaveBeenCalledTimes(2);
-        });
-        if (locationType === "pickUpLocation") {
-            expect(saveSpy).toHaveBeenCalledWith({
-                ...mockTask,
-                pickUpLocation: { ...mockLocation, id: expect.any(String) },
-                dropOffLocation: null,
-                id: expect.any(String),
-            });
-        } else {
-            expect(saveSpy).toHaveBeenCalledWith({
-                ...mockTask,
-                dropOffLocation: { ...mockLocation, id: expect.any(String) },
-                pickUpLocation: null,
-                id: expect.any(String),
-            });
-        }
-    });
-    test.each`
-        action
-        ${"pickUpLocation"} | ${"dropOffLocation"}
+        locationType
+        ${"pickUpLocation"}
+        ${"dropOffLocation"}
     `(
-        "save with a location from the directory and inline edit it",
+        "online search when selecting a location $locationType",
+        async ({ locationType }) => {
+            const fakeOnlineLocation = {
+                label: "testLabel",
+                addressNumber: "123",
+                street: "testStreet",
+                neighborhood: "testNeighborhood",
+                municipality: "testMunicipality",
+                subRegion: "testSubRegion",
+                country: "testCountry",
+                postalCode: "testPostalCode",
+            };
+            const querySpy = jest.spyOn(DataStore, "query");
+            const saveSpy = jest.spyOn(DataStore, "save");
+            jest.spyOn(Geo, "searchByText").mockResolvedValue([
+                fakeOnlineLocation,
+            ]);
+            render(<GuidedSetup />, { preloadedState });
+            await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
+            userEvent.click(screen.getByText(/PICK-UP/));
+            const textBox = screen.getAllByRole("combobox", {
+                name: "Search locations...",
+            })[locationType === "pickUpLocation" ? 0 : 1];
+            userEvent.type(textBox, "testLabel");
+            const option = await screen.findByText(
+                "testLabel",
+                {},
+                { timeout: 1000 }
+            );
+            userEvent.click(option);
+            await waitFor(() => {
+                expect(screen.queryByText("testLabel")).toBeNull();
+            });
+            const { label, addressNumber, street, ...rest } =
+                fakeOnlineLocation;
+            expect(
+                screen.getByText(`${addressNumber} ${street}`)
+            ).toBeInTheDocument();
+            for (const value of Object.values(rest)) {
+                expect(screen.getByText(value)).toBeInTheDocument();
+            }
+            userEvent.click(screen.getByText("testNeighborhood"));
+            userEvent.type(
+                screen.getByRole("textbox", { name: "Click to edit" }),
+                "more"
+            );
+            userEvent.click(
+                screen.getByRole("button", { name: "Save to dashboard" })
+            );
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledTimes(3);
+            });
+            const mockLocation = new models.Location({
+                country: "testCountry",
+                county: "testSubRegion",
+                line1: "123 testStreet",
+                line2: "testNeighborhoodmore",
+                listed: 0,
+                postcode: "testPostalCode",
+                tenantId: "tenantId",
+                town: "testMunicipality",
+            });
+            const mockTask = new models.Task({
+                tenantId,
+                createdBy: whoami,
+                dateCreated: "2021-11-29",
+                dropOffLocation: null,
+                dropOffLocationDetails: null,
+                priority: null,
+                requesterContact: {
+                    name: "",
+                    telephoneNumber: "",
+                },
+                status: "NEW",
+                timeOfCall: "2021-11-29T23:24:58.987Z",
+                establishmentLocation: null,
+                establishmentLocationDetails: null,
+                pickUpSchedule: null,
+                dropOffSchedule: null,
+            });
+            expect(saveSpy).toHaveBeenCalledWith({
+                ...mockLocation,
+                id: expect.any(String),
+            });
+            if (locationType === "pickUpLocation") {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                    pickUpLocation: { ...mockLocation, id: expect.any(String) },
+                    pickUpLocationDetails: locationDetails(mockLocation),
+                    dropOffLocation: null,
+                    dropOffLocationDetails: null,
+                    id: expect.any(String),
+                });
+            } else {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                    pickUpLocation: null,
+                    pickUpLocationDetails: null,
+                    dropOffLocation: {
+                        ...mockLocation,
+                        id: expect.any(String),
+                    },
+                    dropOffLocationDetails: locationDetails(mockLocation),
+                    id: expect.any(String),
+                });
+            }
+        }
+    );
+    test.each`
+        locationType
+        ${"pickUpLocation"}
+        ${"dropOffLocation"}
+    `(
+        "save with a location from the directory $locationType",
         async ({ locationType }) => {
             const mockLocation = new models.Location({
                 name: "testLocation",
@@ -1207,6 +1189,98 @@ describe("GuidedSetup", () => {
                 status: "NEW",
                 timeOfCall: "2021-11-29T23:24:58.987Z",
                 establishmentLocation: null,
+                establishmentLocationDetails: null,
+                pickUpSchedule: null,
+                dropOffSchedule: null,
+            });
+            const querySpy = jest.spyOn(DataStore, "query");
+            const saveSpy = jest.spyOn(DataStore, "save");
+            render(<GuidedSetup />, { preloadedState });
+            await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
+            userEvent.click(screen.getByText(/PICK-UP/));
+            const textBox = screen.getAllByRole("combobox", {
+                name: "Search locations...",
+            })[locationType === "pickUpLocation" ? 0 : 1];
+            userEvent.type(textBox, "testLocation");
+            const option = await screen.findByText("testLocation");
+            userEvent.click(option);
+
+            const rest = [
+                mockLocation.country,
+                mockLocation.county,
+                mockLocation.line1,
+                mockLocation.line2,
+                mockLocation.postcode,
+                mockLocation.town,
+                mockLocation.name,
+            ];
+
+            for (const value of Object.values(rest)) {
+                expect(screen.getByText(value)).toBeInTheDocument();
+            }
+            userEvent.click(
+                screen.getByRole("button", { name: "Save to dashboard" })
+            );
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledTimes(2);
+            });
+            if (locationType === "pickUpLocation") {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                    pickUpLocation: { ...mockLocation, id: expect.any(String) },
+                    pickUpLocationDetails: locationDetails(mockLocation),
+                    dropOffLocation: null,
+                    dropOffLocationDetails: null,
+                    id: expect.any(String),
+                });
+            } else {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                    dropOffLocation: {
+                        ...mockLocation,
+                        id: expect.any(String),
+                    },
+                    dropOffLocationDetails: locationDetails(mockLocation),
+                    pickUpLocation: null,
+                    pickUpLocationDetails: null,
+                    id: expect.any(String),
+                });
+            }
+        }
+    );
+    test.each`
+        locationType
+        ${"pickUpLocation"}
+        ${"dropOffLocation"}
+    `(
+        "save with a location from the directory and inline edit it $locationType",
+        async ({ locationType }) => {
+            const mockLocation = new models.Location({
+                name: "testLocation",
+                country: "testCountry",
+                county: "testSubRegion",
+                line1: "123 testStreet",
+                line2: "testNeighborhood",
+                listed: 1,
+                postcode: "testPostalCode",
+                tenantId: "tenantId",
+                town: "testMunicipality",
+                archived: 0,
+            });
+            await DataStore.save(mockLocation);
+            const mockTask = new models.Task({
+                tenantId,
+                createdBy: whoami,
+                dateCreated: "2021-11-29",
+                priority: null,
+                requesterContact: {
+                    name: "",
+                    telephoneNumber: "",
+                },
+                status: "NEW",
+                timeOfCall: "2021-11-29T23:24:58.987Z",
+                establishmentLocation: null,
+                establishmentLocationDetails: null,
                 dropOffSchedule: null,
                 pickUpSchedule: null,
             });
@@ -1262,205 +1336,230 @@ describe("GuidedSetup", () => {
                 expect(saveSpy).toHaveBeenCalledWith({
                     ...mockTask,
                     pickUpLocation: newMockLocation,
+                    pickUpLocationDetails: locationDetails(newMockLocation),
                     dropOffLocation: null,
+                    dropOffLocationDetails: null,
                     id: expect.any(String),
                 });
             } else {
                 expect(saveSpy).toHaveBeenCalledWith({
                     ...mockTask,
                     dropOffLocation: newMockLocation,
+                    dropOffLocationDetails: locationDetails(newMockLocation),
                     pickUpLocation: null,
+                    pickUpLocationDetails: null,
                     id: expect.any(String),
                 });
             }
         }
     );
     test.each`
-        action
-        ${"pickUpLocation"} | ${"dropOffLocation"}
-    `("edit the location after entering it", async ({ locationType }) => {
-        const mockLocation = new models.Location({
-            name: "testLocation",
-            country: "testCountry",
-            county: "testSubRegion",
-            line1: "123 testStreet",
-            line2: "testNeighborhood",
-            listed: 1,
-            postcode: "testPostalCode",
-            tenantId: "tenantId",
-            town: "testMunicipality",
-            archived: 0,
-        });
-        await DataStore.save(mockLocation);
-        const mockTask = new models.Task({
-            tenantId,
-            createdBy: whoami,
-            dateCreated: "2021-11-29",
-            priority: null,
-            requesterContact: {
+        locationType
+        ${"pickUpLocation"}
+        ${"dropOffLocation"}
+    `(
+        "edit the location after entering it $locationType",
+        async ({ locationType }) => {
+            const mockLocation = new models.Location({
+                name: "testLocation",
+                country: "testCountry",
+                county: "testSubRegion",
+                line1: "123 testStreet",
+                line2: "testNeighborhood",
+                listed: 1,
+                postcode: "testPostalCode",
+                tenantId: "tenantId",
+                town: "testMunicipality",
+                archived: 0,
+            });
+            await DataStore.save(mockLocation);
+            const mockTask = new models.Task({
+                tenantId,
+                createdBy: whoami,
+                dateCreated: "2021-11-29",
+                priority: null,
+                requesterContact: {
+                    name: "",
+                    telephoneNumber: "",
+                },
+                status: "NEW",
+                timeOfCall: "2021-11-29T23:24:58.987Z",
+                establishmentLocation: null,
+                establishmentLocationDetails: null,
+                pickUpSchedule: null,
+                dropOffSchedule: null,
+            });
+            const querySpy = jest.spyOn(DataStore, "query");
+            const saveSpy = jest.spyOn(DataStore, "save");
+            render(<GuidedSetup />, { preloadedState });
+            await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
+            userEvent.click(screen.getByText(/PICK-UP/));
+            const textBox = screen.getAllByRole("combobox", {
+                name: "Search locations...",
+            })[locationType === "pickUpLocation" ? 0 : 1];
+            userEvent.type(textBox, "testLocation");
+            const option = await screen.findByText("testLocation");
+            userEvent.click(option);
+
+            const rest = [
+                mockLocation.country,
+                mockLocation.county,
+                mockLocation.line1,
+                mockLocation.line2,
+                mockLocation.postcode,
+                mockLocation.town,
+                mockLocation.name,
+            ];
+
+            for (const value of Object.values(rest)) {
+                expect(screen.getByText(value)).toBeInTheDocument();
+            }
+            userEvent.click(screen.getByRole("button", { name: "Edit" }));
+            userEvent.type(
+                screen.getByRole("textbox", { name: "Line one" }),
+                "1"
+            );
+            userEvent.click(screen.getByRole("button", { name: "OK" }));
+            userEvent.click(
+                screen.getByRole("button", { name: "Save to dashboard" })
+            );
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledTimes(3);
+            });
+            const mockNewLocation = {
+                ...mockLocation,
                 name: "",
-                telephoneNumber: "",
-            },
-            status: "NEW",
-            timeOfCall: "2021-11-29T23:24:58.987Z",
-            establishmentLocation: null,
-            pickUpSchedule: null,
-            dropOffSchedule: null,
-        });
-        const querySpy = jest.spyOn(DataStore, "query");
-        const saveSpy = jest.spyOn(DataStore, "save");
-        render(<GuidedSetup />, { preloadedState });
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
-        userEvent.click(screen.getByText(/PICK-UP/));
-        const textBox = screen.getAllByRole("combobox", {
-            name: "Search locations...",
-        })[locationType === "pickUpLocation" ? 0 : 1];
-        userEvent.type(textBox, "testLocation");
-        const option = await screen.findByText("testLocation");
-        userEvent.click(option);
-
-        const rest = [
-            mockLocation.country,
-            mockLocation.county,
-            mockLocation.line1,
-            mockLocation.line2,
-            mockLocation.postcode,
-            mockLocation.town,
-            mockLocation.name,
-        ];
-
-        for (const value of Object.values(rest)) {
-            expect(screen.getByText(value)).toBeInTheDocument();
-        }
-        userEvent.click(screen.getByRole("button", { name: "Edit" }));
-        userEvent.type(screen.getByRole("textbox", { name: "Line one" }), "1");
-        userEvent.click(screen.getByRole("button", { name: "OK" }));
-        userEvent.click(
-            screen.getByRole("button", { name: "Save to dashboard" })
-        );
-        await waitFor(() => {
-            expect(saveSpy).toHaveBeenCalledTimes(3);
-        });
-        const mockNewLocation = {
-            ...mockLocation,
-            name: "",
-            line1: `${mockLocation.line1}1`,
-            listed: 0,
-            id: expect.any(String),
-        };
-        expect(saveSpy).toHaveBeenCalledWith(mockNewLocation);
-
-        if (locationType === "pickUpLocation") {
-            expect(saveSpy).toHaveBeenCalledWith({
-                ...mockTask,
-                pickUpLocation: mockNewLocation,
-                dropOffLocation: null,
+                line1: `${mockLocation.line1}1`,
+                listed: 0,
                 id: expect.any(String),
-            });
-        } else {
-            expect(saveSpy).toHaveBeenCalledWith({
-                ...mockTask,
-                dropOffLocation: mockNewLocation,
-                pickUpLocation: null,
-                id: expect.any(String),
-            });
+            };
+            expect(saveSpy).toHaveBeenCalledWith(mockNewLocation);
+
+            if (locationType === "pickUpLocation") {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                    pickUpLocation: mockNewLocation,
+                    pickUpLocationDetails: locationDetails(mockNewLocation),
+                    dropOffLocation: null,
+                    dropOffLocationDetails: null,
+                    id: expect.any(String),
+                });
+            } else {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                    dropOffLocation: mockNewLocation,
+                    dropOffLocationDetails: locationDetails(mockNewLocation),
+                    pickUpLocation: null,
+                    pickUpLocationDetails: null,
+                    id: expect.any(String),
+                });
+            }
         }
-    });
+    );
     test.each`
-        action
-        ${"pickUpLocation"} | ${"dropOffLocation"}
-    `("change the location after entering it", async ({ locationType }) => {
-        const mockLocation = new models.Location({
-            name: "testLocation",
-            country: "testCountry",
-            county: "testSubRegion",
-            line1: "123 testStreet",
-            line2: "testNeighborhood",
-            listed: 1,
-            postcode: "testPostalCode",
-            tenantId: "tenantId",
-            town: "testMunicipality",
-            archived: 0,
-        });
-        const mockLocation2 = new models.Location({
-            name: "another",
-            listed: 1,
-            tenantId: "tenantId",
-            archived: 0,
-        });
-        await DataStore.save(mockLocation);
-        await DataStore.save(mockLocation2);
-        const mockTask = new models.Task({
-            tenantId,
-            createdBy: whoami,
-            dateCreated: "2021-11-29",
-            priority: null,
-            requesterContact: {
-                name: "",
-                telephoneNumber: "",
-            },
-            status: "NEW",
-            timeOfCall: "2021-11-29T23:24:58.987Z",
-            establishmentLocation: null,
-            pickUpSchedule: null,
-            dropOffSchedule: null,
-        });
-        const querySpy = jest.spyOn(DataStore, "query");
-        const saveSpy = jest.spyOn(DataStore, "save");
-        render(<GuidedSetup />, { preloadedState });
-        await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
-        userEvent.click(screen.getByText(/PICK-UP/));
-        const textBox = screen.getAllByRole("combobox", {
-            name: "Search locations...",
-        })[locationType === "pickUpLocation" ? 0 : 1];
-        userEvent.type(textBox, "testLocation");
-        const option = await screen.findByText("testLocation");
-        userEvent.click(option);
-
-        const rest = [
-            mockLocation.country,
-            mockLocation.county,
-            mockLocation.line1,
-            mockLocation.line2,
-            mockLocation.postcode,
-            mockLocation.town,
-            mockLocation.name,
-        ];
-
-        for (const value of Object.values(rest)) {
-            expect(screen.getByText(value)).toBeInTheDocument();
-        }
-        userEvent.click(screen.getByRole("button", { name: "Edit" }));
-        await waitFor(() => {
-            expect(querySpy).toHaveBeenCalledTimes(5);
-        });
-        const comboBox = screen.getByRole("combobox", {
-            name: "Search a new location",
-        });
-        userEvent.type(comboBox, "another");
-        userEvent.click(await screen.findByText("another"));
-        userEvent.click(screen.getByRole("button", { name: "OK" }));
-        userEvent.click(
-            screen.getByRole("button", { name: "Save to dashboard" })
-        );
-        await waitFor(() => {
-            expect(saveSpy).toHaveBeenCalledTimes(2);
-        });
-
-        if (locationType === "pickUpLocation") {
-            expect(saveSpy).toHaveBeenCalledWith({
-                ...mockTask,
-                pickUpLocation: mockLocation2,
-                dropOffLocation: null,
-                id: expect.any(String),
+        locationType
+        ${"pickUpLocation"}
+        ${"dropOffLocation"}
+    `(
+        "change the location after entering it $locationType",
+        async ({ locationType }) => {
+            const mockLocation = new models.Location({
+                name: "testLocation",
+                country: "testCountry",
+                county: "testSubRegion",
+                line1: "123 testStreet",
+                line2: "testNeighborhood",
+                listed: 1,
+                postcode: "testPostalCode",
+                tenantId: "tenantId",
+                town: "testMunicipality",
+                archived: 0,
             });
-        } else {
-            expect(saveSpy).toHaveBeenCalledWith({
-                ...mockTask,
-                dropOffLocation: mockLocation2,
-                pickUpLocation: null,
-                id: expect.any(String),
+            const mockLocation2 = new models.Location({
+                name: "another",
+                listed: 1,
+                tenantId: "tenantId",
+                archived: 0,
             });
+            await DataStore.save(mockLocation);
+            await DataStore.save(mockLocation2);
+            const mockTask = new models.Task({
+                tenantId,
+                createdBy: whoami,
+                dateCreated: "2021-11-29",
+                priority: null,
+                requesterContact: {
+                    name: "",
+                    telephoneNumber: "",
+                },
+                status: "NEW",
+                timeOfCall: "2021-11-29T23:24:58.987Z",
+                establishmentLocation: null,
+                establishmentLocationDetails: null,
+                pickUpSchedule: null,
+                dropOffSchedule: null,
+            });
+            const querySpy = jest.spyOn(DataStore, "query");
+            const saveSpy = jest.spyOn(DataStore, "save");
+            render(<GuidedSetup />, { preloadedState });
+            await waitFor(() => expect(querySpy).toHaveBeenCalledTimes(4));
+            userEvent.click(screen.getByText(/PICK-UP/));
+            const textBox = screen.getAllByRole("combobox", {
+                name: "Search locations...",
+            })[locationType === "pickUpLocation" ? 0 : 1];
+            userEvent.type(textBox, "testLocation");
+            const option = await screen.findByText("testLocation");
+            userEvent.click(option);
+
+            const rest = [
+                mockLocation.country,
+                mockLocation.county,
+                mockLocation.line1,
+                mockLocation.line2,
+                mockLocation.postcode,
+                mockLocation.town,
+                mockLocation.name,
+            ];
+
+            for (const value of Object.values(rest)) {
+                expect(screen.getByText(value)).toBeInTheDocument();
+            }
+            userEvent.click(screen.getByRole("button", { name: "Edit" }));
+            await waitFor(() => {
+                expect(querySpy).toHaveBeenCalledTimes(5);
+            });
+            const comboBox = screen.getByRole("combobox", {
+                name: "Search a new location",
+            });
+            userEvent.type(comboBox, "another");
+            userEvent.click(await screen.findByText("another"));
+            userEvent.click(screen.getByRole("button", { name: "OK" }));
+            userEvent.click(
+                screen.getByRole("button", { name: "Save to dashboard" })
+            );
+            await waitFor(() => {
+                expect(saveSpy).toHaveBeenCalledTimes(2);
+            });
+
+            if (locationType === "pickUpLocation") {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                    pickUpLocation: mockLocation2,
+                    pickUpLocationDetails: locationDetails(mockLocation2),
+                    dropOffLocation: null,
+                    dropOffLocationDetails: null,
+                    id: expect.any(String),
+                });
+            } else {
+                expect(saveSpy).toHaveBeenCalledWith({
+                    ...mockTask,
+                    dropOffLocation: mockLocation2,
+                    dropOffLocationDetails: locationDetails(mockLocation2),
+                    pickUpLocation: null,
+                    pickUpLocationDetails: null,
+                    id: expect.any(String),
+                });
+            }
         }
-    });
+    );
 });

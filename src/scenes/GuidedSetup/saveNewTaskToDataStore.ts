@@ -70,6 +70,8 @@ export async function saveNewTaskToDataStore(
         utils.locationModelToTaskLocationDetail(pickUpLocation);
     const dropOffLocationDetails =
         utils.locationModelToTaskLocationDetail(dropOffLocation);
+    const establishmentLocationDetails =
+        utils.locationModelToTaskLocationDetail(establishmentLocation);
     // get the date today without time
     const date = new Date();
     const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -83,6 +85,7 @@ export async function saveNewTaskToDataStore(
             pickUpLocationDetails,
             dropOffLocationDetails,
             establishmentLocation,
+            establishmentLocationDetails,
             createdBy: author,
             dropOffLocation,
             dropOffSchedule,
