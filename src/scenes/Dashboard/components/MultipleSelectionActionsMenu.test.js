@@ -1297,6 +1297,9 @@ describe("MultipleSelectionActionsMenu", () => {
                         dropOffLocationDetails: {
                             line1: i === 0 ? "some line 2" : "woop 2",
                         },
+                        establishmentLocationDetails: {
+                            line1: i === 0 ? "est 1" : "est 2",
+                        },
                         dateCreated: dateString,
                         id: expect.not.stringMatching(t.id),
                         tenantId,
@@ -1310,6 +1313,7 @@ describe("MultipleSelectionActionsMenu", () => {
                     id: expect.not.stringMatching(mockTasks[0].id),
                     pickUpLocationDetails: { line1: "some line" },
                     dropOffLocationDetails: { line1: "some line 2" },
+                    establishmentLocationDetails: { line1: "est 1" },
                     pickUpLocation: {
                         ...mockLocation1,
                         id: expect.not.stringMatching(mockLocation1.id),
@@ -1333,6 +1337,7 @@ describe("MultipleSelectionActionsMenu", () => {
                     id: expect.not.stringMatching(mockTasks[1].id),
                     pickUpLocationDetails: { line1: "woop 1" },
                     dropOffLocationDetails: { line1: "woop 2" },
+                    establishmentLocationDetails: { line1: "est 2" },
                     pickUpLocation: {
                         ...mockLocation3,
                         id: expect.not.stringMatching(mockLocation3.id),
@@ -1513,6 +1518,7 @@ describe("MultipleSelectionActionsMenu", () => {
                 ...t,
                 pickUpLocationDetails: null,
                 dropOffLocationDetails: null,
+                establishmentLocationDetails: null,
                 tenantId,
                 createdBy: mockWhoami,
                 id: expect.not.stringMatching(t.id),
@@ -1542,6 +1548,7 @@ describe("MultipleSelectionActionsMenu", () => {
                     ...a.task,
                     pickUpLocationDetails: null,
                     dropOffLocationDetails: null,
+                    establishmentLocationDetails: null,
                     createdBy: mockWhoami,
                     dateCreated: dateString,
                     id: expect.not.stringMatching(a.task.id),
@@ -1558,6 +1565,7 @@ describe("MultipleSelectionActionsMenu", () => {
                     ...a.task,
                     pickUpLocationDetails: null,
                     dropOffLocationDetails: null,
+                    establishmentLocationDetails: null,
                     createdBy: mockWhoami,
                     dateCreated: dateString,
                     id: expect.not.stringMatching(a.task.id),
@@ -1572,6 +1580,7 @@ describe("MultipleSelectionActionsMenu", () => {
                     ...d.task,
                     pickUpLocationDetails: null,
                     dropOffLocationDetails: null,
+                    establishmentLocationDetails: null,
                     createdBy: mockWhoami,
                     dateCreated: dateString,
                     id: expect.not.stringMatching(d.task.id),

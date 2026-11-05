@@ -629,6 +629,7 @@ describe("TaskContextMenu", () => {
             ...task,
             pickUpLocationDetails: { name: "woop" },
             dropOffLocationDetails: { name: "ohp" },
+            establishmentLocationDetails: { name: "something" },
             dateCreated: dateString,
             createdBy: whoami,
             tenantId,
@@ -643,6 +644,7 @@ describe("TaskContextMenu", () => {
                     ...task,
                     pickUpLocationDetails: { name: "woop" },
                     dropOffLocationDetails: { name: "ohp" },
+                    establishmentLocationDetails: { name: "something" },
                     dateCreated: dateString,
                     createdBy: whoami,
                     id: expect.not.stringMatching(task.id),
@@ -657,6 +659,7 @@ describe("TaskContextMenu", () => {
                 ...task,
                 pickUpLocationDetails: { name: "woop" },
                 dropOffLocationDetails: { name: "ohp" },
+                establishmentLocationDetails: { name: "something" },
                 createdBy: whoami,
                 dateCreated: dateString,
                 id: expect.any(String),
@@ -804,6 +807,7 @@ describe("TaskContextMenu", () => {
                 id: expect.not.stringMatching(task.id),
                 pickUpLocationDetails: { name: "woop" },
                 dropOffLocationDetails: { name: "ohp" },
+                establishmentLocationDetails: { name: "something" },
             })
         );
     });
