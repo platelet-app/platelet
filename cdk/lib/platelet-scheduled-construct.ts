@@ -3,6 +3,8 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import * as cdk from "aws-cdk-lib";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { createLambdaStatement, getRoleArnNameOnly } from "./utils";
+import * as events from "aws-cdk-lib/aws-events";
+import * as targets from "aws-cdk-lib/aws-events-targets";
 
 export interface ScheduledConstructProps {
     region: string;
@@ -34,9 +36,14 @@ export class ScheduledConstruct extends Construct {
                 role,
             }
         );
-        new cdk.CfnOutput(this, "AdminRoleNamesRegisterTenant", {
-            value: getRoleArnNameOnly(createScheduledTasksFunction),
+
+        const rule = new events.Rule(this, "Schedule Rule", {
+            schedule: events.Schedule.cron({ minute: "0", hour: "0" }),
         });
+        rule.addTarget(
+            new targets.LambdaFunction(createScheduledTasksFunction)
+        );
+
         createLambdaStatement(
             createScheduledTasksFunction,
             props.graphqlAppSync.arn,
