@@ -45,5 +45,8 @@ export class ScheduledConstruct extends Construct {
                 mutations: ["createTask"],
             }
         );
+        new cdk.CfnOutput(this, "AdminRoleNamesCreateScheduledTasks", {
+            value: getRoleArnNameOnly(createScheduledTasksFunction),
+        });
     }
 }
