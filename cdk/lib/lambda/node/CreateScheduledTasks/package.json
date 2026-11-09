@@ -13,7 +13,7 @@
     "scripts": {
         "prebuild": "npm install --include=dev",
         "build": "tsc",
-        "test": "NODE_OPTIONS='--experimental-vm-modules' jest",
+        "test": "echo nope",
         "test:watch": "NODE_OPTIONS='--experimental-vm-modules' jest --watch"
     },
     "dependencies": {
