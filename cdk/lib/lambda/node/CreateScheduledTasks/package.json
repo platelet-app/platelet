@@ -1,0 +1,24 @@
+{
+    "name": "create-scheduled-tasks",
+    "version": "3.0.0",
+    "type": "module",
+    "main": "index.js",
+    "license": "Apache-2.0",
+    "devDependencies": {
+        "@types/aws-lambda": "^8.10.92",
+        "@types/jest": "^30.0.0",
+        "jest": "^30.5.2",
+        "ts-jest": "^29.4.15"
+    },
+    "scripts": {
+        "prebuild": "npm install --include=dev",
+        "build": "tsc",
+        "test": "NODE_OPTIONS='--experimental-vm-modules' jest",
+        "test:watch": "NODE_OPTIONS='--experimental-vm-modules' jest --watch"
+    },
+    "dependencies": {
+        "@platelet-app/graphql": "^1.1.10",
+        "@platelet-app/lambda": "^1.1.19",
+        "@platelet-app/types": "^1.1.4"
+    }
+}

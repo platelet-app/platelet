@@ -9,6 +9,7 @@ import { UserTakeOutDataStepFunction } from "./user-take-out-data-step-function-
 import { CypressTestRole } from "./cypress-test-role-construct";
 import { SSMParamsConstruct } from "./ssm-params-construct";
 import { RegisterTenantFunctionConstruct } from "./register-tenant-function-construct";
+import { ScheduledConstruct } from "./platelet-scheduled-construct";
 
 export class PlateletCdkStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props: cdk.StackProps) {
@@ -95,6 +96,12 @@ export class PlateletCdkStack extends cdk.Stack {
             domainNameParameterArn: SSMParamsConstructInstance.domainNameArn,
             amplifyEnv,
             sesIdentity: SES,
+        });
+
+        new ScheduledConstruct(this, "ScheduledConstruct", {
+            region: this.region,
+            graphQLEndpoint,
+            graphqlAppSync,
         });
 
         if (this.node.tryGetContext("createCypressTestingRole") === "true") {
