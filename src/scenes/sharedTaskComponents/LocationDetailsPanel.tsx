@@ -20,6 +20,7 @@ import ConfirmationDialog from "../../components/ConfirmationDialog";
 import {
     DeleteLocationMutation,
     GetLocationQuery,
+    GetScheduledTaskQuery,
     GetTaskQuery,
     UpdateLocationMutation,
 } from "../../API";
@@ -94,7 +95,8 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
     const initialSetEdit = useRef(false);
     const errorMessage = "Sorry, an error occurred";
 
-    const hideScheduleDate = taskModel.name === "ScheduledTask";
+    const isScheduledTask = taskModel.name === "ScheduledTask";
+    const hideScheduleDate = isScheduledTask;
     const detailsKey = `${locationKey}Details` as
         | "pickUpLocationDetails"
         | "dropOffLocationDetails";
@@ -336,6 +338,50 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
             currentlySelectedPreset.current = null;
         }
     }
+    // clear the location connection and nested details on the server
+    // using the queries for whichever model this panel is for
+    async function clearLocationOnServer() {
+        const variables = {
+            id: taskId,
+        };
+        let data: { id: string; _version?: number | null } | null | undefined;
+        if (isScheduledTask) {
+            const gqlClearResult = await API.graphql<
+                GraphQLQuery<GetScheduledTaskQuery>
+            >({
+                query: queries.getScheduledTask,
+                variables,
+            });
+            data = gqlClearResult.data?.getScheduledTask;
+        } else {
+            const gqlClearResult = await API.graphql<
+                GraphQLQuery<GetTaskQuery>
+            >({
+                query: queries.getTask,
+                variables,
+            });
+            data = gqlClearResult.data?.getTask;
+        }
+        if (!data) return false;
+        const { id, _version } = data;
+        await API.graphql(
+            graphqlOperation(
+                isScheduledTask
+                    ? mutations.updateScheduledTask
+                    : mutations.updateTask,
+                {
+                    input: {
+                        id,
+                        _version,
+                        [`${locationKey}Id`]: null,
+                        [detailsKey]: null,
+                    },
+                }
+            )
+        );
+        return true;
+    }
+
     async function clearLocation() {
         try {
             if (!taskId) throw new Error("No task id");
@@ -362,29 +408,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                         })
                     );
                     if (process.env.REACT_APP_OFFLINE_ONLY !== "true") {
-                        const variables = {
-                            id: taskId,
-                        };
-                        const gqlClearResult = await API.graphql<
-                            GraphQLQuery<GetTaskQuery>
-                        >({
-                            query: queries.getTask,
-                            variables,
-                        });
-                        const data = gqlClearResult.data?.getTask;
-                        if (data) {
-                            const { id, _version } = data;
-                            await API.graphql(
-                                graphqlOperation(mutations.updateTask, {
-                                    input: {
-                                        id,
-                                        _version,
-                                        [`${locationKey}Id`]: null,
-                                        [detailsKey]: null,
-                                    },
-                                })
-                            );
-                        }
+                        await clearLocationOnServer();
                     }
                 } else {
                     // clear the fields for an unlisted location before deleting it
@@ -402,28 +426,8 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                             )
                         );*/
                         if (process.env.REACT_APP_OFFLINE_ONLY !== "true") {
-                            const variables = {
-                                id: taskId,
-                            };
-                            const gqlClearResult = await API.graphql<
-                                GraphQLQuery<GetTaskQuery>
-                            >({
-                                query: queries.getTask,
-                                variables,
-                            });
-                            const data = gqlClearResult.data?.getTask;
-                            if (data) {
-                                const { id, _version } = data;
-                                await API.graphql(
-                                    graphqlOperation(mutations.updateTask, {
-                                        input: {
-                                            id,
-                                            _version,
-                                            [`${locationKey}Id`]: null,
-                                            [detailsKey]: null,
-                                        },
-                                    })
-                                );
+                            const cleared = await clearLocationOnServer();
+                            if (cleared) {
                                 const getLocation = await API.graphql<
                                     GraphQLQuery<GetLocationQuery>
                                 >({
