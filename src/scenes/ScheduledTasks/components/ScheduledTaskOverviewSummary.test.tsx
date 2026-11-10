@@ -97,6 +97,7 @@ describe("ScheduledTaskOverviewSummary", () => {
             expect(saveSpy).toHaveBeenCalledWith({
                 ...mockScheduledTask,
                 establishmentLocation: mockEstablishment,
+                establishmentLocationDetails: { name: "mock establishment" },
             });
         });
         userEvent.click(
@@ -113,6 +114,9 @@ describe("ScheduledTaskOverviewSummary", () => {
                 establishmentLocation: {
                     ...mockUnlistedEstablishment,
                     id: expect.any(String),
+                },
+                establishmentLocationDetails: {
+                    name: "some other establishment",
                 },
             });
         });
