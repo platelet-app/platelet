@@ -4,6 +4,7 @@ import { render } from "../../../test-utils";
 import { DataStore } from "aws-amplify";
 import userEvent from "@testing-library/user-event";
 import { screen, waitFor } from "@testing-library/react";
+import _ from "lodash";
 
 const tenantId = "tenantId";
 
@@ -16,6 +17,18 @@ jest.mock("aws-amplify", () => {
     };
     return Amplify;
 });
+
+// the nested location details are a copy of the location without the model fields
+const locationDetails = (location: models.Location) =>
+    _.omit(location, [
+        "id",
+        "listed",
+        "tenantId",
+        "archived",
+        "_version",
+        "_lastChangedAt",
+        "_deleted",
+    ]);
 
 describe("AdminAddScheduledTask", () => {
     afterEach(async () => {
@@ -98,8 +111,11 @@ describe("AdminAddScheduledTask", () => {
                 telephoneNumber: "01234567890",
             },
             establishmentLocation: mockListedLocation,
+            establishmentLocationDetails: locationDetails(mockListedLocation),
             pickUpLocation: mockListedLocation2,
+            pickUpLocationDetails: locationDetails(mockListedLocation2),
             dropOffLocation: mockListedLocation3,
+            dropOffLocationDetails: locationDetails(mockListedLocation3),
             pickUpSchedule: null,
             dropOffSchedule: null,
             priority: models.Priority.HIGH,
@@ -286,8 +302,11 @@ describe("AdminAddScheduledTask", () => {
                 telephoneNumber: "",
             },
             establishmentLocation: mockListedLocation,
+            establishmentLocationDetails: locationDetails(mockListedLocation),
             pickUpLocation: mockListedLocation2,
+            pickUpLocationDetails: locationDetails(mockListedLocation2),
             dropOffLocation: mockListedLocation3,
+            dropOffLocationDetails: locationDetails(mockListedLocation3),
             pickUpSchedule: mockSchedule,
             dropOffSchedule: mockSchedule2,
             priority: null,
@@ -444,8 +463,13 @@ describe("AdminAddScheduledTask", () => {
         const mockScheduledTask = new models.ScheduledTask({
             tenantId,
             establishmentLocation: mockEstablishmentLocation,
+            establishmentLocationDetails: locationDetails(
+                mockEstablishmentLocation
+            ),
             pickUpLocation: mockLocation,
+            pickUpLocationDetails: locationDetails(mockLocation),
             dropOffLocation: mockLocation2,
+            dropOffLocationDetails: locationDetails(mockLocation2),
             pickUpSchedule: null,
             dropOffSchedule: null,
             cronExpression: "0 18 * * *",

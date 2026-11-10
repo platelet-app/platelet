@@ -10,6 +10,7 @@ import ScheduledTaskPriority from "./ScheduledTaskPriority";
 import { useDispatch, useSelector } from "react-redux";
 import { getWhoami, tenantIdSelector } from "../../../redux/Selectors";
 import { DataStore } from "aws-amplify";
+import { utils } from "@platelet-app/core";
 import {
     displayErrorNotification,
     displayInfoNotification,
@@ -164,6 +165,13 @@ const AdminAddScheduledTask: React.FC = () => {
                     })
                 );
             }
+            // dual-write model and nested
+            const pickUpLocationDetails =
+                utils.locationModelToTaskLocationDetail(pickUpLocation);
+            const dropOffLocationDetails =
+                utils.locationModelToTaskLocationDetail(dropOffLocation);
+            const establishmentLocationDetails =
+                utils.locationModelToTaskLocationDetail(establishmentLocation);
             const pickUpSchedule = convertScheduleToTaskData(schedule?.pickUp);
             const dropOffSchedule = convertScheduleToTaskData(
                 schedule?.dropOff
@@ -173,6 +181,9 @@ const AdminAddScheduledTask: React.FC = () => {
                 pickUpLocation,
                 dropOffLocation,
                 establishmentLocation,
+                pickUpLocationDetails,
+                dropOffLocationDetails,
+                establishmentLocationDetails,
                 tenantId,
                 createdBy,
                 pickUpSchedule,
