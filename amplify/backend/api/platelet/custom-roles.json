@@ -1,3 +1,22 @@
+
 {
-    "adminRoleNames": []
+    "adminRoleNames": [
+        "PlateletCdkStack-dev-279-DeleteUserStepFunctionClea-3mYqObwBsgaJ",
+        "PlateletCdkStack-dev-279-UserTakeOutDataStepFunctio-lxCqAkx0oGWB",
+        "PlateletCdkStack-dev-279-DeleteUserStepFunctionDele-vaFg60DQfs2i",
+        "PlateletCdkStack-dev-279-DeleteUserStepFunctionDele-MW8yImkL7gKQ",
+        "PlateletCdkStack-dev-279-DeleteUserStepFunctionClea-OvPvV9EUnoQE",
+        "PlateletCdkStack-dev-279-CypressTestRoleCypressRole-CMPau5Z04WxR",
+        "PlateletCdkStack-dev-279-UserTakeOutDataStepFunctio-7oCLeMCTfVj7",
+        "PlateletCdkStack-dev-279-DeleteUserStepFunctionDele-WP2QnSv9K0YR",
+        "PlateletCdkStack-dev-279-UserTakeOutDataStepFunctio-NpFNMqK6FGFa",
+        "PlateletCdkStack-dev-279-UserTakeOutDataStepFunctio-0AtOqkBHisCD",
+        "PlateletCdkStack-dev-279-DeleteUserStepFunctionDele-XlIQYOCpu6Lc",
+        "PlateletCdkStack-dev-279-RegisterTenantFunctionRegi-uC3FPhnc4nSN",
+        "PlateletCdkStack-dev-279-DeleteUserStepFunctionGetU-ZCSy5wmaygGm",
+        "PlateletCdkStack-dev-279-ScheduledConstructCreateSc-QlXFVRpq8bxR",
+        "PlateletCdkStack-dev-279-UserTakeOutDataStepFunctio-WRGyo0KEscyU",
+        "PlateletCdkStack-dev-279-DeleteUserStepFunctionGetU-5zHPFQrZZNYN",
+    ]
 }
+
