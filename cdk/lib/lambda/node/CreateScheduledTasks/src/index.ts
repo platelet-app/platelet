@@ -188,6 +188,40 @@ const createUnlistedLocation = async (location: Location) => {
     return body?.data?.createLocation?.id;
 };
 
+// keep in sync with locationModelToTaskLocationDetail in @platelet-app/core
+const taskLocationFields = [
+    "name",
+    "contact",
+    "ward",
+    "line1",
+    "line2",
+    "line3",
+    "town",
+    "county",
+    "state",
+    "country",
+    "postcode",
+    "what3words",
+    "googleMapsPlaceId",
+] as const;
+
+type TaskLocationDetail = Partial<
+    Pick<Location, (typeof taskLocationFields)[number]>
+>;
+
+// only keep the fields that are part of the TaskLocation input
+// so that model fields like id, listed and _version aren't sent
+const locationToTaskLocationDetail = (
+    location?: Location | null
+): TaskLocationDetail | null => {
+    if (!location) return null;
+    return Object.fromEntries(
+        taskLocationFields
+            .filter((field) => field in location)
+            .map((field) => [field, location[field]])
+    );
+};
+
 const createSchedule = (schedule?: Schedule | null) => {
     if (!schedule) return null;
     const { relation, timePrimary, timeSecondary } = schedule;
@@ -273,9 +307,12 @@ const createNewTask = async (scheduledTask: ScheduledTask) => {
             dropOffLocationId,
             establishmentLocationId,
             // dual-write model and nested
-            pickUpLocationDetails: pickUpLocation,
-            dropOffLocationDetails: dropOffLocation,
-            establishmentLocationDetails: establishmentLocation,
+            pickUpLocationDetails: locationToTaskLocationDetail(pickUpLocation),
+            dropOffLocationDetails:
+                locationToTaskLocationDetail(dropOffLocation),
+            establishmentLocationDetails: locationToTaskLocationDetail(
+                establishmentLocation
+            ),
             dateCreated,
             pickUpSchedule: pickUpScheduleResult,
             dropOffSchedule: dropOffScheduleResult,
