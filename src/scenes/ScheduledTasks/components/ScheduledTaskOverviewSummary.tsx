@@ -6,6 +6,7 @@ import TaskDetailsEstablishment from "../../sharedTaskComponents/TaskDetailsEsta
 import RequesterContact from "../../sharedTaskComponents/RequesterContact";
 import PrioritySelect from "../../sharedTaskComponents/PrioritySelect";
 import { DataStore } from "aws-amplify";
+import { utils } from "@platelet-app/core";
 import { displayErrorNotification } from "../../../redux/notifications/NotificationsActions";
 import { useDispatch, useSelector } from "react-redux";
 import { getWhoami } from "../../../redux/Selectors";
@@ -32,6 +33,8 @@ const ScheduledTaskOverviewSummary: React.FC<ScheduledTaskOverviewProps> = ({
             await DataStore.save(
                 models.ScheduledTask.copyOf(result, (updated) => {
                     updated.establishmentLocation = location;
+                    updated.establishmentLocationDetails =
+                        utils.locationModelToTaskLocationDetail(location);
                 })
             );
         } catch (error) {
