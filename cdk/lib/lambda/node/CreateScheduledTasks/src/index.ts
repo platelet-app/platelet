@@ -200,7 +200,7 @@ const createNewTask = async (scheduledTask: ScheduledTask) => {
     return body?.data?.createTask;
 };
 
-exports.handler = async (event: any) => {
+export const handler = async (event: any) => {
     console.log(`EVENT: ${JSON.stringify(event)}`);
     const scheduledTasks = await getScheduledTasks();
     const filtered = scheduledTasks.filter(
