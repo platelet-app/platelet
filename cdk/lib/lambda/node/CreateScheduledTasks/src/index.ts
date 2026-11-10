@@ -1,10 +1,136 @@
 import { request, errorCheck } from "@platelet-app/lambda";
 import { mutations } from "@platelet-app/graphql";
-import { queries } from "@platelet-app/graphql";
 import type { Location, Schedule, ScheduledTask } from "@platelet-app/types";
 
 const { createTask, createLocation, createDeliverable } = mutations;
-const { listScheduledTasks } = queries;
+
+const listScheduledTasks = /* GraphQL */ `
+    query ListScheduledTasks(
+        $filter: ModelScheduledTaskFilterInput
+        $limit: Int
+        $nextToken: String
+    ) {
+        listScheduledTasks(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                tenantId
+                cronExpression
+                pickUpSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
+                dropOffSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
+                pickUpLocation {
+                    id
+                    listed
+                    tenantId
+                    name
+                    contact {
+                        name
+                        telephoneNumber
+                        mobileNumber
+                        emailAddress
+                        ward
+                        line1
+                        line2
+                        line3
+                        town
+                        county
+                        state
+                        country
+                        postcode
+                        what3words
+                    }
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    tenantId
+                    name
+                    contact {
+                        name
+                        telephoneNumber
+                        mobileNumber
+                        emailAddress
+                        ward
+                        line1
+                        line2
+                        line3
+                        town
+                        county
+                        state
+                        country
+                        postcode
+                        what3words
+                    }
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                }
+                establishmentLocation {
+                    id
+                    listed
+                    name
+                    tenantId
+                }
+                deliverables {
+                    items {
+                        _deleted
+                        count
+                        deliverableTypeDeliverablesId
+                        unit
+                    }
+                }
+                requesterContact {
+                    name
+                    telephoneNumber
+                    mobileNumber
+                    emailAddress
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                }
+                priority
+                disabled
+            }
+            nextToken
+            startedAt
+        }
+    }
+`;
 
 const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT || "";
 
@@ -60,6 +186,40 @@ const createUnlistedLocation = async (location: Location) => {
     errorCheck(body);
     console.log("Created unlisted location", body?.data?.createLocation);
     return body?.data?.createLocation?.id;
+};
+
+// keep in sync with locationModelToTaskLocationDetail in @platelet-app/core
+const taskLocationFields = [
+    "name",
+    "contact",
+    "ward",
+    "line1",
+    "line2",
+    "line3",
+    "town",
+    "county",
+    "state",
+    "country",
+    "postcode",
+    "what3words",
+    "googleMapsPlaceId",
+] as const;
+
+type TaskLocationDetail = Partial<
+    Pick<Location, (typeof taskLocationFields)[number]>
+>;
+
+// only keep the fields that are part of the TaskLocation input
+// so that model fields like id, listed and _version aren't sent
+const locationToTaskLocationDetail = (
+    location?: Location | null
+): TaskLocationDetail | null => {
+    if (!location) return null;
+    return Object.fromEntries(
+        taskLocationFields
+            .filter((field) => field in location)
+            .map((field) => [field, location[field]])
+    );
 };
 
 const createSchedule = (schedule?: Schedule | null) => {
@@ -147,9 +307,12 @@ const createNewTask = async (scheduledTask: ScheduledTask) => {
             dropOffLocationId,
             establishmentLocationId,
             // dual-write model and nested
-            pickUpLocationDetails: pickUpLocation,
-            dropOffLocationDetails: dropOffLocation,
-            establishmentLocationDetails: establishmentLocation,
+            pickUpLocationDetails: locationToTaskLocationDetail(pickUpLocation),
+            dropOffLocationDetails:
+                locationToTaskLocationDetail(dropOffLocation),
+            establishmentLocationDetails: locationToTaskLocationDetail(
+                establishmentLocation
+            ),
             dateCreated,
             pickUpSchedule: pickUpScheduleResult,
             dropOffSchedule: dropOffScheduleResult,
