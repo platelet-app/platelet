@@ -49,7 +49,11 @@ export class ScheduledConstruct extends Construct {
             props.graphqlAppSync.arn,
             {
                 queries: ["listScheduledTasks"],
-                mutations: ["createTask"],
+                mutations: [
+                    "createTask",
+                    "createLocation",
+                    "createDeliverable",
+                ],
             }
         );
         new cdk.CfnOutput(this, "AdminRoleNamesCreateScheduledTasks", {
