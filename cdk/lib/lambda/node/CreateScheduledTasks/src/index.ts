@@ -60,6 +60,7 @@ const listScheduledTasks = /* GraphQL */ `
                     country
                     postcode
                     what3words
+                    googleMapsPlaceId
                 }
                 dropOffLocation {
                     id
@@ -92,12 +93,40 @@ const listScheduledTasks = /* GraphQL */ `
                     country
                     postcode
                     what3words
+                    googleMapsPlaceId
                 }
                 establishmentLocation {
                     id
                     listed
-                    name
                     tenantId
+                    name
+                    contact {
+                        name
+                        telephoneNumber
+                        mobileNumber
+                        emailAddress
+                        ward
+                        line1
+                        line2
+                        line3
+                        town
+                        county
+                        state
+                        country
+                        postcode
+                        what3words
+                    }
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                    googleMapsPlaceId
                 }
                 deliverables {
                     items {
