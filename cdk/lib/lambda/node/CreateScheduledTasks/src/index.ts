@@ -1,10 +1,136 @@
 import { request, errorCheck } from "@platelet-app/lambda";
 import { mutations } from "@platelet-app/graphql";
-import { queries } from "@platelet-app/graphql";
 import type { Location, Schedule, ScheduledTask } from "@platelet-app/types";
 
 const { createTask, createLocation, createDeliverable } = mutations;
-const { listScheduledTasks } = queries;
+
+const listScheduledTasks = /* GraphQL */ `
+    query ListScheduledTasks(
+        $filter: ModelScheduledTaskFilterInput
+        $limit: Int
+        $nextToken: String
+    ) {
+        listScheduledTasks(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                tenantId
+                cronExpression
+                pickUpSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
+                dropOffSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
+                pickUpLocation {
+                    id
+                    listed
+                    tenantId
+                    name
+                    contact {
+                        name
+                        telephoneNumber
+                        mobileNumber
+                        emailAddress
+                        ward
+                        line1
+                        line2
+                        line3
+                        town
+                        county
+                        state
+                        country
+                        postcode
+                        what3words
+                    }
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    tenantId
+                    name
+                    contact {
+                        name
+                        telephoneNumber
+                        mobileNumber
+                        emailAddress
+                        ward
+                        line1
+                        line2
+                        line3
+                        town
+                        county
+                        state
+                        country
+                        postcode
+                        what3words
+                    }
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                }
+                establishmentLocation {
+                    id
+                    listed
+                    name
+                    tenantId
+                }
+                deliverables {
+                    items {
+                        _deleted
+                        count
+                        deliverableTypeDeliverablesId
+                        unit
+                    }
+                }
+                requesterContact {
+                    name
+                    telephoneNumber
+                    mobileNumber
+                    emailAddress
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                }
+                priority
+                disabled
+            }
+            nextToken
+            startedAt
+        }
+    }
+`;
 
 const GRAPHQL_ENDPOINT = process.env.GRAPHQL_ENDPOINT || "";
 
