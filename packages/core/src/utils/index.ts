@@ -1,1 +1,1 @@
-export * from "./locationModelToTaskLocationDetail.js";
+export * from "./locationModelToLocationDetail.js";

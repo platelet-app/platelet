@@ -188,7 +188,7 @@ const createUnlistedLocation = async (location: Location) => {
     return body?.data?.createLocation?.id;
 };
 
-// keep in sync with locationModelToTaskLocationDetail in @platelet-app/core
+// keep in sync with locationModelToLocationDetail in @platelet-app/core
 const taskLocationFields = [
     "name",
     "contact",

@@ -17,9 +17,9 @@ const taskLocationFields = [
     "googleMapsPlaceId",
 ];
 
-export const locationModelToTaskLocationDetail = (
+export const locationModelToLocationDetail = (
     location?: models.Location | null
-): models.TaskLocation | null =>
+): models.LocationDetail | null =>
     location
-        ? (_.pick(location, taskLocationFields) as models.TaskLocation)
+        ? (_.pick(location, taskLocationFields) as models.LocationDetail)
         : null;

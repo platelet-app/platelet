@@ -167,11 +167,11 @@ const AdminAddScheduledTask: React.FC = () => {
             }
             // dual-write model and nested
             const pickUpLocationDetails =
-                utils.locationModelToTaskLocationDetail(pickUpLocation);
+                utils.locationModelToLocationDetail(pickUpLocation);
             const dropOffLocationDetails =
-                utils.locationModelToTaskLocationDetail(dropOffLocation);
+                utils.locationModelToLocationDetail(dropOffLocation);
             const establishmentLocationDetails =
-                utils.locationModelToTaskLocationDetail(establishmentLocation);
+                utils.locationModelToLocationDetail(establishmentLocation);
             const pickUpSchedule = convertScheduleToTaskData(schedule?.pickUp);
             const dropOffSchedule = convertScheduleToTaskData(
                 schedule?.dropOff

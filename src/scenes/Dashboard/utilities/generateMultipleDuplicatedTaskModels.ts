@@ -104,11 +104,11 @@ export default async function generateMultipleDuplicatedTaskModels(
 
             // dual-write model and nested
             const pickUpLocationDetails =
-                utils.locationModelToTaskLocationDetail(pickUpLocation);
+                utils.locationModelToLocationDetail(pickUpLocation);
             const dropOffLocationDetails =
-                utils.locationModelToTaskLocationDetail(dropOffLocation);
+                utils.locationModelToLocationDetail(dropOffLocation);
             const establishmentLocationDetails =
-                utils.locationModelToTaskLocationDetail(establishmentLocation);
+                utils.locationModelToLocationDetail(establishmentLocation);
 
             let newTaskData = new models.Task({
                 ...rest,

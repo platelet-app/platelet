@@ -83,11 +83,12 @@ export default async function duplicateTask(
     const date = new Date();
     const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     const pickUpLocationDetails =
-        utils.locationModelToTaskLocationDetail(pickUpLocation);
+        utils.locationModelToLocationDetail(pickUpLocation);
     const dropOffLocationDetails =
-        utils.locationModelToTaskLocationDetail(dropOffLocation);
-    const establishmentLocationDetails =
-        utils.locationModelToTaskLocationDetail(establishmentLocation);
+        utils.locationModelToLocationDetail(dropOffLocation);
+    const establishmentLocationDetails = utils.locationModelToLocationDetail(
+        establishmentLocation
+    );
     let newTaskData = new models.Task({
         ...rest,
         status: models.TaskStatus.NEW,

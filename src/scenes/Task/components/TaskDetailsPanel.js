@@ -117,7 +117,7 @@ function TaskDetailsPanel(props) {
                 models.Task.copyOf(result, (updated) => {
                     updated.establishmentLocation = value;
                     updated.establishmentLocationDetails =
-                        utils.locationModelToTaskLocationDetail(value);
+                        utils.locationModelToLocationDetail(value);
                 })
             );
         } catch (error) {

@@ -249,7 +249,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
             taskModel.copyOf(existingTask, (updated) => {
                 // @ts-ignore
                 updated[detailsKey] =
-                    utils.locationModelToTaskLocationDetail(location);
+                    utils.locationModelToLocationDetail(location);
             })
         );
     }
@@ -282,7 +282,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                     updated[locationKey as keyof taskModel] = newLocation;
                     // @ts-ignore
                     updated[detailsKey] =
-                        utils.locationModelToTaskLocationDetail(newLocation);
+                        utils.locationModelToLocationDetail(newLocation);
                 })
             );
             return newLocation;
@@ -320,9 +320,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                             updated[locationKey] = location;
                             // @ts-ignore
                             updated[detailsKey] =
-                                utils.locationModelToTaskLocationDetail(
-                                    location
-                                );
+                                utils.locationModelToLocationDetail(location);
                         })
                     );
                 }
@@ -551,9 +549,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                         updated[key] = locationResult;
                         // @ts-ignore
                         updated[detailsKey] =
-                            utils.locationModelToTaskLocationDetail(
-                                locationResult
-                            );
+                            utils.locationModelToLocationDetail(locationResult);
                     })
                 );
             }
@@ -638,7 +634,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                             updated[key] = locationResult;
                             // @ts-ignore
                             updated[detailsKey] =
-                                utils.locationModelToTaskLocationDetail(
+                                utils.locationModelToLocationDetail(
                                     locationResult
                                 );
                         })

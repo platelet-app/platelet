@@ -34,7 +34,7 @@ const ScheduledTaskOverviewSummary: React.FC<ScheduledTaskOverviewProps> = ({
                 models.ScheduledTask.copyOf(result, (updated) => {
                     updated.establishmentLocation = location;
                     updated.establishmentLocationDetails =
-                        utils.locationModelToTaskLocationDetail(location);
+                        utils.locationModelToLocationDetail(location);
                 })
             );
         } catch (error) {

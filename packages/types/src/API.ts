@@ -277,9 +277,9 @@ export type Task = {
   pickUpLocation?: Location | null,
   dropOffLocation?: Location | null,
   establishmentLocation?: Location | null,
-  pickUpLocationDetails?: TaskLocation | null,
-  dropOffLocationDetails?: TaskLocation | null,
-  establishmentLocationDetails?: TaskLocation | null,
+  pickUpLocationDetails?: LocationDetail | null,
+  dropOffLocationDetails?: LocationDetail | null,
+  establishmentLocationDetails?: LocationDetail | null,
   riderResponsibility?: string | null,
   assignees?: ModelTaskAssigneeConnection | null,
   priority?: Priority | null,
@@ -360,9 +360,9 @@ export type ScheduledTask = {
   pickUpLocation?: Location | null,
   dropOffLocation?: Location | null,
   establishmentLocation?: Location | null,
-  pickUpLocationDetails?: TaskLocation | null,
-  dropOffLocationDetails?: TaskLocation | null,
-  establishmentLocationDetails?: TaskLocation | null,
+  pickUpLocationDetails?: LocationDetail | null,
+  dropOffLocationDetails?: LocationDetail | null,
+  establishmentLocationDetails?: LocationDetail | null,
   priority?: Priority | null,
   deliverables?: ModelDeliverableConnection | null,
   disabled?: number | null,
@@ -376,8 +376,8 @@ export type ScheduledTask = {
   userCreatedScheduledTasksId?: string | null,
 };
 
-export type TaskLocation = {
-  __typename: "TaskLocation",
+export type LocationDetail = {
+  __typename: "LocationDetail",
   name?: string | null,
   contact?: AddressAndContactDetails | null,
   ward?: string | null,
@@ -875,9 +875,9 @@ export type CreateTaskInput = {
   pickUpLocationId?: string | null,
   dropOffLocationId?: string | null,
   establishmentLocationId?: string | null,
-  pickUpLocationDetails?: TaskLocationInput | null,
-  dropOffLocationDetails?: TaskLocationInput | null,
-  establishmentLocationDetails?: TaskLocationInput | null,
+  pickUpLocationDetails?: LocationDetailInput | null,
+  dropOffLocationDetails?: LocationDetailInput | null,
+  establishmentLocationDetails?: LocationDetailInput | null,
   riderResponsibility?: string | null,
   priority?: Priority | null,
   status?: TaskStatus | null,
@@ -889,7 +889,7 @@ export type CreateTaskInput = {
   userCreatedTasksId?: string | null,
 };
 
-export type TaskLocationInput = {
+export type LocationDetailInput = {
   name?: string | null,
   contact?: AddressAndContactDetailsInput | null,
   ward?: string | null,
@@ -968,9 +968,9 @@ export type UpdateTaskInput = {
   pickUpLocationId?: string | null,
   dropOffLocationId?: string | null,
   establishmentLocationId?: string | null,
-  pickUpLocationDetails?: TaskLocationInput | null,
-  dropOffLocationDetails?: TaskLocationInput | null,
-  establishmentLocationDetails?: TaskLocationInput | null,
+  pickUpLocationDetails?: LocationDetailInput | null,
+  dropOffLocationDetails?: LocationDetailInput | null,
+  establishmentLocationDetails?: LocationDetailInput | null,
   riderResponsibility?: string | null,
   priority?: Priority | null,
   status?: TaskStatus | null,
@@ -1034,9 +1034,9 @@ export type CreateScheduledTaskInput = {
   pickUpLocationId?: string | null,
   dropOffLocationId?: string | null,
   establishmentLocationId?: string | null,
-  pickUpLocationDetails?: TaskLocationInput | null,
-  dropOffLocationDetails?: TaskLocationInput | null,
-  establishmentLocationDetails?: TaskLocationInput | null,
+  pickUpLocationDetails?: LocationDetailInput | null,
+  dropOffLocationDetails?: LocationDetailInput | null,
+  establishmentLocationDetails?: LocationDetailInput | null,
   priority?: Priority | null,
   disabled?: number | null,
   pickUpSchedule?: ScheduleInput | null,
@@ -1070,9 +1070,9 @@ export type UpdateScheduledTaskInput = {
   pickUpLocationId?: string | null,
   dropOffLocationId?: string | null,
   establishmentLocationId?: string | null,
-  pickUpLocationDetails?: TaskLocationInput | null,
-  dropOffLocationDetails?: TaskLocationInput | null,
-  establishmentLocationDetails?: TaskLocationInput | null,
+  pickUpLocationDetails?: LocationDetailInput | null,
+  dropOffLocationDetails?: LocationDetailInput | null,
+  establishmentLocationDetails?: LocationDetailInput | null,
   priority?: Priority | null,
   disabled?: number | null,
   pickUpSchedule?: ScheduleInput | null,
@@ -3165,7 +3165,7 @@ export type CreateTaskMutation = {
       userCreatedLocationsId?: string | null,
     } | null,
     pickUpLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -3180,7 +3180,7 @@ export type CreateTaskMutation = {
       googleMapsPlaceId?: string | null,
     } | null,
     dropOffLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -3195,7 +3195,7 @@ export type CreateTaskMutation = {
       googleMapsPlaceId?: string | null,
     } | null,
     establishmentLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -3389,7 +3389,7 @@ export type UpdateTaskMutation = {
       userCreatedLocationsId?: string | null,
     } | null,
     pickUpLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -3404,7 +3404,7 @@ export type UpdateTaskMutation = {
       googleMapsPlaceId?: string | null,
     } | null,
     dropOffLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -3419,7 +3419,7 @@ export type UpdateTaskMutation = {
       googleMapsPlaceId?: string | null,
     } | null,
     establishmentLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -3613,7 +3613,7 @@ export type DeleteTaskMutation = {
       userCreatedLocationsId?: string | null,
     } | null,
     pickUpLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -3628,7 +3628,7 @@ export type DeleteTaskMutation = {
       googleMapsPlaceId?: string | null,
     } | null,
     dropOffLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -3643,7 +3643,7 @@ export type DeleteTaskMutation = {
       googleMapsPlaceId?: string | null,
     } | null,
     establishmentLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -4040,7 +4040,7 @@ export type CreateScheduledTaskMutation = {
       userCreatedLocationsId?: string | null,
     } | null,
     pickUpLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -4055,7 +4055,7 @@ export type CreateScheduledTaskMutation = {
       googleMapsPlaceId?: string | null,
     } | null,
     dropOffLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -4070,7 +4070,7 @@ export type CreateScheduledTaskMutation = {
       googleMapsPlaceId?: string | null,
     } | null,
     establishmentLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -4242,7 +4242,7 @@ export type UpdateScheduledTaskMutation = {
       userCreatedLocationsId?: string | null,
     } | null,
     pickUpLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -4257,7 +4257,7 @@ export type UpdateScheduledTaskMutation = {
       googleMapsPlaceId?: string | null,
     } | null,
     dropOffLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -4272,7 +4272,7 @@ export type UpdateScheduledTaskMutation = {
       googleMapsPlaceId?: string | null,
     } | null,
     establishmentLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -4444,7 +4444,7 @@ export type DeleteScheduledTaskMutation = {
       userCreatedLocationsId?: string | null,
     } | null,
     pickUpLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -4459,7 +4459,7 @@ export type DeleteScheduledTaskMutation = {
       googleMapsPlaceId?: string | null,
     } | null,
     dropOffLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -4474,7 +4474,7 @@ export type DeleteScheduledTaskMutation = {
       googleMapsPlaceId?: string | null,
     } | null,
     establishmentLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -6593,7 +6593,7 @@ export type GetTaskQuery = {
       userCreatedLocationsId?: string | null,
     } | null,
     pickUpLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -6608,7 +6608,7 @@ export type GetTaskQuery = {
       googleMapsPlaceId?: string | null,
     } | null,
     dropOffLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -6623,7 +6623,7 @@ export type GetTaskQuery = {
       googleMapsPlaceId?: string | null,
     } | null,
     establishmentLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -7157,7 +7157,7 @@ export type GetScheduledTaskQuery = {
       userCreatedLocationsId?: string | null,
     } | null,
     pickUpLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -7172,7 +7172,7 @@ export type GetScheduledTaskQuery = {
       googleMapsPlaceId?: string | null,
     } | null,
     dropOffLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -7187,7 +7187,7 @@ export type GetScheduledTaskQuery = {
       googleMapsPlaceId?: string | null,
     } | null,
     establishmentLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -9081,7 +9081,7 @@ export type OnCreateTaskSubscription = {
       userCreatedLocationsId?: string | null,
     } | null,
     pickUpLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -9096,7 +9096,7 @@ export type OnCreateTaskSubscription = {
       googleMapsPlaceId?: string | null,
     } | null,
     dropOffLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -9111,7 +9111,7 @@ export type OnCreateTaskSubscription = {
       googleMapsPlaceId?: string | null,
     } | null,
     establishmentLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -9304,7 +9304,7 @@ export type OnUpdateTaskSubscription = {
       userCreatedLocationsId?: string | null,
     } | null,
     pickUpLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -9319,7 +9319,7 @@ export type OnUpdateTaskSubscription = {
       googleMapsPlaceId?: string | null,
     } | null,
     dropOffLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -9334,7 +9334,7 @@ export type OnUpdateTaskSubscription = {
       googleMapsPlaceId?: string | null,
     } | null,
     establishmentLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -9527,7 +9527,7 @@ export type OnDeleteTaskSubscription = {
       userCreatedLocationsId?: string | null,
     } | null,
     pickUpLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -9542,7 +9542,7 @@ export type OnDeleteTaskSubscription = {
       googleMapsPlaceId?: string | null,
     } | null,
     dropOffLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -9557,7 +9557,7 @@ export type OnDeleteTaskSubscription = {
       googleMapsPlaceId?: string | null,
     } | null,
     establishmentLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -9950,7 +9950,7 @@ export type OnCreateScheduledTaskSubscription = {
       userCreatedLocationsId?: string | null,
     } | null,
     pickUpLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -9965,7 +9965,7 @@ export type OnCreateScheduledTaskSubscription = {
       googleMapsPlaceId?: string | null,
     } | null,
     dropOffLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -9980,7 +9980,7 @@ export type OnCreateScheduledTaskSubscription = {
       googleMapsPlaceId?: string | null,
     } | null,
     establishmentLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -10151,7 +10151,7 @@ export type OnUpdateScheduledTaskSubscription = {
       userCreatedLocationsId?: string | null,
     } | null,
     pickUpLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -10166,7 +10166,7 @@ export type OnUpdateScheduledTaskSubscription = {
       googleMapsPlaceId?: string | null,
     } | null,
     dropOffLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -10181,7 +10181,7 @@ export type OnUpdateScheduledTaskSubscription = {
       googleMapsPlaceId?: string | null,
     } | null,
     establishmentLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -10352,7 +10352,7 @@ export type OnDeleteScheduledTaskSubscription = {
       userCreatedLocationsId?: string | null,
     } | null,
     pickUpLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -10367,7 +10367,7 @@ export type OnDeleteScheduledTaskSubscription = {
       googleMapsPlaceId?: string | null,
     } | null,
     dropOffLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
@@ -10382,7 +10382,7 @@ export type OnDeleteScheduledTaskSubscription = {
       googleMapsPlaceId?: string | null,
     } | null,
     establishmentLocationDetails?:  {
-      __typename: "TaskLocation",
+      __typename: "LocationDetail",
       name?: string | null,
       ward?: string | null,
       line1?: string | null,
