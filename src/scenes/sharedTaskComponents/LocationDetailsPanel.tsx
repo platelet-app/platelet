@@ -1,5 +1,5 @@
 import LocationDetailAndSelector from "./LocationDetailAndSelector";
-import { utils } from "@platelet-app/core";
+import { locationModelToLocationDetail } from "@platelet-app/core";
 import { GraphQLQuery } from "@aws-amplify/api";
 import React, { useEffect, useRef, useState } from "react";
 import { Divider, Paper, Skeleton, Stack, Typography } from "@mui/material";
@@ -248,8 +248,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
         await DataStore.save(
             taskModel.copyOf(existingTask, (updated) => {
                 // @ts-ignore
-                updated[detailsKey] =
-                    utils.locationModelToLocationDetail(location);
+                updated[detailsKey] = locationModelToLocationDetail(location);
             })
         );
     }
@@ -282,7 +281,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                     updated[locationKey as keyof taskModel] = newLocation;
                     // @ts-ignore
                     updated[detailsKey] =
-                        utils.locationModelToLocationDetail(newLocation);
+                        locationModelToLocationDetail(newLocation);
                 })
             );
             return newLocation;
@@ -320,7 +319,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                             updated[locationKey] = location;
                             // @ts-ignore
                             updated[detailsKey] =
-                                utils.locationModelToLocationDetail(location);
+                                locationModelToLocationDetail(location);
                         })
                     );
                 }
@@ -549,7 +548,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                         updated[key] = locationResult;
                         // @ts-ignore
                         updated[detailsKey] =
-                            utils.locationModelToLocationDetail(locationResult);
+                            locationModelToLocationDetail(locationResult);
                     })
                 );
             }
@@ -634,9 +633,7 @@ const LocationDetailsPanel = <T extends models.Task | models.ScheduledTask>({
                             updated[key] = locationResult;
                             // @ts-ignore
                             updated[detailsKey] =
-                                utils.locationModelToLocationDetail(
-                                    locationResult
-                                );
+                                locationModelToLocationDetail(locationResult);
                         })
                     );
                 }

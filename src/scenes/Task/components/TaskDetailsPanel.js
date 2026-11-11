@@ -17,7 +17,7 @@ import RequesterContact from "../../sharedTaskComponents/RequesterContact";
 import { userRoles } from "../../../apiConsts";
 import { useAssignmentRole } from "../../../hooks/useAssignmentRole";
 import RiderResponsibilityDetail from "./RiderResponsibilityDetail";
-import { utils } from "@platelet-app/core";
+import { locationModelToLocationDetail } from "@platelet-app/core";
 
 function TaskDetailsPanel(props) {
     const { classes } = dialogCardStyles();
@@ -117,7 +117,7 @@ function TaskDetailsPanel(props) {
                 models.Task.copyOf(result, (updated) => {
                     updated.establishmentLocation = value;
                     updated.establishmentLocationDetails =
-                        utils.locationModelToLocationDetail(value);
+                        locationModelToLocationDetail(value);
                 })
             );
         } catch (error) {

@@ -1,5 +1,5 @@
 import { userRoles } from "../../apiConsts";
-import { utils } from "@platelet-app/core";
+import { locationModelToLocationDetail } from "@platelet-app/core";
 import store from "../../redux/Store";
 import { DataStore } from "aws-amplify";
 import * as models from "../../models";
@@ -66,11 +66,10 @@ export async function saveNewTaskToDataStore(
             new models.Location({ ...dropOffLocation, listed: 0, tenantId })
         );
     }
-    const pickUpLocationDetails =
-        utils.locationModelToLocationDetail(pickUpLocation);
+    const pickUpLocationDetails = locationModelToLocationDetail(pickUpLocation);
     const dropOffLocationDetails =
-        utils.locationModelToLocationDetail(dropOffLocation);
-    const establishmentLocationDetails = utils.locationModelToLocationDetail(
+        locationModelToLocationDetail(dropOffLocation);
+    const establishmentLocationDetails = locationModelToLocationDetail(
         establishmentLocation
     );
     // get the date today without time
