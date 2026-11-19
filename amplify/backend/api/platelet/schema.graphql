@@ -152,7 +152,9 @@ type Location
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID!
+    @index(name: "byTenantArchived", sortKeyFields: ["archived"])
+    @index(name: "byTenantId")
     @auth(rules: [
       {allow: private, operations: [read]},
       {allow: groups, groups: ["ADMIN", "COORDINATOR"], operations: [create, read, delete]},
@@ -209,7 +211,9 @@ type Task
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId", queryField: "listTasksByTenantId", sortKeyFields: ["createdAt"])
+  tenantId: ID!
+    @index(name: "byTenantArchived", sortKeyFields: ["archived"])
+    @index(name: "byTenantId", queryField: "listTasksByTenantId", sortKeyFields: ["createdAt"])
     @auth(rules: [
       {allow: private, operations: [read]},
       {allow: groups, groups: ["COORDINATOR", "RIDER", "ADMIN"], operations: [create, read]},
@@ -308,7 +312,9 @@ type TaskAssignee
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID!
+    @index(name: "byTenantArchived", sortKeyFields: ["archived"])
+    @index(name: "byTenantId")
   role: Role!
   task: Task! @belongsTo
   assignee: User! @belongsTo
@@ -355,7 +361,9 @@ type Comment
       {allow: owner, operations: [create, read, delete]},
       {allow: groups, groups: ["ADMIN"], operations: [create, read, delete]},
     ])
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID!
+    @index(name: "byTenantArchived", sortKeyFields: ["archived"])
+    @index(name: "byTenantId")
     @auth(rules: [
       {allow: groups, groups: ["USER"], operations: [read]},
       {allow: owner, operations: [create, read, delete]},
@@ -399,7 +407,9 @@ type Deliverable
 ])
 @model {
   id: ID!
-  tenantId: ID! @index(name: "byTenantId")
+  tenantId: ID!
+    @index(name: "byTenantArchived", sortKeyFields: ["archived"])
+    @index(name: "byTenantId")
     @auth(rules: [
       {allow: private, operations: [read]},
       {allow: groups, groups: ["ADMIN", "COORDINATOR", "RIDER"], operations: [create, read, delete]},
