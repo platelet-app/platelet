@@ -1,0 +1,1261 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CreateScheduledTasks create some scheduled tasks 1`] = `
+[
+  [
+    {
+      "query": "
+    query ListScheduledTasks(
+        $filter: ModelScheduledTaskFilterInput
+        $limit: Int
+        $nextToken: String
+    ) {
+        listScheduledTasks(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                tenantId
+                cronExpression
+                pickUpSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
+                dropOffSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
+                pickUpLocation {
+                    id
+                    listed
+                    tenantId
+                    name
+                    contact {
+                        name
+                        telephoneNumber
+                        mobileNumber
+                        emailAddress
+                        ward
+                        line1
+                        line2
+                        line3
+                        town
+                        county
+                        state
+                        country
+                        postcode
+                        what3words
+                    }
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                    googleMapsPlaceId
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    tenantId
+                    name
+                    contact {
+                        name
+                        telephoneNumber
+                        mobileNumber
+                        emailAddress
+                        ward
+                        line1
+                        line2
+                        line3
+                        town
+                        county
+                        state
+                        country
+                        postcode
+                        what3words
+                    }
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                    googleMapsPlaceId
+                }
+                establishmentLocation {
+                    id
+                    listed
+                    tenantId
+                    name
+                    contact {
+                        name
+                        telephoneNumber
+                        mobileNumber
+                        emailAddress
+                        ward
+                        line1
+                        line2
+                        line3
+                        town
+                        county
+                        state
+                        country
+                        postcode
+                        what3words
+                    }
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                    googleMapsPlaceId
+                }
+                deliverables {
+                    items {
+                        _deleted
+                        count
+                        deliverableTypeDeliverablesId
+                        unit
+                    }
+                }
+                requesterContact {
+                    name
+                    telephoneNumber
+                    mobileNumber
+                    emailAddress
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                }
+                priority
+                disabled
+            }
+            nextToken
+            startedAt
+        }
+    }
+",
+      "variables": {
+        "nextToken": null,
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation CreateLocation(
+  $input: CreateLocationInput!
+  $condition: ModelLocationConditionInput
+) {
+  createLocation(input: $input, condition: $condition) {
+    id
+    tenantId
+    createdBy {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      isBeingDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    name
+    listed
+    contact {
+      name
+      telephoneNumber
+      mobileNumber
+      emailAddress
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      __typename
+    }
+    ward
+    line1
+    line2
+    line3
+    town
+    county
+    state
+    country
+    postcode
+    what3words
+    tasksAsPickUp {
+      nextToken
+      startedAt
+      __typename
+    }
+    tasksAsDropOff {
+      nextToken
+      startedAt
+      __typename
+    }
+    taskAsEstablishment {
+      nextToken
+      startedAt
+      __typename
+    }
+    scheduledTasksAsPickUp {
+      nextToken
+      startedAt
+      __typename
+    }
+    scheduledTasksAsDropOff {
+      nextToken
+      startedAt
+      __typename
+    }
+    scheduledTasksAsEstablishment {
+      nextToken
+      startedAt
+      __typename
+    }
+    comments {
+      nextToken
+      startedAt
+      __typename
+    }
+    disabled
+    googleMapsPlaceId
+    archived
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userCreatedLocationsId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "archived": 0,
+          "contact": {
+            "name": "name",
+            "telephoneNumber": "phone",
+          },
+          "country": "country",
+          "county": "county",
+          "googleMapsPlaceId": "googleMapsPlaceId",
+          "line1": "line1",
+          "line2": "line2",
+          "line3": "line3",
+          "listed": 0,
+          "name": undefined,
+          "postcode": "postcode",
+          "state": undefined,
+          "tenantId": "tenantId",
+          "town": "town",
+          "ward": undefined,
+          "what3words": "what3words",
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation CreateTask(
+  $input: CreateTaskInput!
+  $condition: ModelTaskConditionInput
+) {
+  createTask(input: $input, condition: $condition) {
+    id
+    tenantId
+    createdAt
+    createdBy {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      isBeingDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    dateCreated
+    dateCompleted
+    timeOfCall
+    timePickedUp
+    timePickedUpSenderName
+    timeDroppedOff
+    timeDroppedOffRecipientName
+    timeCancelled
+    timeRejected
+    timeRiderHome
+    requesterContact {
+      name
+      telephoneNumber
+      mobileNumber
+      emailAddress
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      __typename
+    }
+    pickUpLocationId
+    dropOffLocationId
+    establishmentLocationId
+    pickUpLocation {
+      id
+      tenantId
+      name
+      listed
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      disabled
+      googleMapsPlaceId
+      archived
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedLocationsId
+      __typename
+    }
+    dropOffLocation {
+      id
+      tenantId
+      name
+      listed
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      disabled
+      googleMapsPlaceId
+      archived
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedLocationsId
+      __typename
+    }
+    establishmentLocation {
+      id
+      tenantId
+      name
+      listed
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      disabled
+      googleMapsPlaceId
+      archived
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedLocationsId
+      __typename
+    }
+    riderResponsibility
+    assignees {
+      nextToken
+      startedAt
+      __typename
+    }
+    priority
+    deliverables {
+      nextToken
+      startedAt
+      __typename
+    }
+    comments {
+      nextToken
+      startedAt
+      __typename
+    }
+    status
+    isRiderUsingOwnVehicle
+    archived
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userCreatedTasksId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "archived": 0,
+          "dateCreated": "2021-05-01",
+          "dropOffLocationDetails": {
+            "contact": {
+              "name": "name",
+              "telephoneNumber": "phone",
+            },
+            "country": "country",
+            "county": "county",
+            "googleMapsPlaceId": "googleMapsPlaceId",
+            "line1": "line1",
+            "line2": "line2",
+            "line3": "line3",
+            "postcode": "postcode",
+            "town": "town",
+            "what3words": "what3words",
+          },
+          "dropOffLocationId": "newLocationId",
+          "dropOffSchedule": null,
+          "establishmentLocationDetails": {
+            "name": "establishment",
+          },
+          "establishmentLocationId": "establishmentLocationId",
+          "pickUpLocationDetails": {
+            "name": "pick up",
+          },
+          "pickUpLocationId": "pickUpLocationId",
+          "pickUpSchedule": null,
+          "priority": "MEDIUM",
+          "requesterContact": {
+            "name": "name",
+            "telephoneNumber": "phone",
+          },
+          "status": "PENDING",
+          "tenantId": "tenantId",
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation CreateDeliverable(
+  $input: CreateDeliverableInput!
+  $condition: ModelDeliverableConditionInput
+) {
+  createDeliverable(input: $input, condition: $condition) {
+    id
+    tenantId
+    deliverableType {
+      id
+      label
+      tenantId
+      icon
+      defaultUnit
+      tags
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    task {
+      id
+      tenantId
+      createdAt
+      dateCreated
+      dateCompleted
+      timeOfCall
+      timePickedUp
+      timePickedUpSenderName
+      timeDroppedOff
+      timeDroppedOffRecipientName
+      timeCancelled
+      timeRejected
+      timeRiderHome
+      pickUpLocationId
+      dropOffLocationId
+      establishmentLocationId
+      riderResponsibility
+      priority
+      status
+      isRiderUsingOwnVehicle
+      archived
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedTasksId
+      __typename
+    }
+    scheduledTask {
+      id
+      tenantId
+      cronExpression
+      pickUpLocationId
+      dropOffLocationId
+      establishmentLocationId
+      priority
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedScheduledTasksId
+      __typename
+    }
+    count
+    unit
+    orderInGrid
+    comments {
+      nextToken
+      startedAt
+      __typename
+    }
+    archived
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    taskDeliverablesId
+    scheduledTaskDeliverablesId
+    deliverableTypeDeliverablesId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "archived": 0,
+          "count": 1,
+          "deliverableTypeDeliverablesId": "deliverableTypeDeliverablesId",
+          "taskDeliverablesId": "newTaskId",
+          "tenantId": "tenantId",
+          "unit": "unit",
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+]
+`;
+
+exports[`CreateScheduledTasks create some scheduled tasks and calculate schedule 1`] = `
+[
+  [
+    {
+      "query": "
+    query ListScheduledTasks(
+        $filter: ModelScheduledTaskFilterInput
+        $limit: Int
+        $nextToken: String
+    ) {
+        listScheduledTasks(
+            filter: $filter
+            limit: $limit
+            nextToken: $nextToken
+        ) {
+            items {
+                id
+                tenantId
+                cronExpression
+                pickUpSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
+                dropOffSchedule {
+                    relation
+                    timePrimary
+                    timeSecondary
+                }
+                pickUpLocation {
+                    id
+                    listed
+                    tenantId
+                    name
+                    contact {
+                        name
+                        telephoneNumber
+                        mobileNumber
+                        emailAddress
+                        ward
+                        line1
+                        line2
+                        line3
+                        town
+                        county
+                        state
+                        country
+                        postcode
+                        what3words
+                    }
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                    googleMapsPlaceId
+                }
+                dropOffLocation {
+                    id
+                    listed
+                    tenantId
+                    name
+                    contact {
+                        name
+                        telephoneNumber
+                        mobileNumber
+                        emailAddress
+                        ward
+                        line1
+                        line2
+                        line3
+                        town
+                        county
+                        state
+                        country
+                        postcode
+                        what3words
+                    }
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                    googleMapsPlaceId
+                }
+                establishmentLocation {
+                    id
+                    listed
+                    tenantId
+                    name
+                    contact {
+                        name
+                        telephoneNumber
+                        mobileNumber
+                        emailAddress
+                        ward
+                        line1
+                        line2
+                        line3
+                        town
+                        county
+                        state
+                        country
+                        postcode
+                        what3words
+                    }
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                    googleMapsPlaceId
+                }
+                deliverables {
+                    items {
+                        _deleted
+                        count
+                        deliverableTypeDeliverablesId
+                        unit
+                    }
+                }
+                requesterContact {
+                    name
+                    telephoneNumber
+                    mobileNumber
+                    emailAddress
+                    ward
+                    line1
+                    line2
+                    line3
+                    town
+                    county
+                    state
+                    country
+                    postcode
+                    what3words
+                }
+                priority
+                disabled
+            }
+            nextToken
+            startedAt
+        }
+    }
+",
+      "variables": {
+        "nextToken": null,
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation CreateLocation(
+  $input: CreateLocationInput!
+  $condition: ModelLocationConditionInput
+) {
+  createLocation(input: $input, condition: $condition) {
+    id
+    tenantId
+    createdBy {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      isBeingDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    name
+    listed
+    contact {
+      name
+      telephoneNumber
+      mobileNumber
+      emailAddress
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      __typename
+    }
+    ward
+    line1
+    line2
+    line3
+    town
+    county
+    state
+    country
+    postcode
+    what3words
+    tasksAsPickUp {
+      nextToken
+      startedAt
+      __typename
+    }
+    tasksAsDropOff {
+      nextToken
+      startedAt
+      __typename
+    }
+    taskAsEstablishment {
+      nextToken
+      startedAt
+      __typename
+    }
+    scheduledTasksAsPickUp {
+      nextToken
+      startedAt
+      __typename
+    }
+    scheduledTasksAsDropOff {
+      nextToken
+      startedAt
+      __typename
+    }
+    scheduledTasksAsEstablishment {
+      nextToken
+      startedAt
+      __typename
+    }
+    comments {
+      nextToken
+      startedAt
+      __typename
+    }
+    disabled
+    googleMapsPlaceId
+    archived
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userCreatedLocationsId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "archived": 0,
+          "contact": {
+            "name": "name",
+            "telephoneNumber": "phone",
+          },
+          "country": "country",
+          "county": "county",
+          "googleMapsPlaceId": "googleMapsPlaceId",
+          "line1": "line1",
+          "line2": "line2",
+          "line3": "line3",
+          "listed": 0,
+          "name": undefined,
+          "postcode": "postcode",
+          "state": undefined,
+          "tenantId": "tenantId",
+          "town": "town",
+          "ward": undefined,
+          "what3words": "what3words",
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation CreateTask(
+  $input: CreateTaskInput!
+  $condition: ModelTaskConditionInput
+) {
+  createTask(input: $input, condition: $condition) {
+    id
+    tenantId
+    createdAt
+    createdBy {
+      id
+      username
+      cognitoId
+      tenantId
+      isPrimaryAdmin
+      displayName
+      name
+      roles
+      dateOfBirth
+      riderResponsibility
+      disabled
+      isBeingDeleted
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    dateCreated
+    dateCompleted
+    timeOfCall
+    timePickedUp
+    timePickedUpSenderName
+    timeDroppedOff
+    timeDroppedOffRecipientName
+    timeCancelled
+    timeRejected
+    timeRiderHome
+    requesterContact {
+      name
+      telephoneNumber
+      mobileNumber
+      emailAddress
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      __typename
+    }
+    pickUpLocationId
+    dropOffLocationId
+    establishmentLocationId
+    pickUpLocation {
+      id
+      tenantId
+      name
+      listed
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      disabled
+      googleMapsPlaceId
+      archived
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedLocationsId
+      __typename
+    }
+    dropOffLocation {
+      id
+      tenantId
+      name
+      listed
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      disabled
+      googleMapsPlaceId
+      archived
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedLocationsId
+      __typename
+    }
+    establishmentLocation {
+      id
+      tenantId
+      name
+      listed
+      ward
+      line1
+      line2
+      line3
+      town
+      county
+      state
+      country
+      postcode
+      what3words
+      disabled
+      googleMapsPlaceId
+      archived
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedLocationsId
+      __typename
+    }
+    riderResponsibility
+    assignees {
+      nextToken
+      startedAt
+      __typename
+    }
+    priority
+    deliverables {
+      nextToken
+      startedAt
+      __typename
+    }
+    comments {
+      nextToken
+      startedAt
+      __typename
+    }
+    status
+    isRiderUsingOwnVehicle
+    archived
+    pickUpSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    dropOffSchedule {
+      relation
+      timePrimary
+      timeSecondary
+      __typename
+    }
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    userCreatedTasksId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "archived": 0,
+          "dateCreated": "2021-05-01",
+          "dropOffLocationDetails": {
+            "contact": {
+              "name": "name",
+              "telephoneNumber": "phone",
+            },
+            "country": "country",
+            "county": "county",
+            "googleMapsPlaceId": "googleMapsPlaceId",
+            "line1": "line1",
+            "line2": "line2",
+            "line3": "line3",
+            "postcode": "postcode",
+            "town": "town",
+            "what3words": "what3words",
+          },
+          "dropOffLocationId": "newLocationId",
+          "dropOffSchedule": {
+            "relation": "BEFORE",
+            "timePrimary": "2021-05-01T23:00:00.000Z",
+            "timeSecondary": null,
+          },
+          "establishmentLocationDetails": {
+            "name": "establishment",
+          },
+          "establishmentLocationId": "establishmentLocationId",
+          "pickUpLocationDetails": {
+            "name": "pick up",
+          },
+          "pickUpLocationId": "pickUpLocationId",
+          "pickUpSchedule": {
+            "relation": "BETWEEN",
+            "timePrimary": "2021-05-01T10:00:00.000Z",
+            "timeSecondary": "2021-05-02T04:00:00.000Z",
+          },
+          "priority": "MEDIUM",
+          "requesterContact": {
+            "name": "name",
+            "telephoneNumber": "phone",
+          },
+          "status": "PENDING",
+          "tenantId": "tenantId",
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+  [
+    {
+      "query": "mutation CreateDeliverable(
+  $input: CreateDeliverableInput!
+  $condition: ModelDeliverableConditionInput
+) {
+  createDeliverable(input: $input, condition: $condition) {
+    id
+    tenantId
+    deliverableType {
+      id
+      label
+      tenantId
+      icon
+      defaultUnit
+      tags
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      __typename
+    }
+    task {
+      id
+      tenantId
+      createdAt
+      dateCreated
+      dateCompleted
+      timeOfCall
+      timePickedUp
+      timePickedUpSenderName
+      timeDroppedOff
+      timeDroppedOffRecipientName
+      timeCancelled
+      timeRejected
+      timeRiderHome
+      pickUpLocationId
+      dropOffLocationId
+      establishmentLocationId
+      riderResponsibility
+      priority
+      status
+      isRiderUsingOwnVehicle
+      archived
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedTasksId
+      __typename
+    }
+    scheduledTask {
+      id
+      tenantId
+      cronExpression
+      pickUpLocationId
+      dropOffLocationId
+      establishmentLocationId
+      priority
+      disabled
+      createdAt
+      updatedAt
+      _version
+      _deleted
+      _lastChangedAt
+      userCreatedScheduledTasksId
+      __typename
+    }
+    count
+    unit
+    orderInGrid
+    comments {
+      nextToken
+      startedAt
+      __typename
+    }
+    archived
+    createdAt
+    updatedAt
+    _version
+    _deleted
+    _lastChangedAt
+    taskDeliverablesId
+    scheduledTaskDeliverablesId
+    deliverableTypeDeliverablesId
+    __typename
+  }
+}
+",
+      "variables": {
+        "input": {
+          "archived": 0,
+          "count": 1,
+          "deliverableTypeDeliverablesId": "deliverableTypeDeliverablesId",
+          "taskDeliverablesId": "newTaskId",
+          "tenantId": "tenantId",
+          "unit": "unit",
+        },
+      },
+    },
+    "https://api.example.com/graphql",
+  ],
+]
+`;
