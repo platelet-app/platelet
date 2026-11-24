@@ -187,7 +187,7 @@ type Location
     ])
 }
 
-type TaskLocation {
+type LocationDetail {
   name: String
   contact: AddressAndContactDetails
   ward: String
@@ -286,17 +286,17 @@ type Task
   dropOffLocation: Location @belongsTo(fields: ["dropOffLocationId"])
   establishmentLocation: Location @belongsTo(fields: ["establishmentLocationId"])
   # location data snapshots, to replace the connections eventually
-  pickUpLocationDetails: TaskLocation
+  pickUpLocationDetails: LocationDetail
     @auth(rules: [
       {allow: private, operations: [read]},
       {allow: groups, groups: ["COORDINATOR", "ADMIN"], operations: [create, read, update, delete]},
     ])
-  dropOffLocationDetails: TaskLocation
+  dropOffLocationDetails: LocationDetail
     @auth(rules: [
       {allow: private, operations: [read]},
       {allow: groups, groups: ["COORDINATOR", "ADMIN"], operations: [create, read, update, delete]},
     ])
-  establishmentLocationDetails: TaskLocation
+  establishmentLocationDetails: LocationDetail
     @auth(rules: [
       {allow: private, operations: [read]},
       {allow: groups, groups: ["COORDINATOR", "ADMIN"], operations: [create, read, update, delete]},
@@ -364,9 +364,9 @@ type ScheduledTask
   pickUpLocation: Location @belongsTo(fields: ["pickUpLocationId"])
   dropOffLocation: Location @belongsTo(fields: ["dropOffLocationId"])
   establishmentLocation: Location @belongsTo(fields: ["establishmentLocationId"])
-  pickUpLocationDetails: TaskLocation
-  dropOffLocationDetails: TaskLocation
-  establishmentLocationDetails: TaskLocation
+  pickUpLocationDetails: LocationDetail
+  dropOffLocationDetails: LocationDetail
+  establishmentLocationDetails: LocationDetail
   priority: Priority
   deliverables: [Deliverable] @hasMany
   disabled: Int @default(value: "0")

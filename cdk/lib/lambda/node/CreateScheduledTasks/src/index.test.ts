@@ -1,4 +1,17 @@
-const indexModule = require("./index");
+import { jest, expect } from "@jest/globals";
+
+jest.unstable_mockModule("@platelet-app/lambda", () => ({
+    request: jest.fn(),
+    errorCheck: jest.fn(),
+}));
+
+// must be imported before the handler
+const lambda = await import("@platelet-app/lambda");
+const { mutations } = await import("@platelet-app/graphql");
+// import handler
+const { handler } = await import("./index.js");
+
+const mockRequest = jest.mocked(lambda.request);
 
 const mockScheduledTasks = [
     {
@@ -13,11 +26,13 @@ const mockScheduledTasks = [
         dropOffSchedule: null,
         establishmentLocation: {
             id: "establishmentLocationId",
+            name: "establishment",
             listed: 1,
             _version: 1,
         },
         pickUpLocation: {
             id: "pickUpLocationId",
+            name: "pick up",
             listed: 1,
             _version: 1,
         },
@@ -35,6 +50,7 @@ const mockScheduledTasks = [
             country: "country",
             postcode: "postcode",
             what3words: "what3words",
+            googleMapsPlaceId: "googleMapsPlaceId",
             tenantId: "tenantId",
             listed: 0,
             _version: 1,
@@ -103,11 +119,13 @@ const mockScheduledTasksScheduled = [
         },
         establishmentLocation: {
             id: "establishmentLocationId",
+            name: "establishment",
             listed: 1,
             _version: 1,
         },
         pickUpLocation: {
             id: "pickUpLocationId",
+            name: "pick up",
             listed: 1,
             _version: 1,
         },
@@ -125,6 +143,7 @@ const mockScheduledTasksScheduled = [
             country: "country",
             postcode: "postcode",
             what3words: "what3words",
+            googleMapsPlaceId: "googleMapsPlaceId",
             tenantId: "tenantId",
             listed: 0,
             _version: 1,
@@ -157,96 +176,81 @@ const mockScheduledTasksScheduled = [
     },
 ];
 
-jest.mock(
-    "/opt/appSyncRequest",
-    () => {
-        return {
-            request: jest.fn(),
-            errorCheck: jest.fn(),
-        };
-    },
-    { virtual: true }
-);
-jest.mock(
-    "/opt/graphql/mutations",
-    () => {
-        return {
-            createTask: "createTaskQuery",
-            createLocation: "createLocationQuery",
-            createDeliverable: "createDeliverableQuery",
-        };
-    },
-    { virtual: true }
-);
+const mockResponse = (data: unknown) =>
+    ({
+        json: () => Promise.resolve({ data }),
+    } as unknown as Awaited<ReturnType<typeof lambda.request>>);
 
-const appsyncModule = require("/opt/appSyncRequest");
+// list the scheduled tasks, then create the unlisted drop off location,
+// the task and its one non-deleted deliverable
+const setupRequests = (scheduledTasks: unknown[]) => {
+    mockRequest
+        .mockResolvedValueOnce(
+            mockResponse({
+                listScheduledTasks: {
+                    items: scheduledTasks,
+                    nextToken: null,
+                },
+            })
+        )
+        .mockResolvedValueOnce(
+            mockResponse({ createLocation: { id: "newLocationId" } })
+        )
+        .mockResolvedValueOnce(
+            mockResponse({ createTask: { id: "newTaskId" } })
+        )
+        .mockResolvedValueOnce(
+            mockResponse({ createDeliverable: { id: "newDeliverableId" } })
+        );
+};
 
-describe("plateletCreateScheduledTasks", () => {
-    afterEach(() => jest.restoreAllMocks());
+describe("CreateScheduledTasks", () => {
     beforeAll(() => {
-        jest.useFakeTimers("modern");
+        jest.useFakeTimers();
         jest.setSystemTime(new Date("2021-05-01T00:00:00.000Z"));
     });
+    afterAll(() => {
+        jest.useRealTimers();
+    });
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
     test("create some scheduled tasks", async () => {
-        appsyncModule.request
-            .mockResolvedValueOnce({
-                json: () => ({
-                    data: {
-                        listScheduledTasks: {
-                            items: mockScheduledTasks,
-                            nextToken: null,
-                        },
-                    },
-                }),
-            })
-            .mockResolvedValueOnce({
-                json: () => ({
-                    data: { createLocation: { id: "newLocationId" } },
-                }),
-            })
-            .mockResolvedValueOnce({
-                json: () => ({
-                    data: { createTask: { id: "newTaskId" } },
-                }),
-            })
-            .mockResolvedValueOnce({
-                json: () => ({
-                    data: { createDeliverable: { id: "newDeliverableId" } },
-                }),
-            });
-
-        await indexModule.handler();
-        expect(appsyncModule.request).toMatchSnapshot();
+        setupRequests(mockScheduledTasks);
+        await handler({});
+        expect(mockRequest.mock.calls).toMatchSnapshot();
     });
     test("create some scheduled tasks and calculate schedule", async () => {
-        appsyncModule.request
-            .mockResolvedValueOnce({
-                json: () => ({
-                    data: {
-                        listScheduledTasks: {
-                            items: mockScheduledTasksScheduled,
-                            nextToken: null,
-                        },
-                    },
-                }),
-            })
-            .mockResolvedValueOnce({
-                json: () => ({
-                    data: { createLocation: { id: "newLocationId" } },
-                }),
-            })
-            .mockResolvedValueOnce({
-                json: () => ({
-                    data: { createTask: { id: "newTaskId" } },
-                }),
-            })
-            .mockResolvedValueOnce({
-                json: () => ({
-                    data: { createDeliverable: { id: "newDeliverableId" } },
-                }),
-            });
-
-        await indexModule.handler();
-        expect(appsyncModule.request).toMatchSnapshot();
+        setupRequests(mockScheduledTasksScheduled);
+        await handler({});
+        expect(mockRequest.mock.calls).toMatchSnapshot();
+    });
+    test("only the task location fields are copied to the location details", async () => {
+        setupRequests(mockScheduledTasks);
+        await handler({});
+        const createTaskCall = mockRequest.mock.calls.find(
+            ([{ query }]) => query === mutations.createTask
+        );
+        const { input } = createTaskCall?.[0].variables;
+        expect(input.pickUpLocationDetails).toEqual({ name: "pick up" });
+        expect(input.establishmentLocationDetails).toEqual({
+            name: "establishment",
+        });
+        // the model fields id, tenantId, listed and _version are left out
+        expect(input.dropOffLocationDetails).toEqual({
+            contact: {
+                name: "name",
+                telephoneNumber: "phone",
+            },
+            line1: "line1",
+            line2: "line2",
+            line3: "line3",
+            town: "town",
+            county: "county",
+            country: "country",
+            postcode: "postcode",
+            what3words: "what3words",
+            googleMapsPlaceId: "googleMapsPlaceId",
+        });
     });
 });

@@ -1216,7 +1216,7 @@ export const schema = {
                     "name": "pickUpLocationDetails",
                     "isArray": false,
                     "type": {
-                        "nonModel": "TaskLocation"
+                        "nonModel": "LocationDetail"
                     },
                     "isRequired": false,
                     "attributes": []
@@ -1225,7 +1225,7 @@ export const schema = {
                     "name": "dropOffLocationDetails",
                     "isArray": false,
                     "type": {
-                        "nonModel": "TaskLocation"
+                        "nonModel": "LocationDetail"
                     },
                     "isRequired": false,
                     "attributes": []
@@ -1234,7 +1234,7 @@ export const schema = {
                     "name": "establishmentLocationDetails",
                     "isArray": false,
                     "type": {
-                        "nonModel": "TaskLocation"
+                        "nonModel": "LocationDetail"
                     },
                     "isRequired": false,
                     "attributes": []
@@ -1663,7 +1663,7 @@ export const schema = {
                     "name": "pickUpLocationDetails",
                     "isArray": false,
                     "type": {
-                        "nonModel": "TaskLocation"
+                        "nonModel": "LocationDetail"
                     },
                     "isRequired": false,
                     "attributes": []
@@ -1672,7 +1672,7 @@ export const schema = {
                     "name": "dropOffLocationDetails",
                     "isArray": false,
                     "type": {
-                        "nonModel": "TaskLocation"
+                        "nonModel": "LocationDetail"
                     },
                     "isRequired": false,
                     "attributes": []
@@ -1681,7 +1681,7 @@ export const schema = {
                     "name": "establishmentLocationDetails",
                     "isArray": false,
                     "type": {
-                        "nonModel": "TaskLocation"
+                        "nonModel": "LocationDetail"
                     },
                     "isRequired": false,
                     "attributes": []
@@ -2601,8 +2601,8 @@ export const schema = {
                 }
             }
         },
-        "TaskLocation": {
-            "name": "TaskLocation",
+        "LocationDetail": {
+            "name": "LocationDetail",
             "fields": {
                 "name": {
                     "name": "name",
@@ -2828,5 +2828,5 @@ export const schema = {
         }
     },
     "codegenVersion": "3.4.4",
-    "version": "929e24735add6951bfcc2877716821ff"
+    "version": "584788cb37ba389a2caed79f1f972c0d"
 };

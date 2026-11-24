@@ -1,7 +1,7 @@
 import { DataStore } from "aws-amplify";
 import _ from "lodash";
 import * as models from "../models";
-import { utils } from "@platelet-app/core";
+import { locationModelToLocationDetail } from "@platelet-app/core";
 
 const ignoredFields = [
     "id",
@@ -82,12 +82,12 @@ export default async function duplicateTask(
     }
     const date = new Date();
     const today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    const pickUpLocationDetails =
-        utils.locationModelToTaskLocationDetail(pickUpLocation);
+    const pickUpLocationDetails = locationModelToLocationDetail(pickUpLocation);
     const dropOffLocationDetails =
-        utils.locationModelToTaskLocationDetail(dropOffLocation);
-    const establishmentLocationDetails =
-        utils.locationModelToTaskLocationDetail(establishmentLocation);
+        locationModelToLocationDetail(dropOffLocation);
+    const establishmentLocationDetails = locationModelToLocationDetail(
+        establishmentLocation
+    );
     let newTaskData = new models.Task({
         ...rest,
         status: models.TaskStatus.NEW,
